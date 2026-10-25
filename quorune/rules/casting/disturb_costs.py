@@ -40,7 +40,8 @@ def disturb_back_cast_permission(host, seat, card, face_name=None):
 
 def cast_view_zone_permission(host, seat, card):
     from ...preparation import preparation_cast_permission
-    return preparation_cast_permission(host,seat,card) or host._compiled_zone_cast_permission(seat, card) or disturb_back_cast_permission(host, seat, card)
+    from ...adventure import adventure_cast_permission
+    return preparation_cast_permission(host,seat,card) or host._compiled_zone_cast_permission(seat, card) or disturb_back_cast_permission(host, seat, card) or adventure_cast_permission(host,seat,card)
 
 
 def disturb_base_options(host, seat, card, *, commander_tax):

@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "c6f048e17de17090627d9eeb45a54ca81ddb6207cdf969494bd5f86f8ee802d0"
+verified: "6c06f858c8f649ff4594260612e6c003550b850b835a239d3c850223223f0c20"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 278 |
-| Cards | 3010 |
-| Rulings | 6908 |
-| Modules inspected | 563 |
-| Static requirements | 1653 |
+| Fixture files | 385 |
+| Cards | 3841 |
+| Rulings | 10010 |
+| Modules inspected | 672 |
+| Static requirements | 1922 |
 | Declared dynamic requirements | 46 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -32,36 +32,36 @@ Overall closure: **closed**.
 
 | Shard | Modules | Status |
 | --- | ---: | --- |
-| casting-costs-mana | 58 | closed |
-| combat-declarations | 22 | closed |
-| compiler-cardprogram | 63 | closed |
+| casting-costs-mana | 70 | closed |
+| combat-declarations | 24 | closed |
+| compiler-cardprogram | 90 | closed |
 | core-domain | 14 | closed |
-| counter-continuous-effects | 46 | closed |
+| counter-continuous-effects | 60 | closed |
 | deterministic-game-regressions | 6 | closed |
-| events-replacement-zone | 41 | closed |
-| functional-01 | 30 | closed |
-| functional-02 | 70 | closed |
-| functional-03 | 35 | closed |
-| functional-04 | 35 | closed |
-| functional-05 | 38 | closed |
-| functional-06 | 53 | closed |
-| functional-07 | 27 | closed |
-| functional-08 | 38 | closed |
-| functional-09 | 46 | closed |
-| functional-10 | 36 | closed |
-| functional-11 | 63 | closed |
-| functional-12 | 59 | closed |
-| generated-validation | 33 | closed |
+| events-replacement-zone | 54 | closed |
+| functional-01 | 53 | closed |
+| functional-02 | 51 | closed |
+| functional-03 | 50 | closed |
+| functional-04 | 50 | closed |
+| functional-05 | 50 | closed |
+| functional-06 | 49 | closed |
+| functional-07 | 52 | closed |
+| functional-08 | 50 | closed |
+| functional-09 | 85 | closed |
+| functional-10 | 50 | closed |
+| functional-11 | 48 | closed |
+| functional-12 | 50 | closed |
+| generated-validation | 34 | closed |
 | main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |
 | merge-core | 9 | closed |
-| multiplayer-commander | 9 | closed |
+| multiplayer-commander | 17 | closed |
 | nightly-property | 3 | closed |
-| server-replay-privacy | 18 | closed |
+| server-replay-privacy | 37 | closed |
 | state-actions-damage | 18 | closed |
-| targets-choices-continuations | 32 | closed |
+| targets-choices-continuations | 39 | closed |
 | triggers-turns-exact-decks | 20 | closed |
-| windows-compat | 10 | closed |
+| windows-compat | 18 | closed |
 
 The JSON companion contains canonical identities, fixture owners, source
 provenance, unresolved dynamics, and exact missing dependencies.

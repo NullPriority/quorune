@@ -27,6 +27,7 @@ from .activation_condition_model import (
     ActivationConditionKind,
     activation_restriction_spec,
 )
+from .activation_restriction_composition import activation_restriction_from_effect
 from .activated_ability_descriptor import validate_activated_ability_descriptor
 from .boast import keyword_activation_restrictions,validate_boast_ability
 from .replacement.immutable import FrozenMap, thaw_value
@@ -316,8 +317,11 @@ class ActivatedAbility:
     fixed_mana_result: FixedManaResultSpec | None = None
     announced_x_symbols: int | None = None
     boast: bool = False
+    reconfigure: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.reconfigure) is not bool:
+            raise ValueError('Reconfigure marker must be boolean')
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
         if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
@@ -395,6 +399,7 @@ class ActivatedAbility:
         if self.random_discard_payment:result['random_discard_payment']=self.random_discard_payment
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
         if self.boast:result['boast']=True
+        if self.reconfigure:result['reconfigure']=True
         return result
 
     @classmethod
@@ -404,6 +409,7 @@ class ActivatedAbility:
             ability_id=value["ability_id"],
             announced_x_symbols=value.get('announced_x_symbols'),
             boast=value.get('boast',False),
+            reconfigure=value.get('reconfigure', False),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],
@@ -888,6 +894,7 @@ def _fixed_equip_keyword_ability(
         sorcery_speed=True,
         builtin_semantic_key="builtin:equip",
         target_schema=FrozenMap(spec.target_schema),
+        source_counter_removal_cost=cost.source_counter_removal_cost,
         activation_limit=(
             ActivationLimit.ONCE_PER_TURN if spec.once_per_turn else None
         ),
@@ -1202,6 +1209,7 @@ def _activation_conditions(effect_text: str) -> tuple[ActivationCondition, ...]:
         represented = activation_restriction_spec(restriction)
         if represented is not None:
             return represented.conditions
+        if ' and only ' in restriction:return (ActivationCondition(ActivationConditionKind.UNSUPPORTED),)
     result: list[ActivationCondition] = []
     if "activate only during your turn" in lower:
         result.append(ActivationCondition(ActivationConditionKind.CONTROLLERS_TURN))
@@ -1497,6 +1505,7 @@ def _parse_activated_line(
     if (keyword_override or keyword_prefix or "").casefold() == "equip":
         builtin_semantic_key, target_schema = _equip_effect_descriptor()
     activation_limit,conditions,boast=keyword_activation_restrictions(prefix,effect_lower,_activation_conditions(effect_text))
+    restriction=activation_restriction_from_effect(effect_text)
     return (
         ActivatedAbility(
             ability_id=f"ab{line_index + 1}",
@@ -1527,7 +1536,7 @@ def _parse_activated_line(
             choices=cost.choices,
             uncompiled_costs=(*cost.uncompiled, *((POWER_UP_UNCOMPILED,) if prefix == "power-up" else ())),
             mana_ability=mana_ability,
-            sorcery_speed=bool(_ACTIVATE_ONLY_SORCERY.search(effect_text)),
+            sorcery_speed=(restriction.sorcery_speed if restriction is not None else bool(_ACTIVATE_ONLY_SORCERY.search(effect_text))),
             generic_reduction_per_legendary_creature=int(
                 bool(
                     re.search(

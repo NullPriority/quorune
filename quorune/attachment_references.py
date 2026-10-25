@@ -14,6 +14,10 @@ class AttachmentReferenceError(ValueError):
     """A compiled attachment reference or its pinned snapshot is invalid."""
 
 
+ATTACHMENT_INFORMATION_CAPABILITY = 'object.reference.source_attachment_information'
+ATTACHMENT_INFORMATION_VERSION = 'source_attachment_information_version'
+
+
 class AttachmentReferenceKind(str, Enum):
     ENCHANTED = "enchanted_object"
     EQUIPPED = "equipped_object"
@@ -62,7 +66,7 @@ class AttachmentReferenceSpec:
             raise AttachmentReferenceError(
                 "Attachment reference card type is unsupported"
             )
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise AttachmentReferenceError(
                 "Attachment reference schema version is unsupported"
             )
@@ -240,6 +244,19 @@ def required_attachment_relation(
             "One semantic program cannot mix attachment reference relations"
         )
     return next(iter(relations))
+
+
+def attachment_information_capabilities(value):
+    return (ATTACHMENT_INFORMATION_CAPABILITY,) if any(
+        spec.schema_version == 2 for spec in attachment_reference_specs(value)
+    ) else ()
+
+
+def attachment_information_payload_dependencies(value):
+    if isinstance(value, Mapping) and value.get('kind')=='source_attachment':
+        spec=AttachmentReferenceSpec.from_dict(value)
+        return (ATTACHMENT_INFORMATION_CAPABILITY,) if spec.schema_version==2 else ()
+    return ()
 
 
 def _object_identity(card: CardInstance) -> AttachmentObjectIdentity:

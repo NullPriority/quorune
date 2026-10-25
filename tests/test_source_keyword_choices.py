@@ -151,7 +151,7 @@ class SourceKeywordChoiceTests(unittest.TestCase):
             if change == 'stats': choice['then_by_choice']['Flying'][0]['power'] = -1
             if change == 'unknown': choice['extra'] = True
             self.assertEqual((), source_keyword_choice_capabilities(effects=altered, target_schema=None, mechanic_ids=mechanics))
-        for bad in (text.replace('haste', 'banding'), text.replace('haste', 'flying'),
+        for bad in (text.replace('haste', 'bands with other green creatures'), text.replace('haste', 'flying'),
                     text.replace('flying, deathtouch, or haste', 'flying or deathtouch, haste'),
                     text.replace('flying, deathtouch, or haste', 'flying or deathtouch or haste'),
                     text.replace('your choice', "its controller's choice"),

@@ -112,9 +112,19 @@ def _typed_condition_status(
     source: Any | None,
 ) -> tuple[str, str | None]:
     kind = condition.kind
+    if kind in {ActivationConditionKind.CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN,ActivationConditionKind.OPPONENT_LOST_LIFE_THIS_TURN}:
+        from .turn_event_conditions import activation_turn_event_status
+        return activation_turn_event_status(host,seat,kind)
     if kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN:
         from .source_attack import source_attack_condition_status
         return source_attack_condition_status(host,source)
+    if kind is ActivationConditionKind.SOURCE_ATTACHED_TO_CREATURE:
+        target = host.state.cards.get(getattr(source, 'attached_to', None))
+        attached = (source is not None and source.zone == 'battlefield'
+            and target is not None and target.zone == 'battlefield'
+            and source.object_id in target.attachments
+            and 'creature' in (_effective_card_types(host, target) or ()))
+        return ('payable', None) if attached else ('unavailable', 'requires_attached_to_creature')
     if kind is ActivationConditionKind.CONTROLLER_HAS_CITYS_BLESSING:
         from ...city_blessing_model import player_has_citys_blessing
         return ('payable',None) if player_has_citys_blessing(host.state.players[seat]) else ('unavailable','requires_citys_blessing')

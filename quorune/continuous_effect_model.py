@@ -5,6 +5,7 @@ from enum import Enum, IntEnum
 from typing import Any, Mapping
 
 from .activated_ability_descriptor import validate_activated_ability_descriptor
+from .attachment_duration import AttachmentDuration
 from .object_predicate import ObjectQuerySpec
 from .source_continuity import SourceContinuitySnapshot
 from .ability_fragments import ability_fragment_from_dict
@@ -45,6 +46,7 @@ class ContinuousEffectDuration(str, Enum):
     UNTIL_END_OF_TURN = "until_end_of_turn"
     UNTIL_CONTROL_CHANGE = "until_control_change"
     ZONE_OBJECT = "zone_object"
+    UNTIL_UNATTACHED = "until_unattached"
     UNTIL_SOURCE_LEAVES = "until_source_leaves"
     UNTIL_SOURCE_CONTROL_CHANGES = "until_source_control_changes"
     UNTIL_SOURCE_LEAVES_OR_UNTAPS = "until_source_leaves_or_untaps"
@@ -109,6 +111,7 @@ _OPERATION_LAYERS = {
     "set_toughness": Layer.POWER_TOUGHNESS,
     "set_power_toughness": Layer.POWER_TOUGHNESS,
     "modify_power_toughness": Layer.POWER_TOUGHNESS,
+    "modify_power_toughness_by_recipient_quantity": Layer.POWER_TOUGHNESS,
     "switch_power_toughness": Layer.POWER_TOUGHNESS,
 }
 _COPY_FIELDS = {
@@ -344,6 +347,11 @@ def _validate_operation_value(op: str, value: Any, field: str | None) -> None:
     elif op in {"set_power", "set_toughness"}:
         if field is not None or type(value) is not int:
             raise ContinuousEffectError(f"{op} requires one integer")
+    elif op == 'modify_power_toughness_by_recipient_quantity':
+        from .recipient_modifier_model import validate_recipient_modifier
+        if field is not None:raise ContinuousEffectError('Recipient modifiers accept no field')
+        try:validate_recipient_modifier(value)
+        except (TypeError,ValueError) as exc:raise ContinuousEffectError(str(exc)) from exc
     elif op in {"set_power_toughness", "modify_power_toughness"}:
         if field is not None or not isinstance(value, (list, tuple)) or len(value) != 2:
             raise ContinuousEffectError(f"{op} requires an integer pair")
@@ -461,6 +469,11 @@ def _validate_continuous_effect_identity_scope(
     effect: "ContinuousEffect",
     locked: tuple[ContinuousObjectIdentity, ...],
 ) -> None:
+    from .attachment_duration import validate_attachment_duration
+    try:
+        validate_attachment_duration(effect, locked)
+    except ValueError as exc:
+        raise ContinuousEffectError(str(exc)) from exc
     if effect.duration.source_bound:
         if (effect.origin is not ContinuousEffectOrigin.RESOLUTION
                 or effect.layer is not Layer.CONTROL
@@ -545,6 +558,7 @@ class ContinuousEffect:
     duration_controller: str | None = None
     duration_history: SourceContinuitySnapshot | None = None
     denied_keyword_grants: tuple[tuple[str, str, str], ...] = ()
+    attachment_duration: AttachmentDuration | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -695,6 +709,8 @@ class ContinuousEffect:
                             "duration_history": self.duration_history.to_dict()})
         if self.denied_keyword_grants:
             payload['denied_keyword_grants'] = [list(row) for row in self.denied_keyword_grants]
+        if self.attachment_duration is not None:
+            payload['attachment_duration'] = self.attachment_duration.to_dict()
         return payload
 
     @classmethod
@@ -720,7 +736,7 @@ class ContinuousEffect:
             raise ContinuousEffectError(
                 "Continuous effect fields are missing or unknown"
             )
-        actual_fields = frozenset(set(value) - {'denied_keyword_grants'})
+        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration'})
         if actual_fields not in {
             frozenset(legacy_fields),
             frozenset(relation_fields),
@@ -801,6 +817,8 @@ class ContinuousEffect:
                     if "duration_history" in value else None
                 ),
                 denied_keyword_grants=value.get('denied_keyword_grants', ()),
+                attachment_duration=(AttachmentDuration.from_dict(value['attachment_duration'])
+                    if 'attachment_duration' in value else None),
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):

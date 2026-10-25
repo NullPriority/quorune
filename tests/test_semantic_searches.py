@@ -683,6 +683,13 @@ class SemanticPrivateSearchTests(unittest.TestCase):
         self.assertFalse(engine._stabilize())
         engine._prepare_stack_resolution()
         packet = session.packet("pilot:A", full=True)
+        self.assertEqual('offer_optional_effect',packet['decision']['ctx']['operation'])
+        before=authoritative_state_hash(engine.state)
+        self.assertFalse(session.act('pilot:B',{'action_id':'choose','choice':'apply'}).ok)
+        self.assertEqual(before,authoritative_state_hash(engine.state))
+        result=session.act('pilot:A',{'action_id':'choose','choice':'apply'})
+        self.assertTrue(result.ok,result.summary)
+        packet=session.packet('pilot:A',full=True)
         self.assertIn(
             target.ref,
             {

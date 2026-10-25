@@ -642,15 +642,15 @@ class OracleIRTests(unittest.TestCase):
             capability_profile="commander_review",
             promote_exact_runtime_handlers=True,
         )
-        self.assertEqual(1, generation["programs_generated"])
-        self.assertEqual(1, generation["programs_skipped_existing"])
+        self.assertEqual(len(programs), generation["programs_generated"])
+        self.assertEqual(0, generation["programs_skipped_existing"])
         self.assertIsNotNone(
             reviewed_registry.get(
                 f"{record.oracle_id}:static:front:n1"
             )
         )
         self.assertIsNone(reviewed_registry.get(f"{record.oracle_id}:static:thopter-anthem"))
-        self.assertIsNone(
+        self.assertIsNotNone(
             reviewed_registry.get(
                 f"{record.oracle_id}:static:front:n2"
             )
@@ -1910,10 +1910,10 @@ class OracleIRTests(unittest.TestCase):
             exact.faces[0].nodes[0].capability_dependencies,
         )
 
-        for oracle_id, oracle_text in (
-            ("fixture-hexproof-from-black", "Hexproof from black"),
-            ("fixture-hexproof-from-each-color", "Hexproof from each color"),
-            ("fixture-player-hexproof", "You have hexproof from black."),
+        for oracle_id, oracle_text, supported in (
+            ("fixture-hexproof-from-black", "Hexproof from black", True),
+            ("fixture-hexproof-from-each-color", "Hexproof from each color", True),
+            ("fixture-player-hexproof", "You have hexproof from black.", False),
         ):
             with self.subTest(oracle_text=oracle_text):
                 unsupported = compile_oracle_card(
@@ -1927,8 +1927,14 @@ class OracleIRTests(unittest.TestCase):
                     capability_registry=capabilities,
                     capability_profile="commander_review",
                 )
-                self.assertNotEqual("exact", unsupported.status)
-                self.assertTrue(unsupported.material_residuals)
+                if supported:
+                    self.assertEqual("exact", unsupported.status)
+                    self.assertFalse(unsupported.material_residuals)
+                    self.assertIn("target.protection.hexproof_qualified",
+                        unsupported.faces[0].nodes[0].capability_dependencies)
+                else:
+                    self.assertNotEqual("exact", unsupported.status)
+                    self.assertTrue(unsupported.material_residuals)
 
     def test_trample_uses_source_spanned_assignment_capability(self):
         base = self.db.lookup("Wight of the Reliquary")
@@ -2124,10 +2130,13 @@ class OracleIRTests(unittest.TestCase):
         self.assertEqual(
             [
                 {
-                    "op": "modify_stats_until_end_of_turn",
-                    "card": "$source",
+                    "op": "apply_source_characteristics_until_end_of_turn",
+                    "card": "$source.zone_object",
+                    'set_card_types':None,'set_subtypes':None,'set_colors':None,
+                    'base_power':None,'base_toughness':None,
                     "power": 1,
                     "toughness": 1,
+                    'keywords':[],
                 }
             ],
             shade_program.effects,

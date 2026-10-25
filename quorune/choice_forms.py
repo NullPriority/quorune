@@ -484,6 +484,10 @@ def _special_fields(
             fields.append({'name':'enlist','label':'Enlist creatures','control':'assignment_map','required':False,'allow_none':True,'rows':copy.deepcopy(context['enlist']),'source_assignment':'attackers','exclude_assigned':True,'distinct_options':True})
         if context.get('exert'):
             fields.append({'name':'exert','label':'Exert attacking creatures','control':'assignment_map','required':False,'allow_none':True,'rows':copy.deepcopy(context['exert']),'source_assignment':'attackers','choice_label':'exert costs'})
+        if context.get('banding'):
+            fields.append({'name': 'bands', 'label': 'Attacking bands', 'control': 'assignment_map',
+                'required': False, 'allow_none': True, 'rows': copy.deepcopy(context['banding']['rows']),
+                'source_assignment': 'attackers', 'choice_label': 'band leader'})
         return fields
     if decision_kind == "combat.blockers" and action_name == "block":
         legal = context.get("legal_blocks") or {}

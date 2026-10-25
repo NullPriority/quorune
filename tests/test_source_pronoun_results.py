@@ -57,7 +57,7 @@ class SourcePronounCompilerTests(unittest.TestCase):
             capability_registry=CapabilityRegistry(raw)).status)
         for text in (
             'Whenever a creature blocks, it gets +1/+0 and gains first strike until end of turn.',
-            'Whenever this creature blocks, it gets +1/+0 and gains banding until end of turn.',
+            'Whenever this creature blocks, it gets +1/+0 and gains bands with other green creatures until end of turn.',
         ):
             self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=registry).status)
 

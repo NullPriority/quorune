@@ -40,6 +40,12 @@ class CounterTarget(str, Enum):
     TRIGGERED_ABILITY = "triggered ability"
     ACTIVATED_OR_TRIGGERED_ABILITY = "activated or triggered ability"
     SPELL_OR_ABILITY = "spell, activated ability, or triggered ability"
+    TRIGGERED_ABILITY_OR_COLORLESS_SPELL = "triggered ability or colorless spell"
+    ABILITY_OR_NONCREATURE_SPELL = "activated ability, triggered ability, or noncreature spell"
+    ABILITY_OR_LEGENDARY_SPELL = "activated ability, triggered ability, or legendary spell"
+    BLUE_INSTANT_SPELL = "blue instant spell"
+    ACTIVATED_ARTIFACT_SOURCE = "activated ability from an artifact source"
+    NONCREATURE_ABILITY_SOURCE = "activated or triggered ability from a noncreature source"
 
 
 _TYPE_DOMAINS: dict[CounterTarget, tuple[str, ...]] = {
@@ -67,6 +73,14 @@ _COLOR_DOMAINS: dict[CounterTarget, tuple[str, ...]] = {
     CounterTarget.RED_SPELL: ("R",),
     CounterTarget.GREEN_SPELL: ("G",),
     CounterTarget.RED_OR_GREEN_SPELL: ("R", "G"),
+}
+_MIXED_STACK_PREDICATES = {
+    CounterTarget.TRIGGERED_ABILITY_OR_COLORLESS_SPELL: 'triggered_ability_or_colorless_spell',
+    CounterTarget.ABILITY_OR_NONCREATURE_SPELL: 'ability_or_noncreature_spell',
+    CounterTarget.ABILITY_OR_LEGENDARY_SPELL: 'ability_or_legendary_spell',
+    CounterTarget.BLUE_INSTANT_SPELL: 'blue_instant_spell',
+    CounterTarget.ACTIVATED_ARTIFACT_SOURCE: 'activated_artifact_source',
+    CounterTarget.NONCREATURE_ABILITY_SOURCE: 'noncreature_ability_source',
 }
 
 
@@ -108,17 +122,25 @@ class TargetedCounterEffectTemplate:
     def target_schema(self) -> Mapping[str, Any]:
         categories = (
             ["spell", "ability"]
-            if self.target is CounterTarget.SPELL_OR_ABILITY
+            if self.target is CounterTarget.SPELL_OR_ABILITY or self.target in {
+                CounterTarget.TRIGGERED_ABILITY_OR_COLORLESS_SPELL,
+                CounterTarget.ABILITY_OR_NONCREATURE_SPELL,
+                CounterTarget.ABILITY_OR_LEGENDARY_SPELL,
+            }
             else ["ability"]
             if self.target in {
                 CounterTarget.ACTIVATED_ABILITY,
                 CounterTarget.TRIGGERED_ABILITY,
                 CounterTarget.ACTIVATED_OR_TRIGGERED_ABILITY,
+                CounterTarget.ACTIVATED_ARTIFACT_SOURCE,
+                CounterTarget.NONCREATURE_ABILITY_SOURCE,
             }
             else ["spell"]
         )
         options: dict[str, Any] = {}
-        if self.target in _TYPE_DOMAINS:
+        if self.target in _MIXED_STACK_PREDICATES:
+            options['predicate'] = _MIXED_STACK_PREDICATES[self.target]
+        elif self.target in _TYPE_DOMAINS:
             options["types_any"] = _TYPE_DOMAINS[self.target]
         elif self.target is CounterTarget.NONCREATURE_SPELL:
             options["types_none"] = ("creature",)
@@ -178,7 +200,12 @@ def targeted_counter_effect_template(
         r"red or green spell|nonblue spell|colorless spell|"
         r"activated ability|triggered ability|"
         r"activated or triggered ability|"
-        r"spell, activated ability, or triggered ability)\.?",
+        r"spell, activated ability, or triggered ability|"
+        r"triggered ability or colorless spell|"
+        r"activated ability, triggered ability, or noncreature spell|"
+        r"activated ability, triggered ability, or legendary spell|"
+        r"blue instant spell|activated ability from an artifact source|"
+        r"activated or triggered ability from a noncreature source)\.?",
         normalized,
         re.IGNORECASE,
     )

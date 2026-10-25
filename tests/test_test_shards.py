@@ -62,10 +62,13 @@ class TestShardManifestTests(unittest.TestCase):
             "test_fixed_entry_return_triggers",
             "test_fixed_source_combat_growth_triggers",
         )
-        self.assertLessEqual(
-            set(modules),
-            set(self.manifest["primary_shards"]["functional-02"]),
-        )
+        for module in modules:
+            owners = [
+                name for name, assigned in self.manifest["primary_shards"].items()
+                if module in assigned
+            ]
+            self.assertEqual(1, len(owners), module)
+            self.assertTrue(owners[0].startswith("functional-"), module)
         identifiers = canonical_test_ids(load_suite(modules))
         self.assertGreaterEqual(len(identifiers), 100)
         for module in modules:
@@ -85,10 +88,7 @@ class TestShardManifestTests(unittest.TestCase):
         )
         self.assertIn("generated-validation", [row["shard"] for row in rows])
         self.assertEqual("generated-validation", rows[0]["shard"])
-        self.assertLess(
-            self.manifest["execution_order"].index("functional-12"),
-            self.manifest["execution_order"].index("functional-01"),
-        )
+        self.assertEqual(set(self.manifest["primary_shards"]), {row["shard"] for row in rows})
         self.assertEqual(
             [
                 name

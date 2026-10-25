@@ -2186,6 +2186,125 @@
         "residual.replacement.replacement-applicability",
         "residual.replacement.self-replacement-and-prevention-ordering"
       ]
+    },
+    {
+      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
+      "name": "Slaying Fire",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.paid_mana_condition"
+      ],
+      "residual_witness_id": "variable-life-entry-damage-boundary",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "27c84ad1-1491-459b-bf8a-0146062084dc",
+      "name": "Fiery Impulse",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.fixed_public_self_replacement",
+        "capability.resolution.effect.public_same_target_self_replacement"
+      ],
+      "residual_witness_id": "zz-conditional-damage-recipient-redirection",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "52ad1a31-3ad8-4ead-ba77-675cad7e4a14",
+      "name": "Thermal Blast",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.fixed_public_self_replacement",
+        "capability.resolution.effect.public_same_target_self_replacement"
+      ],
+      "residual_witness_id": "zz-conditional-damage-recipient-redirection",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
+      "name": "Firecannon Blast",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.fixed_public_self_replacement",
+        "capability.resolution.effect.public_same_target_self_replacement"
+      ],
+      "residual_witness_id": "zz-conditional-damage-recipient-redirection",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "ab48147c-0bd7-4875-8e11-0e26185453dd",
+      "name": "Cackling Flames",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.fixed_public_self_replacement",
+        "capability.resolution.effect.public_same_target_self_replacement"
+      ],
+      "residual_witness_id": "zz-conditional-damage-recipient-redirection",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
+      "name": "Unholy Heat",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.fixed_public_self_replacement",
+        "capability.resolution.effect.public_same_target_self_replacement"
+      ],
+      "residual_witness_id": "zz-conditional-damage-recipient-redirection",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "d12e374d-ed09-4d5e-bb7a-6c7d9ea80a1e",
+      "name": "Brimstone Volley",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.fixed_public_self_replacement",
+        "capability.resolution.effect.public_same_target_self_replacement"
+      ],
+      "residual_witness_id": "zz-conditional-damage-recipient-redirection",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
+    },
+    {
+      "oracle_id": "d211c03a-03cd-40c5-b7c8-ada352fd01a6",
+      "name": "Galvanic Blast",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "capability.resolution.effect.fixed_public_self_replacement",
+        "capability.resolution.effect.public_same_target_self_replacement"
+      ],
+      "residual_witness_id": "zz-conditional-damage-recipient-redirection",
+      "residual_piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.replacement-applicability",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ]
     }
   ],
   "admission_boundaries": [
@@ -2224,35 +2343,8 @@
       ]
     },
     {
-      "oracle_id": "1e94e647-9150-4b22-aa9f-d195f64fb20a",
-      "name": "Slaying Fire",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
-      "oracle_id": "27c84ad1-1491-459b-bf8a-0146062084dc",
-      "name": "Fiery Impulse",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
       "oracle_id": "2d125ef5-074c-44eb-a1d0-c308d48bfbc2",
       "name": "Invasion of Karsus // Refraction Elemental",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
-      "oracle_id": "52ad1a31-3ad8-4ead-ba77-675cad7e4a14",
-      "name": "Thermal Blast",
       "piece_ids": [
         "capability.damage.source.stack_current_or_lki",
         "residual.replacement.replacement-applicability",
@@ -2296,26 +2388,8 @@
       ]
     },
     {
-      "oracle_id": "97bff952-3bc8-41d0-b03f-5c76f3c7e0a3",
-      "name": "Firecannon Blast",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
       "oracle_id": "a0ce2f5a-9c0b-4801-9105-72f84d8a4a1f",
       "name": "Arrow Storm",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
-      "oracle_id": "ab48147c-0bd7-4875-8e11-0e26185453dd",
-      "name": "Cackling Flames",
       "piece_ids": [
         "capability.damage.source.stack_current_or_lki",
         "residual.replacement.replacement-applicability",
@@ -2341,35 +2415,8 @@
       ]
     },
     {
-      "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083",
-      "name": "Unholy Heat",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
       "oracle_id": "b8cf8614-14f4-4c20-9697-2e5ea34e0039",
       "name": "Crater's Claws",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
-      "oracle_id": "d12e374d-ed09-4d5e-bb7a-6c7d9ea80a1e",
-      "name": "Brimstone Volley",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
-      "oracle_id": "d211c03a-03cd-40c5-b7c8-ada352fd01a6",
-      "name": "Galvanic Blast",
       "piece_ids": [
         "capability.damage.source.stack_current_or_lki",
         "residual.replacement.replacement-applicability",

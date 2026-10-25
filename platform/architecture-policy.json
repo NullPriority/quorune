@@ -149,10 +149,13 @@
     "quorune/characteristic_evaluation_host.py",
     "quorune/dynamic_characteristics.py",
     "quorune/public_quantity_reductions.py",
+    "quorune/public_zone_quantities.py",
     "quorune/self_cast_reductions.py",
     "quorune/continuous_effect_state.py",
     "quorune/resolution_characteristic_model.py",
     "quorune/fixed_effect_payment.py",
+    "quorune/resolution_mana_model.py",
+    "quorune/created_token_counter_model.py",
     "quorune/continuous_effects.py",
     "quorune/continuous_effect_model.py",
     "quorune/control_history.py",
@@ -244,7 +247,8 @@
     "quorune/object_query.py",
     "quorune/transmute.py",
     "quorune/conditional_exile_return.py",
-    "quorune/conditional_exile_model.py"
+    "quorune/conditional_exile_model.py",
+    "quorune/cost_payments.py"
   ],
   "protected_future_prefixes": [
     "quorune/domain/",
@@ -345,41 +349,43 @@
       "quorune/return_to_hand.py": "typed identity-pinned permanent-return transaction delegating mutation to the canonical zone-change owner",
       "quorune/stack_counter.py": "typed stack-counter legality, removal, ordinary spell destination, telemetry, and public journal owner",
       "quorune/trigger_processing.py": "typed CR 603.3 occurrence batching, APNAP placement, stack commit, and historical continuation owner behind CommanderEngine",
-      "quorune/trigger_discovery.py": "normalized semantic trigger detection and immutable ordinary occurrence construction behind CommanderEngine"
-      ,"quorune/turn_priority_owner.py": "typed priority grant/pass, yield invalidation, action-opportunity audit, and deterministic pump owner"
-      ,"quorune/turn_step_owner.py": "typed turn selection, phase/step progression, cleanup iteration, and end-turn coordination owner"
-      ,"quorune/rules/land_play_permissions.py": "typed ordinary land-play quota selection, source-incarnation slot consumption, and turn-reset mutation owner"
-      ,"quorune/mana_activation.py": "activated mana ability and reversible activation transaction owner"
-      ,"quorune/mana_provenance.py": "typed snow-source and spending-restriction mana provenance mutation owner"
-      ,"quorune/semantic_choices/intent_host.py": "typed semantic-choice intent application behind the immutable choice registry"
-      ,"quorune/effect_runtime/state_and_permissions.py": "registry-owned state and permission effect family"
-      ,"quorune/effect_runtime/zones_and_attachments.py": "registry-owned zone and attachment effect family"
-      ,"quorune/effect_runtime/damage_life_and_turns.py": "registry-owned damage and turn effect family"
-      ,"quorune/effect_runtime/damage_modifiers.py": "registry-owned prevention-shield and redirection creation family"
-      ,"quorune/effect_runtime/objects_stack_and_tokens.py": "registry-owned object, stack, and token effect family"
-      ,"quorune/rules/casting/commit.py": "typed spell-casting transaction owner behind CommanderEngine"
-      ,"quorune/rules/activation/commit.py": "typed activated-ability transaction owner behind CommanderEngine"
-      ,"quorune/drawing/transaction.py": "canonical replacement-aware draw mutation owner behind CommanderEngine"
-      ,"quorune/combat_relationship_state.py": "typed combat participation and relationship mutation owner behind CommanderEngine"
-      ,"quorune/relative_power_target.py": "typed pending-target last-known-information snapshot owner for departing relative-power sources"
-      ,"quorune/zone_object_state.py": "typed object-local CR 400.7 reset owner behind the canonical zone transition"
-      ,"quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner"
-      ,"quorune/day_night.py": "typed CR 731 public designation and untap synchronization owner"
-      ,"quorune/permanent_transform.py": "typed CR 701.27 active-face and transform-count mutation owner"
-      ,"quorune/selection/public_choice.py": "typed represented public nontarget choice projection, continuation validation, and authoritative result coordination"
-      ,"quorune/selection/exile_cast.py": "typed one-shot public exile-cast choice, continuation validation, and authoritative resolution cleanup owner"
-      ,"quorune/selection/searching.py": "typed hidden-zone search projection, continuation validation, result binding, and canonical zone-transition coordination"
-      ,"quorune/selection/storm.py": "typed Storm copy-target selection and authoritative stack-copy commit owner"
-      ,"quorune/selection/targeting.py": "typed target proposal, projection, completion, and resolution revalidation owner"
-      ,"quorune/impulse_access.py": "typed fixed library-top exile, temporary ordinary-play permission, and duration-expiry owner delegating zone movement to the canonical zone-transition owner"
-      ,"quorune/rules/player_speed_state.py": "canonical typed persistent player speed and inherent once-per-own-turn trigger usage owner behind state-based stabilization and committed life transactions",
+      "quorune/trigger_discovery.py": "normalized semantic trigger detection and immutable ordinary occurrence construction behind CommanderEngine",
+      "quorune/turn_priority_owner.py": "typed priority grant/pass, yield invalidation, action-opportunity audit, and deterministic pump owner",
+      "quorune/turn_step_owner.py": "typed turn selection, phase/step progression, cleanup iteration, and end-turn coordination owner",
+      "quorune/rules/land_play_permissions.py": "typed ordinary land-play quota selection, source-incarnation slot consumption, and turn-reset mutation owner",
+      "quorune/mana_activation.py": "activated mana ability and reversible activation transaction owner",
+      "quorune/mana_provenance.py": "typed snow-source and spending-restriction mana provenance mutation owner",
+      "quorune/semantic_choices/intent_host.py": "typed semantic-choice intent application behind the immutable choice registry",
+      "quorune/effect_runtime/state_and_permissions.py": "registry-owned state and permission effect family",
+      "quorune/effect_runtime/zones_and_attachments.py": "registry-owned zone and attachment effect family",
+      "quorune/effect_runtime/damage_life_and_turns.py": "registry-owned damage and turn effect family",
+      "quorune/effect_runtime/damage_modifiers.py": "registry-owned prevention-shield and redirection creation family",
+      "quorune/effect_runtime/objects_stack_and_tokens.py": "registry-owned object, stack, and token effect family",
+      "quorune/rules/casting/commit.py": "typed spell-casting transaction owner behind CommanderEngine",
+      "quorune/rules/activation/commit.py": "typed activated-ability transaction owner behind CommanderEngine",
+      "quorune/drawing/transaction.py": "canonical replacement-aware draw mutation owner behind CommanderEngine",
+      "quorune/combat_relationship_state.py": "typed combat participation and relationship mutation owner behind CommanderEngine",
+      "quorune/relative_power_target.py": "typed pending-target last-known-information snapshot owner for departing relative-power sources",
+      "quorune/zone_object_state.py": "typed object-local CR 400.7 reset owner behind the canonical zone transition",
+      "quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner",
+      "quorune/day_night.py": "typed CR 731 public designation and untap synchronization owner",
+      "quorune/permanent_transform.py": "typed CR 701.27 active-face and transform-count mutation owner",
+      "quorune/selection/public_choice.py": "typed represented public nontarget choice projection, continuation validation, and authoritative result coordination",
+      "quorune/selection/exile_cast.py": "typed one-shot public exile-cast choice, continuation validation, and authoritative resolution cleanup owner",
+      "quorune/selection/searching.py": "typed hidden-zone search projection, continuation validation, result binding, and canonical zone-transition coordination",
+      "quorune/selection/storm.py": "typed Storm copy-target selection and authoritative stack-copy commit owner",
+      "quorune/selection/targeting.py": "typed target proposal, projection, completion, and resolution revalidation owner",
+      "quorune/impulse_access.py": "typed fixed library-top exile, temporary ordinary-play permission, and duration-expiry owner delegating zone movement to the canonical zone-transition owner",
+      "quorune/rules/player_speed_state.py": "canonical typed persistent player speed and inherent once-per-own-turn trigger usage owner behind state-based stabilization and committed life transactions",
       "quorune/soulbond_state.py": "typed symmetric Soulbond pair proposal, continuity validation, and relationship commit/expiry owner",
       "quorune/preparation.py": "typed noncopiable Preparation designation and linked inset-spell-copy lifecycle owner",
       "quorune/rules/activation/payment_commit.py": "canonical activation payment commit delegating paid choices and tap/zone/counter mutation to typed owners",
       "quorune/target_source.py": "typed announced targeting-source and retained pre-cost/LKI stack provenance owner",
-      "quorune/untap_selection.py": "typed retained untap-selection choice and continuation owner"
+      "quorune/untap_selection.py": "typed retained untap-selection choice and continuation owner",
+      "quorune/attachment_information.py": "versioned pending attachment-information capture at actual source departure"
     },
     "read_only_consumers": {
+      "quorune/rules/random_discard_additional_cost.py": "read-only random spell-price selection and sealed continuation validation delegating mutation to canonical discard-cost owners",
       "quorune/rules/casting/additional_zone_costs.py": "read-only typed zone-cost candidate and immutable declared-count selection query",
       "quorune/rules/casting/nonmoving_additional_costs.py": "read-only current life and nonmoving additional payment query delegating commitments to canonical owners",
       "quorune/rules/defender_declaration.py": "read-only trusted current-face declaration component and completed characteristic condition query",
@@ -397,61 +403,65 @@
       "quorune/state_based_actions.py": "pure state-based action detection over an authoritative snapshot",
       "quorune/saga_lifecycle.py": "immutable ordinary Saga final-chapter state-action model",
       "quorune/state_based_execution.py": "typed state-based execution planner delegating mutation to canonical destruction and zone owners",
-      "quorune/semantic_runtime/zone_replacements.py": "read-only replacement-source discovery and event identity"
-      ,"quorune/semantic_choices/engine_coordination.py": "actor-scoped immutable choice fact materialization and routing"
-      ,"quorune/mana_undo.py": "read-only reversible mana-window validation with commits delegated to canonical owners"
-      ,"quorune/object_query.py": "typed read-only object selection predicates"
-      ,"quorune/zone_trigger_events.py": "immutable normalized CR 603.6 zone-change occurrence and event derivation"
-      ,"quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners"
-      ,"quorune/cascade.py": "typed Cascade trigger and resolution coordinator delegating casting, zone movement, choice, and cleanup mutation to canonical owners"
-      ,"quorune/storm.py": "read-only typed Storm descriptor discovery and immutable APNAP-placeable trigger factory"
-      ,"quorune/spell_copy_engine_adapter.py": "read-only normalized spell-copy occurrence coordinator over canonical stack-copy commits"
-      ,"quorune/semantic_runtime/action_permissions.py": "read-only trusted static action-permission discovery over active battlefield sources"
-      ,"quorune/semantic_runtime/casting_activation_metadata.py": "read-only trusted casting-permission and loyalty-cost metadata discovery over current source-pinned programs"
-      ,"quorune/semantic_runtime/untap_steps.py": "read-only trusted untap-step participation discovery over current effective characteristics"
-      ,"quorune/untap_step_coordination.py": "read-only untap-step coordinator delegating mutation to canonical tap-state and turn-step owners"
-      ,"quorune/damage_prevention_aftermath.py": "typed prevention-aftermath planner delegating mutation to canonical life and counter owners"
-      ,"quorune/mana_mode_effects.py": "typed mana-mode side-effect coordinator delegating to canonical damage, life, and zone owners"
-      ,"quorune/mana_payment_continuations.py": "atomic mana-payment suspension coordinator"
-      ,"quorune/milling.py": "typed fixed Mill planner and coordinator delegating simultaneous mutation to the canonical zone-transition owner"
-      ,"quorune/effect_runtime/life_effects.py": "registry-owned life-effect planner delegating mutation to the canonical life owner"
-      ,"quorune/rules/action_catalog.py": "read-only executable action-offer catalog"
-      ,"quorune/rules/defender_permission_effect.py": "typed read-only selected creature and incarnation snapshot delegating temporary layer-six permission commitment to the canonical continuous-effect journal"
-      ,"quorune/rules/as_unblocked_effect.py": "typed read-only current creature set selection delegating incarnation-locked as-unblocked permission commitment to the canonical continuous-effect journal"
-      ,"quorune/toughness_assignment.py": "read-only combat assignment rule applicability from current source fragments and full recipient characteristics"
-      ,"quorune/rules/toughness_assignment_effect.py": "typed read-only selected incarnation query delegating resolved assignment-rule commitment to the canonical continuous-effect journal"
-      ,"quorune/rules/action_explanations.py": "principal-scoped read-only unavailable-action explanations"
-      ,"quorune/rules/casting/costs.py": "read-only casting-cost proposal query"
-      ,"quorune/cast_lifecycles.py": "typed casting-lifecycle coordinator delegating state changes to canonical cost, zone, keyword, trigger, and permission owners"
-      ,"quorune/linked_exile_return.py": "typed linked exile and return coordinator reading public identities and storing a closed stack continuation while delegating all zone, entry, layer and delayed-trigger mutations to canonical owners"
-      ,"quorune/rules/casting/proposal.py": "read-only immutable casting proposal query"
-      ,"quorune/rules/morph_actions.py": "typed Morph special-action planner delegating payment, object-state mutation, trigger discovery, and priority progression to canonical owners"
-      ,"quorune/rules/activation/availability.py": "read-only activation payability query"
-      ,"quorune/rules/activation/x_costs.py": "read-only announced activation X price and affordability query"
-      ,"quorune/rules/activation/cost_modifiers.py": "read-only trusted current-source activation cost modifier applicability"
-      ,"quorune/rules/activation/pricing.py": "read-only shared activation price selection and public payment choices"
-      ,"quorune/rules/activation/conditions.py": "read-only closed activation-condition query"
-      ,"quorune/rules/activation/proposal.py": "read-only immutable activation proposal query"
-      ,"quorune/rules/activation/query.py": "read-only activated-ability compiler query"
-      ,"quorune/drawing/coordinator.py": "replacement-aware draw orchestration delegating mutation to the canonical draw owner"
-      ,"quorune/semantic_runtime/draw_replacements.py": "read-only trusted draw-replacement discovery and lowering"
-      ,"quorune/combat_damage_engine_adapter.py": "narrow read-only CommanderEngine compatibility query for immutable combat-damage snapshots"
-      ,"quorune/attack_transition_engine_adapter.py": "narrow read-only CommanderEngine compatibility query and trigger coordinator for immutable completed attack transitions"
-      ,"quorune/attack_transition_resolution.py": "read-only attack-trigger result coordinator delegating mutation to the canonical continuous-effect owner"
-      ,"quorune/target_protection.py": "closed immutable target-protection legality over already-derived current characteristics"
-      ,"quorune/target_protection_engine_adapter.py": "narrow read-only CommanderEngine compatibility query for immutable target-protection snapshots"
-      ,"quorune/target_predicates.py": "closed read-only target-predicate evaluation over current and pinned characteristics"
-      ,"quorune/unearth.py": "typed Unearth coordinator delegating zone mutation, continuous effects, designation reset, replacement, and delayed-trigger placement to canonical owners"
-      ,"quorune/self_zone_move.py": "typed source-self zone-move coordinator delegating activation, replacement-aware movement, owner-zone routing, attachment cleanup, tapped entry, trigger discovery, privacy, and replay to canonical owners"
-      ,"quorune/hand_entry_move.py": "read-only selected private hand-entry incarnation and predicate validation before the canonical zone move"
-      ,"quorune/power_up.py": "read-only typed Power-up pricing over current source mana cost and canonical entry history, delegating payment and usage mutation to existing activation owners"
-      ,"quorune/selection/apnap.py": "typed read-only APNAP and simultaneous-choice coordinator delegating result mutation to canonical owners"
-      ,"quorune/selection/model.py": "immutable versioned selection contract and continuation model"
-      ,"quorune/selection/target_query.py": "narrow read-only target identity and last-known-information query"
-      ,"quorune/zone_transition_model.py": "typed read-only zone-transition host protocol, plan, and departure snapshot definitions"
-      ,"quorune/dynamic_characteristics.py": "typed read-only dynamic-characteristic evaluation over public battlefield and owner graveyard state"
-      ,"quorune/self_cast_reductions.py": "typed read-only self spell-cost reduction metrics over public objects and canonical current-turn facts"
-      ,"quorune/characteristic_evaluation_host.py": "typed read-only effective-characteristic integration over authoritative public state",
+      "quorune/semantic_runtime/zone_replacements.py": "read-only replacement-source discovery and event identity",
+      "quorune/semantic_choices/engine_coordination.py": "actor-scoped immutable choice fact materialization and routing",
+      "quorune/mana_undo.py": "read-only reversible mana-window validation with commits delegated to canonical owners",
+      "quorune/object_query.py": "typed read-only object selection predicates",
+      "quorune/zone_trigger_events.py": "immutable normalized CR 603.6 zone-change occurrence and event derivation",
+      "quorune/zone_trigger_processing.py": "read-only zone-trigger detection coordinator delegating placement and mutation to canonical owners",
+      "quorune/cascade.py": "typed Cascade trigger and resolution coordinator delegating casting, zone movement, choice, and cleanup mutation to canonical owners",
+      "quorune/storm.py": "read-only typed Storm descriptor discovery and immutable APNAP-placeable trigger factory",
+      "quorune/spell_copy_engine_adapter.py": "read-only normalized spell-copy occurrence coordinator over canonical stack-copy commits",
+      "quorune/semantic_runtime/action_permissions.py": "read-only trusted static action-permission discovery over active battlefield sources",
+      "quorune/semantic_runtime/casting_activation_metadata.py": "read-only trusted casting-permission and loyalty-cost metadata discovery over current source-pinned programs",
+      "quorune/semantic_runtime/untap_steps.py": "read-only trusted untap-step participation discovery over current effective characteristics",
+      "quorune/untap_step_coordination.py": "read-only untap-step coordinator delegating mutation to canonical tap-state and turn-step owners",
+      "quorune/damage_prevention_aftermath.py": "typed prevention-aftermath planner delegating mutation to canonical life and counter owners",
+      "quorune/mana_mode_effects.py": "typed mana-mode side-effect coordinator delegating to canonical damage, life, and zone owners",
+      "quorune/mana_payment_continuations.py": "atomic mana-payment suspension coordinator",
+      "quorune/milling.py": "typed fixed Mill planner and coordinator delegating simultaneous mutation to the canonical zone-transition owner",
+      "quorune/effect_runtime/life_effects.py": "registry-owned life-effect planner delegating mutation to the canonical life owner",
+      "quorune/rules/action_catalog.py": "read-only executable action-offer catalog",
+      "quorune/rules/defender_permission_effect.py": "typed read-only selected creature and incarnation snapshot delegating temporary layer-six permission commitment to the canonical continuous-effect journal",
+      "quorune/rules/as_unblocked_effect.py": "typed read-only current creature set selection delegating incarnation-locked as-unblocked permission commitment to the canonical continuous-effect journal",
+      "quorune/toughness_assignment.py": "read-only combat assignment rule applicability from current source fragments and full recipient characteristics",
+      "quorune/rules/toughness_assignment_effect.py": "typed read-only selected incarnation query delegating resolved assignment-rule commitment to the canonical continuous-effect journal",
+      "quorune/rules/action_explanations.py": "principal-scoped read-only unavailable-action explanations",
+      "quorune/rules/casting/costs.py": "read-only casting-cost proposal query",
+      "quorune/rules/casting/optional_life_costs.py": "read-only current provider, immutable optional price and total-life affordability queries; all life and casting mutations remain with canonical owners",
+      "quorune/rules/casting/turn_cast_grants.py": "read-only current source-permission, turn usage and immutable price queries; usage mutation delegates to the existing permanent-incarnation usage owner",
+      "quorune/rules/cast_grant_riders.py": "read-only sealed spell-incarnation binding and ordinary replacement proposals; mutation delegates to canonical zone, tap and object-state owners",
+      "quorune/rules/source_land_plays.py": "read-only shared source/land permission proposals; numeric allowance and source usage commits delegate to their existing canonical owners",
+      "quorune/cast_lifecycles.py": "typed casting-lifecycle coordinator delegating state changes to canonical cost, zone, keyword, trigger, and permission owners",
+      "quorune/linked_exile_return.py": "typed linked exile and return coordinator reading public identities and storing a closed stack continuation while delegating all zone, entry, layer and delayed-trigger mutations to canonical owners",
+      "quorune/rules/casting/proposal.py": "read-only immutable casting proposal query",
+      "quorune/rules/morph_actions.py": "typed Morph special-action planner delegating payment, object-state mutation, trigger discovery, and priority progression to canonical owners",
+      "quorune/rules/activation/availability.py": "read-only activation payability query",
+      "quorune/rules/activation/x_costs.py": "read-only announced activation X price and affordability query",
+      "quorune/rules/activation/cost_modifiers.py": "read-only trusted current-source activation cost modifier applicability",
+      "quorune/rules/activation/pricing.py": "read-only shared activation price selection and public payment choices",
+      "quorune/rules/activation/conditions.py": "read-only closed activation-condition query",
+      "quorune/rules/activation/proposal.py": "read-only immutable activation proposal query",
+      "quorune/rules/activation/query.py": "read-only activated-ability compiler query",
+      "quorune/drawing/coordinator.py": "replacement-aware draw orchestration delegating mutation to the canonical draw owner",
+      "quorune/semantic_runtime/draw_replacements.py": "read-only trusted draw-replacement discovery and lowering",
+      "quorune/combat_damage_engine_adapter.py": "narrow read-only CommanderEngine compatibility query for immutable combat-damage snapshots",
+      "quorune/attack_transition_engine_adapter.py": "narrow read-only CommanderEngine compatibility query and trigger coordinator for immutable completed attack transitions",
+      "quorune/attack_transition_resolution.py": "read-only attack-trigger result coordinator delegating mutation to the canonical continuous-effect owner",
+      "quorune/target_protection.py": "closed immutable target-protection legality over already-derived current characteristics",
+      "quorune/target_protection_engine_adapter.py": "narrow read-only CommanderEngine compatibility query for immutable target-protection snapshots",
+      "quorune/target_predicates.py": "closed read-only target-predicate evaluation over current and pinned characteristics",
+      "quorune/unearth.py": "typed Unearth coordinator delegating zone mutation, continuous effects, designation reset, replacement, and delayed-trigger placement to canonical owners",
+      "quorune/self_zone_move.py": "typed source-self zone-move coordinator delegating activation, replacement-aware movement, owner-zone routing, attachment cleanup, tapped entry, trigger discovery, privacy, and replay to canonical owners",
+      "quorune/hand_entry_move.py": "read-only selected private hand-entry incarnation and predicate validation before the canonical zone move",
+      "quorune/power_up.py": "read-only typed Power-up pricing over current source mana cost and canonical entry history, delegating payment and usage mutation to existing activation owners",
+      "quorune/selection/apnap.py": "typed read-only APNAP and simultaneous-choice coordinator delegating result mutation to canonical owners",
+      "quorune/selection/model.py": "immutable versioned selection contract and continuation model",
+      "quorune/selection/target_query.py": "narrow read-only target identity and last-known-information query",
+      "quorune/zone_transition_model.py": "typed read-only zone-transition host protocol, plan, and departure snapshot definitions",
+      "quorune/dynamic_characteristics.py": "typed read-only dynamic-characteristic evaluation over public battlefield and owner graveyard state",
+      "quorune/self_cast_reductions.py": "typed read-only self spell-cost reduction metrics over public objects and canonical current-turn facts",
+      "quorune/characteristic_evaluation_host.py": "typed read-only effective-characteristic integration over authoritative public state",
       "quorune/conditional_exile_return.py": "typed CR 610.3 committed-departure return selection over retained source and actual exile incarnations; movement stays in the canonical simultaneous zone owner",
       "quorune/counter_prevention.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/damage_aftermath_preparation.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
@@ -466,7 +476,10 @@
       "quorune/semantic_runtime/devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/semantic_runtime/targeted_spell_costs.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/target_restrictions.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
-      "quorune/zone_devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners"
+      "quorune/zone_devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/rules/self_cost_turn_counts.py": "typed read-only counted creature deaths, opponent casts and caster draws; consumes canonical history and draw-count ownership without mutation",
+      "quorune/rules/self_cost_public_counters.py": "Read existing canonical public counter snapshots for one source spell cost before its payment locks.",
+      "quorune/cost_payments.py": "read-only payment configuration and immutable source planning, delegating activation and mana-provenance mutation to existing canonical owners"
     },
     "model_definition": "quorune/model.py"
   },

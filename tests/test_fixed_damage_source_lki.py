@@ -102,7 +102,7 @@ class FixedDamageSourceLkiValueTests(unittest.TestCase):
         from quorune.trigger_batches import create_pending_trigger_batch
         from quorune.model import StackItem
         from quorune.damage_source import DamageError
-        source = SimpleNamespace(object_id='source-object',logical_object_id='old-incarnation',ref='same-source-ref',controller='D',face_down=False)
+        source = SimpleNamespace(object_id='source-object',logical_object_id='old-incarnation',ref='same-source-ref',controller='D',face_down=False,zone_change_counter=0)
         item = StackItem(stack_id='item-id',ref='pending-ref',kind='triggered_ability',controller='A',label='Pending fixed damage',source_object_id=source.object_id,
             context={'source_logical_object_id':source.logical_object_id,'dynamic_effects':[{'op':'damage','source':'$source','target':'B','amount':3}]})
         batch = create_pending_trigger_batch(batch_id='batch-id',ref='batch-ref',items=[item.to_dict()],apnap_order=['A','B','C','D'],turn_sequence=1,priority_epoch=1)

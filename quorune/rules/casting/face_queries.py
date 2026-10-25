@@ -6,6 +6,7 @@ from dataclasses import replace
 
 
 def prospective_cast_card(host,card,face_name=None):
+    if card.annotations.get('prospective_cast_fuse') is True:return card
     record=host.card_record(card)
     if record is None or not record.faces:return card
     from ...preparation import preparation_cast_face
@@ -19,6 +20,9 @@ def prospective_cast_record(record,face):
 
 
 def current_printed_cast_mana_cost(host,card,record):
+    from ..fuse import fuse_characteristic_values
+    fused=fuse_characteristic_values(card)
+    if fused:return fused['mana_cost']
     from ..prototype import prototype_characteristic_values
     values=prototype_characteristic_values(card)
     if values:return values['mana_cost']
@@ -30,11 +34,16 @@ def cast_resolution_is_trusted(host,record,face,program):
     return host.semantic_program_is_current_trusted(program) if program is not None else host._trusted_generic_spell(prospective_cast_record(record,face))
 
 
-def selected_cast_program(host,request,record,face,method_spec):
+def selected_cast_program(host,request,record,face,method_spec,card):
     from .proposal import _spell_semantic_key
     from .model import CastProposalError
     key=f'builtin:{request.cast_method}-face-down' if method_spec is not None else _spell_semantic_key(record,face)
+    from .characteristic_methods import characteristic_program_key
+    key=characteristic_program_key(record,card,request.cast_method,key)
     program=None if method_spec is not None else host.semantics.get(key)
+    from ..fuse import fuse_source_cast_is_complete
+    if not fuse_source_cast_is_complete(host,card,program):
+        raise CastProposalError('This Fuse source has incomplete executable composition',status='unresolved',reason='fuse_source_incomplete')
     if method_spec is None and host.state.config.semantic_policy=='trusted_only' and not cast_resolution_is_trusted(host,record,face,program):
         raise CastProposalError('This selected face lacks a trusted resolution contract',status='unresolved',reason='semantic_policy_requires_trusted')
     return key,program
@@ -47,13 +56,17 @@ def offered_cast_methods(host,card):
     if PREPARE_COPY_FIELD in card.annotations:
         from ...preparation import preparation_cast_face
         return ((None,preparation_cast_face(card,record)),)
-    faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in {'split','modal_dfc'} else (None,)
+    from ...cast_face_offers import complete_cast_face_offers
+    face_layouts={'split','modal_dfc'}|({'adventure'} if complete_cast_face_offers(host.state) else set())
+    faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in face_layouts else (None,)
     from .disturb_costs import compiled_disturb_spec
     disturb=compiled_disturb_spec(host,card) if card.zone=='graveyard' else None
     if disturb is not None:faces=(*faces,disturb.back_face)
     from ..prototype import compiled_prototype_spec
     prototype=(('prototype',None),) if compiled_prototype_spec(host,card) is not None else ()
-    return tuple((None,name) for name in faces)+prototype+tuple((method,None) for method in FACE_DOWN_CAST_METHODS)
+    from ..fuse import compiled_fuse_spec
+    fuse=(('fuse',None),) if card.zone=='hand' and compiled_fuse_spec(host,card) is not None else ()
+    return tuple((None,name) for name in faces)+prototype+fuse+tuple((method,None) for method in FACE_DOWN_CAST_METHODS)
 
 
 def candidate_zone_cast_permission(host,seat,card):
@@ -63,9 +76,9 @@ def candidate_zone_cast_permission(host,seat,card):
 
 
 def selected_cast_card_view(host,card,face_name=None,cast_method=None):
-    from ..prototype import prototype_cast_view
+    from .characteristic_methods import characteristic_cast_view
     view=prospective_cast_card(host,card,face_name)
-    return prototype_cast_view(host,view,host.card_record(view),cast_method)[0]
+    return characteristic_cast_view(host,view,host.card_record(view),cast_method)[0]
 
 
 def cast_offer_id(card,record,face,cast_method=None):

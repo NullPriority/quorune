@@ -27,11 +27,18 @@ _KEYWORDS = frozenset(
 )
 
 
-def _compiled(spec: Any) -> tuple[str, dict[str, Any], str]:
+def _compiled(spec: Any) -> tuple[str, dict[str, Any], tuple[str, ...]]:
+    from ..replacement.immutable import thaw_value
+    from ..rules.casting_additional_cost_groups import (
+        fixed_life_payment_additional_cost_node_capabilities,selected_zone_cost_payload_dependencies,
+    )
+    costs={'additional_costs':[thaw_value(cost) for cost in spec.additional_costs]}
     return (
         f"fixed-public-alternative-cost-{spec.kind.value}-v1",
         fixed_public_alternative_cost_handler_descriptor(spec),
-        FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY,
+        (FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY,
+            *selected_zone_cost_payload_dependencies(costs),
+            *fixed_life_payment_additional_cost_node_capabilities(cost_schema=costs)),
     )
 
 

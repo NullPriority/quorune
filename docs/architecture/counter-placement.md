@@ -21,6 +21,14 @@ An unqualified one-or-more-counters subscription consumes only the first kind
 in that subject's simultaneous placement, so a multi-kind instruction does not
 duplicate its trigger.
 
+Numeric power/toughness counters apply each signed dimension independently
+under CR 122.1a and layer 7c. The canonical numeric characteristic query
+includes zero-valued dimensions such as `-0/-2`, alongside ordinary `+1/+1`
+and `-1/-1` counters. Named counters without numeric dimensions do not modify
+power or toughness. Counter placement commits before state-based checks, so a
+toughness-reducing counter can put the recipient and its now-unattached Aura
+into their owners' graveyards through the existing state-based owner.
+
 Query-scaled ordinary placement lowers to the same `place_counters` instruction
 with a typed public amount. The amount is read at its printed instruction
 boundary, after preceding closed components such as milling finish. A card
@@ -30,6 +38,14 @@ Replacement suspension seals the concrete requested amount and recipient
 incarnation; resumption neither repeats the prefix nor recounts changed zones.
 Source-counter last-known quantities, distributed results and independently
 unsupported costs or linked riders remain outside this query family.
+
+Source-self entry counters accept complete closed public value definitions,
+including graveyard mana-value totals and explicit hand or library cardinalities.
+The prospective entry reads its value before the zone transition commits: a
+card entering directly from hand still contributes to a hand count. The counter
+request then freezes that value. Compiler-bound self recipients include `it`,
+`him` and `her` after the entering subject has been validated as the source.
+Nested quantities retain their own producer capability requirements.
 
 Represented Multikicker entry counters read the immutable paid count of the
 linked printed instance from the resolving spell. The prospective entry
@@ -76,7 +92,8 @@ children. It separates the operation into preparation and commit:
 
 1. Resolve each subject and build immutable player- or object-affected
    `counter.place` events.
-2. Discover active trusted runtime descriptors against the pre-mutation state.
+2. Apply current static placement permissions, then discover active trusted
+   quantity-replacement descriptors against the pre-mutation state.
 3. Traverse simultaneous events in APNAP order and let the affected player or
    permanent's controller choose among represented applicable replacements.
 4. Suspend through the ordinary seat-scoped replacement continuation when a
@@ -90,6 +107,35 @@ The choice projection contains labels and stable option IDs only; the event
 payload, object identifier, replacement batch, and prior journal remain in the
 authoritative continuation. Exact replay reconstructs and validates the path,
 chooser, and selected effect.
+
+`counter_permission.py` represents closed static prohibitions as immutable
+player or permanent predicates. Self identity, recipient controller, counter
+kind, current permanent types and battlefield presence determine permission;
+the player placing a counter does not determine its recipient's controller.
+The source collector requires ordinary trusted programs and current layer-six
+ability presence. Existing battlefield sources use their live characteristics;
+an entering object's own self prohibition uses its prospective face and selected
+copy form. General prohibitions from an entering source do not affect the same
+entry batch. Conditional, attached-object and temporary prohibitions retain
+their independent unsupported contracts.
+
+A prohibition resolves a placement to zero before quantity-replacement choices
+and produces no placement occurrence or replacement application. It leaves
+existing counters in place, including when the source regains its ability after
+temporary ability loss. Counter maxima remain a separate state-based rule.
+Forbidden placements cannot pay additional or loyalty costs; a permitted cost
+modified by a quantity replacement retains the existing payment contract.
+Graft offers and commits share the permission query, so an impossible movement
+neither removes a source counter nor places a recipient counter. Optional
+placement choices omit a wholly impossible option while retaining instructions
+with a possible partial result.
+
+Entry, copy, ordinary placement and damage results consume the same permission
+model. A forbidden infect or wither counter result leaves damage dealt,
+lifelink and other damage observations intact. Off-battlefield card counters
+and types outside the prohibition's predicate remain eligible. Sealed permission
+facts stay in authoritative continuations; seat projections expose only their
+ordinary legal choices.
 
 Named-counter doubling uses one versioned `existing_named_counter_count`
 amount descriptor on the existing placement operations. The typed intent
@@ -154,8 +200,10 @@ Zone-destination replacements use the closed
 parent zone event. The operation binds the affected physical object and the
 already transformed destination at application time, so one immutable source
 effect can serve every event in a simultaneous batch. The containing zone
-event is exhausted before its child is considered. Every replacement choice
-is complete before the move; the child counter commits only after the card
+event normally finishes before its child is considered. Additional entry
+counters share the current entry instruction with its quantity replacements,
+so the affected controller can order those modifications together. Every
+replacement choice is complete before the move; the child counter commits only after the card
 reaches its validated destination. A counter on a card outside the battlefield
 is represented for ordering but remains outside the permanent-only quantity
 component. A suspended continuation validates that prospective child against
@@ -609,6 +657,35 @@ zone-change and quantity-replacement transaction. Variable, zero, larger,
 optional, conditional, additional, multikind, linked, and another-object forms
 remain material residuals; the grammar does not infer or parse them at runtime.
 
+External additional entry counters use a separate bounded producer. A current,
+phased-in source modifies other creatures entering under its current
+controller, independently of ownership or origin. Whole source sentences may
+require or exclude one creature subtype and add one +1/+1 counter, or use the
+source's current power, toughness, or +1/+1 counter count. Prospective copy and
+control replacements determine the entering creature's eligibility. The shared
+layer-6 component marker suppresses a source whose ability has been removed;
+a simultaneously entering source supplies no external bonus.
+
+The rules owner captures the source quantity into an immutable value at entry
+preparation. Negative quantities become zero. Contributions from the same
+placing player and counter kind share the current placement; quantity
+replacement history stays attached to that instruction. The entry ordering
+also permits a later Devour contribution to join an already modified shared
+instruction without applying a quantity source twice. The historical Devour
+path retains its original contribution operation when no external addition
+has participated. The adapter is reconstructed from the original typed effects and current child
+event, and does not add persistent effect or continuation fields. Earlier
+control and copy priority, pending principal authority, atomic commit and
+replay still use the canonical replacement owner.
+
+The bounded source-power form may also add the Mutant subtype while preserving
+the creature's existing types. That result applies even when the counter
+quantity is zero. It commits as a layer-4 replacement-origin effect locked to
+the resulting zone object, before entry observers. It is not a copiable value
+and expires when that incarnation leaves. Unknown qualifiers, counter kinds,
+quantity expressions, subtype companions and counter prohibitions remain
+material residuals.
+
 Fixed choices between two distinct ordinary keyword counters use a separate
 closed entry component. The prospective controller chooses one counter before
 the permanent enters. Each branch delegates a single placement to the same
@@ -746,6 +823,12 @@ uses the live relation while the same source incarnation remains or the pinned
 last-known relation after it leaves, then rejects a phased, wrong-type, or new
 target incarnation before the existing counter intent is created. The
 read-only identity resolver adds no state mutation or runtime Oracle parser.
+
+Version-two attachment references opt into separately versioned source
+information. The zone-transition owner refreshes pending stack and trigger
+snapshots immediately before an actual source departure, so a moved attachment
+does not leave an earlier activation-time relation as its last-known value.
+Version-one references and stored contexts retain their encoding and behavior.
 
 The affected-set family lowers one mandatory fixed quantity onto every member
 of one closed public battlefield set. Its predicates are serialized in an

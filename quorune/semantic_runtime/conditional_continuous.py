@@ -115,6 +115,8 @@ def _validate_target(
             )
         try:
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
+            from ..object_query_union import validate_receiver_union_template
+            validate_receiver_union_template(predicate)
         except (ObjectQueryError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (
@@ -282,6 +284,9 @@ class FixedPublicStateCharacteristicsHandler:
     def validate(
         self, descriptor: Mapping[str, Any]
     ) -> FixedPublicStateCharacteristicsNode:
+        if 'recipient' in descriptor:
+            from ..conditional_recipient_model import validate_conditional_recipient_descriptor
+            validate_conditional_recipient_descriptor(descriptor)
         exact_fields(
             descriptor,
             {
@@ -291,6 +296,7 @@ class FixedPublicStateCharacteristicsHandler:
                 "source_condition",
                 "target",
                 "modifier",
+                *({'recipient'} if 'recipient' in descriptor else ()),
             },
             field="runtime handler",
         )

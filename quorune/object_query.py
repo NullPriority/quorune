@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .qualified_hexproof import keyword_type_terms
 
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping
@@ -101,9 +102,9 @@ def exact_numeric_characteristic(
     )
     if base is None:
         return None
-    plus = card.counters.get("+1/+1", 0)
-    minus = card.counters.get("-1/-1", 0)
-    if type(plus) is not int or type(minus) is not int:
+    from .counter_names import power_toughness_counter_modifier
+    counter_delta=power_toughness_counter_modifier(card.counters,stat)
+    if counter_delta is None:
         return None
     duration = card.annotations.get("until_end_of_turn") or {}
     if not isinstance(duration, Mapping):
@@ -111,7 +112,7 @@ def exact_numeric_characteristic(
     delta = exact_integer(duration.get(stat, 0))
     if delta is None:
         return None
-    return base + plus - minus + delta
+    return base + counter_delta + delta
 
 
 def object_query_result(
@@ -211,8 +212,8 @@ def object_matches_query(
             spec.minimum_color_count is None
             or len(colors) >= spec.minimum_color_count
         )
-        and set(spec.keywords_all).issubset(row.keywords)
-        and set(spec.keywords_none).isdisjoint(row.keywords)
+        and set(spec.keywords_all).issubset(keyword_type_terms(row.keywords))
+        and set(spec.keywords_none).isdisjoint(keyword_type_terms(row.keywords))
         and (spec.token is None or row.token is spec.token)
         and (spec.tapped is None or row.tapped is spec.tapped)
         and (spec.include_phased_out or not row.phased_out)
@@ -221,6 +222,7 @@ def object_matches_query(
             or row.known_to_actor is spec.known_to_actor
         )
         and (spec.exclude_ref is None or row.ref != spec.exclude_ref)
+        and (not spec.any_of or any(object_matches_query(row, part) for part in spec.any_of))
         and (spec.numeric_characteristic is None or spec.numeric_characteristic.permits(
             power=row.effective_power, toughness=row.effective_toughness))
         and (

@@ -2,7 +2,7 @@
 title: "Target legality and protection"
 status: "current"
 authoritative_source: "quorune/targets.py, quorune/target_characteristics.py, quorune/target_history.py, quorune/target_numeric.py, quorune/object_query.py, quorune/target_predicates.py, quorune/protection.py, quorune/damage_source.py, quorune/target_protection.py, quorune/target_protection_engine_adapter.py, quorune/target_source.py, quorune/target_restrictions.py, and CommanderEngine._target_row_matches"
-verified: "2026-10-17"
+verified: "2026-10-21"
 audience: "rules, compiler, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -13,6 +13,14 @@ Quorune uses one server-side target predicate for offer generation, submitted
 command validation, and resolution-time revalidation. A client receives only
 the legal public references in its current action schema and cannot substitute
 an authoritative object identifier or bypass the same predicate at commit.
+
+Printed Protection lists with repeated `from` clauses compile to independent
+typed qualities, including comma-separated color and creature-subtype lists.
+Keyword recognition, fragment lowering, and dependency checks share the same
+printed keyword boundaries. Sibling keywords retain their lowering and capabilities;
+unknown qualities and ambiguous continuations remain residual. Targeting,
+attachments, damage prevention, and blocking consume the existing Protection
+fragments without interpreting the list at runtime.
 
 `selection/target_query.py` resolves an explicit object ID or case-insensitive
 public reference before name lookup. A matching reference keeps its identity
@@ -33,6 +41,36 @@ references retain their own snapshot, current-information, and last-known
 information rules. Casting validation still rejects missing and wrong-domain
 selections before payment.
 
+An Aura's activated instruction to exile its enchanted creature is untargeted,
+even though casting the Aura itself requires a target. Shroud and Hexproof do
+not stop that activated instruction. Its versioned attachment reference uses
+the current attachment of the original Aura incarnation, or its last-known
+attachment after departure. It retains the referenced permanent through type
+changes and rejects a returned recipient's new incarnation. No target schema
+or resolution-time creature target predicate is synthesized for this form.
+
+Closed stack-counter predicates keep disjunction branches independent. A
+triggered ability or colorless spell does not include an activated ability
+merely because its source is colorless. An activated or triggered ability may
+qualify independently of the source's type or legendary status when those
+restrictions apply only to the spell branch. A blue instant spell must satisfy
+both properties on that same spell. Spell copies use their own spell
+characteristics. The shared predicate controls legal offers, submitted targets
+and resolution revalidation; the existing stack-counter owner performs the
+actual countering. Ability-source type restrictions retain their separately
+bounded current/last-known-information contract.
+
+The closed artifact-source activated-ability and noncreature-source ability
+filters read `TargetingSourceBinding`, including for abilities without targets.
+Current games announce nonmana activations before paying source-sacrifice
+costs. Trigger discovery captures the event source, and canonical departure
+capture pins the original incarnation's last characteristics. A returned card's
+printed types cannot replace that information. Missing source facts cannot
+prove that a source is noncreature. These predicates require
+`target.ability_source.current_or_lki` in addition to ordinary countering and
+target revalidation authority; historical absent-version frames retain their
+earlier capture behavior.
+
 An optional target set may begin with zero chosen objects (CR 115.6). After
 validating its descriptor, the homogeneous destruction, movement and tap-state
 handler emits the existing empty result plan without object mutation. Later
@@ -41,6 +79,16 @@ that all become illegal before resolution, where CR 608.2b stops the spell or
 ability. Nonempty batches retain their simultaneous owner and strict snapshots.
 
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
+Direct permanent targets can combine unqualified card types and subtypes as
+flat alternatives, such as creature or Vehicle and Spirit or enchantment.
+`DirectPermanentTargetSpec` serializes these through the existing
+`TargetCharacteristicForm` and `TargetGroup.characteristic_forms_any` fields.
+One permanent satisfying several alternatives remains one target. Common
+controller and source-exclusion scope applies to every branch; unknown terms,
+nested forms and branch-local qualifiers remain residual. Offers, submitted
+commands and resolution use current effective characteristics. Losing one
+branch leaves a target legal if it still satisfies another; losing all branches
+makes it illegal under the ordinary revalidation owner.
 Fixed layer-7c P/T queries can select creatures without a represented current
 keyword. The shared public predicate retains controller and source-exclusion
 scope, and reads completed layer-6 grants and keyword counters. Within continuous
@@ -225,6 +273,32 @@ snow, each color, monocolored, multicolored, and mana value 3 or greater; it
 does not grant authority to cast-history, counter-state, modified, chosen, or
 other open predicates.
 
+Schema v3 adds a fixed-color or fixed-card-type, per-instance exception for the
+granting Aura.
+Only a live attached definition may carry its unbound source marker; the
+existing attached handler binds that marker to the current Aura incarnation.
+Current attachment retention may ignore that one instance for that Aura.
+Another protection instance still applies, and targeting, damage and blocking
+receive ordinary protection. The exception does not permit a new attachment
+or ignore the Aura's Enchant restriction. All-Aura and already-attached
+exceptions remain outside this production.
+
+The fixed-card-type compiler production admits protection from enchantments,
+optionally alongside a signed power/toughness modifier. Its separate capability
+also participates in the runtime minimum for the existing attached handler.
+The exception changes only current attachment retention. An enchantment-source
+ability still cannot target the protected creature, even when its sacrifice
+cost would remove that protection after target selection.
+
+Source-chosen Aura protection uses a separate closed continuous component. The
+existing entry-designation owner records one public color for the entering
+Aura's controller. The component reads that retained source value and emits
+the same fixed-color schema-v3 grant for the current attached creature. A
+different creature controller does not choose or receive the Aura's entry
+draw. Return ends the grant, and a new entry selects again for the new Aura
+incarnation. Characteristic queries never prompt, mutate the designation or
+interpret Oracle text.
+
 Targeting, blocking, and live attachment legality evaluate that descriptor
 against current effective source characteristics. Damage preparation evaluates
 the same descriptor against the canonical immutable source snapshot, which now
@@ -273,12 +347,34 @@ mechanic reusable pieces plus `capability.target.revalidate_resolution` and
 `mechanic.cr-115-targets`.
 
 The compiler recognizes ordinary permanent Hexproof and Shroud
-case-insensitively and composes them with sibling keyword nodes. It also lowers
-the bounded temporary grant "target creature gains shroud until end of turn"
-through the same typed characteristic and target-revalidation path. Player
-Hexproof, player Shroud, Hexproof from a quality, targeting-exception effects,
-multiple or each-quality variants, and rules-text equivalents remain precise
-material residuals. Runtime code does not reinterpret those variants.
+case-insensitively and composes them with sibling keyword nodes. Qualified
+Hexproof retains separate closed keyword values for fixed colors, each color,
+monocolored or multicolored sources and single represented card types. The
+printed-face bridge preserves those values instead of a collapsed bare
+Hexproof index entry. An independently printed or later granted plain Hexproof
+ability still applies to all opposing sources.
+
+The pure target verdict consumes the existing typed acting-source facts. A
+spell's current characteristics, or an ability source's current or immediate
+departure information, supply its qualities. The ability controller supplies
+the opponent relationship even after its source changes controller. A returned
+incarnation cannot replace the original source information. Colorless sources
+are neither monocolored nor multicolored. Matching qualities affect targeting;
+they do not prevent blocking, damage or untargeted effects.
+An explicitly empty type line represents a source with no types, including an
+emblem under CR 114.3; its identity and controller remain sealed. This known
+empty value is distinct from missing or malformed characteristic data.
+An Encore frame seals its acting graveyard source separately from the card
+produced by its exile cost. New Encore payloads carry that copy incarnation for
+current-or-last-known copying; older payload forms retain their recorded path.
+
+Shared keyword queries treat a qualified variant as Hexproof. Removing or
+prohibiting Hexproof removes every variant; later grants and independent plain
+Hexproof follow the ordinary layer-6 owner. Existing typed grants and removal
+carry these closed values through the same target-revalidation path. Fixed
+player keywords use their separate components described above. Unrepresented
+chosen qualities, compound type lists, targeting exceptions and rules-text
+equivalents remain material residuals. Runtime code consumes compiled values.
 
 ## Replay, privacy, rollback, and performance
 
@@ -293,11 +389,11 @@ current battlefield characteristics and do not expose hidden-zone candidates
 or another seat's decision. The pure verdict is constant in the number of game
 objects; candidate enumeration remains owned by the surrounding target query.
 
-Primary evidence is in `test_hexproof_targeting.py`,
+Primary evidence is in `test_qualified_hexproof.py`, `test_hexproof_targeting.py`,
 `test_shroud_targeting.py`, `test_fixed_mana_value_target_predicates.py`,
 `test_fixed_damage_history_targets.py`,
 `test_fixed_direct_target_predicates.py`, `test_oracle_ir.py`, and
-`test_capability_implementation_mutations.py`. Broader player Hexproof, player
-Shroud, Hexproof-from-quality, effects that ignore either ability, hidden-zone
-targets, and unsupported ability-changing, copying, face-down, or merged-object
+`test_capability_implementation_mutations.py`. Broader player keyword grants,
+effects that ignore either ability, hidden-zone targets, and unsupported
+ability-changing, copying, face-down, or merged-object
 keyword producers remain outside these trusted slices.

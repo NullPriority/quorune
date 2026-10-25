@@ -347,7 +347,10 @@ def _ordinary_payment_sufficient(
     fixed_need: Mapping[str, int],
     generic_need: int,
     reserve: Mapping[str, int],
+    spending_policy: Any | None = None,
 ) -> bool:
+    if spending_policy is not None:
+        return spending_policy.allocate(pool,{**fixed_need,'GENERIC':generic_need},reserve=reserve) is not None
     remaining = dict(pool)
     for color in MANA_COLORS:
         needed = fixed_need[color] + reserve[color]
@@ -365,6 +368,7 @@ def _snow_payment_option(
     generic_need: int,
     reserve: Mapping[str, int],
     snow_required: int,
+    spending_policy: Any | None = None,
 ) -> dict[str, int] | None:
     if not snow_required:
         return (
@@ -374,6 +378,7 @@ def _snow_payment_option(
                 fixed_need,
                 generic_need,
                 reserve,
+                spending_policy,
             )
             else None
         )
@@ -402,6 +407,7 @@ def _snow_payment_option(
                     fixed_need,
                     generic_need,
                     reserve,
+                    spending_policy,
                 )
                 else None
             )
@@ -429,6 +435,7 @@ def _select_payment_sources(
     generic_need: int,
     reserve: Mapping[str, int],
     snow_required: int,
+    spending_policy: Any | None = None,
 ) -> list[tuple[ManaSource, ManaMode]] | None:
     target_total = (
         sum(fixed_need.values())
@@ -459,6 +466,7 @@ def _select_payment_sources(
             generic_need=generic_need,
             reserve=reserve,
             snow_required=snow_required,
+            spending_policy=spending_policy,
         ) is not None:
             best = list(chosen)
             return
@@ -505,6 +513,7 @@ def auto_plan_payment(
     starting_pool: dict[str, int] | None = None,
     snow_required: int = 0,
     starting_snow_pool: dict[str, int] | None = None,
+    spending_policy: Any | None = None,
 ) -> ManaPlan:
     """Find a deterministic one-activation-per-source payment plan.
 
@@ -550,6 +559,7 @@ def auto_plan_payment(
         generic_need=generic_need,
         reserve=reserve,
         snow_required=snow_required,
+        spending_policy=spending_policy,
     )
     if best is None:
         raise ManaPlanError("No conservative mana plan can satisfy the declared cost")
@@ -582,11 +592,16 @@ def auto_plan_payment(
         generic_need=generic_need,
         reserve=reserve,
         snow_required=snow_required,
+        spending_policy=spending_policy,
     )
     if snow_payment is None:
         raise ManaPlanError("Planner could not assign required snow mana")
     for color in MANA_COLORS:
         pool[color] -= snow_payment[color]
+    if spending_policy is not None:
+        payment=spending_policy.allocate(pool,requirements,reserve=reserve)
+        if payment is None:raise ManaPlanError('Planner could not allocate actual mana under spending permissions')
+        return ManaPlan(activations=activations,payment=payment,snow_payment=snow_payment)
     payment = normalize_mana_bundle(None)
     # Pay fixed symbols first.
     for color in MANA_COLORS:

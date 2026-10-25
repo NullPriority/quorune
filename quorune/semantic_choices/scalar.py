@@ -82,6 +82,9 @@ class ChooseManaHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if {'schema_version','selection','source'}&set(effect):
+            from .resolution_mana import prepare_resolution_mana
+            return prepare_resolution_mana(effect,context)
         colors = self._colors(effect)
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
@@ -108,6 +111,9 @@ class ChooseManaHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         effect = continuation.effect
+        if {'schema_version','selection','source'}&set(effect):
+            from .resolution_mana import complete_resolution_mana
+            return complete_resolution_mana(continuation,response,query)
         choice = str(
             response.get("choice")
             or response.get("color")

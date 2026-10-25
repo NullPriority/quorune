@@ -12,20 +12,29 @@ from ...target_cardinality import (
 
 
 def bind_target_count_option(program: Any, option: Mapping[str, Any], response: Mapping[str, Any],
-    *, has_mana_x: bool) -> dict[str, Any] | None:
+    *, has_mana_x: bool, has_declared_cost_x: bool=False, target_limit: int | None=None) -> dict[str, Any] | None:
     schema = getattr(program, "target_schema", None)
+    from .kicked_targets import bind_kicked_targets
+    try:option=bind_kicked_targets(program,option)
+    except (TypeError,ValueError):return None
     if not isinstance(schema, Mapping) or "count_parameter" not in schema:
         return deepcopy(dict(option))
-    if not has_mana_x or option.get("target_schema") is not None:
-        return None
     try:
         spec = AnnouncedTargetCardinality.from_dict(schema["count_parameter"])
-        _minimum, maximum = spec.bounds(response.get("x"))
-        bound = bind_announced_target_schema(schema, response.get("x"))
+        if option.get("target_schema") is not None:
+            return None
+        if spec.parameter != "any_number" and not (has_mana_x or has_declared_cost_x):
+            return None
+        value = target_limit if spec.parameter == "any_number" else response.get("x")
+        if spec.parameter == "any_number" and value is None:
+            return None
+        _minimum, maximum = spec.bounds(value)
+        bound = bind_announced_target_schema(schema, value)
     except (TypeError, ValueError):
         return None
     return {**deepcopy(dict(option)), "target_schema": bound,
-        "announced_target_x": maximum, "target_count_parameter": spec.to_dict()}
+        **({"announced_target_x": maximum} if spec.parameter == "x" else {}),
+        "target_count_parameter": spec.to_dict()}
 
 
 def public_target_count_schema(schema: Mapping[str, Any], option: Mapping[str, Any]) -> dict[str, Any]:
@@ -64,6 +73,8 @@ def target_count_preview_maximum(option, maximum):
     if "target_count_preview_limit" not in option:
         return maximum
     spec = AnnouncedTargetCardinality.from_dict(option["target_count_parameter"])
+    if spec.parameter == "any_number":
+        return maximum
     witness = option.get("target_cost_witness", {}).get("targets", {})
     count = sum(len(refs) for refs in witness.values())
     if count > maximum:

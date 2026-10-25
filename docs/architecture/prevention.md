@@ -62,6 +62,40 @@ created shields remain distinct even when they share a source and label, so the
 selected shield alone owns its aftermath or triggered consequence. Each sibling
 scope remains independently available for later nonoverlapping events.
 
+Finite recipient-set prevention uses a closed version-one selector to capture
+current creatures and active players when its instruction resolves. It creates
+one ordinary fixed-amount shield for each recipient, including creature tokens.
+Phased-out objects and noncreatures receive no shield. Later entrants, later
+animation and new object incarnations cannot inherit those shields. The
+selector has an independent producer capability; existing selectors and shield
+records keep their encoded forms and canonical lifetime and consumption owners.
+
+Resolved prevention can bind an enchanted, equipped or fortified creature
+through the existing attachment-reference owner. The compiler proves the source
+relation and emits a versioned bound-subject marker with a version-two
+reference. Activation captures the relation before costs; departure refreshes
+pending source information before zone reset. Missing recipients produce no
+shield and no source-choice prompt, rather than an implicit controller shield.
+Created shields pin their resolved recipient independently of later attachment
+changes. Older unmarked prevention instructions retain their existing defaults.
+
+Plain retained entry colors and creature types can parameterize a version-one
+prevention predicate. Server capture binds the value to the activating source
+incarnation before costs, so reentry with a new choice cannot alter an old
+activation. Color Circles choose one eligible damage source; the chosen-type
+scope instead creates one next-instance shield for any matching creature.
+An absent choice resolves to no effect, never an unqualified predicate. Literal
+predicates keep their existing encoding and damage-time property checks.
+
+Fixed targeted-source prevention lowers directly to a canonical chosen-source
+identity without asking another source choice. Targeted recipient shields pin
+the resolved recipient through the creation owner, rather than retaining only
+a public reference in an applicability filter. Source and recipient reentry
+therefore cannot inherit a prior incarnation's shield. Shared direct targets
+compose tapped creature state with a closed subtype disjunction and revalidate
+both restrictions on resolution. Literal source keyword requirements retain
+their ordinary choice-time validation and damage-time property recheck.
+
 Fixed-amount static prevention shares the
 [current source-ability contract](damage.md) of other static damage components.
 It remains a separate fixed reduction for each applicable event and does not
@@ -106,7 +140,10 @@ Runtime components and handlers never mutate shield state directly. Generic
 code does not recognize card names or Oracle IDs. New prevention grammar must
 compile to typed descriptors with exact predicates, provenance, duration, and
 capability dependencies; unsupported predicates and aftermath forms stay
-material residuals. Unrepresented counter and combat-role predicates, dynamic power or
+material residuals. Fixed self-prevention in both combat-damage directions
+pins its source with the same canonical public source predicate accepted by
+the shield creation owner; it does not issue a source-selection choice.
+Unrepresented counter and combat-role predicates, dynamic power or
 toughness, mana-value, secret, chosen, history-relative, linked-result, modal,
 optional-prevention, repeated-decision, and unsupported multiple-target
 predicates remain outside the represented fixed all-damage boundary. So do

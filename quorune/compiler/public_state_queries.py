@@ -14,6 +14,7 @@ from ..continuous_conditions import (
 )
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from ..rules.source_references import SourceReferenceSpec
 from .boolean_public_conditions import compose_public_conditions,public_condition_parts_result
@@ -134,7 +135,7 @@ _CONDITION_NUMBER_WORDS = {
     "ten": 10,
 }
 _FIXED_NONCREATURE_CONDITION_SUBTYPES = frozenset(
-    {"aura", "equipment", "gate"}
+    {"aura", "equipment", "gate", "vehicle"}
 )
 
 
@@ -751,7 +752,8 @@ def fixed_characteristic_battlefield_query_subject(
         # Singular attachment-relative subjects are owned by the attachment
         # reference grammar, not by a public battlefield-set query.
         return None
-    parsed = fixed_battlefield_query_subject(subject)
+    from .receiver_union_queries import fixed_receiver_union_subject
+    parsed = fixed_receiver_union_subject(subject) or fixed_battlefield_query_subject(subject)
     if parsed is None:
         return None
     _relation, predicate, _exclude_source = parsed
@@ -823,6 +825,10 @@ def fixed_power_toughness_battlefield_query(
     if parsed is None or not (
         "creature" in parsed[1].types_all
         or (not parsed[1].types_all and (parsed[1].subtypes_all or parsed[1].subtypes_any))
+        or (parsed[1].any_of and all(
+            'creature' in part.types_all or (not part.types_all and part.subtypes_all
+                and all(canonical_creature_subtype(value) == value for value in part.subtypes_all))
+            for part in parsed[1].any_of))
     ):
         return None
     return parsed
@@ -879,7 +885,7 @@ def _query_count_condition(
 def _controller_condition_query(subject: str) -> tuple[ObjectQuerySpec, bool] | None:
     material = " ".join(subject.strip().split())
     from .public_condition_surfaces import fixed_condition_subject_extension
-    extension = fixed_condition_subject_extension(material)
+    extension = fixed_condition_subject_extension(material, noncreature_subtypes=_FIXED_NONCREATURE_CONDITION_SUBTYPES)
     if extension is not None:
         return extension
     parsed = fixed_characteristic_battlefield_query_subject(
@@ -1045,6 +1051,8 @@ def _graveyard_query_count_condition(
     fields: dict[str, Any] = {"zones": ("graveyard",), "token": False}
     if quality == "instant and/or sorcery":
         fields["types_any"] = ("instant", "sorcery")
+    elif quality == 'permanent':
+        fields['types_any'] = tuple(sorted(PERMANENT_CARD_TYPES))
     elif quality in _CARD_TYPE_WORDS:
         fields["types_all"] = (quality,)
     elif quality:
@@ -1418,6 +1426,14 @@ def _fixed_public_state_condition(
 ) -> FixedPublicStateConditionSpec | None:
     from .public_condition_surfaces import normalize_public_condition_surface
     normalized = normalize_public_condition_surface(text.strip().rstrip("."))
+    from .public_zone_conditions import public_zone_condition
+    zone_condition = public_zone_condition(normalized)
+    if zone_condition is not None:
+        return zone_condition
+    from .conditional_recipient_conditions import conditional_recipient_condition
+    recipient_condition = conditional_recipient_condition(normalized)
+    if recipient_condition is not None:
+        return recipient_condition
     if normalized.casefold() in {"it's your turn","it’s your turn"}:
         normalized='your turn'
     total = re.fullmatch(r'there are (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+) or more counters among creatures you control', normalized, re.I)

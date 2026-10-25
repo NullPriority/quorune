@@ -300,6 +300,11 @@ class TargetSelectionOwnerMixin:
                 stack_source_types, _, _ = self._type_parts(
                     str(source_data.get("type_line") or "")
                 )
+                ability_source_types = None
+                if group.predicate in {'activated_artifact_source','noncreature_ability_source'} and item.kind in {'activated_ability','triggered_ability'}:
+                    from ..ability_source_information import complete_ability_source_information
+                    if complete_ability_source_information(self.state):
+                        ability_source_types = stack_targeting_source(self,item).card_types
                 characteristics = _target_characteristic_row_values(data, card=card)
                 if item.kind in {"spell", "spell_copy"}:
                     from .exile_cast import mana_value_of_cost
@@ -320,6 +325,8 @@ class TargetSelectionOwnerMixin:
                         "card": card,
                         "stack_item": item,
                         "stack_source_types": stack_source_types,
+                        **({'ability_source_types':ability_source_types} if group.predicate in {
+                            'activated_artifact_source','noncreature_ability_source'} else {}),
                     }
                 )
         for zone in (
@@ -646,6 +653,9 @@ class TargetSelectionOwnerMixin:
         source_ref: str | None,
         acting_source: TargetingSource | None = None,
     ) -> dict[str, Any] | None:
+        from ..target_cardinality import bind_any_number_target_schema
+        schema = bind_any_number_target_schema(schema,
+            len(self.state.cards)+len(self.state.players)+len(self.state.stack))
         modes = available_modes(schema)
         if modes:
             legal_modes: list[str] = []
@@ -831,6 +841,9 @@ class TargetSelectionOwnerMixin:
                     "This semantic program does not accept targets or modes"
                 )
             return [], {}
+        from ..target_cardinality import bind_any_number_target_schema
+        schema = bind_any_number_target_schema(schema,
+            len(self.state.cards)+len(self.state.players)+len(self.state.stack))
         try:
             selected_modes = canonical_modes(
                 schema,
@@ -863,14 +876,20 @@ class TargetSelectionOwnerMixin:
                 raise
             raise GameRuleError(str(exc)) from exc
 
-    @staticmethod
     def _stack_target_schema(
+        self,
         item: StackItem,
         program: SemanticProgram | None,
     ) -> Mapping[str, Any] | None:
         if "target_schema_override" in item.context:
-            return dict(item.context["target_schema_override"])
-        return program.target_schema if program is not None else None
+            schema=dict(item.context["target_schema_override"])
+        else:
+            from ..rules.blocking_requirements import bound_defending_controller_schema
+            schema=bound_defending_controller_schema(program.target_schema,item.context) if program is not None else None
+        if schema is None:return None
+        from ..target_cardinality import bind_any_number_target_schema
+        return bind_any_number_target_schema(schema,
+            len(self.state.cards)+len(self.state.players)+len(self.state.stack))
 
     def _stack_source_ref(self, item: StackItem) -> str:
         if (

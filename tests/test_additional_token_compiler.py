@@ -264,7 +264,9 @@ class AdditionalTokenCompilerTests(unittest.TestCase):
             "replacement.token.additional.v2",
             programs[0].handlers[0]["handler_id"],
         )
-        self.assertGreaterEqual(result["programs_skipped_existing"], 1)
+        self.assertIn('token.creation.additional_replacement',programs[0].capability_dependencies)
+        self.assertTrue(programs[0].capability_closure['trusted'])
+        self.assertTrue(programs[0].ability_id.startswith('static:front:'))
 
 
 if __name__ == "__main__":

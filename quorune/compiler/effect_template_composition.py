@@ -41,6 +41,10 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .created_token_counters import created_token_counter_effect_template
+        created=created_token_counter_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
+            forbid_public_x=forbid_public_x,**source_context)
+        if created is not None:return created
         from .temporary_keyword_removal_templates import temporary_keyword_removal_template
         removal=temporary_keyword_removal_template(body,source_name=card_name,
             source_is_permanent=source_context.get('source_is_permanent'),source_card_types=tuple(source_context.get('source_card_types',())))
@@ -112,12 +116,23 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .quantified_counter_targets import quantified_counter_target_template
+    counters=quantified_counter_target_template(text)
+    if counters is not None:return counters
     from .target_characteristic_sets import target_characteristic_set_template
     targeted_set=target_characteristic_set_template(text)
     if targeted_set is not None:return targeted_set
+    from .any_number_target_sets import any_number_target_set_template
+    any_number = any_number_target_set_template(text)
+    if any_number is not None:return any_number
     if allow_conditions:
+        from .paid_mana_resolution_templates import paid_mana_resolution_template
+        paid=paid_mana_resolution_template(text,source_name=source_name,compile_component=lambda body:reviewed_effect_template_composition(
+            body,source_name=source_name,compile_atomic=compile_atomic,compile_fixed=compile_fixed,
+            cast_x_available=cast_x_available,forbid_public_x=forbid_public_x,allow_conditions=False))
+        if paid is not None:return paid
         from .kicked_spell_conditions import kicked_spell_condition_template
-        kicked = kicked_spell_condition_template(text, compile_component=lambda body: reviewed_effect_template_composition(
+        kicked = kicked_spell_condition_template(text,source_name=source_name, compile_component=lambda body: reviewed_effect_template_composition(
             body, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed,
             cast_x_available=cast_x_available, forbid_public_x=forbid_public_x, allow_conditions=False,
         ))

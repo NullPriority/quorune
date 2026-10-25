@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Constructed complete replacement/creation instructions, independently governed by pinned Worldwalker Helm and Chatterfang rulings",
+  "cards": [
+    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690001","name":"Generic Token Status Observer","mana_cost":"{W}","cmc":1,"type_line":"Enchantment","oracle_text":"If you would create one or more artifact tokens, instead create those tokens plus an additional Map token.","colors":["W"],"color_identity":["W"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690002","name":"Generic Tapped Artifact Subject","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Create a tapped 1/1 colorless Servo artifact creature token.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690003","name":"Generic Intrinsic Artifact Subject","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Create a 1/1 colorless Servo artifact creature token with deathtouch.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}},
+    {"oracle_id":"d4fa0d11-b397-4720-8c14-1c26ca690004","name":"Generic Tapped Creature Subject","mana_cost":"{G}","cmc":1,"type_line":"Instant","oracle_text":"Create a tapped 1/1 white Soldier creature token.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","released_at":"2026-01-01","legalities":{"commander":"legal"}}
+  ],
+  "rulings": []
+}

@@ -74,6 +74,9 @@ def encode_preparation_after_commit(continuation,actor,preparation,intents,resul
         binding=preparation.auto_continue.amount_from_result
         if binding.intent_index not in results:
             raise SemanticChoiceError('Conditional preparation requires its remaining result-bound intents')
+    if preparation.auto_continue is not None and preparation.auto_continue.objects_from_result is not None:
+        if preparation.auto_continue.objects_from_result.intent_index not in results:
+            raise SemanticChoiceError('Conditional preparation requires its committed object result')
     if preparation.auto_continue is not None:
         completion=SemanticChoiceCompletion(intents=tuple(intents),
             prepend_effects=preparation.auto_continue.resolved_effects(results))
@@ -116,6 +119,17 @@ def decode_remaining_completion(value):
         intents.append(intent)
     return continuation,value['actor'],dict(value['response']),SemanticChoiceCompletion(
         intents=tuple(intents),prepend_effects=tuple(value['prepend_effects']),repeat_effect=value['repeat_effect'])
+
+
+def validated_remaining_completion(value, *, continuation, actor, response, intent_kind, intent):
+    """Bind frozen unpaid work to the same parent, payer, response and intent."""
+    from .intent_replacement import semantic_intent_identity
+    saved, saved_actor, saved_response, completion=decode_remaining_completion(value)
+    if (saved.to_dict()!=dict(continuation) or saved_actor!=actor or saved_response!=dict(response)
+            or completion is None or not completion.intents
+            or semantic_intent_identity(completion.intents[0])!=(intent_kind,dict(intent))):
+        raise SemanticChoiceError('Saved remaining completion changed its parent, payer or suspended intent')
+    return completion
 
 
 def resume_completed_choice(host,value):

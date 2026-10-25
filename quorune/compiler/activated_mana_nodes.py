@@ -310,6 +310,9 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    'create_token_then_counters',
+    'prohibit_casting_until_end_of_turn',
+    'return_random_graveyard_cards',
     "copy_stack_item",
     'create_role_token',
     "gain_control",
@@ -359,6 +362,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "place_counter_batch",
     "place_counters_on_set",
     "place_counters_on_targets",
+    "double_counters_on_targets",
     "place_player_counters",
     "remove_counters",
     "remove_all_counters",
@@ -431,6 +435,7 @@ def _activated_effect_dependency_gate(
                 "fixed-resolution-public-condition",
                 "closed-effect-program", "fixed-target-hand-inspection", "temporary-target-interaction", "linked-exile-return",
                 "temporary-source-keyword-choice",
+                "temporary-source-protection-choice",
             }.intersection(mechanics)
         )
         or (
@@ -512,7 +517,7 @@ def _dependency_metadata(
 
 
 _ACTIVATION_RESTRICTION_PREFIX = re.compile(
-    r"^(?P<effect>.+?)\.?\s+activate only ",
+    r"^(?P<effect>.+?)\s+activate only ",
     re.IGNORECASE,
 )
 def _activated_effect_material(ability: ActivatedAbility) -> str:

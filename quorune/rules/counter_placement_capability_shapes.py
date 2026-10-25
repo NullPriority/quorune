@@ -19,7 +19,7 @@ def counter_placement_covered_mechanics(supplied):
     placements={"counter.producer.fixed_effect", "counter.producer.fixed_permanent_group_effect",
         "counter.producer.fixed_multikind_effect", "counter.producer.fixed_attached_effect",
         "counter.producer.fixed_permanent_set_effect", "counter.producer.fixed_permanent_target_set_effect",
-        _NAMED_COUNTER_CAPABILITY,'counter.producer.fixed_event_object'}
+        _NAMED_COUNTER_CAPABILITY,'counter.producer.fixed_event_object','counter.producer.all_kind_doubling'}
     covered={"cr-122-counters"} if placements.intersection(supplied) else set()
     if _NAMED_COUNTER_CAPABILITY in supplied:
         covered.add(_NAMED_COUNTER_MECHANIC)

@@ -373,6 +373,23 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
         self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
         self.replay(session)
 
+    def test_public_alternative_price_declares_reused_nonmana_payment_owner(self):
+        from dataclasses import replace
+        from quorune.public_alternative_costs import FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        program=compile_best_available_card_program(self.db,self.db.lookup('Flare of Duplication'),
+            semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
+        price=next(ability for ability in program.abilities
+            if FIXED_PUBLIC_ALTERNATIVE_COST_CAPABILITY in ability.capability_dependencies)
+        payment='casting.additional_cost.fixed_sacrifice'
+        self.assertIn(payment,price.capability_dependencies)
+        remaining=tuple(value for value in price.capability_dependencies if value!=payment)
+        stripped=replace(price,capability_dependencies=remaining,
+            capability_closure=self.registry.closure(remaining,profile='commander_review').to_dict())
+        binding=bind_semantic_program_runtime(stripped,capability_registry=self.registry,profile='commander_review')
+        self.assertFalse(binding['strict'])
+        self.assertIn('capability:undeclared_runtime_dependency:'+payment,binding['blockers'])
+
     def test_permanent_spell_and_activated_ability_are_not_eligible_spell_copy_targets(self):
         for ability in (False, True):
             with self.subTest(ability=ability):

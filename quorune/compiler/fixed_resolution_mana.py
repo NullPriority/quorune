@@ -11,6 +11,14 @@ FIXED_RESOLUTION_MANA_CAPABILITY = 'mana.production.fixed_resolution'
 
 
 def fixed_resolution_mana_effect_template(text: str):
+    choice=re.fullmatch(r'Add (?P<amount>one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*) mana (?P<selection>of any (?:one )?color|in any combination of colors)\.?',text.strip(),re.I)
+    if choice is not None:
+        from .fixed_numbers import fixed_number
+        from ..resolution_mana_model import ResolutionManaChoiceSpec
+        amount=fixed_number(choice['amount'])
+        if amount is None or not 1<=amount<=10:return None
+        spec=ResolutionManaChoiceSpec('combination' if choice['selection'].casefold().startswith('in ') else 'one_color',amount)
+        return 'fixed-resolution-mana-choice-v2',(spec.effect(),),None,(FIXED_RESOLUTION_MANA_MECHANIC,)
     restriction = None
     if '. Spend this mana only to ' in text:
         body, _tail = text.split('. Spend this mana only to ', 1)

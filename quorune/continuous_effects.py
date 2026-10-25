@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .qualified_hexproof import keyword_is_removed,keyword_type_terms
 
 from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Sequence
@@ -165,7 +166,8 @@ def _ability_presence_dependency_ids(
             operation.op == "remove_all_abilities"
             or (
                 operation.op in {"add_ability", "remove_ability", "prohibit_ability"}
-                and str(operation.value).casefold() in required
+                and bool(keyword_type_terms((operation.value,))&required
+                    or operation.op!='add_ability' and any(keyword_is_removed(wanted,operation.value) for wanted in required))
             )
             for operation in candidate.operations
         )
@@ -347,18 +349,18 @@ def _apply_ability_operation(
     value = operation.value
     if op == "add_ability":
         ability = str(value)
-        if ability.casefold() not in state.prohibited_keywords and ability.casefold() not in {
+        if not any(keyword_is_removed(ability,term) for term in state.prohibited_keywords) and ability.casefold() not in {
             item.casefold() for item in state.abilities
         }:
             state.abilities.append(ability)
     elif op == 'prohibit_ability':
         state.prohibited_keywords.add(str(value).casefold())
-        state.abilities = [ability for ability in state.abilities if ability.casefold() != str(value).casefold()]
+        state.abilities = [ability for ability in state.abilities if not keyword_is_removed(ability,value)]
     elif op == "remove_ability":
         state.abilities = [
             ability
             for ability in state.abilities
-            if ability.casefold() != str(value).casefold()
+            if not keyword_is_removed(ability,value)
         ]
     elif op == "add_rules_text":
         line = str(value).strip()
@@ -397,12 +399,15 @@ def _apply_ability_operation(
         state.activated_abilities = []
     else:
         return False
+    if op in {'remove_ability', 'prohibit_ability'} and str(value).casefold() == 'reconfigure':
+        state.activated_abilities = [ability for ability in state.activated_abilities if not ability.reconfigure]
     return True
 
 
 def _apply_operation(
     state: CharacteristicState,
     operation: ContinuousOperation,
+    context: Mapping[str, Any],
 ) -> None:
     op = operation.op
     value = operation.value
@@ -491,33 +496,8 @@ def _apply_operation(
         return
     if _apply_ability_operation(state, operation):
         return
-    if op == "set_power":
-        state.power = int(value)
-        return
-    if op == "set_toughness":
-        state.toughness = int(value)
-        return
-    if op == "set_power_toughness":
-        if not isinstance(value, Sequence) or len(value) != 2:
-            raise ContinuousEffectError(
-                "set_power_toughness requires [power, toughness]"
-            )
-        state.power = int(value[0])
-        state.toughness = int(value[1])
-        return
-    if op == "modify_power_toughness":
-        if not isinstance(value, Sequence) or len(value) != 2:
-            raise ContinuousEffectError(
-                "modify_power_toughness requires [power, toughness]"
-            )
-        if state.power is not None:
-            state.power += int(value[0])
-        if state.toughness is not None:
-            state.toughness += int(value[1])
-        return
-    if op == "switch_power_toughness":
-        state.power, state.toughness = state.toughness, state.power
-        return
+    from .continuous_stat_operations import apply_stat_operation
+    if apply_stat_operation(state,operation,context):return
     raise ContinuousEffectError(
         f"Unsupported continuous operation {op!r}"
     )
@@ -559,7 +539,8 @@ def evaluate_continuous_effects(
             inapplicable.append(effect.effect_id)
             continue
         present.append(effect)
-    ordered, cycles = order_continuous_effects(present)
+    from .continuous_type_dependencies import bind_type_applicability_dependencies
+    ordered, cycles = order_continuous_effects(bind_type_applicability_dependencies(present,base,context))
     applied: list[str] = []
     intrinsic_ready=False
     for effect in ordered:
@@ -609,7 +590,7 @@ def evaluate_continuous_effects(
                 str(operation.value).casefold(),
             ) in effect.denied_keyword_grants:
                 continue
-            _apply_operation(base, operation)
+            _apply_operation(base, operation, context)
         if effect.layer == Layer.COPY and effect.sublayer == "1a":
             base.copiable_values = base.snapshot()
         applied.append(effect.effect_id)

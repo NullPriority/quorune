@@ -373,10 +373,6 @@ class FixedCounterPlacementTargetSetCompilerTests(unittest.TestCase):
     def test_unsupported_target_set_variants_remain_material_residuals(self):
         texts = (
             "Put a +1/+1 counter on each of up to X target creatures.",
-            "Put a +1/+1 counter on up to one target attacking creature.",
-            "Put a +1/+1 counter on up to one target Dinosaur you control.",
-            "Put a +1/+1 counter on each of up to two target attacking creatures.",
-            "Put a +1/+1 counter on each of up to two target Merfolk you control.",
             "Put a +1/+1 counter on each of up to two target creatures with a counter on them.",
             "Put two +1/+1 counters on one target creature and one on another target creature.",
             "Put a +1/+1 counter on each of up to two target creatures, then untap them.",
@@ -390,6 +386,19 @@ class FixedCounterPlacementTargetSetCompilerTests(unittest.TestCase):
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
 
+    def test_quantified_composition_promotes_closed_predicates_while_the_legacy_leaf_rejects(self):
+        texts=(
+            "Put a +1/+1 counter on up to one target attacking creature.",
+            "Put a +1/+1 counter on up to one target Dinosaur you control.",
+            "Put a +1/+1 counter on each of up to two target attacking creatures.",
+            "Put a +1/+1 counter on each of up to two target Merfolk you control.",
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_counter_placement_target_set_effect_template(text))
+                ir=self.compile(text);self.assertEqual('exact',ir.status,ir.material_residuals)
+                self.assertIn('counter.producer.quantified_target_set',ir.faces[0].nodes[0].capability_dependencies)
+
     def test_target_set_compiler_mutant_is_killed(self):
         def exact() -> None:
             self.assertEqual(
@@ -400,11 +409,8 @@ class FixedCounterPlacementTargetSetCompilerTests(unittest.TestCase):
             )
 
         exact()
-        with patch(
-            "quorune.compiler.counter_resolution_effect_templates."
-            "fixed_counter_placement_target_set_effect_template",
-            return_value=None,
-        ):
+        import re
+        with patch('quorune.compiler.counter_placement_templates._PLACEMENT',re.compile(r'(?!)')):
             with self.assertRaises(AssertionError):
                 exact()
 

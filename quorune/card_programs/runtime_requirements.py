@@ -1,9 +1,11 @@
 from __future__ import annotations
-from ..boast import boast_runtime_dependencies
+from ..rules.activation.restriction_requirements import activation_restriction_runtime_dependencies
+from typing import Any, Mapping
 
 """Descriptor-owned runtime requirements beyond registered operation minima."""
 
 from ..object_predicate import object_query_capabilities
+from ..adventure import ADVENTURE_CAPABILITY,ADVENTURE_COVERAGE
 from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
 from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
 from ..rules.resolution_condition_shapes import same_target_self_replacement_runtime_dependencies
@@ -18,12 +20,137 @@ from ..rules.selected_counter_costs import selected_counter_runtime_dependencies
 from ..rules.activation.source_counter_choices import any_source_counter_runtime_dependencies
 from ..activation_mana_cost import activation_mana_option_runtime_dependencies
 from ..rules.source_keyword_choice_shapes import source_keyword_choice_runtime_dependencies
+from ..rules.source_protection_choice_shapes import source_protection_choice_runtime_dependencies
+from ..rules.source_fixed_protection_shapes import source_fixed_protection_runtime_dependencies
+from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
+from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
+from ..rules.self_cost_numeric_counts import self_cost_numeric_count_dependencies
+from ..rules.reconfigure import reconfigure_runtime_dependencies
+from ..rules.paid_color_entry import paid_color_entry_runtime_dependencies
+from ..rules.paid_mana_resolution import paid_mana_resolution_dependencies
+from ..rules.provoke_shapes import provoke_program_runtime_dependencies
+from ..qualified_hexproof import qualified_hexproof_runtime_dependencies
+from ..protection_attachment_exceptions import attached_protection_runtime_dependencies
+from ..query_effect_amount_model import cast_x_runtime_dependencies
+from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
+from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
+from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies
+from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dependencies
+from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
+from ..rules.keyword_runtime_requirements import keyword_runtime_dependencies
+from ..rules.fixed_blocker_restriction_shapes import fixed_blocker_runtime_dependencies
+from ..rules.source_block_pairs import source_block_pair_runtime_dependencies
+from ..rules.nonmana_buyback_costs import nonmana_buyback_runtime_dependencies
+from ..rules.token_prowess_requirements import token_prowess_runtime_dependencies
+from ..rules.city_blessing_shapes import city_activation_runtime_dependencies
+from ..rules.graveyard_cast_costs import paid_graveyard_runtime_dependencies
+
+
+from .descriptor_requirements import typed_result_amount_runtime_dependencies
+
+
+def nonmana_equip_runtime_dependencies(program):
+    from ..semantic_runtime.activated_abilities import (
+        activated_abilities_from_descriptors, is_structural_activated_ability_catalog_program,
+    )
+    if program.event != 'activate' or is_structural_activated_ability_catalog_program(program):return ()
+    from ..rules.attachment_actions import FIXED_NONMANA_EQUIP_CAPABILITY
+    for ability in activated_abilities_from_descriptors(program.handlers):
+        if ability.builtin_semantic_key == 'builtin:equip' and (
+            ability.life_payment or ability.energy_payment or ability.choices
+            or ability.source_counter_removal_cost is not None
+        ):
+            return (FIXED_NONMANA_EQUIP_CAPABILITY,)
+    return ()
 
 
 def program_dynamic_runtime_requirements(program):
-    required=set();blockers=set()
-    try:required.update(boast_runtime_dependencies(program))
+    from ..rules.fuse_shapes import fuse_runtime_requirements
+    try:
+        fused=fuse_runtime_requirements(program)
+        if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
+    except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
+    required={ADVENTURE_CAPABILITY} if ADVENTURE_COVERAGE in program.coverage else set();blockers=set()
+    from ..characteristic_fragments import characteristic_quantity_capabilities
+    required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
+    try:required.update(city_activation_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_city_activation:invalid:{exc}')
+    try:required.update(paid_graveyard_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_paid_graveyard:invalid:{exc}')
+    if fused is not None:
+        required.update(fused[0]);blockers.update(fused[1])
+    try:required.update(nonmana_equip_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_nonmana_equip:invalid:{exc}')
+    try:required.update(token_prowess_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_token_prowess:invalid:{exc}')
+    try:required.update(nonmana_buyback_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_nonmana_buyback:invalid:{exc}')
+    try:required.update(source_block_pair_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_source_block_pair:invalid:{exc}')
+    try:required.update(fixed_blocker_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_fixed_blocker:invalid:{exc}')
+    from ..rules.occurrence_object_results import occurrence_object_runtime_dependencies
+    try:required.update(occurrence_object_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_occurrence_object:invalid:{exc}')
+    try:required.update(keyword_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_attached_keyword:invalid:{exc}')
+    try:required.update(temporary_cast_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_cast_restriction:invalid:{exc}')
+    try:required.update(random_graveyard_return_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_random_graveyard_return:invalid:{exc}')
+    try:required.update(spell_self_exile_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_self_exile:invalid:{exc}')
+    try:required.update(typed_result_amount_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema),mechanics=tuple(program.coverage)))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_typed_result_amount:invalid:{exc}')
+    try:required.update(closed_effect_program_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_closed_effect_program:invalid:{exc}')
+    try:required.update(fixed_resolution_characteristics_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_resolution_characteristics:invalid:{exc}')
+    try:required.update(cast_x_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema)))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_cast_x_amount:invalid:{exc}')
+    try:required.update(activation_restriction_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_boast:invalid:{exc}')
+    required.update(qualified_hexproof_runtime_dependencies(program))
+    try:
+        required.update(attached_protection_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_attached_protection:invalid:{exc}')
+    try:
+        required.update(provoke_program_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_provoke:invalid:{exc}')
+    try:
+        required.update(paid_mana_resolution_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_paid_mana_resolution:invalid:{exc}')
+    try:
+        required.update(paid_color_entry_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_paid_color_entry:invalid:{exc}')
+    try:
+        required.update(reconfigure_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_reconfigure:invalid:{exc}')
+    try:
+        required.update(self_cost_numeric_count_dependencies(program.handlers))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_self_cost_numeric_count:invalid:{exc}')
+    try:
+        required.update(self_cost_public_counter_dependencies(program.handlers))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_self_cost_public_counters:invalid:{exc}')
+    try:
+        required.update(self_cost_turn_count_dependencies(program.handlers))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_self_cost_turn_count:invalid:{exc}')
+    try:
+        required.update(source_fixed_protection_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_source_fixed_protection:invalid:{exc}')
+    try:
+        required.update(source_protection_choice_runtime_dependencies(program))
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_source_protection_choice:invalid:{exc}')
     try:
         required.update(source_keyword_choice_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
@@ -66,6 +193,8 @@ def program_dynamic_runtime_requirements(program):
         blockers.add(f'runtime_query:invalid:{exc}')
     try:
         required.update(announced_additional_cost_dependencies(program.cost_schema))
+        from ..rules.random_discard_additional_cost import random_spell_cost_dependencies
+        required.update(random_spell_cost_dependencies(program.cost_schema))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_cast_cost:invalid:{exc}')
     try:

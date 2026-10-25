@@ -313,7 +313,8 @@ def build_activation_proposal(
     )
     from ...activation_x import bind_activation_target_cardinality
     try:
-        target_schema = bind_activation_target_cardinality(ability, target_schema, response)
+        target_schema = bind_activation_target_cardinality(ability, target_schema, response,
+            target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
     except ValueError as exc:
         raise ActivationProposalError(str(exc), reason="invalid_announced_target_count") from exc
     targets, target_groups = host._validate_semantic_targets(
@@ -537,7 +538,8 @@ def build_activation_offer(
     unbound_target_schema = target_schema
     from ...activation_x import bind_activation_target_cardinality
     try:
-        target_schema = bind_activation_target_cardinality(selected, target_schema, {}, hint=True)
+        target_schema = bind_activation_target_cardinality(selected, target_schema, {}, hint=True,
+            target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
     except ValueError:
         return ActivationProposalResult("unavailable", "invalid_announced_target_count")
     public_schema = None

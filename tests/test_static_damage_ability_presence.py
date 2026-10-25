@@ -24,6 +24,7 @@ from quorune.session import CommanderSession
 from scripts.build_test_database import build_fixture_database
 import test_bound_effect_programs as bound_controls
 import test_self_public_zone_casting as zone_controls
+from quorune.rules.evidence_storage import read_evidence_document
 
 
 CAPABILITY = 'damage.prevention.static_fixed'
@@ -166,7 +167,7 @@ class StaticDamageAbilityPresenceTests(unittest.TestCase):
                 status='blocked', blockers=['withdrawn static damage owner'], dependency_fail_closed_status='not_run')
             registry = CapabilityRegistry(changed)
             index = build_index(registry_value=changed,
-                declaration_source=json.loads((ROOT/'platform/capability-evidence-declarations.json').read_text(encoding='utf-8')),
+                declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),
                 discovered_test_ids=set(discover_tests(ROOT).values()))
             registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
             ir = compile_oracle_card(self.db.lookup(name), capability_registry=registry, capability_profile='commander_review')

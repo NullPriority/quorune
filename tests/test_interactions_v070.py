@@ -637,8 +637,8 @@ class InteractionKernelTests(unittest.TestCase):
         )
         self.assertEqual(
             {
-                "destroy_artifact",
-                "proliferate",
+                "mode_1",
+                "mode_3",
             },
             set(action["target_schema"]["legal_modes"]),
         )
@@ -647,7 +647,7 @@ class InteractionKernelTests(unittest.TestCase):
             {
                 "source": canker.ref,
                 "ability": "ab1",
-                "modes": ["proliferate"],
+                "modes": ["mode_3"],
                 "targets": [],
             },
         )
@@ -676,11 +676,10 @@ class InteractionKernelTests(unittest.TestCase):
         self.set_window(engine, "B")
         engine._cast("B", {"card": lantern.ref})
         self.resolve_top(engine)
-        trigger = next(
+        trigger, = (
             item
             for item in engine.state.stack
-            if item.semantic_key
-            == f"{lantern.oracle_id}:trigger:etb"
+            if item.kind=='triggered_ability' and item.source_object_id==lantern.object_id
         )
         self.assertEqual(lantern.object_id, trigger.source_object_id)
         self.assertEqual(

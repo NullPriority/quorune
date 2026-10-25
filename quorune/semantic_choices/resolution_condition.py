@@ -25,7 +25,7 @@ class PublicResolutionConditionHandler:
     schema_version: int = 1
     rule_references: tuple[str, ...] = ("CR 109.5", "CR 608.2c", "CR 608.2h")
     capability_dependencies: tuple[str, ...] = (RESOLUTION_CONDITION_CAPABILITY,)
-    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids')
+    continuation_fields: tuple[str, ...] = ("player", "condition", "effects", "mechanic_ids", "prefix_mechanic_ids", 'schema_version', 'cast_fact','otherwise_effects','otherwise_mechanic_ids','target_binding','source_binding')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
@@ -41,11 +41,18 @@ class PublicResolutionConditionHandler:
             raise SemanticChoiceError(str(exc)) from exc
         if effect["player"] != context.actor or context.actor != context.stack_controller:
             raise SemanticChoiceError("Resolution conditions require the resolving controller")
+        if effect.get('schema_version') in {10,11}:
+            if type(effect['cast_fact']) is not bool:raise SemanticChoiceError('Kicked target decision is unavailable')
+            branch=effects if effect['cast_fact'] else effect.get('otherwise_effects',())
+            return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason='sealed Kicker target branch',
+                    prepend_effects=tuple(FrozenMap(child) for child in branch)))
         otherwise=effect.get('otherwise_effects',())
         from .resolution_result_validation import validate_resolution_result_children
         validate_resolution_result_children(effect, effects, otherwise, context)
         try:
-            matched = effect['cast_fact'] if effect.get('schema_version') in {2,4,5} else context.query.resolution_condition_matches(condition.to_dict())
+            matched = (effect['cast_fact']>=condition.minimum if effect.get('schema_version') in {6,7}
+                else effect['cast_fact'] if effect.get('schema_version') in {2,4,5} else context.query.resolution_condition_matches(condition.to_dict()))
             if type(matched) is not bool:
                 raise ValueError('Resolution cast fact is unavailable')
         except (ValueError, TypeError, KeyError) as exc:

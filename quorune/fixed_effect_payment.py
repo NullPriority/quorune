@@ -13,6 +13,7 @@ from .replacement.immutable import FrozenMap, thaw_value
 
 FIXED_EFFECT_PAYMENT_MECHANIC = "fixed-optional-mana-payment"
 FIXED_EFFECT_PAYMENT_CAPABILITY = "effect.choice.optional_fixed_mana_payment"
+MANA_DISCARD_PAYMENT_CAPABILITY = 'effect.choice.optional_mana_discard_payment'
 _MANA_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
 
 
@@ -44,13 +45,20 @@ class FixedEffectPaymentSpec:
     source_ref: str | None = None
 
     def __post_init__(self) -> None:
-        version=4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
+        version=5 if self.kind=='mana_discard' else 4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
         if type(self.schema_version) is not int or self.schema_version != version:
             raise ValueError("Fixed effect payment version does not match its cost kind")
-        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap", "remove_source_counter"}:
+        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap", "remove_source_counter", "mana_discard"}:
             raise ValueError("Fixed effect payment kind is unsupported")
         if type(self.amount) is not int or self.amount <= 0:
             raise ValueError("Fixed effect payment amount must be positive")
+        if self.kind=='mana_discard':
+            if self.amount!=1 or self.counter_name is not None or self.source_ref is not None:
+                raise ValueError('Compound mana/discard cost requires exactly one ordinary hand card')
+            mana=FixedEffectPaymentSpec('mana',requirements=self.requirements)
+            FixedEffectPaymentSpec('discard',predicate=self.predicate)
+            object.__setattr__(self,'requirements',mana.requirements)
+            return
         if self.kind=='remove_source_counter':
             if (type(self.counter_name) is not str or not self.counter_name
                     or normalized_counter_name(self.counter_name)!=self.counter_name
@@ -122,4 +130,15 @@ class FixedEffectPaymentSpec:
                  'exile':('cost.exile.owned_graveyard_resolution','zone.change.destination_replacement'),
                  'tap':('cost.tap.controlled_untapped_resolution',),
                  'remove_source_counter':('cost.counter.source_fixed_resolution',)}
+        costs['mana_discard']=(MANA_DISCARD_PAYMENT_CAPABILITY,'choice.affected_player.fixed_discard','zone.change.destination_replacement')
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind])
+
+
+def compound_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    if (not isinstance(value,Mapping) or value.get('op')!='offer_optional_mana_payment'
+            or not isinstance(value.get('payment'),Mapping) or value['payment'].get('kind')!='mana_discard'):
+        return ()
+    payment=FixedEffectPaymentSpec.from_dict(value['payment'])
+    if payment.predicate.owner != value.get('player'):
+        raise ValueError('Combined payment requires its own payer hand')
+    return payment.capabilities

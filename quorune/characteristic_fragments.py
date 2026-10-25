@@ -35,9 +35,13 @@ class CharacteristicQuantityScope(str, Enum):
     ATTACHED_TO_RECIPIENT = "attached_to_recipient"
     SOURCE_COUNTER = "source_counter"
     CONTROLLER_OPPONENT_COUNT = "controller_opponent_count"
+    CONTROLLER_LIFE_TOTAL = "controller_life_total"
+    OPPONENT_POISON_COUNTERS = "opponent_poison_counters"
+    ATTACHED_OBJECT = "attached_object"
 
 
 class CharacteristicQuantityReduction(str, Enum):
+    MAXIMUM_ZONE_SIZE = 'maximum_zone_size'
     OBJECT_COUNT = "object_count"
     DISTINCT_BASIC_LAND_TYPES = "distinct_basic_land_types"
     DISTINCT_CARD_TYPES = "distinct_card_types"
@@ -69,6 +73,17 @@ class CharacteristicQuantitySpec:
     def __post_init__(self) -> None:
         self._validate_reduction_version()
         self._validate_scope_and_exclusions()
+        if self.schema_version==5:
+            from .public_zone_quantity_model import validate_public_zone_quantity
+            try:validate_public_zone_quantity(self)
+            except ValueError as exc:raise CharacteristicFragmentError(str(exc)) from exc
+            return
+        if self.schema_version == 4:
+            self._validate_current_value()
+            return
+        if self.scope in {CharacteristicQuantityScope.CONTROLLER_LIFE_TOTAL,
+                CharacteristicQuantityScope.OPPONENT_POISON_COUNTERS,CharacteristicQuantityScope.ATTACHED_OBJECT}:
+            raise CharacteristicFragmentError('Current player and attached-object values require version 4')
         if self.schema_version == 3:
             self._validate_sum_terms()
             return
@@ -86,7 +101,7 @@ class CharacteristicQuantitySpec:
         self._validate_object_query()
 
     def _validate_reduction_version(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
@@ -94,6 +109,8 @@ class CharacteristicQuantitySpec:
             self.schema_version == 1 and (self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT or self.multiplier != 1 or self.offset != 0)
         ):
             raise CharacteristicFragmentError("Characteristic reduction requires its explicit versioned vocabulary")
+        if self.reduction is CharacteristicQuantityReduction.MAXIMUM_ZONE_SIZE and self.schema_version!=5:
+            raise CharacteristicFragmentError('Zone maxima require their explicit zone-cardinality version')
         if type(self.multiplier) is not int or self.multiplier < 1 or type(self.offset) is not int or self.offset < 0:
             raise CharacteristicFragmentError("Characteristic reduction arithmetic requires positive multiplier and nonnegative fixed offset")
         if self.reduction in {CharacteristicQuantityReduction.COLORED_MANA_SYMBOLS, CharacteristicQuantityReduction.DEVOTION}:
@@ -104,6 +121,20 @@ class CharacteristicQuantitySpec:
             object.__setattr__(self, "mana_colors", tuple(self.mana_colors))
         elif self.mana_colors:
             raise CharacteristicFragmentError("Only colored symbol reductions carry mana colors")
+
+    def _validate_current_value(self) -> None:
+        if (self.query is not None or self.counter_name is not None or self.exclude_source
+                or self.exclude_attached_object or self.terms or self.mana_colors
+                or self.multiplier != 1 or self.offset != 0):
+            raise CharacteristicFragmentError('Current values require one unscaled closed public reference')
+        if self.scope in {CharacteristicQuantityScope.CONTROLLER_LIFE_TOTAL,CharacteristicQuantityScope.OPPONENT_POISON_COUNTERS}:
+            if self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT:
+                raise CharacteristicFragmentError('Player values cannot carry an object reduction')
+        elif self.scope is CharacteristicQuantityScope.ATTACHED_OBJECT:
+            if self.reduction not in {CharacteristicQuantityReduction.DISTINCT_COLORS,CharacteristicQuantityReduction.MAXIMUM_MANA_VALUE}:
+                raise CharacteristicFragmentError('Attached-object values require colors or mana value')
+        else:
+            raise CharacteristicFragmentError('Version 4 reserves its explicit current-value scopes')
 
     def _validate_scope_and_exclusions(self) -> None:
         if not isinstance(self.scope, CharacteristicQuantityScope):
@@ -213,6 +244,7 @@ class CharacteristicQuantitySpec:
             or query.colors_none
             or query.keywords_none
             or query.numeric_characteristic is not None
+            or (query.any_of and any(part.exclude_ref is not None for part in query.any_of))
             or query.include_phased_out
         ):
             raise CharacteristicFragmentError(
@@ -282,7 +314,7 @@ class CharacteristicQuantitySpec:
             "exclude_source": self.exclude_source,
             "exclude_attached_object": self.exclude_attached_object,
             **({"reduction": self.reduction.value, "multiplier": self.multiplier, "offset": self.offset,
-                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3} else {}),
+                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5} else {}),
             **({"terms": [term.to_dict() for term in self.terms]} if self.schema_version == 3 else {}),
         }
 
@@ -307,7 +339,7 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError(
                 "Characteristic quantities have a closed schema"
             )
-        if (value.get("schema_version") in {2, 3}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
+        if (value.get("schema_version") in {2, 3, 4, 5}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
             raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
         try:
             scope = CharacteristicQuantityScope(value["scope"])
@@ -477,6 +509,8 @@ class QueryPowerToughnessDefinitionSpec:
             raise CharacteristicFragmentError(
                 "Query power/toughness definitions require a typed quantity"
             )
+        if self.quantity.schema_version == 4:
+            raise CharacteristicFragmentError('Current modifier values do not define characteristic values in layer 7a')
         if (
             type(self.define_power) is not bool
             or type(self.define_toughness) is not bool
@@ -730,12 +764,21 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
     if isinstance(value, CharacteristicQuantitySpec):
         value = value.to_dict()
     if isinstance(value, Mapping):
+        from .public_zone_quantity_model import public_zone_quantity_dependencies
+        zone_capabilities=public_zone_quantity_dependencies(value)
         devotion = value.get('reduction') == 'devotion' or (value.get('kind') == 'devotion' and 'color' in value)
-        own = ('state_query.devotion.current',) if devotion else ()
+        own = (*zone_capabilities,*(('state_query.devotion.current',) if devotion else ()))
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
+        if (value.get('schema_version')==4 and value.get('scope') in {'controller_life_total','opponent_poison_counters','attached_object'}
+                and {'scope','query','counter_name','exclude_source'}<=set(value)):
+            if value['scope'] in {'controller_life_total','opponent_poison_counters'}:
+                own=(*own,'quantity_expression.current_player_value')
+            if value['scope']=='attached_object':own=(*own,'quantity_expression.attached_object_value')
         if value.get('kind')=='live_battlefield_quantity':own=(*own,'quantity_expression.live_battlefield_count')
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
-        if value.get('kind')=='controller_has_citys_blessing':own=(*own,'player.designation.citys_blessing')
+        if (value.get('kind')=='controller_has_citys_blessing'
+                and {'schema_version','amount','counter_name'}<=set(value)):
+            own=(*own,'player.designation.citys_blessing')
         if value.get('kind')=='controller_max_speed':own=(*own,'variant.speed.player')
         if value.get('origin')=='public_characteristic_aggregate' or (value.get('kind')=='public_characteristic_aggregate' and 'aggregate' in value):own=(*own,'quantity_expression.public_characteristic_aggregate')
         return tuple(sorted({*own, *(cap for child in value.values() for cap in characteristic_quantity_capabilities(child))}))

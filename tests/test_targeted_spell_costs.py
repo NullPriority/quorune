@@ -24,8 +24,13 @@ class TargetedSpellCostCompilerTests(unittest.TestCase):
 
     def test_unknown_target_taxes_and_malformed_cost_specs_remain_closed(self):
         text='Spells your opponents cast that target this creature cost {2} more to cast.'
+        promoted=text.replace('more','less')
+        ir=compile_oracle_card(record(promoted,'Creature'),capability_registry=self.registry)
+        self.assertEqual('exact',ir.status)
+        self.assertEqual(-2,ir.faces[0].nodes[0].handlers[0]['modifier']['generic'])
+        self.assertEqual('source_opponents',ir.faces[0].nodes[0].handlers[0]['modifier']['caster_relation'])
         for variant in (text.replace('this creature','a Merfolk you control'),text.replace('{2}','{U}'),
-                text.replace('Spells','Abilities').replace('cast','activate'),text.replace('more','less')):
+                text.replace('Spells','Abilities').replace('cast','activate')):
             self.assertNotEqual('exact',compile_oracle_card(record(variant,'Creature'),capability_registry=self.registry).status)
         raw=TargetedSpellCostSpec(TargetedCostSubject.SOURCE,2).to_dict()
         for change in ({'schema_version':True},{'generic':True},{'generic':0},{'subject':'all_creatures'},{'extra':1}):

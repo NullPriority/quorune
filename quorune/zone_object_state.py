@@ -31,6 +31,14 @@ class ZoneObjectStateError(ValueError):
     """A zone-object reset request is malformed."""
 
 
+def mark_cast_grant_rider(card: CardInstance, binding) -> None:
+    from .rules.cast_grant_riders import CAST_GRANT_RIDER_FIELD, CastGrantRiderBinding
+    if (not isinstance(binding, CastGrantRiderBinding) or card.zone != 'stack' or not card.is_card_object
+            or binding.logical_object_id != card.logical_object_id or binding.caster != card.owner):
+        raise ZoneObjectStateError('Casting follow-up requires its original owned spell incarnation')
+    card.annotations[CAST_GRANT_RIDER_FIELD] = binding.to_dict()
+
+
 def mark_resolving_paid_entry_copy(card: CardInstance, context) -> None:
     value = context.get(PAID_ENTRY_COPY_FIELD)
     if value is None:

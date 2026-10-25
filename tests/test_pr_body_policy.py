@@ -93,27 +93,27 @@ Validate pull-request descriptions before expensive certification jobs begin.
 
 
 class PullRequestBodyPolicyTests(unittest.TestCase):
-    def test_support_delivery_requires_200_actual_net_whole_cards(self) -> None:
-        catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 200}}}
-        evidence = {"cards": {"capability_closed": 199},
-            "source_metadata": {"bundle_id": "bundle:combined-mechanics", "expected_complete_card_gain": 400}}
-        with self.assertRaisesRegex(PullRequestEvidenceError, "199.*200"):
+    def test_support_delivery_requires_500_actual_net_whole_cards(self) -> None:
+        catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 500}}}
+        evidence = {"cards": {"capability_closed": 499},
+            "source_metadata": {"bundle_id": "bundle:combined-mechanics", "expected_complete_card_gain": 1000}}
+        with self.assertRaisesRegex(PullRequestEvidenceError, "499.*500"):
             require_support_delivery_floor(evidence, catalog)
-        evidence["cards"]["capability_closed"] = 200
+        evidence["cards"]["capability_closed"] = 500
         require_support_delivery_floor(evidence, catalog)
-        evidence["cards"]["capability_closed"] = 250
+        evidence["cards"]["capability_closed"] = 750
         require_support_delivery_floor(evidence, catalog)
 
     def test_support_floor_cannot_be_avoided_by_metadata_or_ability_counts(self) -> None:
-        catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 200}}}
-        evidence = {"cards": {"capability_closed": 199}, "abilities": {"oracle_exact_node_delta": 1000},
+        catalog = {"work_selection": {"coverage_family": {"minimum_pr_complete_card_gain": 500}}}
+        evidence = {"cards": {"capability_closed": 499}, "abilities": {"oracle_exact_node_delta": 1000},
             "source_metadata": {"bundle_id": None, "expected_complete_card_gain": None}}
         with self.assertRaisesRegex(PullRequestEvidenceError, "whole-card delivery"):
             require_support_delivery_floor(evidence, catalog)
         evidence["cards"]["capability_closed"] = 0
         require_support_delivery_floor(evidence, catalog)
-        catalog["work_selection"]["coverage_family"]["minimum_pr_complete_card_gain"] = 199
-        with self.assertRaisesRegex(PullRequestEvidenceError, "minimum of 200"):
+        catalog["work_selection"]["coverage_family"]["minimum_pr_complete_card_gain"] = 499
+        with self.assertRaisesRegex(PullRequestEvidenceError, "minimum of 500"):
             require_support_delivery_floor(evidence, catalog)
 
     def test_semantic_evidence_omits_internal_compiler_guard(self) -> None:

@@ -123,7 +123,7 @@ def fixed_quantity_arithmetic(value: str, *, compile_value) -> CharacteristicQua
     else:
         multiplier = fixed_number(multiple.group("multiplier").split()[0])
     try:
-        return replace(quantity, schema_version=2, multiplier=quantity.multiplier * multiplier,
+        return replace(quantity, schema_version=5 if quantity.schema_version==5 else 2, multiplier=quantity.multiplier * multiplier,
                        offset=quantity.offset * multiplier + offset)
     except ValueError:
         return None

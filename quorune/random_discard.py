@@ -3,12 +3,12 @@ from __future__ import annotations
 """Fixed random hand subsets committed through canonical discard transitions."""
 
 from dataclasses import dataclass
-import random
 import re
 from typing import Mapping
 
 from .replacement.immutable import FrozenMap
 from .whole_hand_discard import whole_hand_input_snapshot
+from .rules.random_selection import sample_identity_rows
 
 
 RANDOM_DISCARD_OPERATION = "discard_random_cards"
@@ -123,15 +123,17 @@ def random_discard_input_snapshot(host, effect, *, actor):
     }, actor=actor)
 
 
-def resolve_random_discard(host, intent: RandomDiscardIntent, *, commit_batch):
+def resolve_random_discard(host, intent: RandomDiscardIntent, *, commit_batch, exclude_object_ids=()):
+    if (not isinstance(exclude_object_ids,tuple) or any(type(oid) is not str or not oid for oid in exclude_object_ids)
+            or len(set(exclude_object_ids))!=len(exclude_object_ids)):
+        raise ValueError('Random discard exclusions require distinct object identities')
     snapshot = random_discard_input_snapshot(host, {
         "op": RANDOM_DISCARD_OPERATION, "actor": intent.actor, "players": intent.players,
     }, actor=intent.actor)
     selected = []
     for hand in snapshot["hands"]:
-        members = sorted(hand["members"], key=lambda row: row["object_id"])
-        randomizer = random.Random(
-            f"{host.state.config.seed}|{intent.randomization_key}|random-discard|{hand['seat']}"
-        )
-        selected.extend(row["ref"] for row in randomizer.sample(members, min(intent.count, len(members))))
+        members = sorted((row for row in hand['members'] if row['object_id'] not in exclude_object_ids),key=lambda row:row['object_id'])
+        selected.extend(row['ref'] for row in sample_identity_rows(members,intent.count,
+            seed=host.state.config.seed,instruction_key=intent.randomization_key,
+            namespace='random-discard',seat=hand['seat']))
     return commit_batch(tuple(selected)) if selected else ()

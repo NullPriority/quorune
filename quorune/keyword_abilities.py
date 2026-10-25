@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from typing import Any, Protocol
 import re
 from .landwalk import QUALIFIED_LANDWALK_KEYWORDS
+from .qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS,QUALIFIED_HEXPROOF_CAPABILITY
 
 from .ability_fragments import (
     CombatKeywordTriggerKind, CombatKeywordTriggerSpec,
@@ -47,6 +48,7 @@ def triggered_keyword_grant(value: str):
 FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES: Mapping[
     str, tuple[str, ...]
 ] = {
+    "Banding": ("combat.banding",),
     "Deathtouch": (
         "combat.damage.assignment.deathtouch",
         "damage.result.deathtouch",
@@ -84,6 +86,7 @@ FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES = {
     **FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
     **{keyword.title(): ("combat.block.landwalk.qualified_type",)
         for keyword in QUALIFIED_LANDWALK_KEYWORDS},
+    **{keyword.title():(QUALIFIED_HEXPROOF_CAPABILITY,) for keyword in QUALIFIED_HEXPROOF_KEYWORDS},
 }
 FIXED_CHARACTERISTIC_KEYWORDS = frozenset(
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES

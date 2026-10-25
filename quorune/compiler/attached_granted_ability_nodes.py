@@ -472,6 +472,12 @@ def _source_bound_cost_nodes(*, record, node_id, line, material_line, span,
         source_name, effect_template, trusted_mechanics, capability_registry,
         capability_profile, residuals):
     """Route complete source cost and cost-result families before ordinary nodes."""
+    from .reconfigure_nodes import reconfigure_nodes
+    reconfigure = reconfigure_nodes(record=record, node_id=node_id, line=line,
+        material_line=material_line, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if reconfigure is not None:
+        return reconfigure
     from .multikicker_results import multikicker_result_node
     counted = multikicker_result_node(record=record, node_id=node_id, line=line,
         material_line=material_line, span=span, effect_template=effect_template,
@@ -487,7 +493,13 @@ def _source_bound_cost_nodes(*, record, node_id, line, material_line, span,
     if spent is not None:
         return (spent,)
     from .conditional_flash_nodes import conditional_self_flash_nodes
-    return conditional_self_flash_nodes(node_id=node_id, line=line, material_line=material_line,
+    flash = conditional_self_flash_nodes(node_id=node_id, line=line, material_line=material_line,
+        span=span, source_name=source_name, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if flash is not None:
+        return flash
+    from .self_cast_restriction_nodes import self_cast_restriction_nodes
+    return self_cast_restriction_nodes(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=source_name, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals)
 

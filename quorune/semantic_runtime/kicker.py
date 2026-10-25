@@ -84,7 +84,8 @@ class FixedManaKickerRegistry(RuntimeComponentRegistry[object, FixedManaKickerSp
 
 @lru_cache(maxsize=1)
 def default_fixed_mana_kicker_registry() -> FixedManaKickerRegistry:
-    registry = FixedManaKickerRegistry((FixedManaKickerHandler(),))
+    from .nonmana_kicker import FixedNonmanaKickerHandler
+    registry = FixedManaKickerRegistry((FixedManaKickerHandler(),FixedNonmanaKickerHandler()))
     registry.require_registered_capabilities(load_default_capability_registry())
     return registry.freeze()
 

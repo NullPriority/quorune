@@ -37,12 +37,128 @@ source data, unknown dependencies, material residuals, or fingerprint drift
 fail closed. Historical semantic-pack records remain compatibility inputs, not
 a second current runtime authority.
 
+Current fixed additional-token programs can supersede a source-identical
+reviewed view through `additional_token_equivalence.py`. The generated program
+must have trusted closure and the same complete handler, schemas, conditions,
+and execution role, with matching Oracle and rulings hashes. Only after that
+equivalence is established may a source-matched empty normal-permanent cast
+view yield to the existing card-form owner. Nonempty, stale, conditional,
+multiface, or provisional compatibility views remain intact.
+
+`empty_permanent_equivalence.py` applies the empty-cast boundary independently
+when the complete native source is exact and every generated ability is trusted
+and bound to the current rules profile. It accepts only normal single-face,
+nonland permanent records with current matching Oracle and rulings hashes.
+The reviewed view must be an empty, nontargeted, unconditional stack-to-battlefield
+cast with no extra cost. Nonempty reviewed abilities remain authoritative under
+the existing precedence rules; partial source, stale data, unsupported faces,
+and unbound generated dependencies cannot authorize this migration.
+
+`trigger_view_equivalence.py` compares complete source-matched trigger views
+with current trusted dependency closure. It retains event, role, result, cost,
+limit, and target meaning. Closed scalar event conjunctions may reorder their
+leaves; only `creature.dies` aliases its sealed previous controller to its
+controller field. A single positional destroy target may use the existing flat
+or one-group target codec, and its textual reason remains reporting metadata.
+Fixed graveyard-card exile may compare through its complete typed target and
+result owner. An optional artifact search into the controller's graveyard may
+compare through the counted-search owner while retaining the outer decline
+choice, fail-to-find permission, and mandatory shuffle after an accepted search.
+Other result/source differences, missing predicates, or ambiguous matches do
+not establish equivalence. Existing private-draw defaults keep their current
+normalization; historical payloads are not rewritten.
+
+`activation_view_equivalence.py` handles same-key activated views only when the
+existing pinned catalog contains the same complete ability and reproduces the
+entire canonical price. The current result, targets, conditions, limits, role,
+source hashes, and dependency closure must remain equal. An absent explicit
+legacy cost schema never removes mana, sacrifice, energy, exile, tap, or other
+catalog costs. Token creation comparisons may omit only a leading `Token`
+display prefix when the existing type parser proves identical types; the
+creation operation still produces a token with all its own characteristics.
+
+Fixed own-library search results may compare through
+`battlefield_search_equivalence.py` after that same full price proof. The
+existing counted-search and object-query codecs retain the exact selector and
+cardinality; only the search owner's controller and false-reveal defaults and
+its case-normalized type vocabulary are made explicit. Battlefield destination,
+explicit tapped entry, mandatory shuffle, and every other result field remain
+compared. Foreign libraries, unknown fields, changed qualities, optional counts,
+and changed result flags do not establish equivalence.
+
+Single-creature activation targets may compare through
+`activation_target_equivalence.py` only for an explicit battlefield permanent
+target with cardinality one. The existing target codec compares legacy
+`creature` and `controller` aliases with their typed fields. Top-level and
+catalog target domains must agree on each view. A temporary comparison copy
+allows the unchanged full catalog-price proof to run; stored programs and
+execution descriptors remain unchanged. Two additional closed codecs preserve
+one owned graveyard artifact with a fixed mana-value ceiling, and up to one
+tapped battlefield creature. The latter compares the literal tapped predicate
+with its typed state predicate; the former accepts only the equivalent single
+group and flat target domains. Unknown fields and changed relations, bounds or
+predicates remain unequal.
+
+`activation_result_equivalence.py` compares complete fixed results through the
+existing hand-entry, reanimation, public-zone movement, and target-counter
+owners. Optional artifact entry from the locked controller's hand, untapped
+return of the owned graveyard target, opponent-owned graveyard exile, and a
+fixed counter on the optional tapped target retain their full prices and target
+domains. Changed recipients, entry state, counter quantity, public-zone scope,
+or additional operations remain unequal. These comparison copies do not alter
+stored historical programs or replace their current runtime owners.
+
+The legacy single-Treasure operation may compare with the current complete
+predefined Treasure template after the same source, price and strict capability
+proof. The existing token compiler owns that complete definition, including
+quantity, type, text and mana ability profile. Changed characteristics, creation
+state, quantities, recipients or additional operations remain unequal.
+
+Current typed modal activations can supersede catalog-only reviewed views only
+through `modal_catalog_equivalence.py`. It requires matching source hashes,
+ability identity and runtime role, exact catalog cost fields, one-mode
+cardinality, and equivalent target/result bodies in source order. Historical
+mode identifiers and serialized reviewed payloads stay intact; only current
+assembly precedence changes. Typed modal schemas independently require every
+branch owner, and an ordered branch retains its own instruction-list scope.
+The comparison copies payloads before normalization and never mutates either
+snapshot.
+
 Compiler-declared complete-source boundaries can also belong to ordinary
 effect programs. Their provenance explicitly requires the generated whole-card
 admission certificate. Source validation rejects missing, malformed or partial
 certificates before execution. This complements the existing handler-declared
 complete-card boundary without changing historical programs that lack the new
 provenance declaration.
+
+Scheduled-player results can compose the existing typed half-life value after
+binding the scheduled subject. The compiler normalizes the value's pronoun
+without rebinding the player. The shape owner validates the fractional value
+and independently proves the unchanged trigger shell through its fixed-value
+contract. Resolution reads that player's current life with explicit rounding;
+source departure does not reassign an already-created trigger.
+
+Public characteristic quantities can use the existing flat battlefield query
+union. Each object contributes once when it matches multiple type or subtype
+branches, and relative creature descriptions preserve the creature restriction
+on every branch. The quantity reader retains its source-controller relation and
+rejects unresolved branch references, hidden zones and nested unions. Finite
+lists of permanent card types retain the ordinary typed union and tapped-state
+query. `compiler/attached_ability_templates.py` owns closed attached ability
+lists, including ordinary keywords combined with typed Protection fragments;
+the existing attachment and characteristic owners apply those fragments.
+For a represented current face, the combined card keyword index retains a
+Protection label only when that face has a trusted printed declaration.
+Protection granted to an attached creature does not protect the granting Aura.
+The same closed public quantities feed self-entry counters through the existing
+pre-entry snapshot. Simultaneous entrants do not count one another, and later
+changes to the queried battlefield do not change counters already placed.
+
+Runtime dependency inference decodes persisted declaration cost, requirement
+and restriction fragments wherever they are nested in handlers or effects.
+Their registered combat-declaration capability remains mandatory when a query
+grant carries the fragment. Missing capability declarations and malformed
+fragment payloads fail binding before execution.
 
 Source-derived spell variants retain separate semantic identities within the
 same CardProgram. A fixed Overload alternative binds the normal and derived
@@ -61,6 +177,13 @@ A current capability-bound counted search supersedes a reviewed search at the
 same key only when source hashes, event, costs, targets and result semantics
 match. The adapter records the superseded key. Persisted reviewed programs
 retain their recorded instructions and compatibility path.
+
+Reviewed optional-Kicker target overrides share one source-pinned equivalence
+check with current typed replacement programs. It compares the complete normal
+and paid target domains, result instructions, fixed price, event, version and
+Oracle/rulings hashes. Only the equivalent current view supersedes the reviewed
+key; historical payloads stay unchanged. A missing or different price, target
+restriction, result or source hash retains the compatibility boundary.
 
 Fixed counted library searches use a shared immutable schema consumed by the
 compiler, capability shapes and private search owner. The compiler admits
@@ -104,6 +227,44 @@ retain casting decisions; permanent copies and later noncast entries receive
 no paid history. Unknown cost variants, instances and linked results remain
 residual. This adds no runtime Oracle parser or second component registry.
 
+Mandatory fixed mana per extra target uses a complete-source cast-cost
+component rather than a repeat-payment casting choice. The typed descriptor
+records its fixed mana vector and free-target threshold. Cardinality and price
+dependencies are derived independently from the persisted target schema,
+selected-count amount, and cost handler. Source admission requires both the
+complete target result and mandatory price. The ordinary source hashes,
+component registry, and final cost commitment retain their authority.
+
+Persisted additional-cost schemas independently require the capability of each
+selected zone-change leaf. A binary alternative also requires its choice owner
+and every leaf owner, including branches that the player does not select.
+The existing typed cost decoders validate these payloads before trust binding;
+missing producer annotations cannot remove the price's authority requirement.
+
+Optional life for colored mana reductions uses a registered cost component on
+a complete current battlefield source. The offer seals the provider's object,
+incarnation, program and fixed price. Equivalent providers use count choices
+instead of enumerating source subsets. Ordinary cast acceptance recomputes
+the choices, checks total life affordability and retains a locked discount if
+another cost later removes its source. The life transaction remains the mutation
+owner. Selecting a free base cost can still include the optional life payment.
+
+Version-two counter target sets reuse the registered counter-placement handler
+and canonical counter transaction. Their payload independently requires the
+quantified-set capability; a named relative amount also requires named doubling.
+The target schema retains scalar predicate dependencies and, for unrestricted
+sets, cardinality authority. Original integer-only payloads retain their earlier
+wire shape. Pending named placements seal the original target incarnations and
+quantities, including targets with no named counters, before replacement choices.
+
+All-kind doubling has its own typed operation and producer dependency. It
+reuses the counter intent with an explicit all-kinds quantity mode and no
+counter name. The existing source hashes and target cardinality still gate the
+complete instruction. Pending replacement choices seal every selected object's
+full counter map and logical identity; a newly added kind also invalidates the
+choice. The existing generic intent and transaction retain atomic counter
+mutation and replay ownership.
+
 ## Trust and replay
 
 Unconditional static Aura control lowers into a closed attached-source
@@ -125,6 +286,45 @@ trigger effects cannot exceed the limit. Copying its stack ability retains
 ordinary copy semantics. Current ability loss and control changes preserve
 usage; a new logical object or global turn sequence renews the allowance.
 Historical payloads without this descriptor retain their original shape.
+
+Own-turn source casting grants use a registered complete-source descriptor and
+the current static-ability applicability query. Each chosen price binds the
+source incarnation, ability, current turn and underlying casting method. The
+existing permanent-usage owner consumes that ability's allowance after a
+successful cast. Ordinary casts and casts under independent permissions leave
+it available; countering a granted spell does not refund it. Current ability
+loss and control changes preserve the usage data. A new incarnation, a separate
+copied permanent or a new turn has its own allowance. Canonical zone reset,
+save/load and replay retain their existing ownership.
+
+Flashback, Disturb and other methods supplying their own zone permission are
+independent routes and never consume a separate source grant's quota. A
+mana-only alternative can still combine with a source's ordinary graveyard
+permission. A represented grant follow-up is sealed on the original spell by
+the object-state owner and lowered into ordinary zone replacements. It does
+not gain Flashback self-replacement priority, get copied to a spell copy, or
+remain on a later incarnation. A tapped-entry follow-up participates before
+entry rather than tapping the resulting permanent afterward.
+
+Version-three source grants can require the current graveyard incarnation to
+have arrived from its controller's library this turn or to have been actually
+milled this turn. Those are distinct journal facts. A shared land-or-permanent
+grant consumes the same source ability allowance for either action; a land play
+also consumes the ordinary numeric land allowance. Independent graveyard land
+permission preserves the source use. Explicit modern Mill-history recording
+stores only committed graveyard results after replacements; absent historical
+version fields remain absent and cannot invent prior qualifying cards.
+A distinct nonbattlefield-arrival qualifier reads the same exact current-turn
+incarnation journal while excluding battlefield-origin moves. It keeps its own
+registered handler and capability requirement; a death cannot acquire this
+permission from being in the graveyard alone.
+
+Current closed fixed-color land-entry triggers supersede an exact matching
+legacy output view and its empty permanent spell view only when Oracle and
+rulings hashes, output amount, source identity and timing agree. The canonical
+trigger owns its controller predicate and five-color domain. Historical
+compatibility payloads remain available; unrelated or changed views remain
+independent.
 
 - Parsing success does not imply complete rules support.
 - Trust cannot exceed the closure of targets, costs, zones, events,
@@ -181,14 +381,17 @@ leaves. More than two quoted abilities, unsupported children, reminder-only
 profiles, and nonfixed token shells remain residual.
 
 Commander pairing is also a CardProgram declaration boundary. Exact ordinary
-  `Partner`, `Partner with`, `Choose a Background`, and `Doctor's companion`
+  `Partner`, the four pinned `Partner—[text]` variants, `Partner with`,
+  `Choose a Background`, and `Doctor's companion`
   lines compile to distinct trusted `game.setup` capabilities. `Partner with`
   also compiles its separate self-entry targeted named search through the shared
   private library-search and normalized trigger owners. One setup owner checks
   the current canonical declaration plus the printed legendary, Background,
   exact Doctor, or reciprocal named-partner predicate before it creates any
-  state. Broad keyword metadata and Oracle prose have no setup authority. Named
-  Partner variants, granted or changed setup abilities, and stale or duplicate
+  state. Tagged declarations share one capability and retain their exact closed
+  ability variant; only identical tags pair. Mixed tags and other pairing kinds
+  do not combine. Broad keyword metadata and Oracle prose have no setup authority.
+  Unknown Partner variants, granted or changed setup abilities, and stale or duplicate
   declarations fail closed until their distinct typed owners are implemented.
 
 ## Inspection and extension

@@ -134,3 +134,7 @@ deployment modes, or architecture review thresholds.
 - [ADR 0117 — Commander Learn payment boundary](0117-commander-learn-payment-boundary.md)
 - [ADR 0118 — paid entry-copy casting facts](0118-paid-entry-copy-casting-facts.md)
 - [ADR 0119 — fixed-mana Squad repetitions](0119-fixed-mana-squad-repetitions.md)
+- [ADR 0120 — attachment-bound Reconfigure effects](0120-attachment-bound-reconfigure-effects.md)
+- [ADR 0121 — spell payment counts and entry conditions](0121-spell-payment-counts-and-entry-conditions.md)
+- [ADR 0122 — paid-mana resolution and target information](0122-paid-mana-resolution-and-target-information.md)
+- [ADR 0123 — combat-bound blocking requirements](0123-combat-bound-blocking-requirements.md)

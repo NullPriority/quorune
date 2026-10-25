@@ -519,7 +519,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
             list(resolution.event.payload["created_subtypes"]),
         )
 
-    def test_additional_token_does_not_inherit_original_entry_modifiers(self):
+    def test_additional_token_inherits_shared_creation_status_without_copying_definition(self):
         session = self.session(12505021)
         engine = session.engine
         helm = self.card(engine, "Worldwalker Helm")
@@ -538,8 +538,10 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertTrue(cards["Treasure"].tapped)
         self.assertIn("Haste", cards["Treasure"].temporary_keywords)
-        self.assertFalse(cards["Map"].tapped)
-        self.assertNotIn("Haste", cards["Map"].temporary_keywords)
+        self.assertTrue(cards["Map"].tapped)
+        self.assertIn("Haste", cards["Map"].temporary_keywords)
+        self.assertEqual('Token Artifact — Map',engine._copyable_characteristics(cards['Map'])['type_line'])
+        self.assertEqual('Token Artifact — Treasure',engine._copyable_characteristics(cards['Treasure'])['type_line'])
 
     def test_source_created_by_event_does_not_replace_its_own_creation(self):
         session = self.session(1250505)

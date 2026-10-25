@@ -221,6 +221,8 @@ def zone_change_snapshot_event(
             **({"prospective_subject": True} if subject.prospective_subject else {}),
             "transition_kind": subject.transition_kind.value,
             "owner": subject.owner,
+            **({'_counter_permissions': subject.counter_permissions.to_dict()}
+               if subject.counter_permissions.rules else {}),
             **(
                 {"cast_option": subject.cast_option}
                 if subject.cast_option is not None

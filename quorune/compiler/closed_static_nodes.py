@@ -19,6 +19,7 @@ from .toughness_assignment_templates import static_toughness_assignment_handler
 from .block_capacity_templates import static_block_capacity_handler
 from .landwalk_permission_templates import static_landwalk_permission_handler
 from .ir_model import OracleNode, OracleResidual, SourceSpan
+from .oracle_source_text import without_ability_word_label
 from .kicker_nodes import fixed_kicked_entry_node
 from .permanent_additional_cost_nodes import permanent_additional_cost_node
 from .public_alternative_cost_nodes import (
@@ -34,6 +35,10 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     Synthetic token abilities use the record-free dispatcher below and cannot
     acquire a printed additional-cost instance from their creating card.
     """
+    from .target_count_cost_nodes import target_count_cost_static_node
+    target_price=target_count_cost_static_node(record=record,node_id=node_id,line=line,material_line=material_line,
+        span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if target_price is not None:return target_price
     from .preparation_nodes import preparation_entry_node
     preparation=preparation_entry_node(record=record,face_name=face_name,node_id=node_id,line=line,material_line=material_line,
         span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
@@ -68,6 +73,18 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
         capability_profile=capability_profile, residuals=residuals)
     if emerge is not None:
         return emerge
+    from .paid_graveyard_nodes import paid_graveyard_node
+    graveyard = paid_graveyard_node(record=record, node_id=node_id, line=line,
+        material_line=material_line, span=span, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if graveyard is not None:
+        return graveyard
+    from .conditional_recipients import conditional_recipient_node
+    recipients = conditional_recipient_node(node_id=node_id, line=line, material_line=material_line,
+        span=span, source_name=face_name or record.name, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals)
+    if recipients is not None:
+        return recipients
     card_types, subtypes, _supertypes = type_parts(type_line)
     return closed_static_or_replacement_node(node_id=node_id, line=line, material_line=material_line,
         span=span, source_name=face_name or record.name, card_types=card_types,
@@ -76,6 +93,26 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
 
 
 def closed_static_or_replacement_node(
+    *, node_id: str, line: str, material_line: str, span: SourceSpan,
+    source_name: str, card_types: Iterable[str], permanent_card_types: set[str],
+    source_is_class: bool, capability_registry: CapabilityRegistry | None,
+    capability_profile: str, residuals: list[OracleResidual],
+) -> OracleNode | None:
+    """Give exact owners their full source before generic label fallback."""
+    material = without_ability_word_label(material_line)
+    if material is None:return None
+    arguments=dict(node_id=node_id,line=line,span=span,source_name=source_name,
+        card_types=card_types,permanent_card_types=permanent_card_types,
+        source_is_class=source_is_class,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals)
+    original=_closed_static_body_node(material_line=material_line,**arguments)
+    if original is not None:return original
+    if material==material_line:
+        return None
+    return _closed_static_body_node(material_line=material,**arguments)
+
+
+def _closed_static_body_node(
     *,
     node_id: str,
     line: str,
@@ -90,6 +127,16 @@ def closed_static_or_replacement_node(
     residuals: list[OracleResidual],
 ) -> OracleNode | None:
     """Dispatch closed nontriggered static and replacement line owners."""
+
+    from .classic_flash import classic_flash_node
+    classic=classic_flash_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if classic is not None:return classic
+
+    from .external_entry_counters import external_entry_counter_node
+    counters=external_entry_counter_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if counters is not None:return counters
 
     from .target_restriction_nodes import target_restriction_node
     restriction=target_restriction_node(node_id=node_id,line=line,material_line=material_line,span=span,
@@ -199,6 +246,7 @@ def closed_static_or_replacement_node(
     declaration = declaration_static_node(
         node_id=node_id,
         line=line,
+        material_line=material_line,
         card_name=source_name,
         span=span,
         residuals=residuals,

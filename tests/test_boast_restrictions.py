@@ -15,6 +15,7 @@ from scripts.build_test_database import build_fixture_database
 import test_bound_effect_programs as base
 import test_self_public_zone_casting as controls
 import test_temporary_keyword_removal as turns
+from quorune.rules.evidence_storage import read_evidence_document
 
 
 class BoastRestrictionTests(unittest.TestCase):
@@ -129,7 +130,7 @@ class BoastRestrictionTests(unittest.TestCase):
         from scripts.update_capability_evidence import build_index,discover_tests
         from quorune.card_programs.binding import bind_semantic_program_runtime
         p=ROOT/'quorune/rules/capability-registry.json';baseline=json.loads(p.read_text(encoding='utf-8'))
-        declarations=json.loads((ROOT/'platform/capability-evidence-declarations.json').read_text(encoding='utf-8'));known=set(discover_tests(ROOT).values())
+        declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         def verified(raw):
             registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=declarations,discovered_test_ids=known)
             registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry));return registry

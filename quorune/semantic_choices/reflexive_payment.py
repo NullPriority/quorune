@@ -26,7 +26,7 @@ def _validated(effect, actor, query, *, continuation):
         raise SemanticChoiceError('Reflexive consequences require independently closed effect ownership')
     if actor not in query.active_seats or raw['player'] != actor:
         raise SemanticChoiceError('Reflexive payment controller changed')
-    if (payment.kind in {'discard','exile'} and payment.predicate.owner != actor
+    if (payment.kind in {'discard','exile','mana_discard'} and payment.predicate.owner != actor
             or payment.kind in {'sacrifice','tap'} and payment.predicate.controller != actor):
         raise SemanticChoiceError('Reflexive payment object relation changed')
     if continuation:

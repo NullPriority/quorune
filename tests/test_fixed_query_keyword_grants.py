@@ -288,7 +288,7 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
                 handler.validate(changed)
 
     def test_triggered_keyword_grant_codec_omission_mutant_is_killed(self):
-        with mock.patch('quorune.compiler.continuous_templates.triggered_keyword_grant',return_value=None):
+        with mock.patch('quorune.compiler.attached_ability_templates.triggered_keyword_grant',return_value=None):
             with self.assertRaises(AssertionError):
                 self.assertIsNotNone(fixed_query_keyword_grant_handler('Creatures you control have prowess.'))
 

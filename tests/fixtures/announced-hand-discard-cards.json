@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned original hand-price cards and one explicitly synthetic unrestricted hand-price control; the control is not a Commander gain.",
+  "cards": [
+    {
+      "oracle_id": "2fbf95b4-bcf4-4b5e-b5dc-0294f2b48d3e",
+      "name": "Aether Tide",
+      "mana_cost": "{X}{U}",
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, discard X creature cards.\nReturn X target creatures to their owners' hands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1998-06-15",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "card_faces": [],
+      "rulings": []
+    },
+    {
+      "oracle_id": "fd1ce3e0-9c2d-48b6-9a14-4e71921cdfa4",
+      "name": "Scorched Earth",
+      "mana_cost": "{X}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, discard X land cards.\nDestroy X target lands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-10-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "card_faces": [],
+      "rulings": [
+        {
+          "oracle_id": "fd1ce3e0-9c2d-48b6-9a14-4e71921cdfa4",
+          "published_at": "2004-10-04",
+          "source": "wotc",
+          "comment": "X can be zero to destroy no lands."
+        }
+      ]
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000009701",
+      "name": "Generic Announced Hand Witness",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, discard X cards.\nDraw a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ]
+}

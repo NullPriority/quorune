@@ -6,6 +6,7 @@ import re
 from ..targeted_spell_costs import TargetedSpellCostSpec,TargetedCostSubject,TARGETED_SPELL_COST_HANDLER,TARGETED_SPELL_COST_EVENT,TARGETED_SPELL_COST_CAPABILITY
 from ..rules.source_references import SourceReferenceSpec
 from ..targeted_spell_costs import SELF_TARGET_REDUCTION_CAPABILITY
+from ..targeted_spell_costs import BATTLEFIELD_TARGET_REDUCTION_CAPABILITY
 from ..replacement.immutable import FrozenMap
 from .direct_target import direct_permanent_target_spec,stack_target_schema
 
@@ -35,6 +36,17 @@ def self_target_reduction_template(text):
 
 
 def targeted_spell_cost_template(text,*,source_name):
+    reduction=re.fullmatch(r'Spells(?P<caster> you cast| your opponents cast)? that target (?P<subject>.+?) cost \{(?P<amount>[1-9]\d*)\} less to cast\.?',text.strip(),re.I)
+    if reduction is not None:
+        subject=reduction['subject'].strip();relation={None:'any',' you cast':'source_controller',' your opponents cast':'source_opponents'}[reduction['caster'].casefold() if reduction['caster'] else None]
+        if subject.casefold()=='this creature' or SourceReferenceSpec(source_name).matches(subject):
+            kind=TargetedCostSubject.SOURCE;schema=None
+        elif subject.casefold()=='a creature' and relation=='source_controller':
+            kind=TargetedCostSubject.SPELL_TARGET;schema=FrozenMap({'zones':['battlefield'],'categories':['permanent'],'types_any':['creature'],'count':1})
+        else:return None
+        spec=TargetedSpellCostSpec(kind,-int(reduction['amount']),3,schema,relation)
+        return 'targeted-fixed-spell-cost-v1',{'handler_id':TARGETED_SPELL_COST_HANDLER,'schema_version':1,
+            'event':TARGETED_SPELL_COST_EVENT,'modifier':spec.to_dict()},(TARGETED_SPELL_COST_CAPABILITY,BATTLEFIELD_TARGET_REDUCTION_CAPABILITY)
     match=re.fullmatch(r'Spells your opponents cast that target (?P<subject>.+?) cost \{(?P<amount>[1-9]\d*)\} more to cast\.?',text.strip(),re.I)
     if match is None:return None
     subject=match['subject'].strip()

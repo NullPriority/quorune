@@ -1,0 +1,475 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned temporary casting restriction sources; no accepted gain claim until native proof.",
+  "cards": [
+    {
+      "oracle_id": "8aed54cb-d1bb-45ad-adbe-38e55d84ff31",
+      "name": "Silence",
+      "mana_cost": "{W}",
+      "type_line": "Instant",
+      "oracle_text": "Your opponents can't cast spells this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "rulings": [
+        {
+          "oracle_id": "8aed54cb-d1bb-45ad-adbe-38e55d84ff31",
+          "published_at": "2021-03-19",
+          "source": "wotc",
+          "comment": "The only thing Silence stops is casting spells. Your opponents can still activate abilities, including abilities of cards in their hands (like cycling). Their triggered abilities work as normal, they can still play lands, and so on."
+        },
+        {
+          "oracle_id": "8aed54cb-d1bb-45ad-adbe-38e55d84ff31",
+          "published_at": "2021-03-19",
+          "source": "wotc",
+          "comment": "A player who can't cast a spell can't suspend a card."
+        },
+        {
+          "oracle_id": "8aed54cb-d1bb-45ad-adbe-38e55d84ff31",
+          "published_at": "2021-03-19",
+          "source": "wotc",
+          "comment": "Silence won't affect spells that your opponents cast before you cast Silence, including any spells that are still on the stack. Silence also won't stop your opponents from casting spells after you cast Silence but before Silence resolves."
+        }
+      ]
+    },
+    {
+      "oracle_id": "9e48eb8e-ec62-4d73-ac80-31e6fe74ec31",
+      "name": "Cease-Fire",
+      "mana_cost": "{2}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Target player can't cast creature spells this turn.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-10-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "9e48eb8e-ec62-4d73-ac80-31e6fe74ec31",
+          "published_at": "2004-10-04",
+          "source": "wotc",
+          "comment": "This spell will not counter any creature spells on the stack. It only prevents new creature spells from being cast after it resolves."
+        }
+      ]
+    },
+    {
+      "oracle_id": "95aae5ba-7634-4cad-a0be-496c3398fa3c",
+      "name": "Permission Denied",
+      "mana_cost": "{W}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Counter target noncreature spell. Your opponents can't cast noncreature spells this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "95aae5ba-7634-4cad-a0be-496c3398fa3c",
+          "published_at": "2023-11-10",
+          "source": "wotc",
+          "comment": "If Permission Denied resolves but the spell isn't countered (perhaps because it can't be countered), opponents will still be unable to cast noncreature spells this turn."
+        },
+        {
+          "oracle_id": "95aae5ba-7634-4cad-a0be-496c3398fa3c",
+          "published_at": "2023-11-10",
+          "source": "wotc",
+          "comment": "Permission Denied's effect applies to all opponents, not just the player who controlled the spell targeted by Permission Denied."
+        },
+        {
+          "oracle_id": "95aae5ba-7634-4cad-a0be-496c3398fa3c",
+          "published_at": "2023-11-10",
+          "source": "wotc",
+          "comment": "If the spell is an illegal target as Permission Denied tries to resolve, it won't resolve and none of its effects will happen. Your opponents will still be able to cast noncreature spells this turn."
+        }
+      ]
+    },
+    {
+      "oracle_id": "a6436330-f35a-4d31-9230-03e0c62f9e7e",
+      "name": "Calamity's Wake",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Exile all graveyards. Players can't cast noncreature spells this turn. Exile Calamity's Wake.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": []
+    },
+    {
+      "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+      "name": "Orim's Chant",
+      "mana_cost": "{W}",
+      "type_line": "Instant",
+      "oracle_text": "Kicker {W} (You may pay an additional {W} as you cast this spell.)\nTarget player can't cast spells this turn. If this spell was kicked, creatures can't attack this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Kicker"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0,
+      "rulings": [
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-06-07",
+          "source": "wotc",
+          "comment": "A player who can't cast a spell can't suspend a card."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-06-07",
+          "source": "wotc",
+          "comment": "Orim's Chant won't affect spells that your opponents cast before you cast Orim's Chant, including any spells that are still on the stack. Orim's Chant also won't stop your opponents from casting spells after you cast Orim's Chant but before Orim's Chant resolves."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-06-07",
+          "source": "wotc",
+          "comment": "The target opponent can still activate abilities, including abilities of cards in their hands (like cycling). Their triggered abilities work as normal, they can still play lands, and so on."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-06-07",
+          "source": "wotc",
+          "comment": "Orim's Chant also won't affect creatures that are already attacking. It does not remove them from combat."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was."
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\""
+        },
+        {
+          "oracle_id": "26d3a818-7faf-443a-a6bd-9773edaedf17",
+          "published_at": "2024-11-08",
+          "source": "wotc",
+          "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it."
+        }
+      ]
+    },
+    {
+      "oracle_id": "cada3481-cc2b-4412-b9b5-0436af53aad2",
+      "name": "Ranger-Captain of Eos",
+      "mana_cost": "{1}{W}{W}",
+      "type_line": "Creature — Human Soldier Ranger",
+      "oracle_text": "When this creature enters, you may search your library for a creature card with mana value 1 or less, reveal it, put it into your hand, then shuffle.\nSacrifice this creature: Your opponents can't cast noncreature spells this turn.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0,
+      "rulings": [
+        {
+          "oracle_id": "cada3481-cc2b-4412-b9b5-0436af53aad2",
+          "published_at": "2019-06-14",
+          "source": "wotc",
+          "comment": "Your opponents may cast spells in response to the last ability of Ranger-Captain of Eos. The ability won’t affect those spells and it won’t affect spells that those players cast before you activated it. (In other words, the ability can’t be used to counter a spell.)"
+        },
+        {
+          "oracle_id": "cada3481-cc2b-4412-b9b5-0436af53aad2",
+          "published_at": "2019-06-14",
+          "source": "wotc",
+          "comment": "If a card in a player’s library has {X} in its mana cost, X is considered to be 0."
+        }
+      ]
+    },
+    {
+      "oracle_id": "1b388371-f9ef-45b4-82a3-ca20a8cd7807",
+      "name": "Dovin's Veto",
+      "mana_cost": "{W}{U}",
+      "type_line": "Instant",
+      "oracle_text": "This spell can't be countered.\nCounter target noncreature spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "rulings": [
+        {
+          "oracle_id": "1b388371-f9ef-45b4-82a3-ca20a8cd7807",
+          "published_at": "2021-03-19",
+          "source": "wotc",
+          "comment": "A spell or ability that counters spells can still target Dovin's Veto. When that spell or ability resolves, Dovin's Veto won't be countered, but any additional effects of the countering spell or ability will still happen."
+        }
+      ]
+    }
+  ]
+}

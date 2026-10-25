@@ -21,6 +21,9 @@ from quorune.rules.evidence import (
     validate_capability_evidence_index,
 )
 from quorune.util import stable_json
+from quorune.rules.evidence_storage import (
+    evidence_document_text, read_evidence_document, unpack_evidence_document,
+)
 
 
 REGISTRY_PATH = ROOT / "quorune" / "rules" / "capability-registry.json"
@@ -494,6 +497,7 @@ def build_index(
     declaration_source: Mapping[str, Any],
     discovered_test_ids: set[str],
 ) -> dict[str, Any]:
+    declaration_source = unpack_evidence_document(declaration_source)
     if set(declaration_source) != {"schema_version", "declarations"}:
         raise EvidenceGenerationError(
             "Capability evidence declaration source fields are invalid"
@@ -547,7 +551,7 @@ def build_index(
 
 
 def _json_text(value: Mapping[str, Any]) -> str:
-    return json.dumps(value, indent=2, sort_keys=False) + "\n"
+    return evidence_document_text(value)
 
 
 def main() -> int:
@@ -572,7 +576,7 @@ def main() -> int:
         source = bootstrap_declarations(registry_value, discovered)
         DECLARATIONS_PATH.write_text(_json_text(source), encoding="utf-8")
         return 0
-    source = json.loads(DECLARATIONS_PATH.read_text(encoding="utf-8"))
+    source = read_evidence_document(DECLARATIONS_PATH)
     index = build_index(
         registry_value=registry_value,
         declaration_source=source,

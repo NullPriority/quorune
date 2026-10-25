@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned ordered quantity source carriers; existing life-history controls reuse canonical fixtures and are excluded from gains.",
+  "cards": [
+    {
+      "oracle_id": "30f3c3be-0fe9-463d-a245-e44701aec7f2",
+      "name": "Blossoming Bogbeast",
+      "mana_cost": "{4}{G}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "Whenever this creature attacks, you gain 2 life. Then creatures you control gain trample and get +X/+X until end of turn, where X is the amount of life you gained this turn.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0,
+      "rulings": [
+        {
+          "oracle_id": "30f3c3be-0fe9-463d-a245-e44701aec7f2",
+          "published_at": "2021-04-16",
+          "source": "wotc",
+          "comment": "This ability counts the total amount of life gained without considering any life you lost during that turn. For example, if you lost 3 life and gained 3 life earlier in the turn, you'll gain 2 more life from Blossoming Bogbeast and creatures you control will get +5/+5."
+        }
+      ]
+    },
+    {
+      "oracle_id": "0d4bd5e0-8346-4025-8694-d2e1897ee0c2",
+      "name": "Essence Pulse",
+      "mana_cost": "{3}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "You gain 2 life. Each creature gets -X/-X until end of turn, where X is the amount of life you gained this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0,
+      "rulings": [
+        {
+          "oracle_id": "0d4bd5e0-8346-4025-8694-d2e1897ee0c2",
+          "published_at": "2021-04-16",
+          "source": "wotc",
+          "comment": "This ability counts the total amount of life gained without considering any life you lost during that turn. For example, if you lost 3 life and gained 3 life earlier in the turn, you will gain 2 more life from Essence Pulse and each creature will get -5/-5."
+        }
+      ]
+    }
+  ]
+}

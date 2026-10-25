@@ -6,6 +6,10 @@ from typing import AbstractSet, Any, Mapping
 
 from ..rules.capabilities import CapabilityRegistry
 from ..object_predicate import object_query_capabilities
+from ..static_player_restriction_model import static_player_restriction_capabilities
+from ..conditional_recipient_model import conditional_recipient_capabilities
+from ..public_zone_condition_model import public_zone_condition_capabilities
+from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
 from ..characteristic_fragments import characteristic_quantity_capabilities
 from .dependency_gate import dependency_gate, explicit_capabilities_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
@@ -44,7 +48,9 @@ def runtime_handler_node(
         else (raw_handlers,)
     )
     required = (*((capabilities,) if isinstance(capabilities, str) else capabilities),
-                *characteristic_quantity_capabilities(handlers), *object_query_capabilities(handlers))
+                *characteristic_quantity_capabilities(handlers), *object_query_capabilities(handlers),
+                *static_player_restriction_capabilities(handlers), *conditional_recipient_capabilities(handlers),
+                *public_zone_condition_capabilities(handlers), *conditional_free_cast_capabilities(handlers))
     if mechanics:
         gate = dependency_gate(mechanics=mechanics, effects=(), target_schema=None,
             trusted_mechanics=frozenset(), capability_registry=capability_registry,
@@ -109,6 +115,34 @@ def static_runtime_node(
     from .devotion_templates import fixed_devotion_increase_handler
     from .token_templates import static_token_quantity_replacement_handler
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .counter_permission_templates import static_counter_prohibition_handler
+    from ..counter_permission import COUNTER_PROHIBITION_EVENT
+    counter_prohibition = (static_counter_prohibition_handler(material_line, source_name=source_name)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if counter_prohibition is not None:
+        return runtime_handler_node(node_id=node_id, line=line, span=span, compiled=counter_prohibition,
+            kind='static_ability', event=COUNTER_PROHIBITION_EVENT,
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Counter placement requires its typed current prohibition owner',
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    from .damage_permission_templates import static_damage_unpreventability_handler
+    from ..damage_prevention_permission import UNPREVENTABLE_EVENT
+    unpreventable = (static_damage_unpreventability_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if unpreventable is not None:
+        return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=unpreventable,
+            kind='static_ability',event=UNPREVENTABLE_EVENT,runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Static unpreventable damage requires its typed permission owner',
+            capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    from .life_templates import static_life_gain_prohibition_handler
+    from ..life_gain_permission import LIFE_GAIN_PROHIBITION_EVENT
+    prohibition = (static_life_gain_prohibition_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if prohibition is not None:
+        return runtime_handler_node(node_id=node_id,line=line,span=span,compiled=prohibition,
+            kind='static_ability',event=LIFE_GAIN_PROHIBITION_EVENT,runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Static life-gain permission requires its typed rules owner',
+            capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     devotion = (fixed_devotion_increase_handler(material_line)
         if not source_is_class and card_types.intersection(permanent_card_types) else None)
     if devotion is not None:

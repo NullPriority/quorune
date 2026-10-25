@@ -236,6 +236,9 @@ class CounterTargetPredicateCompilerTests(unittest.TestCase):
                     )
 
     def test_unsupported_and_malformed_direct_target_predicates_fail_closed(self):
+        promoted='Put a +1/+1 counter on target artifact or Vehicle.'
+        self.assertIsNotNone(fixed_counter_placement_effect_template(promoted,card_name='Fixture'))
+        self.assertEqual('exact',self.compile(promoted).status)
         unsupported = (
             "target modified creature",
             "target nontoken creature",
@@ -245,7 +248,7 @@ class CounterTargetPredicateCompilerTests(unittest.TestCase):
             "target creature with flying and vigilance",
             "target creature with a counter on it that entered last turn",
             "target creature that entered last turn",
-            "target artifact or Vehicle",
+            "target artifact you control or Vehicle an opponent controls",
         )
         for subject in unsupported:
             text = f"Put a +1/+1 counter on {subject}."

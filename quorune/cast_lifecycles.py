@@ -179,6 +179,7 @@ class FixedCastLifecycleSpec:
     counter_count: int | None = None
     exile_count: int | None = None
     schema_version: int = 1
+    additional_costs: tuple[FrozenMap, ...] = ()
 
     def __post_init__(self) -> None:
         if type(self.schema_version) is not int or self.schema_version not in {
@@ -186,6 +187,7 @@ class FixedCastLifecycleSpec:
             2,
             3,
             4,
+            5,
         }:
             raise FixedCastLifecycleError(
                 "Unsupported fixed cast-lifecycle schema version"
@@ -210,6 +212,13 @@ class FixedCastLifecycleSpec:
             raise FixedCastLifecycleError(
                 "Fixed cast lifecycle kind is unsupported"
             )
+        if self.schema_version == 5:
+            from .rules.nonmana_buyback_costs import validate_nonmana_buyback_spec
+            try:validate_nonmana_buyback_spec(self)
+            except (ValueError,TypeError) as exc:raise FixedCastLifecycleError(str(exc)) from exc
+            return
+        if self.additional_costs:
+            raise FixedCastLifecycleError('Legacy lifecycle variants cannot carry nonmana prices')
         if self.kind is FixedCastLifecycleKind.MAYHEM:
             match = _MAYHEM.fullmatch(self.oracle_line.strip())
             if match is None or self.schema_version != 4 or self.counter_count is not None or self.exile_count is not None:
@@ -304,15 +313,21 @@ class FixedCastLifecycleSpec:
         }
         current = legacy | {"counter_count"}
         staged = current | {"exile_count"}
+        nonmana = staged | {"additional_costs"}
         if not isinstance(value, Mapping) or set(value) not in {
             frozenset(legacy),
             frozenset(current),
             frozenset(staged),
+            frozenset(nonmana),
         }:
             raise FixedCastLifecycleError(
                 "Fixed cast-lifecycle descriptors have a closed schema"
             )
         raw_mana = value["mana_cost"]
+        raw_additional = value.get('additional_costs', ())
+        if ('additional_costs' in value and (type(value['schema_version']) is not int or value['schema_version'] != 5)
+                or not isinstance(raw_additional,(list,tuple)) or any(not isinstance(cost,Mapping) for cost in raw_additional)):
+            raise FixedCastLifecycleError('Nonmana lifecycle price arrays require their closed typed schema')
         if raw_mana is not None and not isinstance(raw_mana, Mapping):
             raise FixedCastLifecycleError(
                 "Fixed cast-lifecycle mana cost must be an object or null"
@@ -333,6 +348,7 @@ class FixedCastLifecycleSpec:
             counter_count=value.get("counter_count"),
             exile_count=value.get("exile_count"),
             schema_version=value["schema_version"],
+            additional_costs=tuple(FrozenMap(cost) for cost in raw_additional),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -351,8 +367,10 @@ class FixedCastLifecycleSpec:
         }
         if self.schema_version >= 2:
             value["counter_count"] = self.counter_count
-        if self.schema_version in {3, 4}:
+        if self.schema_version in {3, 4, 5}:
             value["exile_count"] = self.exile_count
+        if self.schema_version == 5:
+            value['additional_costs'] = [thaw_value(cost) for cost in self.additional_costs]
         return value
 
     def fixed_cost_option(self) -> dict[str, Any]:
@@ -419,6 +437,8 @@ class FixedCastLifecycleSpec:
         if self.kind is FixedCastLifecycleKind.MAYHEM:
             option["source_zone"] = "graveyard"
             option["x_value_policy"] = "zero"
+        if self.schema_version == 5:
+            option['_additional_option_costs'] = [thaw_value(cost) for cost in self.additional_costs]
         return option
 
     def printed_zone_cost_option(
@@ -807,6 +827,8 @@ def fixed_cast_lifecycle_resolution_destination(
 ) -> str | None:
     """Apply lifecycle destinations that are not replacement choices."""
 
+    from .adventure import adventure_resolution_destination
+    destination=adventure_resolution_destination(item,destination)
     raw = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if not isinstance(raw, Mapping):
         return destination

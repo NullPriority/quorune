@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned whole tap-trigger controller timing defect originals and control land.",
+  "cards": [
+    {
+      "oracle_id": "0c6f343a-0088-477a-a6b5-256783ad0c27",
+      "name": "Corrupted Roots",
+      "mana_cost": "{B}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant Forest or Plains\nWhenever enchanted land becomes tapped, its controller loses 2 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-02-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "474db5db-914e-474d-b0c2-7987d5986dc3",
+      "name": "Chronic Flooding",
+      "mana_cost": "{1}{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant land\nWhenever enchanted land becomes tapped, its controller mills three cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant",
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "a60422e8-f2f4-4c37-a0f4-eedad27eb08c",
+      "name": "Psychic Venom",
+      "mana_cost": "{1}{U}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant land\nWhenever enchanted land becomes tapped, this Aura deals 2 damage to that land's controller.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-09-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "0c6f343a-0088-477a-a6b5-256783ad0c27",
+      "published_at": "2009-02-01",
+      "source": "wotc",
+      "comment": "Corrupted Roots doesn’t care why the enchanted land becomes tapped. If that land changes from being untapped to being tapped for any reason, the ability will trigger."
+    },
+    {
+      "oracle_id": "0c6f343a-0088-477a-a6b5-256783ad0c27",
+      "published_at": "2009-02-01",
+      "source": "wotc",
+      "comment": "Corrupted Roots can enchant only a Forest or a Plains. It checks the enchanted land’s subtypes, not its name. If at any time the enchanted land is neither a Forest nor a Plains (due to Unstable Frontier’s ability, perhaps), Corrupted Roots is put into its owner’s graveyard as a state-based action."
+    },
+    {
+      "oracle_id": "474db5db-914e-474d-b0c2-7987d5986dc3",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Chronic Flooding becoming attached to a tapped land won’t cause its ability to immediately trigger. That land must go from untapped to tapped."
+    },
+    {
+      "oracle_id": "474db5db-914e-474d-b0c2-7987d5986dc3",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Chronic Flooding’s ability will trigger whenever the enchanted land becomes tapped for any reason, not just because its controller taps it for mana."
+    },
+    {
+      "oracle_id": "a60422e8-f2f4-4c37-a0f4-eedad27eb08c",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Whenever the land is tapped for any reason, the ability triggers."
+    }
+  ]
+}

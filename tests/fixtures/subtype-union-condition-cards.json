@@ -1,0 +1,509 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Oracle originals plus explicit generic type-union controls; generic controls are not gained cards.",
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Icy Manipulator",
+      "oracle_id": "3608f1f7-8dc5-4dd1-ae91-c830e1de9529",
+      "oracle_text": "{1}, {T}: Tap target artifact, creature, or land.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Treasure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Sailor of Means",
+      "oracle_id": "c4efae03-99de-4439-925b-504602623bfd",
+      "oracle_text": "When this creature enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": "1",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2020-11-20",
+      "toughness": "4",
+      "type_line": "Creature — Human Pirate"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Sky Skiff",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "oracle_text": "Flying\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": "3",
+      "type_line": "Artifact — Vehicle"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Steal Artifact",
+      "oracle_id": "cd8ae9f2-edac-473a-8846-c08219e617c3",
+      "oracle_text": "Enchant artifact\nYou control enchanted artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2003-07-28",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Crew",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}{U}",
+      "name": "The Indomitable",
+      "oracle_id": "276dc5c8-c8cf-4b9c-ad75-31876e6e040a",
+      "oracle_text": "Trample\nWhenever a creature you control deals combat damage to a player, draw a card.\nCrew 3\nYou may cast this card from your graveyard as long as you control three or more tapped Pirates and/or Vehicles.",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2023-11-17",
+      "toughness": "6",
+      "type_line": "Legendary Artifact — Vehicle"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Voltaic Key",
+      "oracle_id": "09aeea91-b1dc-443f-a509-4758f052c0a7",
+      "oracle_text": "{1}, {T}: Untap target artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2010-07-16",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Union Pirate Vehicle",
+      "oracle_id": "00000000-0000-4000-8000-000000049501",
+      "oracle_text": "",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2026-08-06",
+      "toughness": "4",
+      "type_line": "Artifact Creature — Pirate Vehicle"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Union Kindred Pirate",
+      "oracle_id": "00000000-0000-4000-8000-000000049502",
+      "oracle_text": "",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-08-06",
+      "toughness": null,
+      "type_line": "Kindred Enchantment — Pirate"
+    },
+    {
+      "cmc": 2,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Union Mana Pirate",
+      "oracle_id": "00000000-0000-4000-8000-000000049503",
+      "oracle_text": "Sacrifice this creature: Add one mana of any color.",
+      "power": "1",
+      "produced_mana": [
+        "W",
+        "U",
+        "B",
+        "R",
+        "G"
+      ],
+      "released_at": "2026-08-06",
+      "toughness": "4",
+      "type_line": "Artifact Creature — Pirate Vehicle"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "3608f1f7-8dc5-4dd1-ae91-c830e1de9529",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Once a player announces that they're casting a spell or activating an ability, no player may take other actions until the spell or ability has been paid for. Notably, other players can't try to tap that player's permanents to stop them from paying {T} or to stop them from producing enough mana."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "cd8ae9f2-edac-473a-8846-c08219e617c3",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Can be used on artifact creatures."
+    },
+    {
+      "oracle_id": "276dc5c8-c8cf-4b9c-ad75-31876e6e040a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If The Indomitable is countered or dies after being cast from your graveyard, it returns to the graveyard. It may be cast this way again later."
+    },
+    {
+      "oracle_id": "276dc5c8-c8cf-4b9c-ad75-31876e6e040a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Once you begin casting a spell from your graveyard, it immediately moves to the stack. Players can't take any actions until you've finished casting the spell."
+    },
+    {
+      "oracle_id": "276dc5c8-c8cf-4b9c-ad75-31876e6e040a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You still pay The Indomitable's costs when casting it from your graveyard."
+    },
+    {
+      "oracle_id": "276dc5c8-c8cf-4b9c-ad75-31876e6e040a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The casting permission granted by The Indomitable's last ability doesn't change when you may cast it from your graveyard."
+    },
+    {
+      "oracle_id": "276dc5c8-c8cf-4b9c-ad75-31876e6e040a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The Indomitable checks if you control three or more tapped Pirates and/or Vehicles only as you begin to cast it. Once you begin to cast The Indomitable from your graveyard, it doesn't matter what happens to the tapped Pirates and/or Vehicles you control."
+    },
+    {
+      "oracle_id": "276dc5c8-c8cf-4b9c-ad75-31876e6e040a",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Only tapped Pirates and tapped Vehicles count toward the casting permission from The Indomitable's last ability."
+    }
+  ]
+}

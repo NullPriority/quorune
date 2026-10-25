@@ -10,6 +10,9 @@ from .counter_placement_templates import (fixed_counter_placement_batch_effect_t
 
 
 def counter_resolution_effect_template(text, *, card_name, source_is_permanent, source_attachment_relation):
+    from .all_kind_counter_doubling import all_kind_counter_doubling_template
+    all_kinds=all_kind_counter_doubling_template(text)
+    if all_kinds is not None:return all_kinds
     fixed_counter_placement_target_set = (
         fixed_counter_placement_target_set_effect_template(text)
     )

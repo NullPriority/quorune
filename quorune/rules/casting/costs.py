@@ -6,7 +6,7 @@ from typing import Any, Protocol
 
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from .nonmoving_additional_costs import select_fixed_nonmoving_cost
-from .additional_zone_costs import _fixed_zone_change_selection
+from .additional_zone_costs import select_zone_change_additional_cost
 from ...casting_payment_keywords import (
     AffinitySpec,
     CastingPaymentKeywordError,
@@ -24,7 +24,7 @@ from ...compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
 )
-from ...compiled_kicker import compiled_fixed_mana_kicker_spec
+from ...compiled_kicker import compiled_kicker_spec
 from .paid_entry_copy_costs import with_paid_entry_copy_cost_schema
 from .multikicker_costs import with_multikicker_cost_schema
 from .replicate_costs import with_replicate_cost_schema
@@ -48,7 +48,6 @@ from ..casting_additional_costs import (
     AdditionalCostError,
     fixed_counter_additional_cost,
     fixed_counter_cost_candidates,
-    fixed_zone_change_additional_cost,
     legacy_additional_cost_candidates,
 )
 from ..casting_additional_cost_groups import (
@@ -248,7 +247,7 @@ def _with_kicker_cost(
 ) -> dict[str, Any] | None:
     result = copy.deepcopy(dict(schema))
     kicker = (
-        compiled_fixed_mana_kicker_spec(host, card)
+        compiled_kicker_spec(host, card)
         if not suppress_source_costs
         else None
     )
@@ -417,6 +416,7 @@ def _initial_options(
     force_without_mana_cost: bool,
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
+    cast_type_line: str | None = None,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -492,6 +492,10 @@ def _initial_options(
     )
     base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
         enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
+    from .global_alternatives import battlefield_alternative_base_options
+    base.extend(battlefield_alternative_base_options(host,seat,card,cast_type_line=cast_type_line,
+        enabled=not(cast_without_mana or suppress_source_costs or alternative_base is not None or intrinsic_disturb),
+        has_mana_x=has_x,x_value=x_value,commander_tax=commander_tax,temporary_permission=temporary_permission))
     for raw in [] if cast_without_mana else schema.get("alternate_costs", []):
         alternative = dict(raw)
         if (
@@ -1240,24 +1244,10 @@ def _apply_additional_costs(
                 }
             )
             continue
-        try:
-            zone_change_cost = fixed_zone_change_additional_cost(additional)
-        except AdditionalCostError:
-            return False
-        if zone_change_cost is not None:
-            if len(mandatory_costs) != 1:
-                return False
-            valid, selected = _fixed_zone_change_selection(
-                host,
-                seat=seat,
-                source_object_id=card.object_id,
-                cost=zone_change_cost,
-                cost_position=index,
-                response=response,
-                hint=hint,
-                choice_schema=choice_schema,
-                option=option,
-            )
+        zone_selection=select_zone_change_additional_cost(host,seat,card,option,mandatory_costs,response,
+            position=index,hint=hint,choice_schema=choice_schema)
+        if zone_selection is not None:
+            valid,selected=zone_selection
             if not valid:
                 return False
             if selected is not None:
@@ -1268,7 +1258,10 @@ def _apply_additional_costs(
         except AdditionalCostError:
             return False
         if life_cost is not None:
-            if len(mandatory_costs) != 1:
+            from ..random_discard_additional_cost import fixed_life_random_costs
+            from ..fixed_payment_groups import fixed_life_zone_costs
+            if len(mandatory_costs) != 1 and not (
+                    fixed_life_random_costs(mandatory_costs) or fixed_life_zone_costs(mandatory_costs)):
                 return False
             if host.state.players[seat].life < life_cost.amount:
                 return False
@@ -1448,6 +1441,9 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         return None
     if not finalize_emerge_selection(host, seat, card, option, response, choice_schema, hint=hint):
         return None
+    from .optional_life_costs import optional_life_payment_affordable
+    if not optional_life_payment_affordable(host,seat,option,response):
+        return None
     if isinstance(exile_spec, Mapping):
         choice_schema["exile_card"] = {
             "type": "object_ref",
@@ -1466,6 +1462,8 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             option["selected_exile_card"] = selected
     if choice_schema:
         option["choice_schema"] = choice_schema
+    from .turn_cast_grants import finalize_turn_cast_grant_option
+    finalize_turn_cast_grant_option(option)
     return CastCostOption.from_dict(option)
 
 
@@ -1495,20 +1493,27 @@ def build_cast_cost_options(
         force_without_mana_cost=force_without_mana_cost,
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
+        cast_type_line=cast_type_line,
     )
     if initial is None:
         return ()
     expanded, mandatory, mechanics, has_x = initial
+    from .turn_cast_grants import with_turn_cast_grant_choices
+    expanded=with_turn_cast_grant_choices(host,seat,card,expanded,cast_type_line=cast_type_line,force_without_mana_cost=force_without_mana_cost)
+    from .optional_life_costs import optional_life_cost_variants
+    expanded=optional_life_cost_variants(host,seat,card,expanded,cast_type_line=cast_type_line)
     target_mana_x = has_x
     target_schema = getattr(program, "target_schema", None)
     if not has_x and isinstance(target_schema, Mapping) and "count_parameter" in target_schema:
         _printed, target_mana_x = host._compiled_printed_cost_options(seat, card, x_value=0, hint=True)
         if target_mana_x:
             expanded = [{**option, "x_value_policy": "zero"} for option in expanded]
+    declared_cost_x=bool(announced_additional_cost_dependencies(getattr(program,'cost_schema',None))) if not target_mana_x else False
     result = []
     for option in expanded:
         from .target_cardinality import bind_target_count_option
-        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x)
+        option = bind_target_count_option(program, option, submission, has_mana_x=target_mana_x,has_declared_cost_x=declared_cost_x,
+            target_limit=len(host.state.cards)+len(host.state.players)+len(host.state.stack))
         if option is None:
             continue
         option_cast_type_line = (
@@ -1524,10 +1529,13 @@ def build_cast_cost_options(
             )
         )
         from .targeted_costs import target_cost_variants
+        from .target_count_costs import target_count_price_variants
         if hint:
             from .target_cardinality import target_count_cost_preview
             option = target_count_cost_preview(host, seat, card, program, option)
-        for target_option in target_cost_variants(host,seat,card,program,option,submission,hint=hint):
+        target_options=(target_option for priced in target_count_price_variants(host,seat,card,program,option,submission,hint=hint)
+            for target_option in target_cost_variants(host,seat,card,program,priced,submission,hint=hint))
+        for target_option in target_options:
             finalized = _finalize_option(
                 host,
                 seat,

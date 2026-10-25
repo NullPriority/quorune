@@ -951,9 +951,8 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
             )
 
         assert_draw_ability_is_capability_closed()
-        with patch.object(
-            capabilities_module,
-            "fixed_draw_node_capabilities",
+        with patch(
+            "quorune.rules.effect_node_capabilities.fixed_draw_node_capabilities",
             return_value=(),
         ):
             with self.assertRaises(AssertionError):
@@ -1107,7 +1106,7 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
         with patch.object(
             damage_results_module,
             "materialize_damage_results",
-            lambda _host, _events: (),
+            lambda _host, _events, **_kwargs: (),
         ):
             with self.assertRaises(AssertionError):
                 assert_all_permanent_results()

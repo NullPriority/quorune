@@ -124,7 +124,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplateTests(unittest.TestCase):
 
     def test_open_temporary_declaration_restriction_grammar_stays_residual(self):
         for text in (
-            "Target creature can't block this creature this turn.",
+            "Target creature can't block this creature next turn.",
             "Target creature can't be blocked except by Walls this turn.",
             "Target creature can't block this turn and you gain 1 life.",
             "Up to X target creatures can't block this turn.",
@@ -257,7 +257,7 @@ class ActivatedTemporaryDeclarationRestrictionCompilerTests(unittest.TestCase):
     def test_open_forms_do_not_enter_the_closed_family(self):
         for oracle_text, type_line in (
             (
-                "{R}: Target creature can't block this creature this turn.",
+                "{R}: Target creature can't block another creature this turn.",
                 "Creature — Human",
             ),
             (
@@ -285,6 +285,10 @@ class ActivatedTemporaryDeclarationRestrictionCompilerTests(unittest.TestCase):
             "Martyred Rusalka",
             "Thundersong Trumpeter",
             "Amphin Pathmage",
+            "Firefright Mage",
+            "Joven's Tools",
+            "Tower of Coireall",
+            "Duct Crawler",
         ):
             with self.subTest(name=name):
                 ir = compile_oracle_card(
@@ -293,19 +297,8 @@ class ActivatedTemporaryDeclarationRestrictionCompilerTests(unittest.TestCase):
                     capability_profile="commander_review",
                 )
                 self.assertEqual("exact", ir.status)
-        for name in (
-            "Duct Crawler",
-            "Firefright Mage",
-            "Joven's Tools",
-            "Tower of Coireall",
-        ):
-            with self.subTest(name=name):
-                ir = compile_oracle_card(
-                    self.db.lookup(name),
-                    capability_registry=self.capabilities,
-                    capability_profile="commander_review",
-                )
-                self.assertNotEqual("exact", ir.status)
+        boundary = self.compile("{R}: Target creature can't block this creature until your next turn.")
+        self.assertNotEqual("exact", boundary.status)
 
 
 class TemporaryDeclarationRestrictionRuntimeTests(unittest.TestCase):
@@ -952,7 +945,7 @@ class QualifiedDeclarationCompilerTests(unittest.TestCase):
         text = "{T}: Target creature with power 2 or less can't be blocked this turn."
         self.assertEqual("exact", self.compile(text).status)
         for body in ("Target creature with power X or less can't be blocked this turn.",
-                     "Target creature can't block this creature this turn.",
+                     "Target creature can't block this creature until your next turn.",
                      "Target creature can't be blocked until your next turn."):
             with self.subTest(body=body):
                 self.assertNotEqual("exact", self.compile("{1}: " + body).status)

@@ -17,9 +17,11 @@ class ActivationUsageError(ValueError):
 
 
 ACTIVATION_ONCE_PER_TURN_CAPABILITY = "activation.usage.once_per_turn"
+ACTIVATION_ONCE_PER_OBJECT_CAPABILITY='activation.usage.once_per_object'
 
 
 class ActivationLimit(str, Enum):
+    ONCE_PER_OBJECT='once_per_object'
     ONCE_PER_TURN = "once_per_turn"
     EXHAUST_ONCE = "exhaust_once"
     POWER_UP_ONCE = "power_up_once"
@@ -27,7 +29,29 @@ class ActivationLimit(str, Enum):
 
 _ONCE_PER_TURN_FIELD = "once_per_turn_activations"
 _EXHAUST_FIELD = "exhaust_activations"
+_ONCE_PER_OBJECT_FIELD='once_per_object_activations'
 _TRIGGER_ONCE_PER_TURN_FIELD = "once_per_turn_triggers"
+_CAST_GRANT_ONCE_PER_TURN_FIELD = "once_per_turn_cast_grants"
+
+
+def cast_grant_usage_available(source: Any, *, ability_id: str, turn_sequence: int) -> bool:
+    """Read a static casting permission's allowance for this source incarnation."""
+    identity = _ability_id(ability_id)
+    if type(turn_sequence) is not int or turn_sequence < 0:
+        raise ActivationUsageError("Casting permission usage requires a nonnegative turn")
+    raw = _annotations(source).get(_CAST_GRANT_ONCE_PER_TURN_FIELD, {})
+    if not isinstance(raw, Mapping) or any(type(k) is not str or not k or type(v) is not int or v < 0 for k, v in raw.items()):
+        raise ActivationUsageError("Once-per-turn casting permission usage is malformed")
+    return raw.get(identity) != turn_sequence
+
+
+def commit_cast_grant_usage(source: Any, *, ability_id: str, turn_sequence: int) -> None:
+    """Consume one successfully used permission through the existing usage owner."""
+    if not cast_grant_usage_available(source, ability_id=ability_id, turn_sequence=turn_sequence):
+        raise ActivationUsageError("Casting permission usage was already consumed")
+    values = dict(source.annotations.get(_CAST_GRANT_ONCE_PER_TURN_FIELD, {}))
+    values[ability_id] = turn_sequence
+    source.annotations[_CAST_GRANT_ONCE_PER_TURN_FIELD] = values
 
 
 def trigger_usage_available(source: Any, *, ability_id: str, turn_sequence: int) -> bool:
@@ -107,18 +131,20 @@ def activation_usage_verdict(
             if raw.get(identity) == turn_sequence
             else ActivationUsageVerdict(True)
         )
-    if limit in {ActivationLimit.EXHAUST_ONCE,ActivationLimit.POWER_UP_ONCE}:
-        raw = annotations.get(_EXHAUST_FIELD, ())
+    if limit in {ActivationLimit.EXHAUST_ONCE,ActivationLimit.POWER_UP_ONCE,ActivationLimit.ONCE_PER_OBJECT}:
+        field=_ONCE_PER_OBJECT_FIELD if limit is ActivationLimit.ONCE_PER_OBJECT else _EXHAUST_FIELD
+        label='Once-per-object' if limit is ActivationLimit.ONCE_PER_OBJECT else 'Exhaust'
+        raw = annotations.get(field, ())
         if not isinstance(raw, (list, tuple)) or any(
             type(value) is not str or not value for value in raw
         ):
-            raise ActivationUsageError("Exhaust activation usage is malformed")
+            raise ActivationUsageError(f"{label} activation usage is malformed")
         if len(raw) != len(set(raw)):
             raise ActivationUsageError(
-                "Exhaust activation usage contains duplicate abilities"
+                f"{label} activation usage contains duplicate abilities"
             )
         return (
-            ActivationUsageVerdict(False, "exhaust_ability_already_activated")
+            ActivationUsageVerdict(False, 'ability_already_activated_for_object' if limit is ActivationLimit.ONCE_PER_OBJECT else "exhaust_ability_already_activated")
             if identity in raw
             else ActivationUsageVerdict(True)
         )
@@ -152,13 +178,15 @@ def commit_activation_usage(
         values[ability_id] = turn_sequence
         annotations[_ONCE_PER_TURN_FIELD] = values
         return
-    values = list(annotations.get(_EXHAUST_FIELD, ()))
+    field=_ONCE_PER_OBJECT_FIELD if limit is ActivationLimit.ONCE_PER_OBJECT else _EXHAUST_FIELD
+    values = list(annotations.get(field, ()))
     values.append(ability_id)
-    annotations[_EXHAUST_FIELD] = sorted(values)
+    annotations[field] = sorted(values)
 
 
 __all__ = [
     "ACTIVATION_ONCE_PER_TURN_CAPABILITY",
+    "ACTIVATION_ONCE_PER_OBJECT_CAPABILITY",
     "ActivationLimit",
     "ActivationUsageError",
     "ActivationUsageVerdict",
@@ -166,4 +194,6 @@ __all__ = [
     "commit_activation_usage",
     "trigger_usage_available",
     "commit_trigger_usage",
+    "cast_grant_usage_available",
+    "commit_cast_grant_usage",
 ]

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 from dataclasses import replace
+from functools import partial
 
 from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
@@ -32,7 +33,7 @@ def permanent_additional_cost_node(*, node_id, line, material_line, span: Source
     template = next((value for parse in (
         fixed_waterbend_additional_cost_template,
         fixed_tap_additional_cost_template, fixed_counter_additional_cost_template, fixed_sacrifice_additional_cost_template,
-        fixed_zone_change_additional_cost_template, fixed_life_payment_additional_cost_template,
+        partial(fixed_zone_change_additional_cost_template,allow_counted=True), fixed_life_payment_additional_cost_template,
         fixed_alternative_additional_cost_template,
     ) if (value := parse(material_line)) is not None), None)
     if template is None:

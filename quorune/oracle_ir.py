@@ -171,7 +171,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v505"
+ORACLE_COMPILER_VERSION = "oracle-ir-v598"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -352,19 +352,9 @@ def _effect_template(
         re.IGNORECASE,
     )
     if match:
-        return (
-            f"modify-self-{match.group('kind').casefold()}-stats-eot-v1",
-            (
-                {
-                    "op": "modify_stats_until_end_of_turn",
-                    "card": "$source",
-                    "power": int(match.group("power")),
-                    "toughness": int(match.group("toughness")),
-                },
-            ),
-            None,
-            ("cr-611-continuous-effects",),
-        )
+        from .compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+        return FixedSourceCharacteristicsTemplate(source_kind=match.group('kind').casefold(),
+            power=int(match.group('power')), toughness=int(match.group('toughness'))).compiled()
     match = re.fullmatch(
         r"this (?P<kind>artifact|creature|enchantment|permanent) gains "
         r"(?P<keyword>deathtouch|double strike|first strike|flying|haste|"
@@ -420,6 +410,7 @@ def _reviewed_atomic_effect_template(
     prevention = fixed_prevention_effect_template(
         text.strip(),
         card_name=card_name,
+        source_attachment_relation=source_attachment_relation,
     )
     from .compiler.commander_learn_templates import commander_learn_effect_template
     compiled = prevention or commander_learn_effect_template(text) or _effect_template(
@@ -826,7 +817,7 @@ def _source_self_zone_trigger_match(
     return re.fullmatch(
         rf"(?:when|whenever) "
         rf"(?P<subject>this (?:artifact|aura|card|creature|"
-        rf"enchantment|equipment|land|permanent)|{source_name}) "
+        rf"enchantment|equipment|land|permanent|class)|{source_name}) "
         rf"(?P<event>enters|dies|leaves the battlefield), "
         rf"(?P<body>.+)",
         material_line,
@@ -1093,6 +1084,11 @@ def _typed_whole_spell_face(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> OracleFaceIR | None:
+    from .compiler.paid_mana_spell_faces import compile_paid_mana_spell_face
+    paid=compile_paid_mana_spell_face(record=record,face_id=face_id,face_name=face_name,oracle_text=oracle_text,
+        material_rows=material_rows,effect_template=effect_template,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if paid is not None:return paid
     from .compiler.cleave_spell_faces import compile_fixed_cleave_face
     cleave = compile_fixed_cleave_face(record=record, face_id=face_id, face_name=face_name,
         oracle_text=oracle_text, material_rows=material_rows, effect_template=effect_template,
@@ -1153,6 +1149,9 @@ def _compile_face(
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
 
     if spell:
+        from .compiler.public_replacement_rows import public_replacement_material_rows
+        material_rows=public_replacement_material_rows(material_rows,oracle_text=oracle_text,source_name=face_name or record.name,
+            compile_effect=declared_spell_effect_compiler(record,is_spell=spell,oracle_text=oracle_text,compile_effect=contextual_effect_template))
         typed_face = _typed_whole_spell_face(
             record, face_id=face_id, face_name=face_name, type_line=type_line, keywords=keywords, oracle_text=oracle_text,
             material_rows=material_rows, effect_template=declared_spell_effect_compiler(record, is_spell=spell, oracle_text=oracle_text, compile_effect=contextual_effect_template),
@@ -1171,6 +1170,12 @@ def _compile_face(
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue
         line, material_line, span = row; node_id = f"{face_id}:n{index}"
+        from .compiler.static_player_restrictions import static_player_restriction_nodes
+        player_nodes = static_player_restriction_nodes(node_id=node_id, line=line, material_line=material_line,
+            span=span, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+        if player_nodes is not None:
+            nodes.extend(player_nodes)
+            continue
         early_nodes = _keyword_or_attached_grant_nodes(
             record=record, face_id=face_id, node_id=node_id, line=line,
             material_line=material_line, span=span,

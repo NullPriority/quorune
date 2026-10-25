@@ -79,6 +79,8 @@ from .entry_state import (
     FixedEntryConditionReplacementHandler,
 )
 from .external_entry_state import ExternalEntryStateHandler
+from .external_entry_counters import ExternalEntryCounterHandler
+from ..external_entry_counter_model import EXTERNAL_ENTRY_COUNTER_HANDLER
 from .zone_replacement_model import (
     PreparedZoneChange,
     SUPPORTED_ZONE_DESTINATIONS,
@@ -367,7 +369,8 @@ class ZoneChangeReplacementRegistry(
         source_ref: str,
         source_controller: str,
         component_id: str,
-    ) -> ReplacementEffect:
+        source_context: Any = None,
+    ) -> ReplacementEffect | None:
         handler = self._handler(descriptor)
         compiler = getattr(handler, "source_replacement_effect", None)
         if compiler is None:
@@ -380,6 +383,7 @@ class ZoneChangeReplacementRegistry(
             source_ref=source_ref,
             source_controller=source_controller,
             component_id=component_id,
+            **({'source_context':source_context} if source_context is not None else {}),
         )
 
     def subject_replacement_effect(
@@ -443,6 +447,7 @@ def default_zone_change_replacement_registry(
             ConditionalSelfEntryCounterHandler(),
             EntryStateReplacementHandler(),
             ExternalEntryStateHandler(),
+            ExternalEntryCounterHandler(),
             FixedEntryConditionReplacementHandler(),
             EntryDesignationHandler(),
             ExcludedColorEntryDesignationHandler(),
@@ -586,14 +591,18 @@ def collect_zone_change_replacement_effects(
             for descriptor_index, descriptor in enumerate(program.handlers):
                 if descriptor.get('handler_id') == SELF_GRAVEYARD_EXILE_HANDLER:
                     continue
-                effects.append(
-                    registry.source_replacement_effect(
+                source_context=None
+                if descriptor.get('handler_id')==EXTERNAL_ENTRY_COUNTER_HANDLER:
+                    from ..rules.external_entry_counters import snapshot_external_entry_counter_source
+                    source_context=snapshot_external_entry_counter_source(host,source,descriptor)
+                effect=registry.source_replacement_effect(
                         descriptor,
                         source_ref=source.ref,
                         source_controller=source.controller,
                         component_id=f"{program.key}:{descriptor_index}",
+                        source_context=source_context,
                     )
-                )
+                if effect is not None:effects.append(effect)
     effects.extend(
         collect_counter_placement_replacement_effects(
             host,
@@ -903,6 +912,7 @@ def _zone_change_snapshot_effects(
     active_sources: Sequence[Any],
     prospective_objects: Mapping[str, Any],
 ) -> tuple[ReplacementEffect, ...]:
+    from ..rules.cast_grant_riders import cast_grant_rider_replacements
     ambient_effects = collect_zone_change_replacement_effects(
         host,
         sources=active_sources, source_zones={source.object_id: "battlefield" for source in active_sources},
@@ -1015,6 +1025,7 @@ def _zone_change_snapshot_effects(
                     subject_cards,
                     tuple(subject.object_id for subject in subjects),
                 ),
+                *cast_grant_rider_replacements(subject_cards, subjects),
                 *intrinsic_effects,
                 *generated_effects,
                 *self_entry_effects,
@@ -1133,6 +1144,11 @@ def capture_zone_change_replacement_snapshot(
         sources=sources,
         source_zones=source_zones,
     )
+    from .counter_permissions import collect_counter_permissions, entry_counter_permissions
+    counter_permissions = collect_counter_permissions(host, sources=active_sources, source_zones=source_zones)
+    subjects = tuple(replace(subject, counter_permissions=entry_counter_permissions(host, subject,
+        prospective.get(subject.object_id) or host.state.cards[subject.object_id], counter_permissions))
+        for subject in subjects)
     try:
         snapshot=ZoneChangeReplacementSnapshot(
             revision=host.state.revision,

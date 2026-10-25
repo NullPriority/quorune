@@ -44,6 +44,11 @@ def _resolve_attachment_reference(
     item: Any,
 ) -> str | None:
     spec = AttachmentReferenceSpec.from_dict(value)
+    if spec.schema_version==2:
+        from ..attachment_references import ATTACHMENT_INFORMATION_VERSION
+        version=item.context.get(ATTACHMENT_INFORMATION_VERSION)
+        if type(version) is not int or version!=1:
+            raise AttachmentReferenceError('Version-two attachment references require captured departure information')
     snapshot = item.context.get("source_attachment_snapshot")
     if not isinstance(snapshot, Mapping):
         raise AttachmentReferenceError(
@@ -82,8 +87,16 @@ def _resolve_attachment_reference(
     return target.ref
 
 
-def _resolve_typed_numeric_amount(host, value, item):
-    """Delegate numeric value families without changing their error boundary."""
+def _resolve_typed_semantic_value(host, value, item):
+    """Delegate typed amounts and public predicates to their narrow owners."""
+    if value['kind'] in {'source_entry_designation_predicate','source_entry_designation_scope'}:
+        from ..designation_prevention import resolve_designation_predicate
+        try:return resolve_designation_predicate(value,item)
+        except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if value['kind'] == 'selected_target_count':
+        from ..target_cardinality import resolve_selected_target_count
+        try:return resolve_selected_target_count(value, item)
+        except (TypeError, ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     try:
         if value['kind'] == PUBLIC_QUERY_AMOUNT_KIND:
             return resolve_public_query_amount(host, value, item)
@@ -93,10 +106,22 @@ def _resolve_typed_numeric_amount(host, value, item):
             return resolve_scalar_effect_amount(host, value, item)
     except PublicQueryAmountError as exc:
         raise SemanticNodeError(str(exc)) from exc
-    raise SemanticNodeError('Typed numeric value kind is unsupported')
+    raise SemanticNodeError('Typed semantic value kind is unsupported')
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get('op')=='create_token_then_counters':
+        from ..created_token_counter_model import validate_created_token_counter
+        try:validate_created_token_counter(value)
+        except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+        return {**value,'controller':resolve_semantic_value(host,value['controller'],item),
+            'source':resolve_semantic_value(host,value['source'],item),
+            'token':resolve_semantic_value(host,value['token'],item)}
+    if value.get('op')=='apply_if_public_condition' and value.get('schema_version') in {10,11}:
+        from ..resolution_conditions import validate_resolution_condition_instruction
+        validate_resolution_condition_instruction(value)
+        return {**value,'player':resolve_semantic_value(host,value['player'],item),
+            'cast_fact':resolve_semantic_value(host,value['cast_fact'],item)}
     from ..rules.stack_damage_sources import bound_stack_damage_source
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
@@ -121,6 +146,18 @@ def resolve_semantic_value(
 
     if isinstance(value, list):
         return [resolve_semantic_value(host, child, item) for child in value]
+    if isinstance(value, Mapping) and value.get('kind')=='cast_mana_spent_units':
+        from ..rules.paid_mana_resolution import resolve_cast_mana_units
+        try:return resolve_cast_mana_units(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind')=='target_controller_information':
+        from ..target_controller_information import resolve_target_controller_information
+        try:return resolve_target_controller_information(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if isinstance(value, Mapping) and value.get('kind')=='occurrence_controller_information':
+        from ..target_controller_information import resolve_occurrence_controller_information
+        try:return resolve_occurrence_controller_information(host,value,item)
+        except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get('kind') == 'reflexive_trigger_program':
         from ..reflexive_trigger_model import ReflexiveTriggerProgram
         try:
@@ -129,8 +166,8 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND):
-        return _resolve_typed_numeric_amount(host, value, item)
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
+        return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)
     if not isinstance(value, str) or not value.startswith("$"):
@@ -163,7 +200,7 @@ def resolve_semantic_value(
         ):
             return None
         return source.ref
-    if value in {'$event.entry_object','$event.counter_object'}:
+    if value in {'$event.entry_object','$event.counter_object','$event.permanent_object'}:
         from ..event_counter_reference import resolve_entry_event_counter_recipient,resolve_event_counter_recipient
         try:return (resolve_entry_event_counter_recipient if value=='$event.entry_object' else resolve_event_counter_recipient)(host,item)
         except ValueError as exc:raise SemanticNodeError(str(exc)) from exc

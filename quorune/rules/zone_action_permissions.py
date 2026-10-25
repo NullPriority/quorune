@@ -7,6 +7,7 @@ from typing import Any
 from ..compiled_cast_lifecycles import compiled_fixed_zone_cast_permission
 from ..compiled_cast_lifecycles import compiled_mayhem_permission, compiled_fixed_cast_lifecycle_spec
 from ..cast_lifecycles import FixedCastLifecycleKind
+from .self_graveyard_discard import compiled_self_graveyard_discard_specs
 from ..compiled_flashback import (
     compiled_fixed_mana_flashback_spec,
     compiled_ordinary_zone_cast_permission,
@@ -19,12 +20,15 @@ from ..semantic_runtime.action_permissions import (
 )
 
 
-def compiled_land_play_permission(host: Any, seat: str, card: Any) -> bool:
+def compiled_land_play_permission(host: Any, seat: str, card: Any, *, include_source_grants: bool = True) -> bool:
     permission = host._temporary_play_permission(seat, card)
     if permission is not None and bool(permission.get("allow_land", True)):
         return True
     if card.owner != seat:
         return False
+    if include_source_grants:
+        from .casting.turn_cast_grants import current_turn_cast_grants
+        if current_turn_cast_grants(host,seat,card,for_land=True):return True
     if card.zone == "hand":
         return True
     if card.zone == "library":
@@ -43,8 +47,13 @@ def compiled_land_play_permission(host: Any, seat: str, card: Any) -> bool:
     )
 
 
-def compiled_zone_cast_permission(host: Any, seat: str, card: Any) -> bool:
-    if compiled_ordinary_zone_cast_permission(host, seat, card):
+def compiled_zone_cast_permission(host: Any, seat: str, card: Any, *, include_source_grants: bool = True) -> bool:
+    from .graveyard_cast_costs import compiled_paid_graveyard_specs
+    if compiled_paid_graveyard_specs(host, seat, card):
+        return True
+    if compiled_self_graveyard_discard_specs(host,seat,card):
+        return True
+    if compiled_ordinary_zone_cast_permission(host, seat, card, include_source_grants=include_source_grants):
         return True
     if card.zone == "library" and controller_has_library_top_spell_permission(
         host,

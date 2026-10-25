@@ -7,6 +7,7 @@ import re
 
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from .fixed_controller_effect_sequences import _clauses
+from .event_result_value_templates import scheduled_fractional_life_instruction
 from .affected_player_discard_templates import (
     FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC,
     FIXED_CONTROLLER_DISCARD_MECHANIC,
@@ -49,8 +50,11 @@ def scheduled_player_result(binding, body, *, effect_template, card_name):
         return ('scheduled-player-fixed-damage-v1',(effect,),None,tuple(dict.fromkeys((
             *(m for m in mechanics if m!='cr-115-targets'),SCHEDULED_PLAYER_MECHANIC)))),True
     if not re.match(r'(?:that player|they)\b',body,re.I):return None
-    normalized=re.sub(r'\b(?:that player|they)\b','you',body,flags=re.I)
-    normalized=re.sub(r'\b(loses|gains|draws|mills|discards)\b',lambda m:m[0][:-1],normalized,flags=re.I)
+    normalized=scheduled_fractional_life_instruction(body) if 'half' in body.casefold() else None
+    if 'half' in body.casefold() and normalized is None:return None
+    if normalized is None:
+        normalized=re.sub(r'\b(?:that player|they)\b','you',body,flags=re.I)
+        normalized=re.sub(r'\b(loses|gains|draws|mills|discards)\b',lambda m:m[0][:-1],normalized,flags=re.I)
     template,effects,schema,mechanics=effect_template(normalized,card_name=card_name)
     if template is None or schema is not None or not 1<=len(effects)<=2:return None
     clauses = _clauses(body) if len(effects) == 2 else (body,)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
+from .life_gain_permission import ALLOW_ALL_LIFE_GAIN, LifeGainPermissionSnapshot
 
 from .life_state import (
     apply_life_changes,
@@ -106,6 +107,7 @@ class PreparedLifeChangeBatch:
     records: tuple[LifeChangeRecord, ...]
     pending: ReplacementBatchChoice | None = None
     consumed_selections: int = 0
+    gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN
 
 
 @dataclass(frozen=True, slots=True)
@@ -313,6 +315,18 @@ def summarize_life_change_batch(
     )
 
 
+def _permission_events(events, permissions):
+    if not isinstance(permissions, LifeGainPermissionSnapshot):
+        raise LifeChangeError('Life changes require a typed gain-permission snapshot')
+    allowed, suppressed = [], []
+    for event in events:
+        if event.payload.get('direction') == 'gain' and not permissions.allows_gain(event.affected_player):
+            suppressed.append(replace(event, payload={**event.payload, 'amount': 0}))
+        else:
+            allowed.append(event)
+    return tuple(allowed), tuple(suppressed)
+
+
 def prepare_life_change_batch(
     host: LifeChangeHost,
     requests: Sequence[LifeChangeRequest],
@@ -321,6 +335,7 @@ def prepare_life_change_batch(
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     require_all_selections: bool = True,
     batch_id: str | None = None,
+    gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
 ) -> PreparedLifeChangeBatch:
     """Resolve one simultaneous life batch without mutating state."""
 
@@ -329,7 +344,8 @@ def prepare_life_change_batch(
     event_ids = tuple(event.event_id for event in requested_events)
     if len(event_ids) != len(set(event_ids)):
         raise LifeChangeError("Life-change event IDs must be unique")
-    resolved_events = requested_events
+    allowed_events, suppressed_events = _permission_events(requested_events, gain_permissions)
+    resolved_events = allowed_events
     journal: tuple[ReplacementSelection, ...] = ()
     pending: ReplacementBatchChoice | None = None
     consumed = 0
@@ -339,12 +355,12 @@ def prepare_life_change_batch(
     )
     if not str(stable_batch_id or ""):
         raise LifeChangeError("Life-change batches require a stable ID")
-    if requested_events and effects:
+    if allowed_events and effects:
         try:
             progress = advance_replacement_batch(
                 ReplacementEventBatch(
                     batch_id=stable_batch_id,
-                    events=requested_events,
+                    events=allowed_events,
                     apnap_order=tuple(host.apnap_order()),
                 ),
                 effects,
@@ -361,6 +377,10 @@ def prepare_life_change_batch(
         raise LifeChangeError(
             "Replacement selections were supplied without a life change"
         )
+    # Suppressed audit results are not eligible replacement events and must
+    # not change a pending choice's containing-batch identity.
+    if pending is None:
+        resolved_events = (*suppressed_events, *resolved_events)
     records = () if pending is not None else tuple(
         _record(event) for event in resolved_events
     )
@@ -375,6 +395,7 @@ def prepare_life_change_batch(
         records=records,
         pending=pending,
         consumed_selections=consumed,
+        gain_permissions=gain_permissions,
     )
 
 
@@ -384,6 +405,8 @@ def validate_life_change_batch(
 ) -> None:
     if not isinstance(prepared, PreparedLifeChangeBatch):
         raise LifeChangeError("Life commits require a typed prepared batch")
+    if not isinstance(prepared.gain_permissions, LifeGainPermissionSnapshot):
+        raise LifeChangeError('Life changes require a typed gain-permission snapshot')
     if prepared.pending is not None:
         raise LifeChangeError(
             "Life changes cannot commit with a pending replacement choice"
@@ -397,18 +420,25 @@ def validate_life_change_batch(
             raise LifeChangeError(str(exc)) from exc
         return
     try:
-        replayed = resolve_replacement_batch(
-            ReplacementEventBatch(
-                batch_id=prepared.batch_id,
-                events=prepared.requested_events,
-                apnap_order=tuple(host.apnap_order()),
-            ),
-            prepared.effects,
-            selections=prepared.journal,
-        )
+        allowed_events, suppressed_events = _permission_events(prepared.requested_events, prepared.gain_permissions)
+        if allowed_events:
+            replayed = resolve_replacement_batch(
+                ReplacementEventBatch(
+                    batch_id=prepared.batch_id,
+                    events=allowed_events,
+                    apnap_order=tuple(host.apnap_order()),
+                ),
+                prepared.effects,
+                selections=prepared.journal,
+            )
+            expected_events = replayed.events
+        else:
+            if prepared.journal:
+                raise LifeChangeError('A fully prohibited life batch has no replacement journal')
+            expected_events = ()
     except ReplacementEffectError as exc:
         raise LifeChangeError(str(exc)) from exc
-    if replayed.events != prepared.events:
+    if (*suppressed_events, *expected_events) != prepared.events:
         raise LifeChangeError("Life replacement journal changed before commit")
     try:
         validate_life_changes(host, prepared.plan)

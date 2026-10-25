@@ -16,7 +16,6 @@ from quorune.record import (
     checkpoint_envelope,
     replay_record,
 )
-from quorune.rules import capabilities as capabilities_module
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.rules.node_capability_shapes import fixed_scry_node_capabilities
 from quorune.semantics import SemanticProgram
@@ -119,9 +118,8 @@ class ScryCompilerTests(unittest.TestCase):
             )
 
         assert_exact()
-        with patch.object(
-            capabilities_module,
-            "fixed_scry_node_capabilities",
+        with patch(
+            "quorune.rules.effect_node_capabilities.fixed_scry_node_capabilities",
             return_value=(),
         ):
             with self.assertRaises(AssertionError):

@@ -2,7 +2,7 @@
 title: "CI pipeline and two-slot development"
 status: "current"
 authoritative_source: "GitHub workflows, platform/test-shards.json, and local gate scripts"
-verified: "2026-09-04"
+verified: "2026-10-20"
 audience: "contributors and maintainers"
 maintenance: "hand-maintained"
 ---
@@ -20,6 +20,20 @@ the elapsed critical path before changing the pipeline. Measure queue, setup,
 generation, and tests separately; overlapping jobs do not add to elapsed time,
 and workflow timestamps do not measure active development hours. Preserve the
 observation locally and compare the same workload after a change.
+
+Before freezing a consolidated batch, check its newly declared mutation witnesses
+and directly affected compiler grammar boundaries against the final owner set.
+A later owner can provide a complete alternate lowering when an earlier helper
+is removed. Mutation evidence must omit the actual semantic contribution while
+retaining an executable route, and independent native consequences must detect
+that omission. Preserve supported alternate admission and the nearest meaningful
+unsupported cases. Keep remaining broad regressions in public CI.
+
+Before correcting a failed attempt, inspect every failed job and the available
+output of started canceled jobs. Cancellation can leave real assertion failures
+in those logs. A missing log is not execution evidence: distinguish jobs with
+no runner and no steps from jobs whose output still needs inspection. Retain
+published attempts in elapsed-time observations.
 
 Refresh the manifest's launch order when observed shard durations change. Keep
 generated validation first and prioritize functional shards by the larger
@@ -135,6 +149,14 @@ across the observation window and keep generated governance first. Preserve
 primary assignments, semantic overlays, worker counts and concurrency budgets;
 fixed-duration scheduling estimates remain predictions until public runs confirm
 them.
+During failure diagnosis, complete module timings from a finished shard can
+also inform a provisional partition when every configured test ran and
+collection parity was enforced. Preserve the original result and its failure
+status; timing telemetry supplies no correctness or certification evidence.
+Account for the slower observed operating system where both results exist,
+identify missing observations, and validate the full inventory before publishing
+the partition for a fresh complete run. The ordinary rebalance command below
+continues to require successful Ubuntu artifacts.
 Simplifying labels or metadata is useful when it
 removes measured rework, but it must preserve the source and risk evidence
 those fields carry. Finish one measured improvement before combining unrelated
@@ -322,8 +344,13 @@ plan, compiler-identity sentinel and canonical semantic-transition policy
 validation before any census. The canonical mechanic-contract loader validates
 the pinned effective date, source hash and rule references without opening the
 card database. Changed Python text readers require explicit encoding so Windows
-code pages cannot turn valid UTF-8 data into a late matrix failure. When their
-owners are affected, the phase checks exact target-corpus carrier contracts and mutation patch-target
+code pages cannot turn valid UTF-8 data into a late matrix failure. Gate processes
+pass the exact selected paths as a JSON standard-input payload, keeping the
+Windows command line bounded.
+Explicit empty input validates no files; malformed or ambiguous selection
+fails closed. Human-facing `--base` and repeated `--changed-file` entry points
+remain available. When their owners are affected, the phase checks exact
+target-corpus carrier contracts and mutation patch-target
 integrity, including both source-bound paid spell bodies and the combined
 cycle/discard public-action boundary, hybrid face-down probes and reviewed
 legacy text alternatives. Shared quantity grammar changes select only the exact adjacent
@@ -528,6 +555,11 @@ receipts plus the transition-measurement receipt are content identities with no
 feature-commit field. They survive squash, so review, merge, and the next
 selector pass require neither a merge-commit association nor a bookkeeping
 follow-up.
+A prediction keeps its original measurement frontier when conservative main
+updates advance an unmerged delivery's outcome base. The producer recovers
+that exact frontier through validated non-harvest receipt links and checks its
+recorded blob hash and frontier fingerprint. Actual outcome deltas still use
+the current durable-main base; unavailable or inconsistent provenance fails closed.
 When a feature revises an unpublished non-harvest proposal, the history owner
 authenticates its prior receipt against the committed source checkpoint and
 walks its unpublished chain back to durable main. It supersedes only that
@@ -542,10 +574,11 @@ Implementation-eligible work always outranks a measurement in the same
 correctness class. Bundle selection reports shared owner, source-context,
 grammar, card, ability, residual, blocker-closure, and cycle-hour fields before
 ranking within the machine-readable correctness-first class order.
-The policy separately declares a 200-card pull-request delivery floor. Family
-probe thresholds remain diagnostic selection boundaries, while multiple
+The policy separately declares a 500-card pull-request delivery floor to
+amortize corpus generation and complete certification across a larger delivery.
+Family probe thresholds remain diagnostic selection boundaries, while multiple
 mechanics can accumulate on one delivery branch. `PR / Plan` uses immutable
-base/head Commander receipts to require at least 200 net capability-closed
+base/head Commander receipts to require at least 500 net capability-closed
 cards for a declared support harvest or a positive support delta. Overlapping
 families count once through the final corpus; support losses reduce the net
 gain. Ability counts, residual reductions and forecasts cannot substitute for
@@ -578,6 +611,11 @@ full corpus when the finalized inputs and outputs are identical.
 Before accepting either receipt or checkpoint push paths, the hook runs the
 existing changed-file text-I/O sentinel. A current generated receipt therefore
 cannot skip explicit-encoding validation for changed Python sources.
+
+Both ordinary receipt-based pushes and source checkpoints run the same cheap
+pre-corpus sentinels against the branch's main base. A current generated receipt
+cannot bypass explicit UTF-8 text-I/O, compiler-identity or source-policy checks.
+Source checkpoints still require a clean tracked worktree before the sentinels.
 
 The worktree readiness command installs and verifies the tracked pre-push hook.
 The hook-only installer remains available when repairing an existing setup:

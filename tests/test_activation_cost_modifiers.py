@@ -57,7 +57,7 @@ class ActivationCostModifierModelTests(unittest.TestCase):
     def test_modifier_grammar_and_handler_do_not_strip_unknown_qualifications(self):
         for text in ("Activated abilities of creatures you control cost {X} less to activate.",
                 "Activated abilities of creatures you control cost {G} less to activate.",
-                "Cycling abilities you activate cost {2} less to activate.",
+                "Cycling abilities your opponents activate cost {X} less to activate.",
                 "Activated abilities of other creatures you control cost {2} less to activate.",
                 "Activated abilities of creatures you control cost {2} less to activate. Draw a card."):
             self.assertIsNone(static_activation_cost_modifier_handler(text), text)
@@ -79,7 +79,7 @@ class ActivationCostModifierModelTests(unittest.TestCase):
                 zones=('battlefield',), types_all=('creature',)))
         self.assertEqual(spec, FixedActivationCostModifierSpec.from_dict(spec.to_dict()))
         for changes in ({'schema_version': True}, {'generic_adjustment': True},
-                {'generic_adjustment': 0}, {'minimum_mana': 2}, {'ability_scope': 'cycling'},
+                {'generic_adjustment': 0}, {'minimum_mana': 2}, {'ability_scope': 'loyalty'},
                 {'predicate': ObjectQuerySpec(zones=('graveyard',))},
                 {'predicate': ObjectQuerySpec(zones=('battlefield',), owner='A')}):
             with self.assertRaises(ValueError): replace(spec, **changes)

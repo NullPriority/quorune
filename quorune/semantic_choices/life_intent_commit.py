@@ -3,6 +3,7 @@ from ..errors import GameRuleError
 from ..life_change import prepare_life_change_batch,commit_life_change_batch,LifeChangeRequest,LifeChangeError
 from ..replacement import ReplacementChoiceRequired,ReplacementEventBatch
 from ..semantic_runtime.life_replacements import collect_life_change_replacement_effects
+from ..semantic_runtime.life_prohibitions import collect_life_gain_permissions
 from ..semantic_runtime.intents import LifeChangeIntent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..player_result_events import dispatch_life_gain_records
@@ -38,6 +39,7 @@ def apply_life_change_intent(host, intent: LifeChangeIntent) -> int:
                 ),
             ),
             effects=collect_life_change_replacement_effects(host),
+            gain_permissions=collect_life_gain_permissions(host),
             selections=intent.replacement_selections,
             require_all_selections=False,
             batch_id=(

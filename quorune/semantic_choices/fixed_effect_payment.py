@@ -3,6 +3,7 @@ from __future__ import annotations
 """Version-2 payload support for the existing registered payment choice."""
 
 from typing import Any, Mapping
+from dataclasses import replace
 
 from ..fixed_effect_payment import FixedEffectPaymentSpec
 from ..object_query import object_matches_query
@@ -39,7 +40,7 @@ def _validated(
         raise SemanticChoiceError(str(exc)) from exc
     if ('cost' in effect) != (spec.kind == 'mana') or spec.kind == 'mana' and dict(effect['cost']) != dict(spec.requirements):
         raise SemanticChoiceError('Fixed payment mana identity changed')
-    if spec.kind in {'discard','exile'} and spec.predicate.owner != actor or spec.kind in {'sacrifice','tap'} and spec.predicate.controller != actor:
+    if spec.kind in {'discard','exile','mana_discard'} and spec.predicate.owner != actor or spec.kind in {'sacrifice','tap'} and spec.predicate.controller != actor:
         raise SemanticChoiceError('Fixed payment object relation changed')
     effects = effect['effects']
     if not isinstance(effects, (tuple, list)) or not 1 <= len(effects) <= 4:
@@ -82,6 +83,15 @@ def prepare_fixed_payment_cost(
 ) -> SemanticChoicePreparation:
     """Publish the existing closed cost independently of its result branch."""
     actor = context.actor
+    if spec.kind=='mana_discard':
+        prepared=prepare_fixed_payment_cost(FixedEffectPaymentSpec('discard',predicate=spec.predicate),effect,context)
+        payable=context.query.cost_is_affordable(actor,spec.requirements) and prepared.request.public_context['payable']
+        choice=prepared.request.choice
+        if not payable:choice=replace(choice,maximum=0,legal_refs=())
+        request=replace(prepared.request,prompt='Pay the fixed mana and discard one card, or decline.',choice=choice,
+            public_context=FrozenMap({**dict(prepared.request.public_context),'payment_kind':'mana_discard',
+                'payable':payable,'cost':dict(spec.requirements)}))
+        return replace(prepared,request=request)
     legal = ()
     if spec.kind in {'discard', 'sacrifice', 'exile', 'tap'}:
         candidates = context.query.objects(
@@ -152,6 +162,8 @@ def complete_fixed_payment_cost(
     """Validate and commit one fixed cost through the canonical intent owner."""
     actor = effect['_choice_actor']
     label = effect['_stack_label']
+    if spec.kind=='mana_discard':
+        return _complete_mana_discard_cost(spec,effect,response,query)
     if spec.kind in {'discard', 'sacrifice', 'exile', 'tap'}:
         unknown = set(response) - {'cards', 'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}
         if unknown:
@@ -209,3 +221,15 @@ def complete_fixed_payment_cost(
                 details=FrozenMap({'cost': dict(spec.requirements)}),
             )
     return SemanticChoiceCompletion(intents=(intent,))
+
+
+def _complete_mana_discard_cost(spec,effect,response,query):
+    discard=complete_fixed_payment_cost(FixedEffectPaymentSpec('discard',predicate=spec.predicate),effect,response,query)
+    if not discard.intents:return discard
+    actor=effect['_choice_actor']
+    if not query.cost_is_affordable(actor,spec.requirements):
+        raise SemanticChoiceError('Combined mana/discard payment is no longer payable')
+    mana=PayManaCostIntent(actor=actor,player=actor,requirements=spec.requirements,reason=effect['_stack_label'],
+        event_code='effect.optional_mana.paid',message='Optional mana and discard cost paid.',
+        details=FrozenMap({'cost':dict(spec.requirements),'payment_kind':'mana_discard'}))
+    return SemanticChoiceCompletion(intents=(mana,*discard.intents))

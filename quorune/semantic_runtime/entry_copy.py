@@ -199,7 +199,7 @@ def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
     source=(prospective_objects or {}).get(subject.object_id) or host.state.cards.get(subject.object_id)
     if source is None or host.card_record(source) is None:return ()
     root_key=None
-    queue=[(source,root_key)];seen=set();effects={};forms={}
+    queue=[(source,root_key)];seen=set();effects={};forms={};counter_permissions={}
     copy_handlers={ENTRY_COPY_HANDLER,ENTRY_COPY_QUERY_HANDLER,ENTRY_COPY_VALUES_HANDLER,ENTRY_COPY_PREDICATE_HANDLER,CONDITIONAL_COPY_HANDLER}
     while queue:
         view,form_key=queue.pop(0)
@@ -228,4 +228,11 @@ def entry_copy_replacement_effects(host,subject,*,prospective_objects=None):
                         operations=(SetField('entry_copy_source',target.ref),SetField('entry_copy_form',next_key),SetField('entry_copy',values),SetField('object_types',types)),
                         decline_operations=(SetField('entry_copy_source','declined'),),optional=True,
                         label=f'{subject.object_ref}: enter as a copy of {target.ref}')
+                    from .counter_permissions import copied_entry_counter_permissions
+                    counter_permissions[effect_id] = copied_entry_counter_permissions(
+                        host, subject, _copy_form_view(source, values))
+    if subject.counter_permissions.rules or any(snapshot.rules for snapshot in counter_permissions.values()):
+        effects = {key: replace(effect, operations=(*effect.operations,
+            SetField('_counter_permissions', counter_permissions[key].to_dict())))
+            if key in counter_permissions else effect for key, effect in effects.items()}
     return tuple(effects.values())

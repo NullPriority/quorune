@@ -11,6 +11,7 @@ from .continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from .replacement.immutable import FrozenMap
+from .spell_mana_conditions import ManaSpentCondition
 
 
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
@@ -18,6 +19,8 @@ RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
 SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_same_target_self_replacement'
+PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_same_target_self_replacement'
+PUBLIC_SOURCE_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_source_self_replacement'
 CAST_FACT_CONDITION_CAPABILITY = 'resolution.effect.fixed_cast_fact'
 CAST_FACT_CONDITION_MECHANIC = 'fixed-cast-fact-condition'
 _DERIVED_RESULT_MECHANICS = frozenset({
@@ -60,6 +63,26 @@ def cast_fact_result_is_fixed(effects: Any, mechanic_ids: Any, *, allow_fixed_da
         else effect for effect in effects
     )
     return resolution_result_is_fixed(values, mechanic_ids)
+
+
+def public_replacement_result_is_fixed(effects, mechanic_ids):
+    values=tuple({key:value for key,value in effect.items() if key!='source'}
+        if effect.get('op')=='place_counters' and effect.get('source')=='$source' else effect for effect in effects)
+    return cast_fact_result_is_fixed(values,mechanic_ids,allow_targeted_damage_source=True)
+
+
+def public_source_replacement_result_is_fixed(effects,mechanic_ids,*,source_binding='$source'):
+    if any('source' in effect and effect['source']!=source_binding for effect in effects):return False
+    values=tuple({key:value for key,value in effect.items() if key!='source'}
+        if effect.get('op')=='mana' and effect.get('source')==source_binding else effect for effect in effects)
+    return cast_fact_result_is_fixed(values,mechanic_ids,allow_fixed_damage_source=True)
+
+
+def _self_replacement_result_is_fixed(effects,mechanic_ids,version,source_binding='$source'):
+    if version==8:return public_replacement_result_is_fixed(effects,mechanic_ids)
+    if version==9:return public_source_replacement_result_is_fixed(effects,mechanic_ids,source_binding=source_binding)
+    return cast_fact_result_is_fixed(effects,mechanic_ids,
+        allow_fixed_damage_source=version in {4,5},allow_targeted_damage_source=version==5)
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,15 +143,26 @@ def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> 
 
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
-) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition, tuple[Mapping[str, Any], ...]]:
+) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get('schema_version')==11:
+        from .kicked_target_replacement_model import validate_kicked_target_replacement_instruction
+        return validate_kicked_target_replacement_instruction(effect)
+    if effect.get('schema_version')==10:
+        from .kicked_target_model import validate_kicked_target_instruction
+        return validate_kicked_target_instruction(effect)
+    if effect.get('schema_version') in {6,7}:
+        from .spell_mana_conditions import validate_paid_mana_instruction
+        return validate_paid_mana_instruction(effect)
     expected_fields = {
         "op", "player", "condition", "effects",
         "mechanic_ids", "prefix_mechanic_ids",
     }
     cast_fact = effect.get('schema_version') in {2,4,5}
-    replacing=effect.get('schema_version') in {3,4,5}
+    replacing=effect.get('schema_version') in {3,4,5,8,9}
+    if effect.get('schema_version')==8:expected_fields|={'target_binding'}
+    if effect.get('schema_version')==9:expected_fields|={'source_binding'}
     if cast_fact:
         expected_fields |= {'schema_version', 'cast_fact'}
     if replacing:expected_fields|={'schema_version','otherwise_effects','otherwise_mechanic_ids'}
@@ -138,6 +172,14 @@ def validate_resolution_condition_instruction(
         or effect.get("op") != RESOLUTION_CONDITION_OPERATION
     ):
         raise ValueError("Resolution condition instructions have a closed schema")
+    if effect.get('schema_version')==8:
+        from .public_replacement_model import public_target_binding_closed
+        if not public_target_binding_closed(effect['target_binding']):
+            raise ValueError('Public self-replacement requires one complete unchanged public target binding')
+    if effect.get('schema_version')==9:
+        binding=effect['source_binding']
+        if type(binding) is not str or not binding or binding.startswith('$') and binding!='$source':
+            raise ValueError('Public source result requires its current bound spell source')
     if type(effect.get("player")) is not str or not effect["player"]:
         raise ValueError("Resolution conditions require a controller binding")
     for name in ("mechanic_ids", "prefix_mechanic_ids", *(('otherwise_mechanic_ids',) if replacing else ())):
@@ -169,8 +211,9 @@ def validate_resolution_condition_instruction(
         for value in nested
     ):
         raise ValueError("Resolution conditions require a bounded nonnested effect program")
-    if not (cast_fact_result_is_fixed(nested, effect["mechanic_ids"],allow_fixed_damage_source=effect.get('schema_version') in {4,5},
-            allow_targeted_damage_source=effect.get('schema_version')==5) if cast_fact or replacing else resolution_result_is_fixed(nested, effect["mechanic_ids"])):
+    fixed=(_self_replacement_result_is_fixed(nested,effect['mechanic_ids'],effect.get('schema_version'),effect.get('source_binding','$source'))
+        if cast_fact or replacing else resolution_result_is_fixed(nested,effect['mechanic_ids']))
+    if not fixed:
         raise ValueError("Derived or source-relative results require a separate binding and timing boundary")
     if replacing:
         if type(effect['schema_version']) is not int:raise ValueError('Self-replacement version must be an exact integer')
@@ -182,7 +225,6 @@ def _validate_otherwise_program(effect):
     values=effect['otherwise_effects']
     if (not isinstance(values,(list,tuple)) or not 1<=len(values)<=8
             or any(not isinstance(child,Mapping) or child.get('op')==RESOLUTION_CONDITION_OPERATION for child in values)
-            or not cast_fact_result_is_fixed(values,effect['otherwise_mechanic_ids'],allow_fixed_damage_source=effect.get('schema_version') in {4,5},
-                allow_targeted_damage_source=effect.get('schema_version')==5)
+            or not _self_replacement_result_is_fixed(values,effect['otherwise_mechanic_ids'],effect.get('schema_version'),effect.get('source_binding','$source'))
             or 'fixed-next-turn-upkeep-draw' in effect['otherwise_mechanic_ids']):
         raise ValueError('Self-replacement default program is malformed or unrepresented')

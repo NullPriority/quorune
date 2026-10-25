@@ -12,6 +12,7 @@ from ..library_search_model import FixedCountedLibrarySearchTemplate
 from ..semantic_runtime import SemanticNodeError, default_semantic_interpreter
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
+    AutoContinue,
     ScalarChoice,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
@@ -187,6 +188,9 @@ class OptionalEffectHandler:
             actor=context.actor,
             query=context.query,
         )
+        if _prohibited_optional_library_search(effects,player,context.query):
+            return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue(reason='The optional library search cannot be chosen'))
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
                 prompt="Apply the optional effect?",
@@ -229,9 +233,17 @@ class OptionalEffectHandler:
         choice = response.get("choice")
         if type(choice) is not str or choice not in {"apply", "decline"}:
             raise SemanticChoiceError("Choose apply or decline")
+        if choice=='apply' and _prohibited_optional_library_search(effects,actor,query):raise SemanticChoiceError('The optional library search cannot be chosen')
         return SemanticChoiceCompletion(
             prepend_effects=effects if choice == "apply" else ()
         )
+
+
+def _prohibited_optional_library_search(effects,player,query):
+    if len(effects)!=1 or effects[0].get('op')!='search':return False
+    zone=effects[0].get('zone','library')
+    if zone!='library' and zone!=('library',) and zone!=['library']:return False
+    return not query.library_search_allowed(effects[0].get('searching_player') or player)
 
 
 OPTIONAL_EFFECT_CHOICE_HANDLERS = (OptionalEffectHandler(),)

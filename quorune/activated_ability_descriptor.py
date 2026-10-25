@@ -48,7 +48,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {"mana_cost_options", "source_counter_removal_cost", "power_up", "fixed_mana_result", "random_discard_payment", "waterbend", "announced_x_symbols", "boast"}
+    {"announced_x_symbols", "boast", "fixed_mana_result", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -85,6 +85,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError("activated abilities use a closed schema")
     if value["schema_version"] != 1:
         raise ValueError("unsupported activated ability schema version")
+    if 'reconfigure' in value and value['reconfigure'] is not True:
+        raise ValueError('Optional Reconfigure marker must be true')
     if 'announced_x_symbols' in value and (type(value['announced_x_symbols']) is not int or value['announced_x_symbols'] <= 0):
         raise ValueError('Announced X symbol count must be a positive integer')
     if 'boast' in value and value['boast'] is not True:raise ValueError('Optional Boast marker must be true')

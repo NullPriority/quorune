@@ -487,7 +487,7 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
             "Lantern Bearer // Lanterns' Lift", 'Beloved Beggar // Generous Soul',
             'Galedrifter // Waildrifter', 'Baithook Angler // Hook-Haunt Drifter',
             'Gutter Skulker // Gutter Shortcut', "Kindly Ancestor // Ancestor's Embrace",
-            'Chaplain of Alms // Chapel Shieldgeist'}
+            'Chaplain of Alms // Chapel Shieldgeist',"Katilda, Dawnhart Martyr // Katilda's Rising Dawn"}
         for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if 'Disturb' not in raw['keywords']:
                 continue

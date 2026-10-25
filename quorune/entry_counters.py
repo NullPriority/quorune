@@ -77,6 +77,11 @@ def dynamic_entry_counter_amount(
         value = int(item.x_value or 0) if item is not None else 0
     elif source is DynamicEntryCounterValueSource.MANA_COLORS_SPENT:
         value = len(tuple(mana_colors_spent)) if was_cast else 0
+    elif source is DynamicEntryCounterValueSource.MANA_OF_COLOR_SPENT:
+        fact=getattr(item,'mana_spent_counts',None) if was_cast and card.zone=='stack' else None
+        if was_cast and card.zone=='stack' and fact is None:
+            raise EntryCounterError('Paid-color entry requires actual mana-unit payment provenance')
+        value=fact.count_for(card,amount_spec.mana_color) if fact is not None else 0
     elif source is DynamicEntryCounterValueSource.CAST_FROM_HAND:
         value = int(
             was_cast and item.context.get("cast_origin") == "hand"

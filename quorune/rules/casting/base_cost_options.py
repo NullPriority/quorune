@@ -7,6 +7,8 @@ from collections.abc import Mapping, Sequence
 from typing import Any, TYPE_CHECKING
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec, compiled_ordinary_zone_cast_permission
 from .lifecycle_costs import retrace_base_options, zone_lifecycle_base_options
+from ..self_graveyard_discard import self_graveyard_discard_base_options
+from ..graveyard_cast_costs import paid_graveyard_base_options
 
 
 if TYPE_CHECKING:
@@ -63,10 +65,12 @@ def _zone_cast_base_options(
         suppress_source_costs=suppress_source_costs,
     )
     from ...preparation import preparation_cast_permission
+    from ...adventure import adventure_cast_permission
     if (
         card.zone == "exile"
         and not compiled_ordinary_zone_cast_permission(host, seat, card)
         and not preparation_cast_permission(host,seat,card)
+        and not adventure_cast_permission(host,seat,card)
         and not force_without_mana_cost
         and alternative_base is None
     ):
@@ -77,6 +81,8 @@ def _zone_cast_base_options(
         "suppress_source_costs": suppress_source_costs,
     }
     base.extend(retrace_base_options(host, card, printed, **common))
+    base.extend(self_graveyard_discard_base_options(host,seat,card,printed,**common))
+    base.extend(paid_graveyard_base_options(host,seat,card,printed,**common))
     base.extend(
         zone_lifecycle_base_options(host, seat, card, printed, **common)
     )

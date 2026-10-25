@@ -80,6 +80,15 @@ Combat snapshots freeze the relevant public relationships and effective
 characteristics before a pilot decision is issued. Assignment validation owns
 legal recipients, totals, canonical source and recipient order, lethal
 thresholds, and trample spill. Client JSON order is never authoritative.
+Current ordinary Banding changes the assignment actor under CR 702.22j/k.
+A blocker with Banding lets the defending player assign its attacker's damage;
+an attacker with Banding lets the active player assign damage from its blockers.
+This applies without a declared attack band. Each damage step derives that
+actor from the current typed participant graph. An explicit chooser override
+preserves the damage source's actual controller for lifelink and other damage
+consequences. The APNAP sequence collects proposals from these assignment
+actors, and Trample still requires lethal assignment before spill. Empty
+chooser and band extensions preserve historical proposal identities and wire.
 Typed as-unblocked permission adds one optional all-recipient assignment to
 that same proposal. Ordinary assignment remains legal, and Trample retains
 its lethal-before-spill route. Choosing the permission changes assignment
@@ -144,6 +153,23 @@ typed plans with marked-damage and deathtouch state, but no longer owns a
 parallel generic counter-state commit. Every owner validates before the first
 write, so a malformed event or stale logical incarnation leaves the complete
 life, placement, removal, and permanent-result batch unchanged.
+
+The life and damage planners share an immutable gain-permission snapshot.
+Current trusted battlefield abilities supply global or opponent prohibitions,
+including their current controller and layer-6 applicability. Prohibited gains
+are excluded before life-gain replacement processing; lifelink cannot create a
+gain result for a prohibited player. Ordinary life changes retain a zero
+resolved audit result without dispatching a gain occurrence. Life loss and
+life payments retain their separate rules. Each damage step collects its own
+current snapshot, while simultaneous damage results use the same precommit
+permission facts.
+
+Static unpreventability uses the existing authoritative damage flag. Current
+ambient rules are collected when damage is prepared; a source's own rule is
+sealed into its existing source-scope facts, including last-known snapshots.
+Typed component markers determine current applicability and ability loss.
+Prevention still applies once to flagged damage, preserving fixed additional
+consequences while preventing zero damage and retaining shield amounts.
 
 State-based actions consume temporal damage markers according to their own
 owner. Damage code does not perform unrelated state-based checks or bypass

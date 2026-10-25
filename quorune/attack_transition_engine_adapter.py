@@ -216,6 +216,7 @@ def commit_engine_attack_declaration(
     *,
     controller: str,
     chosen: Sequence[tuple[Any, Mapping[str, str]]],
+    bands: tuple = (),
 ) -> tuple[AttackDeclarationAssignment, ...]:
     """Adapt validated card/recipient pairs to the relationship owner."""
 
@@ -235,6 +236,7 @@ def commit_engine_attack_declaration(
             engine.state.cards,
             controller=controller,
             assignments=assignments,
+            bands=bands,
         )
     except CombatRelationshipStateError as exc:
         raise StateInvariantError(str(exc)) from exc

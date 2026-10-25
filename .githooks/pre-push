@@ -37,8 +37,14 @@ if [ -n "${QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON:-}" ]; then
         echo "Quorune pre-push: cloud source checkpoints require a clean tracked worktree so validation matches the pushed commit." >&2
         exit 1
     fi
-    "$PYTHON" "$ROOT/scripts/quick_gate.py" \
+fi
+
+# Both publication routes must pass the same cheap, full-branch source checks.
+# A current generated receipt cannot stand in for explicit text-I/O validation.
+"$PYTHON" "$ROOT/scripts/quick_gate.py" \
         --phase pre-corpus --base origin/main
+
+if [ -n "${QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON:-}" ]; then
     echo "Quorune pre-push: authorized cloud source checkpoint: $QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON"
     exit 0
 fi

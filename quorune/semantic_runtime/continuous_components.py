@@ -30,6 +30,7 @@ from ..leveler_bands import (
     LevelerBandsSpec,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..object_query_union import bind_receiver_union_source, validate_receiver_union_template
 from ..counter_names import normalized_counter_name
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap
@@ -212,7 +213,7 @@ def _fixed_query_effect_predicate(
     """Bind one validated controller relation to a canonical live query."""
 
     return replace(
-        predicate,
+        bind_receiver_union_source(predicate, context.source_ref),
         zones=("battlefield",),
         owner=context.source_controller if target_controller=='source_owner' else None,
         controller=(
@@ -442,6 +443,7 @@ class FixedQueryPowerToughnessAnthemHandler:
             )
         try:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+            validate_receiver_union_template(predicate)
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
@@ -465,6 +467,10 @@ class FixedQueryPowerToughnessAnthemHandler:
             or (not predicate.types_all and (predicate.subtypes_all or predicate.subtypes_any)
                 and all(canonical_creature_subtype(value) == value
                         for value in (*predicate.subtypes_all, *predicate.subtypes_any)))
+            or (predicate.any_of and all(
+                'creature' in part.types_all or (not part.types_all and part.subtypes_all
+                    and all(canonical_creature_subtype(value) == value for value in part.subtypes_all))
+                for part in predicate.any_of))
         ):
             raise SemanticNodeError(
                 "fixed query anthem requires creatures or a canonical creature-subtype set"
@@ -720,6 +726,7 @@ class FixedQueryAbilityGrantHandler:
             )
         try:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+            validate_receiver_union_template(predicate)
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
@@ -911,6 +918,7 @@ class FixedQueryKeywordGrantHandler:
             )
         try:
             predicate = ObjectQuerySpec.from_dict(condition["predicate"])
+            validate_receiver_union_template(predicate)
         except ObjectQueryError as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (condition['target_controller']=='source_owner' or predicate.commander is not None) and (predicate.commander is not True or predicate.types_all!=('creature',) or condition['target_controller'] not in {'source_owner','source_controller'}):
@@ -1365,7 +1373,8 @@ class ContinuousEffectComponentRegistry(
         handler = self._handlers.get(str(descriptor.get('handler_id') or ''))
         if handler is None:
             return Layer.ABILITY
-        layer = getattr(handler, 'source_component_layer', Layer.ABILITY)
+        descriptor_layer=getattr(handler,'descriptor_source_component_layer',None)
+        layer=descriptor_layer(descriptor) if descriptor_layer is not None else getattr(handler, 'source_component_layer', Layer.ABILITY)
         if not isinstance(layer, Layer):
             raise SemanticNodeError('Continuous source participation requires a typed layer')
         if layer < Layer.ABILITY:
@@ -1392,9 +1401,12 @@ def default_continuous_effect_component_registry(
     from .chosen_characteristics import ChosenCharacteristicsHandler
     from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
     from .attached_continuous import AttachedFixedCharacteristicsHandler
+    from .chosen_aura_protection import SourceChosenAuraProtectionHandler
     from .soulbond import SoulbondPairedGrantHandler
     from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
     from .attached_control import AttachedControlHandler
+    from .quantified_anthems import QuantifiedAnthemHandler
+    from .recipient_anthems import RecipientAnthemHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
@@ -1440,11 +1452,14 @@ def default_continuous_effect_component_registry(
             GraveyardStaticCharacteristicsHandler(),
             ConditionalTypedKeywordHandler(),
             AttachedFixedCharacteristicsHandler(),
+            SourceChosenAuraProtectionHandler(),
             SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
             ConditionalCharacteristicSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),
+            QuantifiedAnthemHandler(),
+            RecipientAnthemHandler(),
         )
     )
     registry.require_registered_capabilities(

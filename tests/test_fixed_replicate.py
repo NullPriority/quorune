@@ -266,7 +266,7 @@ class FixedReplicateRuntimeTests(unittest.TestCase):
 
     def test_original_replicate_cards_require_complete_normal_admission(self):
         expected = {'Lose Focus', 'Super Combo', 'Train of Thought', 'Pyromatics', 'Gigadrowse',
-            'Leap of Flame', 'Vacuumelt', 'Shattering Spree'}
+            'Leap of Flame', 'Vacuumelt', 'Shattering Spree','Consign to Memory'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']
             if 'Replicate' in r.get('keywords', ())]
         self.assertEqual(19, len(rows))

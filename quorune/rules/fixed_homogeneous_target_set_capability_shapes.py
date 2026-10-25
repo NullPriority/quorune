@@ -203,6 +203,12 @@ def announced_target_set_node_capabilities(
 def announced_target_runtime_dependencies(program: Any) -> tuple[str, ...]:
     """Require the new authority even if a producer omits its annotation."""
     schema = getattr(program, "target_schema", None)
+    parameter = schema.get('count_parameter') if isinstance(schema,Mapping) else None
+    if isinstance(parameter,Mapping) and parameter.get('parameter')=='any_number':
+        from .any_number_target_shapes import any_number_target_node_capabilities
+        owned=any_number_target_node_capabilities(effects=program.effects,target_schema=schema,mechanic_ids=program.coverage)
+        if not owned:raise ValueError('Any-number target result or schema is malformed')
+        return owned
     parameterized = isinstance(schema, Mapping) and "count_parameter" in schema
     effects = tuple(effect for effect in program.effects if effect.get("op") in _OPERATION_CAPABILITIES
         and ("announced_target_count" in effect or isinstance(effect.get("maximum_targets"), Mapping)))

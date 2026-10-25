@@ -83,6 +83,26 @@ display row as targets change and flags an absent payable combination. This
 metadata grants no command fields; clients submit the ordinary cost option,
 targets and modes, and the server determines the actual total cost again.
 
+A casting cost option may include `additional_life` alongside its mana
+requirements and display label. This is the exact optional life amount for that
+offered price. Clients select its ordinary `cost_option` identifier; they never
+submit a life discount, amount or source identity. The server recomputes and
+commits the selected price through the normal casting transaction.
+
+An optional source-granted casting price includes `permission_source`, the
+public battlefield reference whose allowance the price uses. Its label names
+that source. Clients select the ordinary opaque `cost_option` identifier and
+submit no permission, quota or source-binding fields. An independently payable
+normal price can preserve the allowance for a later cast. The server checks
+the current source, timing, origin, spell characteristics and remaining use.
+
+A source-granted land play uses the existing opaque `land_play_permission`
+identifier and the same public `permission_source` reference. When independent
+and source-backed routes differ, they are separate offered land actions with
+source-labelled text. Clients submit the offered action normally; no source
+binding or history data is accepted from them. The source allowance and the
+ordinary numeric land allowance are separate requirements.
+
 Prepared battlefield objects project `prepared: true`; ordinary objects omit
 the field. Their inset spell copies are public exile objects with their own
 references and inset characteristics. Casting actions appear only for the
@@ -112,6 +132,14 @@ regeneration shields exist. The omitted value means zero. It is projection of
 authoritative logical-object state, not a client-side effect prediction.
 
 ## Actions and choice forms
+
+Casting actions with an intrinsic next-cleanup timing consequence expose
+`timing_permission` through their issued choice form when that choice matters.
+The `intrinsic` value uses the card's timing permission and creates its cleanup
+consequence; `normal` uses an independent permission. The server supplies legal
+values and labels, selects an available independent permission by default, and
+revalidates the choice with the ordinary cost, target, origin and casting
+prohibition checks. This field does not select or replace a mana-cost option.
 
 Legal actions contain stable action IDs and may contain a versioned JSON choice
 form. The same adapter that projects a form defines the accepted choice-field

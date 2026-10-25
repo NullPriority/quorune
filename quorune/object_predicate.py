@@ -48,6 +48,7 @@ _DESIGNATION_QUERY_FIELDS = _NEGATIVE_KEYWORD_QUERY_FIELDS | {"commander"}
 _NUMERIC_QUERY_FIELDS = _DESIGNATION_QUERY_FIELDS | {"numeric_characteristic"}
 _SUPERTYPE_EXCLUSION_QUERY_FIELDS = _NUMERIC_QUERY_FIELDS | {"excluded_supertypes"}
 _COLOR_EXCLUSION_QUERY_FIELDS = _SUPERTYPE_EXCLUSION_QUERY_FIELDS | {"colors_none"}
+_RECEIVER_UNION_QUERY_FIELDS = _COLOR_EXCLUSION_QUERY_FIELDS | {"any_of"}
 NEGATIVE_COLOR_QUERY_CAPABILITY = "state_query.permanent.negative_color"
 _LEGACY_PERMANENT_STATE_FIELDS = frozenset(
     {
@@ -351,6 +352,7 @@ class ObjectQuerySpec:
     numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     excluded_supertypes: tuple[str, ...] = ()
     colors_none: tuple[str, ...] = ()
+    any_of: tuple[ObjectQuerySpec, ...] = ()
     _serialization_version: int = field(
         default=2,
         repr=False,
@@ -491,6 +493,12 @@ class ObjectQuerySpec:
             raise ObjectQueryError(
                 "Extended object predicates require serialization version 3"
             )
+        if self.any_of:
+            from .object_query_union import validate_receiver_union
+            object.__setattr__(self, 'any_of', validate_receiver_union(self))
+            object.__setattr__(self, '_serialization_version', 9)
+        elif not isinstance(self.any_of, tuple):
+            raise ObjectQueryError('Empty receiver union branches must be a tuple')
 
     def canonical_dict(self) -> dict[str, Any]:
         """Return the complete current semantic descriptor."""
@@ -554,6 +562,8 @@ class ObjectQuerySpec:
                 value['excluded_supertypes'] = list(self.excluded_supertypes)
             if self._serialization_version == 9:
                 value['colors_none'] = list(self.colors_none)
+        if self.any_of:
+            value['any_of'] = [part.to_dict() for part in self.any_of]
         return value
 
     def to_dict(self) -> dict[str, Any]:
@@ -568,6 +578,14 @@ class ObjectQuerySpec:
     def from_dict(cls, value: Mapping[str, Any]) -> "ObjectQuerySpec":
         if not isinstance(value, Mapping):
             raise ObjectQueryError("Object query must be an object")
+        if 'any_of' in value and (
+            not isinstance(value['any_of'], (list, tuple))
+            or not 2 <= len(value['any_of']) <= 4
+        ):
+            raise ObjectQueryError('Receiver unions require two through four flat branches')
+        if 'any_of' in value:
+            from .object_query_union import validate_receiver_union_wire
+            validate_receiver_union_wire(value)
         actual = frozenset(value)
         if actual not in {
             _QUERY_FIELDS,
@@ -579,6 +597,7 @@ class ObjectQuerySpec:
             _NUMERIC_QUERY_FIELDS,
             _SUPERTYPE_EXCLUSION_QUERY_FIELDS,
             _COLOR_EXCLUSION_QUERY_FIELDS,
+            _RECEIVER_UNION_QUERY_FIELDS,
         }:
             expected = (
                 _DESIGNATION_QUERY_FIELDS
@@ -645,9 +664,11 @@ class ObjectQuerySpec:
             exclude_ref=value["exclude_ref"],
             state_predicate=state_predicate,
             numeric_characteristic=numeric,
+            any_of=tuple(cls.from_dict(part) for part in value['any_of']) if 'any_of' in value else (),
             _serialization_version=(
                 9
                 if actual == _COLOR_EXCLUSION_QUERY_FIELDS
+                or actual == _RECEIVER_UNION_QUERY_FIELDS
                 else 8
                 if actual == _SUPERTYPE_EXCLUSION_QUERY_FIELDS
                 else 7
@@ -706,6 +727,7 @@ def validate_chosen_damage_source_predicate(
         or spec.keywords_none
         or spec.excluded_supertypes
         or spec.colors_none
+        or spec.any_of
     ):
         raise ObjectQueryError(
             "Chosen damage sources do not support extended public predicates"
@@ -726,7 +748,9 @@ def object_query_capabilities(value: Any) -> tuple[str, ...]:
     if isinstance(value, PermanentStatePredicateSpec):
         return (ANY_COUNTER_QUERY_CAPABILITY,) if value.minimum_total_counter_count is not None else ()
     if isinstance(value, ObjectQuerySpec):
+        from .object_query_union import RECEIVER_UNION_CAPABILITY
         return tuple(sorted({*((NEGATIVE_COLOR_QUERY_CAPABILITY,) if value.colors_none else ()),
+            *((RECEIVER_UNION_CAPABILITY,) if value.any_of else ()),
             *object_query_capabilities(value.state_predicate)}))
     if isinstance(value, Mapping):
         own = (COUNTER_TOTAL_CAPABILITY,) if value.get('reduction') == 'total_counters' else ()
@@ -736,6 +760,10 @@ def object_query_capabilities(value: Any) -> tuple[str, ...]:
         if frozenset(value) == _COLOR_EXCLUSION_QUERY_FIELDS:
             query = ObjectQuerySpec.from_dict(value)
             own = (NEGATIVE_COLOR_QUERY_CAPABILITY,) if query.colors_none else ()
+        if frozenset(value) == _RECEIVER_UNION_QUERY_FIELDS:
+            from .object_query_union import RECEIVER_UNION_CAPABILITY
+            query = ObjectQuerySpec.from_dict(value)
+            own = (RECEIVER_UNION_CAPABILITY,) if query.any_of else ()
         return tuple(sorted({*own, *(cap for child in value.values()
             for cap in object_query_capabilities(child))}))
     if isinstance(value, (tuple, list)):

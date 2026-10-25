@@ -18,6 +18,10 @@ from ..self_cast_reductions import (
     SelfSpellCostReductionSpec,
     SelfSpellCostReductionTerm,
 )
+from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
+from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
+from ..rules.self_cost_numeric_counts import self_cost_numeric_count_dependencies
+from ..target_numeric import TargetNumericCharacteristic, TargetNumericCharacteristicSpec, TargetNumericComparison
 from ..semantic_runtime.cast_costs import (
     FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,
     FIXED_SPELL_COST_REDUCTION_EVENT,
@@ -445,13 +449,30 @@ def _scalar_count_metric(normalized: str) -> CastReductionMetric | None:
     return CastReductionMetric(kind=kind, schema_version=1 if kind is CastReductionMetricKind.OPPONENT_COUNT else 2)
 
 
+def _numeric_creature_count_metric(value: str) -> CastReductionMetric | None:
+    match = re.fullmatch(r'creature you control with (?P<stat>power|toughness) (?P<amount>[0-9]+) or (?P<bound>greater|less)', value)
+    if match is None:
+        return None
+    predicate = TargetNumericCharacteristicSpec(TargetNumericCharacteristic(match['stat']),
+        TargetNumericComparison.AT_LEAST if match['bound'] == 'greater' else TargetNumericComparison.AT_MOST,
+        int(match['amount']))
+    return CastReductionMetric(kind=CastReductionMetricKind.OBJECT_COUNT,
+        queries=(CastReductionObjectQuery(CastReductionQueryScope.CONTROLLER_ZONE,
+            ObjectQuerySpec(zones=('battlefield',), types_all=('creature',), numeric_characteristic=predicate)),))
+
+
 def _object_count_metric(value: str) -> CastReductionMetric | None:
     normalized = " ".join(value.casefold().split())
-    scalar = _scalar_count_metric(normalized)
+    if normalized == 'counter among players and permanents':
+        return CastReductionMetric(kind=CastReductionMetricKind.PUBLIC_COUNTER_TOTAL, schema_version=2)
+    scalar = _scalar_count_metric(normalized) or _numeric_creature_count_metric(normalized)
     if scalar is not None:
         return scalar
     queries: list[CastReductionObjectQuery] = []
     turn_value = {
+        "creature that died this turn": CastReductionTurnFact.CREATURE_DEATH_COUNT,
+        "spell your opponents have cast this turn": CastReductionTurnFact.OPPONENT_SPELL_CAST_COUNT,
+        "card you've drawn this turn": CastReductionTurnFact.CONTROLLER_CARD_DRAW_COUNT,
         "card you've cycled or discarded this turn": (
             CastReductionTurnFact.CONTROLLER_DISCARDED_COUNT
         ),
@@ -708,6 +729,9 @@ def self_spell_cost_reduction_handler(
             if metric is None:
                 return None
             specification = SelfSpellCostReductionSpec((_term(reduction, metric),))
+    counted_dependencies = (*self_cost_turn_count_dependencies(specification.to_dict()),
+                            *self_cost_public_counter_dependencies(specification.to_dict()),
+                            *self_cost_numeric_count_dependencies(specification.to_dict()))
     return (
         "self-spell-cost-public-reduction-v1",
         {
@@ -716,7 +740,8 @@ def self_spell_cost_reduction_handler(
             "event": FIXED_SPELL_COST_REDUCTION_EVENT,
             "reduction": specification.to_dict(),
         },
-        SELF_SPELL_COST_REDUCTION_CAPABILITY_ID,
+        ((SELF_SPELL_COST_REDUCTION_CAPABILITY_ID, *counted_dependencies)
+         if counted_dependencies else SELF_SPELL_COST_REDUCTION_CAPABILITY_ID),
     )
 
 
@@ -832,7 +857,8 @@ def static_fixed_spell_cost_reduction_handler(
 ) -> CastCostModifierTemplate | None:
     """Lower one public fixed-generic modifier through the shared schema."""
 
-    unconditional = _unconditional_spell_cost_reduction_handler(text)
+    from .optional_life_costs import optional_life_color_reduction_template
+    unconditional = optional_life_color_reduction_template(text) or _unconditional_spell_cost_reduction_handler(text)
     if unconditional is not None:
         return unconditional
     from .public_state_queries import fixed_public_state_parts

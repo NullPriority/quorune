@@ -100,6 +100,22 @@ def _public_query(
     return query, None
 
 
+def _keyword_before_stat_grant(oracle_line: str) -> str:
+    """Reorder one whole result before the existing closed keyword validator."""
+    body = _until_end_of_turn_body(oracle_line)
+    match = _PUBLIC_CREATURE_SET.fullmatch(body or '')
+    if match is None or match['verb'].casefold() not in {'gain', 'gains'}:
+        return oracle_line
+    parts = re.fullmatch(
+        r'(?P<keywords>.+?) and gets? (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)',
+        match['result'], re.I,
+    )
+    if parts is None:
+        return oracle_line
+    return (match['subject']+' get '+parts['power']+'/'+parts['toughness']+' and gain '
+            +parts['keywords']+' until end of turn.')
+
+
 def fixed_public_characteristic_set_effect_template(
     oracle_line: str,
 ) -> tuple[
@@ -110,6 +126,7 @@ def fixed_public_characteristic_set_effect_template(
 ] | None:
     """Lower one closed creature/subtype set and lock it at resolution."""
 
+    oracle_line = _keyword_before_stat_grant(oracle_line)
     controlled = controlled_characteristic_until_end_of_turn_effect(oracle_line)
     if controlled is not None:
         template_id, effects, mechanics = controlled

@@ -25,6 +25,7 @@ from .semantic_runtime.action_permissions import (
     land_play_permission_options,
     library_top_visibility,
 )
+from .semantic_runtime.hand_visibility import hand_is_public
 from .record import (
     authoritative_state_hash,
     capability_id,
@@ -83,6 +84,7 @@ def _state_projector(
         library_top_visibility_resolver=lambda owner, viewer: (
             library_top_visibility(engine, owner, viewer or "") is not None
         ),
+        hand_visibility_resolver=lambda owner: hand_is_public(engine, owner),
         land_play_count_resolver=lambda seat: len(
             land_play_permission_options(engine, seat)
         ),

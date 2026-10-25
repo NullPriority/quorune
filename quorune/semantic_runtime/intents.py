@@ -3,6 +3,9 @@ from ..city_blessing_model import AscendIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..random_discard import RandomDiscardIntent
+from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
+from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..library_search_model import ProhibitLibrarySearchIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
@@ -934,8 +937,8 @@ class PayManaCostIntent:
 class PlaceCountersIntent:
     actor: str
     object_refs: tuple[str, ...]
-    counter_name: str
-    amount: int | Literal["existing_named_counter_count"]
+    counter_name: str | None
+    amount: int | Literal["existing_named_counter_count","existing_all_counter_counts"]
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
@@ -1128,7 +1131,7 @@ class PlaceCountersOnTargetsIntent:
     object_refs: tuple[str, ...]
     maximum_targets: int
     counter_name: str
-    amount: int
+    amount: int | Literal["existing_named_counter_count"]
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
@@ -1157,7 +1160,7 @@ class PlaceCountersOnTargetsIntent:
             raise ValueError(
                 "Counter-target intents require unique refs within a positive maximum"
             )
-        if type(self.amount) is not int or self.amount <= 0:
+        if self.amount != "existing_named_counter_count" and (type(self.amount) is not int or self.amount <= 0):
             raise ValueError(
                 "Counter-target intent amount must be a positive exact integer"
             )
@@ -1622,6 +1625,9 @@ SemanticIntent: TypeAlias = (
     | DomainEffectIntent
     | DiscardWholeHandsIntent
     | RandomDiscardIntent
+    | RandomGraveyardReturnIntent
+    | TemporaryCastRestrictionIntent
+    | ProhibitLibrarySearchIntent
     | AscendIntent
 )
 ResultShape: TypeAlias = Literal["single", "by_player"]

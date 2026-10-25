@@ -41,7 +41,7 @@ _DRAW_REVEAL_LINKED_DRAW = re.compile(
     re.IGNORECASE,
 )
 _TRIGGER_ABILITY_WORD = re.compile(
-    r"^[A-Za-z][A-Za-z0-9 '’!?-]+\s+[—-]\s+"
+    r"^[A-Za-z0-9][A-Za-z0-9, '’!?-]+\s+[—-]\s+"
     r"(?P<body>(?:when|whenever|at the beginning of)\b.+)$",
     re.IGNORECASE,
 )
@@ -51,7 +51,10 @@ def trigger_ability_word_material_line(material_line: str) -> str:
     """Remove one leading ability/flavor label before a triggered body."""
 
     match = _TRIGGER_ABILITY_WORD.fullmatch(material_line)
-    return match.group("body") if match is not None else material_line
+    if match is None:
+        return material_line
+    from .oracle_source_text import without_ability_word_label
+    return without_ability_word_label(material_line) or material_line
 
 
 def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:

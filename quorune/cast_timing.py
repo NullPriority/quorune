@@ -7,6 +7,9 @@ from typing import Any, Mapping, Protocol, Sequence
 CAST_PERMISSION_ACTIVE_ZONE = "playable"
 CAST_PERMISSION_EVENT = "cast.permission"
 PRINTED_FLASH_CAPABILITY = "timing.cast.printed_flash"
+CLASSIC_FLASH_CAPABILITY = "casting.permission.classic_flash_cleanup"
+CLASSIC_FLASH_HANDLER = "permission.cast.classic-flash-cleanup.v1"
+CLASSIC_FLASH_MARK = "classic_flash_cleanup"
 PRINTED_FLASH_MECHANIC = PRINTED_FLASH_CAPABILITY.rsplit(".", 1)[1].removeprefix(
     "printed_"
 )

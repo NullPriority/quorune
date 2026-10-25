@@ -1,0 +1,2043 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned15static prohibition carriers and canonical normal-registration native life/damage/payment/controller/ability controls",
+  "cards": [
+    {
+      "oracle_id": "9c36760b-57c5-488b-afc9-ef141942c6ab",
+      "name": "Archfiend of Despair",
+      "mana_cost": "{6}{B}{B}",
+      "cmc": 8.0,
+      "type_line": "Creature — Demon",
+      "oracle_text": "Flying\nYour opponents can't gain life.\nAt the beginning of each end step, each opponent loses life equal to the life that player lost this turn. (Damage causes loss of life.)",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "name": "Erebos, God of the Dead",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Legendary Enchantment Creature — God",
+      "oracle_text": "Indestructible\nAs long as your devotion to black is less than five, Erebos isn't a creature. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)\nYour opponents can't gain life.\n{1}{B}, Pay 2 life: Draw a card.",
+      "power": "5",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Indestructible"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "name": "Everlasting Torment",
+      "mana_cost": "{2}{B/R}",
+      "cmc": 3.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players can't gain life.\nDamage can't be prevented.\nAll damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{B}",
+      "name": "Forsaken Wastes",
+      "oracle_id": "b9e61e68-9dc8-4295-95dc-dd66a0907c8c",
+      "oracle_text": "Players can't gain life.\nAt the beginning of each player's upkeep, that player loses 1 life.\nWhenever this enchantment becomes the target of a spell, that spell's controller loses 5 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": null,
+      "type_line": "World Enchantment"
+    },
+    {
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "name": "Giant Cindermaw",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Dinosaur Beast",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)\nPlayers can't gain life.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "name": "Gríma Wormtongue",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Advisor",
+      "oracle_text": "Your opponents can't gain life.\n{T}, Sacrifice another creature: Target player loses 1 life. If the sacrificed creature was legendary, amass Orcs 2.",
+      "power": "1",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Amass"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "name": "Havoc Festival",
+      "mana_cost": "{4}{B}{R}",
+      "cmc": 6.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players can't gain life.\nAt the beginning of each player's upkeep, that player loses half their life, rounded up.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "815ae30f-f455-4795-96eb-4bcc41d415e8",
+      "name": "Knight of Dusk's Shadow",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Knight",
+      "oracle_text": "Menace (This creature can't be blocked except by two or more creatures.)\nYour opponents can't gain life.\n{1}{B}: This creature gets +1/+1 until end of turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-09-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "name": "Leyline of Punishment",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nPlayers can't gain life.\nDamage can't be prevented.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2010-07-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bbe41a21-f8ad-4e5c-88d8-2a41dfd32d13",
+      "name": "Quakebringer",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Giant Berserker",
+      "oracle_text": "Your opponents can't gain life.\nAt the beginning of your upkeep, Quakebringer deals 2 damage to each opponent. This ability triggers only if Quakebringer is on the battlefield or if Quakebringer is in your graveyard and you control a Giant.\nForetell {2}{R}{R}",
+      "power": "5",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Foretell"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3e5ca524-8dd1-4f7f-a467-5210d768b8a1",
+      "name": "Rampaging Ferocidon",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "Menace\nPlayers can't gain life.\nWhenever another creature enters, this creature deals 1 damage to that creature's controller.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "479adf64-f42c-4cb6-bf25-648c044bca8b",
+      "name": "Sunspine Lynx",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Elemental Cat",
+      "oracle_text": "Players can't gain life.\nDamage can't be prevented.\nWhen this creature enters, it deals damage to each player equal to the number of nonbasic lands that player controls.",
+      "power": "5",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b194f277-5045-4391-8b48-d555a6d657a7",
+      "name": "The Lord of Pain",
+      "mana_cost": "{3}{B}{R}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Assassin",
+      "oracle_text": "Menace\nYour opponents can't gain life.\nWhenever a player casts their first spell each turn, choose another target player. The Lord of Pain deals damage equal to that spell's mana value to the chosen player.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0b768f8f-2213-45b9-bced-8fb1bbb441c3",
+      "name": "Tibalt, Rakish Instigator",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Legendary Planeswalker — Tibalt",
+      "oracle_text": "Your opponents can't gain life.\n−2: Create a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": "5",
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "name": "Witch Hunt",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players can't gain life.\nAt the beginning of your upkeep, this enchantment deals 4 damage to you.\nAt the beginning of your end step, target opponent chosen at random gains control of this enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-11-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b1385b03-cb4b-4812-857f-7421f1df39af",
+      "name": "Revitalize",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "You gain 3 life.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ae78b6f9-8334-479e-8111-8e3acb2b7ca7",
+      "name": "Bloodthirsty Aerialist",
+      "mana_cost": "{1}{B}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Vampire Rogue",
+      "oracle_text": "Flying\nWhenever you gain life, put a +1/+1 counter on this creature.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "name": "Boon Reflection",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If you would gain life, you gain twice that much life instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-08-07",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "28a52ba1-95da-44e1-8ac5-0dc23c902394",
+      "name": "Healer's Hawk",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Creature — Bird",
+      "oracle_text": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "name": "Control Magic",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Vedalken Orrery",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "oracle_text": "You may cast spells as though they had flash.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fea95888-e16a-4209-9cd4-623f7f4d2f67",
+      "name": "Walking Corpse",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "994bcde3-4a76-403d-a6e1-88609a13a99c",
+      "name": "Awe Strike",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "The next time target creature would deal damage this turn, prevent that damage. You gain life equal to the damage prevented this way.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "381fa2a9-69fc-4558-a0ac-fb99c6f8d77f",
+      "name": "Fugitive Wizard",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-07-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "9c36760b-57c5-488b-afc9-ef141942c6ab",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "Archfiend of Despair’s last ability counts only how much life was lost. It doesn’t care whether a player also gained life."
+    },
+    {
+      "oracle_id": "9c36760b-57c5-488b-afc9-ef141942c6ab",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, damage and life loss happen to each player individually. If each player on a team is dealt 2 damage, each of those players loses 2 life and the team’s life total goes down by 4. When Archfiend of Despair’s ability resolves, each of those players again loses 2 life and the team’s life total goes down again by 4; they don’t each lose 4 life."
+    },
+    {
+      "oracle_id": "9c36760b-57c5-488b-afc9-ef141942c6ab",
+      "published_at": "2018-06-08",
+      "source": "wotc",
+      "comment": "The amount of life to lose is determined only as Archfiend of Despair’s triggered ability resolves. For example, if you control two of them and an opponent lost 3 life earlier in the turn, the first ability to resolve would have that player lose 3 life, and the second would have that player lose 6 life."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it's still on the battlefield at that time."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s)."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Mana symbols in the text boxes of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Numeric mana symbols ({0}, {1}, and so on) in mana costs of permanents you control don't count toward your devotion to any color."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "Counters put on a God remain on it while it's not a creature, even if they have no effect."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "When a God enters the battlefield, your devotion to its color (including the mana symbols in the mana cost of the God itself) will determine if a creature entered the battlefield or not for abilities that trigger whenever a creature enters the battlefield."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The abilities of Gods function as long as they're on the battlefield, regardless of whether they're creatures."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If an effect causes a God to lose all abilities, its ability that causes it to stop being a creature still applies if appropriate."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a God is attacking or blocking and it stops being a creature, it will be removed from combat. It won't rejoin combat if it resumes being a creature later during that combat."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "As a God enters the battlefield, your devotion to its color will determine whether any replacement effects that affect creatures entering the battlefield apply to that God. Because replacement effects are considered before the God is on the battlefield, the mana symbols in its mana cost won't be counted when determining this."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The type-changing ability that can make a God not be a creature functions only on the battlefield. It's always a creature card in other zones, regardless of your devotion to its color. It's always a creature spell while it's on the stack."
+    },
+    {
+      "oracle_id": "1cfc7b12-a595-492d-81ee-bd100ba7de6a",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "If a God stops being a creature, it loses the type creature and the creature type God. It continues to be a legendary enchantment."
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If a cost includes life gain (like Invigorate's alternative cost does), that cost can't be paid."
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Effects that would replace gaining life with some other effect won't be able to do anything because it's impossible for players to gain life."
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Spells and abilities that replace or redirect damage aren't affected by Everlasting Torment's second ability. They'll work as normal."
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "The last ability affects all damage, whether it's dealt by creatures, other permanents, spells, or cards that aren't on the battlefield. Wither works everywhere."
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If an effect says to set your life total to a certain number, and that number is higher than your current life total, that effect will normally cause you to gain life equal to the difference. With Everlasting Torment on the battlefield, that part of the effect won't do anything. (If the number is lower than your current life total, the effect will work as normal.)"
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Effects that replace an event with gaining life (like Words of Worship's effect does) will end up replacing the event with nothing."
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "The \"damage can't be prevented\" statement overrides all forms of preventing damage, including protection abilities. Damage prevention spells and abilities can still be cast and played; they just don't do anything."
+    },
+    {
+      "oracle_id": "de41081e-713c-4005-90f7-65d9426208f1",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Spells and abilities that would normally cause a player to gain life still resolve, but the life-gain part simply has no effect."
+    },
+    {
+      "oracle_id": "b9e61e68-9dc8-4295-95dc-dd66a0907c8c",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The loss of life from targeting this card does not work until after this card enters, so you can counter it without losing life."
+    },
+    {
+      "oracle_id": "b9e61e68-9dc8-4295-95dc-dd66a0907c8c",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Effects that replace an event with gaining life (like Words of Worship's effect does) will end up replacing the event with nothing."
+    },
+    {
+      "oracle_id": "b9e61e68-9dc8-4295-95dc-dd66a0907c8c",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Effects that would replace gaining life with some other effect won't be able to do anything because it's impossible for players to gain life."
+    },
+    {
+      "oracle_id": "b9e61e68-9dc8-4295-95dc-dd66a0907c8c",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If a cost includes life gain (like Invigorate's alternative cost does), that cost can't be paid."
+    },
+    {
+      "oracle_id": "b9e61e68-9dc8-4295-95dc-dd66a0907c8c",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "If an effect says to set your life total to a certain number, and that number is higher than your current life total, that effect will normally cause you to gain life equal to the difference. With Forsaken Wastes on the battlefield, that part of the effect won't do anything. (If the number is lower than your current life total, the effect will work as normal.)"
+    },
+    {
+      "oracle_id": "b9e61e68-9dc8-4295-95dc-dd66a0907c8c",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "This has the supertype world. When a world permanent enters, any world permanents that were already on the battlefield are put into their owners' graveyards. This is a state-based action called the \"world rule.\" The new world permanent stays on the battlefield. If two world permanents enter at the same time, they're both put into their owners' graveyards."
+    },
+    {
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause players to gain life still resolve while Giant Cindermaw is on the battlefield. No player will gain life, but any other effects of that spell or ability will happen."
+    },
+    {
+      "oracle_id": "bd0c0e85-ff24-46c9-a547-4f633355c131",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If an effect says to set a player's life total to a number that's higher than the player's current life total while Giant Cindermaw is on the battlefield, the player's life total doesn't change."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "To amass Orcs N, if you don't control an Army creature, create a 0/0 black Orc Army creature token. Then you choose an Army creature you control and put N +1/+1 counters on it. If that Army isn't already an Orc, it becomes an Orc in addition to its other types."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "In the rare case that you control multiple Army creatures (perhaps because you played a creature with changeling) while you amass Orcs, you choose which of your Army creatures to put the +1/+1 counters on. If that creature isn't an Orc, it becomes an Orc in addition to its other types."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If you don't control an Army, the Orc Army token you create enters the battlefield as a 0/0 creature before receiving counters. Any abilities that trigger when a creature with a certain power enters the battlefield, such as that of Mentor of the Meek, will see the token enter as a 0/0 creature before it gets +1/+1 counters."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Gríma Wormtongue's activated ability checks whether the sacrificed creature was legendary as it last existed on the battlefield. It doesn't matter whether or not it's legendary in the graveyard."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Amass abilities are now written as \"amass [subtype] N.\" Previous cards with amass have received errata to say \"amass Zombies N.\""
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If an effect says to set an opponent's life total to a number that's higher than the opponent's current life total while Gríma Wormtongue is on the battlefield, the player's life total doesn't change."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause opponents to gain life still resolve while Gríma Wormtongue is on the battlefield. No opponent will gain life, but any other effects of that spell or ability will still happen."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Amass Zombies works the same way, except you create a 0/0 black Zombie Army creature token if you don't control an Army. If the Army creature you chose isn't already a Zombie, it becomes a Zombie in addition to its other types. By combining cards with amass Orcs and amass Zombies, you can end up with an Orc Zombie Army."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Some spells and abilities that amass Orcs may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't amass Orcs."
+    },
+    {
+      "oracle_id": "8f98806e-c6b7-44af-b436-88acf36d25ec",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Some cards refer to the \"amassed Army.\" That means the Army creature you chose to receive counters, even if no counters were placed on it for some reason."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Effects that would replace gaining life with another effect won’t apply because it’s impossible for players to gain life."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Spells and abilities that would cause a player to gain life still resolve, but the life-gain part has no effect."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If an effect says to set a player’s life total to a certain number and that number is higher than the player’s current life total, that part of the effect won’t do anything. (If the number is lower than the player’s current life total, the effect will work as normal.)"
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "The amount of life lost is calculated when the triggered ability resolves. For example, if a player has 20 life and there are two Havoc Festivals on the battlefield, the first ability will cause that player to lose 10 life and then the second ability will cause that player to lose 5 life."
+    },
+    {
+      "oracle_id": "af0dd100-67f0-4d7c-a65b-b2c7149288f7",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, the last ability triggers for each player. Any life loss is applied to the team’s life total. For example, if the team has 30 life, the first ability will cause the player (and thus the team) to lose 15 life and then the second ability will cause the other player (and thus the team) to lose 8 life. The team will end up having 7 life."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Static abilities that prevent damage (including protection abilities) don't do so. If they have additional effects that don't depend on the amount of damage prevented, those additional effects will still work. Such effects are applied only once per source of damage."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If an effect says to set a player's life total to a certain number, and that number is higher than the player's current life total, that part of the effect won't do anything. (If the number is lower than the player's current life total, the effect will work as normal.)"
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Damage prevention shields don't have any effect. If a prevention effect has an additional effect, the additional effect will still work (if possible). Spells that create prevention effects can still be cast, and abilities that create prevention effects can still be activated."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Effects that would replace gaining life with some other effect won't be able to do anything because it's impossible for players to gain life."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Spells and abilities that would normally cause a player to gain life still resolve, but the life-gain part simply has no effect."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Effects that replace an event with gaining life (like Words of Worship's effect does) will end up replacing the event with nothing."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Effects that replace or redirect damage without using the word \"prevent\" are not affected by Leyline of Punishment."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If a creature is dealt lethal damage, it can still regenerate. If it does, the damage marked on it will be removed from it."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If a cost includes life gain (like Invigorate's alternative cost does), that cost can't be paid."
+    },
+    {
+      "oracle_id": "2608df54-dfbe-417d-aef5-49afbdfb03da",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "A player's \"opening hand\" is the hand of cards the player has after all players have taken mulligans. If players have any cards in hand that allow actions to be taken with them from a player's opening hand, the starting player takes all such actions first in any order, followed by each other player in turn order. Then the first turn begins."
+    },
+    {
+      "oracle_id": "bbe41a21-f8ad-4e5c-88d8-2a41dfd32d13",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If you’re casting a foretold card from exile for its foretell cost, you can’t choose to cast it for any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "bbe41a21-f8ad-4e5c-88d8-2a41dfd32d13",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Because exiling a card with foretell from your hand is a special action, you can do so any time you have priority during your turn, including in response to spells and abilities. Once you announce you’re taking the action, no other player can respond by trying to remove the card from your hand."
+    },
+    {
+      "oracle_id": "bbe41a21-f8ad-4e5c-88d8-2a41dfd32d13",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Casting a foretold card from exile follows the timing rules for that card. If you foretell an instant card, you can cast it as soon as the next player’s turn. In most cases, if you foretell a card that isn’t an instant (or doesn’t have flash), you’ll have to wait until your next turn to cast it."
+    },
+    {
+      "oracle_id": "bbe41a21-f8ad-4e5c-88d8-2a41dfd32d13",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "If Quakebringer is on the battlefield at the beginning of your upkeep, its ability will trigger even if it’s no longer a Giant and you don’t control another Giant."
+    },
+    {
+      "oracle_id": "bbe41a21-f8ad-4e5c-88d8-2a41dfd32d13",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "Quakebringer entering the battlefield won’t undo any life gained earlier in the turn."
+    },
+    {
+      "oracle_id": "3e5ca524-8dd1-4f7f-a467-5210d768b8a1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Rampaging Ferocidon's last ability triggers whenever any player has a creature enter the battlefield, including you."
+    },
+    {
+      "oracle_id": "3e5ca524-8dd1-4f7f-a467-5210d768b8a1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect says to set a player's life total to a number that's higher than the player's current life total while Rampaging Ferocidon is on the battlefield, the player's life total doesn't change."
+    },
+    {
+      "oracle_id": "3e5ca524-8dd1-4f7f-a467-5210d768b8a1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause players to gain life still resolve while Rampaging Ferocidon is on the battlefield. No player will gain life, but any other effects of that spell or ability will happen."
+    },
+    {
+      "oracle_id": "3e5ca524-8dd1-4f7f-a467-5210d768b8a1",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If another creature enters the battlefield at the same time as Rampaging Ferocidon, its last ability triggers."
+    },
+    {
+      "oracle_id": "479adf64-f42c-4cb6-bf25-648c044bca8b",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Protection prevents damage, so protection will be unable to prevent damage while Sunspine Lynx is on the battlefield. However, this won’t allow spells or abilities to target permanents they wouldn’t ordinarily be able to target because of protection, even if that spell or ability would deal damage to those permanents."
+    },
+    {
+      "oracle_id": "479adf64-f42c-4cb6-bf25-648c044bca8b",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause players to gain life still resolve while Sunspine Lynx is on the battlefield. No player will gain life, but any other effects of that spell or ability will happen."
+    },
+    {
+      "oracle_id": "479adf64-f42c-4cb6-bf25-648c044bca8b",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "Sunspine Lynx only stops damage from being prevented by effects that specifically use the word “prevent.”"
+    },
+    {
+      "oracle_id": "479adf64-f42c-4cb6-bf25-648c044bca8b",
+      "published_at": "2024-07-26",
+      "source": "wotc",
+      "comment": "If an effect says to set a player’s life total to a number that’s higher than the player’s current life total while Sunspine Lynx is on the battlefield, the player’s life total doesn’t change."
+    },
+    {
+      "oracle_id": "b194f277-5045-4391-8b48-d555a6d657a7",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "The Lord of Pain's last ability must target a player other than the one who cast the spell that caused the ability to trigger. That means that if it's just you and one other player in the game, you'll have to target yourself when that player casts their first spell each turn. (What did you expect? You summoned The Lord of Pain!)"
+    },
+    {
+      "oracle_id": "b194f277-5045-4391-8b48-d555a6d657a7",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If a spell has {X} in its mana cost, use the value chosen for X when determining that spell's mana value."
+    },
+    {
+      "oracle_id": "b194f277-5045-4391-8b48-d555a6d657a7",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause opponents to gain life still resolve while The Lord of Pain is on the battlefield. They won't gain life, but any other effects of that spell or ability will still happen."
+    },
+    {
+      "oracle_id": "b194f277-5045-4391-8b48-d555a6d657a7",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "If an effect says to set an opponent's life total to a number that's higher than their current life total, that player's life total won't change."
+    },
+    {
+      "oracle_id": "0b768f8f-2213-45b9-bced-8fb1bbb441c3",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "Spells and abilities that cause opponents to gain life still resolve while Tibalt is on the battlefield. No opponent will gain life, but any other effects of that spell or ability will happen."
+    },
+    {
+      "oracle_id": "0b768f8f-2213-45b9-bced-8fb1bbb441c3",
+      "published_at": "2019-05-03",
+      "source": "wotc",
+      "comment": "If an effect says to set an opponent's life total to a number that's higher than their current life total while Tibalt is on the battlefield, the player's life total doesn't change."
+    },
+    {
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "published_at": "2013-10-17",
+      "source": "wotc",
+      "comment": "Spells and abilities that would cause a player to gain life still resolve, but the life-gain part has no effect."
+    },
+    {
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "published_at": "2013-10-17",
+      "source": "wotc",
+      "comment": "The target is chosen at random as you put the last ability on the stack. Players can respond to this ability knowing who the target is."
+    },
+    {
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "published_at": "2013-10-17",
+      "source": "wotc",
+      "comment": "To choose a target at random, all possible legal targets must have an equal chance of being chosen. There are many ways to do this, including assigning each possible legal target a number and rolling a die."
+    },
+    {
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "published_at": "2013-10-17",
+      "source": "wotc",
+      "comment": "Abilities that trigger whenever a player gains life can’t trigger and effects that would replace gaining life with another effect won’t apply because it’s impossible for players to gain life."
+    },
+    {
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "published_at": "2013-10-17",
+      "source": "wotc",
+      "comment": "If an effect sets a player’s life total to a specific number and that number is higher than the player’s current life total, that part of the effect won’t do anything. (If the number is lower than the player’s current life total, the effect will work as normal.)"
+    },
+    {
+      "oracle_id": "e86bd38f-7804-449d-af29-21e96a56ab30",
+      "published_at": "2013-10-17",
+      "source": "wotc",
+      "comment": "If you control Witch Hunt, you are not a legal target. If there are no legal targets available, the ability is removed from the stack and you retain control of Witch Hunt."
+    },
+    {
+      "oracle_id": "ae78b6f9-8334-479e-8111-8e3acb2b7ca7",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "If Bloodthirsty Aerialist is dealt lethal damage at the same time that you gain life, it won't receive a counter from its ability in time to save it."
+    },
+    {
+      "oracle_id": "ae78b6f9-8334-479e-8111-8e3acb2b7ca7",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "The ability of Bloodthirsty Aerialist triggers just once for each life-gaining event, whether it's 1 life from Impassioned Orator or 4 life from Dawning Angel. If you gain an amount of life \"for each\" of something or \"equal to the number\" of something, that life is gained as one event and the ability of Bloodthirsty Aerialist triggers only once."
+    },
+    {
+      "oracle_id": "ae78b6f9-8334-479e-8111-8e3acb2b7ca7",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won't cause the ability to trigger, even though it caused your team's life total to increase."
+    },
+    {
+      "oracle_id": "ae78b6f9-8334-479e-8111-8e3acb2b7ca7",
+      "published_at": "2019-07-12",
+      "source": "wotc",
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, Bloodthirsty Aerialist's ability will trigger twice. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, and/or planeswalkers at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will trigger only once."
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, only Boon Reflection's controller is affected by it. If that player's teammate gains life, Boon Reflection will have no effect, even when that life gain is applied to the shared team life total."
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "If an effect would set your life total to a specific number that's higher than your current life total, that effect would cause you to gain life equal to the difference. Boon Reflection will then double the amount of life that effect would cause you to gain. For example, if you have 3 life and an effect says that your life total “becomes 10,” your life total will actually become 17."
+    },
+    {
+      "oracle_id": "b86d3142-568a-4eea-b1ae-5fcfc1453533",
+      "published_at": "2020-08-07",
+      "source": "wotc",
+      "comment": "The effects of multiple Boon Reflections are cumulative. For example, if you control two Boon Reflections, you'll gain four times the original amount of life. If you control three Boon Reflections, you'll gain eight times the original amount, and so on."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "The controller of Vedalken Orrery can cast nonland artifact, creature, enchantment, and sorcery cards any time they could cast an instant. This includes on other players' turns and during the upkeep step, draw step, combat phase, and end step."
+    },
+    {
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\"."
+    }
+  ]
+}

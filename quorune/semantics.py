@@ -23,6 +23,7 @@ TRUST_LEVELS = {
 SEMANTIC_SCHEMA_VERSION = 3
 BUILTIN_PACK_DIRECTORY = Path(__file__).resolve().parent / "semantic_packs"
 VALID_EFFECT_OPERATIONS = {
+    'require_blocking_this_combat',
     'extort',
     "amass",
     "apply_source_characteristics_until_end_of_turn",
@@ -42,6 +43,7 @@ VALID_EFFECT_OPERATIONS = {
     "prepare_graveyard_creature_aura",
     "reanimate_attached_creature_aura",
     "attach",
+    "unattach",
     "create_attached_token",
     "bounce",
     "return_permanent_targets_to_owner_hand",

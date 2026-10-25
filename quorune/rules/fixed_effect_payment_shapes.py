@@ -52,7 +52,7 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
             return ()
         payment = spec.payment
         if payment is not None and (
-            payment.kind in {'discard','exile'} and payment.predicate.owner != '$controller'
+            payment.kind in {'discard','exile','mana_discard'} and payment.predicate.owner != '$controller'
             or payment.kind in {'sacrifice','tap'} and payment.predicate.controller != '$controller'
             or payment.kind=='remove_source_counter' and payment.source_ref!='$source.zone_object'
         ):
@@ -63,7 +63,7 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'])
     except (ValueError,TypeError,KeyError):return ()
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
-    if payment.kind in {'discard','exile'}and payment.predicate.owner!='$controller':return ()
+    if payment.kind in {'discard','exile','mana_discard'}and payment.predicate.owner!='$controller':return ()
     if payment.kind in {'sacrifice','tap'}and payment.predicate.controller!='$controller':return ()
     if payment.kind=='remove_source_counter' and payment.source_ref!='$source.zone_object':return ()
     nested=wrapper['effects']

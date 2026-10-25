@@ -27,7 +27,7 @@ import test_bound_effect_programs as actions
 import test_self_public_zone_casting as zone_actions
 
 FIXTURE=ROOT/'tests/fixtures/scoped-basic-type-addition-cards.json'
-CLOSED={'Stormtide Leviathan','Swampbenders','Dryad of the Ilysian Grove',"Nylea's Presence",'Prismatic Omen'}
+CLOSED={'Stormtide Leviathan','Swampbenders','Dryad of the Ilysian Grove',"Nylea's Presence",'Prismatic Omen','Leyline of the Guildpact'}
 
 
 class ScopedBasicTypeAdditionCompilerTests(unittest.TestCase):

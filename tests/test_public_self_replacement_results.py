@@ -71,7 +71,7 @@ class PublicSelfReplacementCompilerTests(unittest.TestCase):
         for text in (
                 "Draw two cards. If you have the city's blessing, you may draw three cards instead.",
                 "You may draw two cards. If you have the city's blessing, draw three cards instead.",
-                "Target player draws two cards. If you have the city's blessing, that player draws three cards instead.",
+                "Target player draws two cards. If you have the city's blessing, another target player draws three cards instead.",
                 "Draw two cards. If you have the city's blessing, draw X cards instead."):
             with self.subTest(text=text):
                 ir=compile_oracle_card(record(text,'Sorcery'),capability_registry=registry,capability_profile='commander_review')

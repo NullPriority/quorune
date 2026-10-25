@@ -31,6 +31,8 @@ ENCORE_EFFECT_HANDLER_ID = "generic.encore-tokens.v1"
 ENCORE_EFFECT_OPERATION = "encore_tokens"
 ENCORE_MECHANIC_ID = "encore"
 ENCORE_ATTACK_DESIGNATION = "encore_attack_if_able"
+ENCORE_COPY_IDENTITY_FIELD = 'copy_source_logical_object_id'
+ENCORE_COPY_IDENTITY_CONTEXT = 'encore_copy_source_logical_object_id'
 FIXED_COMBAT_ENTRY_LIFECYCLE_CAPABILITY_ID = (
     "combat.entry.lifecycle.fixed_public"
 )
@@ -662,6 +664,8 @@ __all__ = [
     "ENCORE_ABILITY_HANDLER_ID",
     "ENCORE_EFFECT_HANDLER_ID",
     "ENCORE_EFFECT_OPERATION",
+    "ENCORE_COPY_IDENTITY_FIELD",
+    "ENCORE_COPY_IDENTITY_CONTEXT",
     "ENCORE_MECHANIC_ID",
     "EncoreTokensIntent",
     "encore_attack_requirement",

@@ -25,6 +25,7 @@ from scripts.update_capability_evidence import (
     build_index,
     discover_tests,
 )
+from quorune.rules.evidence_storage import read_evidence_document
 
 
 class CapabilityEvidenceTests(unittest.TestCase):
@@ -33,9 +34,7 @@ class CapabilityEvidenceTests(unittest.TestCase):
         cls.registry_value = json.loads(
             REGISTRY_PATH.read_text(encoding="utf-8")
         )
-        cls.declaration_source = json.loads(
-            DECLARATIONS_PATH.read_text(encoding="utf-8")
-        )
+        cls.declaration_source = read_evidence_document(DECLARATIONS_PATH)
         cls.discovered = discover_tests(ROOT)
 
     def test_default_registry_is_bound_to_current_generated_evidence(self):
@@ -61,7 +60,7 @@ class CapabilityEvidenceTests(unittest.TestCase):
 
     def test_evidence_validation_reuses_one_defensive_capability_snapshot(self):
         registry = CapabilityRegistry(self.registry_value)
-        value = json.loads((ROOT / "quorune/rules/capability-evidence.json").read_text())
+        value = read_evidence_document(ROOT / "quorune/rules/capability-evidence.json")
         with patch.object(registry, "capabilities", wraps=registry.capabilities) as snapshot, patch.object(
             registry, "capability", side_effect=AssertionError("repeated per-declaration copy")
         ):

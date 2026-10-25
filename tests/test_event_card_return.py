@@ -415,16 +415,32 @@ class EventCardReturnActionTests(unittest.TestCase):
         self.assertIn(creature.object_id, session.state.players['B'].zones['hand'])
         self.replay(session)
 
-    def test_original_typed_aura_return_with_unsupported_tap_sibling_rejects_runtime_admission(self):
+    def test_original_typed_aura_return_closes_tap_sibling_and_unsupported_mana_events_reject(self):
+        from dataclasses import replace
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.card_programs import bind_card_program_runtime
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
         from quorune.semantics import SemanticRegistry
+        from high_risk_interaction_support import _observed_piece_ids
         record = self.db.lookup('Spreading Algae')
         program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
             capability_registry=self.registry, capability_profile='commander_review')
         capabilities = set(program.trust_closure['capability_dependencies'])
         self.assertIn('attachment.aura.typed_restriction', capabilities)
         self.assertIn('zone.return.fixed_event_card', capabilities)
+        self.assertFalse(program.residuals)
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        boundary = replace(record, oracle_id='fixture:unknown-mana-tap-return-aura',
+            name='Constructed Unknown Mana Tap Return Aura',
+            oracle_text=record.oracle_text.replace('becomes tapped,', 'becomes tapped for black mana,'))
+        ir = compile_oracle_card(boundary, capability_registry=self.registry, capability_profile='commander_review')
+        program = compile_best_available_card_program(self.db, boundary, semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry, capability_profile='commander_review')
+        row = analyze_card_unlocks(ir, program=program, program_error=None,
+            capabilities=self.registry, profile='commander_review')
+        self.assertLessEqual({'capability.zone.return.fixed_event_card',
+            'residual.event_binding.normalized-event-binding'}, _observed_piece_ids(row))
         self.assertTrue(program.residuals)
         binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
         self.assertFalse(binding['strict_capability_ready'])

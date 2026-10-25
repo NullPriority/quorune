@@ -11,7 +11,13 @@ from ..resolution_conditions import (
 )
 
 
-def kicked_spell_condition_template(text: str, *, compile_component):
+def kicked_spell_condition_template(text: str, *, compile_component,source_name='source'):
+    from .kicked_target_replacements import kicked_target_replacement_template
+    replacing=kicked_target_replacement_template(text,compile_component=compile_component)
+    if replacing is not None:return replacing
+    from .kicked_targets import kicked_target_template
+    targeted=kicked_target_template(text,source_name=source_name,compile_component=compile_component)
+    if targeted is not None:return targeted
     match = re.fullmatch(r'(?P<prefix>.+?\. )?If this spell was kicked, (?P<body>.+)', text.strip(), re.I)
     if match is None:
         return None

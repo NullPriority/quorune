@@ -51,6 +51,8 @@ def generated_ability_id(
         return f"spell:{face_id}"
     if kind in {"activated_ability", "mana_ability"}:
         parts = str(node_id or "").split(":")
+        if len(parts) >= 2 and parts[-2] == 'reconfigure' and parts[-1] in {'attach', 'unattach'}:
+            return f'ability:ab{line}-reconfigure-{parts[-1]}'
         if len(parts) >= 2 and parts[-2] == "typecycling-instance" and parts[-1] in {"1", "2", "3", "4"}:
             return f"ability:ab{line}:typecycling-instance:{parts[-1]}"
         return f"ability:ab{line}"
@@ -133,6 +135,8 @@ def generated_ability_id(
             }
         ):
             return f"static:{face_id}:n{line}:{parts[-2]}:{parts[-1]}"
+        if len(parts) >= 2 and parts[-2] == 'player-restriction' and parts[-1] in {'cast', 'activation'}:
+            return f'static:{face_id}:n{line}:player-restriction:{parts[-1]}'
         if str(node_id or "").endswith(":flash"):
             return f"static:{face_id}:n{line}:flash"
         node_parts = str(node_id or "").split(":")

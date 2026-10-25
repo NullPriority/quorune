@@ -6,7 +6,7 @@ from typing import Any, Mapping
 from ...additional_cost_vocabulary import ZONE_CHANGE_COST_KIND
 from ..casting_additional_costs import (
     AdditionalCostError, AdditionalCostQueryHost, FixedZoneChangeAdditionalCost,
-    fixed_zone_change_cost_candidates,
+    fixed_zone_change_cost_candidates,fixed_zone_change_additional_cost,
 )
 
 
@@ -38,6 +38,8 @@ def _fixed_zone_change_selection(
         maximum = min(len(candidates), int(choice_schema.get('x', {}).get('maximum', len(candidates))))
         if option.get('x_value_policy') == 'zero':
             maximum = 0
+        from .target_cardinality import target_count_preview_maximum
+        maximum=target_count_preview_maximum(option,maximum)
         if count > maximum:
             return False, None
         choice_schema['x'] = {'type': 'integer', 'minimum': 0, 'maximum': maximum}
@@ -77,3 +79,18 @@ def _fixed_zone_change_selection(
         values[0] if count == 1 else values
     )
     return True, selected
+
+
+def select_zone_change_additional_cost(host,seat,source,option,costs,response,*,position,hint,choice_schema):
+    """Select a closed price without paying it or choosing a random subset."""
+    from ..random_discard_additional_cost import RANDOM_SPELL_COST_KIND,select_random_spell_cost
+    if costs[position].get('kind')==RANDOM_SPELL_COST_KIND:
+        return select_random_spell_cost(host,seat,source,costs,response,position=position,choice_schema=choice_schema)
+    try:cost=fixed_zone_change_additional_cost(costs[position])
+    except AdditionalCostError:return False,None
+    if cost is None:return None
+    from ..fixed_payment_groups import fixed_life_zone_costs
+    from ...nonmana_kicker import distinct_kicker_zone_costs
+    if len(costs)!=1 and not fixed_life_zone_costs(costs) and not distinct_kicker_zone_costs(option,costs):return False,None
+    return _fixed_zone_change_selection(host,seat=seat,source_object_id=source.object_id,cost=cost,
+        cost_position=position,response=response,hint=hint,choice_schema=choice_schema,option=option)

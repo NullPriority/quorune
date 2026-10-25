@@ -55,11 +55,18 @@ class ExtortCompilerTests(unittest.TestCase):
 
 
     def test_actual_result_binding_rejects_malformed_values_and_preserves_unbound_continuations(self):
-        from quorune.semantic_choices.model import AutoContinue,IntentResultAmount,SemanticChoiceError
+        from quorune.semantic_choices.model import AutoContinue,IntentResultAmount,IntentResultObjects,SemanticChoiceError
         from quorune.replacement.immutable import FrozenMap
         effect=FrozenMap({'op':'extort','stage':'gain','amount':0})
         unchanged=AutoContinue('ordinary continuation',(effect,))
         self.assertIs(unchanged.prepend_effects,unchanged.resolved_effects({}))
+        objects=FrozenMap({'op':'place_fixed_counters','cards':[]})
+        object_binding=AutoContinue('resolved objects',(objects,),objects_from_result=IntentResultObjects(0,0,'cards'))
+        refs=['CREATED']
+        resolved=object_binding.resolved_effects({0:refs})
+        refs.append('LATE')
+        self.assertEqual(('CREATED',),tuple(resolved[0]['cards']))
+        self.assertEqual((),tuple(objects['cards']))
         bound=AutoContinue('resolved loss',(effect,),IntentResultAmount(0,0,'amount'))
         self.assertEqual(3,bound.resolved_effects({0:3})[0]['amount'])
         self.assertEqual(0,effect['amount'])

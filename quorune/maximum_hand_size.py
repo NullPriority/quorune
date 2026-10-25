@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Typed current-ability query for CR 514.1 maximum hand size."""
+"""Typed current-ability queries for finite and unbounded cleanup limits."""
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
@@ -11,6 +11,9 @@ from .ability_fragments import StaticComponentSpec
 NO_MAXIMUM_HAND_SIZE_CAPABILITY_ID = "hand.cleanup.no_maximum"
 NO_MAXIMUM_HAND_SIZE_HANDLER_ID = "rule.cleanup.no-maximum-hand-size.v1"
 NO_MAXIMUM_HAND_SIZE_TEMPLATE_ID = "no-maximum-hand-size-v1"
+HAND_SIZE_ADJUSTMENT_CAPABILITY_ID = "hand.cleanup.fixed_adjustment"
+HAND_SIZE_ADJUSTMENT_HANDLER_ID = "rule.cleanup.fixed-hand-size-adjustment.v1"
+HAND_SIZE_ADJUSTMENT_TEMPLATE_ID = "fixed-hand-size-adjustment-v1"
 
 
 class MaximumHandSizeError(ValueError):
@@ -37,6 +40,35 @@ class NoMaximumHandSizeSpec:
                 "No-maximum-hand-size specs use a closed schema"
             )
         return cls(schema_version=value["schema_version"])
+
+
+@dataclass(frozen=True, slots=True)
+class FixedHandSizeAdjustmentSpec:
+    player_scope: str
+    amount: int
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if (type(self.schema_version) is not int or self.schema_version != 1
+                or type(self.player_scope) is not str or self.player_scope not in {'controller','opponents'}
+                or type(self.amount) is not int or self.amount == 0):
+            raise MaximumHandSizeError('Hand-size adjustments require a fixed signed amount and owned player relation')
+
+    def to_dict(self):
+        return {'schema_version':self.schema_version,'player_scope':self.player_scope,'amount':self.amount}
+
+    @classmethod
+    def from_dict(cls,value):
+        if not isinstance(value,Mapping) or set(value)!={'schema_version','player_scope','amount'}:
+            raise MaximumHandSizeError('Hand-size adjustment fields are incomplete or unknown')
+        return cls(value['player_scope'],value['amount'],value['schema_version'])
+
+
+def fixed_hand_size_adjustment_descriptor(spec):
+    if not isinstance(spec,FixedHandSizeAdjustmentSpec):
+        raise MaximumHandSizeError('Hand-size component requires its typed adjustment')
+    return {'handler_id':HAND_SIZE_ADJUSTMENT_HANDLER_ID,'schema_version':1,
+        'event':'characteristics.evaluate','spec':spec.to_dict()}
 
 
 def no_maximum_hand_size_handler_descriptor() -> dict[str, Any]:
@@ -95,10 +127,32 @@ def effective_maximum_hand_size(
         raise MaximumHandSizeError(
             "Maximum hand size must be a nonnegative integer"
         )
-    return value
+    return max(0,value + sum(current_hand_size_adjustments(host,seat)))
+
+
+def current_hand_size_adjustments(host: MaximumHandSizeHost,seat: str) -> tuple[int,...]:
+    result=[]
+    for source in host.state.cards.values():
+        if source.zone!='battlefield' or source.phased_out:continue
+        for fragment in host._effective_ability_fragments(source):
+            if not isinstance(fragment,StaticComponentSpec):continue
+            program=host.semantics.get(fragment.semantic_key)
+            if program is None or not host.semantic_program_is_current_trusted(program):continue
+            for descriptor in program.handlers:
+                if descriptor.get('handler_id')!=HAND_SIZE_ADJUSTMENT_HANDLER_ID:continue
+                spec=FixedHandSizeAdjustmentSpec.from_dict(descriptor.get('spec'))
+                if (seat==source.controller)==(spec.player_scope=='controller'):
+                    result.append(spec.amount)
+    return tuple(result)
 
 
 __all__ = [
+    "HAND_SIZE_ADJUSTMENT_CAPABILITY_ID",
+    "HAND_SIZE_ADJUSTMENT_HANDLER_ID",
+    "HAND_SIZE_ADJUSTMENT_TEMPLATE_ID",
+    "FixedHandSizeAdjustmentSpec",
+    "current_hand_size_adjustments",
+    "fixed_hand_size_adjustment_descriptor",
     "NO_MAXIMUM_HAND_SIZE_CAPABILITY_ID",
     "NO_MAXIMUM_HAND_SIZE_HANDLER_ID",
     "NO_MAXIMUM_HAND_SIZE_TEMPLATE_ID",

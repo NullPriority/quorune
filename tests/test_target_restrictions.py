@@ -86,6 +86,19 @@ class TargetRestrictionModelTests(unittest.TestCase):
         self.assertIn('artifact',facts.card_types)
         self.assertEqual('B',item.controller)
 
+    def test_source_with_no_types_is_known_empty_and_missing_characteristics_reject(self):
+        source=CardInstance('emblem','EMBLEM','emblem-oracle','Generic emblem','A','A','command',object_kind='emblem')
+        host=SimpleNamespace(_effective_card_data=lambda card:{'type_line':'','colors':[]})
+        binding=capture_targeting_source(host,source)
+        self.assertEqual(binding,TargetingSourceBinding.from_dict(json.loads(json.dumps(binding.to_dict()))))
+        self.assertEqual(frozenset(),binding.facts().card_types)
+        self.assertEqual(frozenset(),binding.facts().colors)
+        self.assertIsNone(TargetingSource('ability').card_types)
+        self.assertEqual('A',binding.facts().source_controller)
+        for value in ({},{'type_line':None},{'type_line':False},{'type_line':[]}):
+            with self.subTest(value=value),self.assertRaises(ValueError):
+                capture_targeting_source(host,source,characteristics=value)
+
     def test_missing_source_information_is_not_falsely_colorless_and_malformed_binding_rejects(self):
         host=SimpleNamespace(state=SimpleNamespace(cards={}))
         item=StackItem('stack','STACK','activated_ability','B','Ability',source_object_id='departed')

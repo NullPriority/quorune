@@ -3,8 +3,12 @@ from __future__ import annotations
 import re
 from typing import Sequence
 
-from ..commander_pairing import partner_with_spec_for_material_line
+from ..commander_pairing import (
+    TAGGED_PARTNER_KINDS, pairing_kind_for_material_line,
+    partner_with_spec_for_material_line,
+)
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
+from .qualified_hexproof_keywords import qualified_hexproof_keywords
 from ..rules.attachment_actions import fixed_equip_ability_spec
 
 
@@ -31,6 +35,13 @@ _TYPECYCLING = re.compile(
 )
 
 
+def printed_keyword_parts(material_line: str) -> tuple[str, ...]:
+    """Retain explicit Protection continuations within one printed ability."""
+
+    return tuple(part.strip() for part in re.split(
+        r";|,(?!\s*(?:and\s+)?from\b)", material_line.rstrip("."), flags=re.I))
+
+
 def keyword_mechanics(
     text: str,
     card_keywords: Sequence[str],
@@ -38,11 +49,17 @@ def keyword_mechanics(
     """Recognize a complete Oracle line made only of printed keywords."""
 
     known = {keyword.casefold() for keyword in card_keywords}
+    if 'partner' in known:
+        pairing_kind = pairing_kind_for_material_line(text.strip())
+        if pairing_kind in TAGGED_PARTNER_KINDS:
+            return (pairing_kind.value,)
     material = text.rstrip(".").strip()
     if "equip" in known and fixed_equip_ability_spec(material) is not None:
         return ("equip",)
     if 'morph' in known and re.match(r'Morph[—-]', material, re.I):
         return ('morph',)
+    if 'kicker' in known and re.match(r'Kicker—',material,re.I):
+        return ('kicker',)
     if "typecycling" in known and _TYPECYCLING.fullmatch(material):
         return ("cycling",)
     cycling_parts = [part.strip() for part in material.split(",")]
@@ -78,17 +95,23 @@ def keyword_mechanics(
         # Escape's comma separates its alternative mana payment from the
         # fixed other-card exile payment inside one keyword declaration.
         return ("escape",)
+    if 'buyback' in known and re.match(r'Buyback[—–-]', material, re.I):
+        return ('buyback',)
     if (
         "partner with" in known
         and partner_with_spec_for_material_line(material) is not None
     ):
         return ("partner with",)
-    parts = [part.strip() for part in re.split(r"[,;]", material)]
+    parts = printed_keyword_parts(material)
     if not parts:
         return None
     mechanics: list[str] = []
     for part in parts:
         lower = part.casefold()
+        if lower.startswith('hexproof from ') and 'hexproof' in known:
+            qualified=qualified_hexproof_keywords(part)
+            if qualified is None:return None
+            mechanics.extend(qualified);continue
         if lower == "proliferate":
             # Proliferate is a keyword action whose imperative instruction
             # executes during resolution, not a keyword ability carried by

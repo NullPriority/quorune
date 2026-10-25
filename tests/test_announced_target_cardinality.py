@@ -90,9 +90,15 @@ class AnnouncedTargetCardinalityRuntimeTests(unittest.TestCase):
         self.assertTrue(all(session.state.cards[c.object_id].tapped for c in (taxed,other)))
         self.private_replay(session,private)
 
-    def test_unrepresented_self_exile_sibling_keeps_original_wildest_dreams_residual(self):
+    def test_wildest_self_exile_promotes_without_admitting_unrepresented_result_siblings(self):
         session=self.session(729212)
-        for name in ('Wildest Dreams','Divergent Equation','Pest Infestation'):
+        source=self.add(session.engine,'Wildest Dreams',zone='hand')
+        self.assertTrue(self.binding(session,source)['strict_capability_ready'])
+        programs=[p for p in session.engine.semantics.programs_for_oracle(source.oracle_id) if p.event=='resolve']
+        self.assertEqual(1,len(programs));self.assertEqual('exile',programs[0].destination)
+        from quorune.compiler.announced_target_sets import announced_target_set_effect_template
+        self.assertIsNone(announced_target_set_effect_template(self.db.lookup('Wildest Dreams').oracle_text))
+        for name in ('Divergent Equation','Pest Infestation'):
             source=self.add(session.engine,name,zone='hand')
             self.assertFalse(self.binding(session,source)['strict_capability_ready'],name)
 
@@ -307,11 +313,12 @@ class AnnouncedTargetCardinalityRuntimeTests(unittest.TestCase):
     def test_wrong_announced_binding_is_killed_by_a_fresh_original_gridlock(self):
         from quorune.rules.casting import target_cardinality
         original=target_cardinality.bind_target_count_option
-        def choose_one(program,option,response,*,has_mana_x):
-            return original(program,option,{**response,'x':1},has_mana_x=has_mana_x)
+        def choose_one(program,option,response,*,has_mana_x,has_declared_cost_x=False,target_limit=None):
+            return original(program,option,{**response,'x':1},has_mana_x=has_mana_x,
+                has_declared_cost_x=has_declared_cost_x,target_limit=target_limit)
         with patch.object(target_cardinality,'bind_target_count_option',side_effect=choose_one):
             method='test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets'
-            with self.assertRaises((AssertionError,StopIteration)):
+            with self.assertRaises(AssertionError):
                 getattr(type(self)(method),method)()
 
     def test_restored_fixed_six_handler_bound_is_killed_by_a_fresh_original_by_force(self):

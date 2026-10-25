@@ -9,6 +9,82 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Attached-source casting restrictions opt in through version two of the existing
+player-restriction descriptor. The source-turn opponent rule reads a current
+reciprocal attachment to a battlefield creature, including its effective type;
+it does not capture an equip target or add an activation prohibition. Version
+one keeps its exact fields and behavior. Equipment controller, owner and
+equipped-creature controller remain distinct inputs to their existing owners.
+
+Fixed sacrifice-price spell promotion validates the canonical typed price and
+its declared authority separately from the independently closed result. The
+composed producer prefix is checked against that price before testing the
+result through existing closed-effect owners. A strict capability binding alone
+does not promote unknown prices, malformed descriptors or unrepresented results.
+
+The static dispatcher first gives the complete source to its existing exact
+owners, preserving supported Domain, Max speed, Raid and timing conditions.
+Only when no exact owner recognizes that source does it remove a leading
+nonfunctional ability or flavor label
+before invoking its existing typed body owners. Declaration nodes keep the
+original labeled text and source span while parsing that complete material
+body. Numeric labels and their punctuation also precede ordinary triggered
+abilities. The same normalization applies to synthesized static abilities.
+Functional visit instructions remain outside this normalization;
+every condition, threshold and result in a body must still lower exactly.
+
+`compiler/live_modifier_quantities.py` lowers represented live player values,
+attached-recipient colors and mana value, attachment unions, and public-set
+power/toughness modifiers. It uses the existing source, attachment, public
+query, and layer owners. Characteristic quantity version four reserves closed
+nonnegative life, opponent-poison, and attached-object references; earlier
+quantity encodings retain their fields. These new references do not define
+characteristic values in layer seven a.
+
+The quantified anthem production validates its creature subject through the
+existing fixed-query anthem owner. An “other” quantity proves that every
+affected recipient belongs to the counted set before excluding one member.
+It continues to count correctly when the ability source is outside that set.
+Fixed keyword grants remain separate components, so a zero numeric quantity
+does not remove an unconditional keyword. Ambiguous attachment pronouns,
+private identity predicates and later-layer characteristic reads remain
+residual.
+
+`compiler/fuse_faces.py` binds the printed Fuse declarations across both faces
+of a split card after their ordinary spell bodies lower. The existing ability
+component registry validates one complete-source declaration. Neither an
+isolated Fuse keyword nor an exact half admits an unsupported companion.
+`compiler/fuse_programs.py` derives the fused resolution program from the two
+ordinary programs, retaining their source identities and capability closures.
+Its shape owner checks both original bodies, their order, and the exact combined
+effect and target projection. Missing executable composition remains a material
+CardProgram residual; the physical card still has two faces.
+
+`compiler/adventure_faces.py` binds each Adventure alternative's existing
+source-spanned nodes to `casting.lifecycle.adventure`. Runtime requirements
+retain that intrinsic authority even if a program omits its explicit
+dependency. Ordinary whole-card admission still rejects unsupported bodies or
+normal-face siblings. Current versioned casting offers the alternative using
+its own characteristics and price. The `adventure.py` owner carries its sealed
+face binding through ordinary resolution, substitutes exile for the resolving
+spell's graveyard destination, and grants only the resolving controller a
+normal-face permission for that exile incarnation. The ordinary zone, casting,
+cost, target and stack owners perform the transitions. Countered and
+all-targets-illegal alternatives gain no permission, and a spell copy grants
+none. An absent execution marker retains historical behavior as described by
+the [Game Record contract](../reference/game-record.md).
+
+Each represented half keeps its own fixed single-object target roles. The
+composer maps flat and named references into distinct canonical target groups,
+preserving constraints within a half while allowing the same object in both
+halves. A target-hand-count amount receives an explicit version-7 group binding;
+its player remains independent of the other half's target. The runtime minimum
+validator restores each half and delegates its requirements to the existing
+owners. Variable printed mana, modal or variable-cardinality target bodies,
+additional-price declarations, and unowned companion instructions remain
+residual under this production. Earlier scalar encodings retain their fields
+and meaning.
+
 `compiler/action_permission_templates.py` lowers the complete optional
 opening-hand battlefield clause to a hand-scoped permission in the existing
 action registry. Named self-references and ordinary object pronouns use the
@@ -48,12 +124,26 @@ recognizing the price does not admit an unknown result. Printed Waterbend
 action observers bind the acting player through the normalized public-action
 event owner. Optional and variable Waterbend grammar remains residual.
 
+`compiler/optional_life_costs.py` admits the complete declaration that optionally
+pays two life to reduce one corresponding colored mana for a matching colored
+permanent spell. The declaration includes its colored-only restriction and
+requires complete source admission. Current battlefield abilities supply the
+choices; the existing total-cost and life-payment owners apply the price.
+Each provider can be paid once per spell, including when its reduction is zero.
+Generic and other-color costs remain intact. Unknown amounts, mismatched colors
+and incomplete declarations retain material residuals.
+
 `compiler/targeted_spell_costs.py` lowers opponent spell-cost increases for the
 source itself and one or more controlled commander creatures. Descriptors bind
 the fixed generic amount and target subject; the existing cast-cost component
 registry and current static-ability fragments own runtime applicability.
-Subtype targets, activation taxes, self-spell discounts and colored or variable
-increases remain residual under this production.
+Version-three descriptors also represent fixed generic battlefield-source
+reductions for spells targeting the source or at least one current creature.
+They retain an explicit all-caster, source-controller or source-opponent
+relation. A qualifying target set applies the adjustment once per source;
+per-target cardinality, granted target-cost abilities, activation prices and
+colored or variable adjustments remain outside this production. Historical
+tax and intrinsic source-face predicate schemas keep their existing wire.
 
 `compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
 face of a preparation card to closed inset instant or sorcery characteristics.
@@ -73,6 +163,26 @@ stack characteristic programs. Same-line contributions retain distinct stable
 program identities and their complete original source span. Unrepresented
 source-attribute conditions, compound numeric timing conditions and cyclic
 keyword conditions remain residual.
+
+`compiler/classic_flash.py` lowers the closed intrinsic as-though-Flash clause
+with its next-cleanup sacrifice. `rules/classic_flash.py` keeps the selected
+timing permission separate from mana and target choices. The optional casting
+form distinguishes an independent timing permission from this intrinsic one;
+the default uses an independent permission when available. Ordinary sorcery
+timing and scoped casts during resolution do not consume the intrinsic route.
+No Flash keyword is granted.
+
+An intrinsic use creates the delayed ability at accepted cast, retaining the
+cast controller and the canonical cast incarnation. The existing stack-to-
+battlefield identity continuation lets the cleanup instruction find the
+resulting permanent, while countering, recasting or blinking prevents a later
+incarnation from matching. Countering the spell leaves a once-only cleanup
+trigger with no sacrifice result. A permanent copy does not repeat the accepted
+cast action. The canonical cleanup scheduler performs normal cleanup actions
+before placing the delayed ability; the linked zone owner then records a
+sacrifice by the permanent's current controller. Other follow-up durations,
+conditional predicates and independently unowned sibling effects remain
+residuals.
 
 `compiler/cast_cost_modifier_templates.py` lowers fixed ordinary mana bundles
 for a carrying spell's self-reduction, including separate generic and colored
@@ -184,8 +294,16 @@ existing draw, typed discard, destination replacement and counter owners.
 the existing mana effect, one instruction per represented color or colorless
 quantity. A represented spending restriction remains attached to every unit.
 Spell, entry-trigger and loyalty-ability classification retain their normal
-stack timing and separately compiled costs. Unknown conditional replacements,
-color choices, linked effects and spending clauses remain residuals.
+stack timing and separately compiled costs. Fixed positive outputs of any color
+use a closed version-two instruction in the existing mana chooser. One-color
+outputs select exactly one of the five colors; combinations submit an exact
+nonnegative allocation. The existing mana-bundle form exposes that allocation
+without enumerating every possible vector. The payload carries an independent
+runtime capability minimum and binds the resolving controller and source.
+Ordered result composition resumes the remaining instructions once after the
+choice. Genuine mana abilities retain their immediate activation owner.
+Variable or restricted color choices, unknown conditional replacements, linked
+effects and unsupported spending clauses remain residuals.
 
 `compiler/player_speed_nodes.py` lowers Start Your Engines to a current trusted
 static marker. Max Speed fixed characteristic bodies use the public-state
@@ -194,6 +312,10 @@ closed ability bodies under the existing parent/child component scope. The
 scope follows current controller speed across zones. Unknown bodies remain
 residuals, and the Max Speed prefix is retained as a condition rather than
 discarded as decorative text.
+The compiler-pinned activation catalog also applies those parent scopes on the
+battlefield through `rules/scoped_activated_abilities.py`. It uses the same
+current source designations as off-battlefield catalogs, so an absent Max Speed
+child cannot advertise an activation through its intrinsic descriptor.
 
 `compiler/backup_nodes.py` binds each fixed Backup instance to the complete
 printed ability bundle below it after the face's ordinary nodes are compiled.
@@ -246,6 +368,23 @@ locks each surviving target incarnation until cleanup; later characteristic
 changes do not remove its resolved prohibition. A changed predicate before
 resolution prevents creation for that target.
 
+Fixed temporary blocker restrictions use a closed descriptor for a blocker
+subtype, an artifact-or-fixed-color exception, or a fixed maximum blocker power.
+The existing declaration solver reads current blocker characteristics. The
+resolved rule stays on the selected creature incarnation through ability loss
+and source departure, expires in cleanup, and does not undo an existing block.
+The runtime binder independently decodes these descriptors and requires their
+fixed-blocker capability.
+Chosen qualities, player-relative blockers, two-creature relationships, group
+targets and other durations remain outside this production.
+
+A separate source-specific production lowers "target creature can't block this
+creature this turn". Its typed journal entry locks both the chosen blocker and
+the activation source incarnation. It permits that blocker to block other
+attackers and leaves other blockers eligible against the source. Source context
+comes from the sealed stack identity; controller changes and ability loss do
+not rebind either role, and a returned incarnation does not inherit the rule.
+
 Nontargeted creature-group rules instead retain a typed live public battlefield
 query, optionally restricted to the resolving controller or that controller's
 opponents. An initially empty group still creates the rule. Later entrants,
@@ -255,11 +394,11 @@ This follows the separate game-rule boundary in CR 611.2c rather than the locked
 membership of characteristic grants. Both recipient modes use the existing
 continuous-effect journal and expire in cleanup. The rule remains distinct from
 a granted ability. Ambiguous "other" groups, variable target counts,
-two-object restrictions, unrepresented predicates, and different durations
+independently chosen second-creature relationships, unrepresented predicates, and different durations
 remain residual.
 
-Temporary declaration routing recognizes only the complete unconditional
-"can't attack/block/be blocked this turn" instruction. Static restrictions
+Each temporary declaration production recognizes its complete unconditional
+instruction. Static restrictions
 whose public condition refers to activity this turn retain their ordinary
 declaration owner and condition evaluation.
 
@@ -336,6 +475,9 @@ flowchart LR
 `compiler/program_generation.py` owns lowering exact nodes into registry
 programs. `card_programs/adapters.py` combines abilities, face identity,
 source hashes, residuals, and capability closure into the canonical artifact.
+The complete effect-program promotion policy delegates to
+`compiler/nonleaf_effect_closure.py`; the lowering facade retains its existing
+entry point and recognizer ownership.
 For one CardProgram compilation, the adapter passes its locally compiled IR to
 the existing program-generation lowering owner. Lowering still validates trust
 and constructs fresh semantic programs; it does not parse the same record a
@@ -348,6 +490,17 @@ the counted-discard and fixed controller-sequence leaf templates reject that
 instruction. Integration tests assert the promoted effect order and player
 selector; leaf tests retain their narrower grammar boundaries. The whole-hand
 impact rule includes those existing consumer expectations.
+
+`compiler/spell_self_exile.py` recognizes a terminal source-self exile clause
+only at the end of an ordinary single-face spell's complete source. Its body
+must compile independently with unchanged targets and prices. The resulting
+typed marker uses the existing replacement-aware resolution destination;
+countering and all-target-illegal rejection retain their ordinary graveyard
+exit. Partial target resolution and zero target choices still finish the body
+and self-exile. Transient spell-copy objects cannot move the original card.
+Unknown siblings, another object's name, nonterminal and conditional self
+exile remain residual. No runtime Oracle parsing or new movement operation is
+introduced.
 
 The frontier owner passes the same original IR used for its node inventory to
 CardProgram lowering, retaining independent trust and construction-failure
@@ -417,6 +570,13 @@ descriptor, including represented type, subtype, supertype, color, controller,
 combat-state, and source-exclusion predicates. Open target predicates, dynamic
 results, optional or multiple targets, and target-changing effects remain
 residual rather than falling back to a creature-only approximation.
+`compiler/mixed_target_forms.py` admits two through four flat, unqualified
+type/subtype alternatives through this descriptor. It reuses the existing
+target-form representation and characteristic matcher. The compiler keeps
+card types separate from subtype leaves and shares controller and source
+exclusion across the alternatives. Other zones, spell targets, branch-local
+qualifiers and independently unsupported sibling instructions retain their
+existing boundaries.
 The runtime consumes only the resulting typed node and never reparses those
 Oracle sentences.
 
@@ -605,6 +765,23 @@ the existing optional and closed-sequence compilers. Heterogeneous roles,
 divided or dynamic quantities, linked results, compound or conditional tails,
 other players' graveyards, non-owner-hand destinations, and unsupported
 characteristic dependencies remain source-spanned residuals.
+`compiler/any_number_target_sets.py` reuses these complete homogeneous results
+and the fixed temporary characteristic-set owner for “any number of targets”.
+Its version-two count parameter permits zero through the authoritative finite
+object universe without requiring mana X or imposing a fixed six-target limit.
+The result's typed maximum reads the original chosen target roles, including
+targets that later become illegal. Unknown result siblings, divided quantities,
+and aggregate target constraints remain residual.
+
+`compiler/target_count_cost_nodes.py` lowers a complete fixed ordinary-mana
+sentence that charges for each target beyond the first. Strive is an ability
+word; the sentence defines its mandatory price. The existing cast-cost component
+registry owns this source-pinned descriptor. The price is multiplied by the
+original chosen target count minus one, floored at zero, before ordinary total
+cost adjustments. This source family requires one homogeneous unrestricted
+target group; heterogeneous or independently quantified price groups remain
+residual. It creates no Kicker or mana-X casting decision.
+
 Legacy creature-or-Vehicle and historic-permanent target alternatives retain
 their existing typed union authority. Only schemas closed by the shared direct
 permanent predicate decoder request that decoder's characteristic dependencies;
@@ -614,6 +791,25 @@ Public quantity conditions reject keyword-qualified existence queries before
 constructing their closed quantity descriptor. An unsupported condition keeps
 its source-spanned residual; a successful direct-target predicate does not
 imply that the narrower quantity owner can evaluate it.
+
+`compiler/conditional_recipients.py` composes fixed self and controlled-set
+clauses beneath one complete public condition. Closed recipient roles preserve
+source-only, other-creature and other-land-creature scope, so a source that also
+joins the set receives one modifier. “Exactly one creature” uses the existing
+minimum and maximum count leaves; “that creature” becomes the current controlled
+creature set under that exact condition. Lieutenant checks current battlefield
+presence of a commander owned and controlled by the source controller, using
+the designation rather than printed identity. Each descriptor independently
+requires the recipient capability and any commander designation authority.
+
+`compiler/public_zone_conditions.py` binds fixed public zone facts to the same
+condition descriptor: an opponent has an empty hand, an opponent owns a card in
+exile, or one library has at most a fixed number of cards. Opponent relations
+follow the current source controller. Library thresholds quantify each library
+independently, including the controller's; they never sum library sizes. The
+compiler and runtime independently require the public-zone condition capability.
+Private identity predicates, aggregate-library wording and unsupported companion
+abilities remain residual.
 
 `compiler/declaration_nodes.py` composes one independently exact
 recipient-relative declaration requirement or restriction with fixed
@@ -634,11 +830,20 @@ keyword labels;
 Protection qualities and triggered fragments require a separately represented
 temporary-set descriptor and are never discarded during this lowering. Static
 live grants and direct temporary Protection retain their typed fragments.
+Flat unqualified creature-subtype alternatives retain their existing temporary
+set behavior when represented by the shared receiver-union parser. Mixed or
+branch-qualified unions remain outside this codec. An independent controlled
+set uses its own selection scope even when another instruction targets a player;
+queries that consume that player still validate the player's target schema.
 `compiler/fixed_public_characteristic_sets.py` extends the same
 resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking
-creatures. Both grammars feed one closed query validator. Resolution evaluates
-only cycle-safe current type, subtype, color, supertype, token, controller, and
+creatures. Both grammars feed one closed query validator and accept the
+complete combined keyword and signed power/toughness result in either
+printed order. The existing declared-amount composition also accepts that
+result with a typed public count or scalar quantity; promotion independently
+validates the projected fixed result and every required quantity owner.
+Resolution evaluates only cycle-safe current type, subtype, color, supertype, token, controller, and
 public combat-state facts, then locks the matching logical objects. Bare
 subtype resolution sets include noncreature Kindred members. A fixed power or
 toughness bound on a creature recipient reads exact current effective stats
@@ -716,7 +921,8 @@ authority therefore prevents exact keyword admission before runtime binding.
 
 `compiler/fixed_target_effect_sequences.py` also owns one fixed source-
 characteristic result shared by activated and normalized triggered contexts.
-It accepts a fixed power/toughness modifier plus supported keywords, one or
+It accepts a fixed power/toughness modifier, including an explicit +0/+0 that
+leaves the source unchanged, plus supported keywords, one or
 two supported keywords, a colorless or all-colors source change, or a
 fixed artifact animation with literal colors, creature subtypes, base
 power/toughness, and supported keywords. The runtime commits every represented
@@ -727,7 +933,7 @@ check. Layer-4 animation feeds the existing cycle-safe dynamic-characteristic
 boundary before layer-7a counts, and the state-based owner detaches Equipment
 that becomes a creature. Dynamic or
 chosen values, copies, text or control changes, declaration riders,
-Protection, unrepresented landwalk predicates, Banding, unsupported keywords, and non-until-end-of-turn
+Protection, unrepresented landwalk predicates, unsupported keywords, and non-until-end-of-turn
 durations remain source-spanned residuals.
 The shared map retains the five basic landwalk variants and adds Desertwalk,
 artifact, Legendary, nonbasic, Snow, and Snow/basic-land-type predicates.
@@ -782,6 +988,22 @@ type, subtype, color, and supported keyword addition or removal; compound
 forms remain one descriptor so canonical layer ordering is preserved. Fixed P/T may combine directly with supported keyword removal without an ability grant. Removals retain layer-6 timestamp order; a later keyword grant may restore the ability, and reattachment or source departure updates the live relation. The same
 descriptor may append one or two already-exact declaration requirement or
 restriction fragments, including beside a fixed attached modifier and keyword.
+
+Standalone keyword grants also accept enchanted artifacts, battles,
+enchantments, lands, planeswalkers, and unqualified permanents. These subject
+forms retain the existing live-relation descriptor and typed Ward or other
+represented keyword fragments. The extension accepts the keyword clause only;
+existing type, base-setting, and additive productions keep their owners and
+serialized shapes. A noncreature may receive Shroud, Indestructible, or Ward
+without an invented creature prerequisite.
+
+`rules/attached_keyword_requirements.py` derives independent runtime minima
+from the validated descriptor, the canonical keyword catalog, and typed
+fragment ownership. Declaring the general attached-modifier capability cannot
+substitute for a granted keyword's owner. Subject schemas reject unknown or
+duplicate types, and unsupported keyword text or sibling clauses remain
+residuals.
+
 Typed quantities reuse `query_characteristic_quantity()` and the cycle-safe
 layer-5 object query. Name and rules-text changes, conditions, declaration
 costs, target-relative attachment or controller facts, chosen values, and
@@ -877,6 +1099,16 @@ ordinary cast semantics; Max Speed and monarch predicates retain their own
 capability requirements. Additional costs, alternative zones, hidden conditions,
 permission riders and unsupported siblings remain outside this production.
 
+`compiler/paid_graveyard_templates.py` and its record-aware node owner lower a
+complete ordinary intrinsic graveyard price. A fixed mana replacement remains
+distinct from additional life, hand discard, creature or artifact/creature
+sacrifice, and another own-graveyard creature exile. A decorative title is
+retained in the source span while the complete clause supplies its semantics.
+The node declares the payment's actual owners and current-ability fragment;
+independent runtime decoding rejects a missing owner or changed price. The
+record-aware production excludes variable printed mana, other casting methods,
+printed additional-cost companions and unrepresented entry consequences.
+
 Attached characteristic grammar represents fixed modifiers per Equipment,
 Aura, or Aura/Equipment attached to the recipient. The compiler emits the
 versioned recipient-relative public quantity; the ordinary attached owner
@@ -895,6 +1127,16 @@ Fixed live-set stat and keyword composition accepts singular “each ... gets
 ... and has ...” wording alongside the plural form. Both use the same public
 query, subtype union, source exclusion and layer owners. Unknown subjects,
 variable results and unsupported siblings retain their existing residuals.
+
+Fixed characteristic subjects also represent flat unions of public
+battlefield type, subtype, snow and color sets. Repeated “you control” clauses
+share one controller relation. A leading “other” excludes the source from the
+whole union, while “Skeletons you control and other Zombies you control”
+excludes it only from the Zombie branch. The existing query matcher applies a
+union once per object; it does not emit an independent bonus for each matching
+branch. The compiler declares the receiver-union capability in addition to the
+existing stat or keyword consumers. Recursive, hidden, numeric and
+ability-qualified unions remain residual.
 
 The public quantity compiler recognizes single-color and two-distinct-color
 devotion through a dedicated versioned reduction. It retains the CR 700.5a
@@ -1301,7 +1543,12 @@ v1 precedence when its old one-mana/one-effect shape closes. Runtime rechecks
 full resources, current predicates and object incarnations, commits through
 canonical payment or simultaneous zone intents, then resumes the typed result.
 CR 118.12 depends on chosen payment, not the final destination after replacement.
-Alternative/compound/dynamic costs, random/named payments, paid-object or linked
+The version-five cost leaf composes one positive ordinary mana vector with one
+owned hand-card discard in that same optional decision. The advertised choice
+requires both resources. Completion validates both before canonical mana and
+discard intents, and retains already-paid mana through a pending discard
+replacement. Its independent capability is also derived from the payload.
+Other alternative/compound/dynamic costs, random/named payments, paid-object or linked
 results, reflexive triggers, nested/repeated choices, unsupported leaf owners
 and wider grammar remain residual.
 
@@ -1349,6 +1596,34 @@ announced-target-count and additional-cost requirements and validates both
 branches and the shared target of schema 5 before runtime trust. Older
 condition variants retain their existing runtime binding contract.
 
+`compiler/public_replacement_rows.py` joins an adjacent default instruction and
+its complete public-condition self-replacement only after the shared effect
+compiler proves that pair. The node retains the original raw source span;
+other keywords, casting permissions, and unsupported siblings remain separate.
+Ability-word labels are removed only at top-level sentence boundaries. A
+suffix such as “instead if” has the same typed condition and branch semantics
+as a leading “If” clause. Exactly one branch executes, before external draw,
+token, counter, or damage replacements.
+
+Public same-target schema 8 retains the complete original target schema in
+`target_binding`. Both branches independently close against that one role,
+including its predicates, count, zone, and controller relation. The target is
+chosen during casting and checked before resolution. Public source-result
+schema 9 retains `source_binding`, validating symbolic source ownership before
+runtime binding and the same resolved reference in each child afterward.
+These variants use the existing public-condition choice owner and canonical
+effect owners; older instruction schemas retain their original wire fields.
+Copies evaluate public conditions for their resolving controller and current
+game information, while preserving the copied effect and legal target choices.
+
+The land-entry condition reads sealed entry events for the current turn and
+their entry-time controller and card types. A searched land qualifies; playing
+a land is not required. Another player's entry or a previous turn's entry does
+not qualify. Graveyard conditions count cards, excluding tokens. A permanent
+card matches the canonical six permanent card types, with each card counted
+once; “permanent” is not a subtype. The resolving spell remains on the stack
+while that condition is read, including when cast using Flashback.
+
 Public self-death and attached-creature death returns bind the event card and
 its exact post-departure zone-change counter. The existing graveyard-return
 operation lowers that descriptor to the canonical zone move intent, which
@@ -1383,6 +1658,23 @@ owners. The original trigger retains the entry fact when its source leaves or
 changes controller. A blinked object or token copy has no paid kicker fact and
 creates no new kicked trigger. Multiple kicker costs, Multikicker, cost-specific
 conditions and independently unsupported results or siblings remain residual.
+
+`compiler/kicked_targets.py` lowers a fixed Kicker-dependent targeted result
+beside an independently closed prefix. Its source binding retains each target
+domain and an explicit different-role relation for “another target.” Casting
+binds the conditional group's count to zero or one from the selected Kicker
+price before ordinary target selection and tax pricing. Unsupported target
+replacement, variable counts, source-linked amounts and unrepresented sibling
+results remain residual. Complete target-role closure is checked independently
+from the compiler's declared capabilities.
+
+`compiler/kicked_target_replacements.py` represents a complete fixed target
+predicate or count replacement. Both the original and kicked result compile
+independently with their own full target schemas. The selected cost determines
+which schema is used before choosing targets, and the version-eleven cast-fact
+instruction executes only its matching result program. Exact fixed target
+sets retain their existing distinctness and partial-resolution behavior.
+Variable counts, linked result values and unrepresented siblings remain residual.
 
 `compiler/source_maintenance_nodes.py` recognizes self-entry and fixed upkeep
 or end-step triggers whose only result is sacrificing the source, optionally
@@ -1482,6 +1774,13 @@ cross-mode-target, unsupported-wrapper, and untyped-branch forms remain
 source-spanned residuals. See ADR 0071 for the preserved strict compatibility
 shape and ADR 0082 for the expanded owner.
 
+Runtime ownership follows each modal branch's own instruction scope. An ordered
+draw-and-entry branch validates its two-to-eight effects independently of the
+outer modal ability, whose effect list may be empty. The typed mode schema also
+derives the modal capability and every sibling's dependency without relying on
+the producer's annotations. Unknown sibling operations and malformed mode
+cardinality reject complete admission before an action is offered.
+
 `compiler/cumulative_upkeep_nodes.py` owns the closed printed
 cumulative-upkeep grammar. It lowers one fixed positive ordinary-mana cost or
 one em-dash-delimited fixed positive life cost to a source-spanned upkeep
@@ -1504,15 +1803,20 @@ mechanic costs remain source-spanned residuals. Direct mandatory positive
 fixed-life costs use the same life-payment leaf and canonical life owner.
 
 The same compiler module separately lowers one mandatory announced-X life
-payment or one mandatory exile of X cards, creature cards, instant cards or
-sorcery cards from the caster's graveyard. The source-spanned cost retains an
+payment, one mandatory exile of X cards, creature cards, instant cards or
+sorcery cards from the caster's graveyard, or one mandatory discard of X cards,
+creature cards or land cards from the caster's hand. The source-spanned cost retains an
 immutable typed X parameter, and the independently compiled result uses that
 same declaration. The fixed-cost leaf grammar still rejects variable amounts;
 the announced-X production owns their composition. Alternative or optional
-variable costs, random or different-name selections, X discard, sacrifice or
+variable costs, random or different-name selections, X sacrifice or
 return, and unrepresented linked payments remain residual. A spell combining
 this variable additional payment with Convoke, Delve or Improvise also remains
 residual until a shared payment-resource contract owns the joint budget.
+The hand form requires its separate declared-discard capability and the
+ordinary discard-cost owner. Its private dependent selector excludes the
+casting spell and reuses the canonical predicate, payment and replacement
+journal. Price recognition does not admit an independently unsupported result.
 
 `compiler/activated_zone_change_costs.py` reuses the spell-cost leaf grammar
 for one mandatory selected-object activation cost. It accepts only one fixed
@@ -1632,12 +1936,18 @@ cost modifiers, partial cards, copies, grants, text changes, and unsupported
 graveyard permissions remain source-spanned residuals or fail closed.
 
 `compiler/kicker_nodes.py` owns one single fixed ordinary-mana Kicker cost and
-one closed kicked counter-plus-keyword entry replacement. The cost component
+one closed kicked counter-plus-keyword entry replacement.
+`compiler/nonmana_kicker.py` lowers fixed life, controlled-permanent sacrifice
+or return, owned hand discard, and subtype-qualified untapped-creature prices,
+optionally preceded by fixed ordinary mana. The complete em-dash cost stays
+one keyword instance, including commas between its payment parts. The cost component
 adds a server-authored optional total-cost branch only for a complete admitted
 CardProgram. Its paid stack fact flows into immutable zone-replacement and
 normalized entry snapshots. The entry component creates a nested replacement-
 aware +1/+1 counter event and optionally grants Flying, First Strike, Haste, or
-Trample through existing consumers. Multiple, and/or, variable, nonmana,
+Trample through existing consumers. Each nonmana descriptor independently
+requires its existing payment capabilities. Result siblings keep their own
+whole-card admission boundary. Multiple, and/or, variable,
 copied, granted, kicked-trigger, spell-rider, dynamic, and open entry families
 remain source-spanned residuals.
 
@@ -1654,6 +1964,18 @@ descriptor. The compiler strips that suffix only for result recognition and
 retains the original descriptor, so controller-upkeep and sorcery timing share
 the ordinary offer and command legality owner. Missing or conflicting timing
 metadata prevents this lowering.
+Separation preserves the entire preceding effect text, including its final
+period and earlier sentences. Activation instructions are not part of the
+effect; removing a represented instruction must not alter the result grammar.
+`activation_restriction_composition.py` joins complete `and only` clauses from
+the existing closed instruction grammar. It retains every public condition,
+one timing restriction and one usage limit, regardless of clause order.
+Unknown clauses, duplicate predicates or conflicting limits reject the whole
+instruction. Plain `once` carries a distinct once-per-object limit; it does not
+share Exhaust state. Fixed own instant-or-sorcery cast and opponent life-loss
+conditions lower to typed current-turn facts with their own runtime dependency.
+Current public enchantment and other permanent-type existence checks use the
+same closed object query as the existing artifact, creature and land forms.
 Qualified source-self, targeted, mass, optional, conditional, multiple-object,
 copied, granted, and text-changed movement stays source-spanned and residual.
 
@@ -1856,6 +2178,17 @@ damage. Cast-history, counter-state, modified, chosen, and otherwise open
 qualities remain source-spanned residuals. This grammar adds no separate
 layer-6 ability-presence query and no dynamic characteristic count.
 
+`compiler/attached_protection_exceptions.py` owns the closed source-Aura
+retention sentence. Fixed colors and fixed protection from enchantments lower
+through the existing attached-characteristics handler with a schema-v3 source
+marker. The enchantment-type form may retain a signed power/toughness modifier
+and declares its own additional capability. A separate source-chosen-color
+component reads the existing public entry designation. These productions
+exempt only the granting Aura from its own protection instance during current
+attachment retention; all-Aura, already-attached, and chosen-card-type
+exceptions remain residual. Independently compiled sacrifice abilities keep
+ordinary target legality before cost payment.
+
 `compiler/devoid_characteristics.py` owns the ordinary printed Devoid
 production. One
 exact keyword instance lowers to an all-zone
@@ -1918,7 +2251,7 @@ current target before delegating to the existing reciprocal attachment owner;
 the keyword triggers first use the replacement-aware token owner and attach the
 source only to the original Germ, Rebel or 1/1 colorless Hero. Additional replacement-created
 tokens remain unattached. Multiple targets, other attachment source kinds,
-broader Equip costs or restrictions, modified keyword token definitions, and
+broader Equip restrictions, modified keyword token definitions, and
 replacements that multiply or alter the original token remain source-spanned
 residuals.
 Decorative flavor labels on Equip preserve their original source spans. The
@@ -1926,6 +2259,15 @@ complete fixed-mana Equip child is recognized by the shared typed grammar for
 compiler classification and activation catalogs; labels add no payment,
 targeting or timing permissions. Unsupported costs and restrictions retain
 their residuals.
+`compiler/nonmana_equip_nodes.py` lowers closed nonmana Equip through the same
+typed activation catalog and attachment owner. Fixed hand discard, controlled
+creature or artifact sacrifice, another nonland permanent sacrifice, life,
+energy, and one source charge counter are paid before an attachment can
+resolve. Target legality, sorcery timing, source incarnation, and any printed
+once-per-turn limit remain ordinary activation constraints. The cost descriptor
+requires its own runtime capability independently of keyword recognition.
+Alternative and variable prices and unsupported companion abilities remain
+residual.
 
 A syntactically complete but unsupported Enchant line produces one precise
 restriction residual instead of a second generic mechanic blocker. Numeric
@@ -1966,6 +2308,36 @@ closed amount descriptor and the dedicated named-doubling capability. The
 runtime reads current counts at each instruction and uses the ordinary placement
 owner; no new operation or targeting grammar is introduced. Unknown, all-kind,
 chosen, player and independently unsupported sibling forms remain residual.
+`compiler/all_kind_counter_doubling.py` is a separate primitive in the same
+counter-resolution dispatcher. It represents one fixed, up-to, or unrestricted
+permanent target set with “double each kind” semantics. The existing scalar
+target owner preserves type unions, controller relations, and current public
+predicates. Its registered all-kind handler uses the existing counter intent
+with a closed quantity mode and no selected counter name. The canonical counter
+owner snapshots every positive kind and count before submitting one placement
+batch; zero kinds create no request. Existing quantity replacements remain per
+object and kind. The complete result also participates in the existing payment
+component owner, so a reflexive cost precedes a new trigger's target selection.
+Player counters, arbitrary affected sets, variable factors, and linked attached
+object results remain residual.
+`compiler/quantified_counter_targets.py` lifts one complete scalar counter
+result to a homogeneous exact, up-to, or unrestricted target set. It also
+recognizes a closed “choose targets, put counters on each” form. The shared
+scalar predicate owner retains subtype and current public-state qualifications,
+including battlefield entry this turn. The version-two target-set payload
+records one fixed counter amount or the existing named-count descriptor;
+unrestricted cardinality uses the existing selected-target-count descriptor.
+Resolution snapshots each legal target's current named count before quantity
+replacements. A zero named count creates no placement request. Independent
+target groups, divided totals, and unknown result
+companions remain residual.
+The positive colorless qualifier can conjoin one excluded card type through
+the closed type grammar. “Colorless nonland permanent” lowers to the existing
+`colorless: true` and `types_none: [land]` fields. Current effective colors
+govern eligibility independently of printed mana symbols and Commander color
+identity. Artifact lands still fail the nonland predicate, and a color change
+revalidates the original target before its selected result resolves.
+
 Direct targets lower once to
 `DirectPermanentTargetSpec`, whose deterministic runtime schema supports the
 represented type conjunctions and canonical disjunctions of up to four
@@ -2114,9 +2486,20 @@ The same context admits the exact source-self "becomes level N" occurrence
 through normalized trigger placement, and the ordinary static compiler exposes
 the reusable no-maximum-hand-size component used by cleanup offer and commit
 validation.
-Variable, hybrid, Phyrexian, snow, nonmana, malformed, granted, text-changed,
-direct level-setting, independently unsupported, and cycle-sensitive dynamic
-characteristic forms remain residual.
+
+Class-level variable, hybrid, Phyrexian, snow, nonmana, malformed, granted,
+text-changed, direct level-setting, independently unsupported, and
+cycle-sensitive dynamic characteristic forms remain residual.
+
+`compiler/maximum_hand_size_nodes.py` also lowers fixed increases and reductions to the current
+controller's or each opponent's maximum hand size. Its closed signed descriptor
+uses the existing maximum-hand-size component registry. `maximum_hand_size.py`
+adds currently effective adjustments to the player's finite base, clamps the
+result at zero, and preserves an existing no-maximum permission. Source control,
+departure, phasing, and ability removal change the live rule. Cleanup determines
+the active player's exact private discard before end-of-turn ability or control
+effects expire. Variable amounts, fixed set-to values, other player relations,
+and temporary hand-size effects remain outside this grammar.
 
 `compiler/day_night_nodes.py` and
 `compiler/spell_history_transform_nodes.py` close one paired-face family.
@@ -2143,7 +2526,17 @@ with up to three colors, optional Artifact and Enchantment card types, a
 proper name or Legendary supertype, and capability-backed keywords. Changeling
 and the exact can't-block or can't-be-blocked token sentences lower to the
 shared typed characteristic and declaration fragments rather than executable
-display text. A predefined Blood definition additionally requires
+display text. Fixed creature tokens with Prowess carry exactly one canonical
+`SpellCastKeywordTriggerSpec` beside the keyword label. Definition validation
+and an independent runtime minimum require both the token-definition and
+Prowess capabilities. The existing source-local trigger owner handles each
+later noncreature cast by the token's controller; the creating spell and spell
+copies do not retroactively trigger a new token. The fragment is copiable,
+while its temporary power/toughness bonus is not. Ability loss suppresses new
+triggers without cancelling instances already on the stack. Class self-entry
+wording uses the same source-incarnation binder as other permanent self-entry
+subjects. Independently unsupported creator clauses remain residual.
+A predefined Blood definition additionally requires
 `token.ability.fixed_blood`: its explicit activation profile retains all four
 costs and delegates owned-hand selection, source departure and private draw to
 existing generic owners. The token's name or display text does not select its
@@ -2333,6 +2726,17 @@ current-ability revalidation and ordinary destinations remain authoritative.
 Hybrid, variable, snow, Phyrexian and nonmana Mayhem costs remain residual.
 Every prior descriptor retains its original version and serialized shape.
 
+Buyback also has a version-five typed nonmana price. Its compiler recognizes
+fixed selected hand discard, controlled land or basic-land-subtype sacrifice,
+fixed life payment, and fixed life followed by one server-selected random
+discard. Runtime validation reads the immutable price descriptors; Oracle and
+cost text remain display metadata for this variant. The existing optional-cost
+expander retains base additional prices, and the canonical payment owners pay
+the chosen costs before resolution. The paid lifecycle uses the existing
+owner-hand replacement, while countered spells and fresh normal casts keep
+their ordinary destinations. Independent descriptor minima require the new
+Buyback and composed life/random capabilities.
+
 This conservative descriptor
 contract does not grant a new casting permission or bypass current-ability
 validation; unavailable dependencies keep admission fail-closed. Dash contributes
@@ -2392,6 +2796,73 @@ commander-tax, current-ability, and replay owners. Trap, private or arbitrary
 conditions, team-specific history, tap/reveal/opponent/library/counter/random
 payments, variable or complex mana, multiple nonmana payments, and sibling
 additional, lifecycle, or alternative costs remain residual.
+Each represented nonmana payment also declares the shared fixed payment
+owner it invokes. Alternative-price eligibility cannot substitute for the
+sacrifice, life-payment, discard, exile, or return authority used at commit.
+
+Conditional “without paying its mana cost” forms reuse that owner with an
+explicit version-two condition. The closed grammar requires either one
+caster-controlled basic land type and one opponent-controlled basic land type,
+or any designated commander currently controlled by the caster. The commander
+may be owned by another player. These forms add one zero-mana replacement price
+while preserving the normal printed price, ordinary timing, targets, cost
+increases and atomic payment. Current effective land types, control and phasing
+govern eligibility; later changes do not reprice a committed spell.
+Fixed source-only temporary stat changes use the existing incarnation-bound
+characteristic instruction. A source-equivalent reviewed price/exile compound
+is superseded only when source hashes, target, fixed effect and the represented
+commander price agree with the current typed programs.
+
+Battlefield sources can separately grant a fixed alternative mana price through
+`GlobalAlternativeCostSpec`. Its source-spanned descriptor retains a fixed
+spell type/subtype selector and an optional hand-only restriction. Current
+controller, face, ability presence, and source incarnation govern availability.
+The grant adds one alternative before ordinary additional-cost expansion and
+price modifiers; it preserves optional prices, mandatory costs, commander tax,
+and increases or reductions. The selected spell characteristics govern the
+selector. The grant supplies no casting-zone permission and cannot combine
+with a forced alternative method. A printed mana-cost X is zero when the
+alternative contains no X. Private or dynamic selectors and nonmana or variable
+granted prices remain residual.
+Optional additions retain the selected base alternative identity through
+lifecycle validation, including paid nonmana Buyback and its resolution return.
+
+`compiler/turn_cast_grants.py` lowers a complete once-during-own-turn casting
+permission into the existing cast-cost component registry. A closed source can
+grant an ordinary-cost cast from its controller's graveyard or an optional free
+base from hand or the current library top. Public spell predicates retain
+their exact type, subtype and exclusion meaning. The normal hand cast and
+independent zone permissions remain separate choices. A source-bound grant
+price preserves additional costs, Kicker, taxes and reductions; only printed
+mana X is zeroed by a free base. Selected face-down characteristics govern
+qualified spell permission. Unrepresented linked results, extra payments,
+arrival qualifiers and shared land-use clauses remain material residuals.
+
+Version-two grant data also represents a fixed follow-up on an ordinary
+graveyard cast: exile the original spell instead of putting it in its caster's
+graveyard, or have the granted artifact enter tapped. Separate registered
+handlers require the corresponding fine-grained capability; the original
+schema-one descriptor remains unchanged. The chosen cast binds the follow-up
+to its stack incarnation. The existing zone-replacement snapshot receives an
+ordinary replacement candidate, so ordering and entry-copy choices remain with
+the canonical coordinator. A later source departure does not erase it, while
+the spell's zone change ends it. Extra payment and other linked clauses still
+require their complete owners.
+
+Version-three grant data adds exact current-incarnation graveyard qualifiers.
+A Mill-qualified spell permission reads the committed Mill-result journal;
+generic library-to-graveyard moves such as Surveil do not satisfy it. A shared
+land-or-permanent permission instead reads ordinary library-arrival history and
+uses one source allowance across both actions. It supplies zone access without
+adding a numeric land play. Dedicated registered qualifier handlers require the
+matching capability and preserve schema-one and schema-two serialization.
+A separate qualifier accepts a current owned creature incarnation arriving
+this turn from any zone other than the battlefield. It reads the exact
+committed origin; battlefield deaths and prior incarnations do not qualify.
+An ability-word prefix has no additional meaning and is removed only when the
+entire supported permission body remains exact.
+Functional Visit and Case Solve/Solved markers require their own semantics;
+generic decorative-label normalization keeps unrepresented forms residual.
 
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
@@ -2575,6 +3046,24 @@ Counted token instructions retain supported trailing keyword abilities as part
 of the complete fixed token definition before lowering the separate quantity.
 The existing token compiler still rejects unrepresented abilities and definitions.
 
+Fixed additional-token replacements reuse that same complete definition owner.
+Their creator/controller frames accept one fixed addition, retain artifact,
+creature, or Treasure filters, and apply once per creation event. Predefined
+profiles keep their canonical descriptors; other fixed creature definitions must
+fit the existing additional-token codec without separate creation riders.
+Optional additions, variable amounts, unsupported definitions, and extra result
+instructions remain residual.
+
+`compiler/recipient_modifiers.py` lowers fixed modifiers calculated separately
+for each creature in a closed battlefield set. Its typed scalar reads that
+recipient's current colors, fixed named counters, colored symbols in its
+copiable mana cost, or distinct creature types with an optional fixed maximum.
+Singular `each` subjects retain their qualifiers and source exclusion through
+the existing public query owner. Complete ability and flavor word bodies keep
+their source spans; mechanical scope markers and unrepresented conditions
+remain residual. Power/toughness feedback, private collections, and extra
+unrepresented result clauses are outside this grammar.
+
 `compiler/declared_effect_amounts.py` binds ordinary announced cost X or
 one complete public count definition to numeric result slots in existing typed
 instructions. Mandatory `mill cards equal to` wording normalizes to the same
@@ -2586,6 +3075,22 @@ target schemas, and dependencies; only supported result fields may vary. The
 original fixed template identity is retained for runtime admission. Public
 declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
+Creature-token definitions accept the singular articles `a` and `an` as a
+count of one. This also preserves the literal projections used to validate an
+`X/X` definition without changing the original source span. Resolved power and
+toughness become the created token's numeric base characteristics, with a
+separate token quantity; they are neither counters nor a live definition.
+An explicit creature definition payload independently requires its existing
+token-definition capability. The canonical Afterlife definition retains its
+specific producer requirement. Copy recipes and legacy references without a
+definition retain their separate ownership paths.
+The complete create-token/put-counters followup production preserves those as
+separate instructions. Only the closed token definition is created first;
+the following counter amount stays deferred until the actual creation results
+are bound. Its own capability requires the token and counter owners, including
+replacement-aware placement. Unsupported attachment and linked-result clauses
+remain residual. Announced X also retains ordinary colored-hybrid mana choices;
+the represented casting-cost owner still validates and pays the selected price.
 Independent quantity expressions retain their separate execution-time reads.
 One fixed counter placement may consume that existing public-query amount
 beside independently closed ordered components. The compiler preserves the
@@ -2593,6 +3098,14 @@ original placement subject, counter kind and target schema; the canonical
 placement owner receives the concrete execution-time integer. Unrepresented
 activation costs still block an otherwise recognized result.
 The casting and activation owners choose and pay their respective cost X.
+One represented mandatory additional life, owned-graveyard exile or hand-discard
+price also supplies spell X when the printed mana cost has no X. The compiler
+retains the existing typed stack-X expression and target-count descriptor.
+Promotion checks the entire price and then the independently owned result;
+it does not remove an unrepresented sibling. Ordinary mana-X restrictions,
+unsupported nonordinary X mana, ambiguous definitions and multiple unowned
+price contexts retain their rejection boundaries. Fixed mana stays fixed;
+waiving it does not waive the additional price or force that price's X to zero.
 `compiler/activation_x_costs.py` admits ordinary unrestricted battlefield
 activation mana costs with one or more X symbols, optionally a source tap.
 The closed catalog retains the symbol count, while the existing declared
@@ -2668,10 +3181,11 @@ return, life, counter, or binary alternative price. Whole-card admission remains
 required. Repeated declarations and independently unrepresented siblings retain
 material residuals, so a supported price cannot make an unsupported card exact.
 
-`compiler/spell_additional_cost_nodes.py` admits mandatory homogeneous selected
-zone-change prices of two through ten objects through the existing counted-cost
-descriptor. The isolated single-object leaf retains its narrower boundary;
-whole-spell composition opts into counted normalization. Distinct eligible
+Spell and permanent additional-cost composition admits mandatory homogeneous
+selected zone-change prices of two through ten objects through the existing
+counted-cost descriptor. Binary alternative prices can contain those same
+counted leaves. The isolated single-object leaf retains its narrower boundary;
+whole-card composition opts into counted normalization. Distinct eligible
 selections, the spell's exclusion from its own price, simultaneous zone-cost
 commitment, replacement continuations and private hand projection remain owned
 by the canonical casting transaction. Variable, random, optional and mixed
@@ -2680,6 +3194,27 @@ Sequential replacement choices retain earlier selected-object cost journals
 across transactional replay. The continuation decoder admits only distinct
 selected refs with prior canonical event identities; the casting owner still
 revalidates every payer, zone, predicate and selected replacement at commitment.
+
+`compiler/random_discard_spell_costs.py` separately admits one mandatory
+unrestricted random hand-card price. Its closed descriptor requires
+`casting.additional_cost.fixed_random_discard` alongside the existing random
+discard and ordinary discard-cost owners. Promotion validates that price and
+then the independently supported result; recognizing the price does not admit
+an unsupported result. The server excludes the source spell, pays ordinary
+mana first and selects one other current hand card through the canonical random
+owner. Multiple, qualified, optional and compound random prices remain residual.
+
+`compiler/random_graveyard_returns.py` lowers untargeted random returns from
+the resolving controller's own graveyard. Fixed counts and independently
+declared X retain their existing quantity authority; represented card types,
+type unions and one creature subtype remain closed selection data. The rule
+owner queries the current eligible public set when the instruction applies,
+samples distinct physical identities through the shared instruction-keyed
+selector, and delegates movement to the canonical simultaneous zone owner.
+The selector preserves historical random-discard seeding and ordering.
+Known zero, empty and short pools are legal; random cards are not targets or
+player choices. Extra graveyard ordering, different destinations and
+independently unsupported siblings remain residual.
 
 Global fixed characteristic sets accept canonical creature-subtype plurals with
 optional `All` and `Other`. The shared battlefield query carries no controller
@@ -2775,6 +3310,14 @@ Ordinary program registration validates the same scalar projection and the
 unchanged fixed effect and target shape before promoting a spell or activation.
 It requires the quantity capability and the full original dependency closure;
 a scalar descriptor alone cannot grant trust.
+`compiler/query_counter_sequences.py` composes these independently closed
+quantity instructions in printed order, including a fixed life instruction
+followed by a signed public creature-set modifier. Fixed-value probes preserve
+the prior fixed owner before trying the complete closed atomic grammar.
+Each explicit definition keeps its own instruction binding. A later quantity
+reads after earlier instructions and their replacements commit; suspended
+state actions do not repeat the earlier life change. Unknown clauses and
+ambiguous cross-instruction object references remain residual.
 Source attacks, blocks, and becomes-blocked results may use a source pronoun
 with a complete fixed keyword/modifier body or an independently closed public
 characteristic scalar. The child result retains its original source span and
@@ -2973,7 +3516,11 @@ freeze the returned unblocked attacker's recipient before paying the cost.
 Myriad freezes copyable last-known characteristics when it triggers. Encore
 records its post-cost public source zone and copiable values, uses current
 information only while that exact incarnation remains there, and otherwise
-consumes the sealed last-known snapshot. Its per-opponent and replacement-
+consumes the sealed last-known snapshot.
+New Encore payloads seal the copied card's incarnation separately from the
+acting ability source, preserving both original-source targeting facts and
+current copy information after the exile cost. Older payload forms retain
+their recorded identity path. Its per-opponent and replacement-
 expanded copies enter through one grouped token event. One delayed trigger
 filters those recorded incarnations by current zone and original controller,
 then submits every eligible copy to one simultaneous sacrifice through the
@@ -3038,6 +3585,15 @@ CardProgram compilation and live generated-program registration. It removes a
 reviewed split only when every subscription has one trusted, body-identical
 source-self counterpart, preventing duplicate triggers without card identity
 dispatch.
+`card_programs/current_view_equivalence.py` also proves redundant fixed search
+and controller-upkeep type-count life views. It requires matching nonempty
+Oracle and ruling hashes, current capability closure, event and target scope,
+and complete result semantics. A reviewed activated search with no cost schema
+is redundant only when it retains the identical compiler-pinned cost catalog.
+An upkeep type count preserves the exact controller, type, threshold and life
+result while normalizing conjunction nesting and the redundant beginning phase.
+Conflicting costs, conditions, results or source hashes retain the reviewed
+view; current assembly never removes one merely because the IR is exact.
 
 `compiler/static_cast_rule_templates.py` and
 `compiler/activation_restriction_templates.py` own the closed battlefield-
@@ -3048,10 +3604,32 @@ chosen-name, enchanted-object, and enchanted-player activation prohibitions.
 The exact enchanted-permanent untap/prohibition compound composes the existing
 untap participation capability with the activation restriction instead of
 inventing a second untap rule. Every emitted node requires the shared current
-layer-6 static-component fragment. Temporary and targeted rules, cost changes,
-free casts, dynamic quantities or comparisons, linked objects, spell-self
-riders, Split second, Epic, grants, copies, text changes, and unsupported
-compound siblings remain source-spanned residuals.
+layer-6 static-component fragment. Cost changes, free casts, dynamic quantities
+or comparisons, linked objects, spell-self riders, Split second, Epic, grants,
+copies, text changes, and unsupported compound siblings remain outside this
+static grammar.
+
+`compiler/static_player_restrictions.py` also lowers fixed acting-player turn,
+opponent nonhand casting, nonartifact cast limits, and source-controller-turn
+opponent restrictions. A coupled cast/activation sentence produces separate
+event-bound nodes with the same printed source span and distinct role keys.
+Both require the complete typed player restriction capability. Handler versions
+and old payloads stay unchanged; the additive selector has its own closed
+version. Actor turn, source controller, spell origin and current ability-source
+zone remain separate facts. Nonartifact limits read completed cast events,
+including earlier and countered spells, through the existing turn journal.
+
+`compiler/temporary_cast_restrictions.py` separately lowers fixed resolution
+instructions that prohibit all, creature, or noncreature spells through end of
+turn for opponents, all players, or one targeted player. The immutable
+`temporary_cast_rule_model.py` descriptor retains the resolving controller and
+target seat in the existing duration journal. Shared proposed-spell legality
+applies the rule to both advertised actions and accepted casts from every
+otherwise permitted origin. Existing stack objects, land plays, and abilities
+remain unaffected. Runtime binding independently validates the descriptor and
+requires its capability; composite target schemas cannot turn an untargeted
+restriction into a targeted one. Other durations, variable predicates,
+latest-spell-color rules, and unowned sibling effects remain residuals.
 
 `compiler/fixed_source_combat_growth.py` owns the narrower source-self combat
 growth body grammar. It accepts only mandatory fixed integer power/toughness

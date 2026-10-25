@@ -44,7 +44,7 @@ from quorune.semantic_runtime.tap_state_handlers import (
     UntapAllCreaturesHandler,
     UntapPermanentHandler,
 )
-from quorune.semantics import SemanticProgram, VALID_EFFECT_OPERATIONS
+from quorune.semantics import SemanticProgram, _is_supported_effect_operation
 
 
 class TypedSemanticHandlerTests(unittest.TestCase):
@@ -110,7 +110,8 @@ class TypedSemanticHandlerTests(unittest.TestCase):
             if str(row["family"]).startswith("effect.")
         }
         self.assertTrue(effect_operations)
-        self.assertLessEqual(effect_operations, VALID_EFFECT_OPERATIONS)
+        self.assertTrue(all(_is_supported_effect_operation(operation) for operation in effect_operations))
+        self.assertFalse(_is_supported_effect_operation('unregistered_operation_fixture'))
         self.assertIn("place_counter_batch", effect_operations)
         with self.assertRaisesRegex(
             SemanticHandlerRegistryError, "Duplicate semantic operation"

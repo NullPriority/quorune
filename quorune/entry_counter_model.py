@@ -19,11 +19,13 @@ DYNAMIC_SELF_ENTRY_COUNTER_HANDLER_ID = (
     "replacement.zone.dynamic-self-entry-counter.v1"
 )
 DYNAMIC_SELF_ENTRY_AMOUNTS_CONTEXT = "dynamic_self_entry_counter_amounts"
+PAID_COLOR_ENTRY_CAPABILITY = 'counter.producer.paid_color_self_entry'
 
 
 class DynamicEntryCounterValueSource(str, Enum):
     CAST_X = "cast_x"
     MANA_COLORS_SPENT = "mana_colors_spent"
+    MANA_OF_COLOR_SPENT = 'mana_of_color_spent'
     CONTROLLER_ATTACKED = "controller_attacked"
     CONTROLLER_OTHER_SPELLS_CAST = "controller_other_spells_cast"
     CONTROLLER_SPELLS_CAST = "controller_spells_cast"
@@ -55,6 +57,7 @@ class DynamicEntryCounterAmountSpec:
     offset: int = 0
     minimum: int | None = None
     quantity: CharacteristicQuantitySpec | None = None
+    mana_color: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.value_source, DynamicEntryCounterValueSource):
@@ -83,6 +86,11 @@ class DynamicEntryCounterAmountSpec:
             raise EntryCounterError(
                 "Dynamic entry counter coefficient must be from 1 through 10"
             )
+        if self.value_source is DynamicEntryCounterValueSource.MANA_OF_COLOR_SPENT:
+            if type(self.mana_color) is not str or self.mana_color not in tuple('WUBRG'):
+                raise EntryCounterError('Paid-color entry amounts require one ordinary mana color')
+        elif self.mana_color is not None:
+            raise EntryCounterError('Only paid-color entry amounts accept a mana color')
         if type(self.offset) is not int or not 0 <= self.offset <= 10:
             raise EntryCounterError(
                 "Dynamic entry counter offset must be from 0 through 10"
@@ -111,8 +119,8 @@ class DynamicEntryCounterAmountSpec:
                     CharacteristicQuantityScope.ALL_ZONES,
                 }
                 or quantity.query is None
-                or quantity.query.zones
-                not in {("battlefield",), ("graveyard",)}
+                or (quantity.schema_version != 5 and quantity.query.zones
+                    not in {("battlefield",), ("graveyard",)})
             ):
                 raise EntryCounterError(
                     "Dynamic entry counter queries require the cycle-safe "
@@ -154,7 +162,7 @@ class DynamicEntryCounterAmountSpec:
         return self.coefficient if admitted else 0
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "value_source": self.value_source.value,
             "calculation": self.calculation.value,
             "coefficient": self.coefficient,
@@ -164,13 +172,15 @@ class DynamicEntryCounterAmountSpec:
                 self.quantity.to_dict() if self.quantity is not None else None
             ),
         }
+        if self.mana_color is not None:value['mana_color']=self.mana_color
+        return value
 
     @classmethod
     def from_dict(
         cls,
         value: Mapping[str, Any],
     ) -> "DynamicEntryCounterAmountSpec":
-        if not isinstance(value, Mapping) or set(value) != {
+        if not isinstance(value, Mapping) or set(value)-{'mana_color'} != {
             "value_source",
             "calculation",
             "coefficient",
@@ -181,6 +191,8 @@ class DynamicEntryCounterAmountSpec:
             raise EntryCounterError(
                 "Dynamic entry counter amount uses a closed schema"
             )
+        if 'mana_color' in value and value['value_source']!=DynamicEntryCounterValueSource.MANA_OF_COLOR_SPENT.value:
+            raise EntryCounterError('Only paid-color entry amounts may serialize a mana color')
         try:
             quantity = (
                 CharacteristicQuantitySpec.from_dict(value["quantity"])
@@ -196,6 +208,7 @@ class DynamicEntryCounterAmountSpec:
             offset=value["offset"],
             minimum=value["minimum"],
             quantity=quantity,
+            mana_color=value.get('mana_color'),
         )
 
 

@@ -1,13 +1,50 @@
 from __future__ import annotations
 
 from pathlib import Path
+import json
+import subprocess
 import sys
+import tempfile
 import unittest
 
 from scripts.quick_gate import build_plan
 
 
 class QuickGatePlanTests(unittest.TestCase):
+    def test_pre_corpus_text_encoding_uses_bounded_command_and_exact_input(self):
+        paths=('tests/test_quick_gate.py',)*1200+('docs/index.md',)
+        plan=build_plan(paths,phase='pre-corpus')
+        step=next(step for step in plan['steps'] if step.name=='explicit-text-encoding')
+        self.assertLess(len(subprocess.list2cmdline(step.command)),1024)
+        self.assertIn('--changed-files-stdin',step.command)
+        self.assertEqual(list(paths[:-1]),json.loads(step.input_text))
+
+    def test_large_explicit_file_list_reaches_real_encoding_validation_without_argv_growth(self):
+        root=Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as directory:
+            good=Path(directory)/'valid-source-é.py';bad=Path(directory)/'invalid-source.py'
+            good.write_text("from pathlib import Path\nPath('x').read_text(encoding='utf-8')\n",encoding='utf-8')
+            bad.write_text("from pathlib import Path\nPath('x').read_text()\n",encoding='utf-8')
+            paths=[str(good)]*1200+[str(bad)]
+            self.assertGreater(len(subprocess.list2cmdline([argument for path in paths for argument in ('--changed-file',path)])),32767)
+            command=[sys.executable,'scripts/quick_gate.py','--validate-text-io','--changed-files-stdin']
+            result=subprocess.run(command,cwd=root,input=json.dumps(paths),text=True,encoding='utf-8',capture_output=True)
+            self.assertEqual(1,result.returncode,result.stderr)
+            value=json.loads(result.stdout);self.assertEqual(1201,value['checked_python_files'])
+            self.assertEqual([str(bad)],[row['path'] for row in value['violations']])
+            empty=subprocess.run(command,cwd=root,input='[]',text=True,encoding='utf-8',capture_output=True)
+            self.assertEqual(0,empty.returncode,empty.stderr);self.assertEqual(0,json.loads(empty.stdout)['checked_python_files'])
+
+    def test_explicit_file_list_rejects_malformed_input_and_ambiguous_selection(self):
+        root=Path(__file__).resolve().parents[1]
+        command=[sys.executable,'scripts/quick_gate.py','--validate-text-io','--changed-files-stdin']
+        for value in ('{}','true','[null]','[""]','not JSON'):
+            with self.subTest(value=value):
+                result=subprocess.run(command,cwd=root,input=value,text=True,encoding='utf-8',capture_output=True)
+                self.assertEqual(2,result.returncode)
+        result=subprocess.run([*command,'--changed-file','tests/test_quick_gate.py'],cwd=root,input='[]',text=True,encoding='utf-8',capture_output=True)
+        self.assertEqual(2,result.returncode)
+
     def test_changed_test_and_subsystem_are_deduplicated(self):
         plan = build_plan(
             (

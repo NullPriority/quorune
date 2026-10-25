@@ -40,6 +40,11 @@ reviewed static coverage only for trusted, source-hash-matched programs.
 Provisional or source-drifted handlers cannot close a static remainder.
 Compatibility classification retains its separate intrinsic and format-layer
 blockers; a generated handler label alone does not establish strict readiness.
+Preflight accounts native coverage through exact current source spans and
+registered runtime binding. A printed keyword can be owned by its trigger,
+and keywords inside represented token text remain tied to that token owner's
+span. Native coverage does not clear an unrelated material line; provisional,
+source-drifted, or unbound owners retain their blockers.
 
 ## Closure layers
 
@@ -104,6 +109,43 @@ and mutation declarations are checked independently; see the
 Trust computation is deterministic metadata work. It is performed at compile,
 preflight, load, and replay boundaries rather than inside characteristic hot
 paths.
+
+Terminal spell-self exile retains separate body and destination authority.
+The stored marker, source context, template wrapper and exile destination must
+agree, and the runtime binder independently requires the resolving-spell exit
+capability. Removing its declaration or changing those fields rejects strict
+admission. Existing price owners validate any surrounding additional cost
+before the independently closed body is promoted.
+
+The dynamic requirement reader validates typed `cast_x_effect_amount` values
+across effects, handlers, target and cost data. Each requires
+`quantity_expression.declared_effect_amount` independently of its surrounding
+operation. Removing that annotation or supplying a malformed amount cannot
+retain strict runtime trust. The expression still reads the canonical stack
+declaration; it introduces no new expression registry or gameplay state.
+
+Canonical public characteristic-set descriptors also require their resolution,
+recipient-query, ordinary-keyword and typed quantity owners independently of
+the program's annotations. The runtime binder decodes each stat amount and
+validates the projected fixed set. Removing an owner, adding an unknown field,
+or supplying an invalid quantity rejects strict admission before mutation.
+
+The persisted `closed-effect-program` kind also requires its ordered-program
+capability independently of the component owners and retains its bounded
+effect count. Removing that capability or leaving a malformed single-effect
+ordered program cannot retain strict runtime admission.
+Typed public-query and scalar result values require their own quantity owner
+throughout effects, handlers, target and cost data. Explicit instruction
+bindings additionally require declared-amount authority. These requirements
+come from decoding the stored value, including its schema and binding identity,
+and do not depend on its surrounding operation or declared capability list.
+Characteristic producer discovery distinguishes versioned public-state
+conditions from activation conditions that share a `kind` value. A city-blessing
+activation requires its activation owner independently; its distinct condition
+schema does not acquire a characteristic-only dependency.
+Validated public-quantity mana descriptors delegate their nested producer to
+the mana-production owner. Their codec forbids result declaration bindings and
+scalar arithmetic; a similar-looking result value cannot use that delegation.
 
 Session creation and one synchronous Game Record replay share one validated
 read-only capability registry/evidence snapshot across their nested trust

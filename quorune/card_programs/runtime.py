@@ -146,6 +146,16 @@ class _FixedPublicStateSnapshotResolver:
             return None
         if fact is FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON:
             return self._most_common_color_quantity(condition)
+        if source is None:
+            return None
+        from ..public_zone_condition_model import public_zone_fact_value
+        zone_value = public_zone_fact_value(self.state, source.controller, fact.value, condition.fact_parameter)
+        if zone_value is not None:
+            return zone_value
+        if fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER:
+            return int(any(card.zone == 'battlefield' and not card.phased_out
+                and card.is_commander and card.owner == source.controller and card.controller == source.controller
+                for card in self.state.cards.values()))
         if fact in {
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES,
@@ -258,6 +268,7 @@ class _FixedPublicStateSnapshotResolver:
             )
         if fact in {
             FixedPublicStateFact.CONTROLLER_NONLAND_PERMANENTS_ENTERED_THIS_TURN,
+            FixedPublicStateFact.CONTROLLER_LANDS_ENTERED_THIS_TURN,
             FixedPublicStateFact.CONTROLLER_OTHER_CREATURES_ENTERED_THIS_TURN,
             FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN,
         }:
@@ -273,6 +284,8 @@ class _FixedPublicStateSnapshotResolver:
                 return sum("land" not in event.types for event in entered)
             if fact is FixedPublicStateFact.CONTROLLER_ARTIFACTS_ENTERED_THIS_TURN:
                 return sum("artifact" in event.types for event in entered)
+            if fact is FixedPublicStateFact.CONTROLLER_LANDS_ENTERED_THIS_TURN:
+                return sum('land' in event.types for event in entered)
             return sum(
                 "creature" in event.types
                 and event.object_incarnation != source.logical_object_id
@@ -637,6 +650,9 @@ def _component_public_state_snapshot(
 ):
     """Keep early-layer settings separate from characteristic query conditions."""
     handler_id = descriptor.get('handler_id')
+    from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
+    if handler_id==QUANTIFIED_ANTHEM_HANDLER and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
+        return True,None
     if handler_id == 'continuous.characteristics.conditional-creature-type-removal.v1':
         from ..semantic_runtime.fixed_characteristic_settings import ConditionalCreatureTypeRemovalHandler
         ConditionalCreatureTypeRemovalHandler().validate(descriptor)
@@ -668,6 +684,18 @@ def _component_public_state_snapshot(
         return True, None
     return False, (public_state_resolver.snapshot(source,
         FixedPublicStateConditionSpec.from_dict(descriptor['source_condition'])) if is_conditional else None)
+
+
+def _descriptor_characteristic_quantity(source,descriptor,*,quantity_resolver,maximum_layer):
+    """Project supported continuous quantities once through the layer-safe owner."""
+    from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
+    modifier=descriptor.get('modifier')
+    raw=modifier.get('quantity') if isinstance(modifier,Mapping) else None
+    if (descriptor.get('handler_id') in {ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID,QUANTIFIED_ANTHEM_HANDLER}
+            and isinstance(raw,Mapping) and quantity_resolver is not None
+            and (maximum_layer is None or maximum_layer>=Layer.POWER_TOUGHNESS)):
+        return quantity_resolver(source,CharacteristicQuantitySpec.from_dict(raw))
+    return None
 
 
 def collect_card_program_continuous_effects(
@@ -741,29 +769,8 @@ def collect_card_program_continuous_effects(
                         setting_state_resolver=setting_state_resolver)
                     if skip:
                         continue
-                    resolved_quantity = None
-                    modifier = descriptor.get("modifier")
-                    raw_quantity = (
-                        modifier.get("quantity")
-                        if isinstance(modifier, Mapping)
-                        else None
-                    )
-                    if (
-                        descriptor.get("handler_id")
-                        == ATTACHED_FIXED_CHARACTERISTICS_HANDLER_ID
-                        and isinstance(raw_quantity, Mapping)
-                        and quantity_resolver is not None
-                        and (
-                            maximum_layer is None
-                            or maximum_layer >= Layer.POWER_TOUGHNESS
-                        )
-                    ):
-                        resolved_quantity = quantity_resolver(
-                            source,
-                            CharacteristicQuantitySpec.from_dict(
-                                raw_quantity
-                            ),
-                        )
+                    resolved_quantity = _descriptor_characteristic_quantity(source,descriptor,
+                        quantity_resolver=quantity_resolver,maximum_layer=maximum_layer)
                     from ..soulbond_model import SOULBOND_GRANT_HANDLER
                     paired_object = None
                     if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:

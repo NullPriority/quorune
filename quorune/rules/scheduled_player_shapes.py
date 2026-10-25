@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed fixed effects addressed to the sealed scheduled active player."""
 
 from typing import Any,Iterable,Mapping,Sequence
+from ..event_player_result_values import event_result_value_capabilities
 from .affected_player_discard_capability_shapes import (
     fixed_context_player_discard_node_capabilities,
     fixed_controller_discard_node_capabilities,
@@ -33,9 +34,14 @@ def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],targ
         field,fields,capability=layouts[op]
         reference='target' if op=='damage' else 'player'
         players = {'$context.player'} if op == 'damage' else {'$context.player', '$controller'}
-        if set(effect)!=fields or type(effect.get(reference)) is not str or effect.get(reference) not in players or type(effect.get(field)) is not int:
+        if set(effect)!=fields or type(effect.get(reference)) is not str or effect.get(reference) not in players:
             return ()
-        if (effect[field]==0 if op=='life' else effect[field]<=0):return ()
+        if op == 'lose_life':
+            value_capabilities=event_result_value_capabilities(op,field,effect.get(field))
+            if value_capabilities is None:return ()
+            if value_capabilities and 'half-current-player-life-loss' not in set(mechanic_ids):return ()
+            capabilities.update(value_capabilities)
+        elif type(effect.get(field)) is not int or (effect[field]==0 if op=='life' else effect[field]<=0):return ()
         if op=='draw' and effect['private'] is not True:return ()
         if op=='damage':
             if effect['source']!='$source':return ()

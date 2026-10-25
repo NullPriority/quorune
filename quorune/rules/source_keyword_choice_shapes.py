@@ -66,6 +66,7 @@ def source_keyword_choice_runtime_dependencies(program):
         marked = marked or any(isinstance(branch, (list, tuple)) and any(
             isinstance(leaf, Mapping) and leaf.get("card") == "$source.zone_object"
             and leaf.get("op") == "apply_source_characteristics_until_end_of_turn"
+            and "schema_version" not in leaf
             for leaf in branch) for branch in branches.values())
     if not marked:
         return ()

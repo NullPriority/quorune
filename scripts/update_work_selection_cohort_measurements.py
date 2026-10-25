@@ -220,6 +220,50 @@ def _legacy_upgrade_is_checkpoint_bound(entry: dict) -> bool:
         and _semantic_receipts_match(entry['head_receipt'], _receipt(ROOT, 'HEAD'), repository=ROOT))
 
 
+def _measurement_frontier_before_non_harvest_updates(
+    history: dict, *, outcome_base_oid: str, expected_fingerprint: str,
+) -> dict | None:
+    """Recover a prediction's exact base across conservative main updates."""
+    from scripts.harvest_outcome_history import _validate_non_harvest_content_entry
+
+    path = 'coverage/card-unlock-frontier.json.gz'
+    object_id = outcome_base_oid
+    visited = set()
+    while object_id not in visited:
+        visited.add(object_id)
+        predecessors = {}
+        for entry in history.get('non_harvest_transitions', ()):
+            if not isinstance(entry, dict) or entry.get('receipt_identity_kind') != 'semantic_content':
+                continue
+            head = entry.get('head_receipt', {}).get('blobs', {}).get(path, {})
+            if head.get('git_blob_oid') != object_id:
+                continue
+            validated = _validate_non_harvest_content_entry(entry)
+            base = validated['base_receipt']['blobs'][path]
+            if base['git_blob_oid'] != object_id:
+                predecessors[base['git_blob_oid']] = base
+        if not predecessors:
+            return None
+        if len(predecessors) != 1:
+            raise ValueError('Measurement frontier has ambiguous non-harvest predecessors')
+        object_id, blob = next(iter(predecessors.items()))
+        if object_id in visited:
+            raise ValueError('Measurement frontier non-harvest history is cyclic')
+        completed = subprocess.run(
+            ['git', 'cat-file', 'blob', object_id], cwd=ROOT, check=False,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+        raw = completed.stdout if completed.returncode == 0 else _remote_git_blob(object_id)
+        if raw is None:
+            return None
+        if hashlib.sha256(raw).hexdigest() != blob.get('raw_sha256'):
+            raise ValueError('Historical measurement frontier blob hash is inconsistent')
+        value = _decode_frontier(raw, label='Historical measurement base')
+        if value.get('fingerprint') == expected_fingerprint:
+            return value
+    return None
+
+
 def _source_checkpoint_frontier(transition_id: str) -> dict:
     try:
         history = json.loads(HARVEST_HISTORY.read_text(encoding="utf-8"))
@@ -303,6 +347,11 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
         if completed.returncode:
             raw = _remote_git_blob(object_id)
             if raw is None:
+                recovered = _measurement_frontier_before_non_harvest_updates(
+                    history, outcome_base_oid=object_id, expected_fingerprint=expected,
+                )
+                if recovered is not None:
+                    return recovered
                 return _durable_main_frontier(
                     expected_fingerprint=expected,
                 )
@@ -313,6 +362,11 @@ def _source_checkpoint_frontier(transition_id: str) -> dict:
             label="Landed transition base",
         )
         if value.get("fingerprint") != expected:
+            recovered = _measurement_frontier_before_non_harvest_updates(
+                history, outcome_base_oid=object_id, expected_fingerprint=expected,
+            )
+            if recovered is not None:
+                return recovered
             raise ValueError(
                 "Landed transition base-frontier identity is inconsistent"
             )

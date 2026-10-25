@@ -101,6 +101,28 @@ _NONCREATURE_SUBTYPE_OWNERS = {
 }
 
 
+def _definition_subtype_union(normalized, fields):
+    union_parts = re.split(
+        r",\s*(?:and/or\s+)?|\s+and/or\s+",
+        normalized,
+    )
+    if len(union_parts) >= 2 and all(union_parts):
+        subtypes = tuple(
+            subtype
+            for part in union_parts
+            if (
+                (subtype := canonical_creature_subtype(part)) is not None
+                or (
+                    subtype := _singular_creature_subtype(part)
+                )
+                is not None
+            )
+        )
+        if len(subtypes) == len(union_parts) and len(set(subtypes)) == len(subtypes):
+            return ObjectQuerySpec(**fields, subtypes_any=subtypes)
+    return None
+
+
 def _query_quantity_descriptor(
     value: str,
     *,
@@ -154,25 +176,15 @@ def _query_quantity_descriptor(
         fields["excluded_types"] = ("land",)
         return (ObjectQuerySpec(**fields), exclude_source)
 
-    union_parts = re.split(
-        r",\s*(?:and/or\s+)?|\s+and/or\s+",
-        normalized,
-    )
-    if definition_extensions and len(union_parts) >= 2 and all(union_parts):
-        subtypes = tuple(
-            subtype
-            for part in union_parts
-            if (
-                (subtype := canonical_creature_subtype(part)) is not None
-                or (
-                    subtype := _singular_creature_subtype(part)
-                )
-                is not None
-            )
-        )
-        if len(subtypes) == len(union_parts):
-            fields["subtypes_any"] = subtypes
-            return (ObjectQuerySpec(**fields), exclude_source)
+    if definition_extensions:
+        union = _definition_subtype_union(normalized, fields)
+        if union is not None:
+            return union, exclude_source
+
+    from .receiver_union_queries import characteristic_quantity_union
+    union = characteristic_quantity_union(normalized, zone=zone)
+    if union is not None:
+        return union, exclude_source
 
     singulars = {
         "artifacts": "artifact",
@@ -262,6 +274,9 @@ def query_characteristic_quantity(
     definition_extensions: bool = False,
 ) -> CharacteristicQuantitySpec | None:
     text = " ".join(value.strip().rstrip(".").split())
+    from .public_zone_quantities import public_zone_quantity
+    zone=public_zone_quantity(text)
+    if zone is not None:return zone
     if text.casefold() in {'opponent you have','opponents you have'}:
         return CharacteristicQuantitySpec(scope=CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT,schema_version=2)
     reduced = collection_quantity(
@@ -311,6 +326,13 @@ def query_characteristic_quantity(
             scope=CharacteristicQuantityScope.ATTACHED_TO_SOURCE,
             query=query,
         )
+
+    from .receiver_union_queries import relative_characteristic_quantity_query
+    relative = relative_characteristic_quantity_query(text, compile_descriptor=lambda body:
+        _query_quantity_descriptor(body, zone='battlefield', definition_extensions=definition_extensions))
+    if relative is not None:
+        return CharacteristicQuantitySpec(
+            scope=CharacteristicQuantityScope.CONTROLLER_ZONE, query=relative)
 
     relations = (
         (
@@ -387,6 +409,9 @@ def query_characteristic_value(value: str, *, source_name: str) -> Characteristi
 
 
 def _unadjusted_characteristic_value(text: str, *, source_name: str) -> CharacteristicQuantitySpec | None:
+    from .public_zone_quantities import public_zone_quantity
+    zone=public_zone_quantity(text)
+    if zone is not None:return zone
     if text.casefold().startswith('your devotion to '):
         return query_characteristic_quantity(text,source_name=source_name,definition_extensions=True)
     added = additive_quantity(text, compile_value=lambda base: _unadjusted_characteristic_value(base, source_name=source_name))
@@ -626,6 +651,9 @@ def _query_gated_self_characteristics(
 
 
 def _self_collection_quantity(phrase, *, source_name, value_form):
+    from .live_modifier_quantities import source_modifier_quantity
+    current=source_modifier_quantity(phrase)
+    if current is not None:return current
     if value_form:
         return query_characteristic_value(phrase,source_name=source_name)
     quantity=query_characteristic_quantity(phrase,source_name=source_name)

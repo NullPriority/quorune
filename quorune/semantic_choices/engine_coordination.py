@@ -13,6 +13,7 @@ from ..connive import connive_discard_characteristic_ids, bind_connive_instructi
 from ..object_query import object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
+from ..semantic_runtime.hand_visibility import hand_card_is_known_to, public_hand_owners
 from ..semantic_runtime import (
     IntentPlan,
     prepare_draw_resolution,
@@ -61,7 +62,9 @@ class SemanticChoiceCoordinationMixin:
         if inspected_hand_owner not in self.active_seats:
             inspected_hand_owner = ""
         rows: list[ChoiceObjectView] = []
+        public_hands = public_hand_owners(self)
         for card in self.state.cards.values():
+            known_hand = card.owner in self.active_seats and hand_card_is_known_to(self, card, actor, public_owners=public_hands)
             inspected_hidden_card = (
                 card.zone == "hand" and card.owner == inspected_hand_owner
             )
@@ -69,6 +72,7 @@ class SemanticChoiceCoordinationMixin:
                 card.zone not in public_zones
                 and card.owner != actor
                 and not inspected_hidden_card
+                and not known_hand
             ):
                 continue
             effective = self._effective_card_data(card)
@@ -83,6 +87,7 @@ class SemanticChoiceCoordinationMixin:
                     actor in card.known_to
                     or card.zone in public_zones
                     or inspected_hidden_card
+                    or known_hand
                 ),
                 attached_to_ref=(
                     self.state.cards[card.attached_to].ref
@@ -359,6 +364,11 @@ class SemanticChoiceCoordinationMixin:
             cost_value = effect["_requirements"]
         elif isinstance(effect.get("cost"), Mapping):
             cost_value = effect["cost"]
+        elif (effect.get('op')=='offer_optional_mana_payment'
+                and isinstance(effect.get('payment'),Mapping)
+                and effect['payment'].get('kind')=='mana_discard'):
+            from ..fixed_effect_payment import FixedEffectPaymentSpec
+            cost_value=FixedEffectPaymentSpec.from_dict(effect['payment']).requirements
         elif effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 3:
             from ..source_maintenance import SourceMaintenanceSpec
             payment = SourceMaintenanceSpec.from_effect({
@@ -510,7 +520,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         condition_facts = {}
-        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5}:
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11}:
             try:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
                 if choice_effect["player"] != actor:
@@ -520,7 +530,11 @@ class SemanticChoiceCoordinationMixin:
                 )
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
+        from ..rules.library_search_rules import optional_search_permissions
+        from ..semantic_runtime.counter_permissions import collect_counter_permissions
         return SnapshotSemanticChoiceQuery(
+            counter_permissions=collect_counter_permissions(self),
+            library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),
             seat_order=tuple(self.seats),
             active_order=tuple(self.active_seats),

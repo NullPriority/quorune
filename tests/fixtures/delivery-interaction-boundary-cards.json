@@ -1,0 +1,946 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned native conditional Aura and residual-card interaction rejection witnesses.",
+  "cards": [
+    {
+      "oracle_id": "9ab101c2-215b-4736-873a-4a1ef6666b6d",
+      "name": "Nature's Embrace",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature or land\nAs long as enchanted permanent is a creature, it gets +2/+2.\nAs long as enchanted permanent is a land, it has \"{T}: Add two mana of any one color.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bc2c02f6-2b6b-4016-b006-12ce0a1a2450",
+      "name": "Pact Weapon",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "As long as this Equipment is attached to a creature, you don't lose the game for having 0 or less life.\nWhenever equipped creature attacks, draw a card and reveal it. The creature gets +X/+X until end of turn and you lose X life, where X is that card's mana value.\nEquip—Discard a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "name": "The Reality Chip",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Legendary Artifact Creature — Equipment Jellyfish",
+      "oracle_text": "You may look at the top card of your library any time.\nAs long as The Reality Chip is attached to a creature, you may play lands and cast spells from the top of your library.\nReconfigure {2}{U} ({2}{U}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "0",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Reconfigure"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "name": "Cloudsteel Kirin",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Artifact Creature — Equipment Kirin",
+      "oracle_text": "Flying\nEquipped creature has flying and \"You can't lose the game and your opponents can't win the game.\"\nReconfigure {5} ({5}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Reconfigure",
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+      "name": "The Kami War // O-Kagachi Made Manifest",
+      "mana_cost": "{1}{W}{U}{B}{R}{G} // ",
+      "cmc": 6.0,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Dragon Spirit",
+      "oracle_text": "The Kami War: (As this Saga enters and after your draw step, add a lore counter.)\nI — Exile target nonland permanent an opponent controls.\nII — Return up to one other target nonland permanent to its owner's hand. Then each opponent discards a card.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nO-Kagachi Made Manifest: O-Kagachi Made Manifest is all colors.\nFlying, trample\nWhenever this creature attacks, defending player chooses a nonland card in your graveyard. Return that card to your hand. This creature gets +X/+0 until end of turn, where X is the mana value of that card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "B",
+            "G",
+            "R",
+            "U",
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}{U}{B}{R}{G}",
+          "name": "The Kami War",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Exile target nonland permanent an opponent controls.\nII — Return up to one other target nonland permanent to its owner's hand. Then each opponent discards a card.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "B",
+            "G",
+            "R",
+            "U",
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "O-Kagachi Made Manifest",
+          "oracle_text": "O-Kagachi Made Manifest is all colors.\nFlying, trample\nWhenever this creature attacks, defending player chooses a nonland card in your graveyard. Return that card to your hand. This creature gets +X/+0 until end of turn, where X is the mana value of that card.",
+          "power": "6",
+          "toughness": "6",
+          "type_line": "Enchantment Creature — Dragon Spirit"
+        }
+      ]
+    },
+    {
+      "oracle_id": "0df0503b-25e7-499b-a703-a867f2da790c",
+      "name": "Nature's Revolt",
+      "mana_cost": "{3}{G}{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "All lands are 2/2 creatures that are still lands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2001-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "79441673-6e43-41bc-936c-958dbb9d92da",
+      "name": "Civic Saber",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature gets +1/+0 for each of its colors.\nEquip {1}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Quirion Sentinel",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "oracle_text": "When this creature enters, add one mana of any color.",
+      "power": "2",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2000-10-02",
+      "toughness": "1",
+      "type_line": "Creature — Elf Druid"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}{R}",
+          "name": "The Legend of Roku",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Exile the top three cards of your library. Until the end of your next turn, you may play those cards.\nII — Add one mana of any color.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Avatar Roku",
+          "oracle_text": "Firebending 4 (Whenever this creature attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)\n{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Legendary Creature — Avatar"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Firebending"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R} // ",
+      "name": "The Legend of Roku // Avatar Roku",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "oracle_text": "The Legend of Roku: (As this Saga enters and after your draw step, add a lore counter.)\nI — Exile the top three cards of your library. Until the end of your next turn, you may play those cards.\nII — Add one mana of any color.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nAvatar Roku: Firebending 4 (Whenever this creature attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)\n{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Legendary Creature — Avatar"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "9ab101c2-215b-4736-873a-4a1ef6666b6d",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "If the enchanted permanent is both a land and a creature, it gets both benefits."
+    },
+    {
+      "oracle_id": "bc2c02f6-2b6b-4016-b006-12ce0a1a2450",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "Similarly, if an opponent gains control of the equipped creature without gaining control of Pact Weapon and attacks with it, you will draw a card, reveal it, and lose life."
+    },
+    {
+      "oracle_id": "bc2c02f6-2b6b-4016-b006-12ce0a1a2450",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If the card draw is replaced with another effect, the equipped creature won't get any bonus to its power and toughness and you won't lose any life. This is true even if the card draw is replaced by one or more card draws."
+    },
+    {
+      "oracle_id": "bc2c02f6-2b6b-4016-b006-12ce0a1a2450",
+      "published_at": "2022-06-10",
+      "source": "wotc",
+      "comment": "If an opponent gains control of the creature that Pact Weapon is attached to but doesn't also gain control of Pact Weapon, you still control Pact Weapon and still don't lose the game for having 0 or less life as long as it is attached."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Once you cast a spell from the top of your library, causing The Reality Chip to no longer be attached to a creature will have no effect on that spell."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The top card of your library is still in your library and not in your hand. You can't discard cards from the top of your library (for example, to activate their channel abilities)."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "You must pay all costs and follow all timing rules for cards played from the top of your library this way. For example, you may play a land this way only while the stack is empty during one of your own main phases, and only if you haven't played a land yet this turn."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "751f22bc-bcea-4213-a37b-b5f72448a4c4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If you have 0 or less life while Cloudsteel Kirin is equipped to a creature, activating reconfigure to attach Cloudsteel Kirin to another creature you control doesn't cause you to lose the game. You would lose the game if Cloudsteel Kirin becomes unattached or becomes attached to a creature you don't control."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If you control a creature equipped with Cloudsteel Kirin in a Two-Headed Giant game, your team can't lose the game and the opposing team can't win the game."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "No game effect can cause you to lose the game or cause any opponent to win the game while you control a creature equipped with Cloudsteel Kirin. It doesn't matter whether you have 0 or less life, you're forced to draw a card while your library is empty, you have ten or more poison counters, you're at the end of your Nine Lives, your opponent is a Triskaidekaphile, or so on. You keep playing."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "a34a71eb-26a4-4e37-8d3c-a0352bea491b",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Other circumstances can still cause you to lose the game. For example, you will lose a game if you concede or if you're penalized with a Game Loss or a Match Loss during a sanctioned tournament due to a tournament rules infraction."
+    },
+    {
+      "oracle_id": "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color."
+    },
+    {
+      "oracle_id": "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up."
+    },
+    {
+      "oracle_id": "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile."
+    },
+    {
+      "oracle_id": "4d23b22b-31a5-4eec-b894-2dd5a7138c5a",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "0df0503b-25e7-499b-a703-a867f2da790c",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn’t matter how long the permanent has been a creature."
+    },
+    {
+      "oracle_id": "79441673-6e43-41bc-936c-958dbb9d92da",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Civic Saber's bonus can range from +0/+0 (for a colorless creature) to +5/+0 (for a creature that's all five colors)."
+    },
+    {
+      "oracle_id": "79441673-6e43-41bc-936c-958dbb9d92da",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If the equipped creature becomes a different number of colors, the bonus will change accordingly."
+    },
+    {
+      "comment": "A nonmodal double-faced card enters with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a nonmodal double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a nonmodal double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each nonmodal double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of The Legend of Roku, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a nonmodal double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You pay all costs and follow all timing rules for cards played from exile using The Legend of Roku's first chapter ability. For example, if one of the exiled cards is a land card, you may play it only during your main phase while the stack is empty. You may play those exiled cards even if you no longer control The Legend of Roku.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not a mana ability. It uses the stack, and can be responded to.",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You get the mana whether you want it or not. If you don't spend it, it will disappear at the end of the current step (or phase).",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability isn't a mana ability. It uses the stack and can be responded to.",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2011-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You get the mana whether you want it or not. If you don't spend it, it will disappear at the end of the current step (or phase).",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2011-01-25",
+      "source": "wotc"
+    }
+  ]
+}

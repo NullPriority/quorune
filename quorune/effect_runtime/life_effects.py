@@ -26,6 +26,7 @@ from ..semantic_runtime.life_replacements import (
     collect_life_change_replacement_effects,
     LifeReplacementHost,
 )
+from ..semantic_runtime.life_prohibitions import collect_life_gain_permissions
 
 
 OPERATIONS = effect_family_contract("life-effects.v2").operations
@@ -87,6 +88,7 @@ def _commit(
                 for index, change in enumerate(changes)
             ),
             effects=collect_life_change_replacement_effects(host),
+            gain_permissions=collect_life_gain_permissions(host),
             selections=selections,
             require_all_selections=False,
             batch_id=(

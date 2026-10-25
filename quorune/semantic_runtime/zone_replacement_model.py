@@ -7,6 +7,7 @@ from ..entry_keyword_grants import EntryKeywordGrant
 from ..entry_counters import EffectEntryCounter, IntrinsicEntryCounter
 from ..entry_state_conditions import FixedEntryMetric
 from ..replacement.immutable import FrozenMap
+from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot
 from ..replacement_effects import (
     ReplaceableEvent,
     ReplacementBatchChoice,
@@ -184,8 +185,11 @@ class ZoneChangeSubjectSnapshot:
     cast_option: str | None = None
     multikicker_paid: FrozenMap | None = None
     prospective_subject: bool = False
+    counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
 
     def __post_init__(self) -> None:
+        if not isinstance(self.counter_permissions, CounterPermissionSnapshot):
+            raise ZoneReplacementError('Entry counter permissions require a typed immutable snapshot')
         required = (
             self.object_id,
             self.object_ref,

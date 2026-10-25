@@ -24,6 +24,13 @@ Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | 
 
 def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
     value=text.strip()
+    compound=re.fullmatch(r'pay (?P<mana>(?:\{(?:[0-9]+|[WUBRGC])\})+) and discard a card',value,re.I)
+    if compound is not None:
+        from ..object_predicate import ObjectQuerySpec
+        requirements,complex_symbols=mana_cost_to_vector(compound['mana'])
+        if complex_symbols or not any(requirements.values()):return None
+        return FixedEffectPaymentSpec('mana_discard',schema_version=5,requirements=FrozenMap(requirements),
+            predicate=ObjectQuerySpec(zones=('hand',),owner='$controller'))
     exile = _owned_graveyard_exile_payment(value)
     if exile is not None:return exile
     tap = _fixed_untapped_permanent_payment(value)

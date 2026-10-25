@@ -49,6 +49,7 @@ from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
 from .city_blessing import AscendStaticHandler
 from .prototype import PrototypeAbilityHandler
+from .fuse import FuseAbilityHandler
 from .enlist import EnlistAbilityFragmentHandler
 from .exert import ExertAttackFragmentHandler
 
@@ -1356,8 +1357,10 @@ class AbilityFragmentRegistry(
 
 @lru_cache(maxsize=1)
 def default_ability_fragment_registry() -> AbilityFragmentRegistry:
+    from .all_colors import AllColorsDefinitionHandler
     from .rampage_fragment import RampageFragmentHandler
     from .landwalk_permissions import LandwalkPermissionFragmentHandler
+    from .counter_permissions import CounterProhibitionAbilityFragmentHandler
     registry = AbilityFragmentRegistry(
         (
             AllCreatureTypesCharacteristicDefinitionAbilityFragmentHandler(),
@@ -1367,10 +1370,12 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             LandwalkPermissionFragmentHandler(),
             CascadeAbilityFragmentHandler(),
             CounterMaximumAbilityFragmentHandler(),
+            CounterProhibitionAbilityFragmentHandler(),
             DeclarationCostAbilityFragmentHandler(),
             DefenderPermissionAbilityFragmentHandler(),
             BlockCapacityAbilityFragmentHandler(),
             PrototypeAbilityHandler(),
+            FuseAbilityHandler(),
             EnlistAbilityFragmentHandler(),
             ExertAttackFragmentHandler(),
             AsUnblockedAssignmentFragmentHandler(),
@@ -1381,6 +1386,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DeclarationRestrictionComponentHandler(),
             ConditionalKeywordAbilityFragmentHandler(),
             ColorlessCharacteristicDefinitionAbilityFragmentHandler(),
+            AllColorsDefinitionHandler(),
             DethroneAbilityFragmentHandler(),
             DynamicPowerToughnessAbilityFragmentHandler(),
             QueryCharacteristicModifierAbilityFragmentHandler(),

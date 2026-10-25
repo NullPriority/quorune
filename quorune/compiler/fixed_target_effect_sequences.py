@@ -207,8 +207,8 @@ class FixedSourceCharacteristicsTemplate:
     set_colors: tuple[str, ...] | None = None
     base_power: int | None = None
     base_toughness: int | None = None
-    power: int = 0
-    toughness: int = 0
+    power: int | None = None
+    toughness: int | None = None
     keywords: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
@@ -227,8 +227,8 @@ class FixedSourceCharacteristicsTemplate:
                 self.set_subtypes is not None,
                 self.set_colors is not None,
                 self.base_power is not None,
-                self.power != 0,
-                self.toughness != 0,
+                self.power is not None,
+                self.toughness is not None,
                 bool(self.keywords),
             )
         ):
@@ -257,8 +257,8 @@ class FixedSourceCharacteristicsTemplate:
                 ),
                 "base_power": self.base_power,
                 "base_toughness": self.base_toughness,
-                "power": self.power,
-                "toughness": self.toughness,
+                "power": self.power if self.power is not None else 0,
+                "toughness": self.toughness if self.toughness is not None else 0,
                 "keywords": list(self.keywords),
             },
         )

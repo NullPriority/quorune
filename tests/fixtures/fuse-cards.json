@@ -1,0 +1,1921 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned complete Fuse sources and canonical rulings, public controls, plus one explicit generic two-instruction state-based-action witness.",
+  "cards": [
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "name": "Alive // Well",
+      "mana_cost": "{3}{G} // {W}",
+      "cmc": 5.0,
+      "type_line": "Sorcery // Sorcery",
+      "oracle_text": "Alive: Create a 3/3 green Centaur creature token.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nWell: You gain 2 life for each creature you control.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{G}",
+          "name": "Alive",
+          "oracle_text": "Create a 3/3 green Centaur creature token.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W}",
+          "name": "Well",
+          "oracle_text": "You gain 2 life for each creature you control.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ]
+    },
+    {
+      "oracle_id": "cb3072c7-393c-43d9-a2c9-f918bd0fd7be",
+      "name": "Double Jump // Flying Kick",
+      "mana_cost": "{1}{U} // {1}{R}",
+      "cmc": 4.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Double Jump: Put a flying counter on target creature you control. Until end of turn, it has base power and toughness 5/5.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nFlying Kick: Target creature you control deals damage equal to its power to target creature an opponent controls.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Double Jump",
+          "oracle_text": "Put a flying counter on target creature you control. Until end of turn, it has base power and toughness 5/5.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Flying Kick",
+          "oracle_text": "Target creature you control deals damage equal to its power to target creature an opponent controls.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "name": "Down // Dirty",
+      "mana_cost": "{3}{B} // {2}{G}",
+      "cmc": 7.0,
+      "type_line": "Sorcery // Sorcery",
+      "oracle_text": "Down: Target player discards two cards.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nDirty: Return target card from your graveyard to your hand.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{B}",
+          "name": "Down",
+          "oracle_text": "Target player discards two cards.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Dirty",
+          "oracle_text": "Return target card from your graveyard to your hand.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ]
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "name": "Far // Away",
+      "mana_cost": "{1}{U} // {2}{B}",
+      "cmc": 5.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Far: Return target creature to its owner's hand.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nAway: Target player sacrifices a creature of their choice.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Far",
+          "oracle_text": "Return target creature to its owner's hand.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Away",
+          "oracle_text": "Target player sacrifices a creature of their choice.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "name": "Profit // Loss",
+      "mana_cost": "{1}{W} // {2}{B}",
+      "cmc": 5.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Profit: Creatures you control get +1/+1 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nLoss: Creatures your opponents control get -1/-1 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{W}",
+          "name": "Profit",
+          "oracle_text": "Creatures you control get +1/+1 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Loss",
+          "oracle_text": "Creatures your opponents control get -1/-1 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "name": "Protect // Serve",
+      "mana_cost": "{2}{W} // {1}{U}",
+      "cmc": 5.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Protect: Target creature gets +2/+4 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nServe: Target creature gets -6/-0 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}",
+          "name": "Protect",
+          "oracle_text": "Target creature gets +2/+4 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{U}",
+          "name": "Serve",
+          "oracle_text": "Target creature gets -6/-0 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "name": "Toil // Trouble",
+      "mana_cost": "{2}{B} // {2}{R}",
+      "cmc": 6.0,
+      "type_line": "Sorcery // Sorcery",
+      "oracle_text": "Toil: Target player draws two cards and loses 2 life.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nTrouble: Trouble deals damage to target player equal to the number of cards in that player's hand.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{B}",
+          "name": "Toil",
+          "oracle_text": "Target player draws two cards and loses 2 life.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}",
+          "name": "Trouble",
+          "oracle_text": "Trouble deals damage to target player equal to the number of cards in that player's hand.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ]
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "name": "Turn // Burn",
+      "mana_cost": "{2}{U} // {1}{R}",
+      "cmc": 5.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Turn: Until end of turn, target creature loses all abilities and becomes a red Weird with base power and toughness 0/1.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nBurn: Burn deals 2 damage to any target.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{U}",
+          "name": "Turn",
+          "oracle_text": "Until end of turn, target creature loses all abilities and becomes a red Weird with base power and toughness 0/1.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Burn",
+          "oracle_text": "Burn deals 2 damage to any target.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "name": "Wear // Tear",
+      "mana_cost": "{1}{R} // {W}",
+      "cmc": 3.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Wear: Destroy target artifact.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nTear: Destroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Wear",
+          "oracle_text": "Destroy target artifact.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{W}",
+          "name": "Tear",
+          "oracle_text": "Destroy target enchantment.\nFuse (You may cast one or both halves of this card from your hand.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "d6ffdaf0-ac08-4de9-bbce-2eab2f86bcca",
+      "name": "Wind Drake",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Drake",
+      "oracle_text": "Flying",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "name": "Fist of Suns",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "You may pay {W}{U}{B}{R}{G} rather than pay the mana cost for spells you cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "name": "Omniscience",
+      "mana_cost": "{7}{U}{U}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may cast spells from your hand without paying their mana costs.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 10.0
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "name": "Goblin Electromancer",
+      "mana_cost": "{U}{R}",
+      "cmc": 2.0,
+      "type_line": "Creature — Goblin Wizard",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "name": "Sphere of Resistance",
+      "mana_cost": "{2}",
+      "type_line": "Artifact",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-16",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "not_legal",
+        "timeless": "not_legal",
+        "gladiator": "not_legal",
+        "pioneer": "not_legal",
+        "modern": "not_legal",
+        "legacy": "legal",
+        "pauper": "not_legal",
+        "vintage": "legal",
+        "penny": "not_legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "not_legal",
+        "competitivebrawl": "not_legal",
+        "alchemy": "not_legal",
+        "paupercommander": "not_legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "legal",
+        "predh": "legal",
+        "tlr": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "53987a39-c18c-4c13-b1ea-fd1b2a369f9e",
+      "name": "Whip of Erebos",
+      "mana_cost": "{2}{B}{B}",
+      "cmc": 4.0,
+      "type_line": "Legendary Enchantment Artifact",
+      "oracle_text": "Creatures you control have lifelink.\n{2}{B}{B}, {T}: Return target creature card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. If it would leave the battlefield, exile it instead of putting it anywhere else. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fixture:bound-fused-survival",
+      "name": "Generic Bound Fused Survival",
+      "mana_cost": "{U} // {W}",
+      "cmc": 2,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Target creature gets +0/-6 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)\n//\nTarget creature gets +0/+6 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)",
+      "colors": [
+        "W",
+        "U"
+      ],
+      "color_identity": [
+        "W",
+        "U"
+      ],
+      "keywords": [
+        "Fuse"
+      ],
+      "produced_mana": [],
+      "layout": "split",
+      "legalities": {
+        "commander": "legal"
+      },
+      "card_faces": [
+        {
+          "name": "Bound Withstand",
+          "mana_cost": "{U}",
+          "type_line": "Instant",
+          "oracle_text": "Target creature gets +0/-6 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)"
+        },
+        {
+          "name": "Bound Recover",
+          "mana_cost": "{W}",
+          "type_line": "Instant",
+          "oracle_text": "Target creature gets +0/+6 until end of turn.\nFuse (You may cast one or both halves of this card from your hand.)"
+        }
+      ]
+    },
+    {
+      "oracle_id": "584cf0fd-112a-4ca6-9c0e-1f3228a7d325",
+      "name": "Reckless Impulse",
+      "mana_cost": "{1}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Exile the top two cards of your library. Until the end of your next turn, you may play those cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast Alive // Well as a fused split spell, the Centaur creature token will count toward the amount of life you gain."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn’t resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can’t perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn’t been fused has only that half’s characteristics and mana value. The other half is treated as though it didn’t exist."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It’s also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you’re casting a split card with fuse from any zone other than your hand, you can’t cast both halves. You’ll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Count the number of creatures you control when Well resolves to determine how much life you gain."
+    },
+    {
+      "oracle_id": "57ad3c3a-6ac7-4a35-bc07-00f6ea0988c5",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "eba21e3b-e2b2-4e0b-82e3-f0849943fd89",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Away targets only a player. It doesn't target any creatures. The target player chooses which creature to sacrifice as the spell resolves."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "e4b1ef6a-6f05-472e-aaed-1c24dd6605c7",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "c41e8a99-e4a8-4323-a59d-265266e29fa9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "2e0cd5a5-3aee-4b32-873a-e5a40bfba3e9",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast Toil // Trouble as a fused split card and choose to target the same player twice, the two drawn cards are counted when determining how much damage is dealt. The player can't do anything between the effects of Toil and Trouble to have fewer cards in their hand."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "97759579-b676-46e8-b566-fcad10751920",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Turn doesn't counter abilities that have already triggered or been activated. In particular, there is no way to cast this to stop a creature's \"At the beginning of your upkeep\" or \"When this creature enters the battlefield\" abilities from triggering."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Turn will cause the creature lose all other colors and creature types, but it will retain any other card types (such as artifact) it may have."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Effects that modify the targeted creature's power or toughness, such as the effects of Phytoburst or Legion's Initiative, will apply to it no matter when they started to take effect. The same is true for counters that change the creature's power or toughness (such as +1/+1 counters) and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Turn overwrites all previous effects that set the targeted creature's power or toughness to specific values. Effects that set its power or toughness to specific values that start to apply after Turn resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Turn resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "41841bbf-1c51-494b-b299-c997cce88e44",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "You can choose the same object as the target of each half of a fused split spell, if appropriate."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you're casting a split card with fuse from any zone other than your hand, you can't cast both halves. You'll only be able to cast one half or the other."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If a player names a card, the player may name either half of a split card, but not both. A split card has the chosen name if one of its two names matches the chosen name."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "On the stack, a split spell that hasn't been fused has only that half's characteristics and mana value. The other half is treated as though it didn't exist."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When resolving a fused split spell with multiple targets, treat it as you would any spell with multiple targets. If all targets are illegal when the spell tries to resolve, the spell doesn't resolve and none of its effects happen. If at least one target is still legal at that time, the spell resolves, but an illegal target can't perform any actions or have any actions performed on it."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "When a fused split spell resolves, follow the instructions of the left half first, then the instructions on the right half."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two monocolor halves of different colors. If such a card is cast as a fused split spell, the resulting spell is multicolored. If only one half is cast, the spell is the color of that half. While not on the stack, such a card is multicolored."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "To cast a fused split spell, pay both of its mana costs. While the spell is on the stack, its mana value is the total amount of mana in both costs."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "If you cast a split card with fuse from your hand without paying its mana cost, you can choose to use its fuse ability and cast both halves without paying their mana costs."
+    },
+    {
+      "oracle_id": "9842734c-1eac-4509-a731-4c22017ae586",
+      "published_at": "2013-04-15",
+      "source": "wotc",
+      "comment": "Some split cards with fuse have two halves that are both multicolored. That card is multicolored no matter which half is cast, or if both halves are cast. It's also multicolored while not on the stack."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. You can't choose a different one."
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc",
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you apply Fist of Suns's alternative cost to a spell with {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Fist of Suns's ability is an alternative cost to cast a spell. You can't combine this with other alternative costs, such as flashback. You can pay additional costs, such as kicker, in addition to this alternative cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you cast a spell for which mana of any color can be spent to cast it, you may cast it for Fist of Suns's alternative cost and still spend any color of mana to cover that cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you pay {W}{U}{B}{R}{G} rather than pay the mana cost of a spell with {X} in its mana cost, the only legal choice for X is 0."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If a spell has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of each spell you cast."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, such as that of Tormenting Voice, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "730e39e6-c61d-48b5-8827-bfd952bf1be7",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "Once you cast Omniscience, if it's your turn, you'll have priority immediately after it resolves. You can cast another spell before any player can attempt to remove Omniscience with spells or abilities."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2017-03-14",
+      "source": "wotc",
+      "comment": "Two Goblin Electromancers will make instant and sorcery spells you cast cost {2} less to cast, and so on."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "Goblin Electromancer's effect reduces only generic mana in the spell's total cost."
+    },
+    {
+      "oracle_id": "81f06f84-1580-43c0-89d5-08d34541a519",
+      "published_at": "2018-10-05",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "53987a39-c18c-4c13-b1ea-fd1b2a369f9e",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Whip of Erebos grants haste to the creature that's returned to the battlefield. However, neither of the \"exile\" abilities is granted to that creature. If that creature loses all its abilities, it will still be exiled at the beginning of the end step, and if it would leave the battlefield, it is still exiled instead."
+    },
+    {
+      "oracle_id": "53987a39-c18c-4c13-b1ea-fd1b2a369f9e",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "At the beginning of the next end step, the creature returned to the battlefield with Whip of Erebos is exiled. This is a delayed triggered ability. If the ability is countered, the creature will stay on the battlefield and the delayed trigger won't trigger again. However, the replacement effect will still exile the creature when it eventually leaves the battlefield."
+    },
+    {
+      "oracle_id": "53987a39-c18c-4c13-b1ea-fd1b2a369f9e",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "If a creature returned to the battlefield with Whip of Erebos would leave the battlefield for any reason, it's exiled instead. However, if that creature is already being exiled, then the replacement effect won't apply. If the spell or ability that exiles it later returns it to the battlefield (as Chained to the Rocks might, for example), the creature card will return to the battlefield as a new object with no relation to its previous existence. The effects from Whip of Erebos will no longer apply to it."
+    },
+    {
+      "oracle_id": "53987a39-c18c-4c13-b1ea-fd1b2a369f9e",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "The exiled creature is never put into the graveyard. Any abilities the creature has that trigger when it dies won't trigger."
+    },
+    {
+      "oracle_id": "584cf0fd-112a-4ca6-9c0e-1f3228a7d325",
+      "published_at": "2021-11-19",
+      "source": "wotc",
+      "comment": "You must still pay all costs to cast those spells and follow normal casting permissions. For example, if one of the exiled cards is a sorcery, this effect doesn't allow you to cast it during an opponent's turn."
+    }
+  ]
+}

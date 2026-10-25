@@ -1062,7 +1062,7 @@ def _apply_replay_commands(
                 require_runtime_provenance=require_runtime_provenance,
                 sequence=command.get("sequence"),
                 implicit_provenance=lambda key: (
-                    implicit_semantic_execution_provenance(engine, key)
+                    implicit_semantic_execution_provenance(engine, key, include_spell_copies=require_runtime_provenance)
                 ),
             )
         before = authoritative_state_hash(engine.state)

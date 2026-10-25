@@ -3,6 +3,7 @@ from __future__ import annotations
 """Closed queries for resolution-locked characteristic effects."""
 
 from typing import Any, Mapping
+from dataclasses import fields,replace
 
 from ..creature_subtypes import canonical_creature_subtype
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
@@ -51,8 +52,24 @@ def fixed_resolution_characteristic_query_is_closed(
 ) -> bool:
     """Validate one shared controlled or public resolution-time set."""
 
+    if query.any_of:
+        # Preserve the existing homogeneous creature-subtype disjunction when
+        # the shared parser serializes it as flat receiver alternatives.
+        empty=ObjectQuerySpec(zones=('battlefield',))
+        subtypes=[]
+        for part in query.any_of:
+            if len(part.subtypes_all)!=1 or any(
+                getattr(part,item.name)!=getattr(empty,item.name)
+                for item in fields(part)
+                if not item.name.startswith('_') and item.name not in {'zones','subtypes_all'}
+            ):return False
+            subtypes.extend(part.subtypes_all)
+        equivalent=replace(query,any_of=(),subtypes_any=tuple(sorted(set(subtypes))))
+        return fixed_resolution_characteristic_query_is_closed(equivalent,target_schema=target_schema)
+
     if (
         query.zones != ("battlefield",)
+        or query.any_of
         or query.commander is not None
         or query.owner is not None
         or query.types_any

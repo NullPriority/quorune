@@ -12,6 +12,8 @@ from ..ability_fragments import (
     GrantedTriggeredAbilitySpec,
     QueryCharacteristicModifierSpec,
     QueryPowerToughnessDefinitionSpec,
+    SpellCastKeywordTriggerKind,
+    SpellCastKeywordTriggerSpec,
     canonical_ability_fragments,
 )
 from ..compiler.token_templates import (
@@ -41,6 +43,28 @@ from ..fixed_token_production import (
 
 _TOKEN_MECHANIC = "cr-111-tokens"
 _COLOR_ORDER = "WUBRG"
+
+
+def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
+    """Require the existing owner for an explicit creature definition.
+
+    Copy recipes keep their separate owner. Legacy token references without an
+    explicit definition retain their existing compatibility path.
+    """
+    if (isinstance(value,Mapping) and value.get('op')=='create_token'
+            and isinstance(value.get('characteristics'),Mapping)
+            and {'power','toughness'}<=set(value['characteristics'])
+            and not value.get('copy_of') and not value.get('copy_spec')):
+        quantity=value.get('quantity')
+        if AFTERLIFE_MECHANIC_ID in mechanics and type(quantity) is int:
+            try:
+                from ..replacement.immutable import thaw_value
+                if thaw_value(value)==afterlife_token_effect(quantity):return (AFTERLIFE_CAPABILITY_ID,)
+            except FixedTokenProductionError:pass
+        return ('token.creation.fixed_definition',)
+    return ()
+
+
 _CREATURE_KEYWORDS = frozenset(
     {
         "Deathtouch",
@@ -63,6 +87,7 @@ _CREATURE_KEYWORDS = frozenset(
         "Trample",
         "Vigilance",
         "Changeling",
+        "Prowess",
     }
 )
 _PREDEFINED_CAPABILITIES = {
@@ -213,6 +238,9 @@ def _fixed_creature_effect_closure(
         return None
     if len(fragments) != len(raw_fragments):
         return None
+    from .token_prowess_requirements import token_prowess_definition_dependencies
+    try:capabilities.update(token_prowess_definition_dependencies(characteristics))
+    except (TypeError,ValueError):return None
     typed_ability_definition = False
     typed_ability_fragment = False
     for fragment in fragments:
@@ -220,6 +248,10 @@ def _fixed_creature_effect_closure(
             if "Changeling" not in keywords:
                 return None
             capabilities.add("continuous.characteristics.changeling")
+        elif isinstance(fragment, SpellCastKeywordTriggerSpec):
+            if fragment.kind is not SpellCastKeywordTriggerKind.PROWESS or 'Prowess' not in keywords:
+                return None
+            capabilities.add('trigger.keyword.prowess')
         elif isinstance(fragment, DeclarationRestrictionTemplate):
             legacy_declaration = fragment.template_id in {
                 "intrinsic-block-prohibition-v1",

@@ -610,6 +610,8 @@ class FixedMillRuntimeTests(unittest.TestCase):
         self.assertEqual(["exile", "exile"], [card.zone for card in top_first])
         self.assertTrue(all(card.counters["void"] == 1 for card in top_first))
         self.assertFalse(engine.state.players["B"].zones["graveyard"])
+        self.assertFalse(any(event.kind == 'card_milled_graveyard' and event.actor == 'B'
+            for event in engine.state.turn_history.events))
         event = next(
             event
             for event in reversed(engine.state.events)

@@ -11,6 +11,24 @@ from ..compiler.modal_templates import (
 from .modal_capability_shapes import fixed_choose_one_modal_branches, fixed_nonrepeating_modal_branches
 
 
+def modal_schema_runtime_dependencies(schema):
+    """Derive current mode/branch authority without a producer annotation."""
+    if not isinstance(schema,Mapping) or not isinstance(schema.get('modes'),Mapping):return ()
+    definitions=tuple(schema['modes'].values())
+    indexed=tuple(schema['modes'])==tuple(f'mode_{i}' for i in range(1,len(definitions)+1))
+    current=('min_modes' in schema and indexed) or any(isinstance(d,Mapping) and 'mechanics' in d for d in definitions)
+    if not current:return ()
+    modal=FIXED_NONREPEATING_MODAL_MECHANIC if 'min_modes' in schema else FIXED_CHOOSE_ONE_MODAL_MECHANIC
+    mechanics={modal}
+    for definition in definitions:
+        if not isinstance(definition,Mapping) or not isinstance(definition.get('mechanics'),(list,tuple)):
+            raise ValueError('Current modal schema lacks its closed branch mechanics')
+        mechanics.update(definition['mechanics'])
+    required=fixed_modal_capability_dependencies(effects=(),target_schema=schema,mechanics=tuple(sorted(mechanics)))
+    if not required:raise ValueError('Current modal schema has an unowned branch or malformed cardinality')
+    return required
+
+
 def fixed_modal_capability_dependencies(
     *,
     effects: Sequence[Mapping[str, Any]],

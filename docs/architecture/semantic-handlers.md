@@ -17,6 +17,17 @@ Gain replacement choices preserve that total across load and resume without
 repeating opponent losses. Fixed printed gains remain their own life effect;
 this result never substitutes damage or a presumed multiplayer total.
 
+Created-token counter followups use two automatic instructions in the existing
+semantic-choice registry. The first commits one canonical creation intent;
+`IntentResultObjects` binds its actual returned references to the next
+instruction. This includes replacement-created additional tokens. The second
+reads its numeric producer after creation and commits ordinary counter intents.
+It exposes no target or recipient choice. Entry observers see the printed
+creation definition before these counters, and SBA stays deferred through the
+resolving instruction and its replacement choices. Pending creation and counter
+choices retain their separate canonical intent identities and replay owners.
+The automatic result binding adds no record field or mutable gameplay cache.
+
 Intrinsic Exploit uses a public zero-or-one creature choice issued to the
 locked entry-trigger controller. The typed sacrifice intent retains both
 incarnations and delegates to the canonical replacement-aware zone owner.
@@ -426,6 +437,16 @@ transactions; none reparses Oracle text or owns the underlying counter or zone
 mutation. Broad legacy exile and return operations remain separate because they
 represent other origins, destinations, quantities, choices, or hidden-zone
 movement outside these closed direct-target grammars.
+
+Closed activated instructions to exile the enchanted creature use the same
+permanent-exile handler after resolving a version-two attachment reference.
+They introduce no target selection. The reference follows the original source
+incarnation's current attachment, or its actual-departure information after the
+source leaves, including sacrifice as an activation cost. The printed creature
+description identifies that object; a later type change does not add a new
+creature test. A departed and returned recipient is a new object and produces
+the ordinary skipped-instruction result. Historical version-one references
+retain their existing contract.
 
 The `effect.public-zone-move` family closes a broader but still typed boundary.
 One handler accepts exactly one public graveyard-card reference; the other

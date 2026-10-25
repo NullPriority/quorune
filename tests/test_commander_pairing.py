@@ -258,6 +258,7 @@ class CommanderPairingTests(unittest.TestCase):
     def test_pairing_keywords_compile_as_exact_typed_setup_declarations(self):
         expected = {
             "Thrasios, Triton Hero": CommanderPairingKind.PARTNER,
+            "Bjorna, Nightfall Alchemist": CommanderPairingKind.PARTNER_FRIENDS_FOREVER,
             "Wilson, Refined Grizzly": (
                 CommanderPairingKind.CHOOSE_A_BACKGROUND
             ),
@@ -281,14 +282,6 @@ class CommanderPairingTests(unittest.TestCase):
                 self.assertTrue(nodes[0].exact)
                 self.assertEqual("game.setup", nodes[0].event)
                 self.assertEqual((kind.value,), nodes[0].mechanics)
-
-        for name in ("Bjorna, Nightfall Alchemist",):
-            with self.subTest(excluded=name):
-                ir = compile_oracle_card(
-                    self.db.lookup(name),
-                    capability_registry=self.capabilities,
-                    capability_profile="commander_review",
-                )
 
     def test_partner_with_compiles_exact_pairing_and_entry_search(self):
         cases = (
@@ -468,8 +461,15 @@ class CommanderPairingTests(unittest.TestCase):
                 self.assertFalse(search.exact)
                 self.assertTrue(search.residual_ids)
 
+        tagged=compile_oracle_card(replace(record,oracle_text='Partner—Friends forever'),
+            capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertEqual('exact',tagged.status)
+        self.assertTrue(any(node.template_id==COMMANDER_PAIRING_TEMPLATE_ID
+            and node.mechanics==('partner—friends forever',) for face in tagged.faces for node in face.nodes))
+        self.assertFalse(any(node.template_id==PARTNER_WITH_SEARCH_TEMPLATE_ID
+            for face in tagged.faces for node in face.nodes))
         variants = (
-            "Partner—Friends forever",
+            "Partner—Unreviewed tag",
             "Partner with",
             "Partner with Named Partner Beta; draw a card.",
             'Partner with "Named Partner Beta"',

@@ -1,0 +1,2887 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned ordinary Banding originals, complete canonical rulings and explicitly constructed public combat controls.",
+  "cards": [
+    {
+      "oracle_id": "35e4ed0e-8ce2-4729-a009-0d6be8f47663",
+      "name": "Ayesha Tanaka",
+      "mana_cost": "{W}{W}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Artificer",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)\n{T}: Counter target activated ability from an artifact source unless that ability's controller pays {W}. (Mana abilities can't be targeted.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4c81cfb7-8765-4e28-ae33-4287fa9a86cc",
+      "name": "Benalish Hero",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-09-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "543af1f4-f93f-4c7f-a067-ad2db599a4ae",
+      "name": "Benalish Infantry",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d33b3591-c01f-4ac4-8626-7cbfdabaf90d",
+      "name": "Camel",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Creature — Camel",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)\nAs long as this creature is attacking, prevent all damage Deserts would deal to this creature and to creatures banded with this creature.",
+      "power": "0",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1993-12-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1160b8d-c4e4-4869-b7a5-c6a826eb1ba4",
+      "name": "Icatian Phalanx",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-09-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8ddbe82b-7fc9-4b2c-85de-dc747adbb3ca",
+      "name": "Icatian Skirmishers",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "First strike; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)\nWhenever this creature attacks, all creatures banded with it gain first strike until end of turn.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "First strike",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1994-11-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1c6c1604-0724-40b1-9df6-71e57e5063c9",
+      "name": "Kjeldoran Escort",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5d7747b4-061d-4459-ba80-51361526cbfa",
+      "name": "Kjeldoran Knight",
+      "mana_cost": "{W}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Knight",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)\n{1}{W}: This creature gets +1/+0 until end of turn.\n{W}{W}: This creature gets +0/+2 until end of turn.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a8563a4f-a23b-4cb5-b6e5-795bf8d74ee6",
+      "name": "Kjeldoran Phalanx",
+      "mana_cost": "{5}{W}",
+      "cmc": 6.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "First strike; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "First strike",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7160ebce-ee3f-42ac-a3f7-b55f17f2c49f",
+      "name": "Kjeldoran Skycaptain",
+      "mana_cost": "{4}{W}",
+      "cmc": 5.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Flying; first strike; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "First strike",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-09-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b06db20f-84c4-4e2e-a184-3cd70ea0d10d",
+      "name": "Kjeldoran Skyknight",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Knight",
+      "oracle_text": "Flying; first strike; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "First strike",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "73b70a48-b62c-4fdf-9c2d-c6d6688f9ac8",
+      "name": "Kjeldoran Warrior",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6d8e1a97-67bf-4260-888c-c10c498b98d8",
+      "name": "Knights of Thorn",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Knight",
+      "oracle_text": "Protection from red; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Protection",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-09-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8161f5b8-6aab-4133-ba2c-2e7b5774153e",
+      "name": "Mesa Pegasus",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Pegasus",
+      "oracle_text": "Flying; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-09-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "18b1f96f-de35-4f0a-8b0e-81576471fd15",
+      "name": "Mishra's War Machine",
+      "mana_cost": "{7}",
+      "cmc": 7.0,
+      "type_line": "Artifact Creature — Juggernaut",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)\nAt the beginning of your upkeep, this creature deals 3 damage to you unless you discard a card. If it deals damage to you this way, tap it.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-04-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0887dc95-3e75-4f72-bf05-4067d3785376",
+      "name": "Nalathni Dragon",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)\n{R}: This creature gets +1/+0 until end of turn. If this ability has been activated four or more times this turn, sacrifice this creature at the beginning of the next end step.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-08-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "99dd6f15-855f-431f-a3c8-31f1421af88f",
+      "name": "Noble Elephant",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Elephant",
+      "oracle_text": "Trample; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-10-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5556a897-8947-4b78-81ce-a829508a4f11",
+      "name": "Pikemen",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "First strike; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "First strike",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-03-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "75decba6-d188-4144-8e74-58285be0fe9f",
+      "name": "Shield Bearer",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "0",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-09-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a00cb1fa-a196-4403-9008-532dbd15769e",
+      "name": "Teremko Griffin",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Griffin",
+      "oracle_text": "Flying; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-10-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "35d07ac9-b184-4b5f-8192-34b1db042f69",
+      "name": "Timber Wolves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Wolf",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Banding"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-04-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a2dabd52-0b75-42d7-a07d-0df7b38646e2",
+      "name": "Volunteer Reserves",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)\nCumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding",
+        "Cumulative upkeep"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1997-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "530514d9-7274-4835-a4b5-6dccef4da758",
+      "name": "Wall of Shields",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact Creature — Wall",
+      "oracle_text": "Defender (This creature can't attack.)\nBanding (If any creatures with banding you control are blocking a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by.)",
+      "power": "0",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Banding",
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-06-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2b7c9fe0-5a23-4172-b31f-b0d85cd465f6",
+      "name": "War Elephant",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Elephant",
+      "oracle_text": "Trample; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Banding",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "oracle_id": "d6ffdaf0-ac08-4de9-bbce-2eab2f86bcca",
+      "name": "Wind Drake",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Drake",
+      "oracle_text": "Flying",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "name": "Control Magic",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "name": "Cloudshift",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature you control, then return that card to the battlefield under your control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2cc439e8-d112-44e6-bc5a-6e99333c519a",
+      "name": "Benalish Marshal",
+      "mana_cost": "{W}{W}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Knight",
+      "oracle_text": "Other creatures you control get +1/+1.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-11-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c9046281-dedb-4246-8e5d-7786fe0c41c7",
+      "name": "Elvish Berserker",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Berserker",
+      "oracle_text": "Whenever this creature becomes blocked, it gets +1/+1 until end of turn for each creature blocking it.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "feb244f8-bcb1-44cf-9940-2719221a7309",
+      "name": "Vampire Nighthawk",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Creature — Vampire Shaman",
+      "oracle_text": "Flying\nDeathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Deathtouch",
+        "Flying",
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "faces": [],
+      "cmc": 3.0
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Colossal Dreadmaw",
+      "oracle_id": "08c7db90-c0cf-4482-b7ee-bb033e5996d2",
+      "oracle_text": "Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2020-07-03",
+      "toughness": "6",
+      "type_line": "Creature — Dinosaur"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Soulbond"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{W}",
+      "name": "Silverblade Paladin",
+      "oracle_id": "ded0316f-5eed-4a80-91ad-ca236fd16f01",
+      "oracle_text": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as this creature is paired with another creature, both creatures have double strike.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2014-11-07",
+      "toughness": "2",
+      "type_line": "Creature — Human Knight"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Provoke"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Goblin Grappler",
+      "oracle_id": "48c1c84c-f690-42ce-9c5a-dd09b1e4197c",
+      "oracle_text": "Provoke (Whenever this creature attacks, you may have target creature defending player controls untap and block it if able.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2003-02-03",
+      "toughness": "1",
+      "type_line": "Creature — Goblin"
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756037",
+      "name": "Generic Band Menace",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human",
+      "oracle_text": "Menace",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756038",
+      "name": "Generic Band Double Strike",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human",
+      "oracle_text": "Double strike",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Double strike"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756039",
+      "name": "Generic Band Life",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human",
+      "oracle_text": "Lifelink",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756040",
+      "name": "Generic Band Wall",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human",
+      "oracle_text": "",
+      "power": "0",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756041",
+      "name": "Generic Band Grant",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human",
+      "oracle_text": "{0}: This creature gains banding until end of turn.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756101",
+      "name": "Generic Band Block Life",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human",
+      "oracle_text": "Whenever this creature blocks, you gain 1 life.",
+      "power": "0",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756102",
+      "name": "Generic Band Flying Block Life",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human",
+      "oracle_text": "Reach\nWhenever this creature blocks a creature with flying, you gain 1 life.",
+      "power": "0",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Reach"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000756201",
+      "name": "Generic Band Anthem",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Creatures you control have banding.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1995-07-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "35e4ed0e-8ce2-4729-a009-0d6be8f47663",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "35e4ed0e-8ce2-4729-a009-0d6be8f47663",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "35e4ed0e-8ce2-4729-a009-0d6be8f47663",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "35e4ed0e-8ce2-4729-a009-0d6be8f47663",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "35e4ed0e-8ce2-4729-a009-0d6be8f47663",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keywords are activated abilities and will have colons in their reminder text."
+    },
+    {
+      "oracle_id": "4c81cfb7-8765-4e28-ae33-4287fa9a86cc",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "4c81cfb7-8765-4e28-ae33-4287fa9a86cc",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "4c81cfb7-8765-4e28-ae33-4287fa9a86cc",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "4c81cfb7-8765-4e28-ae33-4287fa9a86cc",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "543af1f4-f93f-4c7f-a067-ad2db599a4ae",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "543af1f4-f93f-4c7f-a067-ad2db599a4ae",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "543af1f4-f93f-4c7f-a067-ad2db599a4ae",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "543af1f4-f93f-4c7f-a067-ad2db599a4ae",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "d33b3591-c01f-4ac4-8626-7cbfdabaf90d",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It does prevent damage from animated Deserts in combat."
+    },
+    {
+      "oracle_id": "d33b3591-c01f-4ac4-8626-7cbfdabaf90d",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "d33b3591-c01f-4ac4-8626-7cbfdabaf90d",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "d33b3591-c01f-4ac4-8626-7cbfdabaf90d",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "d33b3591-c01f-4ac4-8626-7cbfdabaf90d",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "a1160b8d-c4e4-4869-b7a5-c6a826eb1ba4",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "a1160b8d-c4e4-4869-b7a5-c6a826eb1ba4",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "a1160b8d-c4e4-4869-b7a5-c6a826eb1ba4",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "a1160b8d-c4e4-4869-b7a5-c6a826eb1ba4",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "8ddbe82b-7fc9-4b2c-85de-dc747adbb3ca",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "8ddbe82b-7fc9-4b2c-85de-dc747adbb3ca",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "8ddbe82b-7fc9-4b2c-85de-dc747adbb3ca",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "8ddbe82b-7fc9-4b2c-85de-dc747adbb3ca",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "1c6c1604-0724-40b1-9df6-71e57e5063c9",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "1c6c1604-0724-40b1-9df6-71e57e5063c9",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "1c6c1604-0724-40b1-9df6-71e57e5063c9",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "1c6c1604-0724-40b1-9df6-71e57e5063c9",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "5d7747b4-061d-4459-ba80-51361526cbfa",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "5d7747b4-061d-4459-ba80-51361526cbfa",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "5d7747b4-061d-4459-ba80-51361526cbfa",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "5d7747b4-061d-4459-ba80-51361526cbfa",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "a8563a4f-a23b-4cb5-b6e5-795bf8d74ee6",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "a8563a4f-a23b-4cb5-b6e5-795bf8d74ee6",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "a8563a4f-a23b-4cb5-b6e5-795bf8d74ee6",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "a8563a4f-a23b-4cb5-b6e5-795bf8d74ee6",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "7160ebce-ee3f-42ac-a3f7-b55f17f2c49f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "7160ebce-ee3f-42ac-a3f7-b55f17f2c49f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "7160ebce-ee3f-42ac-a3f7-b55f17f2c49f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "7160ebce-ee3f-42ac-a3f7-b55f17f2c49f",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "b06db20f-84c4-4e2e-a184-3cd70ea0d10d",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "b06db20f-84c4-4e2e-a184-3cd70ea0d10d",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "b06db20f-84c4-4e2e-a184-3cd70ea0d10d",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "b06db20f-84c4-4e2e-a184-3cd70ea0d10d",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "73b70a48-b62c-4fdf-9c2d-c6d6688f9ac8",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "73b70a48-b62c-4fdf-9c2d-c6d6688f9ac8",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "73b70a48-b62c-4fdf-9c2d-c6d6688f9ac8",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "73b70a48-b62c-4fdf-9c2d-c6d6688f9ac8",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "6d8e1a97-67bf-4260-888c-c10c498b98d8",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "6d8e1a97-67bf-4260-888c-c10c498b98d8",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "6d8e1a97-67bf-4260-888c-c10c498b98d8",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "6d8e1a97-67bf-4260-888c-c10c498b98d8",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "8161f5b8-6aab-4133-ba2c-2e7b5774153e",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "8161f5b8-6aab-4133-ba2c-2e7b5774153e",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "8161f5b8-6aab-4133-ba2c-2e7b5774153e",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "8161f5b8-6aab-4133-ba2c-2e7b5774153e",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "18b1f96f-de35-4f0a-8b0e-81576471fd15",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "You may choose to take damage or to discard. You can't avoid taking damage if you have no cards to discard."
+    },
+    {
+      "oracle_id": "18b1f96f-de35-4f0a-8b0e-81576471fd15",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "18b1f96f-de35-4f0a-8b0e-81576471fd15",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "18b1f96f-de35-4f0a-8b0e-81576471fd15",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "18b1f96f-de35-4f0a-8b0e-81576471fd15",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "0887dc95-3e75-4f72-bf05-4067d3785376",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "0887dc95-3e75-4f72-bf05-4067d3785376",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "0887dc95-3e75-4f72-bf05-4067d3785376",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "0887dc95-3e75-4f72-bf05-4067d3785376",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "99dd6f15-855f-431f-a3c8-31f1421af88f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "99dd6f15-855f-431f-a3c8-31f1421af88f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "99dd6f15-855f-431f-a3c8-31f1421af88f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "99dd6f15-855f-431f-a3c8-31f1421af88f",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "5556a897-8947-4b78-81ce-a829508a4f11",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "5556a897-8947-4b78-81ce-a829508a4f11",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "5556a897-8947-4b78-81ce-a829508a4f11",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "5556a897-8947-4b78-81ce-a829508a4f11",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "75decba6-d188-4144-8e74-58285be0fe9f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "75decba6-d188-4144-8e74-58285be0fe9f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "75decba6-d188-4144-8e74-58285be0fe9f",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "75decba6-d188-4144-8e74-58285be0fe9f",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "a00cb1fa-a196-4403-9008-532dbd15769e",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "a00cb1fa-a196-4403-9008-532dbd15769e",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "a00cb1fa-a196-4403-9008-532dbd15769e",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "a00cb1fa-a196-4403-9008-532dbd15769e",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "35d07ac9-b184-4b5f-8192-34b1db042f69",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "35d07ac9-b184-4b5f-8192-34b1db042f69",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "35d07ac9-b184-4b5f-8192-34b1db042f69",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "35d07ac9-b184-4b5f-8192-34b1db042f69",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "a2dabd52-0b75-42d7-a07d-0df7b38646e2",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Paying cumulative upkeep is always optional. If it's not paid, the permanent with cumulative upkeep is sacrificed. Partial payments of the total cumulative upkeep cost can't be made. For example, if a permanent with \"cumulative upkeep {1}\" has three age counters on it when its cumulative upkeep ability triggers, it gets another age counter and then its controller chooses to either pay {4} or sacrifice the permanent."
+    },
+    {
+      "oracle_id": "a2dabd52-0b75-42d7-a07d-0df7b38646e2",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "a2dabd52-0b75-42d7-a07d-0df7b38646e2",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "a2dabd52-0b75-42d7-a07d-0df7b38646e2",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "a2dabd52-0b75-42d7-a07d-0df7b38646e2",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "2b7c9fe0-5a23-4172-b31f-b0d85cd465f6",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "A maximum of one nonbanding creature can join an attacking band no matter how many creatures with banding are in it."
+    },
+    {
+      "oracle_id": "2b7c9fe0-5a23-4172-b31f-b0d85cd465f6",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "If a creature with banding attacks, it can team up with any number of other attacking creatures with banding (and up to one nonbanding creature) and attack as a unit called a \"band.\" The band can be blocked by any creature that could block a single creature in the band. Blocking any creature in a band blocks the entire band. If a creature with banding is blocked, the attacking player chooses how the blockers' damage is assigned."
+    },
+    {
+      "oracle_id": "2b7c9fe0-5a23-4172-b31f-b0d85cd465f6",
+      "published_at": "2008-10-01",
+      "source": "wotc",
+      "comment": "Creatures in the same band must all attack the same player or planeswalker."
+    },
+    {
+      "oracle_id": "2b7c9fe0-5a23-4172-b31f-b0d85cd465f6",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If a creature in combat has banding, its controller assigns damage for creatures blocking or blocked by it."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "When an effect returns the exiled card \"under your control,\" you control it indefinitely after that. In a multiplayer game, if a player leaves the game, all cards that player owns leave as well. If you leave the game, any creatures you control from Cloudshift's effect are exiled."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "Once the exiled permanent returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled permanent will be put into their owners' graveyards. Equipment attached to the exiled permanent will become unattached and remain on the battlefield. Any counters on the exiled permanent will cease to exist."
+    },
+    {
+      "oracle_id": "6879f5ce-7a1b-4606-bad1-885779b0d456",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "The returned card won't be the target of any spells or abilities that targeted it before. Any spells that don't target, such as Akroma's Vengeance, will still affect it."
+    },
+    {
+      "oracle_id": "2cc439e8-d112-44e6-bc5a-6e99333c519a",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "Because damage remains marked on a creature until it’s removed as the turn ends, nonlethal damage dealt to a creature you control may become lethal if Benalish Marshal leaves the battlefield during that turn."
+    }
+  ]
+}

@@ -17,6 +17,9 @@ from .object_predicate import ObjectQuerySpec
 from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
 from .toughness_assignment_rule import TOUGHNESS_RULE_KIND,ResolvedToughnessAssignmentRule
 from .block_capacity_rule_model import BLOCK_CAPACITY_RULE_KIND, ResolvedBlockCapacityRule
+from .temporary_cast_rule_model import EFFECT_KIND as CAST_RESTRICTION_KIND,ResolvedCastRestriction
+from .source_block_pair_model import SOURCE_BLOCK_PAIR_EFFECT_KIND, ResolvedSourceBlockPair
+from .library_search_model import LIBRARY_SEARCH_TEMP_KIND,ResolvedLibrarySearchProhibition
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
@@ -192,7 +195,7 @@ class ResolutionDeclarationRuleEffect:
 
 
 ContinuousJournalEffect: TypeAlias = (
-    ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule | ResolvedBlockCapacityRule
+    ContinuousEffect | ResolutionDeclarationRuleEffect | AsUnblockedAssignmentRule | ResolvedToughnessAssignmentRule | ResolvedBlockCapacityRule | ResolvedCastRestriction | ResolvedSourceBlockPair | ResolvedLibrarySearchProhibition
 )
 
 
@@ -202,6 +205,9 @@ def continuous_journal_effect_from_dict(
     """Deserialize additive journal records while preserving legacy effects."""
 
     if isinstance(value, Mapping) and "effect_kind" in value:
+        if value['effect_kind']==LIBRARY_SEARCH_TEMP_KIND:return ResolvedLibrarySearchProhibition.from_dict(value)
+        if value['effect_kind'] == SOURCE_BLOCK_PAIR_EFFECT_KIND:return ResolvedSourceBlockPair.from_dict(value)
+        if value['effect_kind']==CAST_RESTRICTION_KIND:return ResolvedCastRestriction.from_dict(value)
         if value['effect_kind'] == BLOCK_CAPACITY_RULE_KIND:
             return ResolvedBlockCapacityRule.from_dict(value)
         if value['effect_kind']==AS_UNBLOCKED_RULE_KIND:return AsUnblockedAssignmentRule.from_dict(value)

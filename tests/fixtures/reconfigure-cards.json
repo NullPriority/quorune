@@ -1,0 +1,1195 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Reconfigure originals and exact owned-neighbor controls; no support is inferred from recognition.",
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Ward",
+        "Reconfigure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Armguard Familiar",
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "oracle_text": "Ward {2} (Whenever this permanent becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)\nEquipped creature gets +2/+1 and has ward {2}.\nReconfigure {4} ({4}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Equipment Beast"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Menace",
+        "Reconfigure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Blade of the Oni",
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "oracle_text": "Menace\nEquipped creature has base power and toughness 5/5, has menace, and is a black Demon in addition to its other colors and types.\nReconfigure {2}{B}{B} ({2}{B}{B}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Equipment Demon"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Bonesplitter",
+      "oracle_id": "452e3f5f-ce17-4682-966b-5cc100210aee",
+      "oracle_text": "Equipped creature gets +2/+0.\nEquip {1}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Reconfigure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Bronzeplate Boar",
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "oracle_text": "Trample\nEquipped creature gets +3/+2 and has trample.\nReconfigure {5} ({5}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Equipment Boar"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Ensoul Artifact",
+      "oracle_id": "02628058-c9d8-4265-afd1-3fb697ec89f7",
+      "oracle_text": "Enchant artifact\nEnchanted artifact is a creature with base power and toughness 5/5 in addition to its other types.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-07-18",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Icy Manipulator",
+      "oracle_id": "3608f1f7-8dc5-4dd1-ae91-c830e1de9529",
+      "oracle_text": "{1}, {T}: Tap target artifact, creature, or land.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Lifelink",
+        "Reconfigure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Leech Gauntlet",
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "oracle_text": "Lifelink\nEquipped creature has lifelink.\nReconfigure {4} ({4}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Equipment Leech"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Double strike",
+        "Reconfigure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Lizard Blades",
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "oracle_text": "Double strike\nEquipped creature has double strike.\nReconfigure {2} ({2}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Equipment Lizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Naturalize",
+      "oracle_id": "bdb3ca68-ec1f-4e16-81cc-d23f8f52c728",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land — Plains"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste",
+        "Reconfigure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Rabbit Battery",
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "oracle_text": "Haste\nEquipped creature gets +1/+1 and has haste.\nReconfigure {R} ({R}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "1",
+      "type_line": "Artifact Creature — Equipment Rabbit"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Reach",
+        "Reconfigure"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Webspinner Cuff",
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "oracle_text": "Reach\nEquipped creature gets +1/+4 and has reach.\nReconfigure {4} ({4}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "4",
+      "type_line": "Artifact Creature — Equipment Spider"
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a player casts a spell that targets multiple permanents their opponent controls with ward, each of those ward abilities will trigger. If that player doesn't pay for all of them, the spell will be countered."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "a7955f10-f502-4893-88ad-f36e7ff0af4f",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Blade of the Oni will overwrite any previous effects that set the equipped creature's power and toughness to specific numbers. Effects that otherwise modify the equipped creature's power and toughness will still apply no matter when they took effect. The same is true for +1/+1 counters."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "6d9ac636-3c6c-40ca-90f3-1a3387836bb4",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "0a09f825-0484-40b4-8adf-1028385db480",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "02628058-c9d8-4265-afd1-3fb697ec89f7",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Effects that modify a creature's power and/or toughness, such as the ones created by Titanic Growth or a +1/+1 counter, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch power and toughness."
+    },
+    {
+      "oracle_id": "02628058-c9d8-4265-afd1-3fb697ec89f7",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "The resulting artifact creature will be able to attack on your turn if it's been under your control continuously since the turn began. That is, it doesn't matter how long it's been a creature, just how long it's been on the battlefield."
+    },
+    {
+      "oracle_id": "02628058-c9d8-4265-afd1-3fb697ec89f7",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "If the artifact was already a creature, its base power and toughness will each become 5. This overwrites any previous effects that set the creature's base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Ensoul Artifact becomes attached to the artifact will overwrite this effect."
+    },
+    {
+      "oracle_id": "02628058-c9d8-4265-afd1-3fb697ec89f7",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "The artifact retains any types, subtypes, or supertypes it has. Notably, if an Equipment becomes an artifact creature, it usually can't be attached to another creature. If it was attached to a creature, it becomes unattached."
+    },
+    {
+      "oracle_id": "3608f1f7-8dc5-4dd1-ae91-c830e1de9529",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Once a player announces that they're casting a spell or activating an ability, no player may take other actions until the spell or ability has been paid for. Notably, other players can't try to tap that player's permanents to stop them from paying {T} or to stop them from producing enough mana."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "1aaddaeb-baab-42b6-a442-d97339da54db",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "f6314e50-a610-4fff-8f60-803d23460ff0",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "c739e180-2f14-41ed-8e7e-50b7df985f35",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "As soon as an Equipment creature with reconfigure stops being a creature, any Equipment and Auras with enchant creature abilities become unattached. Auras that can enchant an Equipment that isn't a creature remain attached to it."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Attaching an Equipment with reconfigure to a creature causes that Equipment to stop being a creature until it becomes unattached. It also loses any creature subtypes it had."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If an Equipment with reconfigure somehow loses its abilities while it is attached, the effect causing it to not be a creature continues to apply until it becomes unattached."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Although it causes an Equipment to become attached to a creature, reconfigure is not an “equip ability” for the purpose of cards like Fighter Class and Leonin Shikari."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Reconfigure represents two activated abilities. Reconfigure [cost] means “[Cost]: Attach this permanent to another target creature you control. Activate only as a sorcery,” and “[Cost]: Unattach this permanent. Activate only if this permanent is attached to a creature and only as a sorcery.”"
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature can never become attached to itself. If an effect tries to do this, nothing happens."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment creature with reconfigure can be attached to creatures by effects other than its reconfigure ability, such as the activated ability of Brass Squire."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "An Equipment doesn't become tapped when the permanent it's attached to becomes tapped. For example, if you attack with a creature that is equipped with Acquisition Octopus, then use reconfigure to unattach Acquisition Octopus after combat, the Octopus will be untapped and could be used to block during your opponent's turn."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Similarly, if an Equipment is tapped, its reconfigure abilities may still be activated and it may still become attached to creatures. Becoming attached doesn't untap it. In most cases, an attached Equipment being tapped won't affect gameplay, but it will be relevant if it becomes unattached again before it untaps."
+    },
+    {
+      "oracle_id": "7826f3f5-c8f2-43f5-a837-ff016da625e6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a permanent with reconfigure is somehow still a creature after it becomes attached (perhaps due to an effect like that of March of the Machines), it immediately becomes unattached from the equipped creature."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    }
+  ]
+}

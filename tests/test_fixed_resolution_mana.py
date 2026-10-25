@@ -29,8 +29,12 @@ class FixedResolutionManaCompilerTests(unittest.TestCase):
 
     def test_dynamic_restricted_and_malformed_mana_remain_closed(self):
         registry=load_default_capability_registry()
-        for text in ('Add {X}.','Add {R} for each unknown thing.','Add {R}{R}. Spend this mana only to cast imaginary spells.','Add one mana of any color.','Add three mana of any one color.','Add one mana of any color combination.','Add one mana of any color. Spend this mana only to cast creature spells.'):
+        for text in ('Add {X}.','Add {R} for each unknown thing.','Add {R}{R}. Spend this mana only to cast imaginary spells.','Add one mana of any color combination.','Add one mana of any color. Spend this mana only to cast creature spells.'):
             self.assertNotEqual('exact',compile_oracle_card(replace(query_record(text),type_line='Instant'),capability_registry=registry).status,text)
+        for text in ('Add one mana of any color.','Add three mana of any one color.'):
+            ir=compile_oracle_card(replace(query_record(text),type_line='Instant'),capability_registry=registry)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            self.assertIn('mana.production.fixed_resolution_choice',ir.faces[0].nodes[0].capability_dependencies)
         shape={'op':'mana','player':'$controller','color':'B','amount':3,'source':'$source'}
         for change in ({'amount':True},{'amount':0},{'color':'secret'},{'extra':1}):
             self.assertFalse(fixed_resolution_mana_capabilities(effects=({**shape,**change},),target_schema=None,mechanic_ids=('fixed-resolution-mana',)))
@@ -84,18 +88,22 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
                     *residuals,
                 }
                 record = self.db.by_oracle_id(oid)
+                supported=record.name=='Cabal Ritual'
+                if supported:
+                    pieces-=residuals
                 ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
                 program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry, capability_profile='commander_review')
                 row = analyze_card_unlocks(ir, program=program, program_error=None,
                     capabilities=self.registry, profile='commander_review')
                 self.assertLessEqual(pieces, _observed_piece_ids(row))
-                self.assertEqual('residual', row['card_program_status'])
+                self.assertEqual('trusted' if supported else 'residual', row['card_program_status'])
                 self.assertIsNone(row['hard_construction_failure'])
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                self.assertFalse(binding['strict_capability_ready'])
-                self.assertFalse(binding['compatible_ready'])
-                self.assertIn('trust_basis:unresolved', binding['blockers'])
+                self.assertEqual(supported,binding['strict_capability_ready'])
+                self.assertEqual(supported,binding['compatible_ready'])
+                if supported:self.assertEqual('exact',ir.status,ir.material_residuals)
+                else:self.assertIn('trust_basis:unresolved', binding['blockers'])
 
     def test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays(self):
         s=self.session(328001);e=s.engine;source=self.add(e,'Dark Ritual',zone='hand')

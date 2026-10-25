@@ -134,22 +134,59 @@
   ],
   "ambient_high_risk_piece_pairs": [
     [
+      "capability.activation.cycling.hand",
+      "capability.target.permanent.characteristic_predicate"
+    ],
+    ["capability.activation.source_zone_change.fixed", "capability.target.ability_source.current_or_lki"],
+    [
+      "capability.activation.source_zone_change.fixed",
+      "capability.target.permanent.characteristic_predicate"
+    ],
+    [
       "capability.attachment.aura.simple_object",
       "capability.combat.block.landwalk.as_though"
+    ],
+    [
+      "capability.attachment.aura.simple_object",
+      "capability.target.permanent.characteristic_predicate"
     ],
     [
       "capability.attachment.equip.fixed_mana",
       "capability.combat.block.landwalk.qualified_type"
     ],
     ["capability.attachment.equip.fixed_mana", "capability.zone.entry.fixed_copy"],
+    [
+      "capability.casting.additional_cost.fixed_alternative",
+      "capability.stack.counter.effect"
+    ],
+    ["capability.casting.additional_cost.fixed_counter_placement", "capability.counter.placement.prohibition.static"],
     ["capability.casting.additional_cost.fixed_counter_placement", "capability.counter.placement.quantity_replacement"],
+    [
+      "capability.casting.additional_cost.fixed_sacrifice",
+      "capability.target.permanent.characteristic_predicate"
+    ],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.trigger.event.normalized_zone_change"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.zone.change.destination_replacement"],
+    [
+      "capability.casting.additional_cost.replicate_fixed_mana",
+      "capability.stack.counter.effect"
+    ],
     ["capability.casting.additional_cost.zone_change.fixed_discard", "capability.zone.change.destination_replacement"],
+    [
+      "capability.casting.cost.self_target_generic_reduction",
+      "capability.target.permanent.characteristic_predicate"
+    ],
     ["capability.casting.disguise.fixed_mana", "capability.keyword_action.manifest.card"],
     ["capability.casting.disguise.fixed_mana", "capability.token.creation.fixed_definition"],
     ["capability.casting.disguise.fixed_mana", "capability.trigger.event.normalized_public_action"],
+    ["capability.casting.lifecycle.adventure", "capability.stack.counter.effect"],
+    ["capability.casting.lifecycle.adventure", "capability.target.ability_source.current_or_lki"],
+    ["capability.casting.lifecycle.fixed_public", "capability.counter.placement.prohibition.static"],
     ["capability.casting.multikicker.fixed_mana", "capability.replacement.multikicker.named_entry_counters"],
+    [
+      "capability.choice.modal.fixed_one",
+      "capability.target.permanent.characteristic_predicate"
+    ],
     ["capability.combat.attack.vigilance", "capability.counter.characteristic.keyword"],
     ["capability.combat.block.capacity", "capability.combat.block.capacity.temporary"],
     ["capability.combat.block.capacity", "capability.zone.entry.fixed_copy"],
@@ -227,6 +264,11 @@
     ["capability.continuous.attached.fixed_characteristics", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
     ["capability.continuous.attached.fixed_characteristics", "capability.permanent.destroy.effect"],
     ["capability.continuous.attached.fixed_characteristics", "capability.zone.entry.fixed_copy"],
+    [
+      "capability.continuous.basic_land_type.fixed_setting",
+      "capability.permanent.exile.effect"
+    ],
+    ["capability.continuous.basic_land_type.fixed_setting", "capability.target.ability_source.current_or_lki"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.damage.amount.positive"],
@@ -235,6 +277,20 @@
     ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.destroy.state_based_damage"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.regeneration.self_activation"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.return.owner_hand"],
+    [
+      "capability.continuous.characteristics.fixed_public_state",
+      "capability.state_query.permanent.receiver_union"
+    ],
+    ["capability.continuous.control.attached_source", "capability.counter.placement.prohibition.static"],
+    ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.counter.placement.prohibition.static"],
+    [
+      "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "capability.state_query.permanent.receiver_union"
+    ],
+    [
+      "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "capability.target.permanent.characteristic_predicate"
+    ],
     ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.zone.entry.fixed_copy"],
     ["capability.counter.characteristic.keyword", "capability.counter.placement.quantity_replacement"],
     ["capability.counter.characteristic.keyword", "capability.damage.result.deathtouch"],
@@ -242,6 +298,15 @@
     ["capability.counter.characteristic.keyword", "capability.permanent.indestructible.ordinary"],
     ["capability.counter.characteristic.keyword", "capability.target.protection.hexproof_permanent"],
     ["capability.counter.characteristic.keyword", "capability.target.revalidate_resolution"],
+    ["capability.counter.lifecycle.graft", "capability.counter.placement.prohibition.static"],
+    ["capability.counter.placement.prohibition.static", "capability.counter.placement.quantity_replacement"],
+    ["capability.counter.placement.prohibition.static", "capability.counter.producer.external_additional_entry"],
+    ["capability.counter.placement.prohibition.static", "capability.counter.producer.fixed_player_effect"],
+    ["capability.counter.placement.prohibition.static", "capability.counter.producer.intrinsic_entry"],
+    ["capability.counter.placement.prohibition.static", "capability.damage.result.infect"],
+    ["capability.counter.placement.prohibition.static", "capability.damage.result.lifelink"],
+    ["capability.counter.placement.prohibition.static", "capability.damage.result.wither"],
+    ["capability.counter.placement.prohibition.static", "capability.zone.entry.fixed_copy"],
     ["capability.counter.placement.quantity_replacement", "capability.counter.producer.optional_self_entry"],
     ["capability.counter.placement.quantity_replacement", "capability.counter.producer.persist"],
     ["capability.counter.placement.quantity_replacement", "capability.counter.producer.riot"],
@@ -252,7 +317,50 @@
       "capability.library.search.fixed_counted",
       "capability.zone.change.destination_replacement"
     ],
+    [
+      "capability.object.reference.source_attachment_information",
+      "capability.permanent.exile.effect"
+    ],
+    [
+      "capability.permanent.exile.effect",
+      "capability.target.protection.shroud_permanent"
+    ],
+    [
+      "capability.permanent.exile.effect",
+      "capability.zone.linked_exile_return.fixed"
+    ],
+    ["capability.stack.counter.effect", "capability.target.ability_source.current_or_lki"],
+    [
+      "capability.stack.counter.effect",
+      "capability.trigger.event.normalized_zone_change"
+    ],
     ["capability.state_query.permanent.public_state_predicate", "capability.zone.entry.fixed_copy"],
+    ["capability.target.ability_source.current_or_lki", "capability.target.revalidate_resolution"],
+    ["capability.target.ability_source.current_or_lki", "capability.trigger.event.normalized_zone_change"],
+    [
+      "capability.target.permanent.characteristic_predicate",
+      "capability.target.revalidate_resolution"
+    ],
+    [
+      "capability.target.permanent.characteristic_predicate",
+      "capability.trigger.condition.fixed_public_state"
+    ],
+    [
+      "capability.target.permanent.characteristic_predicate",
+      "capability.trigger.event.normalized_zone_change"
+    ],
+    [
+      "capability.target.permanent.characteristic_predicate",
+      "capability.variant.speed.player"
+    ],
+    [
+      "capability.target.permanent.characteristic_predicate",
+      "capability.zone.exile_until_source_departure.fixed"
+    ],
+    [
+      "capability.target.permanent.characteristic_predicate",
+      "capability.zone.linked_exile_return.fixed"
+    ],
     ["capability.target.protection.hexproof_permanent", "capability.zone.entry.fixed_copy"],
     ["capability.timing.cast.printed_flash", "capability.zone.entry.fixed_copy"],
     ["capability.trigger.event.normalized_zone_change", "capability.zone.change.destination_replacement"],

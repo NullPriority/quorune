@@ -74,8 +74,46 @@ def closed_effect_program_node_capabilities(
     return tuple(sorted(dependencies))
 
 
+def closed_effect_program_runtime_dependencies(program):
+    """Keep the persisted ordered-program kind bound to its mutation owner."""
+    schema=getattr(program,'target_schema',None)
+    if isinstance(schema,Mapping) and isinstance(schema.get('modes'),Mapping):
+        definitions=tuple(schema['modes'].values())
+        marked=CLOSED_EFFECT_PROGRAM_MECHANIC in program.coverage or any(
+            isinstance(branch,Mapping) and CLOSED_EFFECT_PROGRAM_MECHANIC in branch.get('mechanics',()) for branch in definitions)
+        if not marked:return ()
+        from ..compiler.modal_templates import FIXED_CHOOSE_ONE_MODAL_MECHANIC,FIXED_NONREPEATING_MODAL_MECHANIC
+        from .modal_capability_shapes import FIXED_MODAL_WRAPPER_MECHANICS,fixed_choose_one_modal_branches,fixed_nonrepeating_modal_branches
+        modal=FIXED_NONREPEATING_MODAL_MECHANIC if FIXED_NONREPEATING_MODAL_MECHANIC in program.coverage else FIXED_CHOOSE_ONE_MODAL_MECHANIC
+        mechanics={modal,*set(program.coverage).intersection(FIXED_MODAL_WRAPPER_MECHANICS)}
+        for definition in definitions:
+            if not isinstance(definition,Mapping) or not isinstance(definition.get('mechanics'),(list,tuple)):
+                raise ValueError('Modal ordered-program scope is malformed')
+            mechanics.update(definition['mechanics'])
+        decode=fixed_nonrepeating_modal_branches if FIXED_NONREPEATING_MODAL_MECHANIC in mechanics else fixed_choose_one_modal_branches
+        branches=decode(effects=program.effects,target_schema=schema,mechanic_ids=tuple(sorted(mechanics)))
+        if branches is None:raise ValueError('Modal ordered-program branches are malformed')
+        from .modal_node_capabilities import fixed_modal_capability_dependencies
+        modal_owned=fixed_modal_capability_dependencies(effects=program.effects,target_schema=schema,mechanics=tuple(sorted(mechanics)))
+        if not modal_owned:raise ValueError('Modal ordered-program sibling branches are not independently closed')
+        required=set()
+        for branch in branches:
+            if CLOSED_EFFECT_PROGRAM_MECHANIC not in branch.mechanics:continue
+            owned=closed_effect_program_node_capabilities(effects=branch.effects,target_schema=branch.target_schema,mechanic_ids=branch.mechanics)
+            if not owned:raise ValueError('Modal ordered-program branch lacks its complete ordered effect owner')
+            required.update(owned)
+        if CLOSED_EFFECT_PROGRAM_CAPABILITY not in required:raise ValueError('Modal ordered-program annotation has no owning branch')
+        return tuple(sorted({*required,*modal_owned}))
+    if CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage:
+        return ()
+    if not 2 <= len(program.effects) <= 8:
+        raise ValueError('Closed ordered programs require two to eight effects')
+    return (CLOSED_EFFECT_PROGRAM_CAPABILITY,)
+
+
 __all__ = [
     "CLOSED_EFFECT_PROGRAM_CAPABILITY",
     "CLOSED_EFFECT_PROGRAM_MECHANIC",
     "closed_effect_program_node_capabilities",
+    "closed_effect_program_runtime_dependencies",
 ]

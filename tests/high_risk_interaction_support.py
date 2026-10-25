@@ -199,6 +199,7 @@ _WITNESSES = {
         "As this Aura enters, choose two colors.\n"
         "Enchanted creature has protection from the chosen color. This "
         "effect doesn't remove this Aura.\n"
+        "Enchanted creature has all activated abilities of creature cards in your graveyard.\n"
         "{1}: Attach this Aura to target creature.\n"
         "Sacrifice this Aura: Target creature gains protection from the "
         "chosen color until end of turn.",
@@ -231,6 +232,7 @@ _WITNESSES = {
         "As this Aura enters, choose two colors.\n"
         "Enchanted creature has protection from the chosen color. This "
         "effect doesn't remove this Aura.\n"
+        "Enchanted creature has all activated abilities of creature cards in your graveyard.\n"
         "Sacrifice this Aura: Target creature gains protection from the "
         "chosen color until end of turn.",
         "{2}{W}",
@@ -250,7 +252,8 @@ _WITNESSES = {
         "Enchant creature\n"
         "Enchanted creature can't be blocked by creatures with power 3 or "
         "greater.\n"
-        "Sacrifice this Aura: The next time a source of your choice would "
+        "Sacrifice this Aura: The next time a source of your choice with "
+        "mana value greater than the number of creatures you control would "
         "deal damage to enchanted creature this turn, prevent that damage.",
         "{1}{W}",
         ("Enchant",),
@@ -308,7 +311,7 @@ _WITNESSES = {
         "Enchantment",
         "Cumulative upkeep {1}\n"
         "As this enchantment enters, choose two colors.\n"
-        "{1}: The next time a source of your choice of the chosen color would "
+        "{1}: The next time a source of your choice of one of the chosen colors would "
         "deal damage to you this turn, prevent that damage.",
         "{2}{W}",
         ("Cumulative upkeep",),
@@ -318,7 +321,7 @@ _WITNESSES = {
         "Enchantment",
         "Cumulative upkeep—Pay 2 life.\n"
         "As this enchantment enters, choose two colors.\n"
-        "{1}: The next time a source of your choice of the chosen color would "
+        "{1}: The next time a source of your choice of one of the chosen colors would "
         "deal damage to you this turn, prevent that damage.",
         "{2}{W}",
         ("Cumulative upkeep",),
@@ -852,12 +855,13 @@ _WITNESSES = {
         "{3}{W}{U}",
     ),
     "shieldmage-elder": _Witness(
-        "Shieldmage Elder",
+        "Generic Shieldmage Elder Conditional Prevention Boundary Fixture",
         "Creature — Human Cleric Wizard",
         "Tap two untapped Clerics you control: Prevent all damage target "
         "creature would deal this turn.\n"
         "Tap two untapped Wizards you control: Prevent all damage target "
-        "spell would deal this turn.",
+        "spell would deal this turn if its mana value is greater than the "
+        "number of creatures you control.",
         "{5}{W}",
         power="2",
         toughness="3",
@@ -1506,6 +1510,15 @@ ALL_HIGH_RISK_BOUNDARY_PAIRS = tuple(
     )
 )
 
+
+_WITNESSES['zz-conditional-damage-recipient-redirection'] = _Witness(
+    'Generic Conditional Damage Recipient Redirection Boundary',
+    'Instant',
+    'This spell deals 2 damage to target creature.\n'
+    'If this spell would deal damage to a creature, it deals that much damage '
+    "to that creature's controller instead.",
+    '{R}',
+)
 
 _PAIR_WITNESS: dict[Pair, str] = {}
 

@@ -18,6 +18,18 @@ _DOUBLE_CONTROLLER_LIFE_GAIN = re.compile(
 )
 
 
+def static_life_gain_prohibition_handler(text):
+    from ..life_gain_permission import (FixedLifeGainProhibitionSpec,LIFE_GAIN_PROHIBITION_CAPABILITY,
+        LIFE_GAIN_PROHIBITION_HANDLER,LIFE_GAIN_PROHIBITION_EVENT)
+    match = re.fullmatch(r"(?P<players>Players|Your opponents) can't gain life\.?",text.strip(),re.I)
+    if match is None:
+        return None
+    relation = 'any' if match['players'].casefold() == 'players' else 'opponent'
+    return (f'static-life-gain-prohibition-{relation}-v1',
+        {'handler_id':LIFE_GAIN_PROHIBITION_HANDLER,'schema_version':1,'event':LIFE_GAIN_PROHIBITION_EVENT,
+         'condition':FixedLifeGainProhibitionSpec(relation).to_dict()},LIFE_GAIN_PROHIBITION_CAPABILITY)
+
+
 def static_life_handler(
     text: str,
 ) -> tuple[str, Mapping[str, Any], str] | None:

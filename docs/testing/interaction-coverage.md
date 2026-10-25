@@ -41,6 +41,10 @@ applicable interaction set. Reports distinguish successful supported
 composition, demonstrated fail-closed rejection of an explicitly unsupported
 composition, and unknown or unmodeled composition. A rejection witness must not
 be reported as successful playability of the pair.
+Runtime-admission witnesses exercise the actual trust boundary, including a
+pause before unsupported resolution. Preserve the source's normal zone, legal
+timing, and sufficient payment so the witness isolates the unrepresented operation.
+A nearby accepted control demonstrates that the supported owner remains usable.
 
 Every semantic scope expansion reviews newly reachable ambient interactions,
 even when no capability ID changes. An unchanged denominator is acceptable only

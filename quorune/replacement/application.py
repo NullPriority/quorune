@@ -20,6 +20,9 @@ from .operations import (
     AppendValues,
     CapResultLifeLoss,
     CreateAffectedObjectCounter,
+    AddAffectedObjectCounter,
+    ApplyEntryCounterReplacement,
+    GrantAffectedObjectSubtype,
     CreateAdditionalToken,
     CreateResultDraws,
     CreateNestedEvent,
@@ -42,7 +45,7 @@ _LIFE_LOSS_DIRECTION = "loss"
 
 _SET_FIELDS = {
     "damage": {"amount", "prevented", "prevented_by", "target"},
-    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_prepared'},
+    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_prepared','_counter_permissions'},
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},
@@ -419,6 +422,27 @@ def _retarget_zone_counter_children(
         )
 
 
+def _shared_token_creation_status(tokens):
+    """Keep instruction status distinct from the replaced token definition."""
+    status={}
+    for field,default in (('tapped',False),('temporary_keywords',())):
+        values=[]
+        for token in tokens:
+            if not isinstance(token,Mapping):raise ReplacementEffectError('Token creation specification must be an object')
+            value=token.get(field,default)
+            if field=='tapped':
+                if type(value) is not bool:raise ReplacementEffectError('Token tapped status must be boolean')
+            else:
+                if not isinstance(value,(list,tuple)) or any(type(keyword) is not str for keyword in value):
+                    raise ReplacementEffectError('Token temporary keywords must be an array of strings')
+                value=tuple(value)
+            values.append(value)
+        if values and any(value!=values[0] for value in values[1:]):
+            raise ReplacementEffectError('Mixed token creation status requires an explicit per-definition scope')
+        if values and values[0]!=default:status[field]=list(values[0]) if field=='temporary_keywords' else values[0]
+    return status
+
+
 def _apply_additional_token(
     event: ReplaceableEvent,
     payload: dict[str, Any],
@@ -439,6 +463,7 @@ def _apply_additional_token(
     payload["tokens"] = [
         *list(payload.get("tokens", ())),
         {
+            **_shared_token_creation_status(payload.get('tokens',())),
             "name": operation.name,
             "quantity": operation.quantity,
             "characteristics": thaw_value(operation.characteristics),
@@ -592,22 +617,9 @@ def _apply_operation(
             )
         )
         return entry_scope
-    if isinstance(operation, CreateAffectedObjectCounter):
-        _create_affected_object_counter_event(
-            event,
-            payload,
-            children,
-            operation,
-            effect_id=effect_id,
-        )
-        return entry_scope
-    if isinstance(operation, GrantAffectedObjectKeyword):
-        _apply_affected_object_keyword(
-            event,
-            payload,
-            operation,
-            effect_id=effect_id,
-        )
+    if isinstance(operation,(ApplyEntryCounterReplacement,CreateAffectedObjectCounter,GrantAffectedObjectSubtype,GrantAffectedObjectKeyword)):
+        from .entry_counter_application import apply_entry_counter_operation
+        apply_entry_counter_operation(event,payload,children,operation,effect_id=effect_id)
         return entry_scope
     if isinstance(operation, CreateAdditionalToken):
         _apply_additional_token(event, payload, operation)
@@ -764,6 +776,14 @@ def _apply_effect_operations(
             payload["prevention_applied"] = by_effect
     from .devour import combine_devour_entry_counters
     combine_devour_entry_counters(event,payload,children)
+    if event.kind == 'zone.change' and '_counter_permissions' in payload:
+        from dataclasses import replace
+        from ..counter_permission_events import refresh_entry_counter_permissions
+        from ..counter_permission import CounterPermissionError
+        try:
+            refresh_entry_counter_permissions(replace(event,entry_scope=entry_scope),payload,children)
+        except CounterPermissionError as exc:
+            raise ReplacementEffectError(str(exc)) from exc
     chooser_history = dict(payload.get("replacement_choosers") or {})
     chooser_history[effect.effect_id] = event.chooser
     payload["replacement_choosers"] = chooser_history

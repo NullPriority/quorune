@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .event_counter_reference import event_counter_recipient_context
+from .rules.block_trigger_multiplicity import block_trigger_already_collected
 from .entry_copy import copiable_oracle_id
 
 import copy
@@ -132,13 +133,23 @@ def _trigger_attachment_context(
     source: CardInstance,
     program: SemanticProgram,
 ) -> dict[str, Any]:
+    from .designation_prevention import capture_designation_information, DESIGNATION_INFORMATION_FIELD
+    designation=capture_designation_information(source,program.effects)
+    extra={DESIGNATION_INFORMATION_FIELD:designation} if designation is not None else {}
     snapshot = _trigger_attachment_snapshot(host, source, program)
     if snapshot is None:
-        return {"source_logical_object_id": source.logical_object_id}
+        return {"source_logical_object_id": source.logical_object_id,**extra}
     return {
         "source_logical_object_id": snapshot.source.logical_object_id,
         "source_attachment_snapshot": snapshot.to_dict(),
+        **_versioned_attachment_information(program),
+        **extra,
     }
+
+
+def _versioned_attachment_information(program):
+    from .attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
+    return {ATTACHMENT_INFORMATION_VERSION:1} if attachment_information_capabilities(program.effects) else {}
 
 
 class TriggerDiscoveryHost(Protocol):
@@ -1087,7 +1098,8 @@ def _semantic_trigger_context(
     from .scalar_effect_amounts import scalar_source_context
     stack_context.update(scalar_source_context(host, source, program.effects, characteristics=source_characteristics))
     from .target_source import capture_targeting_source, TARGETING_SOURCE_CONTEXT
-    if program.target_schema:stack_context[TARGETING_SOURCE_CONTEXT]=capture_targeting_source(host,source,characteristics=source_characteristics,zone=active_zone).to_dict()
+    from .ability_source_information import complete_ability_source_information
+    if program.target_schema or complete_ability_source_information(host.state):stack_context[TARGETING_SOURCE_CONTEXT]=capture_targeting_source(host,source,characteristics=source_characteristics,zone=active_zone).to_dict()
     from .rules.stack_damage_sources import fixed_damage_source_context
     stack_context.update(fixed_damage_source_context(host, source, (program.effects, program.target_schema), characteristics=source_characteristics))
     from .token_copy_references import copy_source_context
@@ -1344,6 +1356,9 @@ def dispatch_semantic_event(
                 context,
                 source_zone=active_zone,
             ):
+                continue
+            if event == 'creature.blocks' and block_trigger_already_collected(program.key,
+                    source.object_id, context, _selected_event_subscription(program, event)[2], trigger_batch):
                 continue
             if (
                 host.state.config.semantic_policy == "trusted_only"

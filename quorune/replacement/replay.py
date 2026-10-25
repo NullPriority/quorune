@@ -157,6 +157,7 @@ class ReplacementContinuation:
     held_triggers: tuple[PendingTriggerItem, ...] = ()
     opening_hand_entry: FrozenMap | None = None
     state_based_destruction_selections: tuple[str | FrozenMap, ...] = ()
+    completed_choice: FrozenMap | None = None
 
     @classmethod
     def from_dict(
@@ -325,6 +326,8 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             "Unknown replacement continuation resume kind"
         )
     fields, field_name = shape
+    if resume_kind=='semantic_intent_completion' and 'completed_choice' in value:
+        fields=fields|{'completed_choice'}
     exact_fields(value, fields, field_name=field_name)
     return resume_kind
 
@@ -723,6 +726,10 @@ def _casting_zone_cost_event_is_valid(
         if response.get(field) is not None:
             raw_refs = response[field]
             break
+    if raw_refs is None:
+        from ..rules.random_discard_additional_cost import random_spell_cost_reference
+        ref=random_spell_cost_reference(response,origin=origin,destination=destination,object_ref=payload.get('object_ref'))
+        if ref is not None:raw_refs=(ref,)
     # Historical fixed-sacrifice continuations used cost_cards before the
     # typed zone-change cost vocabulary was introduced.
     if (
@@ -1190,6 +1197,16 @@ def _decode_semantic_intent_continuation(
         raise ReplacementEffectError(
             "Semantic intent continuation fields are malformed"
         )
+    completed=value.get('completed_choice')
+    if 'completed_choice' in value:
+        from ..semantic_choices.completed_choice import validated_remaining_completion
+        from ..semantic_choices.model import SemanticChoiceError
+        try:
+            if intent_index!=0:raise SemanticChoiceError('Saved remaining completion starts at its first unpaid intent')
+            validated_remaining_completion(completed,continuation=semantic,actor=actor,response=response,
+                intent_kind=intent_kind,intent=semantic_intent)
+        except (SemanticChoiceError,TypeError,ValueError,KeyError) as exc:
+            raise ReplacementEffectError(str(exc)) from exc
     return continuation_type(
         batch=batch,
         effects=effects,
@@ -1202,6 +1219,7 @@ def _decode_semantic_intent_continuation(
         intent_index=intent_index,
         semantic_intent_kind=intent_kind,
         semantic_intent=FrozenMap(semantic_intent),
+        completed_choice=FrozenMap(completed) if completed is not None else None,
         replacement_selections=_decode_combat_selections(value),
     )
 

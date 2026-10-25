@@ -270,10 +270,16 @@ class ClassLifecycleCompilerTests(unittest.TestCase):
             trigger.effects,
         )
         self.assertIn("current_ability_fragment_required", trigger.runtime_coverage)
+        adjusted = self.compile(class_record(SCHOLAR_CLASS_TEXT.replace(
+            "You have no maximum hand size.", "Your maximum hand size is increased by two."),
+            name="Constructed Adjusted Scholar Class", keywords=("Vigilance",)))
+        self.assertEqual("exact", adjusted.status)
+        self.assertTrue(any("hand.cleanup.fixed_adjustment" in node.capability_dependencies
+            for node in adjusted.faces[0].nodes))
         for unsupported in (
             SCHOLAR_CLASS_TEXT.replace(
                 "You have no maximum hand size.",
-                "Your maximum hand size is increased by two.",
+                "Your maximum hand size is increased by the number of creatures you control.",
             ),
             SCHOLAR_CLASS_TEXT.replace(
                 "You have no maximum hand size.",

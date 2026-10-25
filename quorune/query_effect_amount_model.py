@@ -56,6 +56,7 @@ def _query_is_layer_five_closed(query: ObjectQuerySpec) -> bool:
 
 
 def _quantity_is_public_amount_closed(quantity: CharacteristicQuantitySpec | LiveBattlefieldQuantitySpec) -> bool:
+    if isinstance(quantity,CharacteristicQuantitySpec) and quantity.schema_version==5:return True
     if isinstance(quantity, LiveBattlefieldQuantitySpec):
         return True
     if quantity.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
@@ -169,6 +170,18 @@ class CastXAmountSpec:
         return cls(coefficient=value["coefficient"], schema_version=value["schema_version"])
 
 
+def cast_x_runtime_dependencies(value: Any) -> tuple[str,...]:
+    """Require the typed amount owner wherever a persisted X read appears."""
+    if isinstance(value,Mapping):
+        if value.get('kind')==CAST_X_AMOUNT_KIND:
+            CastXAmountSpec.from_dict(value)
+            return (DECLARED_AMOUNT_CAPABILITY,)
+        return tuple(sorted({cap for child in value.values() for cap in cast_x_runtime_dependencies(child)}))
+    if isinstance(value,(list,tuple)):
+        return tuple(sorted({cap for child in value for cap in cast_x_runtime_dependencies(child)}))
+    return ()
+
+
 def scope_declared_amount_bindings(value: Any, source_scope: str) -> Any:
     """Give separate Oracle nodes separate declarations, even for identical prose."""
     if isinstance(value, Mapping):
@@ -188,6 +201,7 @@ __all__ = [
     "CAST_X_AMOUNT_KIND",
     "DECLARED_AMOUNT_CAPABILITY",
     "CastXAmountSpec",
+    "cast_x_runtime_dependencies",
     "PUBLIC_QUERY_AMOUNT_CAPABILITY",
     "PUBLIC_QUERY_AMOUNT_KIND",
     "PublicQueryAmountError",

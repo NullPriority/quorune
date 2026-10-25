@@ -1,0 +1,1801 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned current source-turn casting permission witnesses",
+  "cards": [
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "name": "Baithook Angler // Hook-Haunt Drifter",
+      "mana_cost": null,
+      "cmc": 2.0,
+      "type_line": "Creature — Human Peasant // Creature — Spirit",
+      "oracle_text": null,
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": null,
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Disturb"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "standard": "not_legal",
+        "future": "not_legal",
+        "historic": "legal",
+        "timeless": "legal",
+        "gladiator": "legal",
+        "pioneer": "legal",
+        "modern": "legal",
+        "legacy": "legal",
+        "pauper": "legal",
+        "vintage": "legal",
+        "penny": "legal",
+        "commander": "legal",
+        "oathbreaker": "legal",
+        "standardbrawl": "not_legal",
+        "brawl": "legal",
+        "competitivebrawl": "legal",
+        "alchemy": "not_legal",
+        "paupercommander": "legal",
+        "duel": "legal",
+        "oldschool": "not_legal",
+        "premodern": "not_legal",
+        "predh": "not_legal",
+        "tlr": "legal"
+      },
+      "card_faces": [
+        {
+          "object": "card_face",
+          "name": "Baithook Angler",
+          "mana_cost": "{1}{U}",
+          "type_line": "Creature — Human Peasant",
+          "oracle_text": "Disturb {1}{U} (You may cast this card from your graveyard transformed for its disturb cost.)",
+          "colors": [
+            "U"
+          ],
+          "power": "2",
+          "toughness": "1",
+          "flavor_text": "Geor was determined to stay out until he got a bite from something big.",
+          "artist": "Uriah Voth",
+          "artist_id": "14cf4c0c-1a83-4366-ba61-6d0a26ee5a69",
+          "illustration_id": "2b0fb698-7547-4c72-8966-ff427b6dd960",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "normal": "https://cards.scryfall.io/normal/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "large": "https://cards.scryfall.io/large/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "png": "https://cards.scryfall.io/png/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.png?1783925653",
+            "art_crop": "https://cards.scryfall.io/art_crop/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "border_crop": "https://cards.scryfall.io/border_crop/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "thumb": "https://cards.scryfall.io/thumb/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "grid": "https://cards.scryfall.io/grid/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "display": "https://cards.scryfall.io/display/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "art": "https://cards.scryfall.io/art/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "crop": "https://cards.scryfall.io/crop/front/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653"
+          }
+        },
+        {
+          "object": "card_face",
+          "name": "Hook-Haunt Drifter",
+          "mana_cost": "",
+          "type_line": "Creature — Spirit",
+          "oracle_text": "Flying\nIf Hook-Haunt Drifter would be put into a graveyard from anywhere, exile it instead.",
+          "colors": [
+            "U"
+          ],
+          "color_indicator": [
+            "U"
+          ],
+          "power": "1",
+          "toughness": "2",
+          "flavor_text": "Even in death, he casts his lines, forever fishing for reasons long forgotten.",
+          "artist": "Uriah Voth",
+          "artist_id": "14cf4c0c-1a83-4366-ba61-6d0a26ee5a69",
+          "illustration_id": "d6ae2bc6-0248-4c0c-a835-baa2e386feb2",
+          "image_uris": {
+            "small": "https://cards.scryfall.io/small/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "normal": "https://cards.scryfall.io/normal/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "large": "https://cards.scryfall.io/large/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "png": "https://cards.scryfall.io/png/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.png?1783925653",
+            "art_crop": "https://cards.scryfall.io/art_crop/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "border_crop": "https://cards.scryfall.io/border_crop/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.jpg?1783925653",
+            "thumb": "https://cards.scryfall.io/thumb/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "grid": "https://cards.scryfall.io/grid/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "display": "https://cards.scryfall.io/display/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "art": "https://cards.scryfall.io/art/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653",
+            "crop": "https://cards.scryfall.io/crop/back/3/6/36e71d16-0964-489d-bea2-9cec7991fc99.webp?1783925653"
+          }
+        }
+      ]
+    },
+    {
+      "oracle_id": "0596920f-9946-42f4-a03b-24aab67f9f1b",
+      "name": "Blaze",
+      "mana_cost": "{X}{R}",
+      "type_line": "Sorcery",
+      "oracle_text": "Blaze deals X damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-06-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Bonesplitter",
+      "oracle_id": "452e3f5f-ce17-4682-966b-5cc100210aee",
+      "oracle_text": "Equipped creature gets +2/+0.\nEquip {1}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-11-20",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Kicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}",
+      "name": "Burst Lightning",
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "oracle_text": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nBurst Lightning deals 2 damage to any target. If this spell was kicked, it deals 4 damage instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
+      "name": "Danitha, New Benalia's Light",
+      "mana_cost": "{1}{G}{W}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Knight",
+      "oracle_text": "Vigilance, trample, lifelink\nOnce during each of your turns, you may cast an Aura or Equipment spell from your graveyard.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Lifelink",
+        "Vigilance",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-05-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0a1dc797-7531-4494-afe6-add6ac3f74c0",
+      "name": "Defiler of Vigor",
+      "mana_cost": "{3}{G}{G}",
+      "cmc": 5.0,
+      "type_line": "Creature — Phyrexian Wurm",
+      "oracle_text": "Trample\nAs an additional cost to cast green permanent spells, you may pay 2 life. Those spells cost {G} less to cast if you paid life this way. This effect reduces only the amount of green mana you pay.\nWhenever you cast a green permanent spell, put a +1/+1 counter on each creature you control.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-09-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rebound"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Ephemerate",
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "oracle_text": "Exile target creature you control, then return it to the battlefield under its owner's control.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2019-06-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "name": "Fist of Suns",
+      "mana_cost": "{3}",
+      "type_line": "Artifact",
+      "oracle_text": "You may pay {W}{U}{B}{R}{G} rather than pay the mana cost for spells you cast.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-08-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "name": "Gisa and Geralf",
+      "mana_cost": "{2}{U}{B}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "When Gisa and Geralf enters, mill four cards.\nOnce during each of your turns, you may cast a Zombie creature spell from your graveyard.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Kicker"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Gnarlid Colony",
+      "oracle_id": "e5481431-c952-4ad9-94fe-355076ef632b",
+      "oracle_text": "Kicker {2}{G} (You may pay an additional {2}{G} as you cast this spell.)\nIf this creature was kicked, it enters with two +1/+1 counters on it.\nEach creature you control with a +1/+1 counter on it has trample. (It can deal excess combat damage to the player or planeswalker it's attacking.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "2",
+      "type_line": "Creature — Beast"
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "name": "Karador, Ghost Chieftain",
+      "mana_cost": "{5}{W}{B}{G}",
+      "cmc": 8.0,
+      "type_line": "Legendary Creature — Centaur Spirit",
+      "oracle_text": "This spell costs {1} less to cast for each creature card in your graveyard.\nOnce during each of your turns, you may cast a creature spell from your graveyard.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "name": "Kess, Dissident Mage",
+      "mana_cost": "{1}{U}{B}{R}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Wizard",
+      "oracle_text": "Flying\nOnce during each of your turns, you may cast an instant or sorcery spell from your graveyard. If a spell cast this way would be put into your graveyard, exile it instead.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "name": "Mirrormade",
+      "mana_cost": "{1}{U}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "You may have this enchantment enter as a copy of any artifact or enchantment on the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "faces": [],
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0b4cb111-ecf7-4ff7-a9e3-c944054f3370",
+      "name": "Monoist Sentry",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Artifact Creature — Robot",
+      "oracle_text": "Defender",
+      "power": "4",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Defender"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "06bb4272-25d1-46db-8585-15f919267e1e",
+      "name": "One with the Multiverse",
+      "mana_cost": "{6}{U}{U}",
+      "cmc": 8.0,
+      "type_line": "Enchantment",
+      "oracle_text": "You may look at the top card of your library any time.\nYou may play lands and cast spells from the top of your library.\nOnce during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9d2d6479-531c-4ce1-b52b-00e36fa63b64",
+      "name": "Rancor",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+0 and has trample.\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-07-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ecd8d7f4-7b11-4097-afc0-ef3c81edd90c",
+      "name": "Serra Paragon",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Angel",
+      "oracle_text": "Flying\nOnce during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains \"When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life.\"",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "728d2e30-2f36-4054-81db-29b01e376a82",
+      "name": "Sickening Dreams",
+      "mana_cost": "{1}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, discard X cards.\nSickening Dreams deals X damage to each creature and each player.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2002-02-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0,
+      "card_faces": [],
+      "rulings": []
+    },
+    {
+      "oracle_id": "c4dee5fe-36f0-4155-9437-2c0504feba2c",
+      "name": "Skinthinner",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Zombie",
+      "oracle_text": "Morph {3}{B}{B} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, destroy target nonblack creature. It can't be regenerated.",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Morph"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-08-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Sphere of Resistance",
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "oracle_text": "Spells cost {1} more to cast.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-06-16",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "dbd6a94b-62ff-4a10-9d52-bdd90b26e425",
+      "name": "Time Warp",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Target player takes an extra turn after this one.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "banned",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "banned",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1a44261a-2b6a-45dc-91a4-b2eb219ba6fb",
+      "name": "Vision, Spectral Synthezoid",
+      "mana_cost": "{6}{U}{U}",
+      "cmc": 8.0,
+      "type_line": "Legendary Artifact Creature — Robot Hero",
+      "oracle_text": "Flying\nOnce during each of your turns, you may cast a noncreature or Robot spell from your hand without paying its mana cost.",
+      "power": "2",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fea95888-e16a-4209-9cd4-623f7f4d2f67",
+      "name": "Walking Corpse",
+      "mana_cost": "{1}{B}",
+      "type_line": "Creature — Zombie",
+      "oracle_text": "",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "3f8a8650-0e38-4926-8f48-526351e6a863",
+      "name": "Zaffai and the Tempests",
+      "mana_cost": "{5}{U}{R}",
+      "cmc": 7.0,
+      "type_line": "Legendary Creature — Human Bard Sorcerer",
+      "oracle_text": "Once during each of your turns, you may cast an instant or sorcery spell from your hand without paying its mana cost.",
+      "power": "5",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If you cast a spell from your graveyard using another permission, Danitha's effect doesn't apply. You can cast another Aura or Equipment spell from your graveyard."
+    },
+    {
+      "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "You must pay the costs to cast that spell. If it has an alternative cost, you may cast it for that cost instead."
+    },
+    {
+      "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of the spell you cast from your graveyard."
+    },
+    {
+      "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If you cast one Aura or Equipment spell from your graveyard and then have a new Danitha come under your control in the same turn, you may cast another Aura or Equipment spell from your graveyard that turn."
+    },
+    {
+      "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "If an Aura or Equipment card is put into your graveyard during your main phase and the stack is empty, you have a chance to cast it before any player may attempt to remove that card from your graveyard."
+    },
+    {
+      "oracle_id": "971b30a8-4ab4-4e96-9d50-597da4d52994",
+      "published_at": "2023-05-12",
+      "source": "wotc",
+      "comment": "Once you begin to cast the spell, losing control of Danitha won't affect the spell."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Once you begin to cast the Zombie spell, losing control of Gisa and Geralf won’t affect the spell."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If you cast one Zombie creature spell from your graveyard and then have a new Gisa and Geralf come under your control in the same turn, you may cast another Zombie creature spell from your graveyard that turn."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of the Zombie spell you cast from your graveyard."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If a Zombie card is put into your graveyard during your main phase and the stack is empty, you have a chance to cast it before any player may attempt to remove that card from your graveyard."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If multiple effects allow you to cast a Zombie creature spell from your graveyard, such as those of Gisa and Geralf and Karador, Ghost Chieftain, you must announce which permission you’re using as you begin to cast the spell."
+    },
+    {
+      "oracle_id": "20e94d0f-6887-45f8-a137-877011d786c6",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You must pay the costs to cast that Zombie spell. If it has an alternative cost, you may cast it for that cost instead."
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You must pay the costs to cast that spell. If it has an alternative cost, you may cast it for that cost instead."
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost you're paying, add any cost increases (such as the commander tax), then apply any cost reductions (such as that of Karador). The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If you cast one creature spell from your graveyard and then have a new Karador come under your control in the same turn, you may cast another creature spell from your graveyard that turn."
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of the spell you cast from your graveyard."
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "Once you begin to cast the spell, losing control of Karador won't affect the spell. You can finish casting it as normal."
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If a creature card is put into your graveyard during your main phase and the stack is empty, you have a chance to cast it before any player may attempt to remove that card from your graveyard."
+    },
+    {
+      "oracle_id": "304c194f-fa0b-42e5-93ca-8c587181d33c",
+      "published_at": "2020-11-10",
+      "source": "wotc",
+      "comment": "If multiple effects allow you to play a card from your graveyard, you must announce which permission you're using as you begin to play the card."
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a spell cast this way is put into another zone after it resolves (perhaps because it had buyback), it's considered a new object. If that card later moves to your graveyard, it won't be exiled."
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a sorcery card is put into your graveyard during your main phase and the stack is empty, you have a chance to cast it before any player may attempt to remove that card from your graveyard."
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If you cast one instant or sorcery card from your graveyard and then have a new Kess come under your control in the same turn, you may cast another instant or sorcery card from your graveyard that turn."
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "You must pay the costs to cast that card. If it has an alternative cost, you may cast it for that cost instead."
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "Once you begin to cast the card, losing control of Kess won't affect the spell. You can finish casting it as normal and it will be exiled if it would be put into your graveyard."
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "You must follow the normal timing permissions and restrictions of the card you cast from your graveyard."
+    },
+    {
+      "oracle_id": "f5092c14-eec4-472c-999c-ba96c36b2fbb",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If you cast a card from your graveyard using another permission (such as that of flashback), Kess's effect doesn't apply. You can cast another instant or sorcery card from your graveyard."
+    },
+    {
+      "oracle_id": "06bb4272-25d1-46db-8585-15f919267e1e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "While casting a card with the prototype ability using the last ability of One with the Multiverse, you can either choose to cast it normally or choose to cast it as a prototyped spell. In either case, you won't pay its mana cost."
+    },
+    {
+      "oracle_id": "06bb4272-25d1-46db-8585-15f919267e1e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "While casting a spell without paying its mana cost using the last ability, you can't pay alternative costs, but you may choose to pay any optional additional costs the spell may have (such as a kicker cost). You still must pay any mandatory additional costs."
+    },
+    {
+      "oracle_id": "06bb4272-25d1-46db-8585-15f919267e1e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If One with the Multiverse leaves the battlefield and later returns to the battlefield (or you play a second one), it's considered a new object and you may cast a spell using its last ability regardless of whether or not you did so earlier this turn using the enchantment that was on the battlefield before."
+    },
+    {
+      "oracle_id": "06bb4272-25d1-46db-8585-15f919267e1e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "You must follow all normal timing rules for spells cast and lands played using the middle ability and must pay all costs for spells cast this way. To cast a spell this way, you may choose to pay any alternative costs or optional additional costs the spell may have (such as a kicker cost). You must pay any mandatory additional costs."
+    },
+    {
+      "oracle_id": "06bb4272-25d1-46db-8585-15f919267e1e",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Similarly, if you control more than one One with the Multiverse (Two with the Multiverse, if you will), each one's last ability applies independently, and you may cast a spell without paying its mana cost once for each of them during each of your turns. In this case, you will need to track which enchantment's permission you are using to cast a spell this way (due to the possibility that one of them might leave the battlefield before you use its permission that turn)."
+    },
+    {
+      "oracle_id": "9d2d6479-531c-4ce1-b52b-00e36fa63b64",
+      "published_at": "2018-03-16",
+      "source": "wotc",
+      "comment": "If the creature this Aura would enchant is an illegal target by the time Rancor tries to resolve, the Aura spell doesn't resolve. It won't enter the battlefield, so it won't be put into a graveyard from the battlefield and its ability won't trigger."
+    },
+    {
+      "oracle_id": "3f8a8650-0e38-4926-8f48-526351e6a863",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If you cast a spell with {X} in its mana cost this way, you must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "3f8a8650-0e38-4926-8f48-526351e6a863",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, you must pay those to cast the spell."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it."
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\""
+    },
+    {
+      "oracle_id": "ac2086fe-98ee-4280-9c7c-c5c2d6548a8b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+    },
+    {
+      "oracle_id": "09c96077-3804-4f12-a613-5bebc5e0413f",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It affects all players, including you."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "Once the exiled creature returns, it's considered a new object with no relation to the object that it was. Auras attached to the exiled creature will be put into their owners' graveyards. Equipment attached to the exiled creature will become unattached and remain on the battlefield. Any counters on the exiled creature will cease to exist."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "Casting the card again due to rebound's delayed triggered ability is optional. If you choose not to cast the card, or if you can't (perhaps because there are no legal targets available), the card will stay exiled. You won't get another chance to cast it on a future turn. If you do cast the card, it's put into its owner's graveyard as normal once it resolves."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a token is exiled this way, it will cease to exist and won't return to the battlefield."
+    },
+    {
+      "oracle_id": "0fd57894-b917-41c8-a394-360d1d31b236",
+      "published_at": "2019-06-14",
+      "source": "wotc",
+      "comment": "If a spell with rebound that you cast from your hand is countered or doesn't resolve (most likely because its targets have become illegal), none of its effects will happen, including rebound. The spell will be put into its owner's graveyard and you won't get to cast it again on your next turn."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the chosen permanent has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the chosen permanent is a token, Mirrormade copies the original characteristics of that token as stated by the effect that created the token. Mirrormade doesn't become a token in this case."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the chosen permanent is copying something else (for example, if the chosen permanent is another Mirrormade), then Mirrormade enters the battlefield as whatever the chosen permanent copied."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied permanent will trigger when Mirrormade enters the battlefield. Any \"as [this permanent] enters the battlefield\" or \"[this permanent] enters the battlefield with\" abilities of the chosen permanent will also work."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If Mirrormade copies an Aura this way, you choose what the Aura will enchant just before it enters the battlefield. You can't choose any permanent cards entering the battlefield at the same time as that Aura. This doesn't target the player or permanent it will enchant, so an opponent's permanent with hexproof may be chosen this way. The chosen recipient must be able to legally be enchanted by the Aura, so a player or permanent with protection from one of the Aura's qualities can't be chosen this way. If there's nothing legal for Mirrormade to enchant, it stays in its current zone (unless it's a spell, in which case it's put into its owner's graveyard)."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If Mirrormade somehow enters the battlefield at the same time as another artifact or enchantment, it can't become a copy of that permanent. You may choose only a permanent that's already on the battlefield."
+    },
+    {
+      "oracle_id": "79a71fe5-38ce-4bb5-aea0-c9b9a856d397",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Mirrormade copies exactly what was printed on the original permanent (unless that permanent is copying something else or is a token; see below). It doesn't copy whether that permanent is tapped or untapped, whether it has any counters on it or any Auras attached to it, or any non-copy effects that have changed its types, color, or so on. Notably, if Mirrormade copies an artifact creature or enchantment creature that's normally not a creature (such as one affected by Bring to Life), Mirrormade won't be a creature."
+    },
+    {
+      "oracle_id": "dbd6a94b-62ff-4a10-9d52-bdd90b26e425",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If multiple \"extra turn\" effects resolve in the same turn, take them in the reverse of the order that the effects resolved. In other words, the most recently created extra turn is taken first."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you apply Fist of Suns's alternative cost to a spell with {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Fist of Suns's ability is an alternative cost to cast a spell. You can't combine this with other alternative costs, such as flashback. You can pay additional costs, such as kicker, in addition to this alternative cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "If you cast a spell for which mana of any color can be spent to cast it, you may cast it for Fist of Suns's alternative cost and still spend any color of mana to cover that cost."
+    },
+    {
+      "oracle_id": "6fd5e591-fae8-4128-a4d3-a848c8a8ffda",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you pay {W}{U}{B}{R}{G} rather than pay the mana cost of a spell with {X} in its mana cost, the only legal choice for X is 0."
+    },
+    {
+      "oracle_id": "0a1dc797-7531-4494-afe6-add6ac3f74c0",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "Some players may make the mental shortcut that the Defilers effectively turn one of the colored mana symbols in the spell’s cost into a Phyrexian colored mana symbol. Despite the similarity in function, this ability does not cause the spells to have Phyrexian mana symbols in their costs. Sorry, Rage Extractor!"
+    },
+    {
+      "oracle_id": "0a1dc797-7531-4494-afe6-add6ac3f74c0",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "You may only pay the additional cost once per permanent spell."
+    },
+    {
+      "oracle_id": "e5481431-c952-4ad9-94fe-355076ef632b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\""
+    },
+    {
+      "oracle_id": "e5481431-c952-4ad9-94fe-355076ef632b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked."
+    },
+    {
+      "oracle_id": "e5481431-c952-4ad9-94fe-355076ef632b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+    },
+    {
+      "oracle_id": "e5481431-c952-4ad9-94fe-355076ef632b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it."
+    },
+    {
+      "oracle_id": "e5481431-c952-4ad9-94fe-355076ef632b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "e5481431-c952-4ad9-94fe-355076ef632b",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+    },
+    {
+      "oracle_id": "c4dee5fe-36f0-4155-9437-2c0504feba2c",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The trigger occurs when you use the Morph ability to turn the card face up, or when an effect turns it face up. It will not trigger on being revealed or on leaving the battlefield."
+    },
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "When you cast a spell using a card's disturb ability, the card is put onto the stack with its back face up. The resulting spell has all the characteristics of that face."
+    },
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "Disturb is found only on the front faces of some double-faced cards."
+    },
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "A spell cast this way enters the battlefield with its back face up."
+    },
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "If you copy a permanent spell cast this way (perhaps with a card like Double Major), the copy becomes a token that's a copy of the card's back face, even though it isn't itself a double-faced card."
+    },
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "The back face of each card with disturb has an ability that instructs its controller to exile if it would be put into a graveyard from anywhere. This includes going to the graveyard from the stack, so if the spell is countered after you cast it using the disturb ability, it will be put into exile."
+    },
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a disturb cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of a spell cast using disturb is determined by the mana cost on the front face of the card, no matter what the total cost to cast the spell was. (This is a special rule that applies only to transforming double faced-cards, including ones with disturb.)"
+    },
+    {
+      "oracle_id": "c6bb4b41-8dae-429a-b928-ae9d39c74711",
+      "published_at": "2021-09-24",
+      "source": "wotc",
+      "comment": "\"Disturb [cost]\" means \"You may cast this card transformed from your graveyard by paying [cost] rather than its mana cost.\""
+    }
+  ]
+}

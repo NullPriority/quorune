@@ -8,7 +8,9 @@ from dataclasses import replace
 from .face_queries import prospective_cast_card,cast_resolution_is_trusted,cast_offer_id,selected_cast_program,selected_cast_card_view
 from .aftermath import aftermath_cast_prohibition_reason
 from .disturb_costs import cast_view_zone_permission,disturb_back_cast_permission
-from ..prototype import prototype_cast_view,compiled_prototype_spec
+from ..prototype import compiled_prototype_spec
+from .characteristic_methods import characteristic_cast_view,characteristic_program_key,characteristic_offer_fields
+from ..fuse import fuse_source_cast_is_complete
 from typing import Any, Protocol
 
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
@@ -17,7 +19,7 @@ from ...cast_lifecycles import (
     fixed_zone_cast_timing_is_legal,
 )
 from ...cast_timing import cast_timing_is_legal, type_line_has_card_type
-from ...compiled_cast_timing import compiled_cast_timing_permissions
+from ...compiled_cast_timing import compiled_cast_timing_permissions, compiled_self_cast_restriction_reason
 from ...compiled_cast_lifecycles import compiled_sneak_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
@@ -168,6 +170,10 @@ def _cast_face(
     record: Any,
     card: Any,
 ) -> Mapping[str, Any] | None:
+    if request.cast_method=='fuse':
+        if request.face is not None or request.required_face is not None:
+            raise CastProposalError('Fuse selects both halves and cannot select a single face',reason='fuse_single_face')
+        return None
     requested_face = request.required_face or request.face
     from ...preparation import preparation_cast_face
     requested_face=preparation_cast_face(card,record,requested_face)
@@ -308,7 +314,7 @@ def _required_face_down_method_spec(
     card: Any,
     cast_method: str | None,
 ) -> Any | None:
-    if cast_method is None or cast_method=='prototype':
+    if cast_method is None or cast_method in {'prototype','fuse'}:
         return None
     method_spec = compiled_fixed_mana_face_down_method_spec(
         host,
@@ -378,7 +384,9 @@ def _combined_cast_timing_permissions(
     face: Mapping[str, Any] | None,
     face_name: str | None,
     face_down: bool,
+    include_classic: bool=True,
 ) -> tuple[Any, ...]:
+    from ...cast_timing import CLASSIC_FLASH_HANDLER
     printed = (
         ()
         if face_down
@@ -387,6 +395,7 @@ def _combined_cast_timing_permissions(
             card,
             face_name=face_name,
             actor=actor,
+            exclude_handler_ids=() if include_classic else (CLASSIC_FLASH_HANDLER,),
         )
     )
     return (
@@ -411,7 +420,10 @@ def _static_cast_rule_state(
 ) -> tuple[str | None, tuple[Any, ...]]:
     rule_face = _static_rule_face(face, face_down=face_down)
     return (
-        aftermath_cast_prohibition_reason(host,card) or static_cast_prohibition_reason(host, actor, card, face=rule_face),
+        aftermath_cast_prohibition_reason(host,card)
+        or (None if face_down else compiled_self_cast_restriction_reason(
+            host, actor, card, face_name=face_name))
+        or static_cast_prohibition_reason(host, actor, card, face=rule_face),
         _combined_cast_timing_permissions(
             host,
             actor,
@@ -421,6 +433,11 @@ def _static_cast_rule_state(
             face_down=face_down,
         ),
     )
+
+
+def _classic_flash_proposal_details(host,request,card,face):
+    from ..classic_flash import classic_flash_proposal_details
+    return classic_flash_proposal_details(host,request,card,face,permission_query=_combined_cast_timing_permissions)
 
 
 def _offered_face_down_method_spec(
@@ -528,7 +545,7 @@ def _cast_program_and_cost(
                 else "face_down_method_declared_cost"
             ),
         )
-    semantic_key,program=selected_cast_program(host,request,record,face,method_spec)
+    semantic_key,program=selected_cast_program(host,request,record,face,method_spec,card)
     alternative_base, suppress_source_costs = _rules_authorized_cost_base(
         request,
         method_spec,
@@ -717,7 +734,7 @@ def build_cast_proposal(
     record = host.card_record(card)
     if not record:
         raise CastProposalError("Cannot cast a custom token", reason="custom_token")
-    card,record=prototype_cast_view(host,card,record,request.cast_method)
+    card,record=characteristic_cast_view(host,card,record,request.cast_method)
     face = (
         None
         if request.cast_method in FACE_DOWN_CAST_METHODS
@@ -782,6 +799,7 @@ def build_cast_proposal(
         tap_cost_refs=tuple(tap_refs),
         details=freeze_json(
             {
+                **_classic_flash_proposal_details(host,request,card,face),
                 "selected_cost_option": selected_dict,
                 "selected_modes": selected_modes,
                 "target_schema_override": target_schema,
@@ -796,6 +814,7 @@ def build_cast_proposal(
                 "during_resolution": request.during_resolution,
                 "cast_method": request.cast_method,
                 **({'prototype':compiled_prototype_spec(host,card).to_dict()} if request.cast_method=='prototype' else {}),
+                **({'fuse':card.annotations['fused_spell_characteristics']} if request.cast_method=='fuse' else {}),
                 **(
                     {
                         (
@@ -848,8 +867,12 @@ def _cast_offer_payload(
         projected = {
             key: copy.deepcopy(value)
             for key, value in raw.items()
-            if key in {"id", "kind", "requirements", "choice_schema", "label"}
+            if key in {"id", "kind", "requirements", "choice_schema", "label", "permission_source"}
         }
+        from ..optional_life_cost_model import optional_life_cost_amount
+        life_payment=optional_life_cost_amount(raw)
+        if life_payment:
+            projected['additional_life']=life_payment
         if public_schema is not None:
             from .targeted_costs import public_payable_target_schema
             public_schema=public_payable_target_schema(public_schema,raw)
@@ -871,6 +894,8 @@ def _cast_offer_payload(
         "auto_pay": True,
         "cost_options": public_options,
     }
+    from ..classic_flash import classic_flash_offer_fields
+    payload.update(classic_flash_offer_fields(host,seat,card,face,permission_query=_combined_cast_timing_permissions))
     if face is not None:
         payload["face"] = cast_name
     if len(public_options) == 1 and public_options[0].get("target_schema"):
@@ -893,7 +918,7 @@ def build_cast_offer(
     record = host.card_record(card)
     if not record:
         return CastProposalResult("unavailable", "custom_token")
-    try:card,record=prototype_cast_view(host,card,record,cast_method)
+    try:card,record=characteristic_cast_view(host,card,record,cast_method)
     except CastProposalError as exc:return CastProposalResult(exc.status,exc.reason)
     method_spec, method_error = _offered_face_down_method_spec(
         host,
@@ -905,7 +930,8 @@ def build_cast_offer(
     from ...preparation import preparation_cast_face
     try:face_name=preparation_cast_face(card,record,face_name)
     except (ValueError,GameRuleError) as exc:return CastProposalResult('unavailable',str(exc))
-    front = host._select_cast_face(record,face_name) if record.faces else None
+    if cast_method=='fuse' and face_name is not None:return CastProposalResult('unavailable','fuse_single_face')
+    front = host._select_cast_face(record,face_name) if record.faces and cast_method!='fuse' else None
     card=prospective_cast_card(host,card,face_name)
     if card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):
         return CastProposalResult('unavailable','zone_permission')
@@ -941,7 +967,9 @@ def build_cast_offer(
         if method_spec is not None
         else _spell_semantic_key(record, front)
     )
+    semantic_key=characteristic_program_key(record,card,cast_method,semantic_key)
     program = None if method_spec is not None else host.semantics.get(semantic_key)
+    if not fuse_source_cast_is_complete(host,card,program):return CastProposalResult('unresolved','fuse_source_incomplete')
     enchant_spec = host._compiled_enchant_spec(
         card,
         face_name=(
@@ -1003,9 +1031,7 @@ def build_cast_offer(
     if method_spec is not None:
         payload["cost"] = "{3}"
         payload["cast_method"] = cast_method
-    elif cast_method=='prototype':
-        payload['cost']=record.mana_cost
-        payload['cast_method']='prototype'
+    payload.update(characteristic_offer_fields(record,cast_method))
     cast_name = str(front.get("name") or "") if front else record.name
     cast_cost = str(front.get("mana_cost") or "") if front else record.mana_cost
     offer = ActionOffer(

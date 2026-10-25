@@ -358,8 +358,8 @@ class ExactLandFamilyTests(unittest.TestCase):
             {"phase": "beginning", "step": "upkeep", "player": "A"},
         )
         self.assertFalse(engine._stabilize())
-        self.assertEqual(["Inventors' Fair upkeep"], [
-            item.label for item in engine.state.stack
+        self.assertEqual([('triggered_ability',fair.object_id)], [
+            (item.kind,item.source_object_id) for item in engine.state.stack
         ])
         self.resolve_top(engine)
         self.assertEqual(before_life + 1, engine.state.players["A"].life)

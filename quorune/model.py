@@ -18,6 +18,11 @@ from .trigger_batches import PendingTriggerBatch, TriggerBatchError
 from .util import normalize_mana_bundle, stable_json
 from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
+from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
+from .ability_source_information import ability_source_information_version
+from .cast_face_offers import cast_face_offers_version
+from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
+from .banding_model import normalize_attack_bands
 
 CONTROL_HISTORY_VERSION = 2
 _COLORED_MANA_SYMBOLS = tuple("WUBRG")
@@ -61,6 +66,7 @@ TurnHistoryEventKind = Literal[
     "permanent_entered",
     "permanent_left",
     "card_arrived_graveyard",
+    "card_milled_graveyard",
 ]
 
 
@@ -90,6 +96,8 @@ class TurnHistoryEvent:
         if self.kind=='card_arrived_graveyard' and (self.origin is None or type(self.object_incarnation) is not str or not self.object_incarnation):
             raise ValueError('Graveyard arrival needs its exact arrived incarnation and origin')
         if self.kind!='card_arrived_graveyard' and self.origin is not None:raise ValueError('Only graveyard arrival history has an origin')
+        if self.kind=='card_milled_graveyard' and (type(self.object_incarnation) is not str or not self.object_incarnation):
+            raise ValueError('Mill arrival history needs its exact graveyard incarnation')
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -122,6 +130,7 @@ class TurnHistory:
     # committed battlefield-departure recording explicitly.
     departure_history_version: int | None = None
     arrival_history_version: int | None = None
+    mill_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -134,6 +143,7 @@ class TurnHistory:
         ):
             raise ValueError("Unsupported departure-history version")
         if self.arrival_history_version is not None and (type(self.arrival_history_version) is not int or self.arrival_history_version!=1):raise ValueError('Unsupported arrival-history version')
+        if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
         ):
@@ -172,6 +182,7 @@ class TurnHistory:
             "turn_sequence": self.turn_sequence,
             "events": [event.to_dict() for event in self.events],
             **({"arrival_history_version":1} if self.arrival_history_version is not None else {}),
+            **({"mill_history_version":1} if self.mill_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -204,6 +215,7 @@ class TurnHistory:
             schema_version=int(data.get("schema_version", 1)),
             departure_history_version=data.get("departure_history_version"),
             arrival_history_version=data.get("arrival_history_version"),
+            mill_history_version=data.get("mill_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)
@@ -617,9 +629,11 @@ class StackItem:
     # CR 609.7a source choices. This is deliberately separate from arbitrary
     # semantic context so private implementation data is never searched.
     referred_object_ids: list[str] = field(default_factory=list)
+    mana_spent_counts: SpellManaSpentCounts | None = None
 
     def __post_init__(self) -> None:
         mana_colors = self.mana_colors_spent
+        self.mana_spent_counts=normalize_stack_mana_counts(self.kind,self.card_object_id,self.mana_spent_counts)
         if not isinstance(mana_colors, (list, tuple)) or any(
             type(value) is not str or value not in _COLORED_MANA_SYMBOLS
             for value in mana_colors
@@ -651,6 +665,8 @@ class StackItem:
         if not self.referred_object_ids:
             # Preserve historical Game Record v3 checkpoint payloads.
             payload.pop("referred_object_ids")
+        if self.mana_spent_counts is None:payload.pop('mana_spent_counts')
+        else:payload['mana_spent_counts']=self.mana_spent_counts.to_dict()
         return payload
 
     @classmethod
@@ -745,6 +761,12 @@ class CombatState:
     ordinary_second_damage_combatants: list[str] = field(
         default_factory=list
     )
+    blocking_requirements:tuple[ResolvedBlockingRequirement,...]=()
+    attack_bands: tuple = ()
+
+    def __post_init__(self):
+        self.blocking_requirements=normalize_blocking_requirements(self.blocking_requirements)
+        self.attack_bands=normalize_attack_bands(self.attack_bands)
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
@@ -752,6 +774,10 @@ class CombatState:
         # Omitting the empty value preserves their canonical serialization.
         if self.damage_sequence_id is None:
             payload.pop("damage_sequence_id")
+        if self.blocking_requirements:payload['blocking_requirements']=[v.to_dict() for v in self.blocking_requirements]
+        else:payload.pop('blocking_requirements')
+        if self.attack_bands:payload['attack_bands']=[value.to_dict() for value in self.attack_bands]
+        else:payload.pop('attack_bands')
         return payload
 
     @classmethod
@@ -953,11 +979,16 @@ class GameState:
     state_version: int = 3
     mulligan_round: int = 0
     ref_counters: dict[str, int] = field(default_factory=dict)
+    spell_mana_counts_version: int | None = 1
+    ability_source_information_version: int | None = 1
+    cast_face_offers_version: int | None = 1
 
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
+        ability_source_information_version(self.ability_source_information_version)
+        cast_face_offers_version(self.cast_face_offers_version)
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
         ):
@@ -988,6 +1019,9 @@ class GameState:
                 if self.control_history_version is not None
                 else {}
             ),
+            **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
+            **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
+            **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1066,6 +1100,9 @@ class GameState:
             turn_order=list(data["turn_order"]),
             current_turn=(TurnEntry.from_dict(data["current_turn"]) if data.get("current_turn") else None),
             last_normal_turn_player=data.get("last_normal_turn_player"),
+            spell_mana_counts_version=spell_mana_counts_version(data.get('spell_mana_counts_version')),
+            ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
+            cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
             commander_damage_identity_version=(
                 int(data["commander_damage_identity_version"])
                 if data.get("commander_damage_identity_version") is not None

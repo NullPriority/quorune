@@ -26,7 +26,8 @@ class ScopedPreventionCompilerTests(unittest.TestCase):
         ir=compile_oracle_card(record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
         self.assertEqual('exact',ir.status,ir.material_residuals)
         node=ir.faces[0].nodes[0]
-        self.assertEqual('$target.0',node.effects[1]['scope']['target_ref'])
+        self.assertEqual('$target.0',node.effects[1]['subject'])
+        self.assertNotIn('scope',node.effects[1])
         self.assertIn('resolution.effect_program.bound_references',node.capability_dependencies)
         self.assertIn('damage.prevention.persistent_amount',node.capability_dependencies)
 
@@ -37,7 +38,9 @@ class ScopedPreventionCompilerTests(unittest.TestCase):
         text='Target creature gains flying until end of turn. Prevent all damage that would be dealt to that creature this turn.'
         ir=compile_oracle_card(record(text),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
         node=ir.faces[0].nodes[0];effect=dict(node.effects[1])
-        for wrong in ({**effect,'amount':'$x'},{**effect,'scope':{**effect['scope'],'private':True}},
+        self.assertIn('damage.prevention.persistent_amount',fixed_prevention_component_capabilities(
+            effects=(effect,),target_schema=node.target_schema,mechanic_ids=node.mechanics))
+        for wrong in ({**effect,'amount':'$x'},{**effect,'scope':{'private':True}},
                       {**effect,'mode':'amount'},{**effect,'subject':'$target.1'}):
             self.assertFalse(fixed_prevention_component_capabilities(effects=(wrong,),target_schema=node.target_schema,mechanic_ids=node.mechanics))
         registry_value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))

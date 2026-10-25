@@ -118,6 +118,7 @@ from .declaration_restrictions import (
     DeclarationSharedSubtypeCondition,
     DeclarationTurnHistoryCondition,
 )
+from .rules.block_prohibitions import block_prohibition_verdict
 from .rules.temporary_declaration_restrictions import (
     current_declaration_restrictions,
 )
@@ -2393,100 +2394,8 @@ class CommanderEngine(
         spend_context: str | None = None,
         snow_required: int = 0,
     ) -> tuple[dict[str, int], list[dict[str, Any]]]:
-        activations: list[dict[str, Any]] = []
-        pay_mode = response.get("pay", "auto")
-        if pay_mode == "auto":
-            plan = auto_plan_payment(
-                requirements,
-                [
-                    source
-                    for source in self.available_mana_sources(
-                        seat,
-                        spend_context=spend_context,
-                    )
-                    if source.object_id not in (exclude_sources or set())
-                ],
-                allow_conditional=(
-                    bool(response.get("allow_conditional_mana", False))
-                    and not self.state.config.strict_mana
-                ),
-                reserve=normalize_mana_bundle(response.get("reserve")),
-                starting_pool=self._spendable_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-                snow_required=snow_required,
-                starting_snow_pool=self._snow_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-            )
-            activations = plan.activations
-            self._activate_mana_plan(
-                seat,
-                activations,
-                spend_context=spend_context,
-                payment_id=str(response.get("_mana_payment_id") or "") or None,
-                replacement_selections_by_event=(
-                    response.get("_mana_replacement_selections")
-                    if isinstance(
-                        response.get("_mana_replacement_selections"), Mapping
-                    )
-                    else None
-                ),
-            )
-            payment = plan.payment
-            snow_payment = plan.snow_payment
-        else:
-            activations = [dict(item) for item in response.get("mana") or []]
-            self._activate_mana_plan(
-                seat,
-                activations,
-                spend_context=spend_context,
-                payment_id=str(response.get("_mana_payment_id") or "") or None,
-                replacement_selections_by_event=(
-                    response.get("_mana_replacement_selections")
-                    if isinstance(
-                        response.get("_mana_replacement_selections"), Mapping
-                    )
-                    else None
-                ),
-            )
-            payment = normalize_mana_bundle(response.get("payment"))
-            snow_payment = normalize_mana_bundle(
-                response.get("snow_payment")
-            )
-        if sum(snow_payment.values()) != snow_required:
-            raise GameRuleError(
-                f"Mana payment requires exactly {snow_required} snow mana"
-            )
-        snow_pool = self._snow_mana_pool(seat, spend_context)
-        if any(
-            snow_payment[color] > snow_pool[color]
-            for color in "WUBRGC"
-        ):
-            raise GameRuleError("Declared snow mana is not available")
-        ordinary_pool = self._spendable_mana_pool(seat, spend_context)
-        for color in "WUBRGC":
-            ordinary_pool[color] -= snow_payment[color]
-        try:
-            _, spent = pay_mana_from_pool(
-                ordinary_pool,
-                requirements,
-                payment=payment,
-            )
-        except ValueError as exc:
-            raise GameRuleError(str(exc)) from exc
-        combined = normalize_mana_bundle(spent)
-        for color in "WUBRGC":
-            combined[color] += snow_payment[color]
-        self._apply_mana_spend(
-            seat,
-            combined,
-            spend_context,
-            snow_payment=snow_payment,
-        )
-        return combined, activations
+        from .cost_payments import pay_for_cost
+        return pay_for_cost(self,seat,requirements,response,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
 
     def _check_priority(self, seat: str) -> None:
         if self.state.priority_player != seat:
@@ -3045,42 +2954,8 @@ class CommanderEngine(
         spend_context: str | None = None,
         snow_required: int = 0,
     ) -> bool:
-        try:
-            sources = [
-                source
-                for source in self.available_mana_sources(
-                    seat,
-                    spend_context=spend_context,
-                )
-                if source.object_id not in (exclude_sources or set())
-            ]
-            auto_plan_payment(
-                {
-                    key: int(requirements.get(key, 0))
-                    for key in (
-                        "GENERIC",
-                        "W",
-                        "U",
-                        "B",
-                        "R",
-                        "G",
-                        "C",
-                    )
-                },
-                sources,
-                starting_pool=self._spendable_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-                snow_required=snow_required,
-                starting_snow_pool=self._snow_mana_pool(
-                    seat,
-                    spend_context,
-                ),
-            )
-            return True
-        except ManaPlanError:
-            return False
+        from .cost_payments import cost_is_affordable
+        return cost_is_affordable(self,seat,requirements,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
 
 
     @staticmethod
@@ -4331,64 +4206,9 @@ class CommanderEngine(
         )
         if "battle" in blocker_types:
             return False, "blocker_is_battle"
-        by_ref = {card.ref: card for card in self.state.cards.values()}
-        for participant in current_declaration_restrictions(
-            self,
-            error_type=GameRuleError,
-        ):
-            source = participant.source
-            for template in (participant.template,):
-                if (
-                    "block" not in template.declarations
-                    or template.mode != "prohibit"
-                ):
-                    continue
-                applies = {
-                    "self": source.object_id == blocker.object_id,
-                    "attached": source.attached_to == blocker.object_id,
-                    "attached_option": (
-                        source.attached_to == attacker.object_id
-                    ),
-                    "source_opponents": (
-                        blocker.controller != source.controller
-                    ),
-                    "source_option": source.object_id == attacker.object_id,
-                    "global": True,
-                }[template.scope]
-                if not applies:
-                    continue
-                if not self._declaration_option_matches_relation(
-                    template,
-                    kind="block",
-                    source=source,
-                    option=attacker.ref,
-                    by_ref=by_ref,
-                ):
-                    continue
-                if template.condition is not None and (
-                    self._declaration_condition_holds(
-                        template.condition,
-                        kind="block",
-                        source=source,
-                        variable=blocker.ref,
-                        option=attacker.ref,
-                        by_ref=by_ref,
-                    )
-                    != template.applies_when_condition
-                ):
-                    continue
-                if (
-                    self._matches_declaration_predicate(
-                        blocker, template.subject, source=source
-                    )
-                    and self._matches_declaration_predicate(
-                        attacker, template.opposing, source=source
-                    )
-                ):
-                    return (
-                        False,
-                        f"declaration_restriction:{template.template_id}",
-                    )
+        prohibition = block_prohibition_verdict(self, attacker, blocker)
+        if prohibition is not None:
+            return prohibition
         evasion = engine_combat_evasion_verdict(
             self, attacker, blocker, blocker.controller
         )
@@ -5495,6 +5315,8 @@ class CommanderEngine(
         permanent_defender_ids = {
             walker["id"] for walker in planeswalker_defenders
         }
+        from .rules.banding import banding_offer
+        attack_banding = banding_offer(self, candidates)
         self.permissions.issue(
             kind="combat.attackers",
             role="pilot",
@@ -5503,6 +5325,7 @@ class CommanderEngine(
             payload_by_actor={
                 active: {
                     "candidates": candidates,
+                    **({'banding': attack_banding} if attack_banding else {}),
                     **({'enlist':rows} if (rows:=enlist_offer_rows(self,active,candidates)) else {}),
                     **({'exert':rows} if (rows:=exert_offer_rows(self,active,candidates)) else {}),
                     "defenders": [
@@ -5768,6 +5591,8 @@ class CommanderEngine(
             )
         self._validate_declaration_requirements(problem, canonical)
         chosen.sort(key=lambda pair:(pair[0].ref,pair[0].object_id))
+        from .rules.banding import prepare_attack_bands
+        bands = prepare_attack_bands(self, chosen, response.get('bands'))
         enlist_plans=prepare_enlist_costs(self,active,chosen,response.get('enlist'))
         exert_plans=prepare_exert_costs(self,active,chosen,response.get('exert'))
         attack_triggers: list[StackItem] = []
@@ -5789,7 +5614,7 @@ class CommanderEngine(
                 spend_context="combat_declaration",
             )
         committed = attack_transitions.commit_engine_attack_declaration(
-            self, controller=active, chosen=chosen
+            self, controller=active, chosen=chosen, bands=bands
         )
         surviving_attackers = [
             (self.state.cards[value.attacker_object_id], value.target_context)
@@ -5942,6 +5767,8 @@ class CommanderEngine(
             blocker: list(options)
             for blocker, options in problem.domains.items()
         }
+        from .banding_model import projected_attack_bands
+        bands = projected_attack_bands(self.state.combat, self.state.cards)
         self.permissions.issue(
             kind="combat.blockers",
             role="pilot",
@@ -5952,6 +5779,7 @@ class CommanderEngine(
                     "attackers": attackers,
                     "blockers": blockers,
                     "legal_blocks": legal_blocks,
+                    **({'bands': bands} if bands else {}),
                     "minimum_blockers": minimum_blockers,
                     "declaration_constraints": problem.projection(),
                     "declaration_costs": [
@@ -6102,7 +5930,7 @@ class CommanderEngine(
                             ),
                         ),
                         "instruction": (
-                            "Assign damage for sources you control. Earlier "
+                            "Assign damage for the listed sources. Earlier "
                             "APNAP assignments are final and public."
                         ),
                     }
@@ -6297,6 +6125,9 @@ class CommanderEngine(
                 dict(value) for value in announced_assignments
             ],
         }
+        if self.state.combat.attack_bands:
+            from .banding_model import projected_attack_bands
+            payload['bands'] = projected_attack_bands(self.state.combat, self.state.cards)
         if seat is not None:
             payload["damage_sources"] = self._combat_damage_source_options(
                 seat

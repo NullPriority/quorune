@@ -8,8 +8,10 @@ from ..cast_timing import (
     CAST_PERMISSION_EVENT,
     CastTimingPermission,
     CastTimingPermissionError,
+    CLASSIC_FLASH_CAPABILITY,CLASSIC_FLASH_HANDLER,
 )
 from ..rules.capabilities import load_default_capability_registry
+from ..continuous_conditions import FixedPublicStateConditionSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 
@@ -75,8 +77,16 @@ class FlashCastPermissionHandler:
         return (self.validate(descriptor),)
 
 
+@dataclass(frozen=True,slots=True)
+class ClassicFlashPermissionHandler(FlashCastPermissionHandler):
+    handler_id: str=CLASSIC_FLASH_HANDLER
+    family: str='permission.cast.classic_flash_cleanup'
+    rule_references: tuple[str,...]=('117.1a','601.2','603.7g','514.3a','609.4')
+    capability_dependencies: tuple[str,...]=(CLASSIC_FLASH_CAPABILITY,)
+
+
 class CastPermissionRegistry(
-    RuntimeComponentRegistry[object, CastTimingPermission]
+    RuntimeComponentRegistry[object, CastTimingPermission | FixedPublicStateConditionSpec]
 ):
     pass
 
@@ -84,7 +94,9 @@ class CastPermissionRegistry(
 @lru_cache(maxsize=1)
 def default_cast_permission_registry() -> CastPermissionRegistry:
     from .conditional_flash import ConditionalFlashPermissionHandler
-    registry = CastPermissionRegistry((FlashCastPermissionHandler(),ConditionalFlashPermissionHandler()))
+    from .self_cast_restrictions import SelfCastRestrictionHandler
+    registry = CastPermissionRegistry((FlashCastPermissionHandler(),ConditionalFlashPermissionHandler(),
+        SelfCastRestrictionHandler(),ClassicFlashPermissionHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )

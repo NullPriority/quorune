@@ -223,6 +223,8 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
     amount = value["amount"]
     reason = value[_REASON_FIELD]
     source = value["source_ref"]
+    from ..counter_names import ALL_COUNTER_AMOUNTS
+    all_kinds=type(amount) is str and amount==ALL_COUNTER_AMOUNTS and name is None
     if (
         not isinstance(actor, str)
         or not actor
@@ -230,10 +232,7 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
         or not refs
         or any(not isinstance(ref, str) or not ref for ref in refs)
         or len(refs) != len(set(refs))
-        or not isinstance(name, str)
-        or not name
-        or type(amount) is not int
-        or amount < 0
+        or (not all_kinds and (not isinstance(name,str) or not name or type(amount) is not int or amount<0))
         or not isinstance(reason, str)
         or (source is not None and (not isinstance(source, str) or not source))
     ):
@@ -639,8 +638,7 @@ def _validate_counter_target_set_intent_identity(
         or len(refs) > maximum
         or type(counter_name) is not str
         or not counter_name
-        or type(amount) is not int
-        or amount <= 0
+        or (amount != "existing_named_counter_count" and (type(amount) is not int or amount <= 0))
         or type(reason) is not str
         or not reason
         or (source is not None and (type(source) is not str or not source))

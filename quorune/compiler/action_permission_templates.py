@@ -233,12 +233,37 @@ def opening_hand_battlefield_permission_handler(text: str, *, source_name: str |
     return None
 
 
+def _static_hand_visibility_handler(normalized: str) -> ActionPermissionHandlerTemplate | None:
+    from ..semantic_runtime.hand_visibility import HAND_VISIBILITY_CAPABILITY, HAND_VISIBILITY_HANDLER
+    scopes = {'players play with their hands revealed': 'all_players',
+              'your opponents play with their hands revealed': 'source_opponents'}
+    scope=scopes.get(' '.join(normalized.casefold().split()).removesuffix('.'))
+    if scope is None:return None
+    return ('public-hand-visibility-v1',{'handler_id':HAND_VISIBILITY_HANDLER,
+        'schema_version':1,'event':ACTION_PERMISSION_EVENT,'scope':scope},HAND_VISIBILITY_CAPABILITY)
+
+
+def _static_mana_spending_handler(normalized: str) -> ActionPermissionHandlerTemplate | None:
+    from ..semantic_runtime.mana_spending import MANA_SPENDING_CAPABILITY, MANA_SPENDING_HANDLERS
+    spending = {'you may spend white mana as though it were red mana': 0,
+                'you may spend mana as though it were mana of any color': 1,
+                'you can spend mana of any type to cast creature spells': 2}
+    if (index := spending.get(' '.join(normalized.casefold().split()).removesuffix('.'))) is None:
+        return None
+    handler,kind=MANA_SPENDING_HANDLERS[index]
+    return ('static-mana-spending-v1',_descriptor(handler_id=handler,permission=kind),MANA_SPENDING_CAPABILITY)
+
+
 def static_action_permission_handler(
     text: str,
 ) -> ActionPermissionHandlerTemplate | None:
     """Lower one closed controller/public action-permission sentence."""
 
     normalized = text.strip()
+    if (spending := _static_mana_spending_handler(normalized)) is not None:
+        return spending
+    if (hand := _static_hand_visibility_handler(normalized)) is not None:
+        return hand
     if _PLAY_LANDS_FROM_GRAVEYARD.fullmatch(normalized) is not None:
         return (
             "land-play-from-own-graveyard-permission-v1",

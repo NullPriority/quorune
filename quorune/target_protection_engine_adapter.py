@@ -72,6 +72,7 @@ def target_protection_verdict_for_row(
         acting_controller=acting_controller,
         protected_controller=protected_controller,
         target_is_player=target_is_player,
+        source_qualities=acting_source,
         target_keywords=(current_player_target_keywords(host,protected_controller) if target_is_player else normalized_characteristic_keywords(characteristics)),
         source_colors=frozenset(host._source_colors_for_ref(source_ref)),
         controller_hexproof_colors=frozenset(

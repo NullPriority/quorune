@@ -33,6 +33,15 @@ promote a spectator, select another seat, or request an analyst view.
 
 ## Projection invariants
 
+Persistent hand visibility uses the existing trusted action-permission collector.
+Its typed all-player or source-opponent scope is evaluated from current phased-in
+battlefield sources, controllers, faces and abilities. Projected known hands,
+choice-query knowledge and card inspection consume this same authority. The
+grant applies to newly arrived hand cards and ends when its source ceases to
+apply; it does not alter remembered reveal or private-inspection facts. Public
+hands use the existing card view and known-hand field, including for spectators,
+and do not expose library order or another player's decision capability.
+
 - Projection occurs before transport serialization, hashing, or patch
   generation.
 - Raw capabilities, physical card IDs, incarnation/timestamp internals,

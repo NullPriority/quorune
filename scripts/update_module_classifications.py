@@ -51,8 +51,26 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative in {
         "quorune/additional_cost_vocabulary.py",
         "quorune/activated_ability_descriptor.py",
+        "quorune/attachment_duration.py",
+        "quorune/spell_mana_counts.py",
+        "quorune/spell_mana_conditions.py",
         "quorune/ability_fragment_primitives.py",
         "quorune/ability_fragments.py",
+        "quorune/object_query_union.py",
+        "quorune/static_player_restriction_model.py",
+        "quorune/life_gain_permission.py",
+        "quorune/ability_source_information.py",
+        "quorune/cast_face_offers.py",
+        "quorune/counter_permission.py",
+        "quorune/damage_prevention_permission.py",
+        "quorune/conditional_recipient_model.py",
+        "quorune/kicked_target_model.py",
+        "quorune/kicked_target_replacement_model.py",
+        "quorune/recipient_modifier_model.py",
+        "quorune/target_count_cost_model.py",
+        "quorune/mana_symbol_counts.py",
+        "quorune/public_zone_condition_model.py",
+        "quorune/conditional_free_cast_model.py",
         "quorune/ability_line_normalization.py",
         "quorune/conditional_copy_model.py",
         "quorune/copy_value_types.py",
@@ -68,6 +86,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/cast_cost_modifiers.py",
         "quorune/activation_cost_modifiers.py",
         "quorune/characteristic_fragments.py",
+        "quorune/public_zone_quantity_model.py",
+        "quorune/all_colors.py",
         "quorune/counter_maximums.py",
         "quorune/counter_names.py",
         "quorune/counter_snapshot.py",
@@ -75,8 +95,15 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/damage_source.py",
         "quorune/damage_scope_facts.py",
         "quorune/damage_modifier_state.py",
+        "quorune/prevention_recipient_sets.py",
         "quorune/death_return.py",
         "quorune/declaration_fragments.py",
+        "quorune/fixed_blocker_restrictions.py",
+        "quorune/source_block_pair_model.py",
+        "quorune/blocking_requirement_model.py",
+        "quorune/banding_model.py",
+        "quorune/public_replacement_model.py",
+        "quorune/land_entry_condition_model.py",
         "quorune/power_up_model.py",
         "quorune/as_unblocked.py",
         "quorune/public_characteristic_aggregate_model.py",
@@ -89,8 +116,12 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/block_capacity_model.py",
         "quorune/landwalk_permission_model.py",
         "quorune/external_entry_state_model.py",
+        "quorune/external_entry_counter_model.py",
         "quorune/landwalk_vocabulary.py",
+        "quorune/qualified_hexproof.py",
+        "quorune/protection_attachment_exceptions.py",
         "quorune/block_capacity_rule_model.py",
+        "quorune/temporary_cast_rule_model.py",
         "quorune/prototype_model.py",
         "quorune/enlist_model.py",
         "quorune/reflexive_trigger_model.py",
@@ -140,6 +171,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/target_numeric.py",
         "quorune/prevention_triggers.py",
         "quorune/query_effect_amount_model.py",
+        "quorune/mana_spending_model.py",
         "quorune/scalar_effect_amount_model.py",
         "quorune/whole_hand_discard_model.py",
         "quorune/read_ahead.py",
@@ -207,10 +239,15 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         )
     ) or relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/target_controller_information.py",
+        "quorune/designation_prevention.py",
+        "quorune/attached_prevention_model.py",
+        "quorune/attachment_information.py",
         "quorune/activation_x.py",
         "quorune/whole_hand_discard.py",
         "quorune/random_discard.py",
         "quorune/public_quantity_mana_model.py",
+        "quorune/resolution_mana_model.py",
         "quorune/chosen_color_mana_model.py",
         "quorune/chosen_color_mana_abilities.py",
         "quorune/chosen_color_mana_runtime.py",
@@ -222,6 +259,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/activation_usage.py",
         "quorune/boast.py",
         "quorune/activation_condition_model.py",
+        "quorune/activation_restriction_composition.py",
         "quorune/abilities.py",
         "quorune/source_maintenance.py",
         "quorune/cascade.py",
@@ -259,6 +297,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/convoke.py",
         "quorune/cast_timing.py",
         "quorune/cast_lifecycles.py",
+        "quorune/adventure.py",
         "quorune/spree_model.py",
         "quorune/entwine_model.py",
         "quorune/emerge_model.py",
@@ -267,10 +306,13 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/conspire.py",
         "quorune/self_graveyard_exile_model.py",
         "quorune/continuous_effects.py",
+        "quorune/continuous_stat_operations.py",
+        "quorune/continuous_type_dependencies.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
         "quorune/zone_object_subtype_grants.py",
         "quorune/counter_placement.py",
+        "quorune/counter_permission_events.py",
         "quorune/counter_placement_events.py",
         "quorune/counter_doubling.py",
         "quorune/counter_removal_events.py",
@@ -302,6 +344,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/destruction_replacement_planning.py",
         "quorune/state_based_replacement_coordination.py",
         "quorune/dynamic_characteristics.py",
+        "quorune/public_zone_quantities.py",
         "quorune/public_characteristic_aggregates.py",
         "quorune/live_battlefield_quantities.py",
         "quorune/event_counter_reference.py",
@@ -338,6 +381,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/mentor.py",
         "quorune/morph.py",
         "quorune/kicker.py",
+        "quorune/nonmana_kicker.py",
         "quorune/bestow.py",
         "quorune/flashback.py",
         "quorune/casting_cost_host.py",
@@ -422,6 +466,20 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == 'quorune/damage_prevention_permission.py':return 'damage'
+    if relative=="quorune/designation_prevention.py":return "damage"
+    if relative=="quorune/attached_prevention_model.py":return "damage"
+    if relative=="quorune/attachment_information.py":return "attachments"
+    if relative=='quorune/kicked_target_model.py':return 'search_target_and_choice'
+    if relative=='quorune/kicked_target_replacement_model.py':return 'search_target_and_choice'
+    if relative == 'quorune/conditional_recipient_model.py':
+        return 'continuous_effects'
+    if relative == 'quorune/public_zone_condition_model.py':
+        return 'continuous_effects'
+    if relative == 'quorune/conditional_free_cast_model.py':
+        return 'casting_activation_and_costs'
+    if relative == 'quorune/static_player_restriction_model.py':
+        return 'casting_activation_and_costs'
     if relative in {'quorune/activation_x.py','quorune/rules/activation/x_costs.py',
             'quorune/activation_cost_modifiers.py','quorune/rules/activation/cost_modifiers.py',
             'quorune/rules/activation/pricing.py'}:
@@ -440,6 +498,10 @@ def _owner(relative: str, layer: str) -> str:
     if relative == "quorune/preparation.py":
         return "permanent_designations"
     if relative in {"quorune/rules/casting/targeted_costs.py", "quorune/rules/casting/waterbend_costs.py",
+                    "quorune/rules/self_cost_turn_counts.py",
+                    "quorune/rules/self_cost_public_counters.py",
+                    "quorune/rules/self_cost_numeric_counts.py",
+                    "quorune/rules/self_graveyard_discard.py",
                     "quorune/rules/waterbend_payments.py"}:
         return "casting_activation_and_costs"
     if relative in {"quorune/target_restrictions.py", "quorune/target_source.py"}:
@@ -486,6 +548,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/casting_cost_host.py",
         "quorune/cast_cost_modifiers.py",
         "quorune/cast_lifecycles.py",
+        "quorune/adventure.py",
         "quorune/spree_model.py",
         "quorune/entwine_model.py",
         "quorune/emerge_model.py",
@@ -515,6 +578,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/compiled_kicker.py",
         "quorune/kicker.py",
+        "quorune/nonmana_kicker.py",
     }:
         return "casting_kicker"
     if relative in {
@@ -534,22 +598,40 @@ def _owner(relative: str, layer: str) -> str:
         return "casting_flashback"
     if relative in {"quorune/defender_permission.py", "quorune/rules/defender_permission_effect.py", "quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/rules/as_unblocked_effect.py", "quorune/toughness_assignment.py", "quorune/toughness_assignment_model.py", "quorune/toughness_assignment_rule.py", "quorune/rules/toughness_assignment_effect.py"}:
         return "combat_declaration"
+    if relative in {'quorune/blocking_requirement_model.py','quorune/rules/blocking_requirements.py','quorune/rules/provoke_shapes.py'}:
+        return 'combat_declaration'
     if relative in {"quorune/power_up.py", "quorune/power_up_model.py"}:
         return "activated_abilities"
+    if relative == 'quorune/rules/reconfigure.py':
+        return 'attachments'
+    if relative == 'quorune/attachment_duration.py':
+        return 'continuous_effects'
+    if relative == 'quorune/spell_mana_counts.py':
+        return 'mana_rules'
+    if relative == 'quorune/spell_mana_conditions.py':
+        return 'semantic_choices'
+    if relative in {'quorune/rules/paid_mana_resolution.py','quorune/target_controller_information.py'}:
+        return 'targets_and_choices'
+    if relative == 'quorune/rules/paid_color_entry.py':
+        return 'counter_placement'
     if relative.startswith("quorune/rules/"):
         return "rules_capabilities"
     if relative.startswith("quorune/aura/"):
         return "aura_rules"
     if relative in {
         "quorune/ability_fragment_host.py",
+        "quorune/all_colors.py",
         "quorune/ability_fragments.py",
+        "quorune/protection_attachment_exceptions.py",
         "quorune/characteristic_fragments.py",
+        "quorune/public_zone_quantity_model.py",
         "quorune/compiled_ability_fragments.py",
         "quorune/static_component_scope.py",
     }:
         return "ability_fragments"
     if relative in {
         "quorune/activation_condition_model.py",
+        "quorune/activation_restriction_composition.py",
         "quorune/boast.py",
         "quorune/activated_ability_descriptor.py",
         "quorune/compiled_activated_abilities.py",
@@ -622,6 +704,7 @@ def _owner(relative: str, layer: str) -> str:
         return "combat_transitions"
     if relative in {
         "quorune/damage_modifier_state.py",
+        "quorune/prevention_recipient_sets.py",
         "quorune/damage_source.py",
         "quorune/creature_power_damage_model.py",
         "quorune/prevention_triggers.py",
@@ -630,6 +713,8 @@ def _owner(relative: str, layer: str) -> str:
         return "damage"
     if relative in {
         "quorune/counter_names.py",
+        "quorune/counter_permission.py",
+        "quorune/counter_permission_events.py",
         "quorune/counter_removal.py",
         "quorune/counter_state.py",
         "quorune/counter_removal_events.py",
@@ -645,6 +730,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/life_change.py",
         "quorune/life_state.py",
+        "quorune/life_gain_permission.py",
     }:
         return "life_state"
     if relative in {
@@ -664,9 +750,13 @@ def _owner(relative: str, layer: str) -> str:
     if relative in {
         "quorune/declaration_rule_effects.py",
         "quorune/dynamic_characteristics.py",
+        "quorune/public_zone_quantities.py",
         "quorune/devotion.py",
         "quorune/characteristic_evaluation_host.py",
         "quorune/public_quantity_reductions.py",
+        "quorune/recipient_modifier_model.py",
+        "quorune/mana_symbol_counts.py",
+        "quorune/continuous_stat_operations.py",
         "quorune/public_characteristic_aggregates.py",
         "quorune/live_battlefield_quantities.py",
         "quorune/event_counter_reference.py",
@@ -682,6 +772,8 @@ def _owner(relative: str, layer: str) -> str:
         return "card_characteristics"
     if relative in {
         "quorune/activation_mana_cost.py",
+        "quorune/cost_payments.py",
+        "quorune/mana_spending_model.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",
         "quorune/mana_provenance.py",
@@ -693,6 +785,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/public_quantity_mana_abilities.py",
         "quorune/public_quantity_mana_runtime.py",
         "quorune/public_quantity_mana_model.py",
+        "quorune/resolution_mana_model.py",
         "quorune/chosen_color_mana_model.py",
         "quorune/chosen_color_mana_abilities.py",
         "quorune/chosen_color_mana_runtime.py",
@@ -708,6 +801,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/affected_permanents.py",
         "quorune/object_predicate.py",
         "quorune/object_query.py",
+        "quorune/object_query_union.py",
     }:
         return "object_query"
     if relative == "quorune/state_planner.py":
@@ -778,6 +872,7 @@ def _owner(relative: str, layer: str) -> str:
         return "combat_damage"
     if relative in {
         "quorune/fixed_token_production.py",
+        "quorune/created_token_counter_model.py",
         "quorune/standard_token_abilities.py",
         "quorune/token_creation.py",
     }:
@@ -838,6 +933,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/target_numeric.py",
         "quorune/target_predicates.py",
         "quorune/targets.py",
+        "quorune/qualified_hexproof.py",
     }:
         return "targeting"
     if relative == "quorune/replacement_decisions.py":
@@ -1029,6 +1125,7 @@ def build_classifications() -> dict[str, Any]:
                             "quorune/preparation.py",
                             "quorune/rules/activation/payment_commit.py",
                             "quorune/target_source.py",
+                            "quorune/attachment_information.py",
                             "quorune/untap_selection.py",
                             "quorune/zone_devour.py",
                             "quorune/soulbond_model.py",

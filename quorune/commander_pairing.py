@@ -34,6 +34,19 @@ class CommanderPairingKind(str, Enum):
     PARTNER_WITH = "partner with"
     CHOOSE_A_BACKGROUND = "choose a background"
     DOCTORS_COMPANION = "doctor's companion"
+    PARTNER_CHARACTER_SELECT = "partner—character select"
+    PARTNER_FATHER_AND_SON = "partner—father & son"
+    PARTNER_FRIENDS_FOREVER = "partner—friends forever"
+    PARTNER_SURVIVORS = "partner—survivors"
+
+
+TAGGED_PARTNER_CAPABILITY = "format.commander.pairing.tagged"
+TAGGED_PARTNER_KINDS = (
+    CommanderPairingKind.PARTNER_CHARACTER_SELECT,
+    CommanderPairingKind.PARTNER_FATHER_AND_SON,
+    CommanderPairingKind.PARTNER_FRIENDS_FOREVER,
+    CommanderPairingKind.PARTNER_SURVIVORS,
+)
 
 
 PAIRING_CAPABILITY_BY_KIND = {
@@ -47,6 +60,7 @@ PAIRING_CAPABILITY_BY_KIND = {
     CommanderPairingKind.DOCTORS_COMPANION: (
         "format.commander.pairing.doctors_companion"
     ),
+    **{kind: TAGGED_PARTNER_CAPABILITY for kind in TAGGED_PARTNER_KINDS},
 }
 
 
@@ -119,6 +133,7 @@ def _program_pairing_kind(
         kind
         for kind, capability_id in PAIRING_CAPABILITY_BY_KIND.items()
         if program.capability_dependencies == [capability_id]
+        and kind.value in program.coverage
     ]
     if len(matches) != 1:
         return None
@@ -250,12 +265,20 @@ def _is_doctor(card: "CardRecord") -> bool:
     )
 
 
+def tagged_partner_kinds_match(
+    first: CommanderPairingKind | None,
+    second: CommanderPairingKind | None,
+) -> bool:
+    """Compare the closed CR 702.124i ability variants without source text."""
+    return first in TAGGED_PARTNER_KINDS and first is second
+
+
 def validate_commander_pair(
     card_db: "CardDatabase",
     registry: PairingProgramRegistry | None,
     commanders: tuple["CardRecord", "CardRecord"],
 ) -> tuple[CommanderPairingDeclaration | None, ...]:
-    """Validate CR 702.124h/j/k/m through one shared typed setup owner."""
+    """Validate CR 702.124h/i/j/k/m through one shared typed setup owner."""
 
     first, second = commanders
     if first.oracle_id == second.oracle_id:
@@ -275,6 +298,8 @@ def validate_commander_pair(
         declaration.kind if declaration is not None else None
         for declaration in declarations
     )
+    if kinds[0] in TAGGED_PARTNER_KINDS and tagged_partner_kinds_match(*kinds):
+        return declarations
     if kinds == (
         CommanderPairingKind.PARTNER,
         CommanderPairingKind.PARTNER,
@@ -318,7 +343,7 @@ def validate_commander_pair(
     ):
         return declarations
     raise CommanderPairingError(
-        "Two commanders require matching typed Partner, Partner with, Choose "
+        "Two commanders require matching typed Partner, tagged Partner, Partner with, Choose "
         "a Background, or Doctor's companion setup declarations"
     )
 
@@ -374,6 +399,8 @@ __all__ = [
     "CommanderPairingError",
     "CommanderPairingKind",
     "PAIRING_CAPABILITY_BY_KIND",
+    "TAGGED_PARTNER_CAPABILITY",
+    "TAGGED_PARTNER_KINDS",
     "PARTNER_WITH_SEARCH_CAPABILITY_ID",
     "PARTNER_WITH_SEARCH_MECHANIC_ID",
     "PARTNER_WITH_SEARCH_TEMPLATE_ID",

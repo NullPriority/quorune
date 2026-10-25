@@ -204,6 +204,12 @@ class CommandZoneRuleTests(unittest.TestCase):
 
         self.assertEqual(1, len(triggers))
         self.assertEqual(emblem.object_id, triggers[0].source_object_id)
+        from quorune.target_source import TARGETING_SOURCE_CONTEXT,TargetingSourceBinding,stack_targeting_source
+        binding=TargetingSourceBinding.from_dict(triggers[0].context[TARGETING_SOURCE_CONTEXT])
+        self.assertEqual((emblem.object_id,emblem.logical_object_id,'command','A','',()),
+            (binding.object_id,binding.logical_object_id,binding.zone,binding.controller,binding.type_line,binding.colors))
+        facts=stack_targeting_source(engine,triggers[0])
+        self.assertEqual((frozenset(),frozenset(),'A'),(facts.card_types,facts.colors,facts.source_controller))
 
     def test_daretti_emblem_creation_exact_replays(self):
         session = self.make_session(40805, players=2)

@@ -177,6 +177,31 @@ def _chosen_source_effect(
 def _chosen_source_next_instance(
     normalized: str,
 ) -> PreventionTemplate | None:
+    shadow=re.fullmatch(r'the next time a creature of your choice with shadow would deal damage to you '
+        r'this turn, prevent that damage\.?',normalized,re.I)
+    if shadow is not None:
+        effect=_chosen_source_effect(shield={'op':'create_damage_prevention_shield','source':'$source',
+            'subject':'$controller','mode':'next_instance','duration':'until_end_of_turn'},qualifier=None)
+        effect['source_predicate']=validate_chosen_damage_source_predicate(ObjectQuerySpec(
+            zones=REPRESENTED_DAMAGE_SOURCE_ZONES,types_all=('creature',),keywords_all=('shadow',),known_to_actor=True)).to_dict()
+        return ('damage-prevention-chosen-shadow-source-v1',(effect,),None,_rules(None))
+    designation=re.fullmatch(r'the next time (?P<source>a source of your choice of the chosen color|a creature of the chosen type) '
+        r'would deal damage to you this turn, prevent that damage\.?',normalized,re.I)
+    if designation is not None:
+        from ..designation_prevention import DESIGNATION_PREDICATE_KIND, DESIGNATION_SCOPE_KIND
+        kind='color' if 'color' in designation['source'].casefold() else 'creature_type'
+        if kind=='creature_type':
+            return ('damage-prevention-entry-type-scope-v1',({
+                'op':'create_damage_prevention_shield','source':'$source','subject':'$controller',
+                'mode':'next_instance','duration':'until_end_of_turn',
+                'scope':{'kind':DESIGNATION_SCOPE_KIND,'schema_version':1,'designation':kind},
+            },),None,_rules(None))
+        return ('damage-prevention-entry-designation-source-v1',({
+            'op':'choose_damage_source','prompt':'Choose the source whose damage will be prevented.',
+            'source_predicate':{'kind':DESIGNATION_PREDICATE_KIND,'schema_version':1,'designation':kind},
+            'shield':{'op':'create_damage_prevention_shield','source':'$source','subject':'$controller',
+                'mode':'next_instance','duration':'until_end_of_turn'},
+        },),None,_rules(None))
     match = re.fullmatch(
         rf"the next time an? (?:(?P<qualifier>{_SOURCE_QUALIFIER_PATTERN}) )?"
         r"source of your choice would deal damage"
@@ -518,6 +543,18 @@ def _shared_color_creatures(normalized: str) -> PreventionTemplate | None:
 
 
 def _ordinary_shield(normalized: str) -> PreventionTemplate | None:
+    recipients = re.fullmatch(
+        r'prevent the next (?P<amount>\d+) damage that would be dealt to '
+        r'each creature and each player this turn\.?', normalized, re.IGNORECASE,
+    )
+    if recipients is not None and int(recipients['amount']) > 0:
+        from ..prevention_recipient_sets import RECIPIENT_SET_KIND
+        return ('damage-prevention-current-recipient-set-v1', ({
+            'op': 'create_damage_prevention_shield', 'source': '$source',
+            'subject': '*', 'mode': 'amount', 'amount': int(recipients['amount']),
+            'duration': 'until_end_of_turn',
+            'selector': {'kind': RECIPIENT_SET_KIND, 'schema_version': 1},
+        },), None, _rules(None))
     match = re.fullmatch(
         r"prevent the next (?P<amount>\d+|x) damage that would be dealt to "
         rf"(?P<subject>{_SUBJECT_PATTERN}) "
@@ -687,7 +724,8 @@ def _all_combat_damage(normalized: str) -> PreventionTemplate | None:
         "damage-prevention-all-combat-to-from-self-v1",
         (
             {**common, "subject": "$source"},
-            {**common, "subject": "*", "chosen_source": "$source"},
+            {**common, "subject": "*", "chosen_source": "$source",
+             "source_predicate": _source_predicate(None).to_dict()},
         ),
         None,
         _rules(None),
@@ -820,14 +858,59 @@ _PREVENTION_PRODUCTIONS = (
 )
 
 
+def _targeted_damage_source_prevention(normalized):
+    recipient=re.fullmatch(r'prevent all damage that would be dealt to (?P<subject>target .+?) this turn\.?',normalized,re.I)
+    if recipient is not None:
+        from .direct_target import direct_permanent_target_spec
+        target=direct_permanent_target_spec(recipient['subject'])
+        if target is not None:
+            schema=target.to_target_schema()
+            return ('damage-prevention-target-recipient-identity-v1',({'op':'create_damage_prevention_shield',
+                'source':'$source','subject':'$target.0','mode':'all','duration':'until_end_of_turn'},),schema,_rules(schema))
+    match=re.fullmatch(r'prevent all damage target (?P<kind>creature|spell) would deal this turn\.?',normalized,re.I)
+    if match is None:return None
+    from .direct_target import direct_permanent_target_spec,stack_target_schema
+    schema=(direct_permanent_target_spec('target creature').to_target_schema()
+        if match['kind'].casefold()=='creature' else stack_target_schema(categories=('spell',)))
+    return ('damage-prevention-target-source-identity-v1',({'op':'create_damage_prevention_shield',
+        'source':'$source','subject':'*','chosen_source':'$target.0','mode':'all',
+        'duration':'until_end_of_turn','source_predicate':_source_predicate(None).to_dict()},),schema,_rules(schema))
+
+
+def _attached_recipient_prevention(normalized, source_attachment_relation):
+    from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+    from ..attached_prevention_model import BOUND_SUBJECT_VERSION
+    finite=re.fullmatch(r'prevent the next (?P<amount>\d+) damage that would be dealt to '
+        r'(?P<relation>enchanted|equipped|fortified) creature this turn\.?',normalized,re.I)
+    chosen=re.fullmatch(r'the next time a source of your choice would deal damage to '
+        r'(?P<relation>enchanted|equipped|fortified) creature this turn, prevent that damage\.?',normalized,re.I)
+    match=finite or chosen
+    if match is None:return None
+    relation={'enchanted':AttachmentReferenceKind.ENCHANTED,'equipped':AttachmentReferenceKind.EQUIPPED,
+        'fortified':AttachmentReferenceKind.FORTIFIED}[match['relation'].casefold()]
+    if source_attachment_relation is not relation:return None
+    if finite is not None and int(finite['amount'])<1:return None
+    shield={'op':'create_damage_prevention_shield','source':'$source',
+        'subject':AttachmentReferenceSpec(relation,'creature',schema_version=2).to_dict(),BOUND_SUBJECT_VERSION:1,
+        'mode':'amount' if finite is not None else 'next_instance','duration':'until_end_of_turn',
+        **({'amount':int(finite['amount'])} if finite is not None else {})}
+    effect=shield if finite is not None else _chosen_source_effect(shield=shield,qualifier=None)
+    return ('damage-prevention-bound-attachment-v1',(effect,),None,_rules(None))
+
+
 def fixed_prevention_effect_template(
     text: str,
     *,
     card_name: str | None = None,
+    source_attachment_relation=None,
 ) -> PreventionTemplate | None:
     """Lower one closed finite CR 615 sentence through ordered productions."""
 
     normalized = " ".join(text.strip().split())
+    targeted_source=_targeted_damage_source_prevention(normalized)
+    if targeted_source is not None:return targeted_source
+    attached=_attached_recipient_prevention(normalized,source_attachment_relation)
+    if attached is not None:return attached
     triggered = _chosen_source_triggered_damage_and_draw(
         normalized,
         card_name=card_name,

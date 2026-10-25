@@ -8,7 +8,6 @@ from ..object_predicate import ObjectQuerySpec
 from ..ability_fragments import (
     ConditionalKeywordSpec,
     DynamicPowerToughnessSpec,
-    ToxicSpec,
     ability_fragment_to_dict,
     parse_protection_line,
 )
@@ -33,7 +32,10 @@ from .public_state_queries import (
 )
 from .query_characteristic_templates import query_characteristic_quantity
 from .collection_quantity_templates import recipient_attachment_quantity
-from .ward_cost_templates import fixed_ward_spec
+from .attached_ability_templates import (
+    _ATTACHED_SUPPORTED_ABILITIES, _attached_abilities,
+    _attached_granted_abilities, _attached_ability_capabilities, _toxic_ability_fragments,
+)
 from ..rules.source_references import SourceReferenceSpec
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
@@ -52,6 +54,10 @@ _ATTACHED_FIXED_CHARACTERISTICS = re.compile(
     rf"^(?P<subject>{_ATTACHED_SUBJECT}) (?P<body>.+?)\.?$",
     re.IGNORECASE,
 )
+_ATTACHED_OBJECT_KEYWORD_GRANT = re.compile(
+    r"^(?P<subject>Enchanted (?:artifact|battle|enchantment|land|permanent|planeswalker)) "
+    r"(?P<body>has .+?)\.?$", re.IGNORECASE,
+)
 _ATTACHED_FIXED_PT = re.compile(
     r"^gets (?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
     r"(?: and has (?P<abilities>.+))?$",
@@ -65,9 +71,6 @@ _ATTACHED_ADDED_TYPE = re.compile(
     r"^is (?:a|an) (?P<type>[A-Z][A-Za-z'-]*) "
     r"in addition to its other types$",
 )
-_ATTACHED_SUPPORTED_ABILITIES = frozenset(
-    keyword.casefold() for keyword in FIXED_CHARACTERISTIC_KEYWORDS
-) | {'flash'}
 
 _ATTACHED_QUOTED_ABILITY_SENTINELS = (
     "Flying",
@@ -457,115 +460,6 @@ def dynamic_self_power_toughness_handler(
     )
 
 
-def _attached_abilities(value: str) -> tuple[str, ...] | None:
-    normalized = re.sub(r",?\s+and\s+", ",", value.strip())
-    abilities = tuple(
-        part.strip().casefold()
-        for part in normalized.split(",")
-        if part.strip()
-    )
-    if (
-        not abilities
-        or len(set(abilities)) != len(abilities)
-        or any(
-            ability not in _ATTACHED_SUPPORTED_ABILITIES
-            and re.fullmatch(r"toxic [1-9]\d*", ability) is None
-            for ability in abilities
-        )
-    ):
-        return None
-    return tuple(ability.title() for ability in abilities)
-
-
-def _toxic_ability_fragments(
-    abilities: tuple[str, ...],
-) -> tuple[Mapping[str, Any], ...]:
-    return tuple(
-        ability_fragment_to_dict(
-            ToxicSpec(value=int(match.group("value")))
-        )
-        for ability in abilities
-        if (
-            match := re.fullmatch(
-                r"Toxic (?P<value>[1-9]\d*)",
-                ability,
-                re.IGNORECASE,
-            )
-        )
-        is not None
-    )
-
-
-def _attached_granted_abilities(
-    value: str,
-) -> tuple[tuple[str, ...], tuple[Mapping[str, Any], ...]] | None:
-    abilities = _attached_abilities(value)
-    if abilities is not None:
-        return abilities, _toxic_ability_fragments(abilities)
-    protection = parse_protection_line(value)
-    if protection is not None:
-        return (
-            ("Protection",),
-            tuple(
-                ability_fragment_to_dict(fragment)
-                for fragment in protection
-            ),
-        )
-    normalized = re.sub(
-        r",?\s+and\s+", ",", value.strip(), flags=re.IGNORECASE
-    )
-    terms = tuple(
-        term.strip()
-        for term in normalized.rstrip(".").split(",")
-        if term.strip()
-    )
-    if not terms:
-        return None
-    granted_abilities: list[str] = []
-    fragments: list[Mapping[str, Any]] = []
-    for term in terms:
-        ordinary = _attached_abilities(term)
-        if ordinary is not None:
-            granted_abilities.extend(ordinary)
-            fragments.extend(_toxic_ability_fragments(ordinary))
-            continue
-        triggered = triggered_keyword_grant(term)
-        if triggered is not None:
-            label, fragment, _capability = triggered
-            granted_abilities.append(label)
-            fragments.append(fragment)
-            continue
-        ward = fixed_ward_spec(term)
-        if ward is None or ward.generic_cost is None:
-            return None
-        label = f"Ward {{{ward.generic_cost}}}"
-        granted_abilities.append(label)
-        fragments.append(ability_fragment_to_dict(ward))
-    if len(granted_abilities) != len(set(granted_abilities)):
-        return None
-    return tuple(granted_abilities), tuple(fragments)
-
-
-def _attached_ability_capabilities(
-    abilities: tuple[str, ...],
-) -> set[str]:
-    capabilities: set[str] = set()
-    for ability in abilities:
-        if ability == "Protection":
-            capabilities.add("protection.typed.debt")
-        elif ability.startswith("Toxic "):
-            capabilities.add("damage.result.toxic")
-        elif ability.startswith("Ward {"):
-            capabilities.add("trigger.keyword.ward.fixed_generic")
-        elif (triggered := triggered_keyword_grant(ability)) is not None:
-            capabilities.add(triggered[2])
-        else:
-            capabilities.update(
-                FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES.get(ability, ())
-            )
-    return capabilities
-
-
 _ATTACHED_COLOR_SYMBOLS = {
     "white": "W",
     "blue": "U",
@@ -731,7 +625,7 @@ def _attached_dynamic_modifier(
 ) -> dict[str, Any] | None:
     modifier = _attached_modifier()
     leading = re.fullmatch(
-        r"has (?P<abilities>.+?) and (?P<remainder>gets .+)",
+        r"has (?P<abilities>.+?)(?:,)? and (?:it )?(?P<remainder>gets .+)",
         body,
         re.IGNORECASE,
     )
@@ -753,11 +647,14 @@ def _attached_dynamic_modifier(
         body,
         re.IGNORECASE,
     )
+    if variable is None:
+        variable=re.fullmatch(r'gets (?P<power>[+-](?:X|\d+))/(?P<toughness>[+-](?:X|\d+)), where X is (?P<quantity>its mana value)',body,re.I)
     match = fixed or variable
     if match is None:
         return None
     quantity_text = match.group("quantity")
-    quantity = recipient_attachment_quantity(quantity_text)
+    from .live_modifier_quantities import attached_object_quantity
+    quantity = attached_object_quantity(quantity_text) or recipient_attachment_quantity(quantity_text)
     if re.search(
         r"(?:attached to (?:it|this creature)|\bits controller's\b|"
         r"\bof its\b|\bon it\b)",
@@ -964,8 +861,13 @@ def attached_fixed_characteristics_handler(
     quoted rules text, and unrepresented mechanics remain residual.
     """
 
+    from .attached_protection_exceptions import attached_protection_exception_handler
+    special=attached_protection_exception_handler(oracle_line,source_name=source_name)
+    if special is not None:return special
     text = _TRAILING_REMINDER.sub("", oracle_line.strip()).strip()
     match = _ATTACHED_FIXED_CHARACTERISTICS.fullmatch(text)
+    object_keyword = _ATTACHED_OBJECT_KEYWORD_GRANT.fullmatch(text) if match is None else None
+    if object_keyword is not None:match=object_keyword
     if match is None:
         return None
     subject_types_all = (
@@ -973,6 +875,9 @@ def attached_fixed_characteristics_handler(
         if match.group("subject").casefold() == "fortified land"
         else ["creature"]
     )
+    if object_keyword is not None:
+        kind=match.group('subject').casefold().split()[-1]
+        subject_types_all=[] if kind=='permanent' else [kind]
     body = match.group("body")
     modifier = (
         _attached_dynamic_modifier(body, source_name=source_name)

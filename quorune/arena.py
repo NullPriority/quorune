@@ -16,6 +16,7 @@ from .pilot import PLAN_CATEGORIES, PilotResponse
 from .record import ENGINE_VERSION, utc_now
 from .report import derive_review
 from .session import CommanderSession
+from .semantic_runtime.hand_visibility import hand_card_is_known_to
 from .util import stable_json
 
 PILOT_TOOL_NAMES = (
@@ -592,11 +593,7 @@ class SeatScopedPilotTools:
                 or self._seat in card.revealed_to
             )
         if card.zone == "hand":
-            return (
-                card.owner == self._seat
-                or self._seat in card.known_to
-                or self._seat in card.revealed_to
-            )
+            return hand_card_is_known_to(self._session.engine, card, self._seat)
         return card.zone in {
             "battlefield",
             "graveyard",

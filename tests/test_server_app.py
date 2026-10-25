@@ -58,9 +58,9 @@ class ServerApplicationTests(unittest.TestCase):
     def auth(token: str) -> dict[str, str]:
         return {"Authorization": f"Bearer {token}"}
 
-    def set_browser_cookie(self, name: str, value: str) -> None:
+    def set_existing_cookie(self, name: str, value: str) -> None:
         cookies = [cookie for cookie in self.client.cookies.jar if cookie.name == name]
-        self.assertEqual(1, len(cookies), f"Expected one server-set cookie scope for {name}")
+        self.assertEqual(1, len(cookies), "Expected one server-issued cookie scope")
         cookie = cookies[0]
         self.client.cookies.set(name, value, domain=cookie.domain, path=cookie.path)
 
@@ -563,7 +563,7 @@ class ServerApplicationTests(unittest.TestCase):
         )
         self.assertEqual(403, denied_command.status_code, denied_command.text)
 
-        self.set_browser_cookie(COOKIE_NAME, spectator)
+        self.set_existing_cookie(COOKIE_NAME, spectator)
         with self.client.websocket_connect(
             f"/api/v1/games/{game_id}/stream"
         ) as websocket:
@@ -698,8 +698,8 @@ class ServerApplicationTests(unittest.TestCase):
 
         denied = self.client.post("/api/v1/rooms", json={"seed": 1})
         self.assertEqual(403, denied.status_code)
-        self.set_browser_cookie(COOKIE_NAME, alice)
-        self.set_browser_cookie(CSRF_COOKIE_NAME, csrf)
+        self.set_existing_cookie(COOKIE_NAME, alice)
+        self.set_existing_cookie(CSRF_COOKIE_NAME, csrf)
         created = self.client.post(
             "/api/v1/rooms",
             headers={"X-CSRF-Token": csrf},
@@ -790,14 +790,14 @@ class ServerApplicationTests(unittest.TestCase):
         self.assertNotIn("hand", a_players["C"])
         self.assertNotIn("hand", a_players["D"])
 
-        self.set_browser_cookie(COOKIE_NAME, tokens[0])
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
         with self.client.websocket_connect(
             f"/api/v1/games/{game_id}/stream",
             headers={"origin": "http://testserver"},
         ) as websocket_a:
             initial_a = websocket_a.receive_json()
             self.assertEqual("full", initial_a["packet"]["mode"])
-            self.set_browser_cookie(COOKIE_NAME, tokens[1])
+            self.set_existing_cookie(COOKIE_NAME, tokens[1])
             with self.client.websocket_connect(
                 f"/api/v1/games/{game_id}/stream"
             ) as websocket_b:
@@ -852,7 +852,7 @@ class ServerApplicationTests(unittest.TestCase):
                     rejected.json()["receipt"]["code"],
                 )
 
-        self.set_browser_cookie(COOKIE_NAME, tokens[0])
+        self.set_existing_cookie(COOKIE_NAME, tokens[0])
         with self.client.websocket_connect(
             f"/api/v1/games/{game_id}/stream"
         ) as reconnected:
@@ -895,7 +895,7 @@ class ServerApplicationTests(unittest.TestCase):
     def test_stale_game_websocket_stops_reconnecting_with_terminal_message(self):
         game_id, _, _ = self.create_ready_game()
         outsider, _ = self.guest("Stale game tab")
-        self.set_browser_cookie(COOKIE_NAME, outsider)
+        self.set_existing_cookie(COOKIE_NAME, outsider)
 
         with self.client.websocket_connect(
             f"/api/v1/games/{game_id}/stream"

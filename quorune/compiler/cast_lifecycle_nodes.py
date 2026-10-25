@@ -124,6 +124,8 @@ def _lifecycle_face_blocker(
 
 
 def _lifecycle_runtime_coverage(spec: Any) -> tuple[str, ...]:
+    if spec.kind is FixedCastLifecycleKind.BUYBACK and spec.schema_version == 5:
+        return ('fixed_nonmana_optional_additional_cost', 'replacement_aware_resolution_destination')
     return {
         FixedCastLifecycleKind.AFTERMATH: ('selected_half_graveyard_permission','other_zone_cast_prohibition','mandatory_stack_leave_exile'),
         FixedCastLifecycleKind.BUYBACK: (
@@ -218,7 +220,8 @@ def fixed_cast_lifecycle_keyword_node(
 
     if len(mechanics) != 1 or mechanics[0] not in _MECHANICS:
         return None
-    spec = compile_fixed_cast_lifecycle(
+    from .nonmana_buyback_costs import compile_nonmana_buyback
+    spec = compile_nonmana_buyback(material_line=material_line, oracle_line=line, line_index=span.line-1) or compile_fixed_cast_lifecycle(
         material_line=material_line,
         oracle_line=line,
         line_index=span.line - 1,
@@ -288,6 +291,9 @@ def fixed_cast_lifecycle_keyword_node(
             else ()
         ),
     )
+    if spec.schema_version == 5:
+        from ..rules.nonmana_buyback_costs import nonmana_buyback_cost_dependencies
+        dependencies = (*dependencies, *nonmana_buyback_cost_dependencies(spec.additional_costs))
     gate = explicit_capabilities_gate(
         dependencies,
         capability_registry=capability_registry,

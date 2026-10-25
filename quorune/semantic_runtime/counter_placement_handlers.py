@@ -24,6 +24,8 @@ from .intents import (
 )
 
 
+from .all_kind_counters import AllKindCounterDoublingHandler
+
 _REASON_FIELD = "reason"
 
 
@@ -408,6 +410,12 @@ class FixedCounterPlacementTargetSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        versioned='schema_version' in effect
+        if versioned:
+            from ..rules.counter_target_set_shapes import validate_quantified_counter_target_effect
+            try:variable,_relative=validate_quantified_counter_target_effect(effect,resolved=True)
+            except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
+        else:variable=False
         allowed = {
             "op",
             "cards",
@@ -418,6 +426,7 @@ class FixedCounterPlacementTargetSetHandler:
             _REASON_FIELD,
             "_replacement_selections",
         }
+        if versioned:allowed.update(('schema_version','announced_target_count'))
         unknown = sorted(set(effect) - allowed)
         if unknown:
             raise SemanticNodeError(
@@ -451,7 +460,7 @@ class FixedCounterPlacementTargetSetHandler:
         maximum = effect.get("maximum_targets")
         if (
             type(maximum) is not int
-            or maximum <= 0
+            or (maximum < 0 if variable else maximum <= 0)
             or len(cards) > maximum
             or any(type(card) is not str or not card for card in cards)
             or len(cards) != len(set(cards))
@@ -465,7 +474,9 @@ class FixedCounterPlacementTargetSetHandler:
                 "Counter-target placement requires one nonempty counter name"
             )
         amount = effect.get("amount")
-        if type(amount) is not int or amount <= 0:
+        if versioned:amount=_placement_amount(amount)
+        if ((not versioned or amount != EXISTING_COUNTER_AMOUNT)
+                and (type(amount) is not int or amount <= 0)):
             raise SemanticNodeError(
                 "Counter-target amount must be a positive exact integer"
             )
@@ -488,6 +499,8 @@ class FixedCounterPlacementTargetSetHandler:
             raise SemanticNodeError(
                 "Counter-target replacement selections must be an array"
             )
+        if versioned and not cards:
+            return IntentPlan(operation=self.operation,handler_id=self.handler_id,intents=(),result_shape='by_player')
         try:
             intent = PlaceCountersOnTargetsIntent(
                 actor=context.actor,
@@ -627,6 +640,7 @@ COUNTER_PLACEMENT_HANDLERS = (
     FixedCounterPlacementSetHandler(),
     FixedCounterPlacementTargetSetHandler(),
     FixedPlayerCounterPlacementHandler(),
+    AllKindCounterDoublingHandler(),
 )
 
 

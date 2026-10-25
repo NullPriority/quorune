@@ -6,7 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .counter_placement_capability_shapes import fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities
 
 from .casting_additional_costs import (
-    AdditionalCostError, ANNOUNCED_X_EXILE_CAPABILITY,
+    AdditionalCostError, announced_zone_cost_capabilities,
     FixedCounterPlacementAdditionalCost,
     FixedSacrificeAdditionalCost,
     FixedZoneChangeAdditionalCost,
@@ -110,7 +110,7 @@ def fixed_zone_change_additional_cost_node_capabilities(
         cost = FixedZoneChangeAdditionalCost.from_descriptor(raw_costs[0])
     except (AdditionalCostError, TypeError):
         return ()
-    return (fixed_zone_change_additional_cost_capability(cost), *((ANNOUNCED_X_EXILE_CAPABILITY,) if cost.count_parameter else ()))
+    return (fixed_zone_change_additional_cost_capability(cost), *announced_zone_cost_capabilities(cost))
 
 
 _DRAW_TARGET_SCHEMAS: tuple[Mapping[str, Any], ...] = (
@@ -196,6 +196,12 @@ _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
     ),
     {**_COUNTER_STACK_BASE, "predicate": "nonblue_spell"},
     {**_COUNTER_STACK_BASE, "colorless": True},
+    {**_COUNTER_STACK_BASE, 'predicate': 'blue_instant_spell'},
+    *tuple(
+        {**_COUNTER_STACK_BASE, 'categories':['spell','ability'], 'predicate':predicate}
+        for predicate in ('triggered_ability_or_colorless_spell','ability_or_noncreature_spell',
+            'ability_or_legendary_spell')
+    ),
     {
         "zones": ["stack"],
         "categories": ["ability"],
@@ -203,6 +209,10 @@ _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
         "predicate": "activated_ability",
         "count": 1,
     },
+    *tuple(
+        {'zones':['stack'],'categories':['ability'],'source_exclusion':True,'predicate':predicate,'count':1}
+        for predicate in ('activated_artifact_source','noncreature_ability_source')
+    ),
     {
         "zones": ["stack"],
         "categories": ["ability"],
@@ -542,9 +552,21 @@ def targeted_exile_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return capabilities only for the closed direct permanent exile."""
+    """Return ownership for closed direct or versioned attached exile."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (target_schema is None and _EXILE_MECHANIC in mechanics
+            and 'cr-115-targets' not in mechanics and len(effects) == 1
+            and set(effects[0]) == {'op', 'card'} and effects[0].get('op') == 'exile_permanent'):
+        from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+        expected = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, 'permanent', schema_version=2)
+        try:
+            actual = AttachmentReferenceSpec.from_dict(effects[0]['card'])
+        except (TypeError, ValueError):
+            return ()
+        if actual == expected:
+            return ('permanent.exile.effect', 'object.reference.source_attachment_information')
+        return ()
     if (
         not {_EXILE_MECHANIC, "cr-115-targets"}.issubset(mechanics)
         or len(effects) != 1
@@ -608,9 +630,11 @@ def targeted_counter_node_capabilities(
         or effect.get("stack") != "$target.0"
     ):
         return ()
+    from ..ability_source_information import ability_source_filter_dependencies
     return (
         "stack.counter.effect",
         "target.revalidate_resolution",
+        *ability_source_filter_dependencies(target_schema),
     )
 
 
@@ -1060,18 +1084,8 @@ def fixed_source_characteristics_node_capabilities(
         or (base_power is not None and (power or toughness))
     ):
         return ()
-    if not any(
-        (
-            set_card_types is not None,
-            set_subtypes is not None,
-            set_colors is not None,
-            base_power is not None,
-            power != 0,
-            toughness != 0,
-            bool(keywords),
-        )
-    ):
-        return ()
+    # Explicit +0/+0 is a closed, known modifier. The runtime deliberately
+    # returns the source without creating continuous components for this case.
     return (
         "continuous.resolution.fixed_characteristics_until_end_of_turn",
         FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
@@ -1090,6 +1104,13 @@ def temporary_declaration_restriction_node_capabilities(
         return ()
     effect = effects[0]
     kind = effect.get("restriction")
+    if isinstance(kind, Mapping):
+        from ..source_block_pair_model import SOURCE_BLOCK_PAIR_KIND
+        if kind.get('kind') == SOURCE_BLOCK_PAIR_KIND:
+            from .source_block_pairs import source_block_pair_node_capabilities
+            return source_block_pair_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+        from .fixed_blocker_restriction_shapes import fixed_blocker_restriction_node_capabilities
+        return fixed_blocker_restriction_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     group_target = set(effect) == {"op", "cards", "restriction"} and effect.get("cards") == "$targets"
     live_group = set(effect) == {"op", "set", "restriction"}
     if group_target or live_group:

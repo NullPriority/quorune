@@ -291,10 +291,12 @@ def declaration_static_node(
     residuals: list[OracleResidual],
     capability_registry: CapabilityRegistry | None,
     capability_profile: str,
+    material_line: str | None = None,
 ) -> OracleNode | None:
     """Compile one bounded declaration line or return ``None``."""
 
-    fragments = fixed_declaration_fragment_sequence(line, card_name=card_name)
+    material = line if material_line is None else material_line
+    fragments = fixed_declaration_fragment_sequence(material, card_name=card_name)
     if len(fragments) > 1:
         return _typed_declaration_fragment_sequence_node(
             node_id=node_id,
@@ -306,7 +308,7 @@ def declaration_static_node(
             capability_profile=capability_profile,
         )
 
-    requirement = parse_declaration_requirement_line(line, card_name=card_name)
+    requirement = parse_declaration_requirement_line(material, card_name=card_name)
     if requirement is not None:
         return _typed_declaration_node(
             node_id=node_id,
@@ -323,7 +325,7 @@ def declaration_static_node(
             ),
         )
 
-    cost_parse = parse_declaration_cost_line(line, card_name=card_name)
+    cost_parse = parse_declaration_cost_line(material, card_name=card_name)
     if cost_parse.recognized:
         template = cost_parse.template
         if cost_parse.exact and template is not None:
@@ -376,7 +378,7 @@ def declaration_static_node(
         )
 
     restriction_parse = parse_declaration_restriction_line(
-        line, card_name=card_name
+        material, card_name=card_name
     )
     if not restriction_parse.recognized:
         return None

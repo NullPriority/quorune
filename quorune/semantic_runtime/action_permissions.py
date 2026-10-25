@@ -11,6 +11,7 @@ from typing import Any, Mapping, Protocol, Sequence
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..card_program_faces import program_matches_face
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..library_search_model import LibrarySearchRuleSpec
 from ..object_query import ObjectQueryResult, object_matches_query
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import (
@@ -39,6 +40,10 @@ OPENING_HAND_BATTLEFIELD_CAPABILITY = "game.opening_hand.battlefield"
 
 
 class ActionPermissionKind(StrEnum):
+    MANA_WHITE_AS_RED = 'mana_white_as_red'
+    MANA_ANY_COLOR = 'mana_any_color'
+    MANA_ANY_TYPE_CREATURE = 'mana_any_type_creature'
+    PUBLIC_HAND = 'public_hand'
     OPENING_HAND_BATTLEFIELD = "opening_hand_battlefield"
     OPENING_HAND_REVEAL = "opening_hand_reveal"
     LAND_PLAY_FROM_OWN_GRAVEYARD = "land_play_from_own_graveyard"
@@ -48,6 +53,7 @@ class ActionPermissionKind(StrEnum):
     LIBRARY_TOP_VISIBILITY = "library_top_visibility"
     LIBRARY_TOP_ACTION = "library_top_action"
     ADDITIONAL_LAND_PLAY = "additional_land_play"
+    LIBRARY_SEARCH_RULE = 'library_search_rule'
 
 
 class LibraryTopVisibility(StrEnum):
@@ -81,6 +87,11 @@ class StaticActionPermission:
     top_spell_queries: tuple[ObjectQuerySpec, ...] = ()
     additional_land_plays: int = 0
     opening_reveal_spec: OpeningRevealSpec | None = None
+    library_search_rule: LibrarySearchRuleSpec | None = None
+
+    def __post_init__(self):
+        if self.kind is ActionPermissionKind.LIBRARY_SEARCH_RULE and not isinstance(self.library_search_rule,LibrarySearchRuleSpec):
+            raise SemanticNodeError('Library search permission requires its typed rule')
 
 
 @dataclass(frozen=True, slots=True)
@@ -424,8 +435,14 @@ class ActionPermissionRegistry(
 
 @lru_cache(maxsize=1)
 def default_action_permission_registry() -> ActionPermissionRegistry:
+    from .library_search_rules import LibrarySearchRuleHandler
+    from .hand_visibility import StaticHandVisibilityHandler
+    from .mana_spending import mana_spending_handlers
     registry = ActionPermissionRegistry(
         (
+            LibrarySearchRuleHandler(),
+            StaticHandVisibilityHandler(),
+            *mana_spending_handlers(),
             OpeningHandBattlefieldPermissionHandler(),
             OpeningHandRevealPermissionHandler(),
             StaticActionPermissionHandler(

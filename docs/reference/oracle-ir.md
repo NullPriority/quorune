@@ -10,6 +10,43 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+`CharacteristicQuantitySpec` version four carries closed current-value scopes
+for a source controller's nonnegative life total, current opponents' poison
+counters, or an attached recipient's colors or mana value. It retains the
+existing reduction fields and adds no GameState field. Quantity versions one
+through three retain their encoded forms; the new scopes are reserved for
+modifiers rather than characteristic-defining abilities.
+
+Quantity version five adds card counts across explicitly owned exile and
+graveyard collections, raw hand and library sizes, and maximum opponent hand
+size. Current owner-zone lists and the active player roster define membership.
+Tokens and copies are excluded; a card matching both instant and sorcery counts
+once. Face-down exiled cards count only in an unqualified card count. Filtered
+counts never inspect their characteristics. Hand and library sizes read only
+public card-object metadata, without inspecting hidden characteristics or order.
+Independent producer capabilities bind these quantities to their consumers.
+Versions one through four retain their existing encodings and behavior.
+
+Live public-set modifiers use the registered quantified anthem descriptor.
+Its existing fixed-query condition identifies the affected creatures; its
+modifier holds integer coefficients, the typed quantity, and an explicit
+recipient-exclusion flag. Exclusion requires a validated subset relationship
+between the affected subject and counted domain. Independent fixed keywords
+on the same Oracle span remain independently executable components.
+
+For represented Fuse split cards, the source-wide face finalizer retains both
+physical faces and emits one typed complete-source method declaration. Normal
+program lowering keeps each half's executable body and derives a separate
+`spell:<left-face-id>:fuse` program. Its provenance contains the correlated half
+programs and printed characteristic declaration; the closed shape validator
+checks the ordered effects, target projection, and dependencies. A missing
+derived program blocks complete CardProgram admission.
+
+The cast action payload selects this method with `cast_method: "fuse"`. Fuse
+does not use the alternative-cost option kind. A fused hand-count amount uses
+scalar schema version 7 and an explicit canonical `target_group`; versions 1
+through 6 keep their existing encodings.
+
 Typed Oracle IR is the deterministic compiler representation between pinned
 Oracle/rulings input and canonical CardProgram abilities. It classifies source
 text without giving Oracle prose runtime authority. The compiler and

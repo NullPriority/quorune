@@ -92,6 +92,7 @@ class StateProjector:
             Callable[[str, str | None], bool] | None
         ) = None,
         land_play_count_resolver: Callable[[str], int] | None = None,
+        hand_visibility_resolver: Callable[[str], bool] | None = None,
     ):
         self.card_db = card_db
         self.state = state
@@ -101,6 +102,7 @@ class StateProjector:
             library_top_visibility_resolver
         )
         self.land_play_count_resolver = land_play_count_resolver
+        self.hand_visibility_resolver = hand_visibility_resolver
 
     @staticmethod
     def seat_for(principal: str) -> str | None:
@@ -195,7 +197,10 @@ class StateProjector:
             or seat in card.known_to
             or seat in card.revealed_to
             for seat in seats
-        )
+        ) or (card.zone == 'hand' and self._hand_is_public(card.owner))
+
+    def _hand_is_public(self, owner: str) -> bool:
+        return self.hand_visibility_resolver is not None and self.hand_visibility_resolver(owner)
 
     def _effective(self, card: CardInstance) -> dict[str, Any]:
         try:
@@ -314,8 +319,8 @@ class StateProjector:
         )
         return data
 
-    def _obj(self, card: CardInstance, principal: str) -> dict[str, Any]:
-        visible = self._card_visible(card, principal)
+    def _obj(self, card: CardInstance, principal: str, *, public_hand: bool = False) -> dict[str, Any]:
+        visible = (public_hand and card.zone == 'hand') or self._card_visible(card, principal)
         obj: dict[str, Any] = {"id": card.ref}
         if visible and card.object_kind == "emblem":
             obj["n"] = str(
@@ -418,11 +423,12 @@ class StateProjector:
         principal: str,
         *,
         public_unordered: bool = False,
+        public_hand: bool = False,
     ) -> list[dict[str, Any]]:
         identities = list(object_ids)
         if public_unordered and principal not in {"analyst", "admin"}:
             identities.sort(key=lambda object_id: self.state.cards[object_id].ref)
-        return [self._obj(self.state.cards[oid], principal) for oid in identities]
+        return [self._obj(self.state.cards[oid], principal, public_hand=public_hand) for oid in identities]
 
     def _decision(self, principal: str) -> dict[str, Any] | None:
         decision = self.state.pending_decision
@@ -554,6 +560,20 @@ class StateProjector:
                 known.append(card)
         return known
 
+    def _hand_summary(self, owner: str, principal: str, view_seats: set[str]) -> dict[str, Any]:
+        identities = self.state.players[owner].zones['hand']
+        if owner in view_seats or principal in {'analyst', 'admin'}:
+            return {'hand': self._zone(identities, principal)}
+        if self._hand_is_public(owner):
+            return {'known_hand': self._zone(identities, principal, public_unordered=True, public_hand=True)}
+        if view_seats:
+            known = [self.state.cards[oid] for oid in identities if any(
+                seat in self.state.cards[oid].known_to or seat in self.state.cards[oid].revealed_to
+                for seat in view_seats)]
+            if known:
+                return {'known_hand': [self._obj(card, principal) for card in known]}
+        return {}
+
     def _snapshot(self, principal: str) -> dict[str, Any]:
         view_seats = self._view_seats_for(principal)
         players: dict[str, Any] = {}
@@ -609,22 +629,7 @@ class StateProjector:
                             publicly_known_left, key=lambda value: value.ref
                         )
                     ]
-            if (
-                player_seat in view_seats
-                or principal in {"analyst", "admin"}
-            ):
-                summary["hand"] = self._zone(p.zones["hand"], principal)
-            elif view_seats:
-                known = [
-                    self.state.cards[oid] for oid in p.zones["hand"]
-                    if any(
-                        seat in self.state.cards[oid].known_to
-                        or seat in self.state.cards[oid].revealed_to
-                        for seat in view_seats
-                    )
-                ]
-                if known:
-                    summary["known_hand"] = [self._obj(card, principal) for card in known]
+            summary.update(self._hand_summary(player_seat, principal, view_seats))
             known_top = self._known_library_top(
                 player=p,
                 player_seat=player_seat,
@@ -661,6 +666,9 @@ class StateProjector:
                 1 if self.state.combat.first_strike_step else 0
             ),
         }
+        if self.state.combat.attack_bands:
+            from .banding_model import projected_attack_bands
+            combat['bands'] = projected_attack_bands(self.state.combat, self.state.cards)
         snapshot = {
             "rev": self.state.revision,
             "event": self.state.event_sequence,

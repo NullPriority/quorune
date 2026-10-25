@@ -94,6 +94,9 @@ def mana_plan_abilities(host: Any, seat: str, card: Any, *, card_types=None) -> 
                 as_though_haste=host._may_activate_creature_as_haste(seat,card))
     result=[]
     for ability in abilities:
+        from .semantic_runtime.activation_restrictions import current_activation_prohibitions
+        if current_activation_prohibitions(host, card, ability, actor=seat):
+            continue
         if not _mana_plan_cost_is_supported(host,seat,card,ability):
             continue
         if ability.tap_source:
@@ -130,7 +133,9 @@ def available_mana_sources(
             if card.tapped or ('creature' in card_types and summoning_sickness_prohibits_tap_or_untap_cost(
                     host,card,as_though_haste=host._may_activate_creature_as_haste(seat,card))):
                 continue
-            compiled_modes = host._recordless_mana_modes(seat, card)
+            compiled_modes = typed_mana_modes_for_abilities(host, seat, card,
+                tuple(ability for ability in mana_plan_abilities(host, seat, card, card_types=card_types)
+                    if activation_condition_status(host, seat, ability, card)[0] == 'payable'))
             if compiled_modes:
                 sources.append(
                     ManaSource(

@@ -5,9 +5,9 @@ from __future__ import annotations
 import re
 from typing import Any, Collection, Mapping
 
-from ..creature_subtypes import canonical_creature_subtype
+from ..creature_subtypes import canonical_creature_subtype, canonical_creature_subtype_surface
 from ..basic_land_types import LAND_SUBTYPES
-from ..object_predicate import ObjectQuerySpec
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..rules.source_references import source_self_permanent_type
 
 
@@ -23,7 +23,10 @@ def normalize_public_condition_surface(text: str) -> str:
     return text
 
 
-def fixed_condition_subject_extension(text: str) -> tuple[ObjectQuerySpec, bool] | None:
+def fixed_condition_subject_extension(text: str, *, noncreature_subtypes: Collection[str] = ()) -> tuple[ObjectQuerySpec, bool] | None:
+    union = fixed_condition_subtype_union(text, noncreature_subtypes=noncreature_subtypes)
+    if union is not None:
+        return union
     land = re.fullmatch(r'(?P<other>other )?(?P<subtype>.+)', text, re.I)
     if land is not None:
         subtype = land['subtype'].casefold()
@@ -50,6 +53,26 @@ def fixed_condition_subject_extension(text: str) -> tuple[ObjectQuerySpec, bool]
         fields.update(token=False, colors_all=({'white':'W','blue':'U','black':'B','red':'R','green':'G'}[
             quality.removeprefix('nontoken ')],))
     return ObjectQuerySpec(**fields), bool(match['other'])
+
+
+def fixed_condition_subtype_union(text: str, *, noncreature_subtypes: Collection[str]) -> tuple[ObjectQuerySpec, bool] | None:
+    match = re.fullmatch(r'(?P<other>other )?(?:(?P<state>tapped|untapped) )?'
+        r'(?P<left>[A-Za-z][A-Za-z\'-]*) (?:and/or|or) (?P<right>[A-Za-z][A-Za-z\'-]*)', text, re.I)
+    if match is None:
+        return None
+    terms = []
+    for raw in (match['left'], match['right']):
+        subtype = canonical_creature_subtype_surface(raw)
+        if subtype is None:
+            normalized = raw.casefold()
+            subtype = normalized if normalized in noncreature_subtypes else normalized.removesuffix('s')
+            if subtype not in noncreature_subtypes:
+                return None
+        terms.append(subtype)
+    if len(set(terms)) != 2:
+        return None
+    state = None if match['state'] is None else PermanentStatePredicateSpec(tapped=match['state'].casefold() == 'tapped')
+    return ObjectQuerySpec(zones=('battlefield',), subtypes_any=tuple(sorted(terms)), state_predicate=state), bool(match['other'])
 
 
 def fixed_condition_object_query(
