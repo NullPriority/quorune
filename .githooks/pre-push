@@ -12,6 +12,10 @@ else
     exit 1
 fi
 
+# A current generated receipt does not cover source text-I/O policy. Run the
+# existing cheap changed-file sentinel before accepting either push path.
+"$PYTHON" "$ROOT/scripts/quick_gate.py" --validate-text-io --base origin/main
+
 # CI planning cannot construct its matrix when a discovered test module lacks
 # exactly one primary shard. Fail quickly before the expensive corpus census.
 # The finalizer also validates the reviewed architecture baseline after every

@@ -1706,6 +1706,44 @@
         "test_change_impact.ChangeImpactTests.test_manifest_zone_sources_select_current_zone_contracts"
       ],
       "resolution": "Map every stale reference to its actual owned module: existing Oracle IR and mechanic-contract classes reside in test_oracle_ir; zone consumers cover the canonical transition owner, single-object plans, general zone rules, and designation reset. Extend the existing pre-corpus impact sentinel to validate all path/symbol test module and suite references against the canonical shard manifest, including unselected rules. Keep the complete high-risk certification gate for this selection-authority correction."
+    },
+    {
+      "id": "ci-20261024-pr536-explicit-text-encoding",
+      "run_id": 40143670144,
+      "head_sha": "dcd1289b33c641e10e40705fa74ca6157033457f",
+      "category": "source_correctness",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "Generated cloud / Resolve source failed its Require cheap sentinels before any corpus census step: explicit-text-encoding rejected two new metadata read_text calls without an encoding in test_static_damage_ability_presence.py. The normal pre-push path accepted a current finalization receipt without invoking this existing changed-file sentinel; the dry-run already listed the obligation.",
+      "failed_surfaces": [
+        "Generated cloud / Resolve source: explicit-text-encoding"
+      ],
+      "regressions": [
+        "test_ci_pipeline.CiPipelineTests.test_pre_corpus_validates_pinned_contracts_without_opening_the_database",
+        "test_static_damage_ability_presence.StaticDamageAbilityPresenceTests.test_verified_static_damage_owners_withdrawal_stays_fail_closed"
+      ],
+      "resolution": "Specify UTF-8 on both metadata reads and invoke the existing changed-file text-I/O validator on every pre-push path before shard/dependency validation and receipt acceptance. Keep the existing validator and impact selection intact, run the exact sentinel plus its direct checker/withdrawal controls, preserve the completed semantic census, and publish one corrected exact head. Cancel the superseded matrix instead of rerunning the unchanged failed source."
+    },
+    {
+      "id": "ci-20261024-pr536-scoped-server-cookies",
+      "run_id": 40143670135,
+      "head_sha": "dcd1289b33c641e10e40705fa74ca6157033457f",
+      "category": "windows_compatibility",
+      "deterministic": true,
+      "impact_edge_status": "not_applicable",
+      "summary": "The Windows compatibility job failed three server tests when manual cookie setters added empty-domain cookies alongside the response host cookies. HTTPX 2.16.0/Starlette 1.10.0 orders those duplicate names differently from the older local HTTPX 2.12.0/Starlette 1.6.0 pair, yielding the last guest principal, a CSRF mismatch and a spectator socket error. Matching local dependencies to CI reproduced all three failures before the fixture repair; bearer-authenticated REST projections and production authentication remain unchanged.",
+      "failed_surfaces": [
+        "PR / Windows / compatibility",
+        "PR / Windows Certification (failed dependency)",
+        "PR / Certification (failed dependency and superseded-run cancellation)"
+      ],
+      "regressions": [
+        "test_server_app.ServerApplicationTests.test_four_seat_projection_websocket_reconnect_and_exact_replay",
+        "test_server_app.ServerApplicationTests.test_guest_csrf_room_and_atomic_seat_claims",
+        "test_server_app.ServerApplicationTests.test_spectator_projection_public_log_and_restart_are_read_only",
+        "test_server_app.ServerApplicationTests.test_stale_game_websocket_stops_reconnecting_with_terminal_message"
+      ],
+      "resolution": "Keep every existing authentication, CSRF, principal, privacy, rollback and replay assertion. Route manual fixture cookie updates through the single server-set domain/path, assert one existing cookie scope and replace its value in that scope instead of adding an ambiguous cookie. Verify the exact failed cases with the CI dependency versions plus tab-identity and stale-socket controls; change no server authentication code or dependency requirements."
     }
   ],
   "recent_pull_requests": [

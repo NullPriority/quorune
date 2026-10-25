@@ -157,7 +157,7 @@ class StaticDamageAbilityPresenceTests(unittest.TestCase):
         from quorune.rules.capabilities import CapabilityRegistry
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for capability, name in ((CAPABILITY, 'Guardian Seraph'),
                 ('damage.replacement.static_quantity', 'Torbran, Thane of Red Fell'),
                 ('damage.redirection.static_to_source', 'Palisade Giant')):
@@ -166,7 +166,7 @@ class StaticDamageAbilityPresenceTests(unittest.TestCase):
                 status='blocked', blockers=['withdrawn static damage owner'], dependency_fail_closed_status='not_run')
             registry = CapabilityRegistry(changed)
             index = build_index(registry_value=changed,
-                declaration_source=json.loads((ROOT/'platform/capability-evidence-declarations.json').read_text()),
+                declaration_source=json.loads((ROOT/'platform/capability-evidence-declarations.json').read_text(encoding='utf-8')),
                 discovered_test_ids=set(discover_tests(ROOT).values()))
             registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
             ir = compile_oracle_card(self.db.lookup(name), capability_registry=registry, capability_profile='commander_review')
