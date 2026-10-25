@@ -8335,6 +8335,27 @@
         "test_activated_self_transform",
         "test_printed_protection_lists"
       ]
+    },
+    {
+      "id": "current-fixed-activation-result-views",
+      "patterns": [
+        "quorune/card_programs/activation_result_equivalence.py",
+        "quorune/card_programs/trigger_result_equivalence.py",
+        "quorune/card_programs/activation_target_equivalence.py",
+        "quorune/card_programs/activation_view_equivalence.py",
+        "quorune/card_programs/trigger_view_equivalence.py",
+        "tests/test_activation_result_views.py",
+        "tests/fixtures/activation-result-views-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_result_views",
+        "test_activation_target_view_equivalence",
+        "test_activation_view_equivalence",
+        "test_trigger_view_equivalence",
+        "test_fixed_library_searches",
+        "test_library_search_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -6,6 +6,7 @@ import hashlib
 from .current_view_equivalence import _catalog_preserves_cost,_same_current_source
 from .battlefield_search_equivalence import fixed_battlefield_search_results_equal
 from .activation_target_equivalence import reviewed_activation_with_equivalent_target
+from .activation_result_equivalence import fixed_activation_results_equal
 
 
 def _predefined_token_results_equal(current,old):
@@ -26,6 +27,7 @@ def _results_equal(current,old):
     from .reviewed_overlay import _canonical_effects
     return (_canonical_effects(current)==_canonical_effects(old)
         or fixed_battlefield_search_results_equal(current,old)
+        or fixed_activation_results_equal(current,old)
         or _predefined_token_results_equal(current,old))
 
 

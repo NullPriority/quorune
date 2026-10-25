@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from copy import deepcopy
 from dataclasses import replace
 from ..targets import target_plan
+from ..object_predicate import PermanentStatePredicateSpec
 
 
 def _single_creature_target(schema):
@@ -31,11 +32,53 @@ def _single_creature_target(schema):
         return None
 
 
+def _fixed_graveyard_artifact_target(schema):
+    if not isinstance(schema, Mapping):return None
+    value = deepcopy(dict(schema))
+    if set(value) == {'groups'}:
+        groups = value['groups']
+        if not isinstance(groups, list) or len(groups) != 1 or not isinstance(groups[0], Mapping):return None
+        value = deepcopy(dict(groups[0]))
+        if type(value.pop('id', 'target')) is not str:return None
+        if type(value.get('min')) is not int or value.pop('min') != 1:return None
+        if type(value.get('max')) is not int or value.pop('max') != 1:return None
+        value['count'] = 1
+    fields = {'zones', 'categories', 'types_any', 'owner_relation', 'mana_value_max', 'count'}
+    if (set(value) != fields or value['zones'] != ['graveyard'] or value['categories'] != ['card']
+            or value['types_any'] != ['artifact'] or value['owner_relation'] != 'you'
+            or type(value['count']) is not int or value['count'] != 1
+            or type(value['mana_value_max']) is not int or value['mana_value_max'] < 0):return None
+    try:return target_plan(value)
+    except (TypeError, ValueError):return None
+
+
+def _optional_tapped_creature_target(schema):
+    required = {'zones', 'categories', 'types_any', 'up_to'}
+    if (not isinstance(schema, Mapping) or not required <= set(schema)
+            or set(schema)-required-{'tapped', 'state_predicate'}
+            or schema['zones'] != ['battlefield'] or schema['categories'] != ['permanent']
+            or schema['types_any'] != ['creature'] or type(schema['up_to']) is not int
+            or schema['up_to'] != 1 or ('tapped' in schema) == ('state_predicate' in schema)):return None
+    if 'tapped' in schema:
+        if schema['tapped'] is not True:return None
+    else:
+        try:predicate = PermanentStatePredicateSpec.from_dict(schema['state_predicate'])
+        except (TypeError, ValueError, KeyError):return None
+        if predicate != PermanentStatePredicateSpec(tapped=True):return None
+    value = deepcopy(dict(schema));value.pop('state_predicate', None);value['tapped'] = True
+    try:return target_plan(value)
+    except (TypeError, ValueError):return None
+
+
 def reviewed_activation_with_equivalent_target(current, old):
     if current.target_schema == old.target_schema:
         return old
-    a, b = (_single_creature_target(p.target_schema) for p in (current, old))
-    if a is None or b is None or a != b or len(current.handlers) != 1 or len(old.handlers) != 1:
+    equivalent = False
+    for decode in (_single_creature_target, _fixed_graveyard_artifact_target, _optional_tapped_creature_target):
+        a, b = (decode(p.target_schema) for p in (current, old))
+        if a is not None and b is not None and a == b:
+            equivalent = True;break
+    if not equivalent or len(current.handlers) != 1 or len(old.handlers) != 1:
         return None
     for p in (current, old):
         descriptor = p.handlers[0]

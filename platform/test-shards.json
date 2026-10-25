@@ -309,6 +309,7 @@
       "test_unearth_rules"
     ],
     "functional-06": [
+      "test_activation_result_views",
       "test_activation_target_view_equivalence",
       "test_activation_view_equivalence",
       "test_additional_continuous_carriers",

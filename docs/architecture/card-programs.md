@@ -60,6 +60,10 @@ limit, and target meaning. Closed scalar event conjunctions may reorder their
 leaves; only `creature.dies` aliases its sealed previous controller to its
 controller field. A single positional destroy target may use the existing flat
 or one-group target codec, and its textual reason remains reporting metadata.
+Fixed graveyard-card exile may compare through its complete typed target and
+result owner. An optional artifact search into the controller's graveyard may
+compare through the counted-search owner while retaining the outer decline
+choice, fail-to-find permission, and mandatory shuffle after an accepted search.
 Other result/source differences, missing predicates, or ambiguous matches do
 not establish equivalence. Existing private-draw defaults keep their current
 normalization; historical payloads are not rewritten.
@@ -88,8 +92,21 @@ target with cardinality one. The existing target codec compares legacy
 `creature` and `controller` aliases with their typed fields. Top-level and
 catalog target domains must agree on each view. A temporary comparison copy
 allows the unchanged full catalog-price proof to run; stored programs and
-execution descriptors remain unchanged. Additional predicates, optional or
-grouped targets, unknown fields and changed controller relations remain unequal.
+execution descriptors remain unchanged. Two additional closed codecs preserve
+one owned graveyard artifact with a fixed mana-value ceiling, and up to one
+tapped battlefield creature. The latter compares the literal tapped predicate
+with its typed state predicate; the former accepts only the equivalent single
+group and flat target domains. Unknown fields and changed relations, bounds or
+predicates remain unequal.
+
+`activation_result_equivalence.py` compares complete fixed results through the
+existing hand-entry, reanimation, public-zone movement, and target-counter
+owners. Optional artifact entry from the locked controller's hand, untapped
+return of the owned graveyard target, opponent-owned graveyard exile, and a
+fixed counter on the optional tapped target retain their full prices and target
+domains. Changed recipients, entry state, counter quantity, public-zone scope,
+or additional operations remain unequal. These comparison copies do not alter
+stored historical programs or replace their current runtime owners.
 
 The legacy single-Treasure operation may compare with the current complete
 predefined Treasure template after the same source, price and strict capability

@@ -6,6 +6,7 @@ from copy import deepcopy
 from dataclasses import replace
 import hashlib,json
 from ..targets import target_plan
+from .trigger_result_equivalence import fixed_trigger_results_equal, fixed_graveyard_exile_views_equal
 
 
 def _condition(value,event):
@@ -44,6 +45,7 @@ def _effects(program):
 
 def _targets_equal(current,old):
     if current.target_schema==old.target_schema:return True
+    if fixed_graveyard_exile_views_equal(current,old):return True
     # Only one positional destroy result uses this schema normalization.
     effects=_effects(current)
     if (effects!=_effects(old) or len(effects)!=1 or effects[0].get('op')!='destroy'
@@ -78,7 +80,8 @@ def shadowed_reviewed_trigger_view_keys(record,generated_programs,reviewed_progr
                     or current.provenance.get('source_rulings_hash')!=old.provenance['source_rulings_hash']
                     or any(getattr(current,key)!=getattr(old,key) for key in fields)
                     or _condition(current.event_condition,current.event)!=_condition(old.event_condition,old.event)
-                    or _effects(current)!=_effects(old) or not _targets_equal(current,old)):continue
+                    or (_effects(current)!=_effects(old) and not fixed_trigger_results_equal(current,old))
+                    or not _targets_equal(current,old)):continue
             if bind_semantic_program_runtime(current,capability_registry=capability_registry,profile=capability_profile)['strict']:
                 matches.append(current)
         if len(matches)==1:shadowed.add(old.key)
