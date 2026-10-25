@@ -98,17 +98,18 @@ def closed_static_or_replacement_node(
     source_is_class: bool, capability_registry: CapabilityRegistry | None,
     capability_profile: str, residuals: list[OracleResidual],
 ) -> OracleNode | None:
-    """Normalize the shared static boundary before dispatching typed bodies."""
+    """Give exact owners their full source before generic label fallback."""
     material = without_ability_word_label(material_line)
-    if material is None:
+    if material is None:return None
+    arguments=dict(node_id=node_id,line=line,span=span,source_name=source_name,
+        card_types=card_types,permanent_card_types=permanent_card_types,
+        source_is_class=source_is_class,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals)
+    original=_closed_static_body_node(material_line=material_line,**arguments)
+    if original is not None:return original
+    if material==material_line:
         return None
-    return _closed_static_body_node(
-        node_id=node_id, line=line, material_line=material, span=span,
-        source_name=source_name, card_types=card_types,
-        permanent_card_types=permanent_card_types, source_is_class=source_is_class,
-        capability_registry=capability_registry, capability_profile=capability_profile,
-        residuals=residuals,
-    )
+    return _closed_static_body_node(material_line=material,**arguments)
 
 
 def _closed_static_body_node(

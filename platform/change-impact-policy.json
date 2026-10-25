@@ -8611,6 +8611,25 @@
         "test_characteristic_query_unions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "existing-static-label-and-temporary-tribe-integration",
+      "patterns": [
+        "quorune/compiler/closed_static_nodes.py",
+        "quorune/compiler/fixed_resolution_characteristic_queries.py",
+        "quorune/rules/fixed_resolution_characteristic_shapes.py",
+        "tests/test_support_integration_retention.py",
+        "tests/fixtures/support-integration-retention-cards.json"
+      ],
+      "test_modules": [
+        "test_support_integration_retention",
+        "test_ability_label_composition",
+        "test_player_speed",
+        "test_entry_copy_predicates",
+        "test_conditional_flash",
+        "test_receiver_query_unions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

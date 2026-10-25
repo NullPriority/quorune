@@ -456,6 +456,7 @@
       "test_scoped_damage_prevention",
       "test_self_target_reductions",
       "test_self_zone_move_rules",
+      "test_support_integration_retention",
       "test_surveil_rules",
       "test_targeted_destruction_effect_clauses",
       "test_transmute",

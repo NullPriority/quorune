@@ -22,7 +22,10 @@ composed producer prefix is checked against that price before testing the
 result through existing closed-effect owners. A strict capability binding alone
 does not promote unknown prices, malformed descriptors or unrepresented results.
 
-The static dispatcher removes a leading nonfunctional ability or flavor label
+The static dispatcher first gives the complete source to its existing exact
+owners, preserving supported Domain, Max speed, Raid and timing conditions.
+Only when no exact owner recognizes that source does it remove a leading
+nonfunctional ability or flavor label
 before invoking its existing typed body owners. Declaration nodes keep the
 original labeled text and source span while parsing that complete material
 body. Numeric labels and their punctuation also precede ordinary triggered
@@ -827,6 +830,11 @@ keyword labels;
 Protection qualities and triggered fragments require a separately represented
 temporary-set descriptor and are never discarded during this lowering. Static
 live grants and direct temporary Protection retain their typed fragments.
+Flat unqualified creature-subtype alternatives retain their existing temporary
+set behavior when represented by the shared receiver-union parser. Mixed or
+branch-qualified unions remain outside this codec. An independent controlled
+set uses its own selection scope even when another instruction targets a player;
+queries that consume that player still validate the player's target schema.
 `compiler/fixed_public_characteristic_sets.py` extends the same
 resolution owner to all creatures, creatures opponents or one target player
 control, current attacking or blocking creatures, and source-excluding attacking

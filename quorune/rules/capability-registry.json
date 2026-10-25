@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 516,
+  "registry_version": 517,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -19996,7 +19996,7 @@
     },
     {
       "id": "continuous.resolution.fixed_characteristics_until_end_of_turn",
-      "version": 9,
+      "version": 10,
       "official_rules": [
         "611.2a",
         "611.2c",
@@ -20011,7 +20011,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Create a fixed or cycle-safe query-scaled type, subtype, supported keyword, typed ability-fragment, or power/toughness continuous effect during resolution, including one revalidated qualified direct target and fixed controlled or public sets selected by the shared cycle-safe public battlefield query, lock its affected logical objects at creation, and expire it in cleanup.",
+        "summary": "Create a fixed or cycle-safe query-scaled type, subtype, supported keyword, typed ability-fragment, or power/toughness continuous effect during resolution, including one revalidated qualified direct target and fixed controlled or public sets selected by the shared cycle-safe public battlefield query, lock its affected logical objects at creation, and expire it in cleanup. Existing temporary homogeneous unqualified creature-subtype disjunctions also accept their equivalent flat receiver-union representation. Independent controlled-set instructions retain their own selection scope inside a player-targeted compound program.",
         "inputs": [
           "typed resolving stack/source identity",
           "current public battlefield predicate or resolved permanent",
@@ -20022,7 +20022,8 @@
           "optional fixed signed PublicQueryAmountSpec for a source-self or direct-target layer-7c modifier",
           "until-end-of-turn duration",
           "complete current creature power or toughness for one fixed numeric resolution membership predicate",
-          "fully consumed keyword-before-stat or stat-before-keyword set wording over the same recipient predicate"
+          "fully consumed keyword-before-stat or stat-before-keyword set wording over the same recipient predicate",
+          "flat unqualified homogeneous creature-subtype alternatives for the existing resolution-locked set"
         ],
         "outputs": [
           "immutable replay-pinned continuous-effect journal entry",
@@ -20114,7 +20115,10 @@
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
-        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries"
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_temporary_homogeneous_tribe_union_preserves_its_existing_bodies",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "negative_tests": [
         "test_dynamic_activated_characteristic_effects_remain_residual",
@@ -20135,7 +20139,9 @@
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
         "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
         "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
-        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions"
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+        "test_resolution_union_adoption_keeps_mixed_and_branch_qualified_sets_closed",
+        "test_temporary_union_dependencies_are_specific_and_implicitly_required"
       ],
       "interaction_tests": [
         "test_resolution_set_is_locked_to_logical_objects",
@@ -20185,7 +20191,9 @@
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "multiplayer_tests": [
         "test_mass_resolution_locks_set_across_entry_control_and_zone_change",
@@ -20228,7 +20236,9 @@
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "privacy_tests": [
         "test_targeted_effect_expires_and_round_trips_without_private_projection",
@@ -20270,7 +20280,9 @@
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "replay_tests": [
         "test_temporary_effect_command_replays_exactly",
@@ -20312,7 +20324,9 @@
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions"
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "required_evidence": [
         "positive",
@@ -20323,7 +20337,7 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-set duration nodes from becoming exact; every represented keyword node also separately declares and closes its exact combat, damage, destruction, activation, or targeting consumer capabilities. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
+      "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-set duration nodes from becoming exact; every represented keyword node also separately declares and closes its exact combat, damage, destruction, activation, or targeting consumer capabilities. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary. Verified canonical withdrawal blocks each original temporary tribe-grant carrier; implicit query requirements reject a removed receiver-union declaration.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_activated_characteristic_dependency_gate_mutant_is_killed, test_fixed_public_creature_set_compiler_mutant_is_killed, test_qualified_target_characteristic_compiler_mutant_is_killed, and test_fixed_resolution_keyword_shape_requires_exact_consumers reject missing typed closure, test_resolution_continuous_effect_commit_mutant_is_killed rejects a suppressed journal commit, and test_resolution_and_static_ability_changes_share_layer_six_ordering rejects bypassing the shared ability evaluator. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "blockers": [],
@@ -55838,7 +55852,7 @@
     },
     {
       "id": "state_query.permanent.receiver_union",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "109.2",
         "611.3a",
@@ -55855,12 +55869,13 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "One flat live battlefield receiver union matches each object once and preserves branch-local and shared source exclusion. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported. The conditional characteristics consumer adopts the existing flat earlier-layer receiver union through the same immutable live-query binder, preserving reserved scope and branch source templates.",
+        "summary": "One flat live battlefield receiver union matches each object once and preserves branch-local and shared source exclusion. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported. The conditional characteristics consumer adopts the existing flat earlier-layer receiver union through the same immutable live-query binder, preserving reserved scope and branch source templates. Existing temporary homogeneous unqualified creature-subtype disjunctions also accept their equivalent flat receiver-union representation. Independent controlled-set instructions retain their own selection scope inside a player-targeted compound program.",
         "inputs": [
           "two through four closed public type/subtype/color/snow leaves",
           "shared source-controller relation and current source reference",
           "existing continuous characteristic evaluation layers",
-          "closed receiver union independently gated by the existing supported live public-state condition"
+          "closed receiver union independently gated by the existing supported live public-state condition",
+          "flat unqualified homogeneous creature-subtype alternatives for the existing resolution-locked set"
         ],
         "outputs": [
           "one receiver match for overlapping branches",
@@ -55885,7 +55900,9 @@
         "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query",
         "quorune.semantic_runtime.conditional_continuous._validate_target",
         "quorune.semantic_runtime.continuous_components._fixed_query_effect_predicate",
-        "quorune.object_query_union.validate_receiver_union_template"
+        "quorune.object_query_union.validate_receiver_union_template",
+        "quorune.compiler.fixed_resolution_characteristic_queries.fixed_resolution_characteristic_query_is_closed",
+        "quorune.rules.fixed_resolution_characteristic_shapes.fixed_resolution_characteristics_runtime_dependencies"
       ],
       "required_evidence": [
         "positive",
@@ -55896,7 +55913,7 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Normal complete-original registration derives the union capability independently; verified withdrawal and stripped runtime minima reject it. Canonically rebuilt verified withdrawal of the receiver-union or conditional-characteristics authority blocks the original Swarmweaver, while runtime dependency inference rejects a stripped union declaration.",
+      "dependency_fail_closed_rationale": "Normal complete-original registration derives the union capability independently; verified withdrawal and stripped runtime minima reject it. Canonically rebuilt verified withdrawal of the receiver-union or conditional-characteristics authority blocks the original Swarmweaver, while runtime dependency inference rejects a stripped union declaration. Verified canonical withdrawal blocks each original temporary tribe-grant carrier; implicit query requirements reject a removed receiver-union declaration.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh complete-original and real Death Baron consequence witnesses detect producer and receiver matcher omissions. A fresh template-validation omission fails the concrete foreign-branch-reference regression.",
       "blockers": [],
@@ -55917,7 +55934,10 @@
         "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
         "test_originals_have_complete_normal_binding_and_exact_capability_minima",
         "test_compiler_produced_conditional_union_is_accepted_by_its_registered_owner",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
+        "test_temporary_homogeneous_tribe_union_preserves_its_existing_bodies",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "negative_tests": [
         "test_unions_reject_recursive_hidden_late_or_unbounded_queries",
@@ -55929,7 +55949,9 @@
         "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions",
         "test_conditional_union_keeps_reserved_scope_and_template_references_closed",
         "test_conditional_receiver_union_authorities_fail_closed_with_verified_indices",
-        "test_conditional_union_requires_its_implicit_runtime_query_authority"
+        "test_conditional_union_requires_its_implicit_runtime_query_authority",
+        "test_resolution_union_adoption_keeps_mixed_and_branch_qualified_sets_closed",
+        "test_temporary_union_dependencies_are_specific_and_implicitly_required"
       ],
       "interaction_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55943,7 +55965,9 @@
         "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
         "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "multiplayer_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55955,7 +55979,9 @@
         "test_original_narfi_snow_return_pays_three_real_snow_sources",
         "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
         "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "privacy_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55967,7 +55993,9 @@
         "test_original_narfi_snow_return_pays_three_real_snow_sources",
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
         "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ],
       "replay_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55981,7 +56009,9 @@
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
         "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
         "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
+        "test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+        "test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set"
       ]
     },
     {

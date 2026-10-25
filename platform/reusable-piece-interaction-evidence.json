@@ -20227,6 +20227,36 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Swarmweaver gates one Insect-or-Spider affected set on its current controller graveyard card-type threshold. Actual sacrifice, source control change and graveyard exile update modifiers and deathtouch; the overlapping receiver is counted once, with private draws, pending persistence and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_support_integration_retention.SupportIntegrationRetentionRuntimeTests.test_kaito_discard_and_own_tribe_grant_keep_separate_scope_and_locked_recipients",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.receiver_union"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.receiver_union"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original temporary tribe grants use the shared subtype-union affected set once per object, preserve independent target scope, lock recipients at resolution, exclude late entrants/opponents, expire at cleanup and retain pending load, privacy and exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_support_integration_retention.SupportIntegrationRetentionRuntimeTests.test_actual_captain_entry_grant_includes_self_and_locks_the_recipient_set",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.state_query.permanent.receiver_union"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "state_query.permanent.receiver_union"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual original temporary tribe grants use the shared subtype-union affected set once per object, preserve independent target scope, lock recipients at resolution, exclude late entrants/opponents, expire at cleanup and retain pending load, privacy and exact pre-action replay."
     }
   ]
 }

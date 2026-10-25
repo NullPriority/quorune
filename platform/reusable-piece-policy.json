@@ -285,6 +285,10 @@
     ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.counter.placement.prohibition.static"],
     [
       "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+      "capability.state_query.permanent.receiver_union"
+    ],
+    [
+      "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
       "capability.target.permanent.characteristic_predicate"
     ],
     ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.zone.entry.fixed_copy"],

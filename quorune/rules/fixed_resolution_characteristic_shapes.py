@@ -133,8 +133,10 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
         for stat in ('power', 'toughness'):
             projected[stat], amount_owners = _runtime_stat_amount(effect.get(stat))
             required.update(amount_owners)
+        query=ObjectQuerySpec.from_dict(projected['predicate'])
+        selection_schema=program.target_schema if query.controller=='$target.0' else None
         owners = fixed_resolution_characteristic_set_node_capabilities(
-            effects=(projected,), target_schema=program.target_schema, mechanic_ids=program.coverage,
+            effects=(projected,), target_schema=selection_schema, mechanic_ids=program.coverage,
         )
         if not owners:
             raise ValueError('Resolution-set descriptor lacks complete selection and result closure')
