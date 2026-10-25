@@ -14,7 +14,6 @@ import tokenize
 import tomllib
 import unittest
 from typing import Any, Iterable, Mapping
-from quorune.rules.evidence_storage import read_evidence_document
 
 try:
     from scripts.source_syntax import SyntaxSnapshot, analysis_syntax
@@ -904,6 +903,7 @@ def _compiler_metrics(
     commander = _load_json(ROOT / "coverage" / "oracle-coverage-commander.json")
     mechanics = _load_json(ROOT / "coverage" / "mechanics-coverage.json")
     capabilities = _load_json(CAPABILITY_REGISTRY)
+    from quorune.rules.evidence_storage import read_evidence_document
     capability_evidence = read_evidence_document(CAPABILITY_EVIDENCE)
     card_program_schema = _load_json(CARD_PROGRAM_SCHEMA)
     from quorune.semantics import SemanticRegistry
@@ -1227,6 +1227,7 @@ def _test_metrics() -> dict[str, Any]:
     mutation_tools = [
         tool for tool in ("mutmut", "cosmic-ray", "mutpy") if tool in requirements + pyproject
     ]
+    from quorune.rules.evidence_storage import read_evidence_document
     capability_evidence = read_evidence_document(CAPABILITY_EVIDENCE)
     performance = _load_json(CONTINUOUS_PERFORMANCE_BASELINE)
     return {

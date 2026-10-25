@@ -37,6 +37,27 @@ validator discovers test identities from the AST; removed or renamed tests,
 unknown rules/profiles, contradictory declarations, and registry-validation
 tests used as behavioral evidence fail CI.
 
+Both evidence files use the versioned storage envelope owned by
+`quorune/rules/evidence_storage.py`. It groups only identical rule, profile,
+capability, and applicability metadata; each reference keeps an explicit ordinal,
+evidence class, and fully qualified test identity. Decoding restores every
+declaration in its original order before the existing schema, fingerprint, and
+trust checks. Flat historical documents remain readable. Malformed envelopes,
+duplicate or missing ordinals, and ambiguous groups fail closed.
+
+Use `read_evidence_document(path)` when reading either file. For declaration
+edits, update its expanded `declarations` list and serialize it with
+`evidence_document_text(value)`. Regenerate the packaged index through the
+ordinary evidence owner. Keep retained rows in place when appending evidence
+to avoid unrelated ordinal changes. The storage envelope does not change the expanded
+evidence schema, registry fingerprint, source fingerprint, or trust semantics.
+
+Storage expansion uses a two-entry process-local cache of immutable JSON text,
+keyed by the complete current file contents. Each read creates an independent
+expanded value, and every evidence validation still checks the current registry.
+Neither trust results nor game state are cached. Changed contents invalidate
+reuse even when file size and timestamps stay unchanged.
+
 Dependency fail-closed and implementation mutation statuses are independent.
 A trusted capability with dependencies requires a passed dependency test and
 must have killed implementation mutation evidence. `not_applicable` requires a

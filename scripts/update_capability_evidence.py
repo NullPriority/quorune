@@ -21,7 +21,9 @@ from quorune.rules.evidence import (
     validate_capability_evidence_index,
 )
 from quorune.util import stable_json
-from quorune.rules.evidence_storage import evidence_document_text, read_evidence_document, unpack_evidence_document
+from quorune.rules.evidence_storage import (
+    evidence_document_text, read_evidence_document, unpack_evidence_document,
+)
 
 
 REGISTRY_PATH = ROOT / "quorune" / "rules" / "capability-registry.json"

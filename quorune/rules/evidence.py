@@ -252,7 +252,7 @@ def load_capability_evidence_index(
     *,
     registry: Any,
 ) -> tuple[dict[str, Any], str]:
-    value = read_evidence_document(Path(path))
+    value = read_evidence_document(path)
     fingerprint = validate_capability_evidence_index(
         value, registry=registry
     )

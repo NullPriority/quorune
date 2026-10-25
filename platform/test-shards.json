@@ -682,6 +682,7 @@
       "test_compact_ci_dependencies",
       "test_continuous_effect_performance",
       "test_documentation_policy",
+      "test_evidence_storage",
       "test_generated_artifacts",
       "test_generated_finalization_receipt",
       "test_generated_owner_cache",
