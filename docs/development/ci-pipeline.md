@@ -336,8 +336,13 @@ plan, compiler-identity sentinel and canonical semantic-transition policy
 validation before any census. The canonical mechanic-contract loader validates
 the pinned effective date, source hash and rule references without opening the
 card database. Changed Python text readers require explicit encoding so Windows
-code pages cannot turn valid UTF-8 data into a late matrix failure. When their
-owners are affected, the phase checks exact target-corpus carrier contracts and mutation patch-target
+code pages cannot turn valid UTF-8 data into a late matrix failure. Gate processes
+pass the exact selected paths as a JSON standard-input payload, keeping the
+Windows command line bounded.
+Explicit empty input validates no files; malformed or ambiguous selection
+fails closed. Human-facing `--base` and repeated `--changed-file` entry points
+remain available. When their owners are affected, the phase checks exact
+target-corpus carrier contracts and mutation patch-target
 integrity, including both source-bound paid spell bodies and the combined
 cycle/discard public-action boundary, hybrid face-down probes and reviewed
 legacy text alternatives. Shared quantity grammar changes select only the exact adjacent

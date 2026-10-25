@@ -31,6 +31,7 @@ from scripts.validate_python_runtime import require_supported_python
 class QuickStep:
     name: str
     command: tuple[str, ...]
+    input_text: str | None = None
 
 
 def implicit_text_encoding_lines(source: str) -> tuple[int, ...]:
@@ -98,8 +99,8 @@ def build_plan(
     if phase == "pre-corpus":
         steps.extend(
             (
-                QuickStep("explicit-text-encoding", (python, "scripts/quick_gate.py", "--validate-text-io",
-                    *(argument for path in paths if path.endswith('.py') for argument in ('--changed-file', path)))),
+                QuickStep("explicit-text-encoding", (python, "scripts/quick_gate.py", "--validate-text-io", "--changed-files-stdin"),
+                    input_text=json.dumps([path for path in paths if path.endswith('.py')])),
                 QuickStep(
                     "mechanic-contract-source",
                     (python, "-c", "from scripts.update_card_unlock_frontier import _contracts; _contracts()"),
@@ -441,7 +442,10 @@ def _run(plan: dict) -> int:
     for step in plan["steps"]:
         step_started = time.monotonic()
         print(f"[{step.name}] {' '.join(step.command)}", flush=True)
-        result = subprocess.run(step.command, cwd=ROOT, env=environment)
+        run_options = {"cwd": ROOT, "env": environment}
+        if step.input_text is not None:
+            run_options.update(input=step.input_text,text=True,encoding='utf-8')
+        result = subprocess.run(step.command, **run_options)
         if result.returncode:
             print(
                 json.dumps(
@@ -476,7 +480,9 @@ def main() -> int:
         description="Run deterministic changed-file local validation"
     )
     parser.add_argument("--base", default="origin/main")
-    parser.add_argument("--changed-file", action="append", default=[])
+    selection=parser.add_mutually_exclusive_group()
+    selection.add_argument("--changed-file", action="append", default=[])
+    selection.add_argument("--changed-files-stdin", action="store_true")
     parser.add_argument(
         "--phase",
         choices=("normal", "pre-corpus"),
@@ -485,11 +491,14 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--validate-text-io", action="store_true")
     args = parser.parse_args()
-    paths = (
-        tuple(args.changed_file)
-        if args.changed_file
-        else changed_files(args.base, include_worktree=True)
-    )
+    if args.changed_files_stdin:
+        try:provided=json.load(sys.stdin)
+        except (ValueError,UnicodeError) as exc:parser.error(f'Invalid changed-file JSON: {exc}')
+        if not isinstance(provided,list) or any(type(path) is not str or not path for path in provided):
+            parser.error('Changed-file input must be a JSON array of nonempty paths')
+        paths=tuple(provided)
+    else:
+        paths = tuple(args.changed_file) if args.changed_file else changed_files(args.base, include_worktree=True)
     if args.validate_text_io:
         violations = []
         checked = 0
@@ -508,7 +517,7 @@ def main() -> int:
         base_ref=args.base,
         changed_symbols=(
             ()
-            if args.changed_file
+            if args.changed_file or args.changed_files_stdin
             else changed_python_symbols(
                 args.base,
                 include_worktree=True,
