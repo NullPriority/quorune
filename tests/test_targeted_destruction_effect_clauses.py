@@ -131,8 +131,8 @@ class TargetedDestructionTemplateTests(unittest.TestCase):
         for text in (
             "Destroy up to one target creature.",
             "You may destroy target creature.",
-            "Destroy target creature or Spacecraft.",
-            "Destroy target Spirit or enchantment.",
+            "Destroy target creature or Fictionalship.",
+            "Destroy target Spirit or enchantment with an unknown mark.",
             "Destroy all creatures.",
             "Sacrifice target creature.",
         ):
@@ -228,8 +228,8 @@ class TargetedDestructionCompilerTests(unittest.TestCase):
 
     def test_unsupported_destruction_variants_remain_material_residuals(self):
         for text in (
-            "Destroy target creature or Spacecraft.",
-            "Destroy target Spirit or enchantment.",
+            "Destroy target creature or Fictionalship.",
+            "Destroy target Spirit or enchantment with an unknown mark.",
             "Destroy target creature. A card destroyed this way can't be regenerated.",
         ):
             with self.subTest(text=text):

@@ -20,6 +20,8 @@ from ..target_numeric import (
     TargetNumericComparison,
 )
 from .creature_subtypes import canonical_creature_subtype
+from ..target_forms import TargetCharacteristicForm
+from .mixed_target_forms import canonicalize_mixed_direct_forms,mixed_permanent_target_fields
 
 
 CompiledDirectTarget = tuple[
@@ -303,7 +305,8 @@ def _simple_direct_type_fields(phrase: str) -> dict[str, Any] | None:
         and set(conjunction).issubset(_DIRECT_TYPE_ANY_VALUES)
     ):
         return {"types_all": conjunction}
-    return None
+    return mixed_permanent_target_fields(phrase,card_types=_DIRECT_TYPE_ANY_VALUES,
+        noncreature_subtypes=DIRECT_NONCREATURE_SUBTYPES)
 
 
 def _excluded_direct_type_fields(phrase: str) -> dict[str, Any] | None:
@@ -706,9 +709,12 @@ class DirectPermanentTargetSpec:
     commander: bool | None = None
     combat_state: str | None = None
     damage_history: TargetDamageHistorySpec | None = None
+    characteristic_forms_any: tuple[TargetCharacteristicForm, ...] = ()
 
     def __post_init__(self) -> None:
         _canonicalize_direct_target_spec(self)
+        canonicalize_mixed_direct_forms(self,card_types=_DIRECT_TYPE_ANY_VALUES,
+            noncreature_subtypes=DIRECT_NONCREATURE_SUBTYPES)
         _validate_direct_type_predicates(self)
         _validate_direct_subtype_predicates(self)
         _validate_direct_supertype_predicates(self)
@@ -724,7 +730,9 @@ class DirectPermanentTargetSpec:
     def characteristic_slug(self) -> str:
         """Return the canonical characteristic-only predicate identity."""
 
-        if self.types_none == ("land",) and not (
+        if self.characteristic_forms_any:
+            predicate='-or-'.join((form.types_all or form.subtypes_any)[0] for form in self.characteristic_forms_any)
+        elif self.types_none == ("land",) and not (
             self.types_any or self.types_all
         ):
             predicate = "nonland-permanent"
@@ -826,7 +834,8 @@ class DirectPermanentTargetSpec:
         """Whether this spec exceeds the historical single type/subtype grammar."""
 
         return bool(
-            self.types_all
+            self.characteristic_forms_any
+            or self.types_all
             or self.types_none
             or self.supertypes_any
             or self.supertypes_none
@@ -907,6 +916,8 @@ class DirectPermanentTargetSpec:
             schema["combat_state"] = self.combat_state
         if self.damage_history is not None:
             schema["damage_history"] = self.damage_history.to_dict()
+        if self.characteristic_forms_any:
+            schema['characteristic_forms_any']=[form.to_dict() for form in self.characteristic_forms_any]
         return schema
 
     @classmethod
@@ -920,6 +931,7 @@ class DirectPermanentTargetSpec:
             raise ValueError("Direct permanent target schema must be an object")
         schema = dict(value)
         allowed = {
+            "characteristic_forms_any",
             "zones",
             "categories",
             "count",
@@ -971,6 +983,8 @@ class DirectPermanentTargetSpec:
         except ObjectQueryError as exc:
             raise ValueError(str(exc)) from exc
         spec = cls(
+            characteristic_forms_any=tuple(TargetCharacteristicForm.from_mapping(form)
+                for form in schema.get('characteristic_forms_any',())),
             types_any=tuple(schema.get("types_any", ())),
             types_all=tuple(schema.get("types_all", ())),
             types_none=tuple(schema.get("types_none", ())),

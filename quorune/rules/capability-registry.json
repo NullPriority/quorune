@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 514,
+  "registry_version": 515,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -31434,7 +31434,7 @@
     },
     {
       "id": "target.permanent.characteristic_predicate",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "105.2",
         "115.1",
@@ -31457,7 +31457,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, present or absent keywords, power, toughness, token status, fixed mana-value bound, controller relation, source exclusion, and represented combat relation identically at offer, command-validation, and resolution time.",
+        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, present or absent keywords, power, toughness, token status, fixed mana-value bound, controller relation, source exclusion, and represented combat relation identically at offer, command-validation, and resolution time. Closed mixed type/subtype disjunctions reuse the existing characteristic-form alternatives, with common controller and source-exclusion scope.",
         "inputs": [
           "one public battlefield permanent",
           "canonical effective card types, subtypes, supertypes, colors, mana value, power, and toughness",
@@ -31466,7 +31466,8 @@
           "acting controller",
           "stable source identity",
           "one immutable typed direct-target descriptor",
-          "pinned artifact, enchantment and land subtypes without an invented creature requirement"
+          "pinned artifact, enchantment and land subtypes without an invented creature requirement",
+          "two through four flat unqualified known card-type/subtype leaves through TargetCharacteristicForm"
         ],
         "outputs": [
           "deterministic public legal-target set",
@@ -31501,7 +31502,10 @@
         "quorune.object_query.exact_numeric_characteristic",
         "quorune.target_characteristics.TargetCharacteristicSnapshot",
         "quorune.target_numeric.TargetNumericCharacteristicSpec",
-        "quorune.targets.TargetGroup"
+        "quorune.targets.TargetGroup",
+        "quorune.compiler.mixed_target_forms.mixed_permanent_target_fields",
+        "quorune.compiler.mixed_target_forms.canonicalize_mixed_direct_forms",
+        "quorune.target_forms.TargetCharacteristicForm"
       ],
       "positive_tests": [
         "test_closed_direct_target_grammar_compiles_typed_predicates",
@@ -31522,7 +31526,9 @@
         "test_qualified_standalone_targets_share_direct_target_contract",
         "test_qualified_target_characteristics_compile_across_contexts",
         "test_shared_characteristic_grammar_covers_the_bounded_shapes",
-        "test_shared_grammar_compiles_across_effect_owners_and_contexts"
+        "test_shared_grammar_compiles_across_effect_owners_and_contexts",
+        "test_mixed_domains_keep_card_types_and_subtypes_as_alternatives",
+        "test_shared_direct_effect_lowering_keeps_source_spans_and_target_authority"
       ],
       "negative_tests": [
         "test_compiler_conjoins_existing_colorless_and_excluded_type_fields",
@@ -31537,7 +31543,9 @@
         "test_original_spider_selected_equipment_departure_invalidates_trigger_target",
         "test_pinned_noncreature_subtype_targets_preserve_bare_domain",
         "test_scoped_dynamic_and_ability_presence_predicates_fail_closed",
-        "test_unsupported_and_malformed_direct_target_predicates_fail_closed"
+        "test_unsupported_and_malformed_direct_target_predicates_fail_closed",
+        "test_mixed_target_grammar_retains_unowned_and_malformed_boundaries",
+        "test_mixed_target_authority_withdrawals_are_specific_canonical_blocks"
       ],
       "interaction_tests": [
         "test_current_color_change_revalidates_the_original_target_without_mode_switch_or_refund",
@@ -31556,7 +31564,21 @@
         "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
         "test_qualified_target_revalidates_current_characteristics",
         "test_ruins_of_oran_rief_composes_tapped_entry_with_characteristic_target",
-        "test_trusted_qualified_activation_uses_real_action_path_and_replays"
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_paid_destruction_and_exile_originals_keep_each_branch_and_reject_plain_artifacts",
+        "test_embrace_oblivion_pays_actual_sacrifice_only_for_a_legal_union_target",
+        "test_roadside_uses_actual_target_discount_and_keeps_private_draw",
+        "test_actual_type_change_invalidates_both_branches_and_skips_roadside_draw",
+        "test_suit_up_animates_the_noncreature_vehicle_and_draws_privately",
+        "test_light_the_way_keeps_counter_untap_and_return_modes",
+        "test_actual_entry_grants_accept_noncreature_vehicles_and_keep_shared_scope",
+        "test_seven_tail_entry_and_actual_death_each_counter_the_same_vehicle_once",
+        "test_grafted_growth_keeps_aura_land_and_vehicle_trigger_references_distinct",
+        "test_scrap_compactor_keeps_its_two_target_domains_and_sacrificed_ability",
+        "test_actual_cycling_trigger_targets_opposing_vehicle_before_private_draw",
+        "test_pride_of_the_road_requires_actual_max_speed_and_expires_its_grant",
+        "test_fire_nation_engineer_uses_actual_attack_history_and_excludes_itself",
+        "test_perilous_snare_keeps_entry_exile_and_max_speed_vehicle_activation"
       ],
       "multiplayer_tests": [
         "test_current_color_change_revalidates_the_original_target_without_mode_switch_or_refund",
@@ -31566,7 +31588,10 @@
         "test_original_destroy_mode_uses_game_colors_and_excludes_all_lands",
         "test_original_exonerator_aura_target_sacrifices_source_and_replays",
         "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
-        "test_trusted_qualified_activation_uses_real_action_path_and_replays"
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_actual_entry_grants_accept_noncreature_vehicles_and_keep_shared_scope",
+        "test_seven_tail_entry_and_actual_death_each_counter_the_same_vehicle_once",
+        "test_fire_nation_engineer_uses_actual_attack_history_and_excludes_itself"
       ],
       "privacy_tests": [
         "test_current_color_change_revalidates_the_original_target_without_mode_switch_or_refund",
@@ -31575,7 +31600,11 @@
         "test_original_damage_mode_remains_available_without_colorless_nonland_target",
         "test_original_destroy_mode_uses_game_colors_and_excludes_all_lands",
         "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
-        "test_trusted_qualified_activation_uses_real_action_path_and_replays"
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_roadside_uses_actual_target_discount_and_keeps_private_draw",
+        "test_actual_type_change_invalidates_both_branches_and_skips_roadside_draw",
+        "test_suit_up_animates_the_noncreature_vehicle_and_draws_privately",
+        "test_actual_cycling_trigger_targets_opposing_vehicle_before_private_draw"
       ],
       "replay_tests": [
         "test_current_color_change_revalidates_the_original_target_without_mode_switch_or_refund",
@@ -31588,7 +31617,21 @@
         "test_original_flash_flood_mountain_target_preserves_modal_predicate_and_replay",
         "test_original_spider_selected_equipment_departure_invalidates_trigger_target",
         "test_qualified_target_effect_applies_and_replays_with_source_exclusion",
-        "test_trusted_qualified_activation_uses_real_action_path_and_replays"
+        "test_trusted_qualified_activation_uses_real_action_path_and_replays",
+        "test_paid_destruction_and_exile_originals_keep_each_branch_and_reject_plain_artifacts",
+        "test_embrace_oblivion_pays_actual_sacrifice_only_for_a_legal_union_target",
+        "test_roadside_uses_actual_target_discount_and_keeps_private_draw",
+        "test_actual_type_change_invalidates_both_branches_and_skips_roadside_draw",
+        "test_suit_up_animates_the_noncreature_vehicle_and_draws_privately",
+        "test_light_the_way_keeps_counter_untap_and_return_modes",
+        "test_actual_entry_grants_accept_noncreature_vehicles_and_keep_shared_scope",
+        "test_seven_tail_entry_and_actual_death_each_counter_the_same_vehicle_once",
+        "test_grafted_growth_keeps_aura_land_and_vehicle_trigger_references_distinct",
+        "test_scrap_compactor_keeps_its_two_target_domains_and_sacrificed_ability",
+        "test_actual_cycling_trigger_targets_opposing_vehicle_before_private_draw",
+        "test_pride_of_the_road_requires_actual_max_speed_and_expires_its_grant",
+        "test_fire_nation_engineer_uses_actual_attack_history_and_excludes_itself",
+        "test_perilous_snare_keeps_entry_exile_and_max_speed_vehicle_activation"
       ],
       "required_evidence": [
         "positive",
@@ -31599,9 +31642,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Compiler capability closure demotes direct fixed-counter target programs when canonical resolution-time target revalidation is unavailable.",
+      "dependency_fail_closed_rationale": "Compiler capability closure demotes direct fixed-counter target programs when canonical resolution-time target revalidation is unavailable. Canonically rebuilt verified withdrawal of either characteristic-target or target-revalidation authority blocks each original mixed-domain card.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove the shared typed target parser from direct-effect or temporary-characteristic consumers, remove fixed mana-value parsing, or alter current effective-characteristic, exact numeric, and color-cardinality matching; exact cross-owner compilation plus offer, command, and resolution assertions reject each survivor.",
+      "implementation_mutation_rationale": "Focused compiler and runtime mutations remove the shared typed target parser from direct-effect or temporary-characteristic consumers, remove fixed mana-value parsing, or alter current effective-characteristic, exact numeric, and color-cardinality matching; exact cross-owner compilation plus offer, command, and resolution assertions reject each survivor. A fresh accept-every-form matcher omission is killed by the independent mixed type/subtype matrix and nearest nonmatching artifact, land and creature controls.",
       "blockers": [],
       "status": "trusted"
     },

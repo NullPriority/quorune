@@ -8577,6 +8577,24 @@
         "test_counter_target_predicates",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "mixed-permanent-target-alternatives",
+      "patterns": [
+        "quorune/compiler/direct_target.py",
+        "quorune/compiler/mixed_target_forms.py",
+        "tests/test_mixed_permanent_targets.py",
+        "tests/fixtures/mixed-permanent-target-cards.json"
+      ],
+      "test_modules": [
+        "test_mixed_permanent_targets",
+        "test_fixed_direct_target_predicates",
+        "test_targeted_destruction_effect_clauses",
+        "test_targeted_exile_effect_clauses",
+        "test_fixed_public_zone_moves",
+        "test_counter_target_predicates",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

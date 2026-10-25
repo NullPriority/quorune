@@ -79,6 +79,16 @@ that all become illegal before resolution, where CR 608.2b stops the spell or
 ability. Nonempty batches retain their simultaneous owner and strict snapshots.
 
 `targets.py` owns the closed schema vocabulary and public-zone boundary.
+Direct permanent targets can combine unqualified card types and subtypes as
+flat alternatives, such as creature or Vehicle and Spirit or enchantment.
+`DirectPermanentTargetSpec` serializes these through the existing
+`TargetCharacteristicForm` and `TargetGroup.characteristic_forms_any` fields.
+One permanent satisfying several alternatives remains one target. Common
+controller and source-exclusion scope applies to every branch; unknown terms,
+nested forms and branch-local qualifiers remain residual. Offers, submitted
+commands and resolution use current effective characteristics. Losing one
+branch leaves a target legal if it still satisfies another; losing all branches
+makes it illegal under the ordinary revalidation owner.
 Fixed layer-7c P/T queries can select creatures without a represented current
 keyword. The shared public predicate retains controller and source-exclusion
 scope, and reads completed layer-6 grants and keyword counters. Within continuous

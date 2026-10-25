@@ -567,6 +567,13 @@ descriptor, including represented type, subtype, supertype, color, controller,
 combat-state, and source-exclusion predicates. Open target predicates, dynamic
 results, optional or multiple targets, and target-changing effects remain
 residual rather than falling back to a creature-only approximation.
+`compiler/mixed_target_forms.py` admits two through four flat, unqualified
+type/subtype alternatives through this descriptor. It reuses the existing
+target-form representation and characteristic matcher. The compiler keeps
+card types separate from subtype leaves and shares controller and source
+exclusion across the alternatives. Other zones, spell targets, branch-local
+qualifiers and independently unsupported sibling instructions retain their
+existing boundaries.
 The runtime consumes only the resulting typed node and never reparses those
 Oracle sentences.
 

@@ -446,6 +446,7 @@
       "test_madness_rules",
       "test_mana_abilities",
       "test_mayhem_rules",
+      "test_mixed_permanent_targets",
       "test_mixed_stack_counter_targets",
       "test_public_negative_keyword_queries",
       "test_qualified_zone_event_queries",

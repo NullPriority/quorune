@@ -1,0 +1,2984 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned mixed permanent target alternatives, independent unsupported siblings and canonical normal-registration controls. One explicitly generic, normally compiled vanilla Spacecraft isolates that subtype branch; no printed Spacecraft support is claimed.",
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Roadside Blowout",
+      "oracle_id": "03008c7d-c738-473d-a968-1922b2899d1a",
+      "oracle_text": "This spell costs {2} less to cast if it targets a permanent with mana value 1.\nReturn target creature or Vehicle an opponent controls to its owner's hand.\nDraw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "name": "Tales of Master Seshiro // Seshiro's Living Legacy",
+      "mana_cost": "{4}{G} // ",
+      "cmc": 5.0,
+      "type_line": "Enchantment — Saga // Enchantment Creature — Snake Warrior",
+      "oracle_text": "Tales of Master Seshiro: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Put a +1/+1 counter on target creature or Vehicle you control. It gains vigilance until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nSeshiro's Living Legacy: Vigilance, haste",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Vigilance",
+        "Transform",
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{4}{G}",
+          "name": "Tales of Master Seshiro",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI, II — Put a +1/+1 counter on target creature or Vehicle you control. It gains vigilance until end of turn.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Seshiro's Living Legacy",
+          "oracle_text": "Vigilance, haste",
+          "power": "5",
+          "toughness": "5",
+          "type_line": "Enchantment Creature — Snake Warrior"
+        }
+      ]
+    },
+    {
+      "oracle_id": "0fad5713-c09c-43d3-9cc0-10c65aead488",
+      "name": "Embrace Oblivion",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDestroy target creature or Spacecraft.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1139ee31-cb6e-4ae6-a08b-252c46b2db97",
+      "name": "Lotusguard Disciple",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Bird Cleric",
+      "oracle_text": "Flying\nWhen this creature enters, target creature or Vehicle gains lifelink and indestructible until end of turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "142409ce-1187-4554-bc07-6432c4d22dbc",
+      "name": "Okiba Salvage",
+      "mana_cost": "{4}{B}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Return target creature or Vehicle card from your graveyard to the battlefield. Then put two +1/+1 counters on that permanent if you control an artifact and an enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "15c6837c-775b-4b4a-a2f7-9fd79215fa05",
+      "name": "Gravkill",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Exile target creature or Spacecraft.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "15c994b9-901a-46d6-804b-24560a14a481",
+      "name": "Seedship Broodtender",
+      "mana_cost": "{B}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Insect Citizen",
+      "oracle_text": "When this creature enters, mill three cards. (Put the top three cards of your library into your graveyard.)\n{3}{B}{G}, Sacrifice this creature: Return target creature or Spacecraft card from your graveyard to the battlefield. Activate only as a sorcery.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "18ad0dd1-2d0e-46b4-8ab1-ece07180267f",
+      "name": "Imperial Recovery Unit",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Whenever this Vehicle attacks, return target creature or Vehicle card with mana value 2 or less from your graveyard to your hand.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Crew"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "19e60344-57a8-41e0-8eca-87dbedf5a81a",
+      "name": "Captain America's Motorcycle",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Vehicle",
+      "oracle_text": "Flash\nWhen this Vehicle enters, target creature or Vehicle gets +2/+0 until end of turn.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Crew",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1ad5766b-9ae3-437b-bd91-c4c988a8b095",
+      "name": "Agonasaur Rex",
+      "mana_cost": "{3}{G}{G}",
+      "cmc": 5.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "Trample\nCycling {2}{G} ({2}{G}, Discard this card: Draw a card.)\nWhen you cycle this card, put two +1/+1 counters on up to one target creature or Vehicle. It gains trample and indestructible until end of turn.",
+      "power": "8",
+      "toughness": "8",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Trample",
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1b759831-abe8-4996-a897-3c6d6d30a1c7",
+      "name": "Broodheart Engine",
+      "mana_cost": "{B}{G}",
+      "cmc": 2.0,
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of your upkeep, surveil 1.\n{2}{B}{G}, {T}, Sacrifice this artifact: Return target creature or Vehicle card from your graveyard to the battlefield. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Surveil"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1e0b9767-8e51-4021-a8fb-22259e2f5347",
+      "name": "Fang Guardian",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Creature — Ape Druid",
+      "oracle_text": "Flash\nWhen this creature enters, another target creature or Vehicle you control gets +2/+2 until end of turn.",
+      "power": "4",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "23102d8a-3a93-4e83-af5b-401c85ba9dbc",
+      "name": "Spikeshell Harrier",
+      "mana_cost": "{4}{U}",
+      "cmc": 5.0,
+      "type_line": "Artifact Creature — Robot Turtle",
+      "oracle_text": "When this creature enters, return target creature or Vehicle an opponent controls to its owner's hand. If that opponent's speed is greater than each other player's speed, reduce that opponent's speed by 1. This effect can't reduce their speed below 1.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "29bbbbfe-77cb-411f-9c1b-f7e4724685c6",
+      "name": "Suit Up",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Until end of turn, target creature or Vehicle becomes an artifact creature with base power and toughness 4/5.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2af236b0-6b30-4ddc-8735-864d2ffad68e",
+      "name": "Pride of the Road",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Zombie Cat Warrior",
+      "oracle_text": "Vigilance\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nMax speed — At the beginning of combat on your turn, target creature or Vehicle you control gains double strike until end of turn.",
+      "power": "2",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Max speed",
+        "Vigilance",
+        "Start your engines!"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2f87ebc6-68b0-4121-bfaf-b412b077d75b",
+      "name": "Urgent Exorcism",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target Spirit or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-09-30",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "301b8265-9e17-48c3-942d-b7243112b394",
+      "name": "Seven-Tail Mentor",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Fox Samurai",
+      "oracle_text": "When this creature enters or dies, put a +1/+1 counter on target creature or Vehicle you control.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3f2ab9ff-10b8-494a-be7a-2fce172f62a3",
+      "name": "Nakia, Wakandan Operative",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Warrior Hero",
+      "oracle_text": "Reach\nWhenever your commander enters, you become the monarch.\n{2}, {T}: Put two +1/+1 counters on target creature or Vehicle. Activate only as a sorcery.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "43abfce5-b1dd-4784-bb91-d57b2c28f6a6",
+      "name": "Roaring Earth",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature or Vehicle you control.\nChannel — {X}{G}{G}, Discard this card: Put X +1/+1 counters on target land you control. It becomes a 0/0 green Spirit creature with haste. It's still a land.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Channel",
+        "Landfall"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "46f46bdd-52b8-436f-9a39-f5360a84b2cd",
+      "name": "Opportunistic Dragon",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flying\nWhen this creature enters, choose target Human or artifact an opponent controls. For as long as this creature remains on the battlefield, gain control of that permanent, it loses all abilities, and it can't attack or block.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5ea295af-e117-49cc-836b-da16b5d5bbdf",
+      "name": "Nullify",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target creature or Aura spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "71982b17-1d9a-4f98-b8b5-d232e3a8cf1d",
+      "name": "Scrounge for Eternity",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nReturn target creature or Spacecraft card with mana value 5 or less from your graveyard to the battlefield. Then create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "71b81f3f-6092-4819-8529-e27bccfcf088",
+      "name": "Ragamuffin Raptor",
+      "mana_cost": "{4}{G}",
+      "cmc": 5.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "When this creature enters, return up to one target creature or Food card from your graveyard to your hand.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7f113875-a411-463b-8b4d-91d1dee95c2a",
+      "name": "Scrap Compactor",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact",
+      "oracle_text": "{3}, {T}, Sacrifice this artifact: It deals 3 damage to target creature.\n{6}, {T}, Sacrifice this artifact: Destroy target creature or Vehicle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "83917116-d2d8-4701-a79f-af17486706ae",
+      "name": "Light the Way",
+      "mana_cost": "{W}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Choose one —\n• Put a +1/+1 counter on target creature or Vehicle. Untap it.\n• Return target permanent you control to its owner's hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Ride's End",
+      "oracle_id": "89e209f3-c474-453f-9659-ccebfc88bc0f",
+      "oracle_text": "This spell costs {3} less to cast if it targets a tapped permanent.\nExile target creature or Vehicle.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "8abeaa77-d455-47e7-bf60-aefb94ab83fb",
+      "name": "Howler's Heavy",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Creature — Seal Pirate",
+      "oracle_text": "Cycling {1}{U} ({1}{U}, Discard this card: Draw a card.)\nWhen you cycle this card, target creature or Vehicle an opponent controls gets -3/-0 until end of turn.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8c8a3962-42a5-4070-8719-00d7483c7dbe",
+      "name": "Daring Demolition",
+      "mana_cost": "{2}{B}{B}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Destroy target creature or Vehicle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-01-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9a983666-376b-48a8-9f82-8d041d32ae93",
+      "name": "Fire Nation Engineer",
+      "mana_cost": "{2}{B}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Artificer",
+      "oracle_text": "Raid — At the beginning of your end step, if you attacked this turn, put a +1/+1 counter on another target creature or Vehicle you control.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Raid"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9e76d56a-67b6-4bd9-8f2d-3328d18a2880",
+      "name": "Fire Nation Salvagers",
+      "mana_cost": "{3}{B}{B}",
+      "cmc": 5.0,
+      "type_line": "Creature — Human Soldier",
+      "oracle_text": "Menace\nWhen this creature enters, put a +1/+1 counter on target creature or Vehicle you control.\nWhenever one or more creatures you control with counters on them deal combat damage to a player, put target creature or Vehicle card from that player's graveyard onto the battlefield under your control.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Menace"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "aaf46eaf-2e01-46ac-b79d-6b70739d11c2",
+      "name": "Back on Track",
+      "mana_cost": "{4}{B}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Return target creature or Vehicle card from your graveyard to the battlefield. Create a 1/1 colorless Pilot creature token with \"This token saddles Mounts and crews Vehicles as though its power were 2 greater.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c1b6795a-1ac6-4edb-bcee-4db1f1fbe8ea",
+      "name": "Spin Out",
+      "mana_cost": "{1}{B}{B}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Destroy target creature or Vehicle.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c4525b1c-5c3d-494e-b660-ba5a5a28f621",
+      "name": "Grafted Growth",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant land\nWhen this Aura enters, put a +1/+1 counter on target creature or Vehicle you control.\nEnchanted land has \"{T}: Add two mana of any one color.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ce55c0a9-3334-440e-ae1b-c04a9e1c3d87",
+      "name": "Stall Out",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Tap target creature or Vehicle, then put three stun counters on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cff7499a-44b0-4a2a-b96c-ed2cafb1a90d",
+      "name": "Perilous Snare",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nWhen this artifact enters, exile target nonland permanent an opponent controls until this artifact leaves the battlefield.\nMax speed — {T}: Put a +1/+1 counter on target creature or Vehicle you control. Activate only as a sorcery.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Max speed",
+        "Start your engines!"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d71d42e0-cd56-4f53-95ff-ecab7f8c6552",
+      "name": "Nahiri, the Unforgiving",
+      "mana_cost": "{1}{R}{R/W/P}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Planeswalker — Nahiri",
+      "oracle_text": "Compleated ({R/W/P} can be paid with {R}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Until your next turn, up to one target creature attacks a player each combat if able.\n+1: Discard a card, then draw a card.\n0: Exile target creature or Equipment card with mana value less than Nahiri's loyalty from your graveyard. Create a token that's a copy of it. That token gains haste. Exile it at the beginning of the next end step.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "5",
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Compleated"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-02-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d919d8e9-d1ba-42de-9884-12e38dca78ac",
+      "name": "Hellish Sideswipe",
+      "mana_cost": "{B}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDestroy target creature or Vehicle. If the sacrificed permanent was a Vehicle, draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d9c29e6e-5949-4599-bf74-b9539e753f76",
+      "name": "Bounce Off",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Return target creature or Vehicle to its owner's hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-02-14",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "name": "Kari Zev's Expertise",
+      "mana_cost": "{1}{R}{R}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Gain control of target creature or Vehicle until end of turn. Untap it. It gains haste until end of turn.\nYou may cast a spell with mana value 2 or less from your hand without paying its mana cost.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-01-20",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e41be9ad-3717-4f25-a8e0-c9947a2a0227",
+      "name": "Satsuki, the Living Lore",
+      "mana_cost": "{G}{W}",
+      "cmc": 2.0,
+      "type_line": "Legendary Creature — Human Druid",
+      "oracle_text": "{T}: Put a lore counter on each Saga you control. Activate only as a sorcery.\nWhen Satsuki dies, choose up to one —\n• Return target Saga or enchantment creature you control to its owner's hand.\n• Return target Saga card from your graveyard to your hand.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Sky Skiff",
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "oracle_text": "Flying\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2016-09-30",
+      "toughness": "3",
+      "type_line": "Artifact — Vehicle"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "5c9d814b-4257-47bc-a1df-c3480bc038ba",
+      "name": "Geist of the Moors",
+      "mana_cost": "{1}{W}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Spirit",
+      "oracle_text": "Flying",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-03-16",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5f5e0b10-c8cf-450c-bfd3-bcb0528ec330",
+      "name": "Pacifism",
+      "mana_cost": "{1}{W}",
+      "cmc": 2.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "7c3944fa-7c86-4979-85a9-86196aa94594",
+      "name": "Song of the Dryads",
+      "mana_cost": "{2}{G}",
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant permanent\nEnchanted permanent is a colorless Forest land.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Vedalken Orrery",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "oracle_text": "You may cast spells as though they had flash.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "name": "Murder",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "faces": [],
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "name": "Llanowar Elves",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+      "name": "Memnite",
+      "mana_cost": "{0}",
+      "type_line": "Artifact Creature — Construct",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Boomerang",
+      "oracle_id": "dc4a4996-108a-4aac-850f-2d9f76403446",
+      "oracle_text": "Return target permanent to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-09-07",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "fixture:mixed-target-spacecraft",
+      "name": "Generic Mixed Target Spacecraft",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Artifact — Spacecraft",
+      "oracle_text": "",
+      "power": null,
+      "toughness": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "03008c7d-c738-473d-a968-1922b2899d1a",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If there’s an {X} in a permanent’s mana cost, X is 0 when determining its mana value."
+    },
+    {
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each transforming double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored."
+    },
+    {
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The back face of a transforming double-faced card usually has a color indicator that defines its color."
+    },
+    {
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The mana value of a transforming double-faced card is the mana value of its front face, no matter which face is up."
+    },
+    {
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of Azusa's Many Journeys, the chapter III ability will cause it to be exiled and then remain in exile."
+    },
+    {
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Each face of a transforming double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a transforming double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored."
+    },
+    {
+      "oracle_id": "096fbb51-be73-4edc-a051-770a12c09005",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "A transforming double-faced card enters the battlefield with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up."
+    },
+    {
+      "oracle_id": "1ad5766b-9ae3-437b-bd91-c4c988a8b095",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Some cards with cycling have an ability that triggers when you cycle them, and some cards have an ability that triggers whenever you cycle any card or discard any card. These triggered abilities resolve before you draw from the cycling ability."
+    },
+    {
+      "oracle_id": "1ad5766b-9ae3-437b-bd91-c4c988a8b095",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Triggered abilities from cycling a card and the cycling ability itself aren’t spells. Effects that interact with spells (such as that of Cancel) won’t affect them."
+    },
+    {
+      "oracle_id": "1ad5766b-9ae3-437b-bd91-c4c988a8b095",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "You can cycle a card even if it has a triggered ability from cycling that won’t have a legal target. This is because the cycling ability and the triggered ability are separate. This also means that if either ability is countered (with Disallow, for example), the other ability will still resolve."
+    },
+    {
+      "oracle_id": "29bbbbfe-77cb-411f-9c1b-f7e4724685c6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Suit Up will overwrite any previous effects that set the creature or Vehicle's power and toughness to specific numbers. Effects that otherwise modify its power and toughness will still apply no matter when they took effect. The same is true for +1/+1 counters."
+    },
+    {
+      "oracle_id": "29bbbbfe-77cb-411f-9c1b-f7e4724685c6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If Suit Up causes a Vehicle to become an artifact creature, it doesn't count as “crewing” that Vehicle for any ability that would trigger off of a Vehicle becoming crewed."
+    },
+    {
+      "oracle_id": "2af236b0-6b30-4ddc-8735-864d2ffad68e",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If an effect needs to know what a player’s speed is and that player doesn’t have a speed, their speed is considered 0."
+    },
+    {
+      "oracle_id": "2af236b0-6b30-4ddc-8735-864d2ffad68e",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed."
+    },
+    {
+      "oracle_id": "2af236b0-6b30-4ddc-8735-864d2ffad68e",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "A player “has max speed” if their speed is 4."
+    },
+    {
+      "oracle_id": "2af236b0-6b30-4ddc-8735-864d2ffad68e",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Your speed doesn’t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn’t affect your speed."
+    },
+    {
+      "oracle_id": "2af236b0-6b30-4ddc-8735-864d2ffad68e",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "“Max speed — [ability]” means “As long as you have max speed, this object has [ability].” If the granted ability functions in a zone other than the battlefield, the max speed ability does too."
+    },
+    {
+      "oracle_id": "2af236b0-6b30-4ddc-8735-864d2ffad68e",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Start your engines! isn’t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls."
+    },
+    {
+      "oracle_id": "43abfce5-b1dd-4784-bb91-d57b2c28f6a6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Discarding the card is part of the cost to activate a channel ability."
+    },
+    {
+      "oracle_id": "43abfce5-b1dd-4784-bb91-d57b2c28f6a6",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a channel ability requires a target, you may not activate it without a target just to discard the card."
+    },
+    {
+      "oracle_id": "43abfce5-b1dd-4784-bb91-d57b2c28f6a6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A landfall ability doesn't trigger if a permanent already on the battlefield becomes a land."
+    },
+    {
+      "oracle_id": "43abfce5-b1dd-4784-bb91-d57b2c28f6a6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A landfall ability triggers whenever a land you control enters for any reason. It triggers whenever you play a land, as well as whenever a spell or ability puts a land onto the battlefield under your control."
+    },
+    {
+      "oracle_id": "43abfce5-b1dd-4784-bb91-d57b2c28f6a6",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Whenever a land you control enters, each landfall ability of the permanents you control will trigger. You can put them   on the stack in any order. The last ability you put on the stack will be the first one to resolve (As a result, you can have those abilities resolve in the order of your choosing.)."
+    },
+    {
+      "oracle_id": "46f46bdd-52b8-436f-9a39-f5360a84b2cd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If another player gains control of the permanent Opportunistic Dragon has kidnapped, that permanent doesn't regain its abilities and still can't attack or block."
+    },
+    {
+      "oracle_id": "46f46bdd-52b8-436f-9a39-f5360a84b2cd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Opportunistic Dragon's effect doesn't expire if another player gains control of it or if it loses all abilities. The effect only expires once it's no longer on the battlefield."
+    },
+    {
+      "oracle_id": "46f46bdd-52b8-436f-9a39-f5360a84b2cd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If the stolen permanent normally has any abilities that would trigger when Opportunistic Dragon dies, those abilities won't trigger."
+    },
+    {
+      "oracle_id": "46f46bdd-52b8-436f-9a39-f5360a84b2cd",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If Opportunistic Dragon leaves the battlefield before its triggered ability resolves, your opponent keeps control of their Human or artifact, it doesn't lose any abilities, and it can still attack or block as normal. You don't gain control of it at all."
+    },
+    {
+      "oracle_id": "71982b17-1d9a-4f98-b8b5-d232e3a8cf1d",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If a card in your graveyard has {X} in its mana cost, X is 0 for the purpose of determining its mana value."
+    },
+    {
+      "oracle_id": "71b81f3f-6092-4819-8529-e27bccfcf088",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Some spells and abilities that create Food tokens may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't create any Food tokens."
+    },
+    {
+      "oracle_id": "71b81f3f-6092-4819-8529-e27bccfcf088",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Food is an artifact type. Even though it appears on some creatures, it's never a creature type."
+    },
+    {
+      "oracle_id": "71b81f3f-6092-4819-8529-e27bccfcf088",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "If an effect refers to a Food, it means any Food artifact, not just a Food artifact token. For example, you can sacrifice Pizza Face (a Legendary Artifact Creature — Food Mutant) to activate Maraleaf Rider's ability (an ability with \"Sacrifice a Food\" in its cost). You can't sacrifice a Food to pay multiple costs. For example, you can't sacrifice a Food token to activate its own ability and also to activate Maraleaf Rider's ability."
+    },
+    {
+      "oracle_id": "71b81f3f-6092-4819-8529-e27bccfcf088",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "Whatever you do, don't eat the cards. (Also, don't make the pizzas pictured on the cards. You don't have the digestive system of a Ninja Turtle.)"
+    },
+    {
+      "oracle_id": "9a983666-376b-48a8-9f82-8d041d32ae93",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Raid abilities evaluate the entire turn to see if you attacked with a creature. That creature doesn't have to still be on the battlefield. Similarly, the player, planeswalker, or battle it attacked doesn't have to still be in the game or on the battlefield."
+    },
+    {
+      "oracle_id": "9a983666-376b-48a8-9f82-8d041d32ae93",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Raid abilities care only that you attacked with a creature. It doesn't matter how many creatures you attacked with, or which opponent, planeswalker, or battle those creatures attacked."
+    },
+    {
+      "oracle_id": "9e76d56a-67b6-4bd9-8f2d-3328d18a2880",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "The last ability will trigger once for each player dealt damage by creatures you control. If you deal damage to two opponents, you will be able to target a creature or Vehicle card from each of their graveyards."
+    },
+    {
+      "oracle_id": "cff7499a-44b0-4a2a-b96c-ed2cafb1a90d",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Each player tracks their speed (or lack thereof) separately. Increasing your speed has no effect on whether another player has speed."
+    },
+    {
+      "oracle_id": "cff7499a-44b0-4a2a-b96c-ed2cafb1a90d",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "A player “has max speed” if their speed is 4."
+    },
+    {
+      "oracle_id": "cff7499a-44b0-4a2a-b96c-ed2cafb1a90d",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "If an effect needs to know what a player’s speed is and that player doesn’t have a speed, their speed is considered 0."
+    },
+    {
+      "oracle_id": "cff7499a-44b0-4a2a-b96c-ed2cafb1a90d",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Your speed doesn’t change until a spell or ability says so, such as the inherent triggered ability that cares about opponents losing life during your turn. Notably, losing control of permanents with start your engines! doesn’t affect your speed."
+    },
+    {
+      "oracle_id": "cff7499a-44b0-4a2a-b96c-ed2cafb1a90d",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "“Max speed — [ability]” means “As long as you have max speed, this object has [ability].” If the granted ability functions in a zone other than the battlefield, the max speed ability does too."
+    },
+    {
+      "oracle_id": "cff7499a-44b0-4a2a-b96c-ed2cafb1a90d",
+      "published_at": "2025-02-07",
+      "source": "wotc",
+      "comment": "Start your engines! isn’t a triggered ability. Increasing your speed to 1 is something that happens as a state-based action as soon as you control a permanent with the ability. Notably, this includes gaining control of a permanent with the ability that another player controls."
+    },
+    {
+      "oracle_id": "d71d42e0-cd56-4f53-95ff-ecab7f8c6552",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "The compleated ability looks only at whether a player chose to pay 2 life for a Phyrexian mana symbol as they were casting the spell. If a player paid life for some other reason while casting the spell, that will not reduce the number of loyalty counters the planeswalker enters the battlefield with."
+    },
+    {
+      "oracle_id": "d71d42e0-cd56-4f53-95ff-ecab7f8c6552",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "The last loyalty ability will check Nahiri's loyalty as the ability tries to resolve to see if the target is still legal. If it's not, the ability won't resolve and none of its effects will happen. The card won't be exiled and no token will be created."
+    },
+    {
+      "oracle_id": "d71d42e0-cd56-4f53-95ff-ecab7f8c6552",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "A hybrid Phyrexian mana symbol contributes 1 toward the mana value of a card, even if life is paid for it. Specifically, Nahiri's mana value is always 4."
+    },
+    {
+      "oracle_id": "d71d42e0-cd56-4f53-95ff-ecab7f8c6552",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "Other replacement effects that would change the number of loyalty counters Nahiri enters with will apply as normal."
+    },
+    {
+      "oracle_id": "d71d42e0-cd56-4f53-95ff-ecab7f8c6552",
+      "published_at": "2023-02-04",
+      "source": "wotc",
+      "comment": "If the creature targeted by the first loyalty ability can't attack for any reason (such as being tapped), then it doesn't attack. If there's a cost associated with having it attack, its controller isn't forced to pay that cost. If they don't, it doesn't have to attack in that case either."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "Kari Zev's Expertise can target any creature or Vehicle, even one that you already control or that is already untapped."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "If the Expertise spell you cast has any targets, and those targets become illegal before the spell resolves, the spell doesn't resolve and none of its effects happen. You won't get to cast a free spell."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "Effects that allow you to \"cast\" a card don't allow you to play a land card."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "While you're casting your free spell, the Expertise spell is still on the stack. It will be put into its owner's graveyard after the free spell is cast. The free spell can't target the Expertise card in your graveyard. It can target the Expertise spell on the stack, but the Expertise spell will become an illegal target before the free spell resolves."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "If the card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs, such as emerge costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Cathartic Reunion, you must pay those to cast the card."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "Any triggered abilities that trigger while performing the Expertise spell's first effect won't be put onto the stack until after you're done casting your free spell. They're put onto the stack at the same time as any abilities that triggered while casting that spell regardless of the order in which those abilities triggered."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-02-09",
+      "source": "wotc",
+      "comment": "A card's mana value is determined solely by the mana symbols printed in its upper right corner. The mana value is the total amount of mana in that cost, regardless of color. For example, a card with mana cost {1}{U}{U} has mana value 3. Ignore any alternative costs, additional costs, cost increases, or cost reductions that could apply to it. A card with no mana cost has a mana value of 0."
+    },
+    {
+      "oracle_id": "e0de0121-6185-45c5-9d88-a415b07347e0",
+      "published_at": "2017-04-18",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If an expertise spell allows you to cast a split card, you may cast either half or, if that split card has fuse, both halves."
+    },
+    {
+      "oracle_id": "e41be9ad-3717-4f25-a8e0-c9947a2a0227",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Putting a lore counter on a Saga will usually cause the next chapter ability to trigger. If it already has a number of lore counters on it equal to its final chapter number however, no abilities trigger. In particular, this doesn't cause the final chapter ability to trigger again."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "You may tap more creatures than necessary to activate a crew ability."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger."
+    },
+    {
+      "oracle_id": "f2c43b85-8c42-4b23-84c2-bec8d6230039",
+      "published_at": "2017-09-29",
+      "source": "wotc",
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature."
+    },
+    {
+      "oracle_id": "7c3944fa-7c86-4979-85a9-86196aa94594",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "If the permanent was an Aura or an Equipment, it becomes unattached from whatever it was attached to."
+    },
+    {
+      "oracle_id": "7c3944fa-7c86-4979-85a9-86196aa94594",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "The enchanted permanent loses any card types, subtypes, and colors it previously had. It keeps any supertypes it had and its name remains unchanged. It gains “{T}: Add {G}” and loses all other abilities from its rules text. It will still have any abilities it gained from other effects."
+    },
+    {
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "The controller of Vedalken Orrery can cast nonland artifact, creature, enchantment, and sorcery cards any time they could cast an instant. This includes on other players' turns and during the upkeep step, draw step, combat phase, and end step."
+    },
+    {
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2010-06-15",
+      "source": "wotc",
+      "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\"."
+    }
+  ]
+}

@@ -20017,6 +20017,201 @@
       ],
       "interaction_order": 2,
       "assertion": "A second actual Rust removes the original ability target, so the Adventure does not resolve or gain exile permission; the original damage is also countered."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_embrace_oblivion_pays_actual_sacrifice_only_for_a_legal_union_target",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.target.permanent.characteristic_predicate"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "target.permanent.characteristic_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Embrace Oblivion pays its artifact sacrifice only with a legal creature-or-Spacecraft target; the invalid target rolls back before cost payment."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_roadside_uses_actual_target_discount_and_keeps_private_draw",
+      "piece_ids": [
+        "capability.casting.cost.self_target_generic_reduction",
+        "capability.target.permanent.characteristic_predicate"
+      ],
+      "capability_ids": [
+        "casting.cost.self_target_generic_reduction",
+        "target.permanent.characteristic_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Roadside Blowout pays its normal cost for an uncrewed Vehicle and its reduced cost for a one-mana creature, rejecting underpayment and retaining the private draw."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_suit_up_animates_the_noncreature_vehicle_and_draws_privately",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.target.permanent.characteristic_predicate"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "target.permanent.characteristic_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Suit Up animates a noncreature Vehicle while preserving its subtype, setting4/5 and drawing privately through pending load/replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_seven_tail_entry_and_actual_death_each_counter_the_same_vehicle_once",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Seven-Tail Mentor enters and later dies to actual Murder; each distinct event targets the same noncreature Vehicle once."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_actual_cycling_trigger_targets_opposing_vehicle_before_private_draw",
+      "piece_ids": [
+        "capability.activation.cycling.hand",
+        "capability.target.permanent.characteristic_predicate"
+      ],
+      "capability_ids": [
+        "activation.cycling.hand",
+        "target.permanent.characteristic_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Howler cycling pays and discards before its targeted opposing-Vehicle reduction and private draw resolve, preserving separate frames and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_pride_of_the_road_requires_actual_max_speed_and_expires_its_grant",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.variant.speed.player"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "variant.speed.player"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Shock increases speed from3to4; only then does Pride create its beginning-combat Vehicle target grant, which expires at cleanup."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_fire_nation_engineer_uses_actual_attack_history_and_excludes_itself",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.trigger.condition.fixed_public_state"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "trigger.condition.fixed_public_state"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual Memnite attack enables the Engineer end-step target; no attack creates no target, and the source remains excluded."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_scrap_compactor_keeps_its_two_target_domains_and_sacrificed_ability",
+      "piece_ids": [
+        "capability.activation.source_zone_change.fixed",
+        "capability.target.permanent.characteristic_predicate"
+      ],
+      "capability_ids": [
+        "activation.source_zone_change.fixed",
+        "target.permanent.characteristic_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Scrap Compactor keeps its creature-damage and creature-or-Vehicle destruction domains separate, sacrifices as a cost, and destroys through the departed source."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_grafted_growth_keeps_aura_land_and_vehicle_trigger_references_distinct",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.target.permanent.characteristic_predicate"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "target.permanent.characteristic_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Grafted Growth attaches to the selected land while its independent entry trigger puts a counter on the selected Vehicle, preserving both references."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_light_the_way_keeps_counter_untap_and_return_modes",
+      "piece_ids": [
+        "capability.choice.modal.fixed_one",
+        "capability.target.permanent.characteristic_predicate"
+      ],
+      "capability_ids": [
+        "choice.modal.fixed_one",
+        "target.permanent.characteristic_predicate"
+      ],
+      "interaction_order": 2,
+      "assertion": "Both actual Light the Way modes resolve through their own targets: a Vehicle counter and untap, or its owner-hand return."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_actual_type_change_invalidates_both_branches_and_skips_roadside_draw",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.target.revalidate_resolution"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "target.revalidate_resolution"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Song of the Dryads removes both mixed branches of Roadside target eligibility, so neither bounce nor its private draw resolves."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_perilous_snare_keeps_entry_exile_and_max_speed_vehicle_activation",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.zone.exile_until_source_departure.fixed"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "zone.exile_until_source_departure.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Perilous Snare exiles an opposing artifact, reaches max speed through actual Shock, and activates its own-Vehicle counter ability. Actual opposing Boomerang removes Snare while that ability is pending: the original exiled artifact returns to its owner, speed remains4, and the independent activated counter still resolves on the original Vehicle. Wrong-domain/principal rollback, pending load and pre-action replay pass."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_permanent_targets.MixedPermanentTargetRuntimeTests.test_perilous_snare_keeps_entry_exile_and_max_speed_vehicle_activation",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Perilous Snare exiles an opposing artifact, reaches max speed through actual Shock, and activates its own-Vehicle counter ability. Actual opposing Boomerang removes Snare while that ability is pending: the original exiled artifact returns to its owner, speed remains4, and the independent activated counter still resolves on the original Vehicle. Wrong-domain/principal rollback, pending load and pre-action replay pass."
     }
   ]
 }
