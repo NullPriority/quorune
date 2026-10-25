@@ -96,6 +96,11 @@ compose tapped creature state with a closed subtype disjunction and revalidate
 both restrictions on resolution. Literal source keyword requirements retain
 their ordinary choice-time validation and damage-time property recheck.
 
+Fixed-amount static prevention shares the
+[current source-ability contract](damage.md) of other static damage components.
+It remains a separate fixed reduction for each applicable event and does not
+create or consume a finite shield.
+
 Preparation and commit are separated. A continuation fingerprints the damage
 event, available amount, source snapshot, modifier set, chooser, and prior
 journal. If any input drifts before resume, validation fails without partial

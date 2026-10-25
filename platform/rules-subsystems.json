@@ -22,18 +22,43 @@
       "title": "Core game, players, setup, and endings",
       "order": 10,
       "depends_on": [],
-      "section_ids": ["100", "101", "102", "103", "104"],
-      "compiler_impact": ["none"]
+      "section_ids": [
+        "100",
+        "101",
+        "102",
+        "103",
+        "104"
+      ],
+      "compiler_impact": [
+        "none"
+      ]
     },
     {
       "id": "characteristics",
       "title": "Object and card characteristics",
       "order": 20,
-      "depends_on": ["core-game"],
+      "depends_on": [
+        "core-game"
+      ],
       "section_ids": [
-        "105", "107", "108", "109", "200", "201", "202", "203",
-        "204", "205", "206", "207", "208", "209", "210", "211",
-        "212", "213"
+        "105",
+        "107",
+        "108",
+        "109",
+        "200",
+        "201",
+        "202",
+        "203",
+        "204",
+        "205",
+        "206",
+        "207",
+        "208",
+        "209",
+        "210",
+        "211",
+        "212",
+        "213"
       ],
       "compiler_impact": [
         "oracle_normalization",
@@ -45,8 +70,15 @@
       "id": "objects-permanents-tokens",
       "title": "Objects, permanents, tokens, and emblems",
       "order": 30,
-      "depends_on": ["core-game", "characteristics"],
-      "section_ids": ["110", "111", "114"],
+      "depends_on": [
+        "core-game",
+        "characteristics"
+      ],
+      "section_ids": [
+        "110",
+        "111",
+        "114"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -62,7 +94,15 @@
         "characteristics",
         "objects-permanents-tokens"
       ],
-      "section_ids": ["106", "112", "113", "115", "116", "117", "118"],
+      "section_ids": [
+        "106",
+        "112",
+        "113",
+        "115",
+        "116",
+        "117",
+        "118"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_costs",
@@ -74,10 +114,27 @@
       "id": "card-types",
       "title": "Card and nontraditional card types",
       "order": 50,
-      "depends_on": ["characteristics", "objects-permanents-tokens"],
+      "depends_on": [
+        "characteristics",
+        "objects-permanents-tokens"
+      ],
       "section_ids": [
-        "300", "301", "302", "303", "304", "305", "306", "307",
-        "308", "309", "310", "311", "312", "313", "314", "315"
+        "300",
+        "301",
+        "302",
+        "303",
+        "304",
+        "305",
+        "306",
+        "307",
+        "308",
+        "309",
+        "310",
+        "311",
+        "312",
+        "313",
+        "314",
+        "315"
       ],
       "compiler_impact": [
         "oracle_normalization",
@@ -89,8 +146,21 @@
       "id": "zones",
       "title": "Zones and zone topology",
       "order": 60,
-      "depends_on": ["objects-permanents-tokens", "card-types"],
-      "section_ids": ["400", "401", "402", "403", "404", "405", "406", "407", "408"],
+      "depends_on": [
+        "objects-permanents-tokens",
+        "card-types"
+      ],
+      "section_ids": [
+        "400",
+        "401",
+        "402",
+        "403",
+        "404",
+        "405",
+        "406",
+        "407",
+        "408"
+      ],
       "compiler_impact": [
         "card_program_zone_permissions",
         "mechanic_contracts"
@@ -100,8 +170,16 @@
       "id": "resources",
       "title": "Life, drawing, counters, and stickers",
       "order": 70,
-      "depends_on": ["mana-costs-priority", "zones"],
-      "section_ids": ["119", "121", "122", "123"],
+      "depends_on": [
+        "mana-costs-priority",
+        "zones"
+      ],
+      "section_ids": [
+        "119",
+        "121",
+        "122",
+        "123"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -117,7 +195,9 @@
         "objects-permanents-tokens",
         "resources"
       ],
-      "section_ids": ["120"],
+      "section_ids": [
+        "120"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -128,19 +208,44 @@
       "id": "turn-structure",
       "title": "Turn, phases, and noncombat steps",
       "order": 90,
-      "depends_on": ["mana-costs-priority", "zones", "resources"],
-      "section_ids": [
-        "500", "501", "502", "503", "504", "505", "511", "512",
-        "513", "514"
+      "depends_on": [
+        "mana-costs-priority",
+        "zones",
+        "resources"
       ],
-      "compiler_impact": ["runtime_contracts", "mechanic_contracts"]
+      "section_ids": [
+        "500",
+        "501",
+        "502",
+        "503",
+        "504",
+        "505",
+        "511",
+        "512",
+        "513",
+        "514"
+      ],
+      "compiler_impact": [
+        "runtime_contracts",
+        "mechanic_contracts"
+      ]
     },
     {
       "id": "casting-activation",
       "title": "Casting, activation, mana abilities, and loyalty abilities",
       "order": 100,
-      "depends_on": ["mana-costs-priority", "zones", "turn-structure"],
-      "section_ids": ["600", "601", "602", "605", "606"],
+      "depends_on": [
+        "mana-costs-priority",
+        "zones",
+        "turn-structure"
+      ],
+      "section_ids": [
+        "600",
+        "601",
+        "602",
+        "605",
+        "606"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_costs",
@@ -157,7 +262,11 @@
         "turn-structure",
         "casting-activation"
       ],
-      "section_ids": ["603", "604", "607"],
+      "section_ids": [
+        "603",
+        "604",
+        "607"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "event_binding",
@@ -174,7 +283,11 @@
         "casting-activation",
         "triggered-static-linked"
       ],
-      "section_ids": ["608", "609", "610"],
+      "section_ids": [
+        "608",
+        "609",
+        "610"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -191,7 +304,11 @@
         "triggered-static-linked",
         "resolution-effects"
       ],
-      "section_ids": ["611", "612", "613"],
+      "section_ids": [
+        "611",
+        "612",
+        "613"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -208,7 +325,11 @@
         "resolution-effects",
         "continuous-effects"
       ],
-      "section_ids": ["614", "615", "616"],
+      "section_ids": [
+        "614",
+        "615",
+        "616"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -225,8 +346,17 @@
         "turn-structure",
         "continuous-effects"
       ],
-      "section_ids": ["506", "507", "508", "509", "510"],
-      "compiler_impact": ["runtime_contracts", "mechanic_contracts"]
+      "section_ids": [
+        "506",
+        "507",
+        "508",
+        "509",
+        "510"
+      ],
+      "compiler_impact": [
+        "runtime_contracts",
+        "mechanic_contracts"
+      ]
     },
     {
       "id": "game-actions-state",
@@ -240,8 +370,19 @@
         "replacement-prevention"
       ],
       "section_ids": [
-        "700", "701", "703", "704", "705", "706", "707", "723",
-        "724", "727", "729", "732", "733"
+        "700",
+        "701",
+        "703",
+        "704",
+        "705",
+        "706",
+        "707",
+        "723",
+        "724",
+        "727",
+        "729",
+        "732",
+        "733"
       ],
       "compiler_impact": [
         "oracle_parser",
@@ -260,7 +401,9 @@
         "combat",
         "game-actions-state"
       ],
-      "section_ids": ["702"],
+      "section_ids": [
+        "702"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -280,8 +423,22 @@
         "game-actions-state"
       ],
       "section_ids": [
-        "708", "709", "710", "711", "712", "713", "714", "715",
-        "716", "717", "718", "719", "720", "721", "722", "730",
+        "708",
+        "709",
+        "710",
+        "711",
+        "712",
+        "713",
+        "714",
+        "715",
+        "716",
+        "717",
+        "718",
+        "719",
+        "720",
+        "721",
+        "722",
+        "730",
         "731"
       ],
       "compiler_impact": [
@@ -296,8 +453,16 @@
       "id": "designations-variants",
       "title": "Monarch, initiative, and special designations",
       "order": 190,
-      "depends_on": ["turn-structure", "combat", "triggered-static-linked"],
-      "section_ids": ["725", "726", "728"],
+      "depends_on": [
+        "turn-structure",
+        "combat",
+        "triggered-static-linked"
+      ],
+      "section_ids": [
+        "725",
+        "726",
+        "728"
+      ],
       "compiler_impact": [
         "oracle_parser",
         "card_program_lowering",
@@ -308,12 +473,29 @@
       "id": "multiplayer",
       "title": "Multiplayer options and team variants",
       "order": 200,
-      "depends_on": ["core-game", "turn-structure", "combat"],
-      "section_ids": [
-        "800", "801", "802", "803", "804", "805", "806", "807",
-        "808", "809", "810", "811"
+      "depends_on": [
+        "core-game",
+        "turn-structure",
+        "combat"
       ],
-      "compiler_impact": ["runtime_contracts", "mechanic_contracts"]
+      "section_ids": [
+        "800",
+        "801",
+        "802",
+        "803",
+        "804",
+        "805",
+        "806",
+        "807",
+        "808",
+        "809",
+        "810",
+        "811"
+      ],
+      "compiler_impact": [
+        "runtime_contracts",
+        "mechanic_contracts"
+      ]
     },
     {
       "id": "formats",
@@ -326,7 +508,14 @@
         "designations-variants",
         "multiplayer"
       ],
-      "section_ids": ["900", "901", "902", "903", "904", "905"],
+      "section_ids": [
+        "900",
+        "901",
+        "902",
+        "903",
+        "904",
+        "905"
+      ],
       "compiler_impact": [
         "format_contracts",
         "card_program_zone_permissions",
@@ -7298,7 +7487,6 @@
       "measurement_id": "measurement:batched-reusable-card-closure-v534",
       "non_harvest_reason": null
     },
-
     "forecast_corrections": [
       {
         "transition_id": "oracle-ir-v134-fixed-spell-cast-characteristic-triggers",
@@ -7349,238 +7537,306 @@
     "harvest_provenance": [
       {
         "bundle_id": "bundle:typed-combat-prevention",
-        "candidate_ids": ["compiler:typed-combat-prevention"],
+        "candidate_ids": [
+          "compiler:typed-combat-prevention"
+        ],
         "expected_complete_card_gain": 90,
         "base_commit": "57e84224ef94e7d9a295115336a69bafaf099c03",
         "head_commit": "df595f203df287a3fe9afd5bb60292aa4d720a7c"
       },
       {
         "bundle_id": "bundle:ordinary-cascade",
-        "candidate_ids": ["compiler:ordinary-cascade"],
+        "candidate_ids": [
+          "compiler:ordinary-cascade"
+        ],
         "expected_complete_card_gain": 19,
         "base_commit": "026690af2c435ab09fb25c81d21a21e9248a9f7c",
         "head_commit": "05656532ff0a42f31b5353c0fa5b1e04930b247b"
       },
       {
         "bundle_id": "bundle:fixed-mill-instructions",
-        "candidate_ids": ["compiler:fixed-mill-instructions"],
+        "candidate_ids": [
+          "compiler:fixed-mill-instructions"
+        ],
         "expected_complete_card_gain": 44,
         "base_commit": "05656532ff0a42f31b5353c0fa5b1e04930b247b",
         "head_commit": "748aa4861d864245a0295c1b5197bf79c29e3a76"
       },
       {
         "bundle_id": "bundle:fixed-surveil-instructions",
-        "candidate_ids": ["compiler:fixed-surveil-instructions"],
+        "candidate_ids": [
+          "compiler:fixed-surveil-instructions"
+        ],
         "expected_complete_card_gain": 62,
         "base_commit": "748aa4861d864245a0295c1b5197bf79c29e3a76",
         "head_commit": "f914524e092e0d1524c67876ecce841cdd322559"
       },
       {
         "bundle_id": "bundle:fixed-entry-state-conditions",
-        "candidate_ids": ["compiler:fixed-entry-state-conditions"],
+        "candidate_ids": [
+          "compiler:fixed-entry-state-conditions"
+        ],
         "expected_complete_card_gain": 46,
         "base_commit": "f914524e092e0d1524c67876ecce841cdd322559",
         "head_commit": "4e3264d2d30a0f2200737c3dba1ab1fb4fcbe272"
       },
       {
         "bundle_id": "bundle:ordinary-fixed-mana-bestow",
-        "candidate_ids": ["compiler:ordinary-fixed-mana-bestow"],
+        "candidate_ids": [
+          "compiler:ordinary-fixed-mana-bestow"
+        ],
         "expected_complete_card_gain": 17,
         "base_commit": "2a067369b9826b3a274be566b887ac45bf0e0b30",
         "head_commit": "c1eebf47cf285c6b1ff5fd74f2dafcecd0b2d33d"
       },
       {
         "bundle_id": "bundle:qualified-object-enchant",
-        "candidate_ids": ["compiler:qualified-object-enchant"],
+        "candidate_ids": [
+          "compiler:qualified-object-enchant"
+        ],
         "expected_complete_card_gain": 7,
         "base_commit": "d43bdbe21af247fe28a41c125669e6c2cd837dd5",
         "head_commit": "114221155c14bc00f07e0076762219ddd60d046e"
       },
       {
         "bundle_id": "bundle:fixed-next-turn-upkeep-draw",
-        "candidate_ids": ["compiler:fixed-next-turn-upkeep-draw"],
+        "candidate_ids": [
+          "compiler:fixed-next-turn-upkeep-draw"
+        ],
         "expected_complete_card_gain": 18,
         "base_commit": "b17ad66f4c76b33e293a78989d8d4d7d57517106",
         "head_commit": "a1c2312ab0ca51f489cd558d1659f65727b56466"
       },
       {
         "bundle_id": "bundle:ordinary-storm",
-        "candidate_ids": ["compiler:ordinary-storm"],
+        "candidate_ids": [
+          "compiler:ordinary-storm"
+        ],
         "expected_complete_card_gain": 13,
         "base_commit": "a1c2312ab0ca51f489cd558d1659f65727b56466",
         "head_commit": "2ce611e9210683e2eefeaa26153f221ae1caf2b1"
       },
       {
         "bundle_id": "bundle:fixed-affected-player-sacrifice",
-        "candidate_ids": ["compiler:fixed-affected-player-sacrifice"],
+        "candidate_ids": [
+          "compiler:fixed-affected-player-sacrifice"
+        ],
         "expected_complete_card_gain": 20,
         "base_commit": "1bbf32499660c170e052ee8662c046da217cbd11",
         "head_commit": "336d2b63875272b6a8356b5df616199bbafcdcdc"
       },
       {
         "bundle_id": "bundle:fixed-mana-value-direct-targets",
-        "candidate_ids": ["compiler:fixed-mana-value-direct-targets"],
+        "candidate_ids": [
+          "compiler:fixed-mana-value-direct-targets"
+        ],
         "expected_complete_card_gain": 14,
         "base_commit": "336d2b63875272b6a8356b5df616199bbafcdcdc",
         "head_commit": "f515c67d32929fff33ce45d0a896e88123978a94"
       },
       {
         "bundle_id": "bundle:fixed-affected-player-discards",
-        "candidate_ids": ["compiler:fixed-affected-player-discards"],
+        "candidate_ids": [
+          "compiler:fixed-affected-player-discards"
+        ],
         "expected_complete_card_gain": 51,
         "base_commit": "f515c67d32929fff33ce45d0a896e88123978a94",
         "head_commit": "9f8c28240ba573eb7c3a3531f28c80b61690bd17"
       },
       {
         "bundle_id": "bundle:fixed-flashback-costs",
-        "candidate_ids": ["compiler:fixed-flashback-costs"],
+        "candidate_ids": [
+          "compiler:fixed-flashback-costs"
+        ],
         "expected_complete_card_gain": 50,
         "base_commit": "9ed6bc8c65f2520307e6ef08d283efe4fac4ee6b",
         "head_commit": "76f2bd63f4e0dc129636305458ff1c35a6b3caa6"
       },
       {
         "bundle_id": "bundle:fixed-public-zone-moves",
-        "candidate_ids": ["compiler:fixed-public-zone-moves"],
+        "candidate_ids": [
+          "compiler:fixed-public-zone-moves"
+        ],
         "expected_complete_card_gain": 37,
         "base_commit": "e700c6f6bb0dbcefc0060679e3d3bdbc76bab482",
         "head_commit": "ba67509f49cf60b1f26ac50e90d68d38bf8370dd"
       },
       {
         "bundle_id": "bundle:typed-commander-pairing",
-        "candidate_ids": ["compiler:typed-commander-pairing"],
+        "candidate_ids": [
+          "compiler:typed-commander-pairing"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "75f82dc20008d31dd93ab252853fa27c9784be7d",
         "head_commit": "3bb502dc8dd6514f3745c83bd6024a29d0bbd335"
       },
       {
         "bundle_id": "bundle:fixed-query-spell-cost-reductions",
-        "candidate_ids": ["compiler:fixed-query-spell-cost-reductions"],
+        "candidate_ids": [
+          "compiler:fixed-query-spell-cost-reductions"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "3bb502dc8dd6514f3745c83bd6024a29d0bbd335",
         "head_commit": "af117bb4e26f73589ad24eb91e99342f7ec3c943"
       },
       {
         "bundle_id": "bundle:fixed-self-library-search-to-battlefield",
-        "candidate_ids": ["compiler:fixed-self-library-search-to-battlefield"],
+        "candidate_ids": [
+          "compiler:fixed-self-library-search-to-battlefield"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "af117bb4e26f73589ad24eb91e99342f7ec3c943",
         "head_commit": "cf0b6c1e06869de5a58528c2f27baf0f306139a3"
       },
       {
         "bundle_id": "bundle:fixed-self-entry-counters",
-        "candidate_ids": ["compiler:fixed-self-entry-counters"],
+        "candidate_ids": [
+          "compiler:fixed-self-entry-counters"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "cf0b6c1e06869de5a58528c2f27baf0f306139a3",
         "head_commit": "74be5440038f1c216b519bcf7f9d8f42f7d1220c"
       },
       {
         "bundle_id": "bundle:closed-typed-effect-programs",
-        "candidate_ids": ["compiler:closed-typed-effect-programs"],
+        "candidate_ids": [
+          "compiler:closed-typed-effect-programs"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "74be5440038f1c216b519bcf7f9d8f42f7d1220c",
         "head_commit": "c0221e7a67fe7ec0188d6a2870356a83020223b7"
       },
       {
         "bundle_id": "bundle:fixed-typed-event-effect-triggers",
-        "candidate_ids": ["compiler:fixed-typed-event-effect-triggers"],
+        "candidate_ids": [
+          "compiler:fixed-typed-event-effect-triggers"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "c0221e7a67fe7ec0188d6a2870356a83020223b7",
         "head_commit": "85c1969c7963fc84943e6f0b8e3aa2a8d019ce03"
       },
       {
         "bundle_id": "bundle:typed-casting-payment-keywords",
-        "candidate_ids": ["compiler:typed-casting-payment-keywords"],
+        "candidate_ids": [
+          "compiler:typed-casting-payment-keywords"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "85c1969c7963fc84943e6f0b8e3aa2a8d019ce03",
         "head_commit": "1b9f0f7f259cb4ffdb84e89d94e165a34ebaddf9"
       },
       {
         "bundle_id": "bundle:closed-cast-and-attack-triggers",
-        "candidate_ids": ["compiler:closed-cast-and-attack-triggers"],
+        "candidate_ids": [
+          "compiler:closed-cast-and-attack-triggers"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "1b9f0f7f259cb4ffdb84e89d94e165a34ebaddf9",
         "head_commit": "dfe937e8af8722b547525222e958909b6450b55e"
       },
       {
         "bundle_id": "bundle:fixed-nonrepeating-modal-programs",
-        "candidate_ids": ["compiler:fixed-nonrepeating-modal-programs"],
+        "candidate_ids": [
+          "compiler:fixed-nonrepeating-modal-programs"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "dfe937e8af8722b547525222e958909b6450b55e",
         "head_commit": "6df1d3aea71db7f3b6e35f6c96b391bc19d500bb"
       },
       {
         "bundle_id": "bundle:closed-typed-effect-program-composition",
-        "candidate_ids": ["compiler:closed-typed-effect-program-composition"],
+        "candidate_ids": [
+          "compiler:closed-typed-effect-program-composition"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "6df1d3aea71db7f3b6e35f6c96b391bc19d500bb",
         "head_commit": "cf1ec2543949ec09a53a554406f3acd2b1b9dc90"
       },
       {
         "bundle_id": "bundle:fixed-protection-qualities",
-        "candidate_ids": ["compiler:fixed-protection-qualities"],
+        "candidate_ids": [
+          "compiler:fixed-protection-qualities"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "cf1ec2543949ec09a53a554406f3acd2b1b9dc90",
         "head_commit": "09614f71cd5a82eea852e90e4d13e846f10cfb22"
       },
       {
         "bundle_id": "bundle:fixed-direct-target-predicates",
-        "candidate_ids": ["compiler:fixed-direct-target-predicates"],
+        "candidate_ids": [
+          "compiler:fixed-direct-target-predicates"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "09614f71cd5a82eea852e90e4d13e846f10cfb22",
         "head_commit": "3a7a33780ba69f4676c287588ba1b93b83fe9b01"
       },
       {
         "bundle_id": "bundle:fixed-typecycling",
-        "candidate_ids": ["compiler:fixed-typecycling"],
+        "candidate_ids": [
+          "compiler:fixed-typecycling"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "3a7a33780ba69f4676c287588ba1b93b83fe9b01",
         "head_commit": "d6899f2069a9d5b59867a0fa62b2a6119ec3805a"
       },
       {
         "bundle_id": "bundle:fixed-controller-draw-discard-sequences",
-        "candidate_ids": ["compiler:fixed-controller-draw-discard-sequences"],
+        "candidate_ids": [
+          "compiler:fixed-controller-draw-discard-sequences"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "d6899f2069a9d5b59867a0fa62b2a6119ec3805a",
         "head_commit": "2f3bf9105bf0c417f176fca6a032ad9cb23ca99e"
       },
       {
         "bundle_id": "bundle:fixed-static-characteristic-grants",
-        "candidate_ids": ["compiler:fixed-static-characteristic-grants"],
+        "candidate_ids": [
+          "compiler:fixed-static-characteristic-grants"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "2f3bf9105bf0c417f176fca6a032ad9cb23ca99e",
         "head_commit": "190519aa79ea73766494df05724ea9b39d1db0c9"
       },
       {
         "bundle_id": "bundle:fixed-activated-zone-change-costs",
-        "candidate_ids": ["compiler:fixed-activated-zone-change-costs"],
+        "candidate_ids": [
+          "compiler:fixed-activated-zone-change-costs"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "190519aa79ea73766494df05724ea9b39d1db0c9",
         "head_commit": "dfeda0a562e066849046bf419a85178f1ba31b38"
       },
       {
         "bundle_id": "bundle:fixed-activated-tap-costs",
-        "candidate_ids": ["compiler:fixed-activated-tap-costs"],
+        "candidate_ids": [
+          "compiler:fixed-activated-tap-costs"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "dfeda0a562e066849046bf419a85178f1ba31b38",
         "head_commit": "5bcc7ea5ab15a95eb7dad2ed82837a23e3402ead"
       },
       {
         "bundle_id": "bundle:fixed-impulse-access",
-        "candidate_ids": ["compiler:fixed-impulse-access"],
+        "candidate_ids": [
+          "compiler:fixed-impulse-access"
+        ],
         "expected_complete_card_gain": null,
         "base_commit": "5bcc7ea5ab15a95eb7dad2ed82837a23e3402ead",
         "head_commit": "77a6cbae5bd91a75220c25051f9bb9fa61d0f36a"
       },
       {
         "bundle_id": "bundle:fixed-combat-state-direct-targets",
-        "candidate_ids": ["compiler:fixed-combat-state-direct-targets"],
+        "candidate_ids": [
+          "compiler:fixed-combat-state-direct-targets"
+        ],
         "expected_complete_card_gain": 72,
         "base_commit": "f147c03b2923e45bde2e3845b2bb9680729c8be1",
         "head_commit": "6dfdb6d0418b0364da7042272ab1dbb0beee1f6d"
       },
       {
         "bundle_id": "bundle:fixed-source-event-triggers",
-        "candidate_ids": ["compiler:fixed-source-event-triggers"],
+        "candidate_ids": [
+          "compiler:fixed-source-event-triggers"
+        ],
         "expected_complete_card_gain": 53,
         "base_commit": "a5c7efd8e811244bfcb5930a5b55de6f668e2b13",
         "head_commit": "21ccaaca182f93bf9ccf1215650da803270f5ffe"

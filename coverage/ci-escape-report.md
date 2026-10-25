@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "7d1fd12f02749084325313722e80acd4a43cde4b176865869b1d5d546f58b70b"
+verified: "294ed6fa93c66eef5e93bdacfcba6d6b258d436f1f30f587dba1a5e019e9e453"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 103
-- Deterministic escapes: 95
+- Escapes: 108
+- Deterministic escapes: 99
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -132,6 +132,11 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261015-515-windows-node-choice-budget` | [38753370109](https://github.com/NullPriority/quorune/actions/runs/38753370109) | `windows_compatibility` | `not_applicable` | Use one bounded Node choice-validation process budget shared by both real TypeScript validator consumers, covering startup, type stripping and validation under shard worker load. Preserve all test identities, decorators, return-code checks, cardinality/allocation assertions, accepted/rejected commands and replay evidence. The Windows-only incident uses the complete exact-base fix-forward route; no unchanged-head CI rerun or narrowed recovery evidence is used. |
 | `ci-20261015-517-dependency-syntax-short-path-fixtures` | [38773388505](https://github.com/NullPriority/quorune/actions/runs/38773388505) | `windows_compatibility` | `not_applicable` | Resolve each temporary fixture root before creating sources and comparing canonical helper provenance. Preserve every test identity, decorator, assertion, cache-count control and malformed/missing/unreadable-input check; production dependency analysis and complete cross-platform CI selection remain unchanged. The exact two tests pass under the same native short-path harness after the fixture correction. |
 | `ci-20261016-520-stale-impact-test-references` | [38948998302](https://github.com/NullPriority/quorune/actions/runs/38948998302) | `missing_affected_test` | `added` | Map every stale reference to its actual owned module: existing Oracle IR and mechanic-contract classes reside in test_oracle_ir; zone consumers cover the canonical transition owner, single-object plans, general zone rules, and designation reset. Extend the existing pre-corpus impact sentinel to validate all path/symbol test module and suite references against the canonical shard manifest, including unselected rules. Keep the complete high-risk certification gate for this selection-authority correction. |
+| `ci-20261024-pr536-explicit-text-encoding` | [40143670144](https://github.com/NullPriority/quorune/actions/runs/40143670144) | `source_correctness` | `not_applicable` | Specify UTF-8 on both metadata reads and invoke the existing changed-file text-I/O validator on every pre-push path before shard/dependency validation and receipt acceptance. Keep the existing validator and impact selection intact, run the exact sentinel plus its direct checker/withdrawal controls, preserve the completed semantic census, and publish one corrected exact head. Cancel the superseded matrix instead of rerunning the unchanged failed source. |
+| `ci-20261024-pr536-scoped-server-cookies` | [40143670135](https://github.com/NullPriority/quorune/actions/runs/40143670135) | `windows_compatibility` | `not_applicable` | Keep every existing authentication, CSRF, principal, privacy, rollback and replay assertion. Route manual fixture cookie updates through the single server-set domain/path, assert one existing cookie scope and replace its value in that scope instead of adding an ambiguous cookie. Verify the exact failed cases with the CI dependency versions plus tab-identity and stale-socket controls; change no server authentication code or dependency requirements. |
+| `ci-20261025-pr536-prepush-contract` | [40146602116](https://github.com/NullPriority/quorune/actions/runs/40146602116) | `missing_affected_test` | `not_applicable` | Keep the clean-tracked-tree check before the checkpoint pre-corpus sentinel, locating that phase explicitly instead of the first shared script name. Also assert that the always-on encoding sentinel precedes shard validation and receipt acceptance. Run this exact owned hook contract and the existing encoding-plan control before republishing; retain all other assertions and avoid rerunning the superseded matrix. |
+| `ci-20261025-pr536-private-reference-token-collision` | [40149579140](https://github.com/NullPriority/quorune/actions/runs/40149579140) | `flaky_test` | `not_applicable` | Assign the three private fixture references a colon-delimited value before the initial checkpoint. The separator is absent from base64url capabilities; retain every original full-decision privacy, principal, ordering, zone-replacement and replay assertion. The exact native method passes. |
+| `ci-20261025-pr536-unrelated-history-certification-scope` | [40149579140](https://github.com/NullPriority/quorune/actions/runs/40149579140) | `source_correctness` | `not_applicable` | Resolve the exact checked HEAD once and use that immutable revision for both history scans. Keep the existing forbidden paths, secret patterns and10MiB limits. Actual temporary Git repositories prove unrelated branches do not affect certification while oversized tracked files and deleted forbidden/oversized ancestry still fail. Run the full repository validator after canonical finalization before republishing. |
 
 ## Measurement limitations
 

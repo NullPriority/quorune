@@ -27,6 +27,13 @@ replaces these facts with the destination snapshot; it recomputes block-pair
 and shared-color relations instead of inheriting the former recipient's scope.
 Empty source and redirection extensions preserve their legacy serialized form.
 
+Newly compiled battlefield-static damage components require their own current
+layer-6 ability component. Amount replacements, fixed prevention and
+redirection stop while that ability is removed and return when it is restored.
+Their existing damage mathematics and affected-player ordering remain intact.
+Persisted programs without the current-component coverage declaration retain
+their existing replay contract.
+
 Fixed source damage retains its physical and logical source identity in the
 creating stack frame. While that incarnation remains in its expected zone,
 damage uses current effective source facts. Immediately before departure, the

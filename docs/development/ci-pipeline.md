@@ -396,8 +396,12 @@ Generated-owner jobs that consume only the exact source tree use depth-1
 checkouts. Source planning and rules-scheduler harvest provenance retain full
 commit topology through blobless partial checkouts, fetching historical blobs
 only when their comparisons require them. The final bundle deliberately keeps
-one full-history checkout because repository policy audits every reachable Git
-object. This prevents the parallel owner fan-out from independently downloading
+one full-history checkout because repository policy audits every Git object
+reachable from the exact checked commit. The validator resolves that revision
+once for both historical-path and blob-size checks; unrelated fetched branches
+cannot change its result. Forbidden paths and oversized blobs in the checked
+commit's ancestry still fail, including files deleted from its current tree.
+This prevents the parallel owner fan-out from independently downloading
 the repository's complete historical blob set while preserving every job's
 actual history contract.
 
@@ -586,6 +590,9 @@ the final commit. A successful write stores a worktree-local receipt in Git
 metadata. The pre-push hook verifies that receipt and blocks publication on
 either generated drift or architecture-policy failure without repeating the
 full corpus when the finalized inputs and outputs are identical.
+Before accepting either receipt or checkpoint push paths, the hook runs the
+existing changed-file text-I/O sentinel. A current generated receipt therefore
+cannot skip explicit-encoding validation for changed Python sources.
 
 Both ordinary receipt-based pushes and source checkpoints run the same cheap
 pre-corpus sentinels against the branch's main base. A current generated receipt

@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "fe9106e3-c637-4995-9dc1-cae0be31f23b",
+      "name": "Guardian Seraph",
+      "mana_cost": "{2}{W}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Angel",
+      "oracle_text": "Flying\nIf a source an opponent controls would deal damage to you, prevent 1 of that damage.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Humble",
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "oracle_text": "Until end of turn, target creature loses all abilities and has base power and toughness 0/1.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "oracle_id": "a9d288b8-cdc1-4e55-a0c9-d6edfc95e65d",
+      "name": "Shock",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Shock deals 2 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "4457ed35-7c10-48c8-9776-456485fdf070",
+      "name": "Lightning Bolt",
+      "mana_cost": "{R}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Lightning Bolt deals 3 damage to any target.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Mountain",
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "produced_mana": [
+        "R"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "8c3495bf-02e7-4ad9-949d-92eb3d2b662a",
+      "name": "Torbran, Thane of Red Fell",
+      "mana_cost": "{1}{R}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Dwarf Noble",
+      "oracle_text": "If a red source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 2 instead.",
+      "power": "2",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-10-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f38fe1e9-8997-4b63-9109-7513034bac88",
+      "name": "Palisade Giant",
+      "mana_cost": "{4}{W}{W}",
+      "cmc": 6.0,
+      "type_line": "Creature — Giant Soldier",
+      "oracle_text": "All damage that would be dealt to you and other permanents you control is dealt to this creature instead.",
+      "power": "2",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "name": "Furnace of Rath",
+      "mana_cost": "{1}{R}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "If a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Double"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-09-04",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "fe9106e3-c637-4995-9dc1-cae0be31f23b",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "The effects from multiple Guardian Seraphs are cumulative."
+    },
+    {
+      "oracle_id": "fe9106e3-c637-4995-9dc1-cae0be31f23b",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "Spells and permanents have controllers, but cards that aren’t on the stack or the battlefield don’t. If a source without a controller (such as a cycled Jund Sojourners, for example) would deal damage to you, 1 of that damage is prevented if an opponent owns that source."
+    },
+    {
+      "oracle_id": "fe9106e3-c637-4995-9dc1-cae0be31f23b",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "This ability prevents 1 damage from each source an opponent controls each time that source would deal damage to you. It prevents 1 of any damage, not just combat damage."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble doesn’t counter abilities that have already triggered or been activated. In particular, casting this spell won’t stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Humble overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Humble resolves will overwrite this effect."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Seal of Strength, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness."
+    },
+    {
+      "oracle_id": "d2d41f12-18d8-473b-9308-3f02d7d791f0",
+      "published_at": "2016-06-08",
+      "source": "wotc",
+      "comment": "If the affected creature gains an ability after Humble resolves, it will keep that ability."
+    },
+    {
+      "oracle_id": "8c3495bf-02e7-4ad9-949d-92eb3d2b662a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If damage dealt by a source you control is being divided or assigned among multiple permanents an opponent controls or among an opponent and one or more permanents they control, divide the original amount before adding 2. For example, if you attack with a 5/5 red creature with trample and your opponent blocks with a 2/2 creature, you can assign 2 damage to the blocker and 3 damage to the defending player. These amounts are then modified to 4 and 5, respectively."
+    },
+    {
+      "oracle_id": "8c3495bf-02e7-4ad9-949d-92eb3d2b662a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "The additional 2 damage is dealt by the same source as the original source of damage. The damage isn't dealt by Torbran unless Torbran is the original source of damage."
+    },
+    {
+      "oracle_id": "8c3495bf-02e7-4ad9-949d-92eb3d2b662a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If another effect modifies how much damage your red source would deal, including preventing some of it, the player being dealt damage or the controller of the permanent being dealt damage chooses an order in which to apply those effects. If all of the damage is prevented, Torbran's effect no longer applies."
+    },
+    {
+      "oracle_id": "f38fe1e9-8997-4b63-9109-7513034bac88",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "Applying this redirection effect doesn’t change whether the damage is combat damage."
+    },
+    {
+      "oracle_id": "f38fe1e9-8997-4b63-9109-7513034bac88",
+      "published_at": "2012-10-01",
+      "source": "wotc",
+      "comment": "If you control more than one Palisade Giant, you choose which redirection effect to apply. You can’t divide damage dealt by one source. For example, if an attacking creature would deal 8 damage to you and you control two Palisade Giants, you may have that damage dealt to either of the Palisade Giants. You can’t have 4 damage dealt to each Giant or choose to have the 8 damage dealt to you."
+    },
+    {
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you have two of these on the battlefield, the damage is multiplied by 4."
+    },
+    {
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The multiplied damage counts in all ways as if it came from the original source. Furnace of Rath is not the source."
+    },
+    {
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If a spell or ability damages multiple things, divide up the damage before applying this effect. This means you can’t normally end up with an odd amount of damage on something."
+    },
+    {
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The trample rules cause damage to be divided before it is doubled."
+    },
+    {
+      "oracle_id": "68715465-6cf9-4006-87e9-31f227fe9ed3",
+      "published_at": "2005-08-01",
+      "source": "wotc",
+      "comment": "If multiple effects modify how damage will be dealt, the player who would be dealt damage or the controller of the creature that would be dealt damage chooses the order to apply the effects. For example, Mending Hands says, “Prevent the next 4 damage that would be dealt to any target this turn.” Suppose a spell would deal 5 damage to a player who has cast Mending Hands targeting themselves. That player can either (a) prevent 4 damage first and then let Furnace of Rath double the remaining 1 damage, taking 2 damage, or (b) double the damage to 10 and then prevent 4 damage, taking 6 damage."
+    }
+  ],
+  "source": "Pinned current-ability static damage originals and canonical paid loss/restoration controls"
+}

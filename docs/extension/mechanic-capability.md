@@ -48,8 +48,8 @@ duplicate or missing ordinals, and ambiguous groups fail closed.
 Use `read_evidence_document(path)` when reading either file. For declaration
 edits, update its expanded `declarations` list and serialize it with
 `evidence_document_text(value)`. Regenerate the packaged index through the
-ordinary evidence owner. Keep retained rows in place when appending evidence
-to avoid unrelated ordinal changes. The storage envelope does not change the expanded
+ordinary evidence owner. Keep the existing canonical capability/class/test
+ordering when adding evidence; the storage layer preserves that order. The storage envelope does not change the expanded
 evidence schema, registry fingerprint, source fingerprint, or trust semantics.
 
 Storage expansion uses a two-entry process-local cache of immutable JSON text,

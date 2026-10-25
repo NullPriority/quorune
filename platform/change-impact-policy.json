@@ -8456,6 +8456,32 @@
         "test_turn_cast_grants",
         "test_unpreventable_damage_permissions"
       ]
+    },
+    {
+      "id": "static-damage-current-ability",
+      "patterns": [
+        "quorune/compiler/runtime_templates.py",
+        "tests/test_static_damage_ability_presence.py",
+        "tests/fixtures/static-damage-ability-presence-cards.json"
+      ],
+      "test_modules": [
+        "test_static_damage_ability_presence",
+        "test_damage_replacement_model",
+        "test_fixed_counter_prevention",
+        "test_bound_effect_programs",
+        "test_card_program_trust",
+        "test_damage_replacement_integration"
+      ]
+    },
+    {
+      "id": "repository-checked-history",
+      "patterns": [
+        "scripts/validate_repository.py",
+        "tests/test_repository_history.py"
+      ],
+      "test_modules": [
+        "test_repository_history"
+      ]
     }
   ],
   "symbol_rules": [

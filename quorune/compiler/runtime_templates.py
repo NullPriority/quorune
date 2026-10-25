@@ -612,6 +612,54 @@ def _chosen_static_template(text: str, *, source_name: str | None, source_is_cla
         dependency_reason='Chosen-value characteristics require the retained public entry designation owner')
 
 
+def _static_damage_runtime_template(
+    text: str,
+    *,
+    source_name: str | None,
+    source_damageable: bool | None,
+    source_permanent: bool,
+    source_is_class: bool,
+) -> StaticRuntimeTemplate | None:
+    """Assemble closed damage handlers and their current-ability contract."""
+    from .counter_prevention_templates import fixed_counter_prevention_handler
+    static_damage = (fixed_counter_prevention_handler(text, source_name=source_name or '')
+                     if source_permanent and not source_is_class else None)
+    static_damage = static_damage or static_damage_handler(text, card_name=source_name)
+    if static_damage is None:
+        return None
+    if (
+        (source_is_class or not source_permanent)
+        and static_damage[1]["handler_id"]
+        == "replacement.damage.quantity.v2"
+    ):
+        return None
+    if (
+        static_damage[1]["handler_id"]
+        == "replacement.damage.redirect-to-source.v1"
+        and source_damageable is False
+    ):
+        # Damage can be redirected only to an object that can receive damage.
+        # Keeping this type check at compilation prevents a future artifact or
+        # enchantment with superficially similar wording from being promoted
+        # to a trusted program that can only fail at runtime.
+        return None
+    return StaticRuntimeTemplate(
+        compiled=static_damage,
+        kind=(
+            "prevention_effect"
+            if static_damage[1]["handler_id"].startswith("prevention.")
+            else "replacement_effect"
+        ),
+        event="damage",
+        dependency_reason=(
+            "generic damage replacement depends on an untrusted rules "
+            "capability"
+        ),
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+    )
+
+
+
 def static_runtime_template(
     text: str,
     *,
@@ -728,44 +776,7 @@ def static_runtime_template(
                 "rules capability"
             ),
         )
-    from .counter_prevention_templates import fixed_counter_prevention_handler
-    static_damage = (fixed_counter_prevention_handler(text, source_name=source_name or '')
-                     if source_permanent and not source_is_class else None)
-    static_damage = static_damage or static_damage_handler(text, card_name=source_name)
-    if static_damage is None:
-        return None
-    if (
-        (source_is_class or not source_permanent)
-        and static_damage[1]["handler_id"]
-        == "replacement.damage.quantity.v2"
-    ):
-        return None
-    if (
-        static_damage[1]["handler_id"]
-        == "replacement.damage.redirect-to-source.v1"
-        and source_damageable is False
-    ):
-        # Damage can be redirected only to an object that can receive damage.
-        # Keeping this type check at compilation prevents a future artifact or
-        # enchantment with superficially similar wording from being promoted
-        # to a trusted program that can only fail at runtime.
-        return None
-    return StaticRuntimeTemplate(
-        compiled=static_damage,
-        kind=(
-            "prevention_effect"
-            if static_damage[1]["handler_id"].startswith("prevention.")
-            else "replacement_effect"
-        ),
-        event="damage",
-        dependency_reason=(
-            "generic damage replacement depends on an untrusted rules "
-            "capability"
-        ),
-        runtime_coverage=(
-            (CURRENT_ABILITY_FRAGMENT_COVERAGE,)
-            if static_damage[1]["handler_id"]
-            in {"prevention.damage.all.v1", "prevention.damage.fixed-self-counter.v1"}
-            else ()
-        ),
+    return _static_damage_runtime_template(
+        text, source_name=source_name, source_damageable=source_damageable,
+        source_permanent=source_permanent, source_is_class=source_is_class,
     )
