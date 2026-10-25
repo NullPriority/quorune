@@ -148,7 +148,7 @@ class MyrelCompositionTests(unittest.TestCase):
         from quorune.rules.capabilities import CapabilityRegistry
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         for cap in (CAP,QUERY):
             changed=deepcopy(raw);next(c for c in changed['capabilities'] if c['id']==cap).update(status='blocked',blockers=['withdrawn Myrel composition owner'],dependency_fail_closed_status='not_run')
             registry=CapabilityRegistry(changed);index=build_index(registry_value=changed,declaration_source=declarations,discovered_test_ids=set(discover_tests(ROOT).values()))

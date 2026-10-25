@@ -170,7 +170,7 @@ class CharacteristicQueryUnionTests(unittest.TestCase):
         from quorune.rules.capabilities import CapabilityRegistry
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         mixed = replace(self.db.lookup('Shambling Suit'),
             name='Generic Withdrawn Mixed Query', oracle_id='fixture:withdrawn-mixed-query',
             oracle_text='This creature gets +1/+0 for each Dwarf, Equipment, and/or Vehicle you control.',

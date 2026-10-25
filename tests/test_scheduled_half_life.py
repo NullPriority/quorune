@@ -147,7 +147,7 @@ class ScheduledHalfLifeTests(unittest.TestCase):
         from quorune.rules.capabilities import CapabilityRegistry
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for cap in (SCHEDULED_CAP,HALF_LIFE_CAPABILITY):
             changed=deepcopy(raw);next(r for r in changed['capabilities'] if r['id']==cap).update(status='blocked',blockers=['withdrawn scheduled fractional owner'],dependency_fail_closed_status='not_run')
             registry=CapabilityRegistry(changed)

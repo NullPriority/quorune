@@ -167,7 +167,7 @@ class AttachedPreventionTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index,discover_tests
         from quorune.oracle_ir import compile_oracle_card
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());decl=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));decl=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         for cap in (CAP,INFO,BASE):
             changed=deepcopy(raw);next(c for c in changed['capabilities'] if c['id']==cap).update(status='blocked',blockers=['withdrawn attachment information'],dependency_fail_closed_status='not_run')
             registry=CapabilityRegistry(changed);index=build_index(registry_value=changed,declaration_source=decl,discovered_test_ids=set(discover_tests(ROOT).values()));registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))

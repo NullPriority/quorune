@@ -197,7 +197,7 @@ class AbilityLabelCompositionTests(unittest.TestCase):
         from quorune.rules.capabilities import CapabilityRegistry
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         for cap,name in (('combat.declaration.typed_components',NAMES[0]),('trigger.event.normalized_self_attack',NAMES[1]),('continuous.characteristics.query_count_modifier',NAMES[2]),('continuous.characteristics.fixed_public_state',NAMES[2])):
             changed=deepcopy(raw);next(c for c in changed['capabilities'] if c['id']==cap).update(status='blocked',blockers=['withdrawn labeled-body owner'],dependency_fail_closed_status='not_run')
             registry=CapabilityRegistry(changed);index=build_index(registry_value=changed,declaration_source=declarations,discovered_test_ids=set(discover_tests(ROOT).values()))

@@ -224,7 +224,7 @@ class ResolutionManaChoiceTests(unittest.TestCase):
         from quorune.rules.capabilities import CapabilityRegistry
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(c for c in raw['capabilities'] if c['id']==CAP).update(status='blocked',blockers=['withdrawn fixed color result'],dependency_fail_closed_status='not_run')
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(c for c in raw['capabilities'] if c['id']==CAP).update(status='blocked',blockers=['withdrawn fixed color result'],dependency_fail_closed_status='not_run')
         registry=CapabilityRegistry(raw);decl=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         index=build_index(registry_value=raw,declaration_source=decl,discovered_test_ids=set(discover_tests(ROOT).values()))
         registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))

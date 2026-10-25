@@ -164,7 +164,7 @@ class AdditionalTokenDefinitionTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from scripts.update_capability_evidence import build_index,discover_tests
         from quorune.semantic_runtime.token_replacements import GenericAdditionalTokenReplacementHandler
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());decl=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));decl=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         changed=deepcopy(raw);next(c for c in changed['capabilities'] if c['id']==CAP).update(status='blocked',blockers=['withdrawn fixed additional token authority'],dependency_fail_closed_status='not_run')
         registry=CapabilityRegistry(changed);index=build_index(registry_value=changed,declaration_source=decl,discovered_test_ids=set(discover_tests(ROOT).values()));registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
         ir=compile_oracle_card(self.db.lookup(NAMES[0]),capability_registry=registry,capability_profile='commander_review');blockers=[b for r in ir.material_residuals for b in r.blockers]
