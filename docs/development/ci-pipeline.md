@@ -382,8 +382,12 @@ Generated-owner jobs that consume only the exact source tree use depth-1
 checkouts. Source planning and rules-scheduler harvest provenance retain full
 commit topology through blobless partial checkouts, fetching historical blobs
 only when their comparisons require them. The final bundle deliberately keeps
-one full-history checkout because repository policy audits every reachable Git
-object. This prevents the parallel owner fan-out from independently downloading
+one full-history checkout because repository policy audits every Git object
+reachable from the exact checked commit. The validator resolves that revision
+once for both historical-path and blob-size checks; unrelated fetched branches
+cannot change its result. Forbidden paths and oversized blobs in the checked
+commit's ancestry still fail, including files deleted from its current tree.
+This prevents the parallel owner fan-out from independently downloading
 the repository's complete historical blob set while preserving every job's
 actual history contract.
 

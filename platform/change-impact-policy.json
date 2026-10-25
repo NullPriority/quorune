@@ -6618,6 +6618,16 @@
         "test_card_program_trust",
         "test_damage_replacement_integration"
       ]
+    },
+    {
+      "id": "repository-checked-history",
+      "patterns": [
+        "scripts/validate_repository.py",
+        "tests/test_repository_history.py"
+      ],
+      "test_modules": [
+        "test_repository_history"
+      ]
     }
   ],
   "symbol_rules": [

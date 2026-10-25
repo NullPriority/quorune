@@ -595,6 +595,7 @@
       "test_protocol_reference",
       "test_python_runtime",
       "test_quick_gate",
+      "test_repository_history",
       "test_reusable_pieces",
       "test_rule_conformance",
       "test_rule_conformance_inventory",

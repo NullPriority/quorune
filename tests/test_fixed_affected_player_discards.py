@@ -566,6 +566,9 @@ class FixedAffectedPlayerDiscardRuntimeTests(unittest.TestCase):
             ref="discard-voidwalker",
         )
         chosen = {seat: self.hand_cards(engine, seat)[0] for seat in "BCD"}
+        # A colon cannot occur in an opaque base64url capability token.
+        for seat, card in chosen.items():
+            card.ref = f"discard-private:{seat}"
         self.stage(engine, "Each opponent discards a card.")
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()

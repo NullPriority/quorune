@@ -1760,6 +1760,41 @@
         "test_generated_artifacts.GeneratedArtifactFinalizationTests.test_generated_pre_push_hook_uses_worktree_python_and_stops_on_changes"
       ],
       "resolution": "Keep the clean-tracked-tree check before the checkpoint pre-corpus sentinel, locating that phase explicitly instead of the first shared script name. Also assert that the always-on encoding sentinel precedes shard validation and receipt acceptance. Run this exact owned hook contract and the existing encoding-plan control before republishing; retain all other assertions and avoid rerunning the superseded matrix."
+    },
+    {
+      "run_id": 40149579140,
+      "head_sha": "211d4a90f22ac1ae275028d73930ef38d84a60a1",
+      "impact_edge_status": "not_applicable",
+      "id": "ci-20261025-pr536-private-reference-token-collision",
+      "category": "flaky_test",
+      "deterministic": false,
+      "summary": "Ubuntu functional-06 passed798tests and1413subtests, but the private discard projection assertion matched the short hidden card reference C07 inside an authorized random opaque capability token. The actual projection data contained only the acting seat choices.",
+      "failed_surfaces": [
+        "PR / Python / functional-06: Run functional shard"
+      ],
+      "regressions": [
+        "test_fixed_affected_player_discards.FixedAffectedPlayerDiscardRuntimeTests.test_private_apnap_discard_aura_attachment_zone_replacement_and_replay"
+      ],
+      "resolution": "Assign the three private fixture references a colon-delimited value before the initial checkpoint. The separator is absent from base64url capabilities; retain every original full-decision privacy, principal, ordering, zone-replacement and replay assertion. The exact native method passes."
+    },
+    {
+      "run_id": 40149579140,
+      "head_sha": "211d4a90f22ac1ae275028d73930ef38d84a60a1",
+      "impact_edge_status": "not_applicable",
+      "id": "ci-20261025-pr536-unrelated-history-certification-scope",
+      "category": "source_correctness",
+      "deterministic": true,
+      "summary": "Generated and architecture passed3859tests then repository validation scanned every fetched ref, finding oversized capability evidence on an unrelated feature branch. No oversized blob is reachable from the exact PR head. The check therefore depended on unrelated remote refs rather than certified content.",
+      "failed_surfaces": [
+        "PR / Generated and architecture: Verify architecture, documentation, and repository policy"
+      ],
+      "regressions": [
+        "test_repository_history.RepositoryHistoryTests.test_unrelated_branch_artifacts_cannot_change_checked_revision_result",
+        "test_repository_history.RepositoryHistoryTests.test_deleted_oversized_blob_in_checked_ancestry_still_fails",
+        "test_repository_history.RepositoryHistoryTests.test_deleted_forbidden_path_in_checked_ancestry_still_fails",
+        "test_repository_history.RepositoryHistoryTests.test_uncommitted_oversized_tracked_source_still_fails"
+      ],
+      "resolution": "Resolve the exact checked HEAD once and use that immutable revision for both history scans. Keep the existing forbidden paths, secret patterns and10MiB limits. Actual temporary Git repositories prove unrelated branches do not affect certification while oversized tracked files and deleted forbidden/oversized ancestry still fail. Run the full repository validator after canonical finalization before republishing."
     }
   ],
   "recent_pull_requests": [

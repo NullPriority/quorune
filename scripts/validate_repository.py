@@ -73,6 +73,7 @@ def validate_public_fixture() -> None:
 
 
 def validate_tracked_files() -> tuple[int, int]:
+    history_revision = _git("rev-parse", "--verify", "HEAD").strip()
     tracked = [line for line in _git("ls-files").splitlines() if line]
     errors: list[str] = []
     scanned_bytes = 0
@@ -94,14 +95,14 @@ def validate_tracked_files() -> tuple[int, int]:
     historical_paths = {
         line.replace("\\", "/")
         for line in _git(
-            "log", "--all", "--name-only", "--pretty=format:"
+            "log", history_revision, "--name-only", "--pretty=format:"
         ).splitlines()
         if line
     }
     for relative in sorted(historical_paths):
         if any(pattern.search(relative) for pattern in FORBIDDEN_TRACKED):
             errors.append(f"forbidden artifact remains in history: {relative}")
-    objects = _git("rev-list", "--objects", "--all").splitlines()
+    objects = _git("rev-list", "--objects", history_revision).splitlines()
     if objects:
         batch = subprocess.run(
             [
