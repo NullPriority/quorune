@@ -70,8 +70,11 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
             self.assertIn(CAPABILITY,node.capability_dependencies)
             self.assertIn('damage.prevention.persistent_amount',node.capability_dependencies)
             prevention=node.effects[-1]
-            self.assertEqual('*',prevention['subject'])
-            self.assertEqual('$target.0',prevention['scope']['target_ref'])
+            recipient=prevention['scope']['target_ref'] if prevention['subject']=='*' else prevention['subject']
+            self.assertEqual('$target.0',recipient)
+            from quorune.rules.prevention_component_shapes import fixed_prevention_component_capabilities
+            self.assertIn('damage.prevention.persistent_amount',fixed_prevention_component_capabilities(
+                effects=(prevention,),target_schema=node.target_schema,mechanic_ids=node.mechanics))
         for text in ('Tap target creature an opponent controls. Goad it.',
                      'Put a +1/+1 counter on target creature. Goad it.'):
             ir=self.compile(text)

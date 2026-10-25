@@ -29,7 +29,11 @@ class SharedCharacteristicQueryCompilerTests(unittest.TestCase):
             with self.subTest(text=text):
                 value = query_characteristic_quantity(text, source_name='Generic')
                 self.assertIsNotNone(value)
-                self.assertEqual(expected, getattr(value.query, field))
+                observed=getattr(value.query,field)
+                if field=='subtypes_any' and value.query.any_of:
+                    observed=tuple(sorted({subtype for leaf in value.query.any_of for subtype in leaf.subtypes_all}))
+                    self.assertEqual(len(expected),len(value.query.any_of))
+                self.assertEqual(expected,observed)
                 self.assertEqual(other, value.exclude_source)
         for text in ('creatures you control with flying', 'creatures you control without flying',
                 'creatures you control with power 4 or greater', 'chosen creatures you control', 'creature'):

@@ -46,7 +46,7 @@ class TargetingSourceBinding:
     colors: tuple[str,...]
 
     def __post_init__(self):
-        if any(type(v) is not str or not v for v in (self.object_id,self.object_ref,self.logical_object_id,self.zone,self.controller,self.type_line)):
+        if any(type(v) is not str or not v for v in (self.object_id,self.object_ref,self.logical_object_id,self.zone,self.controller)) or type(self.type_line) is not str:
             raise ValueError('Targeting source binding requires its complete incarnation')
         if self.zone not in {'battlefield','stack','hand','graveyard','exile','command','library'}:raise ValueError('Unknown targeting source zone')
         if type(self.colors) is not tuple or len(set(self.colors))!=len(self.colors) or any(v not in tuple('WUBRG') for v in self.colors):
@@ -68,8 +68,10 @@ class TargetingSourceBinding:
 
 def capture_targeting_source(host,source,*,characteristics=None,zone=None):
     data=host._effective_card_data(source) if characteristics is None else characteristics
+    if not isinstance(data,Mapping) or type(data.get('type_line')) is not str:
+        raise ValueError('Targeting source characteristics require an explicit type line')
     return TargetingSourceBinding(source.object_id,source.ref,source.logical_object_id,zone or source.zone,source.controller if (zone or source.zone) in {'battlefield','stack'} else source.owner,
-        str(data.get('type_line') or ''),tuple(sorted(set(data.get('colors',())))))
+        data['type_line'],tuple(sorted(set(data.get('colors',())))))
 
 
 def spell_targeting_source(host,card):

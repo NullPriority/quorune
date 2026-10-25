@@ -113,7 +113,9 @@ class TokenArticleCompositionTests(unittest.TestCase):
         self.assertEqual((CAP,),token_definition_payload_dependencies(afterlife))
         self.assertEqual((),token_definition_payload_dependencies({'op':'create_token','name':'legacy','quantity':1}))
         self.assertEqual((),token_definition_payload_dependencies({**effect,'copy_of':'$source'}))
-        for name in ('Fractal Summoning','Mystic Genesis','Grove of the Guardian'):
+        promoted=compile_oracle_card(self.db.lookup('Fractal Summoning'),capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',promoted.status,promoted.material_residuals)
+        for name in ('Mystic Genesis','Grove of the Guardian'):
             other=compile_oracle_card(self.db.lookup(name),capability_registry=self.registry,capability_profile='commander_review')
             self.assertNotEqual('exact',other.status,name);self.assertTrue(other.material_residuals)
 

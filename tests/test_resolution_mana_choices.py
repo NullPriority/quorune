@@ -97,7 +97,9 @@ class ResolutionManaChoiceTests(unittest.TestCase):
         with self.assertRaises(ValueError):resolution_mana_choice_dependencies(stripped)
 
     def test_independent_siblings_and_genuine_activation_rules_remain_held(self):
-        held=('Apex of Power','Realm-Scorcher Hellkite','Boommobile','Cosmic Crucible','Branch of Vitu-Ghazi','Nissa, Resurgent Animist','Berta, Wise Extrapolator','Mox Opal')
+        promoted=compile_oracle_card(self.db.lookup('Berta, Wise Extrapolator'),capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',promoted.status,promoted.material_residuals)
+        held=('Apex of Power','Realm-Scorcher Hellkite','Boommobile','Cosmic Crucible','Branch of Vitu-Ghazi','Nissa, Resurgent Animist','Mox Opal')
         for name in held:
             ir=compile_oracle_card(self.db.lookup(name),capability_registry=self.registry,capability_profile='commander_review')
             self.assertNotEqual('exact',ir.status,name);self.assertTrue(ir.material_residuals,name)

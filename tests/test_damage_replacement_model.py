@@ -200,6 +200,7 @@ class DamageReplacementModelTests(DamageReplacementPipelineBase):
         inventory = default_damage_replacement_registry().inventory()
         self.assertEqual(
             [
+                "damage.prevention.prohibition.v1",
                 "prevention.damage.all.v1",
                 "prevention.damage.fixed-self-counter.v1",
                 "prevention.damage.fixed.v1",

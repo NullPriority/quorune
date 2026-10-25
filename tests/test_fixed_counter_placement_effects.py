@@ -341,7 +341,7 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
         )[0]
         self.assertIs(ActivationLimit.ONCE_PER_TURN, ability.activation_limit)
         self.assertEqual(
-            "Put three +1/+1 counters on Licia",
+            "Put three +1/+1 counters on Licia.",
             _activated_effect_material(ability),
         )
         detached = replace(ability, activation_conditions=())

@@ -13,6 +13,7 @@ from ..combat_entry_activations import (
     ENCORE_ABILITY_HANDLER_ID,
     ENCORE_EFFECT_HANDLER_ID,
     ENCORE_EFFECT_OPERATION,
+    ENCORE_COPY_IDENTITY_FIELD,
     EncoreTokensIntent,
     FIXED_COMBAT_ENTRY_LIFECYCLE_CAPABILITY_ID,
     NINJUTSU_ABILITY_HANDLER_ID,
@@ -256,11 +257,14 @@ class EncoreTokensEffectHandler:
         current_fields = frozenset(
             {"op", "source_zone", "copy_snapshot"}
         )
+        copy_identity_fields=current_fields|{ENCORE_COPY_IDENTITY_FIELD}
         if frozenset(effect) not in {
             legacy_fields,
             legacy_fields | {"_replacement_selections"},
             current_fields,
             current_fields | {"_replacement_selections"},
+            copy_identity_fields,
+            copy_identity_fields | {"_replacement_selections"},
         } or effect.get("op") != self.operation:
             raise SemanticNodeError("Encore token effect is malformed")
         source = context.source
@@ -280,6 +284,9 @@ class EncoreTokensEffectHandler:
             )
         source_zone = effect.get("source_zone")
         copy_snapshot = effect.get("copy_snapshot")
+        copy_identity=effect.get(ENCORE_COPY_IDENTITY_FIELD,source.logical_object_id)
+        if type(copy_identity) is not str or not copy_identity:
+            raise SemanticNodeError('Encore requires its complete copy-card incarnation')
         if (source_zone is None) != (copy_snapshot is None) or (
             source_zone is not None
             and (
@@ -299,7 +306,7 @@ class EncoreTokensEffectHandler:
                     stack_ref=source.stack_ref,
                     source_object_id=str(source.object_id),
                     source_ref=str(source.card_ref),
-                    source_logical_object_id=str(source.logical_object_id),
+                    source_logical_object_id=copy_identity,
                     opponents=tuple(
                         seat
                         for seat in context.query.active_seats

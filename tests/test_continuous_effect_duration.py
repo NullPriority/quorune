@@ -1100,21 +1100,24 @@ class ContinuousEffectModelTests(unittest.TestCase):
         cases = (
             (
                 "{B}: This creature gets +1/+1 until end of turn.",
-                "modify-self-creature-stats-eot-v1",
-                "modify_stats_until_end_of_turn",
+                "fixed-source-characteristics-until-end-of-turn-v1",
+                "apply_source_characteristics_until_end_of_turn",
+                "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
             ),
             (
                 "{5}: Creatures you control get +1/+1 until end of turn.",
                 "modify-controlled-creatures-fixed-stats-eot-v1",
                 "modify_all_matching_permanents_until_end_of_turn",
+                "continuous.resolution.fixed_characteristics_until_end_of_turn",
             ),
             (
                 "{4}: Other creatures you control get +1/+0 until end of turn.",
                 "modify-controlled-creatures-fixed-stats-eot-v1",
                 "modify_all_matching_permanents_until_end_of_turn",
+                "continuous.resolution.fixed_characteristics_until_end_of_turn",
             ),
         )
-        for text, template_id, operation in cases:
+        for text, template_id, operation, capability in cases:
             with self.subTest(text=text):
                 ir = compile_oracle_card(
                     activated_characteristic_card(text),
@@ -1126,7 +1129,7 @@ class ContinuousEffectModelTests(unittest.TestCase):
                 self.assertEqual(template_id, node.template_id)
                 self.assertEqual(operation, node.effects[0]["op"])
                 self.assertIn(
-                    "continuous.resolution.fixed_characteristics_until_end_of_turn",
+                    capability,
                     node.capability_dependencies,
                 )
 

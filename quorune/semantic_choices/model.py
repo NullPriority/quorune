@@ -782,6 +782,8 @@ class AutoContinue:
 
 
     def resolved_effects(self,results):
+        if self.amount_from_result is None and self.objects_from_result is None:
+            return self.prepend_effects
         effects=list(self.prepend_effects)
         if self.objects_from_result is not None:
             spec=self.objects_from_result;refs=results.get(spec.intent_index)

@@ -27,7 +27,7 @@ def bind_type_applicability_dependencies(effects,base,context):
             if not any(op.op in {'set_basic_land_types','set_types','add_types','remove_types'} for op in candidate.operations):continue
             if not bound_to_object(candidate) or not _matches(candidate.applies,base,context):continue
             changed=deepcopy(base)
-            for operation in candidate.operations:_apply_operation(changed,operation)
+            for operation in candidate.operations:_apply_operation(changed,operation,context)
             if _matches(effect.applies,changed,context)!=original:dependencies.add(candidate.effect_id)
         result.append(replace(effect,depends_on=tuple(sorted(dependencies))))
     return tuple(result)

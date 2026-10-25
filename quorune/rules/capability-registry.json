@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 517,
+  "registry_version": 518,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6010,7 +6010,8 @@
         "test_sacrifice_is_not_destruction_and_uses_owner_graveyard",
         "test_zone_replacement_suspends_cost_before_mutation_and_replays",
         "test_actual_bankrupt_commits_two_sacrifices_as_one_event_batch_and_replays",
-        "test_real_sacrifice_price_spends_before_permission_source_leaves"
+        "test_real_sacrifice_price_spends_before_permission_source_leaves",
+        "test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana"
       ],
       "multiplayer_tests": [
         "test_zone_replacement_suspends_cost_before_mutation_and_replays",
@@ -6437,11 +6438,13 @@
       ],
       "positive_tests": [
         "test_fixed_public_alternative_costs_compile_closed_plain_and_keyword_grammar",
-        "test_fixed_alternative_costs_offer_commit_tax_and_total_costs"
+        "test_fixed_alternative_costs_offer_commit_tax_and_total_costs",
+        "test_public_alternative_price_declares_reused_nonmana_payment_owner"
       ],
       "negative_tests": [
         "test_fixed_public_alternative_costs_reject_open_costs_conditions_and_composition",
-        "test_partial_removed_and_stale_alternative_costs_fail_closed"
+        "test_partial_removed_and_stale_alternative_costs_fail_closed",
+        "test_public_alternative_price_declares_reused_nonmana_payment_owner"
       ],
       "interaction_tests": [
         "test_spectacle_surge_prowl_and_freerunning_use_authoritative_history",
@@ -20454,7 +20457,7 @@
     },
     {
       "id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "205.1a",
         "205.1b",
@@ -20561,7 +20564,8 @@
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
         "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_explicit_zero_source_modifier_preserves_state"
       ],
       "multiplayer_tests": [
         "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
@@ -36004,7 +36008,7 @@
     },
     {
       "id": "combat.entry.lifecycle.fixed_public",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "113.7a",
         "601.2b",
@@ -61159,10 +61163,11 @@
     },
     {
       "id": "target.ability_source.current_or_lki",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "113.7",
         "113.7a",
+        "114.3",
         "400.7",
         "608.2b",
         "608.2h"
@@ -61201,7 +61206,8 @@
       ],
       "positive_tests": [
         "test_nontargeted_ability_source_uses_current_then_actual_departure_information",
-        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw"
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_source_with_no_types_is_known_empty_and_missing_characteristics_reject"
       ],
       "negative_tests": [
         "test_source_type_counter_domains_distinguish_ability_kind_and_known_source_facts",
@@ -61209,13 +61215,16 @@
         "test_source_and_adventure_authority_withdrawals_are_specific_rules_blocks",
         "test_source_and_adventure_programs_require_declared_intrinsic_authority",
         "test_creature_source_abilities_are_rejected_without_payment_and_still_deal_damage",
-        "test_source_information_scan_preserves_unrelated_structured_predicates"
+        "test_source_information_scan_preserves_unrelated_structured_predicates",
+        "test_source_with_no_types_is_known_empty_and_missing_characteristics_reject"
       ],
       "interaction_tests": [
         "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
         "test_rust_revalidation_uses_changed_source_then_departure_not_printed_artifact",
         "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
-        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger"
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
+        "test_daretti_emblem_triggers_from_its_exact_command_object",
+        "test_encore_uses_exiled_lki_after_source_departure_and_reentry"
       ],
       "multiplayer_tests": [
         "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",

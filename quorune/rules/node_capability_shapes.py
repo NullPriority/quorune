@@ -1084,18 +1084,8 @@ def fixed_source_characteristics_node_capabilities(
         or (base_power is not None and (power or toughness))
     ):
         return ()
-    if not any(
-        (
-            set_card_types is not None,
-            set_subtypes is not None,
-            set_colors is not None,
-            base_power is not None,
-            power != 0,
-            toughness != 0,
-            bool(keywords),
-        )
-    ):
-        return ()
+    # Explicit +0/+0 is a closed, known modifier. The runtime deliberately
+    # returns the source without creating continuous components for this case.
     return (
         "continuous.resolution.fixed_characteristics_until_end_of_turn",
         FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,

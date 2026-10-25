@@ -144,6 +144,10 @@ class _FixedPublicStateSnapshotResolver:
         fact = condition.fact
         if not isinstance(fact, FixedPublicStateFact):
             return None
+        if fact is FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON:
+            return self._most_common_color_quantity(condition)
+        if source is None:
+            return None
         from ..public_zone_condition_model import public_zone_fact_value
         zone_value = public_zone_fact_value(self.state, source.controller, fact.value, condition.fact_parameter)
         if zone_value is not None:
@@ -152,8 +156,6 @@ class _FixedPublicStateSnapshotResolver:
             return int(any(card.zone == 'battlefield' and not card.phased_out
                 and card.is_commander and card.owner == source.controller and card.controller == source.controller
                 for card in self.state.cards.values()))
-        if fact is FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON:
-            return self._most_common_color_quantity(condition)
         if fact in {
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES,

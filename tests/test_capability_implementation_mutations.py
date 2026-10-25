@@ -1106,7 +1106,7 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
         with patch.object(
             damage_results_module,
             "materialize_damage_results",
-            lambda _host, _events: (),
+            lambda _host, _events, **_kwargs: (),
         ):
             with self.assertRaises(AssertionError):
                 assert_all_permanent_results()

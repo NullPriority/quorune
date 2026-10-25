@@ -1051,7 +1051,7 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             root=Path(directory)
             subprocess.run(['git','init','-q',str(root)],check=True,capture_output=True)
             python=root/'.venv/bin/python';python.parent.mkdir(parents=True)
-            python.write_text("#!/bin/sh\nprintf '%s\\n' \"$*\" >> hook-calls.txt\ncase \"$1\" in */scripts/quick_gate.py) exit 79;; esac\nexit 0\n",encoding='utf-8')
+            python.write_text("#!/bin/sh\nprintf '%s\\n' \"$*\" >> hook-calls.txt\ncase \"$*\" in *\"--phase pre-corpus\"*) exit 79;; esac\nexit 0\n",encoding='utf-8',newline='\n')
             python.chmod(0o755)
             environment=dict(os.environ)
             environment.pop('QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON',None)

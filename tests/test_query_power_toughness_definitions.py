@@ -517,13 +517,20 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
         )
 
     def test_query_definition_executes_while_replacement_siblings_fail_closed(self):
+        from dataclasses import replace
+        from quorune.semantic_runtime.token_replacements import GenericAdditionalTokenReplacementHandler
         session = self.session(129_003_006)
         engine = session.engine
         record = self.db.lookup("Queen Allenal of Ruadach")
         capabilities = load_default_capability_registry()
+        boundary=replace(record,oracle_id='fixture:query-definition-dynamic-additional-token',
+            name='Generic Query Definition Additional Token Boundary',raw={},oracle_text=(
+                "This creature's power and toughness are each equal to the number of creatures you control.\n"
+                'If one or more creature tokens would be created under your control, those tokens plus '
+                'a 1/1 white Soldier creature token for each creature you control are created instead.'))
         program = compile_card_program(
             self.db,
-            record,
+            boundary,
             capability_registry=capabilities,
             capability_profile="commander_review",
             trust_level="provisional",
@@ -559,7 +566,8 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
             capability_profile="commander_review",
             promote_exact_runtime_handlers=True,
         )
-        self.assertEqual(1, registration["runtime_handlers_promoted"])
+        self.assertEqual(len({HANDLER_ID,GenericAdditionalTokenReplacementHandler().handler_id}),
+            registration["runtime_handlers_promoted"])
         runtime_programs = tuple(
             engine.semantics.runtime_handler_programs_for_oracle(
                 record.oracle_id,
@@ -575,15 +583,19 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
                 for descriptor in runtime_program.handlers
             )
         )
-        self.assertFalse(
+        self.assertTrue(
             any(
-                "replacement" in runtime_program.event
+                runtime_program.event=='token.create'
+                and any(h['handler_id']==GenericAdditionalTokenReplacementHandler().handler_id for h in runtime_program.handlers)
                 and engine.semantic_program_is_current_trusted(runtime_program)
                 for runtime_program in engine.semantics.programs_for_oracle(
                     record.oracle_id
                 )
             )
         )
+        admitted=engine.semantics.card_program_for_oracle(record.oracle_id)
+        self.assertTrue(bind_card_program_runtime(admitted,capability_registry=capabilities,
+            profile='commander_review')['strict_capability_ready'])
 
         source = CardInstance(
             object_id="query-definition-queen-allenal",
@@ -601,7 +613,9 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
         self.token(engine, "A", type_line="Token Creature", name="First Witness")
         self.token(engine, "A", type_line="Token Creature", name="Second Witness")
         current = engine._effective_card_data(source)
-        self.assertEqual(("3", "3"), (current["power"], current["toughness"]))
+        self.assertEqual(("5", "5"), (current["power"], current["toughness"]))
+        self.assertEqual(2,sum(card.is_token and card.controller=='A' and card.printed_name=='Soldier'
+            for card in engine.state.cards.values()))
 
     def test_query_definition_hand_count_projects_without_hidden_identity(self):
         session = self.session(129_003_003)

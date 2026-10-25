@@ -160,6 +160,7 @@ class FixedCombatEntryKeywordLifecycleCompilerTests(unittest.TestCase):
                                 "copy_snapshot": (
                                     "$context.encore_copy_snapshot"
                                 ),
+                                'copy_source_logical_object_id':'$context.encore_copy_source_logical_object_id',
                             },
                         ),
                         node.effects,
@@ -907,6 +908,13 @@ class FixedCombatEntryKeywordLifecycleRuntimeTests(unittest.TestCase):
             players=3,
         )
         current_engine = current_session.engine
+        item=current_engine.state.stack[-1]
+        from quorune.target_source import TARGETING_SOURCE_CONTEXT,TargetingSourceBinding,stack_targeting_source
+        acting_source=TargetingSourceBinding.from_dict(item.context[TARGETING_SOURCE_CONTEXT])
+        self.assertEqual(acting_source.logical_object_id,item.context['source_logical_object_id'])
+        self.assertNotEqual(acting_source.logical_object_id,current_source.logical_object_id)
+        self.assertEqual(current_source.logical_object_id,item.context['encore_copy_source_logical_object_id'])
+        self.assertIn('creature',stack_targeting_source(current_engine,item).card_types)
         current_source.annotations["copy_overrides"] = {
             "power": "7",
             "toughness": "7",

@@ -4131,6 +4131,88 @@ class RulesSchedulerTests(unittest.TestCase):
             _source_checkpoint_frontier(transition_id)["fingerprint"],
         )
 
+    def _conservative_frontier_advance(self):
+        history=json.loads((ROOT/'coverage/harvest-outcome-history.json').read_text(encoding='utf-8'))
+        path='coverage/card-unlock-frontier.json.gz'
+        for entry in reversed(history['non_harvest_transitions']):
+            before=entry['base_receipt']['blobs'][path]['git_blob_oid']
+            after=entry['head_receipt']['blobs'][path]['git_blob_oid']
+            if before==after:
+                continue
+            raw=subprocess.check_output(['git','cat-file','blob',before],cwd=ROOT)
+            original=json.loads(gzip.decompress(raw))
+            current=json.loads(gzip.decompress(subprocess.check_output(['git','cat-file','blob',after],cwd=ROOT)))
+            if original['fingerprint']!=current['fingerprint']:
+                return entry,original,raw
+        self.fail('Expected an immutable conservative main-frontier advance in the journal')
+
+    def test_measurement_frontier_survives_conservative_main_advance(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        entry,original,_=self._conservative_frontier_advance()
+        outcome={'transition_id':'fixture-original-measurement',
+            'measurement_frontier_fingerprint':original['fingerprint'],
+            'base_receipt':entry['head_receipt']}
+        journal={'entries':[outcome],'non_harvest_transitions':[entry]}
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'history.json'
+            path.write_text(json.dumps(journal),encoding='utf-8',newline='\n')
+            before=path.read_bytes()
+            with mock.patch.object(owner,'HARVEST_HISTORY',path):
+                self.assertEqual(original,owner._source_checkpoint_frontier(outcome['transition_id']))
+                self.assertEqual(before,path.read_bytes())
+                path.write_text(json.dumps({**journal,'non_harvest_transitions':[]}),encoding='utf-8',newline='\n')
+                with self.assertRaisesRegex(ValueError,'base-frontier identity is inconsistent'):
+                    owner._source_checkpoint_frontier(outcome['transition_id'])
+
+    def test_measurement_frontier_recovery_rejects_corrupt_provenance(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        from scripts.harvest_outcome_history import _hash
+        entry,original,_=self._conservative_frontier_advance()
+        outcome={'transition_id':'fixture-original-measurement',
+            'measurement_frontier_fingerprint':original['fingerprint'],
+            'base_receipt':entry['head_receipt']}
+        journal={'entries':[outcome],'non_harvest_transitions':[entry]}
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'history.json'
+            with mock.patch.object(owner,'HARVEST_HISTORY',path):
+                invalid=deepcopy(journal)
+                invalid['non_harvest_transitions'][0]['entry_fingerprint']='0'*64
+                path.write_text(json.dumps(invalid),encoding='utf-8',newline='\n')
+                with self.assertRaisesRegex(ValueError,'non-harvest transition is malformed'):
+                    owner._source_checkpoint_frontier(outcome['transition_id'])
+                invalid=deepcopy(journal)
+                invalid['entries'][0]['measurement_frontier_fingerprint']='0'*64
+                path.write_text(json.dumps(invalid),encoding='utf-8',newline='\n')
+                with self.assertRaisesRegex(ValueError,'base-frontier identity is inconsistent'):
+                    owner._source_checkpoint_frontier(outcome['transition_id'])
+                invalid=deepcopy(journal)
+                row=invalid['non_harvest_transitions'][0]
+                row['base_receipt']['blobs']['coverage/card-unlock-frontier.json.gz']['raw_sha256']='f'*64
+                row['base_receipt']['content_fingerprint']=_receipt_content_fingerprint(row['base_receipt'])
+                row['entry_fingerprint']=_hash({k:v for k,v in row.items() if k!='entry_fingerprint'})
+                path.write_text(json.dumps(invalid),encoding='utf-8',newline='\n')
+                with self.assertRaisesRegex(ValueError,'blob hash is inconsistent'):
+                    owner._source_checkpoint_frontier(outcome['transition_id'])
+
+    def test_measurement_frontier_recovery_reads_exact_blob_in_shallow_checkout(self):
+        import scripts.update_work_selection_cohort_measurements as owner
+        entry,original,raw=self._conservative_frontier_advance()
+        old_oid=entry['base_receipt']['blobs']['coverage/card-unlock-frontier.json.gz']['git_blob_oid']
+        outcome={'transition_id':'fixture-original-measurement',
+            'measurement_frontier_fingerprint':original['fingerprint'],
+            'base_receipt':entry['head_receipt']}
+        real_run=subprocess.run
+        def shallow_run(command,*args,**kwargs):
+            if command==['git','cat-file','blob',old_oid]:
+                return SimpleNamespace(returncode=1,stdout=b'')
+            return real_run(command,*args,**kwargs)
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/'history.json'
+            path.write_text(json.dumps({'entries':[outcome],'non_harvest_transitions':[entry]}),encoding='utf-8',newline='\n')
+            with mock.patch.object(owner,'HARVEST_HISTORY',path), mock.patch.object(owner.subprocess,'run',side_effect=shallow_run), mock.patch.object(owner,'_remote_git_blob',return_value=raw) as remote:
+                self.assertEqual(original,owner._source_checkpoint_frontier(outcome['transition_id']))
+                remote.assert_called_once_with(old_oid)
+
     def test_unmerged_harvest_compiler_revision_retains_original_frontier_identity(self):
         transition_id = 'generic-unmerged-harvest'
         original_frontier = {'fingerprint': 'original-frontier', 'cards': []}
@@ -4250,24 +4332,28 @@ class RulesSchedulerTests(unittest.TestCase):
             self.assertEqual(['git', 'fetch', '--no-tags', '--depth=1', 'origin', 'a' * 40], git.call_args_list[1].args[0])
 
     def test_transition_probe_recovers_receipt_blob_in_shallow_checkout(self):
-        outcome = self.work_inputs["harvest_outcome_history"]["entries"][-1]
+        import scripts.update_work_selection_cohort_measurements as owner
+        entry,original,raw=self._conservative_frontier_advance()
+        outcome = {
+            'transition_id': 'fixture-unaltered-measurement-base',
+            'measurement_frontier_fingerprint': original['fingerprint'],
+            'base_receipt': entry['base_receipt'],
+        }
         transition_id = outcome["transition_id"]
         blob_id = outcome["base_receipt"]["blobs"][
             "coverage/card-unlock-frontier.json.gz"
         ]["git_blob_oid"]
-        raw = subprocess.run(
-            ["git", "cat-file", "blob", blob_id],
-            cwd=ROOT,
-            check=True,
-            stdout=subprocess.PIPE,
-        ).stdout
         missing = subprocess.CompletedProcess(
             args=["git", "cat-file", "blob", blob_id],
             returncode=1,
             stdout=b"",
             stderr=b"missing in shallow checkout",
         )
-        with (
+        with tempfile.TemporaryDirectory() as directory:
+            history=Path(directory)/'history.json'
+            history.write_text(json.dumps({'entries':[outcome]}),encoding='utf-8',newline='\n')
+            with (
+            mock.patch.object(owner,'HARVEST_HISTORY',history),
             mock.patch(
                 "scripts.update_work_selection_cohort_measurements."
                 "subprocess.run",
@@ -4278,8 +4364,8 @@ class RulesSchedulerTests(unittest.TestCase):
                 "_remote_git_blob",
                 return_value=raw,
             ) as remote,
-        ):
-            recovered = _source_checkpoint_frontier(transition_id)
+            ):
+                recovered = _source_checkpoint_frontier(transition_id)
         remote.assert_called_once_with(blob_id)
         self.assertEqual(
             outcome["measurement_frontier_fingerprint"],

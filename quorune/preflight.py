@@ -463,6 +463,102 @@ def _trusted_activated_ability_is_covered(
     )
 
 
+def _trusted_generated_source_coverage(record, oracle_ir, programs, capability_registry, profile):
+    """Recognize only exact current source spans with bound native execution."""
+    from .card_programs.binding import bind_semantic_program_runtime
+    from .card_programs.model import _ability_face_id
+
+    ranges={face.face_id:[] for face in oracle_ir.faces}
+    covered_occurrences=set()
+    all_occurrences=set()
+    for face in oracle_ir.faces:
+        all_occurrences.update((face.face_id,line.strip()) for line in
+            _without_parenthetical_reminder(face.oracle_text).splitlines() if line.strip())
+        for program in programs:
+            if (program.provenance.get('authored_by')!=oracle_ir.compiler_version
+                    or _ability_face_id(program)!=face.face_id):
+                continue
+            node=next((node for node in face.nodes if node.exact and node.lowerable
+                and not node.residual_ids and asdict(node.span)==program.provenance.get('source_span')
+                and node.template_id==program.provenance.get('template_id')),None)
+            if node is None or not bind_semantic_program_runtime(program,
+                    capability_registry=capability_registry,profile=profile)['strict']:
+                continue
+            ranges[face.face_id].append((node.span.start,node.span.end))
+            text=face.oracle_text[node.span.start:node.span.end]
+            covered_occurrences.update((face.face_id,line.strip()) for line in
+                _without_parenthetical_reminder(text).splitlines() if line.strip())
+    lines={line for _,line in all_occurrences if
+        all((face,line) in covered_occurrences for face,value in all_occurrences if value==line)}
+    keywords=set()
+    for keyword in record.keywords:
+        pattern=re.compile(r'\b'+re.escape(keyword)+r's?\b',re.I)
+        matches=[(face.face_id,match) for face in oracle_ir.faces
+            for match in pattern.finditer(face.oracle_text)]
+        if matches and all(any(start<=match.start() and match.end()<=end
+                for start,end in ranges[face_id]) for face_id,match in matches):
+            keywords.add(keyword.casefold())
+    return lines,keywords
+
+
+def _unresolved_source_materials(record, oracle_ir, trusted_programs, capability_registry, capability_profile):
+    """Keep source-bound native and reviewed material coverage together."""
+    unresolved=[]
+    legacy_coverage={value for program in trusted_programs
+        if not str(program.provenance.get('authored_by','')).startswith('oracle-ir-v')
+        for value in program.coverage}
+    source_lines,source_keywords=_trusted_generated_source_coverage(record,oracle_ir,trusted_programs,
+        capability_registry or load_default_capability_registry(),capability_profile)
+    replacement_lines={line.strip() for line in _material_oracle_text(record).splitlines()
+        if 'instead' in line.casefold()}
+    if replacement_lines-source_lines and 'replacement_effect' not in legacy_coverage:
+        unresolved.append('replacement_effect')
+    if (
+        static_lines_without_keyword_owners([line for line in _static_lines_needing_program(record)
+            if line.strip() not in source_lines],record=record,trusted_programs=trusted_programs)
+        and not legacy_coverage.intersection({
+            "static_ability", "continuous_effect", "runtime_static_handler", "cost_reduction",
+        })
+    ):
+        unresolved.append("static_ability")
+    unsupported_keywords = sorted(
+        {
+            keyword.casefold()
+            for keyword in record.keywords
+            if keyword.casefold() in _MATERIAL_KEYWORDS
+            and keyword.casefold() not in _BUILTIN_STATIC_KEYWORDS
+            and keyword.casefold() not in _BUILTIN_MATERIAL_KEYWORDS
+            and keyword.casefold() not in legacy_coverage
+            and keyword.casefold() not in source_keywords
+        }
+    )
+    if (
+        unsupported_keywords
+        and "keyword_ability" not in legacy_coverage
+        and "combat_keyword" not in legacy_coverage
+        and "protection_keyword" not in legacy_coverage
+    ):
+        unresolved.extend(
+            f"keyword:{keyword}" for keyword in unsupported_keywords
+        )
+    if (
+        "zone_permission" in _material_effect_categories(record)
+        and not legacy_coverage.intersection(
+            {
+                "zone_permission",
+                "graveyard_cast_permission",
+                "graveyard_land_permission",
+                "play_without_mana_cost",
+            }
+        )
+        and any(line.strip() not in source_lines for line in _material_oracle_text(record).splitlines()
+            if any(marker in line.casefold() for marker in ('you may cast this card from',
+                'you may cast that card','you may play lands from','you may play it this turn')))
+    ):
+        unresolved.append("zone_permission")
+    return tuple(unresolved),frozenset(legacy_coverage)
+
+
 def card_semantic_status(
     record: CardRecord,
     registry: SemanticRegistry,
@@ -537,16 +633,14 @@ def card_semantic_status(
     ]
     if trigger_lines and len(trusted_event_programs) < len(trigger_lines):
         unresolved.append("triggered_ability")
-    if "instead" in oracle and not any(
-        "replacement_effect" in program.coverage
-        for program in trusted_programs
-    ):
-        unresolved.append("replacement_effect")
     trusted_coverage = {
         value
         for program in trusted_programs
         for value in program.coverage
     }
+    material_unresolved,legacy_coverage=_unresolved_source_materials(
+        record,oracle_ir,trusted_programs,capability_registry,capability_profile)
+    unresolved.extend(material_unresolved)
     trusted_ids = {
         program.ability_id
         for program in trusted_programs
@@ -582,44 +676,6 @@ def card_semantic_status(
             and not _trusted_activated_ability_is_covered(ability, trusted_programs, trusted_ids)
         ):
             unresolved.append(f"activated_ability:{ability.ability_id}")
-    if (
-        static_lines_without_keyword_owners(_static_lines_needing_program(record),record=record,trusted_programs=trusted_programs)
-        and not trusted_coverage.intersection({
-            "static_ability", "continuous_effect", "runtime_static_handler", "cost_reduction",
-        })
-    ):
-        unresolved.append("static_ability")
-    unsupported_keywords = sorted(
-        {
-            keyword.casefold()
-            for keyword in record.keywords
-            if keyword.casefold() in _MATERIAL_KEYWORDS
-            and keyword.casefold() not in _BUILTIN_STATIC_KEYWORDS
-            and keyword.casefold() not in _BUILTIN_MATERIAL_KEYWORDS
-            and keyword.casefold() not in trusted_coverage
-        }
-    )
-    if (
-        unsupported_keywords
-        and "keyword_ability" not in trusted_coverage
-        and "combat_keyword" not in trusted_coverage
-        and "protection_keyword" not in trusted_coverage
-    ):
-        unresolved.extend(
-            f"keyword:{keyword}" for keyword in unsupported_keywords
-        )
-    if (
-        "zone_permission" in _material_effect_categories(record)
-        and not trusted_coverage.intersection(
-            {
-                "zone_permission",
-                "graveyard_cast_permission",
-                "graveyard_land_permission",
-                "play_without_mana_cost",
-            }
-        )
-    ):
-        unresolved.append("zone_permission")
     trusted_spell_program = any(
         program.ability_id.startswith("spell:")
         and "spell_resolution" in program.coverage
@@ -638,8 +694,8 @@ def card_semantic_status(
             value for value in unresolved if value != "triggered_ability"
         ]
     if (
-        "replacement_effect" in trusted_coverage
-        or "replacement_destination" in trusted_coverage
+        "replacement_effect" in legacy_coverage
+        or "replacement_destination" in legacy_coverage
         or (
             trusted_spell_program
             and (record.is_instant or record.is_sorcery)

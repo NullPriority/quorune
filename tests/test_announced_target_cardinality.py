@@ -313,9 +313,9 @@ class AnnouncedTargetCardinalityRuntimeTests(unittest.TestCase):
     def test_wrong_announced_binding_is_killed_by_a_fresh_original_gridlock(self):
         from quorune.rules.casting import target_cardinality
         original=target_cardinality.bind_target_count_option
-        def choose_one(program,option,response,*,has_mana_x,has_declared_cost_x=False):
+        def choose_one(program,option,response,*,has_mana_x,has_declared_cost_x=False,target_limit=None):
             return original(program,option,{**response,'x':1},has_mana_x=has_mana_x,
-                has_declared_cost_x=has_declared_cost_x)
+                has_declared_cost_x=has_declared_cost_x,target_limit=target_limit)
         with patch.object(target_cardinality,'bind_target_count_option',side_effect=choose_one):
             method='test_original_gridlock_uses_one_announced_x_for_cost_and_distinct_targets'
             with self.assertRaises(AssertionError):

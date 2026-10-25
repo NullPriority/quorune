@@ -149,6 +149,14 @@ across the observation window and keep generated governance first. Preserve
 primary assignments, semantic overlays, worker counts and concurrency budgets;
 fixed-duration scheduling estimates remain predictions until public runs confirm
 them.
+During failure diagnosis, complete module timings from a finished shard can
+also inform a provisional partition when every configured test ran and
+collection parity was enforced. Preserve the original result and its failure
+status; timing telemetry supplies no correctness or certification evidence.
+Account for the slower observed operating system where both results exist,
+identify missing observations, and validate the full inventory before publishing
+the partition for a fresh complete run. The ordinary rebalance command below
+continues to require successful Ubuntu artifacts.
 Simplifying labels or metadata is useful when it
 removes measured rework, but it must preserve the source and risk evidence
 those fields carry. Finish one measured improvement before combining unrelated
@@ -547,6 +555,11 @@ receipts plus the transition-measurement receipt are content identities with no
 feature-commit field. They survive squash, so review, merge, and the next
 selector pass require neither a merge-commit association nor a bookkeeping
 follow-up.
+A prediction keeps its original measurement frontier when conservative main
+updates advance an unmerged delivery's outcome base. The producer recovers
+that exact frontier through validated non-harvest receipt links and checks its
+recorded blob hash and frontier fingerprint. Actual outcome deltas still use
+the current durable-main base; unavailable or inconsistent provenance fails closed.
 When a feature revises an unpublished non-harvest proposal, the history owner
 authenticates its prior receipt against the committed source checkpoint and
 walks its unpublished chain back to durable main. It supersedes only that

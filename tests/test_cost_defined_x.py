@@ -355,8 +355,8 @@ class CostDefinedXTests(unittest.TestCase):
         from quorune.rules.casting.targeted_costs import _announced_tax_assignments
         main='test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana'
         scalar='test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player'
-        def missing_binding(program,option,response,*,has_mana_x,has_declared_cost_x=False):
-            return bind_target_count_option(program,option,response,has_mana_x=has_mana_x)
+        def missing_binding(program,option,response,*,has_mana_x,has_declared_cost_x=False,target_limit=None):
+            return bind_target_count_option(program,option,response,has_mana_x=has_mana_x,target_limit=target_limit)
         def missing_signature_bound(*args,**kwargs):
             for targets,groups,limit in _announced_tax_assignments(*args,**kwargs):yield targets,groups,999
         cases=(('quorune.compiler.declared_effect_amounts._additional_price_declares_x',lambda *a:False,main),

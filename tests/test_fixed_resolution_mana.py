@@ -88,18 +88,22 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
                     *residuals,
                 }
                 record = self.db.by_oracle_id(oid)
+                supported=record.name=='Cabal Ritual'
+                if supported:
+                    pieces-=residuals
                 ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
                 program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry, capability_profile='commander_review')
                 row = analyze_card_unlocks(ir, program=program, program_error=None,
                     capabilities=self.registry, profile='commander_review')
                 self.assertLessEqual(pieces, _observed_piece_ids(row))
-                self.assertEqual('residual', row['card_program_status'])
+                self.assertEqual('trusted' if supported else 'residual', row['card_program_status'])
                 self.assertIsNone(row['hard_construction_failure'])
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                self.assertFalse(binding['strict_capability_ready'])
-                self.assertFalse(binding['compatible_ready'])
-                self.assertIn('trust_basis:unresolved', binding['blockers'])
+                self.assertEqual(supported,binding['strict_capability_ready'])
+                self.assertEqual(supported,binding['compatible_ready'])
+                if supported:self.assertEqual('exact',ir.status,ir.material_residuals)
+                else:self.assertIn('trust_basis:unresolved', binding['blockers'])
 
     def test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays(self):
         s=self.session(328001);e=s.engine;source=self.add(e,'Dark Ritual',zone='hand')

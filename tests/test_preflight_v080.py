@@ -46,6 +46,49 @@ class SemanticPreflightV2Tests(unittest.TestCase):
         self.assertEqual("unresolved", drifted["status"])
         self.assertIn("semantic_source_hash_drift", drifted["unresolved"])
 
+    def test_native_replacement_coverage_requires_its_registered_capability(self):
+        from dataclasses import replace
+        record=self.db.lookup('Worldwalker Helm')
+        registry=SemanticRegistry()
+        capabilities=load_default_capability_registry()
+        register_generated_programs(self.db,registry,(record,),capability_registry=capabilities,
+            capability_profile='commander_review',promote_exact_runtime_handlers=True)
+        self.assertEqual('fully_playable',card_semantic_status(record,registry,db=self.db,
+            capability_registry=capabilities)['status'])
+        current=next(p for p in registry.programs_for_oracle(record.oracle_id)
+            if 'token.creation.additional_replacement' in p.capability_dependencies)
+        registry.put(replace(current,capability_dependencies=tuple(value for value in
+            current.capability_dependencies if value!='token.creation.additional_replacement'),
+            capability_closure=None))
+        row=card_semantic_status(record,registry,db=self.db,capability_registry=capabilities)
+        self.assertNotEqual('fully_playable',row['status'])
+        self.assertIn('replacement_effect',row['unresolved'])
+        self.assertIn('keyword:explore',row['unresolved'])
+
+    def test_native_static_owner_cannot_cover_an_unrelated_source_line(self):
+        from dataclasses import replace
+        from test_qualified_zone_event_queries import query_record
+        text=('Creatures you control get +1/+1.\n'
+            'As this enchantment enters, an opponent secretly chooses a color.\n'
+            'Creatures of the chosen color get +1/+1.')
+        record=replace(query_record(text),name='Generic Native Preflight Boundary',
+            type_line='Enchantment',mana_cost='{2}{W}')
+        registry=SemanticRegistry()
+        capabilities=load_default_capability_registry()
+        register_generated_programs(self.db,registry,(record,),capability_registry=capabilities,
+            capability_profile='commander_review',promote_exact_runtime_handlers=True)
+        current=next(p for p in registry.programs_for_oracle(record.oracle_id)
+            if p.trust_level=='trusted' and p.provenance.get('source_span',{}).get('line')==1)
+        row=card_semantic_status(record,registry,db=self.db,capability_registry=capabilities)
+        self.assertIn('static_ability',row['unresolved'])
+        self.assertNotEqual('fully_playable',row['status'])
+        start=text.index('As this enchantment')
+        registry.put(replace(current,provenance={**current.provenance,
+            'source_span':{'start':start,'end':text.index('\n',start),'line':2}}))
+        row=card_semantic_status(record,registry,db=self.db,capability_registry=capabilities)
+        self.assertIn('static_ability',row['unresolved'])
+        self.assertNotEqual('fully_playable',row['status'])
+
     def test_preflight_v2_records_exact_sources_and_material_fields(self):
         report = semantic_preflight(self.db, self.zimone)
         self.assertEqual(3, report["schema_version"])

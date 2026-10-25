@@ -131,3 +131,72 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         self.assertTrue(any(r.material for f in ir.faces for r in f.residuals))
         self.reject(s,{'action_id':'cast:'+c.ref,'pay':'auto'})
         self.replay(s)
+
+    def test_exact_resolution_mana_fragment_does_not_admit_unowned_saga_and_replacement(self):
+        s=self.session(764115)
+        s.state.config.semantic_policy='trusted_only'
+        source=self.add(s.engine,'The Legend of Roku // Avatar Roku')
+        source.active_face='Avatar Roku'
+        control=self.add(s.engine,'Quirion Sentinel',zone='hand')
+        private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
+        ir=compile_oracle_card(self.db.lookup(source.printed_name),
+            capability_registry=self.registry,capability_profile='commander_review')
+        capability='mana.production.fixed_resolution_choice'
+        self.assertTrue(any(capability in node.capability_dependencies
+            for face in ir.faces for node in face.nodes))
+        self.assertNotEqual('exact',ir.status)
+        blockers={blocker for residual in ir.material_residuals for blocker in residual.blockers}
+        self.assertTrue({'replacement applicability','self-replacement and prevention ordering'} <= blockers)
+        self.assertFalse(self.binding(s,source)['strict_capability_ready'])
+        self.assertIn('trust_basis:unresolved',self.binding(s,source)['blockers'])
+        self.assertTrue(self.binding(s,control)['strict_capability_ready'])
+
+        self.prepare(s,mana={'C':12,'G':1})
+        self.checkpoint(s)
+        self.assertEqual('battlefield',s.state.cards[source.object_id].zone)
+        self.assertIn('creature',s.engine._type_parts(s.engine._effective_card_data(source)['type_line'])[0])
+        offers=self.actions(s)
+        activation=next(row for row in offers if row['id'].startswith('activate:'+source.ref+':'))
+        self.assertTrue(any(row.get('kind')=='cast' and row.get('card')==control.ref for row in offers))
+
+        self.cast(s,control,{'C':1,'G':1})
+        pending=self.resolve(s)
+        self.assertIsNotNone(pending)
+        self.assertEqual('semantic.choice',pending.kind)
+        context=s.packet('pilot:A',full=True)['decision']['ctx']
+        self.assertEqual(('choose_mana',1),(context['operation'],context['amount']))
+        self.reject(s,{'action_id':'choose','choice':'G'},principal='pilot:D')
+        result=s.act('pilot:A',{'action_id':'choose','choice':'G'})
+        self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual(1,s.state.players['A'].mana_pool['G'])
+        self.assertEqual('battlefield',s.state.cards[control.object_id].zone)
+        self.assertEqual('battlefield',s.state.cards[source.object_id].zone)
+        self.assertFalse(self.binding(s,source)['strict_capability_ready'])
+        self.private_replay(s,private)
+
+        command={'action_id':activation['id'],'pay':'manual','payment':{'C':8}}
+        self.reject(s,command,principal='pilot:D')
+        result=s.act('pilot:A',command)
+        self.assertTrue(result.ok,result.summary)
+        item=s.state.stack[-1]
+        program=s.engine.semantics.get(item.semantic_key)
+        self.assertFalse(s.engine.semantic_program_is_current_trusted(program))
+        card_ids=set(s.state.cards)
+        mana=dict(s.state.players['A'].mana_pool)
+        for _ in range(8):
+            if s.state.pending_decision is None:
+                break
+            self.assertEqual('priority',s.state.pending_decision.kind)
+            result=s.act(s.pending_principals()[0],{'action_id':'pass'})
+            self.assertTrue(result.ok,result.summary)
+        self.assertIsNone(s.state.pending_decision)
+        self.assertEqual([item.ref],[entry.ref for entry in s.state.stack])
+        self.assertEqual(card_ids,set(s.state.cards))
+        self.assertEqual(mana,s.state.players['A'].mana_pool)
+        pause=next(row for row in reversed(s.state.annotations) if row.get('kind')=='semantic_unsupported')
+        self.assertEqual((item.ref,'trusted_only'),(pause['stack'],pause['semantic_policy']))
+        self.assertFalse(self.binding(s,source)['strict_capability_ready'])
+        s=self.replay(s,load=True)
+        self.assertEqual([item.ref],[entry.ref for entry in s.state.stack])
+        self.reject(s,{'action_id':'choose','choice':'G'})

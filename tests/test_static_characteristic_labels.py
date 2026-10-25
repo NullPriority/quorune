@@ -48,11 +48,11 @@ class StaticCharacteristicLabelCompilerTests(unittest.TestCase):
         self.assertIsNone(static_runtime_template('Protector — Creatures you control have flying.',source_name='Class witness',source_is_class=True))
 
     def test_static_label_dispatch_omission_mutant_is_killed(self):
-        import quorune.compiler.runtime_templates as owner
-        original=owner._continuous_static_runtime_template
-        def omitted(text,**kwargs):
-            return None if ' — ' in text else original(text,**kwargs)
-        with patch.object(owner,'_continuous_static_runtime_template',side_effect=omitted):
+        import quorune.compiler.closed_static_nodes as owner
+        original=owner.without_ability_word_label
+        def omitted(text):
+            return None if ' — ' in text else original(text)
+        with patch.object(owner,'without_ability_word_label',side_effect=omitted):
             with self.assertRaises(AssertionError):
                 self.test_decorative_static_labels_preserve_descriptor_and_original_source_span()
 
@@ -60,7 +60,8 @@ class StaticCharacteristicLabelCompilerTests(unittest.TestCase):
         from quorune.compiler.public_state_queries import fixed_characteristic_battlefield_query_subject
         relation,query,other=fixed_characteristic_battlefield_query_subject('Other Wolves and Werewolves you control')
         self.assertEqual('source_controller',relation);self.assertTrue(other)
-        self.assertEqual(('werewolf','wolf'),query.subtypes_any)
+        self.assertEqual({'werewolf','wolf'},{subtype for leaf in query.any_of for subtype in leaf.subtypes_all})
+        self.assertEqual(2,len(query.any_of))
         self.assertEqual((),query.types_all)
         self.assertIsNone(fixed_characteristic_battlefield_query_subject('Other Wolves and Boguses you control'))
 

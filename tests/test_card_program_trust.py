@@ -58,7 +58,7 @@ class CardProgramTrustTests(unittest.TestCase):
         old = next(program for program in reviewed if any(
             handler.get("handler_id") == "continuous.anthem.power_toughness.v1"
             for handler in program.handlers))
-        self.assertEqual({old.key}, shadowed_reviewed_program_keys(record, generated, reviewed))
+        self.assertEqual({program.key for program in reviewed}, shadowed_reviewed_program_keys(record, generated, reviewed))
         self.assertEqual(set(), shadowed_reviewed_program_keys(record, generated, (
             replace(old, provenance={**old.provenance, "source_oracle_hash": "0" * 64}),)))
         changed = copy.deepcopy(old.handlers)

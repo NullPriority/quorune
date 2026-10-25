@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "7f614255a6e97002ad475c85c7d6dabba65ccc6d9571961003442cd0fdde554a"
+verified: "74e06c108d71a38d97468ad380bd9f48f74624508456a2fbb7200c44e230cec5"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -17,13 +17,13 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 - Profile: `commander_review`
 - Ontology: `reusable-pieces-v1`
-- Pieces: 3,807
+- Pieces: 3,806
 - Cards indexed: 31,623
 - Material abilities classified: 59,885
 - Unclassified material spans: 0
-- Mapped pinned rules: 1,487 / 3,309
-- Applicable piece pairs: 139,985
-- Covered piece pairs: 1,782
+- Mapped pinned rules: 1,488 / 3,309
+- Applicable piece pairs: 140,079
+- Covered piece pairs: 1,786
 
 ## Ontology classes
 
@@ -33,7 +33,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 | `card_forms` — Card types and specialized forms | 11 |
 | `choices_continuations` — Modes, targets, choices, and continuations | 20 |
 | `combat` — Combat | 43 |
-| `compiler_cardprogram` — Compiler and CardProgram pieces | 2,111 |
+| `compiler_cardprogram` — Compiler and CardProgram pieces | 2,110 |
 | `continuous_effects` — Static abilities and continuous effects | 116 |
 | `costs_mana` — Costs and mana | 15 |
 | `events_mutations` — Typed events and mutations | 153 |
@@ -67,7 +67,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 
 | Piece | Class | Residuals | Sole blockers | Expected cards | Runtime | Assurance |
 |---|---|---:|---:|---:|---|---|
-| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 2,559 | 1,040 | 1,040 | `absent` | `untested` |
+| `residual.continuous_layer.continuous-effect-layers-and-dependencies` | `continuous_effects` | 2,565 | 1,041 | 1,041 | `absent` | `untested` |
 | `residual.activated_effect.unparsed-clause-grammar` | `one_shot_effects` | 1,087 | 104 | 104 | `absent` | `untested` |
 | `residual.effect_clause.unparsed-clause-grammar` | `one_shot_effects` | 1,563 | 59 | 59 | `absent` | `untested` |
 | `residual.keyword_dependency.cipher` | `keyword_mechanics` | 15 | 11 | 11 | `absent` | `untested` |

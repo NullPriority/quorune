@@ -51,6 +51,8 @@ from ...combat_entry_activations import (
     begin_ninjutsu_reveal,
     FIXED_COMBAT_RETURN_CONTEXT,
     ENCORE_EFFECT_OPERATION,
+    ENCORE_COPY_IDENTITY_FIELD,
+    ENCORE_COPY_IDENTITY_CONTEXT,
 )
 from ...trigger_processing import collect_ward_occurrences
 from ...trigger_processing import enqueue_trigger_batch
@@ -816,11 +818,15 @@ def _commit_activation_costs_and_stack(
     ):
         from ...token_creation import token_copy_snapshot
 
-        source_logical_object_id = source.logical_object_id
         source_activation_context = {
             "encore_source_zone": source.zone,
             "encore_copy_snapshot": token_copy_snapshot(host, source),
         }
+        if any(effect.get('op')==ENCORE_EFFECT_OPERATION and ENCORE_COPY_IDENTITY_FIELD in effect
+                for effect in program.effects):
+            source_activation_context[ENCORE_COPY_IDENTITY_CONTEXT]=source.logical_object_id
+        else:
+            source_logical_object_id=source.logical_object_id
     from ...attachment_references import attachment_information_capabilities, ATTACHMENT_INFORMATION_VERSION
     if attachment_snapshot is not None and program is not None and attachment_information_capabilities(program.effects):
         source_activation_context={**(source_activation_context or {}),ATTACHMENT_INFORMATION_VERSION:1}

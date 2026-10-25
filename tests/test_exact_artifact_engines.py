@@ -62,11 +62,10 @@ class ExactArtifactEngineTests(unittest.TestCase):
 
         engine._cast("A", {"card": sol_ring.ref, "pay": "auto"})
         self.assertFalse(engine.state.pending_trigger_batches)
-        self.assertEqual(
-            "Sai artifact-cast trigger", engine.state.stack[-1].label
-        )
+        trigger=engine.state.stack[-1]
+        self.assertEqual(('triggered_ability',sai.object_id),(trigger.kind,trigger.source_object_id))
         self.assertFalse(engine._stabilize())
-        self.assertEqual("Sai artifact-cast trigger", engine.state.stack[-1].label)
+        self.assertEqual(trigger.ref,engine.state.stack[-1].ref)
         self.resolve_top(engine)
         thopters = [
             card
@@ -624,8 +623,8 @@ class ExactArtifactEngineTests(unittest.TestCase):
         self.resolve_top(engine)
         self.assertEqual("outside", token.zone)
         self.assertEqual(
-            "Skullclamp equipped-creature death trigger",
-            engine.state.stack[-1].label,
+            ('triggered_ability',skullclamp.object_id),
+            (engine.state.stack[-1].kind,engine.state.stack[-1].source_object_id),
         )
         self.resolve_top(engine)
         self.assertEqual(

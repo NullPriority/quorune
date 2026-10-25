@@ -4333,7 +4333,7 @@
         "damage.prevention.persistent_amount"
       ],
       "interaction_order": 2,
-      "assertion": "Shieldmage Elder compiles its first selected-Cleric prevention ability while its target-spell prevention ability remains residual, and strict runtime admission rejects the incomplete CardProgram."
+      "assertion": "The generic Shieldmage-style boundary keeps its exact selected-Cleric prevention ability beside a separate target-spell prevention clause with an unrepresented dynamic mana-value condition. Strict runtime binding rejects that incomplete CardProgram. The real printed Shieldmage Elder is a separate positive exact/admitted integration witness."
     },
     {
       "evidence_class": "interaction",
@@ -6082,7 +6082,7 @@
         "continuous.characteristics.query_power_toughness_definition"
       ],
       "interaction_order": 2,
-      "assertion": "Queen Allenal's exact query-derived characteristic definition executes while strict CardProgram admission rejects its unsupported token-replacement applicability sibling before authoritative mutation."
+      "assertion": "The original Queen Allenal fully admits its query-defined power/toughness and fixed additional-token replacement: two separate creature-token events create two extra Soldiers and the Queen counts all five creatures. A separately constructed dynamic-quantity additional-token counterpart retains material replacement residuals and fails strict and compatibility binding without state mutation."
     },
     {
       "evidence_class": "interaction",
@@ -6096,7 +6096,7 @@
         "continuous.characteristics.query_power_toughness_definition"
       ],
       "interaction_order": 2,
-      "assertion": "Queen Allenal's exact query-derived characteristic definition executes without admitting its unsupported self-replacement and prevention-ordering boundary."
+      "assertion": "The original Queen Allenal fully admits its query-defined power/toughness and fixed additional-token replacement: two separate creature-token events create two extra Soldiers and the Queen counts all five creatures. A separately constructed dynamic-quantity additional-token counterpart retains material replacement residuals and fails strict and compatibility binding without state mutation."
     },
     {
       "evidence_class": "interaction",
@@ -12905,7 +12905,7 @@
         "zone.exile_until_source_departure.fixed"
       ],
       "interaction_order": 2,
-      "assertion": "Original Gelatinous Cube and Perilous Snare preserve conditional exile beside unresolved targeted activated siblings. Canonical whole CardProgram binding rejects unresolved trust without constructing a gameplay approximation."
+      "assertion": "Original Gelatinous Cube retains conditional exile beside its unresolved targeted activated sibling. Canonical whole CardProgram binding rejects unresolved trust without constructing a gameplay approximation. Perilous Snare is a separate positive exact/admitted permanent-union integration witness."
     },
     {
       "evidence_class": "interaction",
@@ -20257,6 +20257,64 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual original temporary tribe grants use the shared subtype-union affected set once per object, preserve independent target scope, lock recipients at resolution, exclude late entrants/opponents, expire at cleanup and retain pending load, privacy and exact pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_resolution_mana_fragment_does_not_admit_unowned_saga_and_replacement",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution_choice",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "The pinned Legend of Roku keeps its explicit replacement-applicability residual beside the exact chapter-II mana-choice fragment, so whole-source runtime binding remains unresolved. In the same game a normally compiled Quirion Sentinel casts, resolves its controller-only choice and produces the chosen mana. The known printed Avatar Roku activation cost can be paid, but trusted-only resolution pauses on the unchanged stack item before executing the unrepresented Dragon body: no token or other card is created and paid mana remains unchanged during the pause. Foreign commands reject, private projection and active/paused save-load replay remain intact. This is fail-closed rejection evidence, not successful unsupported Saga/replacement playability."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "test_exact_resolution_mana_fragment_does_not_admit_unowned_saga_and_replacement",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution_choice",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "The pinned Legend of Roku keeps its explicit replacement-ordering residual beside the exact chapter-II mana-choice fragment, so whole-source runtime binding remains unresolved. In the same game a normally compiled Quirion Sentinel casts, resolves its controller-only choice and produces the chosen mana. The known printed Avatar Roku activation cost can be paid, but trusted-only resolution pauses on the unchanged stack item before executing the unrepresented Dragon body: no token or other card is created and paid mana remains unchanged during the pause. Foreign commands reject, private projection and active/paused save-load replay remain intact. This is fail-closed rejection evidence, not successful unsupported Saga/replacement playability."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_combat_entry_keyword_lifecycles.FixedCombatEntryKeywordLifecycleRuntimeTests.test_encore_uses_exiled_lki_after_source_departure_and_reentry",
+      "piece_ids": [
+        "capability.combat.entry.lifecycle.fixed_public",
+        "capability.target.ability_source.current_or_lki"
+      ],
+      "capability_ids": [
+        "combat.entry.lifecycle.fixed_public",
+        "target.ability_source.current_or_lki"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Encore pays its exile cost while retaining the acting graveyard source binding. The separate sealed copy incarnation supplies current exiled copy values, or the original snapshot after departure/reentry. The native source query remains valid, copy counts and identities are exact, and pending/group replay and older payload cases retain their separate evidence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_stack_spell_copy.FixedStackSpellCopyRuntimeTests.test_flare_copy_alternative_sacrifices_current_red_creature_instead_of_mana",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_sacrifice",
+        "capability.casting.alternative_cost.fixed_public"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_sacrifice",
+        "casting.alternative_cost.fixed_public"
+      ],
+      "interaction_order": 2,
+      "assertion": "The real Flare alternative is offered and accepted with zero mana only after a current nontoken red creature is sacrificed through the shared payment owner. A green creature cannot substitute; the independent original and copied Giant Growth resolve on distinct targets, with pending load and exact replay preserving the payment and mana."
     }
   ]
 }

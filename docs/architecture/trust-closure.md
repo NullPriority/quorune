@@ -40,6 +40,11 @@ reviewed static coverage only for trusted, source-hash-matched programs.
 Provisional or source-drifted handlers cannot close a static remainder.
 Compatibility classification retains its separate intrinsic and format-layer
 blockers; a generated handler label alone does not establish strict readiness.
+Preflight accounts native coverage through exact current source spans and
+registered runtime binding. A printed keyword can be owned by its trigger,
+and keywords inside represented token text remain tied to that token owner's
+span. Native coverage does not clear an unrelated material line; provisional,
+source-drifted, or unbound owners retain their blockers.
 
 ## Closure layers
 

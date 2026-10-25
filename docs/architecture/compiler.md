@@ -921,7 +921,8 @@ authority therefore prevents exact keyword admission before runtime binding.
 
 `compiler/fixed_target_effect_sequences.py` also owns one fixed source-
 characteristic result shared by activated and normalized triggered contexts.
-It accepts a fixed power/toughness modifier plus supported keywords, one or
+It accepts a fixed power/toughness modifier, including an explicit +0/+0 that
+leaves the source unchanged, plus supported keywords, one or
 two supported keywords, a colorless or all-colors source change, or a
 fixed artifact animation with literal colors, creature subtypes, base
 power/toughness, and supported keywords. The runtime commits every represented
@@ -932,7 +933,7 @@ check. Layer-4 animation feeds the existing cycle-safe dynamic-characteristic
 boundary before layer-7a counts, and the state-based owner detaches Equipment
 that becomes a creature. Dynamic or
 chosen values, copies, text or control changes, declaration riders,
-Protection, unrepresented landwalk predicates, Banding, unsupported keywords, and non-until-end-of-turn
+Protection, unrepresented landwalk predicates, unsupported keywords, and non-until-end-of-turn
 durations remain source-spanned residuals.
 The shared map retains the five basic landwalk variants and adds Desertwalk,
 artifact, Legendary, nonbasic, Snow, and Snow/basic-land-type predicates.
@@ -2795,6 +2796,9 @@ commander-tax, current-ability, and replay owners. Trap, private or arbitrary
 conditions, team-specific history, tap/reveal/opponent/library/counter/random
 payments, variable or complex mana, multiple nonmana payments, and sibling
 additional, lifecycle, or alternative costs remain residual.
+Each represented nonmana payment also declares the shared fixed payment
+owner it invokes. Alternative-price eligibility cannot substitute for the
+sacrifice, life-payment, discard, exile, or return authority used at commit.
 
 Conditional “without paying its mana cost” forms reuse that owner with an
 explicit version-two condition. The closed grammar requires either one
@@ -2857,6 +2861,8 @@ this turn from any zone other than the battlefield. It reads the exact
 committed origin; battlefield deaths and prior incarnations do not qualify.
 An ability-word prefix has no additional meaning and is removed only when the
 entire supported permission body remains exact.
+Functional Visit and Case Solve/Solved markers require their own semantics;
+generic decorative-label normalization keeps unrepresented forms residual.
 
 Lifecycle lookup uses the shared static-component applicability query before
 offers, commits, and the represented Suspend upkeep trigger. Because the layer
@@ -3510,7 +3516,11 @@ freeze the returned unblocked attacker's recipient before paying the cost.
 Myriad freezes copyable last-known characteristics when it triggers. Encore
 records its post-cost public source zone and copiable values, uses current
 information only while that exact incarnation remains there, and otherwise
-consumes the sealed last-known snapshot. Its per-opponent and replacement-
+consumes the sealed last-known snapshot.
+New Encore payloads seal the copied card's incarnation separately from the
+acting ability source, preserving both original-source targeting facts and
+current copy information after the exile cost. Older payload forms retain
+their recorded identity path. Its per-opponent and replacement-
 expanded copies enter through one grouped token event. One delayed trigger
 filters those recorded incarnations by current zone and original controller,
 then submits every eligible copy to one simultaneous sacrifice through the

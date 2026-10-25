@@ -65,8 +65,11 @@ def effect_node_capabilities(
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
     from .occurrence_object_results import occurrence_object_node_capabilities
     from .prevention_component_shapes import fixed_prevention_component_capabilities
-    from ..attachment_references import attachment_information_capabilities
-    dependencies: set[str] = set(attachment_information_capabilities(effects))
+    from ..attachment_references import AttachmentReferenceError,attachment_information_capabilities
+    try:
+        dependencies: set[str] = set(attachment_information_capabilities(effects))
+    except AttachmentReferenceError:
+        return set()
     for resolver in (
         fixed_prevention_component_capabilities,
         created_token_counter_node_capabilities,

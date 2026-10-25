@@ -409,11 +409,8 @@ class FixedCounterPlacementTargetSetCompilerTests(unittest.TestCase):
             )
 
         exact()
-        with patch(
-            "quorune.compiler.counter_resolution_effect_templates."
-            "fixed_counter_placement_target_set_effect_template",
-            return_value=None,
-        ):
+        import re
+        with patch('quorune.compiler.counter_placement_templates._PLACEMENT',re.compile(r'(?!)')):
             with self.assertRaises(AssertionError):
                 exact()
 

@@ -176,8 +176,8 @@ class CastingSpellRuleTests(unittest.TestCase):
             engine.state.stack[0].card_object_id,
         )
         self.assertEqual(
-            "Sai artifact-cast trigger",
-            engine.state.stack[-1].label,
+            ('triggered_ability',sai.object_id),
+            (engine.state.stack[-1].kind,engine.state.stack[-1].source_object_id),
         )
         relevant_events = [
             event.code

@@ -200,7 +200,7 @@ class AttachedObjectKeywordTests(unittest.TestCase):
         native='test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability'
         cases=(('quorune.compiler.continuous_templates._ATTACHED_OBJECT_KEYWORD_GRANT',re.compile(r'(?!)'),native),
             ('quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler.lower',lambda *a:(),native),
-            ('quorune.card_programs.runtime_requirements.attached_keyword_runtime_dependencies',lambda *a:(),
+            ('quorune.rules.keyword_runtime_requirements.attached_keyword_runtime_dependencies',lambda *a:(),
              'test_granted_keyword_owners_are_independent_runtime_requirements'))
         for owner,omission,method in cases:
             with patch(owner,omission):

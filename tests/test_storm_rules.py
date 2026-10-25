@@ -57,7 +57,9 @@ class CopyTargetModelTests(unittest.TestCase):
                 self.test_copy_assignment_matrix_keeps_only_server_pinned_originals()
 
     def test_copy_assignment_matrix_keeps_only_server_pinned_originals(self):
+        from types import SimpleNamespace
         class Host(TargetSelectionOwnerMixin):
+            state=SimpleNamespace(cards={'CURRENT':None,'OTHER':None},players={'A':None,'B':None},stack=[])
             def _target_candidate_map(self, actor, plan, *, source_ref, acting_source=None):
                 return {group.group_id: ["CURRENT", "OTHER"] for group in plan.groups}
 

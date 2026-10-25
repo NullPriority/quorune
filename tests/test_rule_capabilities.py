@@ -112,7 +112,8 @@ class CapabilityValidationSnapshotTests(unittest.TestCase):
                     with _capability_validation_snapshot():
                         load_default_capability_registry()
                 source.write_text(registry_text, encoding="utf-8")
-                raw = json.loads(evidence_text)
+                from quorune.rules.evidence_storage import unpack_evidence_document
+                raw = unpack_evidence_document(json.loads(evidence_text))
                 timestamp = index.stat().st_mtime_ns
                 changed = evidence_text.replace('"fingerprint": "' + raw['fingerprint'] + '"',
                     '"fingerprint": "' + '0'*64 + '"', 1)

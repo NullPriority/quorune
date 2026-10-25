@@ -48,7 +48,7 @@ def without_ability_word_label(text: str) -> str | None:
     if match is None:
         return None if re.search(r" [—-] ", text) else text
     label = match['label'].casefold()
-    if label == 'visit' or label.startswith((
+    if label in {'visit','solve','to solve','solved'} or label.startswith((
         'if ', 'when ', 'whenever ', 'as ', 'at ', 'this ', 'that ', 'you ', 'your ',
     )):
         return None

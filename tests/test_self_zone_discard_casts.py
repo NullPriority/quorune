@@ -258,7 +258,7 @@ class SelfZoneDiscardCastTests(unittest.TestCase):
                 replace(source,annotations={**source.annotations,'copy_overrides':{'type_line':'Creature — Human'}})):
             self.assertFalse(compiled_self_graveyard_discard_specs(session.engine,'A',changed))
         for target in ('program_has_complete_card_program_admission','program_matches_face'):
-            with patch('quorune.rules.self_graveyard_discard.'+target,return_value=False):
+            with patch('quorune.rules.graveyard_payment_sources.'+target,return_value=False):
                 self.assertFalse(compiled_self_graveyard_discard_specs(session.engine,'A',source))
                 before=authoritative_state_hash(session.state)
                 self.assertFalse(session.act('pilot:A',command).ok)

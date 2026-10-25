@@ -337,6 +337,8 @@ class ContinuousEffectComponentTests(unittest.TestCase):
 
         unsupported_keyword = ability_grant_descriptor()
         unsupported_keyword["modifier"]["add_abilities"] = ["Banding"]
+        handler.validate(unsupported_keyword)
+        unsupported_keyword["modifier"]["add_abilities"] = ["Unrepresented keyword"]
         with self.assertRaisesRegex(SemanticNodeError, "supported keywords"):
             handler.validate(unsupported_keyword)
 

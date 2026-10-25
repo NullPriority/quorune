@@ -10,6 +10,7 @@ from common import ROOT, keep_all, make_session
 from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
+    FixedSourceCharacteristicsTemplate,
     fixed_source_characteristics_effect_template,
 )
 from quorune.continuous_effects import (
@@ -171,7 +172,9 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
     def test_fixed_animation_versioned_schema_rejects_nonboolean_and_open_fields(self):
         compiled=self.compile('Target land becomes a 2/2 creature until end of turn. It\'s still a land.',type_line='Instant')
         effect=compiled.faces[0].nodes[0].effects[0]
-        for field,value in (('retain_types',1),('retain_creature_subtypes','true'),('remove_all_abilities',None),('base_power',True),('keywords',['Banding']),('schema_version',True)):
+        known=copy.deepcopy(effect);known['characteristics']['keywords']=['Banding']
+        self.assertIsNotNone(fixed_resolution_characteristic_instruction(known))
+        for field,value in (('retain_types',1),('retain_creature_subtypes','true'),('remove_all_abilities',None),('base_power',True),('keywords',['Unrepresented keyword']),('schema_version',True)):
             with self.subTest(field=field):
                 mutated=copy.deepcopy(effect);mutated['characteristics'][field]=value
                 with self.assertRaises(ValueError):fixed_resolution_characteristic_instruction(mutated)
@@ -518,6 +521,25 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 self.assertTrue(compiled.material_residuals)
 
     def test_source_characteristic_shape_is_closed_and_capability_bound(self):
+        with self.assertRaisesRegex(ValueError, "cannot be empty"):
+            FixedSourceCharacteristicsTemplate(source_kind="creature")
+        zero = FixedSourceCharacteristicsTemplate(source_kind="creature", power=0, toughness=0)
+        self.assertEqual((0, 0), (zero.effects[0]["power"], zero.effects[0]["toughness"]))
+        self.assertIn(
+            SOURCE_CAPABILITY,
+            capability_dependencies_for_node(
+                effects=zero.effects, target_schema=None, mechanic_ids=zero.mechanics,
+            ),
+        )
+        for invalid in (None, False, "0", {"kind": "dynamic"}):
+            with self.subTest(invalid_zero=invalid):
+                self.assertNotIn(
+                    SOURCE_CAPABILITY,
+                    capability_dependencies_for_node(
+                        effects=({**zero.effects[0], "power": invalid},),
+                        target_schema=None, mechanic_ids=zero.mechanics,
+                    ),
+                )
         template = fixed_source_characteristics_effect_template(
             "This artifact becomes a 2/2 blue Bird artifact creature with flying until end of turn.",
             source_is_permanent=True,
@@ -1406,6 +1428,16 @@ class FixedSourceCharacteristicRuntimeTests(unittest.TestCase):
         before = authoritative_state_hash(engine.state)
         with self.assertRaises(GameRuleError):
             engine.apply_effect(effect, actor="A")
+        self.assertEqual(before, authoritative_state_hash(engine.state))
+
+    def test_explicit_zero_source_modifier_preserves_state(self):
+        session = self.session(70261109)
+        engine = session.engine
+        source = self.add_card(session, name="Source Growth Fixture", ref="SOURCE-ZERO")
+        template = FixedSourceCharacteristicsTemplate(source_kind="creature", power=0, toughness=0)
+        effect = {**template.effects[0], "card": source.ref}
+        before = authoritative_state_hash(engine.state)
+        self.assertEqual(source.ref, engine.apply_effect(effect, actor="A"))
         self.assertEqual(before, authoritative_state_hash(engine.state))
 
     def test_targeted_shadow_uses_shared_keyword_and_block_legality(self):

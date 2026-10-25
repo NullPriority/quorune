@@ -361,6 +361,12 @@ the opponent relationship even after its source changes controller. A returned
 incarnation cannot replace the original source information. Colorless sources
 are neither monocolored nor multicolored. Matching qualities affect targeting;
 they do not prevent blocking, damage or untargeted effects.
+An explicitly empty type line represents a source with no types, including an
+emblem under CR 114.3; its identity and controller remain sealed. This known
+empty value is distinct from missing or malformed characteristic data.
+An Encore frame seals its acting graveyard source separately from the card
+produced by its exile cost. New Encore payloads carry that copy incarnation for
+current-or-last-known copying; older payload forms retain their recorded path.
 
 Shared keyword queries treat a qualified variant as Hexproof. Removing or
 prohibiting Hexproof removes every variant; later grants and independent plain

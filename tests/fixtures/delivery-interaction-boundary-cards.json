@@ -506,6 +506,139 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Quirion Sentinel",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "oracle_text": "When this creature enters, add one mana of any color.",
+      "power": "2",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2000-10-02",
+      "toughness": "1",
+      "type_line": "Creature — Elf Druid"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}{R}",
+          "name": "The Legend of Roku",
+          "oracle_text": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Exile the top three cards of your library. Until the end of your next turn, you may play those cards.\nII — Add one mana of any color.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Enchantment — Saga"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Avatar Roku",
+          "oracle_text": "Firebending 4 (Whenever this creature attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)\n{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Legendary Creature — Avatar"
+        }
+      ],
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Transform",
+        "Firebending"
+      ],
+      "layout": "transform",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R} // ",
+      "name": "The Legend of Roku // Avatar Roku",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "oracle_text": "The Legend of Roku: (As this Saga enters and after your draw step, add a lore counter.)\nI — Exile the top three cards of your library. Until the end of your next turn, you may play those cards.\nII — Add one mana of any color.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n//\nAvatar Roku: Firebending 4 (Whenever this creature attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)\n{8}: Create a 4/4 red Dragon creature token with flying and firebending 4.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2025-11-21",
+      "toughness": null,
+      "type_line": "Enchantment — Saga // Legendary Creature — Avatar"
     }
   ],
   "rulings": [
@@ -748,6 +881,66 @@
       "published_at": "2012-10-01",
       "source": "wotc",
       "comment": "If the equipped creature becomes a different number of colors, the bonus will change accordingly."
+    },
+    {
+      "comment": "A nonmodal double-faced card enters with its front face up by default, unless a spell or ability instructs you to put it onto the battlefield transformed or you cast it transformed, in which case it enters with its back face up.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each face of a nonmodal double-faced card has its own set of characteristics: name, types, subtypes, abilities, and so on. While a nonmodal double-faced permanent is on the battlefield, consider only the characteristics of the face that's currently up. The other set of characteristics is ignored.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each nonmodal double-faced card in this set is cast face up. In every zone other than the battlefield, consider only the characteristics of its front face. If it is on the battlefield, consider only the characteristics of the face that's up; the other face's characteristics are ignored.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you are instructed to put a card that isn't a double-faced card onto the battlefield transformed, it will not enter the battlefield at all. In that case, it stays in the zone it was previously in. For example, if a single-faced card is a copy of The Legend of Roku, the chapter III ability will cause it to be exiled and then remain in exile.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a nonmodal double-faced card is the mana value of its front face, no matter which face is up.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You pay all costs and follow all timing rules for cards played from exile using The Legend of Roku's first chapter ability. For example, if one of the exiled cards is a land card, you may play it only during your main phase while the stack is empty. You may play those exiled cards even if you no longer control The Legend of Roku.",
+      "oracle_id": "2f26f270-26d9-46d3-957f-19f52d51eb03",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not a mana ability. It uses the stack, and can be responded to.",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2008-08-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You get the mana whether you want it or not. If you don't spend it, it will disappear at the end of the current step (or phase).",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The triggered ability isn't a mana ability. It uses the stack and can be responded to.",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2011-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You get the mana whether you want it or not. If you don't spend it, it will disappear at the end of the current step (or phase).",
+      "oracle_id": "70bb2690-653b-4787-bdd1-d1739a8ae545",
+      "published_at": "2011-01-25",
+      "source": "wotc"
     }
   ]
 }
