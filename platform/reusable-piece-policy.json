@@ -142,10 +142,18 @@
       "capability.combat.block.landwalk.qualified_type"
     ],
     ["capability.attachment.equip.fixed_mana", "capability.zone.entry.fixed_copy"],
+    [
+      "capability.casting.additional_cost.fixed_alternative",
+      "capability.stack.counter.effect"
+    ],
     ["capability.casting.additional_cost.fixed_counter_placement", "capability.counter.placement.prohibition.static"],
     ["capability.casting.additional_cost.fixed_counter_placement", "capability.counter.placement.quantity_replacement"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.trigger.event.normalized_zone_change"],
     ["capability.casting.additional_cost.fixed_sacrifice", "capability.zone.change.destination_replacement"],
+    [
+      "capability.casting.additional_cost.replicate_fixed_mana",
+      "capability.stack.counter.effect"
+    ],
     ["capability.casting.additional_cost.zone_change.fixed_discard", "capability.zone.change.destination_replacement"],
     ["capability.casting.disguise.fixed_mana", "capability.keyword_action.manifest.card"],
     ["capability.casting.disguise.fixed_mana", "capability.token.creation.fixed_definition"],
@@ -280,6 +288,10 @@
     [
       "capability.permanent.exile.effect",
       "capability.zone.linked_exile_return.fixed"
+    ],
+    [
+      "capability.stack.counter.effect",
+      "capability.trigger.event.normalized_zone_change"
     ],
     ["capability.state_query.permanent.public_state_predicate", "capability.zone.entry.fixed_copy"],
     ["capability.target.protection.hexproof_permanent", "capability.zone.entry.fixed_copy"],

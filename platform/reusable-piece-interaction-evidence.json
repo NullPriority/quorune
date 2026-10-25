@@ -19867,6 +19867,51 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Cloudshift creates a new recipient incarnation before the untargeted ability resolves; that returned creature remains on the battlefield with exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_stack_counter_targets.MixedStackCounterRuntimeTests.test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
+      "piece_ids": [
+        "capability.casting.additional_cost.replicate_fixed_mana",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.replicate_fixed_mana",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Paid Consign replicate creates an independent copy whose new target is a real triggered ability while the original counters a real colorless creature spell; no Visionary draw occurs and pending/private replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_stack_counter_targets.MixedStackCounterRuntimeTests.test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_alternative",
+        "capability.stack.counter.effect"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_alternative",
+        "stack.counter.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Louisoix pays either two extra generic mana or sacrifices an original legendary creature, then counters a green creature ETB ability. The source creature restriction is confined to the spell branch."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_mixed_stack_counter_targets.MixedStackCounterRuntimeTests.test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+      "piece_ids": [
+        "capability.stack.counter.effect",
+        "capability.trigger.event.normalized_zone_change"
+      ],
+      "capability_ids": [
+        "stack.counter.effect",
+        "trigger.event.normalized_zone_change"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real Elvish Visionary enters, then its triggered draw is countered without affecting the creature. A colorless artifact activated ability remains an illegal Consign target and resolves ordinary damage."
     }
   ]
 }

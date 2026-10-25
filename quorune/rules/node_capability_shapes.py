@@ -196,6 +196,12 @@ _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
     ),
     {**_COUNTER_STACK_BASE, "predicate": "nonblue_spell"},
     {**_COUNTER_STACK_BASE, "colorless": True},
+    {**_COUNTER_STACK_BASE, 'predicate': 'blue_instant_spell'},
+    *tuple(
+        {**_COUNTER_STACK_BASE, 'categories':['spell','ability'], 'predicate':predicate}
+        for predicate in ('triggered_ability_or_colorless_spell','ability_or_noncreature_spell',
+            'ability_or_legendary_spell')
+    ),
     {
         "zones": ["stack"],
         "categories": ["ability"],

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 509,
+  "registry_version": 510,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -28280,7 +28280,7 @@
     },
     {
       "id": "stack.counter.effect",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "115.1",
         "115.5",
@@ -28296,13 +28296,14 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and execute one mandatory direct-target instruction that counters a currently legal spell, activated ability, or triggered ability through a typed stack-counter owner after exact target revalidation.",
+        "summary": "Compile and execute one mandatory direct stack counter with closed spell/ability unions and a closed blue-instant conjunction. Each restriction remains on its own branch; the shared target owner controls offers, accepted choices and resolution revalidation.",
         "inputs": [
           "closed typed direct-target counter clause",
           "current public stack object",
           "canonical spell or ability characteristics, with one optional fixed spell mana-value bound",
           "source-exclusion identity",
-          "trusted counter-prohibition declaration"
+          "trusted counter-prohibition declaration",
+          "closed mixed spell/ability branch or blue-instant spell predicate"
         ],
         "outputs": [
           "removed stack object",
@@ -28331,32 +28332,54 @@
         "quorune.rules.node_capability_shapes.targeted_counter_node_capabilities",
         "quorune.semantic_runtime.stack_counter_handlers.CounterStackTargetHandler",
         "quorune.stack_counter.counter_stack_item",
-        "quorune.zone_trigger_events.ZoneTransitionKind"
+        "quorune.zone_trigger_events.ZoneTransitionKind",
+        "quorune.target_predicates.target_predicate_matches"
       ],
       "positive_tests": [
         "test_spell_trigger_and_activated_contexts_share_targeted_counter_lowering",
         "test_handler_lowers_one_strict_typed_counter_intent",
         "test_compiled_counter_targets_exact_stack_domains_and_replays",
-        "test_countered_ability_leaves_card_zones_unchanged"
+        "test_countered_ability_leaves_card_zones_unchanged",
+        "test_mixed_counter_predicates_keep_each_restriction_on_its_own_branch",
+        "test_blue_instant_counter_requires_both_properties_on_the_same_spell"
       ],
       "negative_tests": [
         "test_unsupported_counter_variants_remain_material_residuals",
         "test_targeted_counter_shape_mutants_fail_closed",
-        "test_counter_source_cannot_target_its_own_stack_object"
+        "test_counter_source_cannot_target_its_own_stack_object",
+        "test_mixed_stack_counter_shapes_reject_category_predicate_and_source_near_misses",
+        "test_mixed_stack_counter_authority_withdrawals_are_specific_rules_blocks",
+        "test_mixed_counter_programs_require_runtime_and_retain_transitive_target_authority"
       ],
       "interaction_tests": [
         "test_intrinsic_uncounterable_spell_survives_typed_counter",
         "test_counter_target_that_leaves_stack_invalidates_resolution",
-        "test_counter_destination_replacement_emits_only_pre_counter_event"
+        "test_counter_destination_replacement_emits_only_pre_counter_event",
+        "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
+        "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
+        "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
       ],
       "multiplayer_tests": [
-        "test_compiled_counter_targets_exact_stack_domains_and_replays"
+        "test_compiled_counter_targets_exact_stack_domains_and_replays",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells"
       ],
       "privacy_tests": [
-        "test_compiled_counter_targets_exact_stack_domains_and_replays"
+        "test_compiled_counter_targets_exact_stack_domains_and_replays",
+        "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source"
       ],
       "replay_tests": [
-        "test_compiled_counter_targets_exact_stack_domains_and_replays"
+        "test_compiled_counter_targets_exact_stack_domains_and_replays",
+        "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
+        "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
+        "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
       ],
       "required_evidence": [
         "positive",
@@ -28367,9 +28390,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "The exact counter node requires resolution-time target revalidation, the typed intrinsic counter-prohibition declaration, and normalized zone-change events; blocking any dependency prevents the node and CardProgram from becoming trusted.",
+      "dependency_fail_closed_rationale": "The exact counter node requires resolution-time target revalidation, the typed intrinsic counter-prohibition declaration, and normalized zone-change events; blocking any dependency prevents the node and CardProgram from becoming trusted. Canonically rebuilt, verified withdrawal of either stack countering or target revalidation specifically blocks every mixed-domain original.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_stack_counter_owner_mutants_are_killed suppresses stack removal and source exclusion in turn, while test_counter_event_derivation_mutant_is_killed suppresses normalized derivation; the focused assertions reject each survivor.",
+      "implementation_mutation_rationale": "test_stack_counter_owner_mutants_are_killed suppresses stack removal and source exclusion in turn, while test_counter_event_derivation_mutant_is_killed suppresses normalized derivation; the focused assertions reject each survivor. A fresh accept-everything predicate omission fails the branch and nearest-counterexample matrix.",
       "blockers": [],
       "status": "trusted"
     },
@@ -31891,13 +31914,18 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_mixed_counter_predicates_keep_each_restriction_on_its_own_branch",
+        "test_blue_instant_counter_requires_both_properties_on_the_same_spell"
       ],
       "negative_tests": [
         "test_all_targets_illegal_counters_by_rules",
         "test_initial_unknown_and_wrong_domain_targets_still_reject_atomically",
         "test_literal_unknown_information_and_historical_references_keep_existing_boundaries",
-        "test_target_that_leaves_and_returns_is_a_new_illegal_object"
+        "test_target_that_leaves_and_returns_is_a_new_illegal_object",
+        "test_mixed_stack_counter_shapes_reject_category_predicate_and_source_near_misses",
+        "test_mixed_stack_counter_authority_withdrawals_are_specific_rules_blocks",
+        "test_mixed_counter_programs_require_runtime_and_retain_transitive_target_authority"
       ],
       "interaction_tests": [
         "test_fell_faces_compose_target_revalidation_with_tapped_entry",
@@ -31923,7 +31951,13 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
+        "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
+        "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
       ],
       "multiplayer_tests": [
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
@@ -31942,7 +31976,9 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells"
       ],
       "privacy_tests": [
         "test_hidden_zones_are_rejected_by_target_schema",
@@ -31962,7 +31998,9 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source"
       ],
       "replay_tests": [
         "test_deflecting_swat_free_cost_and_exact_retarget",
@@ -31983,7 +32021,13 @@
         "test_actual_hovel_hybrid_counter_payment_grants_its_other_target_power_and_flying",
         "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
-        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm"
+        "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
+        "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
+        "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
+        "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
       ],
       "required_evidence": [
         "positive",

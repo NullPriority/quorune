@@ -8529,6 +8529,24 @@
         "test_typed_activated_ability_catalog",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "mixed-stack-counter-predicates",
+      "patterns": [
+        "quorune/compiler/counter_templates.py",
+        "quorune/target_predicates.py",
+        "tests/test_mixed_stack_counter_targets.py",
+        "tests/fixtures/mixed-stack-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_mixed_stack_counter_targets",
+        "test_targeted_counter_effect_clauses",
+        "test_stack_counter_rules",
+        "test_counter_target_predicates",
+        "test_fixed_replicate",
+        "test_fixed_alternative_additional_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

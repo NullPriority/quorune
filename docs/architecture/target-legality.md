@@ -49,6 +49,17 @@ attachment after departure. It retains the referenced permanent through type
 changes and rejects a returned recipient's new incarnation. No target schema
 or resolution-time creature target predicate is synthesized for this form.
 
+Closed stack-counter predicates keep disjunction branches independent. A
+triggered ability or colorless spell does not include an activated ability
+merely because its source is colorless. An activated or triggered ability may
+qualify independently of the source's type or legendary status when those
+restrictions apply only to the spell branch. A blue instant spell must satisfy
+both properties on that same spell. Spell copies use their own spell
+characteristics. The shared predicate controls legal offers, submitted targets
+and resolution revalidation; the existing stack-counter owner performs the
+actual countering. Ability-source type restrictions retain their separately
+bounded current/last-known-information contract.
+
 An optional target set may begin with zero chosen objects (CR 115.6). After
 validating its descriptor, the homogeneous destruction, movement and tap-state
 handler emits the existing empty result plan without object mutation. Later
