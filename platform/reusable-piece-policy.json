@@ -229,6 +229,10 @@
     ["capability.continuous.attached.fixed_characteristics", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
     ["capability.continuous.attached.fixed_characteristics", "capability.permanent.destroy.effect"],
     ["capability.continuous.attached.fixed_characteristics", "capability.zone.entry.fixed_copy"],
+    [
+      "capability.continuous.basic_land_type.fixed_setting",
+      "capability.permanent.exile.effect"
+    ],
     ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.damage.amount.positive"],
@@ -264,6 +268,18 @@
     [
       "capability.library.search.fixed_counted",
       "capability.zone.change.destination_replacement"
+    ],
+    [
+      "capability.object.reference.source_attachment_information",
+      "capability.permanent.exile.effect"
+    ],
+    [
+      "capability.permanent.exile.effect",
+      "capability.target.protection.shroud_permanent"
+    ],
+    [
+      "capability.permanent.exile.effect",
+      "capability.zone.linked_exile_return.fixed"
     ],
     ["capability.state_query.permanent.public_state_predicate", "capability.zone.entry.fixed_copy"],
     ["capability.target.protection.hexproof_permanent", "capability.zone.entry.fixed_copy"],

@@ -438,6 +438,16 @@ mutation. Broad legacy exile and return operations remain separate because they
 represent other origins, destinations, quantities, choices, or hidden-zone
 movement outside these closed direct-target grammars.
 
+Closed activated instructions to exile the enchanted creature use the same
+permanent-exile handler after resolving a version-two attachment reference.
+They introduce no target selection. The reference follows the original source
+incarnation's current attachment, or its actual-departure information after the
+source leaves, including sacrifice as an activation cost. The printed creature
+description identifies that object; a later type change does not add a new
+creature test. A departed and returned recipient is a new object and produces
+the ordinary skipped-instruction result. Historical version-one references
+retain their existing contract.
+
 The `effect.public-zone-move` family closes a broader but still typed boundary.
 One handler accepts exactly one public graveyard-card reference; the other
 accepts an immutable fixed affected-set descriptor with public origin,

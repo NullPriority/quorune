@@ -542,9 +542,21 @@ def targeted_exile_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return capabilities only for the closed direct permanent exile."""
+    """Return ownership for closed direct or versioned attached exile."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if (target_schema is None and _EXILE_MECHANIC in mechanics
+            and 'cr-115-targets' not in mechanics and len(effects) == 1
+            and set(effects[0]) == {'op', 'card'} and effects[0].get('op') == 'exile_permanent'):
+        from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
+        expected = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, 'permanent', schema_version=2)
+        try:
+            actual = AttachmentReferenceSpec.from_dict(effects[0]['card'])
+        except (TypeError, ValueError):
+            return ()
+        if actual == expected:
+            return ('permanent.exile.effect', 'object.reference.source_attachment_information')
+        return ()
     if (
         not {_EXILE_MECHANIC, "cr-115-targets"}.issubset(mechanics)
         or len(effects) != 1

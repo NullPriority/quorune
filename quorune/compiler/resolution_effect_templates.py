@@ -96,7 +96,8 @@ def _attachment_or_owner_zone_move(
     source_attachment_relation: AttachmentReferenceKind | None,
 ):
     from .attached_destruction import attached_destruction_template
-    return attached_destruction_template(text,source_attachment_relation=source_attachment_relation) or fixed_source_attachment_effect_template(
+    from .exile_templates import attached_exile_effect_template
+    return attached_exile_effect_template(text,source_attachment_relation=source_attachment_relation) or attached_destruction_template(text,source_attachment_relation=source_attachment_relation) or fixed_source_attachment_effect_template(
         text,
         source_attachment_relation=source_attachment_relation,
     ) or fixed_owner_zone_move_effect_template(

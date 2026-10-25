@@ -8510,6 +8510,25 @@
         "test_fixed_counter_event_triggers",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "versioned-attached-exile-activation",
+      "patterns": [
+        "quorune/compiler/exile_templates.py",
+        "quorune/attachment_references.py",
+        "quorune/attachment_information.py",
+        "tests/test_attached_exile_activations.py",
+        "tests/fixtures/attached-exile-activation-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_exile_activations",
+        "test_targeted_exile_effect_clauses",
+        "test_permanent_exile_rules",
+        "test_attached_counter_placement",
+        "test_attached_prevention",
+        "test_typed_activated_ability_catalog",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

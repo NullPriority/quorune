@@ -32,6 +32,7 @@
     "tests/fixtures/ascend-city-blessing-cards.json",
     "tests/fixtures/attached-cast-restriction-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",
+    "tests/fixtures/attached-exile-activation-cards.json",
     "tests/fixtures/attached-object-keyword-cards.json",
     "tests/fixtures/attached-occurrence-cards.json",
     "tests/fixtures/attached-permanent-modifier-cards.json",

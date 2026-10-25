@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 508,
+  "registry_version": 509,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -25860,7 +25860,7 @@
     },
     {
       "id": "permanent.exile.effect",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "400.2",
         "400.7",
@@ -25868,7 +25868,10 @@
         "406.2",
         "608.2c",
         "701.13",
-        "701.13a"
+        "701.13a",
+        "113.7a",
+        "303.4m",
+        "608.2h"
       ],
       "supported_profiles": [
         "traditional",
@@ -25876,14 +25879,15 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and execute one mandatory direct-target instruction that moves a phased-in battlefield permanent toward exile through target revalidation and a typed precommit transaction owned by the canonical replacement-aware zone-change path.",
+        "summary": "Compile and execute one mandatory direct-target exile or a non-targeted version-two source attachment exile. The canonical replacement-aware zone transaction owns mutation, while target or current/LKI reference owners provide the recipient.",
         "inputs": [
           "closed shared direct-permanent target descriptor",
           "revalidated phased-in battlefield permanent",
           "current represented effective target characteristics and public state when required",
           "physical and logical object identity",
           "current owner and controller",
-          "represented destination-replacement selections"
+          "represented destination-replacement selections",
+          "version-two current or actual-departure attachment reference with original source and recipient incarnations"
         ],
         "outputs": [
           "requested exile zone event",
@@ -25911,32 +25915,51 @@
         "quorune.rules.single_object_zone_transition.validate_single_object_zone_transition_plan",
         "quorune.rules.single_object_zone_transition.commit_prevalidated_single_object_zone_transition",
         "quorune.permanent_exile.prepare_permanent_exile",
-        "quorune.permanent_exile.commit_permanent_exile"
+        "quorune.permanent_exile.commit_permanent_exile",
+        "quorune.compiler.exile_templates.AttachedExileEffectTemplate",
+        "quorune.compiler.exile_templates.attached_exile_effect_template"
       ],
       "positive_tests": [
         "test_spell_trigger_and_activated_contexts_share_targeted_exile_lowering",
         "test_pinned_direct_target_exile_family_harvests_seven_cards",
         "test_control_changed_permanent_exiles_to_owner_public_zone",
-        "test_exile_destination_replacement_preserves_typed_result"
+        "test_exile_destination_replacement_preserves_typed_result",
+        "test_attached_exile_compiles_a_complete_source_with_its_original_activation_cost",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior"
       ],
       "negative_tests": [
         "test_unsupported_exile_variants_remain_material_residuals",
         "test_targeted_exile_shape_mutants_fail_closed",
-        "test_exile_phased_and_stale_permanents_fail_before_mutation"
+        "test_exile_phased_and_stale_permanents_fail_before_mutation",
+        "test_attached_exile_requires_the_source_relation_and_versioned_information",
+        "test_attached_exile_reference_and_target_shape_mutants_fail_closed",
+        "test_verified_attached_exile_authority_withdrawals_are_specific_rules_blocks",
+        "test_attached_exile_cannot_omit_its_runtime_or_information_dependency"
       ],
       "interaction_tests": [
         "test_compiled_tapped_exile_filters_and_revalidates_target",
         "test_exile_destination_replacement_preserves_typed_result",
-        "test_indestructible_and_shield_do_not_prevent_exile"
+        "test_indestructible_and_shield_do_not_prevent_exile",
+        "test_actual_source_departure_keeps_original_attachment_and_replays_pending_ability",
+        "test_returned_aura_incarnation_does_not_replace_pending_source_information",
+        "test_actual_recipient_blink_never_exiles_the_returned_creature",
+        "test_sacrificed_aura_exiles_its_same_recipient_after_actual_creature_type_loss"
       ],
       "multiplayer_tests": [
-        "test_compiled_exile_is_multiplayer_public_and_replays"
+        "test_compiled_exile_is_multiplayer_public_and_replays",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior"
       ],
       "privacy_tests": [
-        "test_compiled_exile_is_multiplayer_public_and_replays"
+        "test_compiled_exile_is_multiplayer_public_and_replays",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior"
       ],
       "replay_tests": [
-        "test_compiled_exile_is_multiplayer_public_and_replays"
+        "test_compiled_exile_is_multiplayer_public_and_replays",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior",
+        "test_actual_source_departure_keeps_original_attachment_and_replays_pending_ability",
+        "test_returned_aura_incarnation_does_not_replace_pending_source_information",
+        "test_actual_recipient_blink_never_exiles_the_returned_creature",
+        "test_sacrificed_aura_exiles_its_same_recipient_after_actual_creature_type_loss"
       ],
       "required_evidence": [
         "positive",
@@ -25947,9 +25970,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "The exact direct-target compiler shape requires resolution-time target revalidation; blocking that dependency prevents the exile node and its CardProgram from becoming trusted.",
+      "dependency_fail_closed_rationale": "The exact direct-target compiler shape requires resolution-time target revalidation; blocking that dependency prevents the exile node and its CardProgram from becoming trusted. Canonically rebuilt verified withdrawal of the exile or versioned attachment-information authority specifically blocks all attached-exile originals.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_permanent_exile_transaction_mutant_is_killed bypasses stale-plan validation; the no-mutation assertion rejects the survivor.",
+      "implementation_mutation_rationale": "test_permanent_exile_transaction_mutant_is_killed bypasses stale-plan validation; the no-mutation assertion rejects the survivor. A fresh attached-exile grammar omission fails complete-source admission.",
       "blockers": [],
       "status": "trusted"
     },
@@ -59915,7 +59938,8 @@
         "outputs": [
           "current or actual-departure creature binding",
           "existing canonical finite/next-instance shield creation",
-          "no-op when bound recipient is unavailable"
+          "no-op when bound recipient is unavailable",
+          "bound permanent recipient for the canonical untargeted attached-exile consumer, including later type changes"
         ],
         "exclusions": [
           "unproved source attachment relation",
@@ -59939,7 +59963,9 @@
         "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
         "test_real_unavailable_attached_recipient_never_shields_controller",
         "test_real_source_destroyed_after_activation_retains_last_known_creature",
-        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot"
+        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot",
+        "test_attached_exile_compiles_a_complete_source_with_its_original_activation_cost",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior"
       ],
       "negative_tests": [
         "test_originals_admit_with_independent_bound_recipient_and_information_minima",
@@ -59949,35 +59975,50 @@
         "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
         "test_real_unavailable_attached_recipient_never_shields_controller",
         "test_real_source_destroyed_after_activation_retains_last_known_creature",
-        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot"
+        "test_departure_information_tracks_moved_attachment_and_keeps_legacy_snapshot",
+        "test_attached_exile_requires_the_source_relation_and_versioned_information",
+        "test_attached_exile_reference_and_target_shape_mutants_fail_closed",
+        "test_verified_attached_exile_authority_withdrawals_are_specific_rules_blocks",
+        "test_attached_exile_cannot_omit_its_runtime_or_information_dependency"
       ],
       "interaction_tests": [
         "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
         "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
         "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
         "test_real_unavailable_attached_recipient_never_shields_controller",
-        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_actual_source_departure_keeps_original_attachment_and_replays_pending_ability",
+        "test_returned_aura_incarnation_does_not_replace_pending_source_information",
+        "test_actual_recipient_blink_never_exiles_the_returned_creature",
+        "test_sacrificed_aura_exiles_its_same_recipient_after_actual_creature_type_loss"
       ],
       "multiplayer_tests": [
         "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
         "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
         "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
         "test_real_unavailable_attached_recipient_never_shields_controller",
-        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior"
       ],
       "privacy_tests": [
         "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
         "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
         "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
         "test_real_unavailable_attached_recipient_never_shields_controller",
-        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior"
       ],
       "replay_tests": [
         "test_real_fylgja_pays_healing_before_shield_and_keeps_counter_sibling",
         "test_real_fylgja_healing_price_cannot_be_paid_a_fifth_time",
         "test_real_kithkin_block_rule_and_sacrificed_source_choice_use_old_attachment",
         "test_real_unavailable_attached_recipient_never_shields_controller",
-        "test_real_source_destroyed_after_activation_retains_last_known_creature"
+        "test_real_source_destroyed_after_activation_retains_last_known_creature",
+        "test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior",
+        "test_actual_source_departure_keeps_original_attachment_and_replays_pending_ability",
+        "test_returned_aura_incarnation_does_not_replace_pending_source_information",
+        "test_actual_recipient_blink_never_exiles_the_returned_creature",
+        "test_sacrificed_aura_exiles_its_same_recipient_after_actual_creature_type_loss"
       ],
       "required_evidence": [
         "positive",

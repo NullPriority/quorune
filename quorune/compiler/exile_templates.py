@@ -10,8 +10,33 @@ from .direct_target import (
     direct_permanent_target_spec,
     direct_target_effect,
 )
+from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
 
 _EXILE_MECHANIC = "exile"
+
+
+@dataclass(frozen=True, slots=True)
+class AttachedExileEffectTemplate:
+    """One non-targeted exile using current or actual-departure information."""
+
+    reference: AttachmentReferenceSpec
+
+    def __post_init__(self):
+        expected = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, 'permanent', schema_version=2)
+        if self.reference != expected:
+            raise ValueError('Attached exile requires versioned enchanted-creature information')
+
+    def compiled(self):
+        return ('exile-source-attachment-v1',
+            ({'op': 'exile_permanent', 'card': self.reference.to_dict()},), None, (_EXILE_MECHANIC,))
+
+
+def attached_exile_effect_template(text, *, source_attachment_relation):
+    if (source_attachment_relation is not AttachmentReferenceKind.ENCHANTED
+            or re.fullmatch(r'Exile enchanted creature\.', ' '.join(text.split()), re.I) is None):
+        return None
+    return AttachedExileEffectTemplate(AttachmentReferenceSpec(
+        AttachmentReferenceKind.ENCHANTED, 'permanent', schema_version=2))
 
 
 @dataclass(frozen=True, slots=True)
@@ -75,6 +100,8 @@ def targeted_exile_effect_template(
 
 
 __all__ = [
+    "AttachedExileEffectTemplate",
+    "attached_exile_effect_template",
     "TargetedExileEffectTemplate",
     "targeted_exile_effect_template",
 ]

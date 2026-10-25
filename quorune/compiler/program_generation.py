@@ -1173,7 +1173,7 @@ def _is_closed_mass_destruction_program(
 def _is_closed_targeted_exile_program(
     program: SemanticProgram,
 ) -> bool:
-    """Recognize only the reviewed direct battlefield exile family."""
+    """Recognize closed direct and versioned attached battlefield exile."""
 
     required = set(
         targeted_exile_node_capabilities(

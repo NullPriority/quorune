@@ -388,6 +388,7 @@
     ],
     "functional-07": [
       "test_activated_abilities",
+      "test_attached_exile_activations",
       "test_attack_keyword_triggers",
       "test_batch_retained_owner_composition",
       "test_capability_implementation_mutations",

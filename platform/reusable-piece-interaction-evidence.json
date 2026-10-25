@@ -19807,6 +19807,66 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Lotus Bloom suspend remains offered under Solemnity, places three time counters in exile and preserves principal rollback and pre-action replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_exile_activations.AttachedExileActivationRuntimeTests.test_actual_source_departure_keeps_original_attachment_and_replays_pending_ability",
+      "piece_ids": [
+        "capability.object.reference.source_attachment_information",
+        "capability.permanent.exile.effect"
+      ],
+      "capability_ids": [
+        "object.reference.source_attachment_information",
+        "permanent.exile.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual source destruction retains the original enchanted recipient; paid activation, private projection, pending load and pre-action replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_exile_activations.AttachedExileActivationRuntimeTests.test_sacrificed_aura_exiles_its_same_recipient_after_actual_creature_type_loss",
+      "piece_ids": [
+        "capability.continuous.basic_land_type.fixed_setting",
+        "capability.permanent.exile.effect"
+      ],
+      "capability_ids": [
+        "continuous.basic_land_type.fixed_setting",
+        "permanent.exile.effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real Choking Restraints sacrifice cost is paid before Song of the Dryads changes the recipient to a Forest; the untargeted exile still moves that same object."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_exile_activations.AttachedExileActivationRuntimeTests.test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior",
+      "piece_ids": [
+        "capability.permanent.exile.effect",
+        "capability.target.protection.shroud_permanent"
+      ],
+      "capability_ids": [
+        "permanent.exile.effect",
+        "target.protection.shroud_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "Four original Aura spells and activations pay their real costs. Actual Robe of Mirrors grants shroud after attachment, and the untargeted exile still resolves without skipping source body consequences."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attached_exile_activations.AttachedExileActivationRuntimeTests.test_actual_recipient_blink_never_exiles_the_returned_creature",
+      "piece_ids": [
+        "capability.permanent.exile.effect",
+        "capability.zone.linked_exile_return.fixed"
+      ],
+      "capability_ids": [
+        "permanent.exile.effect",
+        "zone.linked_exile_return.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cloudshift creates a new recipient incarnation before the untargeted ability resolves; that returned creature remains on the battlefield with exact replay."
     }
   ]
 }

@@ -41,6 +41,14 @@ references retain their own snapshot, current-information, and last-known
 information rules. Casting validation still rejects missing and wrong-domain
 selections before payment.
 
+An Aura's activated instruction to exile its enchanted creature is untargeted,
+even though casting the Aura itself requires a target. Shroud and Hexproof do
+not stop that activated instruction. Its versioned attachment reference uses
+the current attachment of the original Aura incarnation, or its last-known
+attachment after departure. It retains the referenced permanent through type
+changes and rejects a returned recipient's new incarnation. No target schema
+or resolution-time creature target predicate is synthesized for this form.
+
 An optional target set may begin with zero chosen objects (CR 115.6). After
 validating its descriptor, the homogeneous destruction, movement and tap-state
 handler emits the existing empty result plan without object mutation. Later
