@@ -6,6 +6,7 @@ from typing import Any, Mapping, Protocol
 from ..replacement.immutable import FrozenMap
 from ..drawing.restrictions import DrawPermission
 from ..object_query import ObjectQueryResult
+from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
 
 ChoiceObjectView = ObjectQueryResult
 
@@ -108,6 +109,9 @@ class SemanticChoiceQuery(
 
     def player_counters(self, seat: str) -> Mapping[str, int]: ...
 
+    def counter_placement_allowed(self, subject: str, counter: str, amount: int,
+                                  *, subject_kind: str = 'permanent') -> bool: ...
+
     def library_refs(self, seat: str, *, top_first: bool) -> tuple[str, ...]: ...
     def library_search_allowed(self,seat:str)->bool: ...
 
@@ -169,8 +173,11 @@ class SnapshotSemanticChoiceQuery:
     resolution_condition_facts: FrozenMap = field(default_factory=FrozenMap)
     rules_profile: str = ''
     library_search_allowed_by_seat: FrozenMap = field(default_factory=FrozenMap)
+    counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
 
     def __post_init__(self) -> None:
+        if not isinstance(self.counter_permissions, CounterPermissionSnapshot):
+            raise ValueError('Choice counter permissions require an immutable typed snapshot')
         for field_name in (
             "life_by_seat",
             "counters_by_seat",
@@ -249,6 +256,23 @@ class SnapshotSemanticChoiceQuery:
 
     def authorized_cast_options(self) -> tuple[Mapping[str, Any], ...]:
         return tuple(self.authorized_cast_option_rows)
+
+    def counter_placement_allowed(self, subject: str, counter: str, amount: int,
+                                  *, subject_kind: str = 'permanent') -> bool:
+        if subject_kind == 'player':
+            if subject not in self.active_seats:
+                return False
+            fact = CounterPlacementFact('player', subject, counter, amount)
+        elif subject_kind == 'permanent':
+            row = self.object(subject)
+            if row is None or row.phased_out:
+                return False
+            fact = CounterPlacementFact('permanent', row.object_id, counter, amount,
+                controller=row.controller if row.zone == 'battlefield' else None,
+                zone=row.zone, types=row.types)
+        else:
+            raise ValueError('Unknown counter-placement choice subject kind')
+        return self.counter_permissions.allows(fact)
 
     def stack_object(
         self,

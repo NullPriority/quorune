@@ -531,7 +531,9 @@ class SemanticChoiceCoordinationMixin:
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
         from ..rules.library_search_rules import optional_search_permissions
+        from ..semantic_runtime.counter_permissions import collect_counter_permissions
         return SnapshotSemanticChoiceQuery(
+            counter_permissions=collect_counter_permissions(self),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),
             seat_order=tuple(self.seats),

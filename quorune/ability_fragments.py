@@ -25,6 +25,7 @@ from .counter_maximums import (
     CounterMaximumSpec,
     effective_counter_maximums,
 )
+from .counter_permission import CounterPermissionError, FixedCounterProhibitionSpec
 from .characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     CharacteristicFragmentError,
@@ -731,6 +732,7 @@ StaticAbilityFragment: TypeAlias = (
     | StaticComponentSpec
     | StaticComponentScopeSpec
     | CounterMaximumSpec
+    | FixedCounterProhibitionSpec
     | TriggerMultiplierSpec
     | WardSpec
     | AllCreatureTypesCharacteristicDefinitionSpec
@@ -786,6 +788,8 @@ def ability_fragment_to_dict(
         kind = "static_component_scope"
     elif isinstance(fragment, CounterMaximumSpec):
         kind = "counter_maximum"
+    elif isinstance(fragment, FixedCounterProhibitionSpec):
+        kind = "counter_prohibition"
     elif isinstance(fragment, TriggerMultiplierSpec):
         kind = "trigger_multiplier"
     elif isinstance(fragment, WardSpec):
@@ -878,6 +882,11 @@ def ability_fragment_from_dict(
         try:
             return CounterMaximumSpec.from_dict(value["value"])
         except CounterMaximumError as exc:
+            raise AbilityFragmentError(str(exc)) from exc
+    if value["kind"] == "counter_prohibition":
+        try:
+            return FixedCounterProhibitionSpec.from_dict(value["value"])
+        except (CounterPermissionError, TypeError, ValueError) as exc:
             raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "trigger_multiplier":
         return TriggerMultiplierSpec.from_dict(value["value"])
@@ -980,6 +989,7 @@ def canonical_ability_fragments(
                 StaticComponentSpec,
                 StaticComponentScopeSpec,
                 CounterMaximumSpec,
+                FixedCounterProhibitionSpec,
                 TriggerMultiplierSpec,
                 WardSpec,
                 AllCreatureTypesCharacteristicDefinitionSpec,
@@ -1366,6 +1376,7 @@ __all__ = [
     "CombatKeywordTriggerKind",
     "CombatKeywordTriggerSpec",
     "CounterMaximumSpec",
+    "FixedCounterProhibitionSpec",
     "ConditionalKeywordSpec",
     "ColorlessCharacteristicDefinitionSpec",
     "CURRENT_ABILITY_FRAGMENT_COVERAGE",

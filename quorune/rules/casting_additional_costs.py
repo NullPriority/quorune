@@ -598,10 +598,15 @@ def fixed_counter_cost_candidates(
 ) -> tuple[str, ...]:
     """Return public candidate refs using effective characteristics."""
 
+    from ..semantic_runtime.counter_permissions import collect_counter_permissions, allows_counter_placement_on_card
+    permissions = collect_counter_permissions(host)
     rows = []
     for object_id in host.state.players[actor].zones["battlefield"]:
         card = host.state.cards[object_id]
         effective = host._effective_card_data(card)
+        if not allows_counter_placement_on_card(host, card, cost.counter_name, cost.amount,
+                permissions=permissions, effective=effective):
+            continue
         rows.append(
             object_query_result(
                 card,

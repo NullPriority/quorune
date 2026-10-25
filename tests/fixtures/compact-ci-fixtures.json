@@ -90,6 +90,7 @@
     "tests/fixtures/counted-spell-additional-costs.json",
     "tests/fixtures/counter-doubling-cards.json",
     "tests/fixtures/counter-placement-event-cards.json",
+    "tests/fixtures/counter-prohibition-cards.json",
     "tests/fixtures/counter-qualified-zone-cards.json",
     "tests/fixtures/counter-replacement-cards.json",
     "tests/fixtures/created-token-counter-cards.json",

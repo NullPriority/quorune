@@ -177,6 +177,10 @@ def _loyalty_availability(
         return "unavailable", "loyalty_timing"
     if card.annotations.get("loyalty_activated_turn_sequence") == host.state.turn_sequence:
         return "unavailable", "loyalty_already_activated"
+    if ability.loyalty_delta > 0:
+        from ...semantic_runtime.counter_permissions import allows_counter_placement_on_card
+        if not allows_counter_placement_on_card(host, card, 'loyalty', ability.loyalty_delta):
+            return "unpayable", "counter_placement_prohibited"
     if (
         ability.loyalty_delta < 0
         and int(card.counters.get("loyalty", 0)) < -ability.loyalty_delta

@@ -736,11 +736,13 @@ def prepare_damage_batch(
         ),
     )
     try:
+        from .semantic_runtime.counter_permissions import collect_counter_permissions
         result_progress = prepare_damage_results(
             host,
             events,
             effects=result_effects,
             gain_permissions=collect_life_gain_permissions(host,sources=sources,source_zones=source_zones),
+            counter_permissions=collect_counter_permissions(host,sources=sources,source_zones=source_zones),
             selections=tuple(selections[consumed:]),
             require_all_selections=False,
         )

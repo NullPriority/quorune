@@ -378,6 +378,7 @@ def _commit_counter_placement_additional_cost(
             ),
             selections=tuple(selections),
             event_ids=(event_id,),
+            for_cost=True,
         )
         results = commit_prepared_counter_placements(
             host,

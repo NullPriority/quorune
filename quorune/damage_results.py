@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .life_gain_permission import ALLOW_ALL_LIFE_GAIN, LifeGainPermissionSnapshot
+from .counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPermissionError
 
 from dataclasses import dataclass
 from typing import Any, Literal, Mapping, Protocol, Sequence
@@ -869,20 +870,28 @@ def materialize_damage_results(
     damage_events: Sequence[ReplaceableEvent],
     *,
     gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
+    counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS,
 ) -> tuple[ReplaceableEvent, ...]:
     """Convert final dealt components into immutable CR 120.3 result trees."""
 
     if not isinstance(gain_permissions, LifeGainPermissionSnapshot):
         raise DamageResultError('Damage results require a typed gain-permission snapshot')
+    if not isinstance(counter_permissions, CounterPermissionSnapshot):
+        raise DamageResultError('Damage results require typed counter permissions')
     state = _new_materialization_state()
     for damage_event in damage_events:
         _accumulate_damage_event(host, state, damage_event)
     _append_accumulated_player_results(state, gain_permissions)
     _append_accumulated_permanent_results(state)
-    return tuple(
+    roots = tuple(
         _materialized_root(host, key, state.accumulators[key])
         for key in sorted(state.accumulators)
     )
+    from .counter_permission_events import apply_counter_permissions_tree
+    try:
+        return tuple(apply_counter_permissions_tree(root, counter_permissions) for root in roots)
+    except CounterPermissionError as exc:
+        raise DamageResultError(str(exc)) from exc
 def prepare_damage_results(
     host: DamageResultHost,
     damage_events: Sequence[ReplaceableEvent],
@@ -891,8 +900,10 @@ def prepare_damage_results(
     selections: Sequence[str | None] = (),
     require_all_selections: bool = True,
     gain_permissions: LifeGainPermissionSnapshot = ALLOW_ALL_LIFE_GAIN,
+    counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS,
 ) -> PreparedDamageResults:
-    roots = materialize_damage_results(host, damage_events, gain_permissions=gain_permissions)
+    roots = materialize_damage_results(host, damage_events, gain_permissions=gain_permissions,
+        counter_permissions=counter_permissions)
     if not roots:
         if selections and require_all_selections:
             raise DamageResultError(

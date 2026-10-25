@@ -274,6 +274,8 @@ class GraftRuntimeTests(unittest.TestCase):
             types=('creature',), logical_object_id='recipient@0')
         class Query:
             active_seats = ('A','B','C','D')
+            def counter_placement_allowed(self, subject, counter, amount, *, subject_kind='permanent'):
+                return subject == recipient.ref and counter == '+1/+1' and amount == 1
             def object(self, ref, *, zones=None):
                 result = source if ref=='source' else recipient if ref=='recipient' else None
                 return result if result and (zones is None or result.zone in zones) else None

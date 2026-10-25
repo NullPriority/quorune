@@ -33,7 +33,8 @@ def _possible(effect, query):
                 and not source.phased_out and not recipient.phased_out
                 and source.logical_object_id == effect["from_identity"]
                 and recipient.logical_object_id == effect["to_identity"]
-                and source.counters.get("+1/+1", 0) > 0)
+                and source.counters.get("+1/+1", 0) > 0
+                and query.counter_placement_allowed(recipient.ref, '+1/+1', 1))
 
 
 @dataclass(frozen=True, slots=True)

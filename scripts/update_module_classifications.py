@@ -59,6 +59,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/object_query_union.py",
         "quorune/static_player_restriction_model.py",
         "quorune/life_gain_permission.py",
+        "quorune/counter_permission.py",
         "quorune/damage_prevention_permission.py",
         "quorune/conditional_recipient_model.py",
         "quorune/kicked_target_model.py",
@@ -308,6 +309,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/zone_object_keyword_grants.py",
         "quorune/zone_object_subtype_grants.py",
         "quorune/counter_placement.py",
+        "quorune/counter_permission_events.py",
         "quorune/counter_placement_events.py",
         "quorune/counter_doubling.py",
         "quorune/counter_removal_events.py",
@@ -707,6 +709,8 @@ def _owner(relative: str, layer: str) -> str:
         return "damage"
     if relative in {
         "quorune/counter_names.py",
+        "quorune/counter_permission.py",
+        "quorune/counter_permission_events.py",
         "quorune/counter_removal.py",
         "quorune/counter_state.py",
         "quorune/counter_removal_events.py",

@@ -5,8 +5,10 @@ from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..semantic_runtime import SemanticNodeError, default_semantic_interpreter
+from ..semantic_runtime.intents import IntentPlan
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
+    AutoContinue,
     ScalarChoice,
     SemanticChoiceCompletion,
     SemanticChoiceContinuation,
@@ -33,7 +35,7 @@ def _validated_effect(
     *,
     actor: str,
     query: SemanticChoiceQuery,
-) -> tuple[str, FrozenMap]:
+) -> tuple[str, FrozenMap, IntentPlan]:
     if not isinstance(effect, Mapping) or set(effect) != {
         "op",
         "player",
@@ -83,7 +85,7 @@ def _validated_effect(
         raise SemanticChoiceError(
             "Optional counter placement continuation is malformed"
         )
-    return player, frozen
+    return player, frozen, plan
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,6 +98,7 @@ class OptionalCounterPlacementHandler:
     rule_references: tuple[str, ...] = (
         "CR 603.3",
         "CR 608.2c",
+        "CR 608.2d",
         "CR 609.1",
         "CR 122.1",
         "CR 122.6",
@@ -125,11 +128,16 @@ class OptionalCounterPlacementHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
-        player, counter_effect = _validated_effect(
+        player, counter_effect, plan = _validated_effect(
             effect,
             actor=context.actor,
             query=context.query,
         )
+        from .counter_permission_choices import optional_counter_placement_possible
+        continuation = FrozenMap({'op': self.operation, 'player': player, 'effect': counter_effect})
+        if not optional_counter_placement_possible(plan, context.query):
+            return SemanticChoicePreparation(request=None, continuation_effect=continuation,
+                auto_continue=AutoContinue('The optional counter placement is impossible'))
         return SemanticChoicePreparation(
             request=SemanticChoiceRequest(
                 prompt="Put the counters?",
@@ -164,7 +172,7 @@ class OptionalCounterPlacementHandler:
             raise SemanticChoiceError(
                 "Optional counter placement continuation chooser is malformed"
             )
-        _player, counter_effect = _validated_effect(
+        _player, counter_effect, plan = _validated_effect(
             continuation.effect,
             actor=actor,
             query=query,
@@ -173,6 +181,9 @@ class OptionalCounterPlacementHandler:
         if type(choice) is not str or choice not in {"put", "decline"}:
             raise SemanticChoiceError("Choose put or decline")
         if choice == "decline":
+            return SemanticChoiceCompletion()
+        from .counter_permission_choices import optional_counter_placement_possible
+        if not optional_counter_placement_possible(plan, query):
             return SemanticChoiceCompletion()
         return SemanticChoiceCompletion(prepend_effects=(counter_effect,))
 

@@ -220,6 +220,8 @@
       "test_class_lifecycle",
       "test_commander_characteristic_grants",
       "test_copied_self_entry_counters",
+      "test_counter_permissions",
+      "test_counter_prohibition_runtime",
       "test_escaped_entry_counters",
       "test_expanded_basic_type_setting",
       "test_external_entry_counters",

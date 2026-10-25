@@ -92,7 +92,8 @@ children. It separates the operation into preparation and commit:
 
 1. Resolve each subject and build immutable player- or object-affected
    `counter.place` events.
-2. Discover active trusted runtime descriptors against the pre-mutation state.
+2. Apply current static placement permissions, then discover active trusted
+   quantity-replacement descriptors against the pre-mutation state.
 3. Traverse simultaneous events in APNAP order and let the affected player or
    permanent's controller choose among represented applicable replacements.
 4. Suspend through the ordinary seat-scoped replacement continuation when a
@@ -106,6 +107,35 @@ The choice projection contains labels and stable option IDs only; the event
 payload, object identifier, replacement batch, and prior journal remain in the
 authoritative continuation. Exact replay reconstructs and validates the path,
 chooser, and selected effect.
+
+`counter_permission.py` represents closed static prohibitions as immutable
+player or permanent predicates. Self identity, recipient controller, counter
+kind, current permanent types and battlefield presence determine permission;
+the player placing a counter does not determine its recipient's controller.
+The source collector requires ordinary trusted programs and current layer-six
+ability presence. Existing battlefield sources use their live characteristics;
+an entering object's own self prohibition uses its prospective face and selected
+copy form. General prohibitions from an entering source do not affect the same
+entry batch. Conditional, attached-object and temporary prohibitions retain
+their independent unsupported contracts.
+
+A prohibition resolves a placement to zero before quantity-replacement choices
+and produces no placement occurrence or replacement application. It leaves
+existing counters in place, including when the source regains its ability after
+temporary ability loss. Counter maxima remain a separate state-based rule.
+Forbidden placements cannot pay additional or loyalty costs; a permitted cost
+modified by a quantity replacement retains the existing payment contract.
+Graft offers and commits share the permission query, so an impossible movement
+neither removes a source counter nor places a recipient counter. Optional
+placement choices omit a wholly impossible option while retaining instructions
+with a possible partial result.
+
+Entry, copy, ordinary placement and damage results consume the same permission
+model. A forbidden infect or wither counter result leaves damage dealt,
+lifelink and other damage observations intact. Off-battlefield card counters
+and types outside the prohibition's predicate remain eligible. Sealed permission
+facts stay in authoritative continuations; seat projections expose only their
+ordinary legal choices.
 
 Named-counter doubling uses one versioned `existing_named_counter_count`
 amount descriptor on the existing placement operations. The typed intent

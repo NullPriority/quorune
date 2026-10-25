@@ -1144,6 +1144,11 @@ def capture_zone_change_replacement_snapshot(
         sources=sources,
         source_zones=source_zones,
     )
+    from .counter_permissions import collect_counter_permissions, entry_counter_permissions
+    counter_permissions = collect_counter_permissions(host, sources=active_sources, source_zones=source_zones)
+    subjects = tuple(replace(subject, counter_permissions=entry_counter_permissions(host, subject,
+        prospective.get(subject.object_id) or host.state.cards[subject.object_id], counter_permissions))
+        for subject in subjects)
     try:
         snapshot=ZoneChangeReplacementSnapshot(
             revision=host.state.revision,

@@ -8482,6 +8482,34 @@
       "test_modules": [
         "test_repository_history"
       ]
+    },
+    {
+      "id": "static-counter-placement-prohibition",
+      "patterns": [
+        "quorune/counter_permission*.py",
+        "quorune/compiler/counter_permission_templates.py",
+        "quorune/semantic_runtime/counter_permissions.py",
+        "quorune/semantic_choices/counter_permission_choices.py",
+        "quorune/semantic_choices/graft.py",
+        "quorune/semantic_choices/optional_counter_placement.py",
+        "tests/test_counter_permissions.py",
+        "tests/test_counter_prohibition_runtime.py",
+        "tests/fixtures/counter-prohibition-cards.json"
+      ],
+      "test_modules": [
+        "test_counter_permissions",
+        "test_counter_prohibition_runtime",
+        "test_graft_rules",
+        "test_counter_placement_replacements",
+        "test_counter_placement_events",
+        "test_fixed_counter_additional_costs",
+        "test_loyalty_counter_cost_replacements",
+        "test_damage_result_events",
+        "test_nested_entry_copy",
+        "test_entry_copy_values",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

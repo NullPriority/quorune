@@ -115,6 +115,16 @@ def static_runtime_node(
     from .devotion_templates import fixed_devotion_increase_handler
     from .token_templates import static_token_quantity_replacement_handler
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .counter_permission_templates import static_counter_prohibition_handler
+    from ..counter_permission import COUNTER_PROHIBITION_EVENT
+    counter_prohibition = (static_counter_prohibition_handler(material_line, source_name=source_name)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if counter_prohibition is not None:
+        return runtime_handler_node(node_id=node_id, line=line, span=span, compiled=counter_prohibition,
+            kind='static_ability', event=COUNTER_PROHIBITION_EVENT,
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Counter placement requires its typed current prohibition owner',
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     from .damage_permission_templates import static_damage_unpreventability_handler
     from ..damage_prevention_permission import UNPREVENTABLE_EVENT
     unpreventable = (static_damage_unpreventability_handler(material_line)

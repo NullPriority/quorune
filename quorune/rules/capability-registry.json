@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 507,
+  "registry_version": 508,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -60827,6 +60827,116 @@
       "dependency_fail_closed_rationale": "Canonical blocked-registry reconstruction and evidence verification produces the specific static unpreventability blocker.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh removal of permission-to-flag propagation restores shield prevention and fails; live-source omission has an additional declared native sentinel.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "counter.placement.prohibition.static",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "118.3",
+        "118.11",
+        "122.5",
+        "122.6",
+        "614.12",
+        "613.1f",
+        "608.2d"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current static source predicates prohibit player or permanent counter placements before quantity replacements, including prospective entry, counter costs, movement and damage results.",
+        "inputs": [
+          "typed player/permanent counter fact",
+          "current source controller and layer-six source ability scope",
+          "prospective entry characteristics and self-only entry predicates"
+        ],
+        "outputs": [
+          "zero prohibited placement with no replacement choice",
+          "unpayable prohibited placement cost",
+          "atomic movement with neither removal nor placement when prohibited"
+        ],
+        "exclusions": [
+          "conditional and temporary prohibition durations",
+          "attached-object and linked-source prohibitions",
+          "poison quantity replacement and once-per-turn poison limits",
+          "unrepresented object types or team formats"
+        ]
+      },
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "damage.result.replacement_order"
+      ],
+      "implementation_components": [
+        "quorune.counter_permission.FixedCounterProhibitionSpec",
+        "quorune.counter_permission.CounterPermissionSnapshot",
+        "quorune.semantic_runtime.counter_permissions.CounterProhibitionAbilityFragmentHandler",
+        "quorune.semantic_runtime.counter_permissions.collect_counter_permissions",
+        "quorune.counter_permission_events.apply_counter_permissions",
+        "quorune.compiler.counter_permission_templates.static_counter_prohibition_handler"
+      ],
+      "positive_tests": [
+        "test_complete_static_source_clauses_lower_to_fixed_public_predicates",
+        "test_originals_bind_whole_sources_with_required_current_permission_authority"
+      ],
+      "negative_tests": [
+        "test_descriptor_and_copy_policy_cannot_omit_capability_or_current_scope",
+        "test_live_counter_prohibition_sources_keep_current_instead_of_prospective_presence",
+        "test_open_conditions_durations_antecedents_and_coupled_instructions_stay_unrecognized",
+        "test_optional_counter_handler_rechecks_permission_before_offer_and_resume",
+        "test_verified_counter_permission_withdrawal_is_a_specific_rules_block"
+      ],
+      "interaction_tests": [
+        "test_authoritative_prepare_does_not_offer_replacements_for_prohibited_effects",
+        "test_entry_child_is_blocked_before_quantity_replacement_choice",
+        "test_graft_cannot_offer_or_resume_a_prohibited_movement",
+        "test_optional_placement_keeps_partial_legal_results_but_not_impossible_option",
+        "test_paid_melira_blocks_poison_and_counter_cost_then_humble_restores_legal_payment",
+        "test_paid_self_prohibitions_ignore_quantity_replacements_and_humble_restores_placement",
+        "test_paid_solemnity_blocks_entry_and_energy_without_skipping_private_draw_or_loyalty",
+        "test_real_entry_copy_uses_selected_self_prohibition_and_decline_keeps_entry_counter",
+        "test_real_graft_does_not_offer_impossible_transfer_and_keeps_source_counter",
+        "test_real_infect_keeps_lifelink_and_wither_keeps_damage_without_forbidden_counters",
+        "test_solemnity_allows_real_suspend_counters_outside_the_battlefield"
+      ],
+      "multiplayer_tests": [
+        "test_paid_blightbeetle_uses_recipient_current_controller_and_retains_existing_counters",
+        "test_paid_melira_blocks_poison_and_counter_cost_then_humble_restores_legal_payment"
+      ],
+      "privacy_tests": [
+        "test_paid_melira_blocks_poison_and_counter_cost_then_humble_restores_legal_payment",
+        "test_paid_solemnity_blocks_entry_and_energy_without_skipping_private_draw_or_loyalty",
+        "test_real_entry_copy_uses_selected_self_prohibition_and_decline_keeps_entry_counter",
+        "test_real_graft_does_not_offer_impossible_transfer_and_keeps_source_counter",
+        "test_real_infect_keeps_lifelink_and_wither_keeps_damage_without_forbidden_counters",
+        "test_solemnity_allows_real_suspend_counters_outside_the_battlefield"
+      ],
+      "replay_tests": [
+        "test_paid_blightbeetle_uses_recipient_current_controller_and_retains_existing_counters",
+        "test_paid_melira_blocks_poison_and_counter_cost_then_humble_restores_legal_payment",
+        "test_paid_self_prohibitions_ignore_quantity_replacements_and_humble_restores_placement",
+        "test_paid_solemnity_blocks_entry_and_energy_without_skipping_private_draw_or_loyalty",
+        "test_real_entry_copy_uses_selected_self_prohibition_and_decline_keeps_entry_counter",
+        "test_real_graft_does_not_offer_impossible_transfer_and_keeps_source_counter",
+        "test_real_infect_keeps_lifelink_and_wither_keeps_damage_without_forbidden_counters",
+        "test_solemnity_allows_real_suspend_counters_outside_the_battlefield"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Canonical blocked-registry reconstruction with discovered tests and regenerated verified evidence produces the specific counter-prohibition status blocker for all five originals.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh omission of the shared permission decision restores forbidden replacement discovery and fails the exact placement-owner assertion. Native source-scope witnesses remain required before delivery.",
       "blockers": [],
       "status": "trusted"
     }

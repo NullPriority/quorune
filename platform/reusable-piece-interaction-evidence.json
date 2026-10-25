@@ -19612,6 +19612,201 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual paid Katilda front reads current Spirit/enchantment union through all-zone CDA, real Murder moves it to graveyard and recomputes its value, actual paid Disturb casts back as an Aura onto a current Spirit, and real Disenchant exiles the Aura and ends its typed grants. One four-principal rollback/save-load/pre-action replay prefix crosses both faces."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_paid_melira_blocks_poison_and_counter_cost_then_humble_restores_legal_payment",
+      "piece_ids": [
+        "capability.casting.additional_cost.fixed_counter_placement",
+        "capability.counter.placement.prohibition.static"
+      ],
+      "capability_ids": [
+        "casting.additional_cost.fixed_counter_placement",
+        "counter.placement.prohibition.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Melira excludes all prohibited minus-counter cost recipients; a forged payment rolls back, and actual Humble restores a paid Lethal Sting with both creature deaths."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_paid_self_prohibitions_ignore_quantity_replacements_and_humble_restores_placement",
+      "piece_ids": [
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "capability.counter.placement.prohibition.static"
+      ],
+      "capability_ids": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn",
+        "counter.placement.prohibition.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Paid self-prohibition originals reject Growth despite Scales; actual Humble allows two counters, then cleanup restores the ban without removing those counters."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_paid_blightbeetle_uses_recipient_current_controller_and_retains_existing_counters",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "capability.counter.placement.prohibition.static"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source",
+        "counter.placement.prohibition.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Paid Blightbeetle tracks the recipient controller rather than placing player; paid Control Magic reverses scope while retaining existing counters and green protection."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_paid_self_prohibitions_ignore_quantity_replacements_and_humble_restores_placement",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.counter.placement.quantity_replacement"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "counter.placement.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "A static prohibition precedes Hardened Scales and creates no placement choice; after actual ability loss, Scales modifies the permitted Growth once."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_real_graft_does_not_offer_impossible_transfer_and_keeps_source_counter",
+      "piece_ids": [
+        "capability.counter.lifecycle.graft",
+        "capability.counter.placement.prohibition.static"
+      ],
+      "capability_ids": [
+        "counter.lifecycle.graft",
+        "counter.placement.prohibition.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Paid Simic Initiate retains its actual entry counter when paid Tatterkite enters; no impossible move choice or source removal occurs, with replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_real_entry_copy_uses_selected_self_prohibition_and_decline_keeps_entry_counter",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.counter.producer.external_additional_entry"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "counter.producer.external_additional_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Renata cannot put an entry counter on Tatterkite or its selected Clone form, while declined Clone enters with its legal counter; pending load and replay preserve the selected form."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_paid_melira_blocks_poison_and_counter_cost_then_humble_restores_legal_payment",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.counter.producer.fixed_player_effect"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "counter.producer.fixed_player_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "A real opposing Prologue gives poison to the two unprotected opponents, leaves Melira controller protected and still draws privately for its caster."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_paid_solemnity_blocks_entry_and_energy_without_skipping_private_draw_or_loyalty",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.counter.producer.intrinsic_entry"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "counter.producer.intrinsic_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "Paid Solemnity blocks Arcbound Worker counters and Rogue Refiner energy without skipping the private draw; ordinary Jace enters with loyalty."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_real_entry_copy_uses_selected_self_prohibition_and_decline_keeps_entry_counter",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.zone.entry.fixed_copy"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "zone.entry.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Real Clone entry snapshots acquire only the selected self prohibition; declining copy retains the original form and permitted Renata counter without leaking permission snapshots."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_real_infect_keeps_lifelink_and_wither_keeps_damage_without_forbidden_counters",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.damage.result.infect"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "damage.result.infect"
+      ],
+      "interaction_order": 2,
+      "assertion": "An actual equipped Plague Stinger deals combat damage under Solemnity: no poison or life loss occurs, while actual lifelink gains one life and replay agrees."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_real_infect_keeps_lifelink_and_wither_keeps_damage_without_forbidden_counters",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.damage.result.wither"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "damage.result.wither"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Sickle Ripper combat cannot put minus counters on Melira Keepers and marks no damage; the blocker survives and the attacker dies from ordinary return damage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_real_infect_keeps_lifelink_and_wither_keeps_damage_without_forbidden_counters",
+      "piece_ids": [
+        "capability.counter.placement.prohibition.static",
+        "capability.damage.result.lifelink"
+      ],
+      "capability_ids": [
+        "counter.placement.prohibition.static",
+        "damage.result.lifelink"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Basilisk Collar grants lifelink to Plague Stinger; prohibiting its poison result does not suppress actual damage or the one-life gain."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_counter_prohibition_runtime.CounterProhibitionRuntimeTests.test_solemnity_allows_real_suspend_counters_outside_the_battlefield",
+      "piece_ids": [
+        "capability.casting.lifecycle.fixed_public",
+        "capability.counter.placement.prohibition.static"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.fixed_public",
+        "counter.placement.prohibition.static"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Lotus Bloom suspend remains offered under Solemnity, places three time counters in exile and preserves principal rollback and pre-action replay."
     }
   ]
 }

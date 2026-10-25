@@ -3021,6 +3021,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/counter_permission_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/counter_placement_event_bindings.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7627,6 +7642,32 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/counter_permission.py",
+      "layer": "domain",
+      "owning_subsystem": "counter_state",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/counter_permission_events.py",
+      "layer": "rules",
+      "owning_subsystem": "counter_state",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/counter_placement.py",
@@ -15408,6 +15449,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_choices/counter_permission_choices.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_choices/created_token_counters.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
@@ -16639,6 +16695,21 @@
     },
     {
       "file": "quorune/semantic_runtime/counter_movement_intent.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/counter_permissions.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
       "allowed_dependency_layers": [
@@ -19765,5 +19836,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "571d8ee67222d2008ae0813b7fc975fab33e87d15346ade5040962fdaf80333b"
+  "fingerprint": "afadf71885bb3c21b4559f041c4407081172c5e6798ad1186676c6b51c792c1a"
 }

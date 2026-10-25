@@ -301,6 +301,7 @@ def _commit_resource_costs(
                 ),
                 selections=tuple(selections),
                 event_ids=(loyalty_event_id,),
+                for_cost=True,
             )
         except CounterPlacementError as exc:
             raise ActivationProposalError(

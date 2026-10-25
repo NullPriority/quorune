@@ -138,6 +138,9 @@ def replacement_choice(
     event: ReplaceableEvent,
     effects: Iterable[ReplacementEffect],
 ) -> ReplacementChoice | None:
+    from ..counter_permission_events import counter_event_is_prohibited
+    if counter_event_is_prohibited(event):
+        return None
     values=canonical_effects(effects)
     used_occurrences={effect.occurrence_id for effect in values if effect.effect_id in event.applied_effects and effect.occurrence_id is not None}
     applicable = _deduplicate_explicit_application_groups([

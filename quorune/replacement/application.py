@@ -45,7 +45,7 @@ _LIFE_LOSS_DIRECTION = "loss"
 
 _SET_FIELDS = {
     "damage": {"amount", "prevented", "prevented_by", "target"},
-    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_prepared'},
+    "zone.change": {"destination", "read_ahead_chapter", "tapped", "entry_chosen_color", "entry_chosen_creature_type", "entry_copy", "entry_copy_source", "entry_copy_form", "object_types", 'entry_revealed_hand_card','entry_prepared','_counter_permissions'},
     "token.create": {"quantity", "created_types", "created_subtypes"},
     "counter.place": {"amount"},
     "counter.add": {"amount", "quantity"},
@@ -776,6 +776,14 @@ def _apply_effect_operations(
             payload["prevention_applied"] = by_effect
     from .devour import combine_devour_entry_counters
     combine_devour_entry_counters(event,payload,children)
+    if event.kind == 'zone.change' and '_counter_permissions' in payload:
+        from dataclasses import replace
+        from ..counter_permission_events import refresh_entry_counter_permissions
+        from ..counter_permission import CounterPermissionError
+        try:
+            refresh_entry_counter_permissions(replace(event,entry_scope=entry_scope),payload,children)
+        except CounterPermissionError as exc:
+            raise ReplacementEffectError(str(exc)) from exc
     chooser_history = dict(payload.get("replacement_choosers") or {})
     chooser_history[effect.effect_id] = event.chooser
     payload["replacement_choosers"] = chooser_history

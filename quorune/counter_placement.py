@@ -305,6 +305,7 @@ def prepare_counter_placements(
     sources: Sequence[Any] | None = None,
     source_zones: Mapping[str, str] | None = None,
     event_ids: Sequence[str] | None = None,
+    for_cost: bool = False,
 ) -> PreparedCounterPlacements:
     """Resolve one simultaneous counter-placement batch before mutation."""
 
@@ -360,6 +361,7 @@ def prepare_counter_placements(
             f"replacement:counter.place:{host.state.revision}:"
             f"{host.state.event_sequence + 1}"
         ),
+        for_cost=for_cost,
     )
 
 
@@ -371,6 +373,7 @@ def prepare_counter_placement_specs(
     sources: Sequence[Any] | None = None,
     source_zones: Mapping[str, str] | None = None,
     batch_id: str,
+    for_cost: bool = False,
 ) -> PreparedCounterPlacements:
     """Resolve typed placement specs whose subjects may be prospective.
 
@@ -405,6 +408,21 @@ def prepare_counter_placement_specs(
                 "Replacement selections were supplied without counters"
             )
         return PreparedCounterPlacements(events=(), effects=(), journal=())
+    if type(for_cost) is not bool:
+        raise CounterPlacementError('Counter placement cost context must be boolean')
+    from .counter_permission_events import apply_counter_permissions, counter_event_is_prohibited
+    from .semantic_runtime.counter_permissions import collect_counter_permissions
+    try:
+        permissions = collect_counter_permissions(host, sources=sources, source_zones=source_zones)
+        events = tuple(apply_counter_permissions(event, permissions) for event in events)
+    except ValueError as exc:
+        raise CounterPlacementError(str(exc)) from exc
+    if for_cost and any(counter_event_is_prohibited(event) for event in events):
+        raise CounterPlacementError('A prohibited counter placement cannot pay a cost')
+    if all(counter_event_is_prohibited(event) for event in events):
+        if selections:
+            raise CounterPlacementError('Replacement choices were supplied for prohibited placements')
+        return PreparedCounterPlacements(events=events, effects=(), journal=())
     effects = collect_counter_placement_replacement_effects(
         host,
         sources=sources,
@@ -514,6 +532,8 @@ def plan_prepared_counter_placement_commit(
             raise CounterPlacementError(
                 "Counter placement commits require resolved placement leaves"
             )
+        from .counter_permission_events import apply_counter_permissions
+        event = apply_counter_permissions(event)
         name, requested, amount = _resolved_amount(event)
         target_kind = str(event.payload.get("target_kind") or "")
         if target_kind == "player":
