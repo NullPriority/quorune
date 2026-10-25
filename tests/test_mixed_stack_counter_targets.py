@@ -74,8 +74,8 @@ class MixedStackCounterTargetTests(unittest.TestCase):
                     {'source_exclusion':False},{'count':True}):
                 self.assertFalse(targeted_counter_node_capabilities(effects=template.effects,
                     target_schema={**template.target_schema,**change},mechanic_ids=template.mechanics))
-        for text in ('Counter target activated ability from an artifact source.',
-                'Counter target activated or triggered ability from a noncreature source.',
+        for text in ('Counter target activated ability from an artifact source you control.',
+                'Counter target activated or triggered ability from a noncreature source with mana value 2.',
                 'Counter target blue instant spell unless its controller pays {2}. Draw a card.',
                 'Counter target legendary activated ability.'):
             self.assertIsNone(targeted_counter_effect_template(text))

@@ -418,6 +418,7 @@
       "test_untap_step_rules"
     ],
     "functional-08": [
+      "test_ability_source_counter_targets",
       "test_aggregated_zone_event_triggers",
       "test_announced_hand_discard_costs",
       "test_announced_target_cardinality",

@@ -191,6 +191,8 @@ def complete_stack_resolution(
         resolved_logical_object_id=resolved_logical_object_id,
         applied_replacement_effect_ids=applied_replacement_effect_ids,
     )
+    from .adventure import complete_adventure_resolution
+    complete_adventure_resolution(item,card)
     if evoked and card.zone != "battlefield":
         card.annotations.pop("evoked", None)
 

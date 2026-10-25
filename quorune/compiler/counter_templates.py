@@ -44,6 +44,8 @@ class CounterTarget(str, Enum):
     ABILITY_OR_NONCREATURE_SPELL = "activated ability, triggered ability, or noncreature spell"
     ABILITY_OR_LEGENDARY_SPELL = "activated ability, triggered ability, or legendary spell"
     BLUE_INSTANT_SPELL = "blue instant spell"
+    ACTIVATED_ARTIFACT_SOURCE = "activated ability from an artifact source"
+    NONCREATURE_ABILITY_SOURCE = "activated or triggered ability from a noncreature source"
 
 
 _TYPE_DOMAINS: dict[CounterTarget, tuple[str, ...]] = {
@@ -77,6 +79,8 @@ _MIXED_STACK_PREDICATES = {
     CounterTarget.ABILITY_OR_NONCREATURE_SPELL: 'ability_or_noncreature_spell',
     CounterTarget.ABILITY_OR_LEGENDARY_SPELL: 'ability_or_legendary_spell',
     CounterTarget.BLUE_INSTANT_SPELL: 'blue_instant_spell',
+    CounterTarget.ACTIVATED_ARTIFACT_SOURCE: 'activated_artifact_source',
+    CounterTarget.NONCREATURE_ABILITY_SOURCE: 'noncreature_ability_source',
 }
 
 
@@ -128,6 +132,8 @@ class TargetedCounterEffectTemplate:
                 CounterTarget.ACTIVATED_ABILITY,
                 CounterTarget.TRIGGERED_ABILITY,
                 CounterTarget.ACTIVATED_OR_TRIGGERED_ABILITY,
+                CounterTarget.ACTIVATED_ARTIFACT_SOURCE,
+                CounterTarget.NONCREATURE_ABILITY_SOURCE,
             }
             else ["spell"]
         )
@@ -198,7 +204,8 @@ def targeted_counter_effect_template(
         r"triggered ability or colorless spell|"
         r"activated ability, triggered ability, or noncreature spell|"
         r"activated ability, triggered ability, or legendary spell|"
-        r"blue instant spell)\.?",
+        r"blue instant spell|activated ability from an artifact source|"
+        r"activated or triggered ability from a noncreature source)\.?",
         normalized,
         re.IGNORECASE,
     )

@@ -4,6 +4,7 @@
   "fixtures": [
     "tests/fixtures/ability-kind-cost-modifier-cards.json",
     "tests/fixtures/ability-label-composition-cards.json",
+    "tests/fixtures/ability-source-counter-cards.json",
     "tests/fixtures/activated-self-transform-cards.json",
     "tests/fixtures/activation-restriction-material-cards.json",
     "tests/fixtures/activation-result-views-cards.json",

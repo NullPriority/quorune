@@ -11,4 +11,6 @@ def finalize_card_faces(record,faces,*,material_line_for,capability_registry,cap
     faces=compile_backup_faces(record,faces,material_line_for=material_line_for,capability_registry=capability_registry,capability_profile=capability_profile)
     from .fuse_faces import compile_fuse_faces
     faces=compile_fuse_faces(record,faces,material_line_for=material_line_for,capability_registry=capability_registry,capability_profile=capability_profile)
+    from .adventure_faces import compile_adventure_faces
+    faces=compile_adventure_faces(record,faces,capability_registry=capability_registry,capability_profile=capability_profile)
     return scope_declared_card_faces(scope_entry_designation_faces(faces))

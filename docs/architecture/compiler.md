@@ -57,6 +57,20 @@ Its shape owner checks both original bodies, their order, and the exact combined
 effect and target projection. Missing executable composition remains a material
 CardProgram residual; the physical card still has two faces.
 
+`compiler/adventure_faces.py` binds each Adventure alternative's existing
+source-spanned nodes to `casting.lifecycle.adventure`. Runtime requirements
+retain that intrinsic authority even if a program omits its explicit
+dependency. Ordinary whole-card admission still rejects unsupported bodies or
+normal-face siblings. Current versioned casting offers the alternative using
+its own characteristics and price. The `adventure.py` owner carries its sealed
+face binding through ordinary resolution, substitutes exile for the resolving
+spell's graveyard destination, and grants only the resolving controller a
+normal-face permission for that exile incarnation. The ordinary zone, casting,
+cost, target and stack owners perform the transitions. Countered and
+all-targets-illegal alternatives gain no permission, and a spell copy grants
+none. An absent execution marker retains historical behavior as described by
+the [Game Record contract](../reference/game-record.md).
+
 Each represented half keeps its own fixed single-object target roles. The
 composer maps flat and named references into distinct canonical target groups,
 preserving constraints within a half while allowing the same object in both

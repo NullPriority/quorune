@@ -5,6 +5,7 @@ from typing import Any, Mapping
 """Descriptor-owned runtime requirements beyond registered operation minima."""
 
 from ..object_predicate import object_query_capabilities
+from ..adventure import ADVENTURE_CAPABILITY,ADVENTURE_COVERAGE
 from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
 from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
 from ..rules.resolution_condition_shapes import same_target_self_replacement_runtime_dependencies
@@ -69,7 +70,7 @@ def program_dynamic_runtime_requirements(program):
         fused=fuse_runtime_requirements(program)
         if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
-    required=set();blockers=set()
+    required={ADVENTURE_CAPABILITY} if ADVENTURE_COVERAGE in program.coverage else set();blockers=set()
     from ..characteristic_fragments import characteristic_quantity_capabilities
     required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     try:required.update(city_activation_runtime_dependencies(program))

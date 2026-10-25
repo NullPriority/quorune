@@ -827,6 +827,8 @@ def fixed_cast_lifecycle_resolution_destination(
 ) -> str | None:
     """Apply lifecycle destinations that are not replacement choices."""
 
+    from .adventure import adventure_resolution_destination
+    destination=adventure_resolution_destination(item,destination)
     raw = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
     if not isinstance(raw, Mapping):
         return destination

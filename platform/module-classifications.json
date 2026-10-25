@@ -100,6 +100,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/ability_source_information.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/activated_ability_descriptor.py",
       "layer": "domain",
       "owning_subsystem": "activated_abilities",
@@ -199,6 +211,20 @@
       "owning_subsystem": "legacy_domain",
       "allowed_dependency_layers": [
         "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/adventure.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -1212,6 +1238,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/cast_face_offers.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/cast_lifecycles.py",
       "layer": "rules",
       "owning_subsystem": "casting_activation_and_costs",
@@ -2092,6 +2130,21 @@
     },
     {
       "file": "quorune/compiler/additional_cost_payment_faces.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/adventure_faces.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -19836,5 +19889,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "afadf71885bb3c21b4559f041c4407081172c5e6798ad1186676c6b51c792c1a"
+  "fingerprint": "1a13b00d43ee5de91802c5c722db56c12a87e1f0b3506b0d906050c1570a8c6e"
 }

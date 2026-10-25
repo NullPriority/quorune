@@ -300,6 +300,11 @@ class TargetSelectionOwnerMixin:
                 stack_source_types, _, _ = self._type_parts(
                     str(source_data.get("type_line") or "")
                 )
+                ability_source_types = None
+                if group.predicate in {'activated_artifact_source','noncreature_ability_source'} and item.kind in {'activated_ability','triggered_ability'}:
+                    from ..ability_source_information import complete_ability_source_information
+                    if complete_ability_source_information(self.state):
+                        ability_source_types = stack_targeting_source(self,item).card_types
                 characteristics = _target_characteristic_row_values(data, card=card)
                 if item.kind in {"spell", "spell_copy"}:
                     from .exile_cast import mana_value_of_cost
@@ -320,6 +325,8 @@ class TargetSelectionOwnerMixin:
                         "card": card,
                         "stack_item": item,
                         "stack_source_types": stack_source_types,
+                        **({'ability_source_types':ability_source_types} if group.predicate in {
+                            'activated_artifact_source','noncreature_ability_source'} else {}),
                     }
                 )
         for zone in (

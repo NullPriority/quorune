@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 510,
+  "registry_version": 514,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -28280,7 +28280,7 @@
     },
     {
       "id": "stack.counter.effect",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "115.1",
         "115.5",
@@ -28296,14 +28296,15 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile and execute one mandatory direct stack counter with closed spell/ability unions and a closed blue-instant conjunction. Each restriction remains on its own branch; the shared target owner controls offers, accepted choices and resolution revalidation.",
+        "summary": "Compile and execute one mandatory direct stack counter with closed spell/ability unions and a closed blue-instant conjunction. Each restriction remains on its own branch; the shared target owner controls offers, accepted choices and resolution revalidation. Closed ability-source predicates additionally require versioned current-or-LKI source information, including non-targeted abilities and sacrificed sources.",
         "inputs": [
           "closed typed direct-target counter clause",
           "current public stack object",
           "canonical spell or ability characteristics, with one optional fixed spell mana-value bound",
           "source-exclusion identity",
           "trusted counter-prohibition declaration",
-          "closed mixed spell/ability branch or blue-instant spell predicate"
+          "closed mixed spell/ability branch or blue-instant spell predicate",
+          "closed activated artifact-source or noncreature ability-source predicate with explicit source-information authority"
         ],
         "outputs": [
           "removed stack object",
@@ -28341,7 +28342,9 @@
         "test_compiled_counter_targets_exact_stack_domains_and_replays",
         "test_countered_ability_leaves_card_zones_unchanged",
         "test_mixed_counter_predicates_keep_each_restriction_on_its_own_branch",
-        "test_blue_instant_counter_requires_both_properties_on_the_same_spell"
+        "test_blue_instant_counter_requires_both_properties_on_the_same_spell",
+        "test_source_type_counter_domains_distinguish_ability_kind_and_known_source_facts",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw"
       ],
       "negative_tests": [
         "test_unsupported_counter_variants_remain_material_residuals",
@@ -28349,7 +28352,9 @@
         "test_counter_source_cannot_target_its_own_stack_object",
         "test_mixed_stack_counter_shapes_reject_category_predicate_and_source_near_misses",
         "test_mixed_stack_counter_authority_withdrawals_are_specific_rules_blocks",
-        "test_mixed_counter_programs_require_runtime_and_retain_transitive_target_authority"
+        "test_mixed_counter_programs_require_runtime_and_retain_transitive_target_authority",
+        "test_source_and_adventure_authority_withdrawals_are_specific_rules_blocks",
+        "test_creature_source_abilities_are_rejected_without_payment_and_still_deal_damage"
       ],
       "interaction_tests": [
         "test_intrinsic_uncounterable_spell_survives_typed_counter",
@@ -28360,17 +28365,25 @@
         "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
         "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
         "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
-        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_rust_revalidation_uses_changed_source_then_departure_not_printed_artifact",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger"
       ],
       "multiplayer_tests": [
         "test_compiled_counter_targets_exact_stack_domains_and_replays",
         "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
-        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells"
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature"
       ],
       "privacy_tests": [
         "test_compiled_counter_targets_exact_stack_domains_and_replays",
         "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
-        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source"
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature"
       ],
       "replay_tests": [
         "test_compiled_counter_targets_exact_stack_domains_and_replays",
@@ -28379,7 +28392,11 @@
         "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
         "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
         "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
-        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_rust_revalidation_uses_changed_source_then_departure_not_printed_artifact",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger"
       ],
       "required_evidence": [
         "positive",
@@ -31916,7 +31933,9 @@
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
         "test_mixed_counter_predicates_keep_each_restriction_on_its_own_branch",
-        "test_blue_instant_counter_requires_both_properties_on_the_same_spell"
+        "test_blue_instant_counter_requires_both_properties_on_the_same_spell",
+        "test_source_type_counter_domains_distinguish_ability_kind_and_known_source_facts",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw"
       ],
       "negative_tests": [
         "test_all_targets_illegal_counters_by_rules",
@@ -31925,7 +31944,9 @@
         "test_target_that_leaves_and_returns_is_a_new_illegal_object",
         "test_mixed_stack_counter_shapes_reject_category_predicate_and_source_near_misses",
         "test_mixed_stack_counter_authority_withdrawals_are_specific_rules_blocks",
-        "test_mixed_counter_programs_require_runtime_and_retain_transitive_target_authority"
+        "test_mixed_counter_programs_require_runtime_and_retain_transitive_target_authority",
+        "test_source_and_adventure_authority_withdrawals_are_specific_rules_blocks",
+        "test_creature_source_abilities_are_rejected_without_payment_and_still_deal_damage"
       ],
       "interaction_tests": [
         "test_fell_faces_compose_target_revalidation_with_tapped_entry",
@@ -31957,7 +31978,11 @@
         "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
         "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
         "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
-        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_rust_revalidation_uses_changed_source_then_departure_not_printed_artifact",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger"
       ],
       "multiplayer_tests": [
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
@@ -31978,7 +32003,9 @@
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
         "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
-        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells"
+        "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature"
       ],
       "privacy_tests": [
         "test_hidden_zones_are_rejected_by_target_schema",
@@ -32000,7 +32027,9 @@
         "test_departed_burdened_source_does_not_refund_payment_or_remove_its_stack_effect",
         "test_tapped_source_is_unavailable_and_target_departure_does_not_refund_the_paid_arm",
         "test_actual_guttural_requires_blue_instant_and_pays_either_hybrid_color",
-        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source"
+        "test_actual_consign_distinguishes_trigger_colorless_spell_and_colorless_activated_source",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature"
       ],
       "replay_tests": [
         "test_deflecting_swat_free_cost_and_exact_retarget",
@@ -32027,7 +32056,11 @@
         "test_actual_tales_end_ignores_ability_source_legendary_but_restricts_spells",
         "test_actual_louisoix_keeps_both_cost_branches_and_does_not_filter_creature_abilities",
         "test_consign_replicate_retargets_independent_copies_across_both_legal_branches",
-        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying"
+        "test_louisoix_noncreature_spell_branch_rejects_a_creature_spell_without_paying",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_rust_revalidation_uses_changed_source_then_departure_not_printed_artifact",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger"
       ],
       "required_evidence": [
         "positive",
@@ -61022,6 +61055,192 @@
       "dependency_fail_closed_rationale": "Canonical blocked-registry reconstruction with discovered tests and regenerated verified evidence produces the specific counter-prohibition status blocker for all five originals.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A fresh omission of the shared permission decision restores forbidden replacement discovery and fails the exact placement-owner assertion. Native source-scope witnesses remain required before delivery.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "target.ability_source.current_or_lki",
+      "version": 1,
+      "official_rules": [
+        "113.7",
+        "113.7a",
+        "400.7",
+        "608.2b",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Versioned complete ability-source information supports closed current-or-LKI source-type counter target filters, including non-targeted, sacrificed and departed sources.",
+        "inputs": [
+          "explicit optional execution version",
+          "original ability source incarnation",
+          "current or immediate-departure public source characteristics"
+        ],
+        "outputs": [
+          "known immutable source types",
+          "closed activated-artifact or noncreature-ability predicate",
+          "unmodified historical frames when execution version is absent"
+        ],
+        "exclusions": [
+          "mana abilities as stack targets",
+          "replacement source incarnations",
+          "arbitrary source queries outside the closed predicates",
+          "inferred noncreature type from unavailable source facts"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.ability_source_information.ability_source_information_version",
+        "quorune.ability_source_information.ability_source_filter_dependencies",
+        "quorune.target_source.TargetingSourceBinding",
+        "quorune.target_source.stack_targeting_source",
+        "quorune.target_source.pin_targeting_source_departures"
+      ],
+      "positive_tests": [
+        "test_nontargeted_ability_source_uses_current_then_actual_departure_information",
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw"
+      ],
+      "negative_tests": [
+        "test_source_type_counter_domains_distinguish_ability_kind_and_known_source_facts",
+        "test_legacy_nontargeted_ability_frames_remain_unmodified_and_malformed_facts_fail",
+        "test_source_and_adventure_authority_withdrawals_are_specific_rules_blocks",
+        "test_source_and_adventure_programs_require_declared_intrinsic_authority",
+        "test_creature_source_abilities_are_rejected_without_payment_and_still_deal_damage",
+        "test_source_information_scan_preserves_unrelated_structured_predicates"
+      ],
+      "interaction_tests": [
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_rust_revalidation_uses_changed_source_then_departure_not_printed_artifact",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger"
+      ],
+      "multiplayer_tests": [
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature"
+      ],
+      "privacy_tests": [
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
+        "test_creature_source_abilities_are_rejected_without_payment_and_still_deal_damage"
+      ],
+      "replay_tests": [
+        "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
+        "test_rust_revalidation_uses_changed_source_then_departure_not_printed_artifact",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_legacy_absent_marker_replays_nontargeted_ability_without_adding_source_book",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
+        "test_creature_source_abilities_are_rejected_without_payment_and_still_deal_damage"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The typed source-information binding and version marker validate complete identities directly; stack countering and target revalidation remain separate consumer dependencies.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh omission of complete non-targeted source capture fails the current/departure source-information witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.lifecycle.adventure",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "608.2b",
+        "715.3",
+        "715.3a",
+        "715.3b",
+        "715.3c",
+        "715.3d",
+        "715.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A complete compiled Adventure alternative uses alternative-face casting and stack characteristics, resolves to exile, and grants its controller a zone-bound normal-face play permission.",
+        "inputs": [
+          "optional current execution version",
+          "physical Adventure card and chosen alternative face",
+          "successful resolution and current exile incarnation"
+        ],
+        "outputs": [
+          "offered affordable alternative-face cast",
+          "intrinsic resolution-to-exile destination",
+          "normal-face permission limited to the resolving controller and original exile incarnation"
+        ],
+        "exclusions": [
+          "countered or all-targets-illegal spells",
+          "normal-face permission for spell copies",
+          "reusing permission after another zone change",
+          "casting the Adventure again under its own permission",
+          "unsupported result bodies or normal-face siblings"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.adventure.adventure_stack_context",
+        "quorune.adventure.adventure_resolution_destination",
+        "quorune.adventure.complete_adventure_resolution",
+        "quorune.adventure.adventure_cast_permission",
+        "quorune.compiler.adventure_faces.compile_adventure_faces"
+      ],
+      "positive_tests": [
+        "test_adventure_permission_and_face_offer_versions_reject_stale_or_legacy_facts",
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature"
+      ],
+      "negative_tests": [
+        "test_source_and_adventure_authority_withdrawals_are_specific_rules_blocks",
+        "test_source_and_adventure_programs_require_declared_intrinsic_authority",
+        "test_countered_adventure_receives_neither_exile_nor_normal_face_permission",
+        "test_all_illegal_adventure_targets_give_no_exile_permission"
+      ],
+      "interaction_tests": [
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
+        "test_countered_adventure_receives_neither_exile_nor_normal_face_permission",
+        "test_all_illegal_adventure_targets_give_no_exile_permission"
+      ],
+      "multiplayer_tests": [
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_countered_adventure_receives_neither_exile_nor_normal_face_permission"
+      ],
+      "privacy_tests": [
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
+        "test_countered_adventure_receives_neither_exile_nor_normal_face_permission",
+        "test_all_illegal_adventure_targets_give_no_exile_permission"
+      ],
+      "replay_tests": [
+        "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
+        "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
+        "test_countered_adventure_receives_neither_exile_nor_normal_face_permission",
+        "test_all_illegal_adventure_targets_give_no_exile_permission"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "not_applicable",
+      "dependency_fail_closed_rationale": "The intrinsic Adventure owner validates its closed face and zone-bound identity directly. Ordinary casting, the compiled result and its counter-source filter retain separate required authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A fresh omission of the Adventure resolution-to-exile replacement fails the independent lifecycle and permission witness.",
       "blockers": [],
       "status": "trusted"
     }

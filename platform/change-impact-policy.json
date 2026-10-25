@@ -8547,6 +8547,36 @@
         "test_fixed_alternative_additional_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ability-source-counter-and-adventure-lifecycle",
+      "patterns": [
+        "quorune/ability_source_information.py",
+        "quorune/adventure.py",
+        "quorune/cast_face_offers.py",
+        "quorune/compiler/adventure_faces.py",
+        "quorune/compiler/card_face_finalization.py",
+        "quorune/compiler/counter_templates.py",
+        "quorune/target_source.py",
+        "quorune/trigger_discovery.py",
+        "quorune/rules/activation/payment_commit.py",
+        "quorune/rules/casting/face_queries.py",
+        "quorune/rules/casting/base_cost_options.py",
+        "quorune/rules/casting/disturb_costs.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/cast_lifecycles.py",
+        "quorune/stack_resolution.py",
+        "tests/test_ability_source_counter_targets.py",
+        "tests/fixtures/ability-source-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_ability_source_counter_targets",
+        "test_mixed_stack_counter_targets",
+        "test_targeted_counter_effect_clauses",
+        "test_stack_counter_rules",
+        "test_counter_target_predicates",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

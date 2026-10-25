@@ -19,6 +19,8 @@ from .util import normalize_mana_bundle, stable_json
 from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
+from .ability_source_information import ability_source_information_version
+from .cast_face_offers import cast_face_offers_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
 
@@ -978,11 +980,15 @@ class GameState:
     mulligan_round: int = 0
     ref_counters: dict[str, int] = field(default_factory=dict)
     spell_mana_counts_version: int | None = 1
+    ability_source_information_version: int | None = 1
+    cast_face_offers_version: int | None = 1
 
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
+        ability_source_information_version(self.ability_source_information_version)
+        cast_face_offers_version(self.cast_face_offers_version)
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
         ):
@@ -1014,6 +1020,8 @@ class GameState:
                 else {}
             ),
             **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
+            **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
+            **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1093,6 +1101,8 @@ class GameState:
             current_turn=(TurnEntry.from_dict(data["current_turn"]) if data.get("current_turn") else None),
             last_normal_turn_player=data.get("last_normal_turn_player"),
             spell_mana_counts_version=spell_mana_counts_version(data.get('spell_mana_counts_version')),
+            ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
+            cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
             commander_damage_identity_version=(
                 int(data["commander_damage_identity_version"])
                 if data.get("commander_damage_identity_version") is not None

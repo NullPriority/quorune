@@ -91,6 +91,14 @@ def target_predicate_matches(
     if not predicate:
         return True
     card = row.get("card")
+    if predicate in {'activated_artifact_source','noncreature_ability_source'}:
+        item=row.get('stack_item');source_types=row.get('ability_source_types')
+        if (row.get('zone')!='stack' or row.get('category')!='ability'
+                or not isinstance(item,StackItem) or source_types is None):
+            return False
+        if predicate=='activated_artifact_source':
+            return item.kind=='activated_ability' and 'artifact' in source_types
+        return item.kind in {'activated_ability','triggered_ability'} and 'creature' not in source_types
     if predicate in {'triggered_ability_or_colorless_spell','ability_or_noncreature_spell',
             'ability_or_legendary_spell','blue_instant_spell'}:
         item = row.get('stack_item')

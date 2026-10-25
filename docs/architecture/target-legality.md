@@ -60,6 +60,17 @@ and resolution revalidation; the existing stack-counter owner performs the
 actual countering. Ability-source type restrictions retain their separately
 bounded current/last-known-information contract.
 
+The closed artifact-source activated-ability and noncreature-source ability
+filters read `TargetingSourceBinding`, including for abilities without targets.
+Current games announce nonmana activations before paying source-sacrifice
+costs. Trigger discovery captures the event source, and canonical departure
+capture pins the original incarnation's last characteristics. A returned card's
+printed types cannot replace that information. Missing source facts cannot
+prove that a source is noncreature. These predicates require
+`target.ability_source.current_or_lki` in addition to ordinary countering and
+target revalidation authority; historical absent-version frames retain their
+earlier capture behavior.
+
 An optional target set may begin with zero chosen objects (CR 115.6). After
 validating its descriptor, the homogeneous destruction, movement and tap-state
 handler emits the existing empty result plan without object mutation. Later

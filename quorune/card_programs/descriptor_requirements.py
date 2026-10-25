@@ -51,6 +51,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *attached_prevention_dependencies(value))
         from ..attachment_references import attachment_information_payload_dependencies
         own = (*own, *attachment_information_payload_dependencies(value))
+        from ..ability_source_information import ability_source_filter_dependencies
+        own = (*own, *ability_source_filter_dependencies(value))
         from ..designation_prevention import designation_predicate_dependencies
         own = (*own, *designation_predicate_dependencies(value))
         from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies

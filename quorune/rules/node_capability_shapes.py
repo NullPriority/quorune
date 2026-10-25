@@ -209,6 +209,10 @@ _TARGETED_COUNTER_SCHEMAS: tuple[Mapping[str, Any], ...] = (
         "predicate": "activated_ability",
         "count": 1,
     },
+    *tuple(
+        {'zones':['stack'],'categories':['ability'],'source_exclusion':True,'predicate':predicate,'count':1}
+        for predicate in ('activated_artifact_source','noncreature_ability_source')
+    ),
     {
         "zones": ["stack"],
         "categories": ["ability"],
@@ -626,9 +630,11 @@ def targeted_counter_node_capabilities(
         or effect.get("stack") != "$target.0"
     ):
         return ()
+    from ..ability_source_information import ability_source_filter_dependencies
     return (
         "stack.counter.effect",
         "target.revalidate_resolution",
+        *ability_source_filter_dependencies(target_schema),
     )
 
 

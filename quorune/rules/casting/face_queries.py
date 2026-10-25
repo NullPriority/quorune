@@ -56,7 +56,9 @@ def offered_cast_methods(host,card):
     if PREPARE_COPY_FIELD in card.annotations:
         from ...preparation import preparation_cast_face
         return ((None,preparation_cast_face(card,record)),)
-    faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in {'split','modal_dfc'} else (None,)
+    from ...cast_face_offers import complete_cast_face_offers
+    face_layouts={'split','modal_dfc'}|({'adventure'} if complete_cast_face_offers(host.state) else set())
+    faces=tuple(str(f['name']) for f in record.faces) if record is not None and record.layout in face_layouts else (None,)
     from .disturb_costs import compiled_disturb_spec
     disturb=compiled_disturb_spec(host,card) if card.zone=='graveyard' else None
     if disturb is not None:faces=(*faces,disturb.back_face)

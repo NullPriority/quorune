@@ -256,6 +256,22 @@ omit it. A checkpoint without the execution marker retains historical
 no-count casting, so later replay does not add payment fields to its hashes.
 The decoder rejects malformed versions, Boolean counts and copy-owned facts.
 
+Current games also pin `ability_source_information_version: 1`. Every nonmana
+activation captures its original source before costs, and every triggered
+ability captures its source when created, including abilities without targets.
+The existing targeting-source binding follows current characteristics while
+that incarnation remains in its expected public zone and pins immediate
+departure information through the canonical zone owner. An absent marker
+retains historical targeted-only capture and does not add fields during replay.
+
+`cast_face_offers_version: 1` enables Adventure alternative-face offers and
+their intrinsic resolution lifecycle. A resolving Adventure records the chosen
+alternative and normal face, moves to exile, and grants its resolving controller
+a normal-face play permission bound to that exact exile incarnation. Countered
+spells and spell copies gain no permission. Records without the marker retain
+their earlier face offers and resolution. Both optional markers accept only
+integer one or absence; Boolean and unknown versions are rejected.
+
 Current runtime-trust provenance also identifies a core permanent-spell copy's
 empty resolution through its pinned spell record. It retains the copy-specific
 fallback kind and original Oracle identity, independently of whether the

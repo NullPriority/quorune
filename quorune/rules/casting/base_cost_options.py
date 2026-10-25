@@ -65,10 +65,12 @@ def _zone_cast_base_options(
         suppress_source_costs=suppress_source_costs,
     )
     from ...preparation import preparation_cast_permission
+    from ...adventure import adventure_cast_permission
     if (
         card.zone == "exile"
         and not compiled_ordinary_zone_cast_permission(host, seat, card)
         and not preparation_cast_permission(host,seat,card)
+        and not adventure_cast_permission(host,seat,card)
         and not force_without_mana_cost
         and alternative_base is None
     ):

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ...spell_mana_counts import capture_spell_mana_counts
+from ...adventure import adventure_stack_context
 from ..optional_life_cost_model import optional_life_cost_amount
 from .turn_cast_grants import underlying_cast_cost_option_id, commit_turn_cast_grant_use
 
@@ -856,8 +857,10 @@ def _mark_selected_cast_lifecycle(
 def _cast_provenance_context(
     proposal: CastProposal,
     spent: Mapping[str, int],
+    *, state: Any, record: Any, card: Any,
 ) -> dict[str, Any]:
     return {
+        **adventure_stack_context(state,record,card),
         "cast_origin": proposal.origin,
         "mana_spent_total": sum(
             int(amount)
@@ -978,7 +981,7 @@ def _create_spell_item(
         ),
         mana_spent_counts=capture_spell_mana_counts(host.state.spell_mana_counts_version,card,spent),
         context={
-            **_cast_provenance_context(proposal, spent),
+            **_cast_provenance_context(proposal,spent,state=host.state,record=record,card=card),
             **paid_entry_copy_cast_context(selected_option),
             **multikicker_cast_context(selected_option),
             **replicate_cast_context(selected_option),

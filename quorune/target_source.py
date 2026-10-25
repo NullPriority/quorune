@@ -136,7 +136,9 @@ def pin_targeting_source_departures(host,cards,*,error_type=GameRuleError):
 def ensure_trigger_targeting_source(host,item):
     if item.kind not in {'triggered_ability','activated_ability'} or TARGETING_SOURCE_CONTEXT in item.context:return
     program=host.semantics.get(item.semantic_key)
-    if not (item.targets or item.context.get('target_schema_override') or getattr(program,'target_schema',None)):return
+    from .ability_source_information import complete_ability_source_information
+    if not (item.targets or item.context.get('target_schema_override') or getattr(program,'target_schema',None)
+            or complete_ability_source_information(host.state)):return
     source=host.state.cards.get(item.source_object_id)
     if source is not None and item.context.get('source_logical_object_id',source.logical_object_id)==source.logical_object_id:
         item.context[TARGETING_SOURCE_CONTEXT]=capture_targeting_source(host,source).to_dict()

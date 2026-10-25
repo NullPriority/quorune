@@ -133,6 +133,7 @@
     ["stack_resolution", "triggers"]
   ],
   "ambient_high_risk_piece_pairs": [
+    ["capability.activation.source_zone_change.fixed", "capability.target.ability_source.current_or_lki"],
     [
       "capability.attachment.aura.simple_object",
       "capability.combat.block.landwalk.as_though"
@@ -158,6 +159,8 @@
     ["capability.casting.disguise.fixed_mana", "capability.keyword_action.manifest.card"],
     ["capability.casting.disguise.fixed_mana", "capability.token.creation.fixed_definition"],
     ["capability.casting.disguise.fixed_mana", "capability.trigger.event.normalized_public_action"],
+    ["capability.casting.lifecycle.adventure", "capability.stack.counter.effect"],
+    ["capability.casting.lifecycle.adventure", "capability.target.ability_source.current_or_lki"],
     ["capability.casting.lifecycle.fixed_public", "capability.counter.placement.prohibition.static"],
     ["capability.casting.multikicker.fixed_mana", "capability.replacement.multikicker.named_entry_counters"],
     ["capability.combat.attack.vigilance", "capability.counter.characteristic.keyword"],
@@ -241,6 +244,7 @@
       "capability.continuous.basic_land_type.fixed_setting",
       "capability.permanent.exile.effect"
     ],
+    ["capability.continuous.basic_land_type.fixed_setting", "capability.target.ability_source.current_or_lki"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.continuous.resolution.fixed_source_characteristics_until_end_of_turn"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.damage.amount.positive"],
@@ -289,11 +293,14 @@
       "capability.permanent.exile.effect",
       "capability.zone.linked_exile_return.fixed"
     ],
+    ["capability.stack.counter.effect", "capability.target.ability_source.current_or_lki"],
     [
       "capability.stack.counter.effect",
       "capability.trigger.event.normalized_zone_change"
     ],
     ["capability.state_query.permanent.public_state_predicate", "capability.zone.entry.fixed_copy"],
+    ["capability.target.ability_source.current_or_lki", "capability.target.revalidate_resolution"],
+    ["capability.target.ability_source.current_or_lki", "capability.trigger.event.normalized_zone_change"],
     ["capability.target.protection.hexproof_permanent", "capability.zone.entry.fixed_copy"],
     ["capability.timing.cast.printed_flash", "capability.zone.entry.fixed_copy"],
     ["capability.trigger.event.normalized_zone_change", "capability.zone.change.destination_replacement"],
