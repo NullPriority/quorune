@@ -1919,6 +1919,22 @@
       "resolution": "Keep every existing authentication, CSRF, principal, privacy, rollback and replay assertion. Route manual fixture cookie updates through the single server-set domain/path, assert one existing cookie scope and replace its value in that scope instead of adding an ambiguous cookie. Verify the exact failed cases with the CI dependency versions plus tab-identity and stale-socket controls; change no server authentication code or dependency requirements.",
       "run_id": 40143670135,
       "summary": "The Windows compatibility job failed three server tests when manual cookie setters added empty-domain cookies alongside the response host cookies. HTTPX 2.16.0/Starlette 1.10.0 orders those duplicate names differently from the older local HTTPX 2.12.0/Starlette 1.6.0 pair, yielding the last guest principal, a CSRF mismatch and a spectator socket error. Matching local dependencies to CI reproduced all three failures before the fixture repair; bearer-authenticated REST projections and production authentication remain unchanged."
+    },
+    {
+      "category": "missing_affected_test",
+      "deterministic": true,
+      "failed_surfaces": [
+        "PR / Windows / generated-validation: Run sequential generated and governance shard"
+      ],
+      "head_sha": "407db1bb41d6e4c68877cc1a1a2f969370d38d5e",
+      "id": "ci-20261025-pr536-prepush-contract",
+      "impact_edge_status": "not_applicable",
+      "regressions": [
+        "test_generated_artifacts.GeneratedArtifactFinalizationTests.test_generated_pre_push_hook_uses_worktree_python_and_stops_on_changes"
+      ],
+      "resolution": "Keep the clean-tracked-tree check before the checkpoint pre-corpus sentinel, locating that phase explicitly instead of the first shared script name. Also assert that the always-on encoding sentinel precedes shard validation and receipt acceptance. Run this exact owned hook contract and the existing encoding-plan control before republishing; retain all other assertions and avoid rerunning the superseded matrix.",
+      "run_id": 40146602116,
+      "summary": "Windows generated-validation executed3859tests and found one stale hook-order assertion after the always-on encoding guard was added. The existing contract located the first quick_gate.py occurrence, assuming it was the checkpoint-only pre-corpus call; it now identified the earlier intended encoding call instead. Cloud generation for this exact head succeeded and the remaining failure was the directly owned contract test."
     }
   ],
   "known_flaky_tests": [],
@@ -1979,7 +1995,7 @@
   ],
   "repository": "NullPriority/quorune",
   "schema_version": 2,
-  "source_fingerprint": "df1c02693e385db6a5a522376b97425d0ee597725336000506e39ae610d54124",
+  "source_fingerprint": "36f1d61218c86946ce59a59f016c76ac7dc0dfdefee3c3b6ec2f1112fb4102f5",
   "summary": {
     "average_critical_path_seconds": 181.25,
     "average_pushes_per_merged_pr": null,
@@ -1989,13 +2005,13 @@
       "flaky_test": 9,
       "generated_artifact_drift": 10,
       "infrastructure": 1,
-      "missing_affected_test": 46,
+      "missing_affected_test": 47,
       "source_correctness": 30,
       "windows_compatibility": 4
     },
     "current_missing_impact_edges": [],
-    "deterministic_escape_count": 97,
-    "escape_count": 105,
+    "deterministic_escape_count": 98,
+    "escape_count": 106,
     "eventual_final_head_certification_pass_rate": 1.0,
     "eventual_final_head_certification_sample_size": 4,
     "first_eligible_head_certification_pass_rate": null,

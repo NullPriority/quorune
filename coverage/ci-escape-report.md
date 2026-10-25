@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "df1c02693e385db6a5a522376b97425d0ee597725336000506e39ae610d54124"
+verified: "36f1d61218c86946ce59a59f016c76ac7dc0dfdefee3c3b6ec2f1112fb4102f5"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 105
-- Deterministic escapes: 97
+- Escapes: 106
+- Deterministic escapes: 98
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -134,6 +134,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261016-520-stale-impact-test-references` | [38948998302](https://github.com/NullPriority/quorune/actions/runs/38948998302) | `missing_affected_test` | `added` | Map every stale reference to its actual owned module: existing Oracle IR and mechanic-contract classes reside in test_oracle_ir; zone consumers cover the canonical transition owner, single-object plans, general zone rules, and designation reset. Extend the existing pre-corpus impact sentinel to validate all path/symbol test module and suite references against the canonical shard manifest, including unselected rules. Keep the complete high-risk certification gate for this selection-authority correction. |
 | `ci-20261024-pr536-explicit-text-encoding` | [40143670144](https://github.com/NullPriority/quorune/actions/runs/40143670144) | `source_correctness` | `not_applicable` | Specify UTF-8 on both metadata reads and invoke the existing changed-file text-I/O validator on every pre-push path before shard/dependency validation and receipt acceptance. Keep the existing validator and impact selection intact, run the exact sentinel plus its direct checker/withdrawal controls, preserve the completed semantic census, and publish one corrected exact head. Cancel the superseded matrix instead of rerunning the unchanged failed source. |
 | `ci-20261024-pr536-scoped-server-cookies` | [40143670135](https://github.com/NullPriority/quorune/actions/runs/40143670135) | `windows_compatibility` | `not_applicable` | Keep every existing authentication, CSRF, principal, privacy, rollback and replay assertion. Route manual fixture cookie updates through the single server-set domain/path, assert one existing cookie scope and replace its value in that scope instead of adding an ambiguous cookie. Verify the exact failed cases with the CI dependency versions plus tab-identity and stale-socket controls; change no server authentication code or dependency requirements. |
+| `ci-20261025-pr536-prepush-contract` | [40146602116](https://github.com/NullPriority/quorune/actions/runs/40146602116) | `missing_affected_test` | `not_applicable` | Keep the clean-tracked-tree check before the checkpoint pre-corpus sentinel, locating that phase explicitly instead of the first shared script name. Also assert that the always-on encoding sentinel precedes shard validation and receipt acceptance. Run this exact owned hook contract and the existing encoding-plan control before republishing; retain all other assertions and avoid rerunning the superseded matrix. |
 
 ## Measurement limitations
 

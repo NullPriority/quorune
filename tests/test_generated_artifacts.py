@@ -1005,6 +1005,12 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
         self.assertIn(".venv/Scripts/python.exe", hook)
         self.assertIn("data/scryfall-current.sqlite3", hook)
         self.assertIn('"$ROOT/scripts/test_shards.py" validate', hook)
+        encoding_check = '"$ROOT/scripts/quick_gate.py" --validate-text-io --base origin/main'
+        self.assertIn(encoding_check, hook)
+        self.assertLess(
+            hook.index(encoding_check),
+            hook.index('"$ROOT/scripts/test_shards.py" validate'),
+        )
         self.assertIn("QUORUNE_CLOUD_SOURCE_CHECKPOINT_REASON", hook)
         self.assertIn(
             '"$ROOT/scripts/quick_gate.py" \\\n        --phase pre-corpus --base origin/main',
@@ -1015,9 +1021,10 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
         self.assertIn("git diff --cached --quiet --ignore-submodules --", hook)
         self.assertLess(
             hook.index("git diff --quiet --ignore-submodules --"),
-            hook.index('"$ROOT/scripts/quick_gate.py"'),
+            hook.index('--phase pre-corpus --base origin/main'),
         )
         self.assertIn("--verify-receipt", hook)
+        self.assertLess(hook.index(encoding_check), hook.index("--verify-receipt"))
         self.assertIn("--write --fail-on-change", hook)
         self.assertIn(
             "existing generated-finalization receipt is current",
