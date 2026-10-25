@@ -87,7 +87,7 @@ class ReceiverQueryUnionModelTests(unittest.TestCase):
         from quorune.semantic_runtime.conditional_continuous import _validate_target
         with self.assertRaises(ValueError):
             _validate_target({'kind': 'fixed_query', 'target_controller': 'source_controller',
-                'predicate': query.to_dict(), 'exclude_source': False, 'types_all': []})
+                'predicate': replace(query,controller='A').to_dict(), 'exclude_source': False, 'types_all': []})
 
     def test_union_surface_preserves_scope_and_unsupported_antecedents(self):
         cases = (

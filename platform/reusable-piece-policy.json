@@ -277,6 +277,10 @@
     ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.destroy.state_based_damage"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.regeneration.self_activation"],
     ["capability.continuous.characteristics.fixed_public_state", "capability.permanent.return.owner_hand"],
+    [
+      "capability.continuous.characteristics.fixed_public_state",
+      "capability.state_query.permanent.receiver_union"
+    ],
     ["capability.continuous.control.attached_source", "capability.counter.placement.prohibition.static"],
     ["capability.continuous.resolution.fixed_characteristics_until_end_of_turn", "capability.counter.placement.prohibition.static"],
     [

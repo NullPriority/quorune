@@ -20212,6 +20212,21 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual Perilous Snare exiles an opposing artifact, reaches max speed through actual Shock, and activates its own-Vehicle counter ability. Actual opposing Boomerang removes Snare while that ability is pending: the original exiled artifact returns to its owner, speed remains4, and the independent activated counter still resolves on the original Vehicle. Wrong-domain/principal rollback, pending load and pre-action replay pass."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_conditional_receiver_unions.ConditionalReceiverUnionRuntimeTests.test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
+      "piece_ids": [
+        "capability.continuous.characteristics.fixed_public_state",
+        "capability.state_query.permanent.receiver_union"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.fixed_public_state",
+        "state_query.permanent.receiver_union"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Swarmweaver gates one Insect-or-Spider affected set on its current controller graveyard card-type threshold. Actual sacrifice, source control change and graveyard exile update modifiers and deathtouch; the overlapping receiver is counted once, with private draws, pending persistence and pre-action replay."
     }
   ]
 }

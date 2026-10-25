@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 515,
+  "registry_version": 516,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -17163,7 +17163,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 22,
+      "version": 23,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -17197,13 +17197,14 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies. The controller city blessing boolean uses its canonical persistent public designation owner and current source controller. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime. A schema-7 public color fact compares current five-color permanent counts through layer5;ties include all-zero counts and colorless is not a sixth color. Closed contractions, canonical permanent self-descriptions, and equivalent other-creature entry wording reuse existing condition values. Current colorless, nontoken fixed-color, and nonbasic-land conditions retain each typed query predicate. Current land-subtype and snow-land conditions use existing typed quantities. Explicit repeated-article controller disjunctions retain per-branch source exclusion. Newly compiled graveyard-card conditions use the existing card-only public quantity version.",
+        "summary": "Apply fixed supported keywords and power/toughness modifiers in layers 6 and 7c while one closed authoritative public scalar, object, cycle-safe query, sealed history, distinct graveyard characteristic, hand, starting-life, player-counter, or designation condition is true. Compose one recipient-relative declaration requirement or restriction with fixed characteristics behind that same current public condition. Conditional typed keyword composition retains complete keyword labels, fragments and consumer capabilities behind the shared live public-state condition. A closed public-state wrapper gates the existing total-cost modifier at the shared offered and accepted casting boundary, preserving live source and spell scope. Explicit conditional self-graveyard permission evaluates shared typed public-state facts relative to the owner without bypassing ordinary cast timing, targets or total cost. Versioned flat all/any compositions retain each closed leaf and current source-bound snapshot, including distinct query quantities and status producer dependencies. The controller city blessing boolean uses its canonical persistent public designation owner and current source controller. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime. A schema-7 public color fact compares current five-color permanent counts through layer5;ties include all-zero counts and colorless is not a sixth color. Closed contractions, canonical permanent self-descriptions, and equivalent other-creature entry wording reuse existing condition values. Current colorless, nontoken fixed-color, and nonbasic-land conditions retain each typed query predicate. Current land-subtype and snow-land conditions use existing typed quantities. Explicit repeated-article controller disjunctions retain per-branch source exclusion. Newly compiled graveyard-card conditions use the existing card-only public quantity version. The conditional characteristics consumer adopts the existing flat earlier-layer receiver union through the same immutable live-query binder, preserving reserved scope and branch source templates.",
         "inputs": [
           "active phased-in battlefield source",
           "source controller turn, life, public hand, graveyard, current or sealed turn-history, opponent poison, monarch, and starting-life facts",
           "cycle-safe source, attached-object, controller, opponent, public-zone, distinct graveyard type, or distinct graveyard mana-value query through layer 5",
           "source, attached-object, or fixed ObjectQuerySpec target",
-          "fixed represented keyword and power/toughness modifier, including complete additive an-additional or also wording"
+          "fixed represented keyword and power/toughness modifier, including complete additive an-additional or also wording",
+          "closed receiver union independently gated by the existing supported live public-state condition"
         ],
         "outputs": [
           "one source-bound typed condition snapshot",
@@ -17257,7 +17258,10 @@
         "quorune.semantic_runtime.conditional_continuous.FixedPublicStateCharacteristicsHandler",
         "quorune.token_creation.create_tokens",
         "quorune.turn_history.current_turn_history_events",
-        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence"
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.semantic_runtime.conditional_continuous._validate_target",
+        "quorune.semantic_runtime.continuous_components._fixed_query_effect_predicate",
+        "quorune.object_query_union.validate_receiver_union_template"
       ],
       "positive_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -17323,7 +17327,9 @@
         "test_originals_have_complete_admission_and_original_source_spans",
         "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_compiler_produced_conditional_union_is_accepted_by_its_registered_owner",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "negative_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -17376,7 +17382,10 @@
         "test_originals_have_complete_admission_and_original_source_spans",
         "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_conditional_union_keeps_reserved_scope_and_template_references_closed",
+        "test_conditional_receiver_union_authorities_fail_closed_with_verified_indices",
+        "test_conditional_union_requires_its_implicit_runtime_query_authority"
       ],
       "interaction_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -17427,7 +17436,8 @@
         "test_turn_gated_attachment_and_anthem_compose",
         "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "multiplayer_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -17460,7 +17470,8 @@
         "test_turn_gated_attachment_and_anthem_compose",
         "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "privacy_tests": [
         "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
@@ -17479,7 +17490,8 @@
         "test_public_condition_queries_follow_authoritative_history_and_control",
         "test_public_fact_conditions_recompute_and_replay",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "replay_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -17523,7 +17535,8 @@
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
         "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "required_evidence": [
         "positive",
@@ -17534,9 +17547,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-targeted public-state components from becoming exact; each emitted keyword and power/toughness body also independently declares and closes its exact consumer capability.",
+      "dependency_fail_closed_rationale": "Blocking the shared public-query capability prevents query-targeted public-state components from becoming exact; each emitted keyword and power/toughness body also independently declares and closes its exact consumer capability. Canonically rebuilt verified withdrawal of the receiver-union or conditional-characteristics authority blocks the original Swarmweaver, while runtime dependency inference rejects a stripped union declaration.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused tests remove or invert the typed state condition, public-fact quantity, target identity, layer-6 grant, or layer-7c modifier and exact current-characteristic assertions reject each survivor. Omitting either the otherwise base or the conditional correction preserves complete admission but changes the actual Aura stat consequence and is killed by its native witness. Omitting live five-color count evaluation preserves whole-card admission but is caught by the original cast/tie/bounce stat witness.",
+      "implementation_mutation_rationale": "Focused tests remove or invert the typed state condition, public-fact quantity, target identity, layer-6 grant, or layer-7c modifier and exact current-characteristic assertions reject each survivor. Omitting either the otherwise base or the conditional correction preserves complete admission but changes the actual Aura stat consequence and is killed by its native witness. Omitting live five-color count evaluation preserves whole-card admission but is caught by the original cast/tie/bounce stat witness. A fresh template-validation omission fails the concrete foreign-branch-reference regression.",
       "blockers": [],
       "status": "trusted"
     },
@@ -55825,7 +55838,7 @@
     },
     {
       "id": "state_query.permanent.receiver_union",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "109.2",
         "611.3a",
@@ -55842,11 +55855,12 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "One flat live battlefield receiver union matches each object once and preserves branch-local and shared source exclusion. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported.",
+        "summary": "One flat live battlefield receiver union matches each object once and preserves branch-local and shared source exclusion. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported. The conditional characteristics consumer adopts the existing flat earlier-layer receiver union through the same immutable live-query binder, preserving reserved scope and branch source templates.",
         "inputs": [
           "two through four closed public type/subtype/color/snow leaves",
           "shared source-controller relation and current source reference",
-          "existing continuous characteristic evaluation layers"
+          "existing continuous characteristic evaluation layers",
+          "closed receiver union independently gated by the existing supported live public-state condition"
         ],
         "outputs": [
           "one receiver match for overlapping branches",
@@ -55868,7 +55882,10 @@
         "quorune.object_query.object_matches_query",
         "quorune.compiler.receiver_union_queries.fixed_receiver_union_subject",
         "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
-        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query"
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query",
+        "quorune.semantic_runtime.conditional_continuous._validate_target",
+        "quorune.semantic_runtime.continuous_components._fixed_query_effect_predicate",
+        "quorune.object_query_union.validate_receiver_union_template"
       ],
       "required_evidence": [
         "positive",
@@ -55879,9 +55896,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Normal complete-original registration derives the union capability independently; verified withdrawal and stripped runtime minima reject it.",
+      "dependency_fail_closed_rationale": "Normal complete-original registration derives the union capability independently; verified withdrawal and stripped runtime minima reject it. Canonically rebuilt verified withdrawal of the receiver-union or conditional-characteristics authority blocks the original Swarmweaver, while runtime dependency inference rejects a stripped union declaration.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Fresh complete-original and real Death Baron consequence witnesses detect producer and receiver matcher omissions.",
+      "implementation_mutation_rationale": "Fresh complete-original and real Death Baron consequence witnesses detect producer and receiver matcher omissions. A fresh template-validation omission fails the concrete foreign-branch-reference regression.",
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
@@ -55898,7 +55915,9 @@
         "test_original_narfi_snow_return_pays_three_real_snow_sources",
         "test_five_originals_have_complete_admission_and_union_runtime_minimum",
         "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
-        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima",
+        "test_compiler_produced_conditional_union_is_accepted_by_its_registered_owner",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "negative_tests": [
         "test_unions_reject_recursive_hidden_late_or_unbounded_queries",
@@ -55907,7 +55926,10 @@
         "test_canonically_verified_union_withdrawal_blocks_all_originals",
         "test_handler_rejects_hidden_recursive_and_foreign_source_union_branches",
         "test_union_quantities_reject_hidden_nested_unresolved_and_ambiguous_queries",
-        "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
+        "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions",
+        "test_conditional_union_keeps_reserved_scope_and_template_references_closed",
+        "test_conditional_receiver_union_authorities_fail_closed_with_verified_indices",
+        "test_conditional_union_requires_its_implicit_runtime_query_authority"
       ],
       "interaction_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55920,7 +55942,8 @@
         "test_death_baron_other_is_local_after_source_becomes_a_skeleton",
         "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
-        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "multiplayer_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55931,7 +55954,8 @@
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
         "test_original_narfi_snow_return_pays_three_real_snow_sources",
         "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
-        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss"
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "privacy_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55942,7 +55966,8 @@
         "test_actual_humble_removes_union_grants_and_control_rebinds_recipients",
         "test_original_narfi_snow_return_pays_three_real_snow_sources",
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
-        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ],
       "replay_tests": [
         "test_original_death_baron_cast_grants_overlap_once_and_deathtouch_kills",
@@ -55955,7 +55980,8 @@
         "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
         "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
-        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
       ]
     },
     {

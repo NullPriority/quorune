@@ -613,7 +613,14 @@ apply outside the union; a branch-local “other” binds only that branch to th
 current source reference. These leaves use battlefield type, subtype, snow,
 and color facts from earlier layers. Recursive, hidden, numeric, keyword and
 state-qualified union leaves are rejected. Existing query payloads retain
-their exact encoding when no union is present. Single-set queries also evaluate
+their exact encoding when no union is present. An independently supported live
+public-state condition can gate this affected set through the conditional
+characteristics owner. That owner validates the same closed union template and
+uses the same current-source controller and branch-exclusion binder. Changes
+to the public condition or source controller update the whole affected set;
+the condition is not encoded as a union leaf. Root owner, controller,
+visibility and source-reference fields remain reserved to the binder.
+Single-set queries also evaluate
 type, subtype, color cardinality, token identity, and named +1/+1 counter state
 from the current public characteristic boundary; opponent relations exclude
 the source controller without enumerating seats in the descriptor. Each

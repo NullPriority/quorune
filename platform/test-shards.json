@@ -430,6 +430,7 @@
       "test_combat_keyword_rules",
       "test_compound_damage_recipients",
       "test_conditional_exile",
+      "test_conditional_receiver_unions",
       "test_copy_objects",
       "test_counted_spell_additional_costs",
       "test_damage_prevention_shields",

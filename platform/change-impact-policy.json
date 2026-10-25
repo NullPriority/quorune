@@ -8595,6 +8595,22 @@
         "test_counter_target_predicates",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "conditional-receiver-union-consumer",
+      "patterns": [
+        "quorune/semantic_runtime/conditional_continuous.py",
+        "quorune/object_query_union.py",
+        "quorune/compiler/receiver_union_queries.py",
+        "tests/test_conditional_receiver_unions.py",
+        "tests/fixtures/conditional-receiver-union-cards.json"
+      ],
+      "test_modules": [
+        "test_conditional_receiver_unions",
+        "test_receiver_query_unions",
+        "test_characteristic_query_unions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

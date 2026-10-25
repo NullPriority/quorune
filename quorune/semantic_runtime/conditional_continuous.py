@@ -115,6 +115,8 @@ def _validate_target(
             )
         try:
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
+            from ..object_query_union import validate_receiver_union_template
+            validate_receiver_union_template(predicate)
         except (ObjectQueryError, TypeError) as exc:
             raise SemanticNodeError(str(exc)) from exc
         if (
@@ -123,7 +125,6 @@ def _validate_target(
             or predicate.excluded_controllers
             or predicate.exclude_ref is not None
             or predicate.known_to_actor is not None
-            or predicate.any_of
         ):
             raise SemanticNodeError(
                 "fixed public-state queries reserve owner, controller, "
