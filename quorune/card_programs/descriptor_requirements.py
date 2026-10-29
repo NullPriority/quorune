@@ -7,6 +7,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..rules.library_order_shapes import library_order_payload_dependencies
+        library_order=library_order_payload_dependencies(value)
+        if library_order:return library_order
         from ..public_history_query_model import public_history_query_dependencies
         from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies,QUALIFIED_SPELL_ORDINAL_FIELD
         history=public_history_query_dependencies(value) if 'history_query' in value or value.get('kind') in {'history_count_at_least','history_count_at_most'} else ()

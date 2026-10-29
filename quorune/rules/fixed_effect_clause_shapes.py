@@ -7,6 +7,7 @@ from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 """Capability closure for generic two-clause effect sequences."""
 
 from typing import Any, Iterable, Mapping, Sequence
+from .library_order_shapes import fixed_library_order_capabilities
 
 from .affected_player_sacrifice_capability_shapes import (
     fixed_affected_player_sacrifice_node_capabilities,
@@ -117,6 +118,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_library_order_capabilities,
     fixed_stack_spell_copy_node_capabilities,
     created_token_counter_node_capabilities,
     fixed_resolution_mana_choice_capabilities,

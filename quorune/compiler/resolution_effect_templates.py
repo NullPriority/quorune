@@ -161,15 +161,11 @@ def _source_context_resolution_template(
     return linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
 
 
-def typed_resolution_effect_template(
-    text: str,
-    *,
-    card_name: str,
-    source_is_permanent: bool | None = None,
-    source_card_types: Sequence[str] = (),
-    source_attachment_relation: AttachmentReferenceKind | None = None,
-) -> CompiledEffectTemplate | None:
-    """Lower closed typed resolution-effect families."""
+def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
+    """Retain the precedence of leaves that do not inspect source context."""
+    from .fixed_top_order_templates import fixed_top_order_template
+    top_order=fixed_top_order_template(text)
+    if top_order is not None:return top_order
     from .temporary_player_rule_templates import temporary_player_rule_template
     cast_restriction=temporary_player_rule_template(text)
     if cast_restriction is not None:return cast_restriction
@@ -180,6 +176,21 @@ def typed_resolution_effect_template(
     manifest = manifest_effect_template(text)
     if manifest is not None:
         return manifest
+    return None
+
+
+def typed_resolution_effect_template(
+    text: str,
+    *,
+    card_name: str,
+    source_is_permanent: bool | None = None,
+    source_card_types: Sequence[str] = (),
+    source_attachment_relation: AttachmentReferenceKind | None = None,
+) -> CompiledEffectTemplate | None:
+    """Lower closed typed resolution-effect families."""
+    independent = _source_independent_resolution_template(text)
+    if independent is not None:
+        return independent
 
     contextual = _source_context_resolution_template(text, card_name=card_name, source_is_permanent=source_is_permanent, source_card_types=source_card_types)
     if contextual is not None:

@@ -10,6 +10,7 @@ from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
 from .object_selection import OBJECT_SELECTION_HANDLERS
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
 from .ordering import ORDERING_CHOICE_HANDLERS
+from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
 from .scry import SCRY_CHOICE_HANDLERS
 from .surveil import SURVEIL_CHOICE_HANDLERS
 from .fixed_library_selection import (
@@ -61,6 +62,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *OBJECT_SELECTION_HANDLERS,
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,
             *ORDERING_CHOICE_HANDLERS,
+            *FIXED_TOP_ORDER_HANDLERS,
             *SCRY_CHOICE_HANDLERS,
             *SURVEIL_CHOICE_HANDLERS,
             *FIXED_LIBRARY_SELECTION_CHOICE_HANDLERS,

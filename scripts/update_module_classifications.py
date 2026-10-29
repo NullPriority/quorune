@@ -72,6 +72,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/shared_creature_type_model.py",
         "quorune/state_trigger_model.py",
         "quorune/cast_source_placement_model.py",
+        "quorune/library_order_model.py",
         "quorune/target_count_cost_model.py",
         "quorune/mana_symbol_counts.py",
         "quorune/public_zone_condition_model.py",

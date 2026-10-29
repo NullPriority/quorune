@@ -509,6 +509,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'fixed-controller-top-order',
+        'fixed-controller-shuffle',
         'fixed-public-state-trigger',
         'created-token-counter-followup',
         'temporary-cast-prohibition',
@@ -1283,6 +1285,8 @@ def capability_dependencies_for_node(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
+        'library.order.fixed_controller':'fixed-controller-top-order',
+        'library.shuffle.fixed_controller':'fixed-controller-shuffle',
         'trigger.state.fixed_public_condition':'fixed-public-state-trigger',
         FIXED_OPTIONAL_EFFECT_CAPABILITY: FIXED_OPTIONAL_EFFECT_MECHANIC,
         FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY: (

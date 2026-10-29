@@ -9515,6 +9515,40 @@
         "test_game_record_v3",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-private-top-order-and-shuffle",
+      "patterns": [
+        "quorune/compiler/generated_program_identity.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/rules/capabilities.py",
+        "quorune/semantic_choices/defaults.py",
+        "quorune/semantic_runtime/__init__.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/library_order_model.py",
+        "quorune/compiler/fixed_top_order_templates.py",
+        "quorune/semantic_choices/fixed_top_order.py",
+        "quorune/semantic_runtime/library_shuffle.py",
+        "quorune/rules/library_order_shapes.py",
+        "tests/top_order_fixture.py",
+        "tests/test_fixed_top_order.py",
+        "tests/test_top_order_native.py",
+        "tests/fixtures/fixed-top-order-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_top_order",
+        "test_top_order_native",
+        "test_semantic_choice_characterization",
+        "test_fixed_library_selection",
+        "test_fixed_optional_effect_choices",
+        "test_closed_effect_programs",
+        "test_card_program_trust",
+        "test_continuous_compiler_hardening"
+      ]
     }
   ],
   "symbol_rules": [

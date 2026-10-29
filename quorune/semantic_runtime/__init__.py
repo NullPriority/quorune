@@ -265,6 +265,7 @@ from .stack_counter_handlers import (
     STACK_COUNTER_HANDLERS,
 )
 from .generic import GENERIC_HANDLERS
+from .library_shuffle import FixedLibraryShuffleHandler
 from .city_blessing import AscendSpellHandler
 from .handlers import SemanticNodeHandler
 from .intents import (
@@ -396,6 +397,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     registry = SemanticHandlerRegistry(
         (
             *GENERIC_HANDLERS,
+            FixedLibraryShuffleHandler(),
             AscendSpellHandler(),
             WholeHandDiscardHandler(),
             RandomDiscardHandler(),

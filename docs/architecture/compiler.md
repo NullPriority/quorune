@@ -591,6 +591,10 @@ source hashes, residuals, and capability closure into the canonical artifact.
 The complete effect-program promotion policy delegates to
 `compiler/nonleaf_effect_closure.py`; the lowering facade retains its existing
 entry point and recognizer ownership.
+`compiler/generated_program_identity.py` owns generated ability identities and
+canonical runtime-handler footprints. Complete typed query normalization keeps
+equivalent reviewed handlers comparable without discarding their predicates;
+the program-generation entry point retains its compatibility import.
 For one CardProgram compilation, the adapter passes its locally compiled IR to
 the existing program-generation lowering owner. Lowering still validates trust
 and constructs fresh semantic programs; it does not parse the same record a
@@ -820,6 +824,19 @@ alternative. Variable counts, another player's library, numeric or named
 predicates, conditional or payment grammar, other destinations, and sibling
 effects remain source-spanned residuals. See
 [ADR 0091](../adr/0091-typed-fixed-library-selection.md).
+
+`compiler/fixed_top_order_templates.py` separately represents fixed private
+controller look-and-order instructions and explicit controller shuffles. Exact
+leaf proofs participate in spell and activated-program promotion as well as
+trigger bodies, optional choices and ordered results. They validate executable
+shape and declared capability minima before promotion; whole-source closure
+still rejects unrepresented siblings. Runtime dependency inference requires
+the ordering or shuffle owner even when coverage annotations are absent.
+The private ordering continuation pins current refs and logical incarnations,
+and delegates mutation to existing library owners. This operation keeps every
+looked-at card on top and emits no Scry occurrence. The
+[library ordering contract](library-ordering.md#fixed-top-ordering-and-shuffle)
+owns privacy, continuation and historical-operation compatibility.
 
 `compiler/entry_state_templates.py` also owns one closed family of fixed public
 conditions that determine whether a land enters tapped. `FixedEntryCondition`
