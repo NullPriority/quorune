@@ -330,6 +330,7 @@
     "tests/fixtures/qualified-landwalk-cards.json",
     "tests/fixtures/qualified-public-history-cards.json",
     "tests/fixtures/qualified-quantity-cards.json",
+    "tests/fixtures/qualified-quantity-retention-cards.json",
     "tests/fixtures/qualified-regeneration-cards.json",
     "tests/fixtures/qualified-spell-ordinal-cards.json",
     "tests/fixtures/quantified-counter-target-cards.json",

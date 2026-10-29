@@ -50,7 +50,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v13"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v14"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -63,7 +63,7 @@ TARGET_TEMPLATE_IDS = frozenset(
 COMPOSING_TEMPLATE_IDS = frozenset(
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS
     | FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS
-    | {"fixed-source-exploit-result-v1"}
+    | {"fixed-source-exploit-result-v1", "fixed-expend-trigger-v1"}
 )
 SUPPORTED_CONTEXTS = (
     "activated_ability",
@@ -506,6 +506,7 @@ def grammar_source_fingerprint() -> str:
         announced_x_activation_effect,
         activation_x_symbols,
         _required_capabilities,
+        _composing_event_capabilities,
     )
     payload = {
         "algorithm_version": ASSURANCE_ALGORITHM_VERSION,
@@ -727,6 +728,19 @@ def _required_capabilities(
         | {kind.capability for kind in variants})) if fixed else ()
 
 
+def _composing_event_capabilities(node: OracleNode) -> tuple[str, ...]:
+    """A known Expend wrapper must preserve its complete printed binding."""
+    if node.template_id != 'fixed-expend-trigger-v1':
+        return ()
+    from .fixed_public_action_event_bindings import fixed_public_action_event_binding_spec
+    binding = fixed_public_action_event_binding_spec(_without_parenthetical_reminder(node.text))
+    if (binding is None or binding.template_id != node.template_id
+            or node.event != getattr(binding.event, 'value', binding.event)
+            or stable_json(node.event_condition) != stable_json(binding.condition)):
+        raise TargetEffectAssuranceError('Composed Expend target effect lost its printed event binding')
+    return tuple(binding.capabilities)
+
+
 def _observation(
     record: CardRecord,
     ir: OracleCardIR,
@@ -773,6 +787,7 @@ def _observation(
         )
     if cost_capability is not None:
         required = tuple(sorted({*required, cost_capability}))
+    required = tuple(sorted({*required, *_composing_event_capabilities(node)}))
     missing = sorted(set(required) - set(node.capability_dependencies))
     if missing:
         raise TargetEffectAssuranceError(

@@ -24,6 +24,24 @@ TEXT='Whenever you expend 4, draw a card.'
 
 
 class ExpendModelCompilerTests(unittest.TestCase):
+    def test_expend_target_corpus_assurance_preserves_event_and_target_body(self):
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector, TargetEffectAssuranceError
+        text = 'Whenever you expend 4, target creature you control gets +1/+1 and gains trample until end of turn.'
+        card = query_record(text);ir = compile_oracle_card(card, capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals);node, = ir.faces[0].nodes
+        TargetEffectCorpusCollector().observe(card, ir)
+        changed_condition = deepcopy(dict(node.event_condition));changed_condition['all'][1]['value'] = 3
+        mutations = (
+            replace(node, event_condition=changed_condition),
+            replace(node, event='spell.cast'),
+            replace(node, capability_dependencies=tuple(c for c in node.capability_dependencies if c != CAPABILITY)),
+            replace(node, effects=node.effects[:-1]),
+            replace(node, template_id='unknown-target-wrapper-v1'),
+        )
+        for changed in mutations:
+            with self.subTest(changed=changed.template_id), self.assertRaises(TargetEffectAssuranceError):
+                TargetEffectCorpusCollector().observe(card, replace(ir, faces=(replace(ir.faces[0], nodes=(changed,)),)))
+
     def test_payment_event_codec_and_crossing_truth_table_are_closed(self):
         for before in range(10):
             for paid in range(1,7):

@@ -19,7 +19,7 @@ from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
     FIXED_CHARACTERISTIC_KEYWORDS,
 )
-from ..object_predicate import ObjectQuerySpec
+from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_pattern
 from .creature_subtypes import canonical_creature_subtype
 from .collection_quantity_templates import collection_quantity, fixed_quantity_arithmetic, additive_quantity, public_card_quantity
@@ -124,6 +124,16 @@ def _definition_subtype_union(normalized, fields):
     return None
 
 
+def _canonical_tap_quantity_query(query: ObjectQuerySpec) -> ObjectQuerySpec:
+    """Preserve the legacy count encoding for an equivalent pure tap state."""
+    state = query.state_predicate
+    if (state is not None and state.tapped is not None
+            and state == PermanentStatePredicateSpec(tapped=state.tapped)
+            and query.tapped in (None, state.tapped)):
+        return replace(query, tapped=state.tapped, state_predicate=None)
+    return query
+
+
 def _query_quantity_descriptor(
     value: str,
     *,
@@ -162,7 +172,7 @@ def _query_quantity_descriptor(
             lambda match: match[1] + 's', normalized, count=1)
         parsed = fixed_characteristic_battlefield_query_subject(plural, allow_negative_keyword=True)
         if parsed is not None and parsed[0] == 'any' and not parsed[2]:
-            return parsed[1], exclude_source
+            return _canonical_tap_quantity_query(parsed[1]), exclude_source
 
     type_unions = {
         "artifact and/or creature": ("artifact", "creature"),

@@ -539,6 +539,14 @@ it does not bind a target-led or unowned event pronoun. Current counts and
 immediate departure counts remain the existing scalar owner's responsibility,
 so sacrifice costs and later returned incarnations need no alternate evaluator.
 
+General query parsing preserves the earlier direct tap-field encoding for a
+pure tapped or untapped quantity predicate. Compound state predicates retain
+their own representation and validation. Public mana production validates a
+tentative static amount through its existing output model before selecting
+that parse; an invalid static keyword count can therefore reach the existing
+live battlefield count owner. This keeps current Defender and tap counts
+available without relaxing static characteristic or layer-five safety.
+
 Scheduled each-player and each-opponent upkeep or draw-step triggers preserve the trigger
 source's controller separately from the active player. Fixed nontargeted
 draw, life, mill, and damage results preserve each clause's original subject.
@@ -4400,6 +4408,12 @@ together, and the pronoun binds only that same controlled creature. A separate
 composition capability and whole-program shape check cover the ordered result;
 unknown antecedents, conditional preparation and variable amounts remain
 residual. The [damage transaction](damage.md) owns execution and attribution.
+
+Target-effect corpus assurance recognizes the Expend trigger wrapper while
+independently recompiling its target result. The printed threshold, player
+relation and event must still match the typed event binding, and the wrapper's
+Expend capability remains required alongside the result capabilities. A known
+wrapper identifier cannot excuse changed effects, predicates or dependencies.
 
 Direct “twice its power” instructions lower through an explicit version-two
 creature-power damage payload and a separate fixed-multiple capability. The

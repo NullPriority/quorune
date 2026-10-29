@@ -653,6 +653,7 @@
       "test_public_state_counter_actions",
       "test_public_state_event_actions",
       "test_qualified_graveyard_grants",
+      "test_qualified_quantity_retention",
       "test_query_power_toughness_definitions",
       "test_replacement_event_ordering",
       "test_ring_emblem_triggers",
