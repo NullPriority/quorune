@@ -81,6 +81,15 @@ damage source, including its lifelink and deathtouch; a trample grant does not
 redirect excess noncombat damage to a player. These compositions add no second
 damage or mutation owner.
 
+Version-two creature-power damage instructions add an explicit fixed multiplier
+of two for direct one-way damage. The source's current power is multiplied
+once before the ordinary damage proposal enters replacement and prevention.
+Damage attribution and result materialization still use the creature source.
+Legacy instructions omit both multiplier fields and retain their original
+meaning. Unknown versions, incomplete fields, other coefficients and Fight
+combinations fail closed. Runtime admission derives the multiplier capability
+from the instruction payload independently of program annotations.
+
 ```mermaid
 flowchart LR
     Producer["Combat or typed effect"] --> Proposal["Immutable proposal batch"]

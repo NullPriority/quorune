@@ -4400,3 +4400,9 @@ together, and the pronoun binds only that same controlled creature. A separate
 composition capability and whole-program shape check cover the ordered result;
 unknown antecedents, conditional preparation and variable amounts remain
 residual. The [damage transaction](damage.md) owns execution and attribution.
+
+Direct “twice its power” instructions lower through an explicit version-two
+creature-power damage payload and a separate fixed-multiple capability. The
+ordinary direct-damage and Fight productions keep their prior payloads.
+Companion cost reductions remain independently compiled target or public-zone
+conditions; recognizing the damage clause alone does not close a card.

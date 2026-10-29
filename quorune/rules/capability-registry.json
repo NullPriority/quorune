@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 594,
+  "registry_version": 595,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -36333,6 +36333,100 @@
       "status": "trusted"
     },
     {
+      "id": "damage.creature_power.fixed_multiple",
+      "version": 1,
+      "official_rules": [
+        "608.2b",
+        "608.2h",
+        "120.2",
+        "120.3",
+        "107.2",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Explicit version-two one-way direct targeted creature-power damage multiplies the legal source creature current power by fixed two before canonical damage replacement and results. Legacy payloads omit both new fields.",
+        "inputs": [
+          "Exact schema-two fixed multiplier",
+          "Original source and recipient target roles",
+          "Current effective creature power"
+        ],
+        "outputs": [
+          "Ordinary damage proposals with actual creature source",
+          "Existing replacement prevention and result semantics"
+        ],
+        "exclusions": [
+          "Unknown versions coefficients or incomplete payloads",
+          "Fight multiplier",
+          "Unrepresented source or recipient grammar"
+        ]
+      },
+      "dependencies": [
+        "damage.creature_power.fixed_interaction",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.creature_power_damage_model.creature_power_damage_multiplier",
+        "quorune.compiler.creature_power_damage_templates._direct_bite",
+        "quorune.rules.creature_power_damage_capability_shapes.fixed_creature_power_damage_node_capabilities",
+        "quorune.creature_power_damage.resolve_creature_power_damage",
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
+      ],
+      "positive_tests": [
+        "test_power_multiple_codec_preserves_legacy_and_rejects_malformed_extensions",
+        "test_power_multiple_compiler_emits_explicit_scale_and_keeps_ordinary_and_fight_bytes",
+        "test_power_multiple_payload_requires_its_capability_without_annotations",
+        "test_power_multiple_verified_withdrawal_rejects_new_form_and_retains_plain_damage",
+        "test_actual_three_power_multiple_spells_keep_distinct_discount_predicates",
+        "test_actual_power_multiple_reads_response_power_and_preserves_creature_lifelink",
+        "test_actual_power_multiple_zero_power_and_returned_source_are_distinct_no_damage_cases"
+      ],
+      "negative_tests": [
+        "test_power_multiple_codec_preserves_legacy_and_rejects_malformed_extensions",
+        "test_power_multiple_compiler_emits_explicit_scale_and_keeps_ordinary_and_fight_bytes",
+        "test_power_multiple_payload_requires_its_capability_without_annotations",
+        "test_power_multiple_verified_withdrawal_rejects_new_form_and_retains_plain_damage"
+      ],
+      "interaction_tests": [
+        "test_actual_three_power_multiple_spells_keep_distinct_discount_predicates",
+        "test_actual_power_multiple_reads_response_power_and_preserves_creature_lifelink",
+        "test_actual_power_multiple_zero_power_and_returned_source_are_distinct_no_damage_cases"
+      ],
+      "multiplayer_tests": [
+        "test_actual_three_power_multiple_spells_keep_distinct_discount_predicates",
+        "test_actual_power_multiple_reads_response_power_and_preserves_creature_lifelink",
+        "test_actual_power_multiple_zero_power_and_returned_source_are_distinct_no_damage_cases"
+      ],
+      "privacy_tests": [
+        "test_actual_three_power_multiple_spells_keep_distinct_discount_predicates",
+        "test_actual_power_multiple_reads_response_power_and_preserves_creature_lifelink",
+        "test_actual_power_multiple_zero_power_and_returned_source_are_distinct_no_damage_cases"
+      ],
+      "replay_tests": [
+        "test_actual_three_power_multiple_spells_keep_distinct_discount_predicates",
+        "test_actual_power_multiple_reads_response_power_and_preserves_creature_lifelink",
+        "test_actual_power_multiple_zero_power_and_returned_source_are_distinct_no_damage_cases"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Rebuilt verified withdrawal blocks fixed doubling while ordinary bite remains admitted; payload-derived runtime requirements detect an omitted multiplier capability.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing the multiplier decoder with legacy one changes actual original spell damage from four to two and fails the independent expected result.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "damage.creature_power.prepared_sequence",
       "version": 1,
       "official_rules": [
@@ -49398,6 +49492,7 @@
         "quorune.semantic_runtime.values.resolve_semantic_value"
       ],
       "positive_tests": [
+        "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
@@ -49515,6 +49610,7 @@
         "test_verified_scalar_withdrawal_keeps_fixed_source_damage"
       ],
       "interaction_tests": [
+        "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
@@ -49572,6 +49668,7 @@
         "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays"
       ],
       "multiplayer_tests": [
+        "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
@@ -49622,6 +49719,7 @@
         "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "privacy_tests": [
+        "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
@@ -49661,6 +49759,7 @@
         "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "replay_tests": [
+        "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",

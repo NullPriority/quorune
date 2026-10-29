@@ -10049,6 +10049,30 @@
         "test_source_damage_scalars",
         "test_sunburst_rules"
       ]
+    },
+    {
+      "id": "fixed-creature-power-multiple",
+      "patterns": [
+        "quorune/creature_power_damage.py",
+        "quorune/creature_power_damage_model.py",
+        "quorune/compiler/creature_power_damage_templates.py",
+        "quorune/rules/creature_power_damage_capability_shapes.py",
+        "tests/test_creature_power_multiples*.py",
+        "tests/creature_power_multiple_fixture.py",
+        "tests/fixtures/creature-power-multiple-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_creature_power_multiples_compiler",
+        "test_creature_power_multiples_native",
+        "test_fixed_creature_power_damage",
+        "test_oracle_ir",
+        "test_persist_undying_rules",
+        "test_prepared_creature_power_damage_compiler",
+        "test_prepared_creature_power_damage_native",
+        "test_public_target_spell_costs"
+      ]
     }
   ],
   "symbol_rules": [

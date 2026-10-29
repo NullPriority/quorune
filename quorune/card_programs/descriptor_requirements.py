@@ -7,6 +7,10 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        if value.get('op') == 'creature_power_damage':
+            from ..creature_power_damage_model import creature_power_damage_multiplier, CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY
+            if creature_power_damage_multiplier(value) == 2:
+                return (CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,)
         if value.get('op') == 'apply_if_public_condition' and value.get('schema_version') == 12:
             from ..declared_cost_conditions import validate_declared_cost_instruction
             from ..declared_cast_cost_model import DECLARED_CAST_COST_CAPABILITY

@@ -2,7 +2,7 @@
 title: "Game Record v3"
 status: "current"
 authoritative_source: "quorune/record.py, quorune/replacement/model.py, quorune/replacement/ordering.py, persistence implementation, and Game Record schemas"
-verified: "2026-08-06"
+verified: "2026-10-28"
 audience: "engine, persistence, replay, and analyst contributors"
 maintenance: "hand-maintained"
 concern: "game-record"
@@ -724,3 +724,12 @@ Selected-tap schema two retains the existing field set and adds a closed color
 alternative predicate. Its internal plan seals the ability source zone and
 logical identity independently of the selected battlefield objects. Schema-one
 costs and earlier battlefield source defaults retain their prior meaning.
+
+Creature-power damage instructions with fixed doubling use explicit
+`schema_version: 2` and `power_multiplier: 2`. Both fields are required together
+and the extension applies only to one-way damage. Historical instructions omit
+both fields and retain their previous meaning and serialized shape. Runtime
+binding infers the fixed-multiple capability from these fields; removing a
+program annotation cannot remove that requirement. Source and target identity,
+current-power timing, replacement continuations and damage attribution retain
+the existing record owners.

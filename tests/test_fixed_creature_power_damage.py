@@ -301,7 +301,7 @@ class FixedCreaturePowerDamageCompilerTests(unittest.TestCase):
         unsupported = (
             "Target creature you control fights a random creature.",
             "Target creature you control deals damage equal to its toughness to any target.",
-            "Target creature you control deals damage equal to twice its power to any target.",
+            "Target creature you control deals damage equal to three times its power to any target.",
             "Target creature you control deals damage equal to its power divided as you choose among any number of targets.",
             "It deals damage equal to its power to any target.",
             "Whenever another creature enters, it deals damage equal to its power to any target.",

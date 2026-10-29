@@ -110,6 +110,7 @@
     "tests/fixtures/counter-replacement-cards.json",
     "tests/fixtures/created-token-counter-cards.json",
     "tests/fixtures/creature-power-departure-cards.json",
+    "tests/fixtures/creature-power-multiple-cards.json",
     "tests/fixtures/creature-subtype-addition-cards.json",
     "tests/fixtures/cycle-or-discard-event-cards.json",
     "tests/fixtures/damage-result-cards.json",
