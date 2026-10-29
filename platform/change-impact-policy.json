@@ -9894,6 +9894,38 @@
         "test_source_label_characteristics",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ordinary-casualty-power-sacrifice-and-copy-trigger",
+      "patterns": [
+        "quorune/casualty.py",
+        "quorune/casualty_model.py",
+        "quorune/power_sacrifice_model.py",
+        "quorune/compiler/casualty_nodes.py",
+        "quorune/semantic_runtime/casualty.py",
+        "quorune/rules/casting/casualty_costs.py",
+        "tests/casualty_fixture.py",
+        "tests/test_casualty*.py",
+        "tests/fixtures/casualty-cards.json",
+        "mechanics/contracts/casualty.json"
+      ],
+      "test_modules": [
+        "test_bestow_rules",
+        "test_card_program_trust",
+        "test_cast_creature_targets",
+        "test_casualty_compiler",
+        "test_casualty_native",
+        "test_casualty_results",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_conspire",
+        "test_fixed_replicate",
+        "test_fixed_sacrifice_additional_costs",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_zone_change_additional_costs",
+        "test_public_state_mana_actions",
+        "test_storm_rules",
+        "test_suspend_rules"
+      ]
     }
   ],
   "symbol_rules": [

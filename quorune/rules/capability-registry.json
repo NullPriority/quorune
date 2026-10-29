@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 585,
+  "registry_version": 587,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6314,6 +6314,147 @@
       "status": "trusted"
     },
     {
+      "id": "casting.additional_cost.casualty_fixed",
+      "version": 1,
+      "official_rules": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "702.153a",
+        "702.153b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed printed Casualty instance on an independently complete ordinary instant or sorcery; optional current-power sacrifice and one retained ordinary cast-copy trigger.",
+        "inputs": [
+          "Complete source-spanned declaration",
+          "Current controlled creature power and incarnation",
+          "Committed sacrifice and existing spell-copy template"
+        ],
+        "outputs": [
+          "Ordinary optional price and paid fact",
+          "Existing independent cast-trigger and copy pipeline"
+        ],
+        "exclusions": [
+          "Unrepresented companion bodies",
+          "Multiple or granted instances",
+          "Variable permanent-copy exceptions",
+          "Unknown mixed consuming costs"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.creature_power_minimum",
+        "stack.copy.fixed_instant_or_sorcery",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.casualty_model.FixedCasualtySpec",
+        "quorune.casualty_model.validate_casualty_fact",
+        "quorune.compiler.casualty_nodes.printed_casualty_spec",
+        "quorune.semantic_runtime.casualty.FixedCasualtyHandler",
+        "quorune.rules.casting.casualty_costs.expand_casualty_options",
+        "quorune.rules.casting.casualty_costs.finalize_casualty_option",
+        "quorune.rules.casting.casualty_costs.casualty_cast_context",
+        "quorune.casualty.casualty_trigger_items",
+        "quorune.casualty.validated_casualty_trigger"
+      ],
+      "positive_tests": [
+        "test_casualty_spec_and_payment_fact_seal_one_distinct_instance_and_incarnation",
+        "test_casualty_power_cost_uses_current_creature_power_and_control_without_tap_price",
+        "test_casualty_numeric_cost_version_and_payload_reject_unrepresented_variants",
+        "test_casualty_source_span_and_complete_companion_require_independent_owners",
+        "test_casualty_verified_capability_withdrawal_rejects_source_and_keeps_plain_draw",
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "negative_tests": [
+        "test_casualty_spec_and_payment_fact_seal_one_distinct_instance_and_incarnation",
+        "test_casualty_power_cost_uses_current_creature_power_and_control_without_tap_price",
+        "test_casualty_numeric_cost_version_and_payload_reject_unrepresented_variants",
+        "test_casualty_source_span_and_complete_companion_require_independent_owners",
+        "test_casualty_verified_capability_withdrawal_rejects_source_and_keeps_plain_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "multiplayer_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "privacy_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "replay_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn Casualty, power-price or copy authority rejects the source while plain draw remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Weakening the power threshold admits a below-threshold creature and fails the independent candidate witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "casting.additional_cost.conspire_fixed_tap",
       "version": 1,
       "official_rules": [
@@ -6437,6 +6578,139 @@
       "dependency_fail_closed_rationale": "Missing tap/copy dependencies and unsupported mixed consuming costs remain residual. Invalid pairs, changed incarnations and unavailable mana reject before commitment.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the paired compiler producer fails the independent source-spanned positive contract before promotion. Native omission of canonical tap commitment preserves whole admission but fails the actual two-creature tapped-state consequence.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.creature_power_minimum",
+      "version": 1,
+      "official_rules": [
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "601.2i",
+        "702.153a",
+        "702.153b",
+        "707.10",
+        "707.10a",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One schema-four controlled current creature sacrifice price with effective power at least a fixed nonnegative integer, through existing zone-cost owners.",
+        "inputs": [
+          "Complete source-spanned declaration",
+          "Current controlled creature power and incarnation",
+          "Committed sacrifice and existing spell-copy template"
+        ],
+        "outputs": [
+          "Ordinary optional price and paid fact",
+          "Existing independent cast-trigger and copy pipeline"
+        ],
+        "exclusions": [
+          "Unrepresented companion bodies",
+          "Multiple or granted instances",
+          "Variable permanent-copy exceptions",
+          "Unknown mixed consuming costs"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.fixed_sacrifice"
+      ],
+      "implementation_components": [
+        "quorune.power_sacrifice_model.power_sacrifice_predicate",
+        "quorune.power_sacrifice_model.validate_power_sacrifice_variant",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.casting_additional_costs.fixed_zone_change_cost_candidates"
+      ],
+      "positive_tests": [
+        "test_casualty_spec_and_payment_fact_seal_one_distinct_instance_and_incarnation",
+        "test_casualty_power_cost_uses_current_creature_power_and_control_without_tap_price",
+        "test_casualty_numeric_cost_version_and_payload_reject_unrepresented_variants",
+        "test_casualty_source_span_and_complete_companion_require_independent_owners",
+        "test_casualty_verified_capability_withdrawal_rejects_source_and_keeps_plain_draw",
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "negative_tests": [
+        "test_casualty_spec_and_payment_fact_seal_one_distinct_instance_and_incarnation",
+        "test_casualty_power_cost_uses_current_creature_power_and_control_without_tap_price",
+        "test_casualty_numeric_cost_version_and_payload_reject_unrepresented_variants",
+        "test_casualty_source_span_and_complete_companion_require_independent_owners",
+        "test_casualty_verified_capability_withdrawal_rejects_source_and_keeps_plain_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "multiplayer_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "privacy_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "replay_tests": [
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn Casualty, power-price or copy authority rejects the source while plain draw remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Weakening the power threshold admits a below-threshold creature and fails the independent candidate witness.",
       "blockers": [],
       "status": "trusted"
     },

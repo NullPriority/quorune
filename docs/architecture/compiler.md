@@ -4352,3 +4352,13 @@ Filtered hands, unbound event players and unknown linked tails remain residual;
 recognition does not close an unsupported companion body. See the
 [semantic handler contract](semantic-handlers.md) for replacement and privacy
 boundaries.
+
+Fixed Casualty keyword rows produce a source-spanned cast-cost component only
+for one ordinary printed instant or sorcery instance. Complete-card admission
+remains mandatory; a recognized keyword cannot promote an unknown companion
+body. The declaration derives the existing zone-change price in schema four,
+whose closed predicate requires current controlled creature power at least a
+fixed minimum. The declaration and price have separate capability minima, and
+the existing cast-copy owner handles the resulting trigger. See
+[ADR 0136](../adr/0136-power-qualified-casualty-costs.md) and the
+[Casualty contract](../../mechanics/contracts/casualty.json).

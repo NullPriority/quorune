@@ -178,6 +178,26 @@ not supply it. Copyable values capture that printed fact before later ability
 removal; copied and token values retain their own captured keyword data.
 Whole-card command admission remains a separate authority.
 
+One fixed printed Casualty declaration adds an optional schema-four sacrifice
+price to ordinary casting. Its typed predicate requires one currently controlled
+creature with effective power at least the declared threshold. Tapped,
+summoning-sick and token creatures remain eligible. In new games, price offers
+use the existing prospective source-placement reader, so power depending on the
+hand or another origin zone agrees with actual payment after the source reaches
+the stack. Earlier zone-cost schemas retain their prior representation.
+
+The canonical zone-cost owner pays the price and retains the selected logical
+incarnation. The spell's declared context carries that sealed fact during
+preparation; cast-trigger construction validates it against committed cost
+objects after payment. This preserves the existing source-before-cost sequence.
+Destination redirection still pays sacrifice. The ordinary spell-copy trigger
+owner then creates one independent copy with retained X and optional fresh
+targets. It survives removal of the original spell, and the copy is not cast.
+Private choices in copied bodies retain ordinary projection and replay. Variable
+permanent-copy exceptions, multiple or granted instances, mixed consuming costs
+and unknown companion bodies remain residual. See
+[ADR 0136](../adr/0136-power-qualified-casualty-costs.md).
+
 Enlist's optional declaration taps and linked reflexive program use the
 existing tap, scalar, APNAP and continuous-effect owners. The trigger context
 pins the original attacker and donor, preserves paid taps across pending

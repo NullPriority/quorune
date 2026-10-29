@@ -320,7 +320,7 @@ class FixedZoneChangeAdditionalCost:
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3}
+            or self.schema_version not in {1, 2, 3, 4}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -348,6 +348,9 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional costs require a typed object predicate"
             )
+        from ..power_sacrifice_model import validate_power_sacrifice_variant
+        try:validate_power_sacrifice_variant(self.schema_version,self.operation,self.count,self.predicate,self.unblocked_attacker,self.count_parameter)
+        except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
         expected_owner = "$actor" if origin != "battlefield" else None
         expected_controller = "$actor" if origin == "battlefield" else None
         state_predicate = self.predicate.state_predicate
@@ -649,6 +652,10 @@ def fixed_zone_change_cost_candidates(
     exclude_object_id: str | None = None,
 ) -> tuple[str, ...]:
     """Return operation-owned candidates through one immutable query path."""
+
+    if cost.schema_version == 4:
+        from .casting.source_placement import power_sacrifice_read_host
+        host = power_sacrifice_read_host(host, actor, exclude_object_id)
 
     rows = []
     for object_id in host.state.players[actor].zones[cost.origin_zone]:

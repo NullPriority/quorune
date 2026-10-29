@@ -551,6 +551,8 @@ def _initial_options(
     from .conspire_costs import expand_conspire_options
     expanded = expand_conspire_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
         mechanics=mechanics, mandatory=mandatory)
+    from .casualty_costs import expand_casualty_options
+    expanded = expand_casualty_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
     from .aftermath import with_aftermath_stack_context
     return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 
@@ -1464,6 +1466,8 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         option["choice_schema"] = choice_schema
     from .turn_cast_grants import finalize_turn_cast_grant_option
     finalize_turn_cast_grant_option(option)
+    from .casualty_costs import finalize_casualty_option
+    if not finalize_casualty_option(host,seat,card,option,hint=hint):return None
     return CastCostOption.from_dict(option)
 
 

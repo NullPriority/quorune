@@ -39,3 +39,13 @@ def casting_affordability_host(host,source):
             and source.zone!='stack'):
         return _CastAffordabilityHost(host,source)
     return host
+
+
+def power_sacrifice_read_host(host, actor, source_object_id):
+    """A numeric casting price reads the same post-placement state as payment."""
+    if isinstance(host, _CastAffordabilityHost):host = host.original
+    source = host.state.cards.get(source_object_id)
+    if (source is not None and source.zone != 'stack'
+            and cast_source_placement_version(getattr(host.state, 'cast_source_placement_version', None)) == 1):
+        return prospective_characteristic_read_host(host, actor, source)
+    return host

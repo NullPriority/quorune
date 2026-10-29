@@ -124,6 +124,8 @@ def announced_additional_cost_dependencies(cost_schema):
         if raw.get('kind') == 'zone_change' and raw.get('schema_version') == 3:
             cost=FixedZoneChangeAdditionalCost.from_descriptor(raw)
             required.update((*announced_zone_cost_capabilities(cost),fixed_zone_change_additional_cost_capability(cost)))
+        if raw.get('kind') == 'zone_change' and raw.get('schema_version') == 4:
+            required.add(fixed_zone_change_additional_cost_capability(FixedZoneChangeAdditionalCost.from_descriptor(raw)))
     return tuple(sorted(required))
 
 
@@ -315,6 +317,10 @@ def fixed_zone_change_additional_cost_capability(
     cost: FixedZoneChangeAdditionalCost,
 ) -> str:
     """Return the one reviewed capability owned by a typed zone-change leaf."""
+
+    if cost.schema_version == 4:
+        from ..power_sacrifice_model import POWER_SACRIFICE_CAPABILITY
+        return POWER_SACRIFICE_CAPABILITY
 
     return {
         DISCARD_ONE_COST: "casting.additional_cost.zone_change.fixed_discard",

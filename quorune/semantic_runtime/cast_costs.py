@@ -42,6 +42,7 @@ from ..emerge_model import FixedManaEmergeSpec
 from ..disturb_model import FixedManaDisturbSpec
 from ..replicate_model import FixedManaReplicateSpec
 from ..conspire_model import FixedConspireSpec
+from ..casualty_model import FixedCasualtySpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
 from .paid_entry_copy import PaidEntryCopyCostHandler
@@ -50,6 +51,7 @@ from .emerge import FixedManaEmergeHandler
 from .disturb import FixedManaDisturbHandler
 from .replicate import FixedManaReplicateHandler
 from .conspire import FixedConspireHandler
+from .casualty import FixedCasualtyHandler
 from .targeted_spell_costs import TargetedSpellCostHandler
 from .activation_costs import FixedActivationCostModifierHandler, TargetedActivationCostModifierHandler, PublicQuantityActivationCostModifierHandler
 from ..activation_cost_modifiers import FixedActivationCostModifierSpec
@@ -546,6 +548,7 @@ class CastCostComponentRegistry(
         | FixedManaDisturbSpec
         | FixedManaReplicateSpec
         | FixedConspireSpec
+        | FixedCasualtySpec
         | FixedActivationCostModifierSpec,
     ]
 ):
@@ -576,6 +579,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaDisturbHandler(),
             FixedManaReplicateHandler(),
             FixedConspireHandler(),
+            FixedCasualtyHandler(),
             FixedActivationCostModifierHandler(),
             TargetedActivationCostModifierHandler(),
             PublicQuantityActivationCostModifierHandler(),

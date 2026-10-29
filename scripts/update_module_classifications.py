@@ -160,6 +160,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/repeated_mana_costs.py",
         "quorune/replicate_model.py",
         "quorune/conspire_model.py",
+        "quorune/casualty_model.py",
+        "quorune/power_sacrifice_model.py",
         "quorune/overload_model.py",
         "quorune/spell_text_variants.py",
         "quorune/cleave_model.py",
@@ -334,6 +336,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/disturb_model.py",
         "quorune/replicate.py",
         "quorune/conspire.py",
+        "quorune/casualty.py",
         "quorune/self_graveyard_exile_model.py",
         "quorune/continuous_effects.py",
         "quorune/continuous_stat_operations.py",
@@ -605,6 +608,9 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/combat_entry_activations.py",
         "quorune/compiled_cast_lifecycles.py",
         "quorune/self_cast_reductions.py",
+        "quorune/casualty.py",
+        "quorune/casualty_model.py",
+        "quorune/power_sacrifice_model.py",
     }:
         return "casting_activation_and_costs"
     if relative in {

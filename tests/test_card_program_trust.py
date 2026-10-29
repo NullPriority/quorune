@@ -313,6 +313,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.multikicker.fixed_mana",
                 "casting.additional_cost.replicate_fixed_mana",
                 "casting.additional_cost.conspire_fixed_tap",
+                "casting.additional_cost.casualty_fixed",
                 "casting.additional_cost.per_target_fixed_mana",
                 "casting.alternative_cost.emerge_fixed_mana",
                 "casting.lifecycle.disturb_fixed_mana",

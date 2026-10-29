@@ -685,3 +685,13 @@ inside the authoritative continuation. Once the discard commits, any suspended
 conditional return retains the bound ordinary draw instructions through the
 existing completed-choice codec. The result introduces no state or checkpoint
 field; earlier whole-hand instructions retain their original representation.
+
+Zone-change additional-cost schema four retains the existing fixed-cost field
+set and adds a closed current-power sacrifice meaning. Schemas one through
+three keep their prior codecs. A fixed Casualty declaration and paid fact retain
+their instance, threshold and selected creature incarnation. Preparation may
+serialize that sealed fact before costs are paid; cast-trigger construction
+checks it against the ordinary committed cost context. The existing spell-copy
+template retains X and targets independently of later source departure. Existing
+cast-source-placement modes govern prospective power reads; no new state mode,
+checkpoint field or alternate replacement/copy continuation is introduced.
