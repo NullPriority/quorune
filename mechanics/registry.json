@@ -1,5 +1,5 @@
 {
-  "contract_count": 143,
+  "contract_count": 150,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -41,6 +41,12 @@
       "mechanic_id": "backup",
       "path": "mechanics/contracts/backup.json",
       "sha256": "1ea04e6437b8812f54bd9a7afc8f1694639f45bb283e48ee7bb0e91a334ca490",
+      "version": 1
+    },
+    {
+      "mechanic_id": "bargain",
+      "path": "mechanics/contracts/bargain.json",
+      "sha256": "eab15878341a003add5296262ddb923a0f6f6647246a34eb7e4b9a231f715c11",
       "version": 1
     },
     {
@@ -110,9 +116,27 @@
       "version": 2
     },
     {
+      "mechanic_id": "casualty",
+      "path": "mechanics/contracts/casualty.json",
+      "sha256": "42ba2a88700629e807ad8fc4aa944cb067d07ff504f13aeb83055cadfba05785",
+      "version": 1
+    },
+    {
+      "mechanic_id": "champion",
+      "path": "mechanics/contracts/champion.json",
+      "sha256": "6afb3562c56d26da3dc5ba4de715c993345cc475628ef8b38f5c53c0dba6c9b4",
+      "version": 1
+    },
+    {
       "mechanic_id": "changeling",
       "path": "mechanics/contracts/changeling.json",
       "sha256": "a9e2913f4e676b7bb9bf331617a8c5c27b1449017413a7075f2546f07fc7c57b",
+      "version": 1
+    },
+    {
+      "mechanic_id": "cipher",
+      "path": "mechanics/contracts/cipher.json",
+      "sha256": "bc505a10cc5a9b058d1f0f2d7a23b9b5ab10963444b6ced89cf4481578aaf327",
       "version": 1
     },
     {
@@ -372,6 +396,12 @@
       "path": "mechanics/contracts/flying.json",
       "sha256": "748bdba731056878bb54076a402e810348077ce01b54c26b69b5e1ebc14ae5d9",
       "version": 2
+    },
+    {
+      "mechanic_id": "forecast",
+      "path": "mechanics/contracts/forecast.json",
+      "sha256": "31efce42cc2647331a021639dfdad5b092c03bab0ec0c0bc144578632571f75c",
+      "version": 1
     },
     {
       "mechanic_id": "foretell",
@@ -674,6 +704,12 @@
       "version": 2
     },
     {
+      "mechanic_id": "the-ring-tempts-you",
+      "path": "mechanics/contracts/ring.json",
+      "sha256": "66b2344303f8bac00b2ef37586914067acc45363934d9f4498aa0ca35c0bb509",
+      "version": 1
+    },
+    {
       "mechanic_id": "riot",
       "path": "mechanics/contracts/riot.json",
       "sha256": "2c6d340a5987ea2069aa0d08ec402c395cfab152badece901c77bc81b77d39c1",
@@ -752,10 +788,16 @@
       "version": 9
     },
     {
+      "mechanic_id": "cr-721-station-cards",
+      "path": "mechanics/contracts/station-symbols.json",
+      "sha256": "05d005ae0b94180194d3176e2eb602953766e068e6f32c5b16898d18a3b8af4f",
+      "version": 1
+    },
+    {
       "mechanic_id": "station",
       "path": "mechanics/contracts/station.json",
-      "sha256": "5f9e4d282009c8dc463edcf2644251474166c86903e3a3aaa15707f004730c82",
-      "version": 1
+      "sha256": "bbbcefec58c740a8f96ab40fb297782d1ff8b8f6cb201cd3a41711b2f810807b",
+      "version": 2
     },
     {
       "mechanic_id": "storm",
@@ -1178,19 +1220,48 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/bargain.json",
+      "contract_sha256": "eab15878341a003add5296262ddb923a0f6f6647246a34eb7e4b9a231f715c11",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "FixedBargainSpec, DeclaredCastCostFacts, schema-five ordinary zone-cost union, linked ordinary condition/entry owners",
+      "implementation_version": "linked-bargain-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unrepresented conditional announcement targets",
+        "conditional discounts",
+        "other unrepresented linked bodies",
+        "multiple/granted instances and mixed consuming prices",
+        "unrepresented source layouts",
+        "aggregate Bargain remains incomplete"
+      ],
       "mechanic_id": "bargain",
       "official_name": "Bargain",
       "rule_references": [
         "702.166"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+        "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+        "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+        "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+        "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+        "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+        "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw",
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -1413,36 +1484,80 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/casualty.json",
+      "contract_sha256": "42ba2a88700629e807ad8fc4aa944cb067d07ff504f13aeb83055cadfba05785",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "FixedCasualtySpec and existing typed zone-cost, cast-commit and spell-copy owners",
+      "implementation_version": "fixed-printed-casualty-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "variable/permanent-copy exception",
+        "multiple and granted instances",
+        "mixed consuming costs without their own contract",
+        "unrepresented ordinary companion bodies",
+        "aggregate Casualty remains incomplete"
+      ],
       "mechanic_id": "casualty",
       "official_name": "Casualty",
       "rule_references": [
         "702.153"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_casualty_spec_and_payment_fact_seal_one_distinct_instance_and_incarnation",
+        "test_casualty_power_cost_uses_current_creature_power_and_control_without_tap_price",
+        "test_casualty_numeric_cost_version_and_payload_reject_unrepresented_variants",
+        "test_casualty_source_span_and_complete_companion_require_independent_owners",
+        "test_casualty_verified_capability_withdrawal_rejects_source_and_keeps_plain_draw",
+        "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+        "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+        "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+        "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+        "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+        "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+        "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+        "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+        "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+        "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+      ],
       "trust_level": "untrusted"
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/champion.json",
+      "contract_sha256": "6afb3562c56d26da3dc5ba4de715c993345cc475628ef8b38f5c53c0dba6c9b4",
+      "contract_version": 1,
+      "coverage_status": "partial",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.champion_model, champion_state, linked_ability_exile_model, linked_ability_exile_state, typed Champion choice/intents and paired compiler productions",
+      "implementation_version": "champion-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "Modified Champion subject grammar remains residual.",
+        "Source-specific championed-object event and result bodies remain residual unless independently lowered."
+      ],
       "mechanic_id": "champion",
       "official_name": "Champion",
       "rule_references": [
         "702.72"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_native_entry_exiles_borrowed_creature_and_return_uses_its_owner",
+        "test_native_decline_and_impossible_choice_sacrifice_only_original_source",
+        "test_early_leaving_trigger_does_not_return_a_later_exiled_card",
+        "test_kindred_permanent_matches_subtype_only_champion",
+        "test_decline_cannot_sacrifice_a_new_incarnation_or_another_controller",
+        "test_stale_zone_control_and_unoffered_references_reject",
+        "test_missing_link_choice_or_zone_dependency_rejects_with_unrelated_control",
+        "test_owner_entry_replacement_choice_resumes_only_the_linked_return",
+        "test_decline_completion_retains_sacrifice_across_destination_replacement_choice",
+        "test_exile_link_omission_mutant_is_killed"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -1485,19 +1600,54 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/cipher.json",
+      "contract_sha256": "bc505a10cc5a9b058d1f0f2d7a23b9b5ab10963444b6ced89cf4481578aaf327",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "CipherEncoding, registered encoding choice/intent, canonical zone owner, exile continuous grant, ordinary granted-trigger discovery and existing one-shot copy-cast owner",
+      "implementation_version": "typed-cipher-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unrepresented companion spell bodies",
+        "unowned target or additional-cost variants",
+        "arbitrary text-changing or granted Cipher keyword layouts",
+        "aggregate Cipher support remains incomplete"
+      ],
       "mechanic_id": "cipher",
       "official_name": "Cipher",
       "rule_references": [
         "702.99"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_cipher_encoding_and_granted_fragment_roundtrip_preserve_both_incarnations",
+        "test_cipher_encoding_offers_current_controlled_creatures_and_skips_copies",
+        "test_cipher_candidate_control_predicate_mutant_is_killed",
+        "test_cipher_link_reconciliation_is_incarnation_bound_and_preserves_queued_reference",
+        "test_cipher_intent_replacement_codec_and_version_two_dependency_are_structural",
+        "test_cipher_unknown_keyword_shapes_and_unsupported_companions_remain_residual",
+        "test_cipher_verified_owner_withdrawal_blocks_whole_source_and_keeps_plain_draw",
+        "test_cipher_appends_encoding_after_body_and_declares_exile_grant",
+        "test_actual_last_thoughts_without_creatures_draws_then_uses_ordinary_graveyard_destination",
+        "test_actual_last_thoughts_encodes_after_draw_and_combat_copy_does_not_encode",
+        "test_actual_last_thoughts_declined_encoding_and_copy_cast_keep_original_lifecycle",
+        "test_actual_cipher_control_change_locks_damage_trigger_controller_after_creature_departure",
+        "test_actual_cipher_ability_removal_suppresses_grant_then_restores_it_and_declined_copy_is_cleaned",
+        "test_actual_nightwing_token_can_receive_encoding_and_copy_creates_an_unencoded_token",
+        "test_actual_two_encodings_create_distinct_damage_triggers_and_declines_preserve_both_cards",
+        "test_actual_cipher_all_targets_illegal_never_reaches_encoding",
+        "test_actual_cipher_link_survives_vehicle_noncreature_interval_and_recrew",
+        "test_actual_exiled_cipher_card_departure_removes_grant_before_damage",
+        "test_actual_delusions_and_shadow_slice_original_and_combat_copy_use_new_player_target",
+        "test_actual_mental_vapors_private_discards_belong_to_each_fresh_target",
+        "test_actual_undercity_plague_orders_life_discard_sacrifice_before_encoding_and_copies",
+        "test_actual_writ_and_midnight_recoveries_resolve_before_encoding_and_again_from_copy",
+        "test_actual_voidwalk_delayed_return_and_copy_blink_keep_original_encoding",
+        "test_actual_hands_of_binding_original_and_copy_tap_distinct_opponents",
+        "test_actual_stolen_identity_original_and_cipher_copy_create_distinct_artifact_copies"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -2874,19 +3024,41 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/forecast.json",
+      "contract_sha256": "31efce42cc2647331a021639dfdad5b092c03bab0ec0c0bc144578632571f75c",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
-      "implementation_component": null,
+      "implementation_component": "ActivatedAbility Forecast marker, existing usage/upkeep/catalog/commit owners, ForecastRevealFrame and canonical scoped hand reveals",
+      "implementation_version": "typed-forecast-v1",
       "kind": "keyword_ability",
+      "known_blockers": [
+        "unrepresented companion bodies",
+        "unknown costs or effects",
+        "aggregate Forecast remains incomplete"
+      ],
       "mechanic_id": "forecast",
       "official_name": "Forecast",
       "rule_references": [
         "702.57"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_forecast_descriptor_is_hand_upkeep_once_and_legacy_descriptors_omit_marker",
+        "test_forecast_reveal_frame_is_versioned_and_original_incarnation_bound",
+        "test_forecast_disclosure_retains_knowledge_and_ends_only_outside_upkeep_or_on_departure",
+        "test_forecast_colored_tap_cost_admits_each_white_or_blue_untapped_controlled_creature",
+        "test_forecast_source_span_hand_catalog_and_intrinsic_restrictions_are_closed",
+        "test_forecast_unknown_bodies_and_missing_reveal_do_not_promote_card",
+        "test_forecast_verified_owner_withdrawal_keeps_ordinary_draw_activation",
+        "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+        "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+        "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+        "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+        "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+        "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -5168,8 +5340,8 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/station.json",
-      "contract_sha256": "5f9e4d282009c8dc463edcf2644251474166c86903e3a3aaa15707f004730c82",
-      "contract_version": 1,
+      "contract_sha256": "bbbcefec58c740a8f96ab40fb297782d1ff8b8f6cb201cd3a41711b2f810807b",
+      "contract_version": 2,
       "coverage_status": "tested",
       "dependencies": [
         "702"
@@ -5178,7 +5350,7 @@
       "implementation_version": "typed-ordinary-station-activation-v1",
       "kind": "keyword_ability",
       "known_blockers": [
-        "Station symbol threshold and characteristic behavior from CR 721",
+        "Station symbols are separately owned by the bounded CR721 Station Cards contract; this activation capability does not certify them",
         "Tapestry Warden and other CR 702.184c characteristic substitutions",
         "cost-creature phasing before resolution",
         "type-changing interactions that remove creature power before resolution",
@@ -7300,19 +7472,39 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/ring.json",
+      "contract_sha256": "66b2344303f8bac00b2ef37586914067acc45363934d9f4498aa0ca35c0bb509",
+      "contract_version": 1,
+      "coverage_status": "partial",
       "dependencies": [
         "701"
       ],
-      "implementation_component": null,
+      "implementation_component": "quorune.ring_model, ring_state, ring_effects, ring_triggers, ring_delays, typed Ring choice/intents and source-spanned compiler productions",
+      "implementation_version": "ring-v1",
       "kind": "keyword_action",
+      "known_blockers": [
+        "Ring-bearer and lifetime-temptation conditions embedded in broader Oracle result grammar are not generally compiled.",
+        "Modified action instructions and player-qualified observer forms outside the closed controller productions remain residual."
+      ],
       "mechanic_id": "the-ring-tempts-you",
       "official_name": "The Ring Tempts You",
       "rule_references": [
         "701.54"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_birthday_escape_public_borrowed_choice_private_draw_and_pending_replay",
+        "test_birthday_escape_without_creatures_still_completes_one_temptation",
+        "test_claim_the_precious_resolves_destruction_before_impossible_ring_choice",
+        "test_claim_all_targets_illegal_does_not_tempt",
+        "test_native_attack_loot_and_combat_loss_keep_private_draw_and_all_opponents",
+        "test_native_blocker_delay_survives_pending_load_and_uses_current_controller",
+        "test_call_observes_actual_rechoice_for_its_controller_and_optional_payment",
+        "test_call_does_not_observe_an_impossible_choice",
+        "test_ring_power_restriction_agrees_in_offered_and_accepted_blocks",
+        "test_put_blocking_bypasses_declaration_restrictions_and_emits_each_new_relation",
+        "test_skipped_end_combat_and_source_lki_do_not_erase_waiting_delay",
+        "test_ring_choice_flag_mutant_is_killed"
+      ],
       "trust_level": "untrusted"
     },
     {
@@ -10825,17 +11017,43 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/station-symbols.json",
+      "contract_sha256": "05d005ae0b94180194d3176e2eb602953766e068e6f32c5b16898d18a3b8af4f",
+      "contract_version": 1,
+      "coverage_status": "tested",
       "dependencies": [],
-      "implementation_component": null,
+      "implementation_component": "StationSymbolsSpec, StationSymbolsHandler, Station compiler context, existing static-component scopes and canonical layer/counter/choice owners",
+      "implementation_version": "typed-station-symbols-v1",
       "kind": "rules_section",
+      "known_blockers": [
+        "unrepresented children",
+        "ambiguous, missing or inconsistent P/T-box placement",
+        "variable P/T or thresholds",
+        "more than two or malformed symbols",
+        "unowned characteristic applicability cycles",
+        "arbitrary text-changing, merged or granted symbol layouts",
+        "aggregate Station Cards coverage remains incomplete"
+      ],
       "mechanic_id": "cr-721-station-cards",
       "official_name": "Station Cards",
       "rule_references": [
         "721"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_station_symbols_roundtrip_reject_ambiguous_boxes_members_and_counter_facts",
+        "test_station_symbols_emit_cumulative_members_and_separate_type_ability_base_layers",
+        "test_station_threshold_predicate_mutant_is_killed",
+        "test_spacecraft_self_zone_labels_share_canonical_vehicle_occurrences_without_type_predicates",
+        "test_station_symbols_preserve_spans_and_members_without_promoting_unknown_children",
+        "test_station_symbols_verified_owner_withdrawal_blocks_whole_source",
+        "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+        "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+        "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+      ],
       "trust_level": "untrusted"
     },
     {

@@ -2,7 +2,7 @@
 title: "Commander card-unlock frontier"
 status: "generated"
 authoritative_source: "coverage/card-unlock-frontier.json.gz"
-verified: "a673df6c21dafe956f1485fe97a2ec113fbb01c524def5d83952430eed4c9701"
+verified: "50236cc548e85c4c2c43800cdea8e3e4c011a74f3f011c439ca14960d191b6a1"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -14,65 +14,65 @@ This generated report ranks minimum known compiler and rules blockers for the pi
 ## Snapshot
 
 - Cards considered: 31,623
-- Oracle states: `{"exact":15860,"partial":8517,"unresolved":7246}`
-- CardProgram states: `{"residual":15765,"trusted":15858}`
+- Oracle states: `{"exact":16394,"partial":8188,"unresolved":7041}`
+- CardProgram states: `{"residual":15231,"trusted":16392}`
 - Hard construction failures: 0
-- Frontier fingerprint: `a673df6c21dafe956f1485fe97a2ec113fbb01c524def5d83952430eed4c9701`
+- Frontier fingerprint: `50236cc548e85c4c2c43800cdea8e3e4c011a74f3f011c439ca14960d191b6a1`
 
 ## Highest-leverage single families
 
 | Family | Occurrences | Cards | Sole-blocker cards | Exact abilities | Readiness | Risk |
 |---|---:|---:|---:|---:|---|---|
-| `continuous_layer:continuous-effect-layers-and-dependencies` | 2,565 | 2,081 | 1,041 | 2,565 | missing_lowering | very_high |
-| `keyword_dependency:cipher` | 15 | 15 | 11 | 15 | missing_contract | medium |
-| `effect_clause:typed-spell-additional-cost-clause` | 72 | 72 | 10 | 10 | missing_lowering | high |
-| `activated_effect:unparsed-you-get-an` | 69 | 69 | 9 | 67 | missing_lowering | high |
-| `activated_effect:create-token` | 217 | 212 | 9 | 31 | missing_lowering | high |
+| `continuous_layer:continuous-effect-layers-and-dependencies` | 2,410 | 1,944 | 954 | 2,410 | missing_lowering | very_high |
+| `effect_clause:typed-spell-additional-cost-clause` | 72 | 72 | 11 | 11 | missing_lowering | high |
+| `activated_effect:unparsed-you-get-an` | 69 | 69 | 10 | 67 | missing_lowering | high |
+| `activated_effect:create-token` | 211 | 206 | 10 | 30 | missing_lowering | high |
 | `keyword_dependency:assist` | 16 | 16 | 9 | 16 | missing_contract | medium |
-| `effect_clause:life-change` | 350 | 348 | 6 | 18 | missing_lowering | high |
+| `effect_clause:life-change` | 347 | 345 | 6 | 18 | missing_lowering | high |
 | `effect_clause:destroy-mass` | 137 | 128 | 6 | 17 | missing_lowering | high |
-| `effect_clause:return` | 406 | 393 | 6 | 16 | missing_lowering | high |
+| `effect_clause:return` | 404 | 391 | 6 | 16 | missing_lowering | high |
 | `keyword_dependency:phasing` | 12 | 12 | 6 | 12 | missing_contract | medium |
-| `activated_effect:life-change` | 148 | 142 | 6 | 11 | missing_lowering | high |
+| `activated_effect:life-change` | 144 | 139 | 6 | 11 | missing_lowering | high |
 | `effect_clause:unparsed-target-spell-or` | 7 | 7 | 6 | 6 | missing_lowering | high |
-| `replacement:damage-prevention` | 114 | 112 | 5 | 16 | missing_lowering | very_high |
+| `replacement:damage-prevention` | 113 | 111 | 5 | 16 | missing_lowering | very_high |
 | `keyword_dependency:equip` | 8 | 8 | 5 | 8 | missing_contract | medium |
-| `activated_effect:draw` | 211 | 210 | 5 | 6 | missing_lowering | high |
+| `activated_effect:draw` | 198 | 197 | 5 | 6 | missing_lowering | high |
 | `activated_effect:unparsed-the-next-time` | 15 | 15 | 5 | 6 | missing_lowering | high |
-| `activated_effect:unparsed-target-creature-gets` | 14 | 14 | 5 | 6 | missing_lowering | high |
+| `activated_effect:unparsed-target-creature-gets` | 13 | 13 | 5 | 6 | missing_lowering | high |
 | `effect_clause:exile` | 460 | 453 | 4 | 48 | missing_lowering | high |
-| `effect_clause:create-token` | 406 | 395 | 4 | 47 | missing_lowering | high |
-| `activated_effect:exile` | 248 | 234 | 4 | 15 | missing_lowering | high |
+| `effect_clause:create-token` | 404 | 393 | 4 | 47 | missing_lowering | high |
+| `activated_effect:exile` | 247 | 233 | 4 | 15 | missing_lowering | high |
 | `activated_effect:put-onto-battlefield` | 161 | 159 | 4 | 11 | missing_lowering | high |
-| `effect_clause:unparsed-all-creatures-able` | 6 | 6 | 4 | 6 | missing_lowering | high |
 | `activated_effect:unparsed-the-next-spell` | 6 | 6 | 4 | 5 | missing_lowering | high |
 | `activated_effect:unparsed-target-player-shuffles` | 5 | 5 | 4 | 5 | missing_lowering | high |
 | `activated_effect:destroy-target` | 52 | 52 | 4 | 4 | missing_lowering | high |
+| `effect_clause:unparsed-you-may-play` | 7 | 7 | 3 | 7 | missing_lowering | high |
+| `activated_effect:return` | 192 | 192 | 3 | 5 | missing_lowering | high |
 
 ## Highest-leverage bounded bundles
 
 | Families | Exact cards | Exact abilities | Residuals |
 |---|---:|---:|---:|
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, activated_effect:create-token` | 1,062 | 2,663 | 2,671 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, activated_effect:unparsed-you-get-an` | 1,062 | 2,647 | 2,649 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, activated_effect:create-token` | 1,062 | 2,611 | 2,617 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, effect_clause:typed-spell-additional-cost-clause` | 1,062 | 2,590 | 2,652 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:unparsed-you-get-an` | 1,061 | 2,642 | 2,706 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 1,061 | 2,606 | 2,674 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, keyword_dependency:assist` | 1,061 | 2,596 | 2,596 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:create-token, effect_clause:ordered-effect-composition` | 1,060 | 2,980 | 2,981 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, keyword_dependency:assist` | 1,060 | 2,648 | 2,650 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:assist` | 1,060 | 2,612 | 2,618 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:assist` | 1,060 | 2,591 | 2,653 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:life-change, effect_clause:ordered-effect-composition` | 1,059 | 2,947 | 2,947 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:return, effect_clause:ordered-effect-composition` | 1,058 | 2,946 | 2,946 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, activated_effect:life-change` | 1,058 | 2,643 | 2,645 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, effect_clause:life-change` | 1,058 | 2,598 | 2,598 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, effect_clause:destroy-mass` | 1,058 | 2,597 | 2,597 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, effect_clause:return` | 1,058 | 2,596 | 2,596 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, keyword_dependency:phasing` | 1,058 | 2,592 | 2,592 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, activated_effect:life-change` | 1,058 | 2,591 | 2,591 |
-| `continuous_layer:continuous-effect-layers-and-dependencies, keyword_dependency:cipher, activated_effect:put-onto-battlefield` | 1,058 | 2,591 | 2,591 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, activated_effect:create-token` | 977 | 2,507 | 2,515 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:unparsed-you-get-an` | 976 | 2,488 | 2,551 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, activated_effect:create-token` | 976 | 2,451 | 2,518 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, keyword_dependency:assist` | 974 | 2,493 | 2,495 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, keyword_dependency:assist` | 974 | 2,456 | 2,462 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:typed-spell-additional-cost-clause, keyword_dependency:assist` | 974 | 2,437 | 2,498 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:create-token, effect_clause:ordered-effect-composition` | 973 | 2,809 | 2,810 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:life-change, effect_clause:ordered-effect-composition` | 972 | 2,776 | 2,776 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, activated_effect:life-change` | 972 | 2,488 | 2,490 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, effect_clause:return, effect_clause:ordered-effect-composition` | 971 | 2,775 | 2,775 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, effect_clause:life-change` | 971 | 2,495 | 2,497 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, effect_clause:destroy-mass` | 971 | 2,494 | 2,496 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, effect_clause:return` | 971 | 2,493 | 2,495 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, keyword_dependency:phasing` | 971 | 2,489 | 2,491 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, activated_effect:put-onto-battlefield` | 971 | 2,488 | 2,490 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, keyword_dependency:equip` | 971 | 2,485 | 2,487 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:unparsed-you-get-an, effect_clause:unparsed-target-spell-or` | 971 | 2,483 | 2,485 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:life-change` | 971 | 2,458 | 2,464 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:destroy-mass` | 971 | 2,457 | 2,463 |
+| `continuous_layer:continuous-effect-layers-and-dependencies, activated_effect:create-token, effect_clause:return` | 971 | 2,456 | 2,462 |
 
 ## Hard construction failures
 
