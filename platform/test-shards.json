@@ -86,6 +86,7 @@
       "test_bestow_typed_grants",
       "test_bound_static_declarations",
       "test_capability_implementation_mutations",
+      "test_cast_spell_mana_values",
       "test_champion_choices",
       "test_champion_model",
       "test_champion_native",

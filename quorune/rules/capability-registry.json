@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 552,
+  "registry_version": 553,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -65384,6 +65384,114 @@
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ]
+    },
+    {
+      "id": "quantity_expression.cast_spell_mana_value",
+      "version": 1,
+      "official_rules": [
+        "202.3",
+        "202.3e",
+        "601.2i",
+        "603.3",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Scalar version8 reads the exact committed cast spell mana value, including chosen X, independently of actual payment and later zone/incarnation changes. Existing scalar result and normalized event/player owners retain consequence and recipient semantics.",
+        "inputs": [
+          "Closed version8 scalar origin",
+          "Original complete normalized cast facts with exact spell incarnation and stack reference",
+          "Independently closed result slot"
+        ],
+        "outputs": [
+          "Known nonnegative integer cast spell mana value, including zero"
+        ],
+        "exclusions": [
+          "Current graveyard/permanent object substitutions",
+          "Actual mana spent or casting cost instead of mana value",
+          "Missing or non-cast facts",
+          "Unrepresented copy-only, target-spell or linked readers"
+        ]
+      },
+      "dependencies": [
+        "quantity_expression.scalar_effect_amount",
+        "trigger.event.normalized_spell_cast"
+      ],
+      "implementation_components": [
+        "quorune.cast_event_amounts.committed_cast_mana_value_facts",
+        "quorune.cast_event_amounts.cast_mana_value_runtime_dependencies",
+        "quorune.scalar_effect_amount_model.ScalarEffectAmountSpec",
+        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount",
+        "quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template"
+      ],
+      "positive_tests": [
+        "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
+        "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
+        "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
+        "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature",
+        "test_cast_values_compose_with_independent_result_and_player_owners",
+        "test_declared_cast_scalar_cache_is_bound_to_the_cast_identity_and_value",
+        "test_new_scalar_schema_round_trips_and_legacy_schema_is_unchanged",
+        "test_reader_uses_committed_spell_value_not_actual_spend_or_a_current_object"
+      ],
+      "negative_tests": [
+        "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
+        "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
+        "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
+        "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature",
+        "test_cast_values_compose_with_independent_result_and_player_owners",
+        "test_declared_cast_scalar_cache_is_bound_to_the_cast_identity_and_value",
+        "test_missing_bad_and_non_cast_facts_are_unavailable_without_creating_a_cache",
+        "test_new_scalar_schema_round_trips_and_legacy_schema_is_unchanged",
+        "test_reader_uses_committed_spell_value_not_actual_spend_or_a_current_object",
+        "test_runtime_cast_value_dependency_is_inferred_without_capability_or_marker",
+        "test_verified_cast_value_withdrawal_preserves_existing_source_scalar"
+      ],
+      "interaction_tests": [
+        "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
+        "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
+        "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
+        "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature"
+      ],
+      "multiplayer_tests": [
+        "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
+        "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
+        "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
+        "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature"
+      ],
+      "privacy_tests": [
+        "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
+        "test_actual_frightful_counts_chosen_x_after_reduction_and_countering"
+      ],
+      "replay_tests": [
+        "test_actual_background_grant_reads_cast_value_and_keeps_commander_damage_source",
+        "test_actual_cyclops_declared_amount_uses_countered_cast_value_for_source_buff",
+        "test_actual_frightful_counts_chosen_x_after_reduction_and_countering",
+        "test_actual_keeper_uses_referenced_graveyard_cast_and_preserves_target_choice",
+        "test_actual_zero_value_cast_is_known_zero_and_consumes_first_noncreature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited registry/evidence withdrawal blocks cast-value scalars while existing source-characteristic scalars remain exact; runtime minima infer the reader after capability and compiler marker removal.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Substituting actual paid mana3 or current graveyard value1 for the independently expected committed value4 fails the exact scalar witness.",
+      "blockers": [],
+      "status": "trusted"
     }
   ]
 }

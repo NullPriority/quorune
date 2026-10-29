@@ -314,6 +314,14 @@ controller only for a represented target-information reference. Loading keeps
 that original incarnation; re-entry does not replace it. Earlier records omit
 the book, and earlier resolution-condition schemas keep their payloads.
 
+Scalar amount schema eight represents a committed cast spell's mana value.
+Its origin and `mana_value` characteristic are closed, and it reads the
+original normalized cast context rather than a current zone object or casting
+payment. A declared scalar cache also binds that cast's incarnation, stack
+reference, caster and value. The reader requires existing complete cast-event
+facts and adds no checkpoint or event fields. Scalar schemas one through seven
+retain their exact payloads.
+
 Public-condition schema eight stores one closed `history_query` and a
 nonnegative count or amount threshold. Its version-one query identifies the
 typed event, principal relation, card-type filters and reduction. It reads the

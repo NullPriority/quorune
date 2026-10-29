@@ -85,7 +85,10 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if value.get('kind') == 'scalar_effect_amount':
             from ..scalar_effect_amount_model import ScalarEffectAmountSpec, SCALAR_AMOUNT_CAPABILITY
             spec = ScalarEffectAmountSpec.from_dict(value)
+            from ..scalar_effect_amount_model import ScalarAmountOrigin
+            from ..cast_event_amounts import CAST_MANA_VALUE_CAPABILITY
             return tuple(sorted({SCALAR_AMOUNT_CAPABILITY,
+                                 *((CAST_MANA_VALUE_CAPABILITY,) if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE else ()),
                                  *((DECLARED_AMOUNT_CAPABILITY,) if spec.binding_id is not None else ())}))
         return tuple(sorted({*own, *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
     if isinstance(value, (list, tuple)):

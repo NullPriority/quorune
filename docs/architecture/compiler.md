@@ -3688,6 +3688,17 @@ and consequences even when the variable amount is zero. The typed reader is
 restricted to spell resolution; source-entry and variable-target consumers
 remain residual. Earlier scalar encodings are unchanged.
 
+Scalar version 8 adds `committed_cast_spell_mana_value` through the same result
+projection. A normalized cast occurrence supplies the original spell's mana
+value, including chosen X; actual payment, later zone changes and the ability
+source's characteristics cannot replace it. The fine
+`quantity_expression.cast_spell_mana_value` capability requires the existing
+scalar and cast-event owners. Bound player results retain their original
+recipient, and granted triggers retain their actual ability source. Missing
+facts remain unavailable; known zero remains zero. Copy-only, unrepresented
+target-spell and linked readers remain residual. Earlier scalar encodings and
+cast event payloads keep their existing forms.
+
 Public event-effect triggers compile only when one closed normalized carrier
 and one independently exact typed body compose through the shared event-effect
 owner. Zone events consume transaction-sealed owner, prior controller, type,

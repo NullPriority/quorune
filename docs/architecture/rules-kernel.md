@@ -1694,6 +1694,14 @@ original occurrence. Missing history or an absent or ambiguous occurrence is
 unavailable. Current object characteristics and observation counts cannot
 replace these facts.
 
+Cast-trigger result amounts use a separate scalar origin for that spell's
+committed mana value. It includes chosen X while the spell is on the stack,
+even after a cost reduction or a counter moves the physical card elsewhere.
+The reader uses the original cast facts, and rejects unavailable or malformed
+information. Existing result owners still choose the damage source, recipient
+and mutation; a granted commander ability therefore deals damage from that
+commander while reading the cast spell's value.
+
 Schema-five public conditions have a separate numeric creature-existence
 predicate. Intervening triggers and resolution instructions read complete
 current effective power or toughness under their locked controller. They

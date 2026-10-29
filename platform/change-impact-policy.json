@@ -9200,6 +9200,24 @@
         "test_public_state_event_actions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "cast-spell-mana-value-scalars",
+      "patterns": [
+        "quorune/cast_event_amounts.py",
+        "quorune/scalar_effect_amount_model.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/test_cast_spell_mana_values.py",
+        "tests/fixtures/cast-spell-mana-value-cards.json"
+      ],
+      "test_modules": [
+        "test_cast_spell_mana_values",
+        "test_scalar_effect_amounts",
+        "test_event_player_fixed_damage",
+        "test_mana_spent_amounts",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

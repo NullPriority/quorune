@@ -46,10 +46,12 @@ def fixed_event_player_damage_node_capabilities(*,effects,target_schema,mechanic
     effect=effects[0]
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
             or effect.get('target') not in {'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
-            or type(effect.get('amount')) is not int or effect['amount']<=0):return ()
+            or event_result_value_capabilities('damage','amount',effect.get('amount')) is None):return ()
     from .damage_capability_shapes import fixed_damage_node_capabilities
-    damage=fixed_damage_node_capabilities(effects=({**effect,'target':'$controller'},),target_schema=None,mechanic_ids={'cr-120-damage'})
-    return (EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_DAMAGE_CAPABILITY,*damage) if damage else ()
+    extra=event_result_value_capabilities('damage','amount',effect['amount'])
+    amount=effect['amount'] if type(effect['amount']) is int else 2
+    damage=fixed_damage_node_capabilities(effects=({**effect,'target':'$controller','amount':amount},),target_schema=None,mechanic_ids={'cr-120-damage'})
+    return tuple(sorted({EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_DAMAGE_CAPABILITY,*damage,*extra})) if damage else ()
 
 
 def event_player_damage_runtime_dependencies(program):
@@ -57,7 +59,7 @@ def event_player_damage_runtime_dependencies(program):
     required=set();has_marker=EVENT_PLAYER_DAMAGE_MECHANIC in program.coverage
     def visit(node):
         if isinstance(node,Mapping):
-            if (node.get('op')=='damage' and node.get('source')=='$source' and type(node.get('amount')) is int
+            if (node.get('op')=='damage' and node.get('source')=='$source' and event_result_value_capabilities('damage','amount',node.get('amount')) is not None
                     and _event_player_reference_is_closed(program,node.get('target')) and node.get('target')!='$controller'):
                 caps=fixed_event_player_damage_node_capabilities(effects=(node,),target_schema=None,
                     mechanic_ids={EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC})

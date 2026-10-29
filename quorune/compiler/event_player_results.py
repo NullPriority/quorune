@@ -51,6 +51,16 @@ def _occurrence_player(event,condition,variant,subject):
     return player
 
 
+def _bound_result_template(binding,text,*,effect_template,card_name):
+    compiled=effect_template(text,card_name=card_name)
+    if compiled[0] is None and binding.event.value=='spell.cast' and re.search(r"that spell['’]s mana value",text,re.I):
+        from .scalar_effect_amounts import scalar_effect_amount_template
+        scalar=scalar_effect_amount_template(text,source_name=card_name,event='spell.cast',
+            compile_fixed=lambda value:effect_template(value,card_name=card_name))
+        if scalar is not None:return scalar
+    return compiled
+
+
 def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
     match=re.fullmatch(r"(?P<subject>that player|they|defending player|that creature['’]s controller|you) (?P<verb>draws?|loses?|gains?) (?P<body>.+)",body,re.I)
     if match is None:return None
@@ -59,7 +69,7 @@ def _fixed_event_player_clause(binding,body,*,effect_template,card_name):
     verb=match['verb'].casefold().removesuffix('s')
     normalized=event_result_instruction(match['subject'].casefold(),verb,match['body'])
     if normalized is None:return None
-    compiled=effect_template(normalized,card_name=card_name)
+    compiled=_bound_result_template(binding,normalized,effect_template=effect_template,card_name=card_name)
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0];layouts={'draw':('count',{'op','player','count','private'}),
         'life':('delta',{'op','player','delta'}),'lose_life':('amount',{'op','player','amount'})}
@@ -81,14 +91,14 @@ def fixed_event_player_result(binding,body,*,effect_template,card_name):
 
 
 def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
-    match=re.fullmatch(r"(?P<prefix>.+? deals [1-9][0-9]* damage to )(?P<subject>that player|defending player|that creature['’]s controller)\.?",body,re.I)
+    match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|defending player|that creature['’]s controller)\.?",body,re.I)
     if match is None:return None
     player=_event_player(binding,match['subject'].casefold())
     if player is None:return None
-    compiled=effect_template(match['prefix']+'you.',card_name=card_name)
+    compiled=_bound_result_template(binding,match['prefix']+'you.',effect_template=effect_template,card_name=card_name)
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
-            or effect.get('target')!='$controller' or type(effect.get('amount')) is not int or effect['amount']<=0):return None
+            or effect.get('target')!='$controller' or event_result_value_capabilities('damage','amount',effect.get('amount')) is None):return None
     return ('fixed-event-player-damage-v1',({**effect,'target':player},),None,
         tuple(dict.fromkeys((*compiled[3],EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC)))),False

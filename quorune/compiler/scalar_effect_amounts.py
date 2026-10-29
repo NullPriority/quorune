@@ -56,6 +56,8 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
         return None
     reference = match["reference"].casefold()
     field = match["field"].casefold().replace(" ", "_")
+    if reference.replace('’',"'")=="that spell's" and field=='mana_value' and event=='spell.cast':
+        return ScalarEffectAmountSpec(ScalarAmountOrigin.CAST_SPELL_MANA_VALUE,characteristic='mana_value',schema_version=8)
     source = rf"(?:this (?:creature|permanent|artifact|land|enchantment)|{SourceReferenceSpec(source_name).regex_pattern})"
     if re.fullmatch(source + "['’]s", match["reference"], re.I):
         origin = ScalarAmountOrigin.SOURCE
@@ -103,7 +105,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         match = re.fullmatch(r"(?P<head>.+?) equal to (?P<twice>twice )?(?P<quantity>.+?)(?P<tail> to .+| until end of turn)?\.?", normalized, re.I)
         if match is None:
             return None
-        body = match["head"] + " X" + (match["tail"] or "") + "."
+        body = match["head"] + " X" + (match["tail"] or "").rstrip('.') + "."
         quantity = match["quantity"].rstrip(".")
         multiplier = 2 if match["twice"] else 1
         body = re.sub(r"\bdraw cards X\b", "Draw X cards", body, flags=re.I)
@@ -141,6 +143,9 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         return deepcopy(value)
     from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC
     additional=(TARGET_HAND_COUNT_MECHANIC,) if producer.origin is ScalarAmountOrigin.TARGET_HAND_COUNT else ()
+    if producer.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:
+        from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
+        additional=(*additional,CAST_MANA_VALUE_MECHANIC)
     return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
 
 
@@ -170,4 +175,5 @@ def scalar_amount_shape_context(effects, mechanics):
     from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC
     from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC
     from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC
-    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount",TARGET_HAND_COUNT_MECHANIC,MULTIKICKER_AMOUNT_MECHANIC,MANA_COLOR_AMOUNT_MECHANIC}
+    from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
+    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount",TARGET_HAND_COUNT_MECHANIC,MULTIKICKER_AMOUNT_MECHANIC,MANA_COLOR_AMOUNT_MECHANIC,CAST_MANA_VALUE_MECHANIC}

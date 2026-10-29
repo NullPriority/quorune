@@ -87,6 +87,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
     from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies
+    from ..cast_event_amounts import cast_mana_value_runtime_dependencies
     required,blockers=set(),set()
     for resolver,value,label in (
         (public_history_query_dependencies,program.event_condition,'public_history'),
@@ -94,6 +95,7 @@ def _event_query_runtime_requirements(program):
         (qualified_attack_runtime_dependencies,program,'qualified_attack'),
         (qualified_attack_batch_runtime_dependencies,program,'qualified_attack_batch'),
         (event_player_damage_runtime_dependencies,program,'event_player_damage'),
+        (cast_mana_value_runtime_dependencies,program,'cast_spell_mana_value'),
     ):
         try:required.update(resolver(value))
         except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')

@@ -58,6 +58,7 @@
     "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",
     "tests/fixtures/cast-creature-targets.json",
+    "tests/fixtures/cast-spell-mana-value-cards.json",
     "tests/fixtures/casting-activation-metadata-cards.json",
     "tests/fixtures/casting-payment-keywords-cards.json",
     "tests/fixtures/champion-cards.json",

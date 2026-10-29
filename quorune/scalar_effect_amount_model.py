@@ -21,6 +21,7 @@ TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
 
 
 class ScalarAmountOrigin(StrEnum):
+    CAST_SPELL_MANA_VALUE = 'committed_cast_spell_mana_value'
     CAST_MANA_COLOR_COUNT = 'cast_mana_color_count'
     MULTIKICKER_COUNT = 'multikicker_count'
     TARGET_HAND_COUNT='target_player_hand_count'
@@ -54,8 +55,12 @@ class ScalarEffectAmountSpec:
     target_group: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6,7}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6,7,8}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version==8)!=(self.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE):
+            raise PublicQueryAmountError('Cast spell mana value requires its explicit scalar version')
+        if self.schema_version==8 and self.characteristic!='mana_value':
+            raise PublicQueryAmountError('Cast spell scalar reads only its committed mana value')
         if (self.schema_version == 6) != (self.origin is ScalarAmountOrigin.CAST_MANA_COLOR_COUNT):
             raise PublicQueryAmountError('Spent mana colors require their explicit scalar version')
         if (self.schema_version == 5) != (self.origin is ScalarAmountOrigin.MULTIKICKER_COUNT):
@@ -95,6 +100,7 @@ class ScalarEffectAmountSpec:
             raise PublicQueryAmountError("Scalar declaration identity must be nonempty")
         characteristic_origin = self.origin in {
             ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
+            ScalarAmountOrigin.CAST_SPELL_MANA_VALUE,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
             raise PublicQueryAmountError("Scalar characteristic does not match its origin")
