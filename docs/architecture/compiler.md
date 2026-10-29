@@ -3963,6 +3963,14 @@ becomes-blocked occurrence per attacker. Counter bodies, source-tapped
 producers, broader attachment relations, Room, dice, chosen,
 history-relative, other targeted-event, declaration-replacement, ambiguous
 disjunction, linked-event, and dynamic-comparison grammar remains residual.
+Attached dealing-damage headers independently retain enchanted versus equipped
+relation, combat-only versus all damage, and any recipient versus a player or
+an opponent. They use the existing attachment reference and committed damage
+occurrence; an opponent is relative to the Aura or Equipment trigger controller.
+An absent recipient restriction includes damage to permanents. Independently
+closed result owners preserve life, counters, tokens, private optional results,
+and the damaged player's discard or sacrifice choice. Unrepresented bodies and
+ambiguous object-controller pronouns remain residual.
 The same owner now accepts a second bounded public-action closure: controller
 attack declarations with zero, two, or three minimum attackers; typed
 discard and sacrifice subjects; fixed token, land, creature, artifact, and

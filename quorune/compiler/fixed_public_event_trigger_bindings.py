@@ -116,7 +116,7 @@ _ATTACHMENT_ATTACK_TRIGGER = re.compile(
 )
 _ATTACHMENT_DAMAGE_TRIGGER = re.compile(
     r"^Whenever (?P<relation>enchanted|equipped) creature deals "
-    r"(?P<combat>combat )?damage to (?P<recipient>a player|an opponent), "
+    r"(?P<combat>combat )?damage(?: to (?P<recipient>a player|an opponent))?, "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -630,18 +630,13 @@ def _attachment_attack_or_damage_spec(
         )
     damage = _ATTACHMENT_DAMAGE_TRIGGER.fullmatch(material_line)
     if damage is not None:
-        recipient = damage.group("recipient").casefold()
+        recipient = (damage.group("recipient") or "").casefold()
         relation = damage.group("relation").casefold()
         combat = damage.group("combat") is not None
-        if (relation, combat, recipient) not in {
-            ("enchanted", False, "an opponent"),
-            ("equipped", True, "a player"),
-        }:
-            return None
         return _spec(
             "damage.dealt",
             f"{relation}_creature_{'combat_' if combat else ''}"
-            f"damage_{recipient.replace(' ', '_')}",
+            f"damage{('_' + recipient.replace(' ', '_')) if recipient else ''}",
             damage.group("body"),
             "fixed-counter-public-damage-trigger-v1",
             "trigger-event-normalized-damage",
@@ -651,7 +646,9 @@ def _attachment_attack_or_damage_spec(
                     "op": "eq",
                     "value": "$context.source",
                 },
-                {"field": "target_kind", "op": "eq", "value": "player"},
+                {"field": "target_kind", "op": "eq", "value": "player"}
+                if recipient
+                else None,
                 {"field": "combat", "op": "truthy", "value": True}
                 if combat
                 else None,

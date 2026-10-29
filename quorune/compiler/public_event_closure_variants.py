@@ -18,6 +18,12 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "enchanted_permanent_graveyard",
         "equipped_creature_attacks",
         "equipped_creature_combat_damage_a_player",
+        *{
+            f"{relation}_creature_{combat}damage{recipient}"
+            for relation in ("enchanted", "equipped")
+            for combat in ("", "combat_")
+            for recipient in ("", "_a_player", "_an_opponent")
+        },
         "equipped_creature_dies",
         "one_or_more_controller_creature_cards_leave_graveyard",
         "source_or_controlled_creature_or_artifact_dies",

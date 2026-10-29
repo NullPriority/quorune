@@ -9778,6 +9778,25 @@
         "test_scalar_effect_amounts",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "complete-attached-damage-qualifiers",
+      "patterns": [
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/public_event_closure_variants.py",
+        "tests/attachment_damage_fixture.py",
+        "tests/test_attachment_damage*.py",
+        "tests/fixtures/attachment-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_attachment_damage_bindings",
+        "test_attachment_damage_life_native",
+        "test_attachment_damage_choices_native",
+        "test_attachment_damage_results_native",
+        "test_fixed_counter_event_triggers",
+        "test_event_player_sacrifices",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

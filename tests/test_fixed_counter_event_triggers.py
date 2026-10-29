@@ -1526,7 +1526,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "draw a card.",
             "Whenever this creature deals damage to a creature, draw a card.",
             "Whenever this creature deals damage, draw a card for each counter on it.",
-            "Whenever equipped creature deals combat damage to an opponent, draw "
+            "Whenever equipped creature deals combat damage to two opponents, draw "
             "a card.",
             "Whenever one or more creatures deal combat damage to a player, "
             "draw a card.",
@@ -3528,21 +3528,22 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def test_public_event_near_misses_remain_material(self):
         self.assertEqual("exact", self.compile("Whenever a creature you control becomes tapped, you may gain 1 life.", type_line="Creature — Fixture").status)
+        self.assertEqual("exact", self.compile("Whenever one or more creatures you control attack, you may draw a card.", type_line="Creature — Fixture").status)
         cases = (
             "Whenever an opponent discards one or more cards, you may draw a card.",
             "Whenever you sacrifice a green creature, you may gain 2 life.",
             "Whenever equipped creature attacks alone, you may draw a card.",
             "Whenever enchanted permanent dies, you may gain 2 life.",
-            "Whenever equipped creature deals damage to an opponent, you "
+            "Whenever equipped creature deals damage to each opponent simultaneously, you "
             "may draw a card.",
-            "Whenever enchanted creature deals combat damage to a player, "
+            "Whenever enchanted creature deals combat damage to a chosen player, "
             "you may draw a card.",
             "Whenever one or more cards leave an opponent's graveyard, create a 2/2 "
             "red and white Spirit creature token.",
             "Whenever another creature you control with power X or less "
             "enters, you may draw a card.",
             "Whenever you cycle one or more cards, you may gain 1 life.",
-            "Whenever one or more creatures you control attack, you may draw a card.",
+            "Whenever one or more creatures you control attack for the first time each turn, you may draw a card.",
             "Whenever a creature you control becomes the target of a spell for the first time each turn, you "
             "may draw a card.",
             "Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once during each opponent's turn.",
