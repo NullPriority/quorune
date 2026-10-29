@@ -43,9 +43,11 @@ def targeted_destruction_node_capabilities(
         try:AttachmentReferenceSpec.from_dict(effects[0]['card'])
         except (TypeError,ValueError):return ()
         return ('permanent.destroy.effect','attachment.reference.current_or_lki')
-    if (target_schema is None and len(effects)==1 and effects[0]=={'op':'destroy','card':'$event.permanent_object'}
+    if (target_schema is None and len(effects)==1 and effects[0].get('op')=='destroy' and effects[0].get('card')=='$event.permanent_object'
             and 'destroy' in mechanics and 'cr-115-targets' not in mechanics):
-        return ('permanent.destroy.effect','resolution.event_object.fixed_result')
+        prohibited=effects[0].get('regeneration_prohibited') is True
+        if set(effects[0])!={'op','card',*({'regeneration_prohibited'} if prohibited else set())} or ('regeneration-prohibition' in mechanics) is not prohibited:return ()
+        return ('permanent.destroy.effect','resolution.event_object.fixed_result',*(('permanent.destroy.regeneration_prohibition',) if prohibited else ()))
     if (
         not {"destroy", "cr-115-targets"}.issubset(mechanics)
         or len(effects) != 1

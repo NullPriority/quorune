@@ -10,7 +10,11 @@ from .fixed_source_combat_growth import fixed_source_combat_growth_effect_templa
 from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
-def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=()):
+def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    if _allow_optional:
+        from .binding_optional_results import binding_aware_optional_result
+        optional = binding_aware_optional_result(body, compile_child=lambda text: binding_effect_template(binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=False))
+        if optional is not None:return optional
     from ..expend_model import EXPEND_CAPABILITY
     if EXPEND_CAPABILITY in binding.explicit_capabilities:
         from .source_self_effect_templates import normalized_source_result_body

@@ -200,6 +200,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 )
 MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        "enchanted_creature_tap_or_received_damage",
         "independent_dual_event",
         "qualified_zone_event_pair",
         "source_enters_or_attacks",

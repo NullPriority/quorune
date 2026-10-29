@@ -1102,6 +1102,9 @@ def fixed_public_event_binding_spec(
     *,
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
+    from .received_damage_bindings import received_permanent_binding_spec
+    received = received_permanent_binding_spec(material_line)
+    if received is not None:return received
     """Parse one bounded public occurrence without compiling its effect body."""
 
     exploit=re.fullmatch(r'(?:When|Whenever) (?P<source>.+?) exploits a creature, (?P<body>.+)',material_line,re.I)

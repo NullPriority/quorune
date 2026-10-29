@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .received_damage_bindings import RECEIVED_PERMANENT_VARIANTS
 
 """Finite public event variants admitted by the shared result composer."""
 
@@ -23,4 +24,4 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "the end step",
         "each combat",
     }
-)
+) | RECEIVED_PERMANENT_VARIANTS

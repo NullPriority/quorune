@@ -648,6 +648,22 @@ coverage is absent. Outgoing damage bindings retain the dealer stream. The
 [damage contract](damage.md) owns simultaneous grouping, actual prevention
 results, lethal-source timing and historical packet subscription compatibility.
 
+Exact creature receiving heads also bind an enchanted or equipped recipient,
+or any damaged creature, to the sealed event-object result owner. Destruction
+retains the original incarnation after the giver leaves or moves. The exact
+regeneration-prohibition suffix stays on that destruction. A tap-or-damage
+attachment head uses a typed subscription per child event, each with its own
+permanent predicate and identity guarantee.
+
+`compiler/binding_optional_results.py` compiles an optional child with the same
+event and source context before applying the existing optional wrapper. Scalar
+shape projection enters only its exact single child result, never a cost,
+selector or player field. Accept applies the complete event-derived quantity;
+decline creates none. Existing optional-counter, payment and linked
+draw/discard boundaries remain distinct. Self tap/untap pronouns bind only in
+a proven source event. Copy results retain ordinary copiable-value and LKI
+ownership, including source departure and copied triggered abilities.
+
 `compiler/spell_self_exile.py` recognizes a terminal source-self exile clause
 only at the end of an ordinary single-face spell's complete source. Its body
 must compile independently with unchanged targets and prices. The resulting

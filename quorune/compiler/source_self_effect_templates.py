@@ -139,6 +139,7 @@ def normalized_source_result_body(body: str) -> str | None:
     """Bind only a complete source-led result, never new-object anaphora."""
     if re.search(r'\b(?:target|create|choose|another|that)\b',body,re.I):return None
     if not (re.match(r'(?:it|him|her) (?:gets|gains|deals)\b',body,re.I)
+            or re.fullmatch(r'(?:Tap|Untap) (?:it|him|her)\.',body,re.I)
             or re.fullmatch(r'(?:(?:you may )?put .+? counter(?:s)? on|double the number of .+? counters on) (?:it|him|her)\.',body,re.I)):
         return None
     return re.sub(r'\b(?:it|him|her)\b','this creature',body,flags=re.I)

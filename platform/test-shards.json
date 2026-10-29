@@ -158,6 +158,8 @@
       "test_random_discard_activation_costs",
       "test_received_damage_events",
       "test_received_damage_model",
+      "test_recipient_result_composition",
+      "test_recipient_result_native",
       "test_record_lifecycle_v060",
       "test_resolution_mana_choices",
       "test_resolution_mana_compositions",

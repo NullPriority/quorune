@@ -164,6 +164,11 @@ def scalar_amount_shape_context(effects, mechanics):
     count = 0
     def project(value, operation, path):
         nonlocal count
+        if isinstance(value,Mapping) and value.get('op')=='offer_optional_effect':
+            children=value.get('effects')
+            if set(value)!={'op','player','effects'} or value.get('player')!='$controller' or not isinstance(children,(list,tuple)) or len(children)!=1 or not isinstance(children[0],Mapping):
+                raise PublicQueryAmountError('Scalar optional results require one closed controller child')
+            return {**value,'effects':type(children)(project(child,str(child.get('op') or ''),()) for child in children)}
         if isinstance(value, Mapping) and value.get("kind") == SCALAR_AMOUNT_KIND:
             if not _result_slot(operation, path):
                 raise PublicQueryAmountError("Scalar amount is outside a result slot")

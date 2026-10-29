@@ -16,6 +16,9 @@ def event_counter_recipient_context(program,event,context):
     if not contains(program.effects):return {}
     reference=context.get('card');identity=None
     if event=='damage.dealt':identity=context.get('source_logical_object_id')
+    elif event in {'damage.received','combat.damage.received'}:
+        if context.get('target_kind')!='permanent':raise ValueError('Received event object must be a permanent')
+        identity=context.get('target_logical_object_id')
     elif event in {'permanent.tap','permanent.untap'}:identity=context.get('card_object_identity')
     elif event=='creature.attacks':
         from .attack_transition_model import AttackTransitionEvent

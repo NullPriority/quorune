@@ -334,6 +334,7 @@
     "tests/fixtures/read-ahead-saga-cards.json",
     "tests/fixtures/received-damage-cards.json",
     "tests/fixtures/recipient-modifier-cards.json",
+    "tests/fixtures/recipient-result-cards.json",
     "tests/fixtures/reconfigure-cards.json",
     "tests/fixtures/reflexive-payment-cards.json",
     "tests/fixtures/repeatable-object-action-triggers.json",

@@ -9632,6 +9632,39 @@
         "test_resolution_public_conditions",
         "test_aggregated_zone_event_triggers"
       ]
+    },
+    {
+      "id": "received-permanent-results-and-bound-optional-quantities",
+      "patterns": [
+        "quorune/compiler/received_damage_bindings.py",
+        "quorune/compiler/binding_optional_results.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/public_event_closure_variants.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/occurrence_object_results.py",
+        "quorune/rules/occurrence_object_results.py",
+        "quorune/rules/received_damage_events.py",
+        "quorune/rules/destruction_regeneration_capability_shapes.py",
+        "quorune/event_counter_reference.py",
+        "tests/test_recipient_result_composition.py",
+        "tests/test_recipient_result_native.py",
+        "tests/recipient_result_fixture.py",
+        "tests/fixtures/recipient-result-cards.json"
+      ],
+      "test_modules": [
+        "test_recipient_result_composition",
+        "test_recipient_result_native",
+        "test_fixed_optional_effect_choices",
+        "test_optional_draw_discard_sequences",
+        "test_fixed_counter_event_triggers",
+        "test_scalar_effect_amounts",
+        "test_received_damage_events",
+        "test_received_damage_model",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

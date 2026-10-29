@@ -215,6 +215,15 @@ persistent grouping state is replaced. Saved `damage.dealt` subscriptions keep
 their packet behavior. See
 [ADR 0133](../adr/0133-committed-damage-received-occurrences.md).
 
+Untargeted destruction on a receiving creature seals that event's recipient,
+not the giver's attachment when the queued ability later resolves. The existing
+event-object reference checks its logical incarnation; departure or reentry
+does not redirect the result. Ordinary regeneration, an exact prohibition of
+regeneration, and indestructibility retain the canonical destruction owner.
+Attached tap-or-damage subscriptions independently seal the same reference
+from each represented event transport. Unknown recipient predicates remain
+compiler residuals.
+
 ## Replay, privacy, and extension
 
 Event IDs derive from stable damage-step, source-incarnation, recipient, and
