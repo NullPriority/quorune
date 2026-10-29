@@ -283,6 +283,7 @@
     "tests/fixtures/public-condition-self-replacement-cards.json",
     "tests/fixtures/public-condition-surface-cards.json",
     "tests/fixtures/public-cost-subject-cards.json",
+    "tests/fixtures/public-history-query-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
     "tests/fixtures/public-negative-color-cards.json",
     "tests/fixtures/public-negative-keyword-cards.json",

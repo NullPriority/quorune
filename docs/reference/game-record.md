@@ -314,6 +314,14 @@ controller only for a represented target-information reference. Loading keeps
 that original incarnation; re-entry does not replace it. Earlier records omit
 the book, and earlier resolution-condition schemas keep their payloads.
 
+Public-condition schema eight stores one closed `history_query` and a
+nonnegative count or amount threshold. Its version-one query identifies the
+typed event, principal relation, card-type filters and reduction. It reads the
+existing current-turn history; it adds no presentation-log dependency or new
+event fields. Departure and graveyard-arrival queries require their existing
+history-mode markers. An absent mode is unavailable rather than a known zero.
+Condition schemas one through seven retain their original serialized shapes.
+
 Upkeep-relative control history is one such additive boundary. New records pin
 its version in both the initial checkpoint and manifest; records without the
 marker remain in the historical no-history mode so later replay does not add

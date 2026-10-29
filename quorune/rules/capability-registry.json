@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 548,
+  "registry_version": 549,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -64919,6 +64919,105 @@
       "dependency_fail_closed_rationale": "Verified batch capability withdrawal preserves singular attack control; runtime binding rejects missing capability or coalescing coverage.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "A total-attacker proxy is killed by one matching flier and one nonmatching creature.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "condition.history.fixed_public_query",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "603.4",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version8 public conditions count or sum closed current-turn history events using sealed occurrence actor/target and card-type facts. Missing/stale event history is unavailable, never a fabricated zero. Intervening-if and resolution consumers retain their own timing owners.",
+        "inputs": [
+          "Typed current-turn history and required event modes",
+          "Closed event/principal/type query",
+          "Fixed nonnegative threshold"
+        ],
+        "outputs": [
+          "Read-only count, amount sum or per-player maximum",
+          "Independent trigger and resolution-time condition evaluation"
+        ],
+        "exclusions": [
+          "Current object substitutions for past events",
+          "Hidden/source-relative/future/previous-turn predicates",
+          "Unrecorded type, subtype, color and origin facts"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.public_history_query_model.PublicHistoryQuerySpec",
+        "quorune.public_history_query_model.public_history_query_value",
+        "quorune.compiler.public_history_conditions.fixed_public_history_condition",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._condition_quantity"
+      ],
+      "positive_tests": [
+        "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
+        "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger",
+        "test_current_turn_history_grammar_composes_with_independent_trigger_results",
+        "test_history_queries_use_sealed_roles_and_per_player_amounts_without_current_objects",
+        "test_new_history_schema_round_trips_without_changing_legacy_payloads"
+      ],
+      "negative_tests": [
+        "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
+        "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger",
+        "test_current_turn_history_grammar_composes_with_independent_trigger_results",
+        "test_history_queries_use_sealed_roles_and_per_player_amounts_without_current_objects",
+        "test_missing_history_is_unavailable_in_zero_count_and_boolean_conditions",
+        "test_new_history_schema_round_trips_without_changing_legacy_payloads",
+        "test_runtime_history_query_dependency_is_inferred_from_intervening_condition",
+        "test_verified_history_query_withdrawal_preserves_unrelated_flying"
+      ],
+      "interaction_tests": [
+        "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
+        "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger"
+      ],
+      "multiplayer_tests": [
+        "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
+        "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger"
+      ],
+      "privacy_tests": [
+        "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history"
+      ],
+      "replay_tests": [
+        "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
+        "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited registry/evidence withdrawal blocks the history condition while Flying remains exact; runtime dependency is inferred from the version8 query payload.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Ignoring sealed event actor fails the independent zero-match witness.",
       "blockers": [],
       "status": "trusted"
     }

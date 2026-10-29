@@ -2992,6 +2992,17 @@ Fixed-output mana nodes also declare the unchanged shared handler's complete
 capability contract. This does not restrict otherwise unrestricted mana or add
 payment authority; the existing typed spending predicate remains authoritative.
 
+`compiler/public_history_conditions.py` extends the shared public-state
+condition grammar with closed current-turn death, entry, sacrifice, cast,
+attack, life-change, departure and graveyard-arrival predicates. These lower
+to schema-eight history queries and require
+`condition.history.fixed_public_query`. Existing productions keep their
+earlier schemas. Fixed minima, controller relations and supported card-type
+filters are explicit; unsupported temporal ranges, type facts absent from the
+event journal and ambiguous conditions remain residual. Boolean composition
+uses the same atomic condition parser, while result instructions must still
+lower independently.
+
 The separate fixed public alternative-cost owner lowers complete-card-admitted
 plain “rather than pay” declarations and fixed ordinary-mana Freerunning,
 Prowl, Spectacle, and Surge. Plain declarations may contain one fixed mana or

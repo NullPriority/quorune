@@ -9133,6 +9133,22 @@
         "test_attack_transitions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "public-history-queries",
+      "patterns": [
+        "quorune/public_history_query_model.py",
+        "quorune/compiler/public_history_conditions.py",
+        "tests/test_public_history_queries.py",
+        "tests/fixtures/public-history-query-cards.json"
+      ],
+      "test_modules": [
+        "test_public_history_queries",
+        "test_public_state_event_counter_actions",
+        "test_public_state_event_actions",
+        "test_resolution_public_conditions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

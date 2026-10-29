@@ -126,6 +126,7 @@
       "test_object_identity",
       "test_persist_undying_rules",
       "test_public_event_counter_sets",
+      "test_public_history_queries",
       "test_public_negative_colors",
       "test_public_quantity_mana",
       "test_public_state_event_counter_actions",

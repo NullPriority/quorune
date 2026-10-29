@@ -1667,6 +1667,16 @@ Current controller facts govern the live condition. Losing that condition
 ends new activation and trigger availability while stack abilities retain their
 original controller and ordinary target revalidation.
 
+Current-turn history conditions use immutable `PublicHistoryQuerySpec` values
+through the shared public-condition resolver. They count committed typed
+occurrences using the actor or life-event recipient recorded at the occurrence,
+without reading the object's current zone or controller. Repeated entries and
+token deaths count separately. Life gained and life lost remain independent;
+a per-player threshold does not add different players' amounts together.
+Missing or stale history is unavailable, including inside Boolean conditions
+and zero-count comparisons. Intervening conditions retain the existing checks
+at occurrence and resolution under the trigger's locked controller.
+
 Schema-five public conditions have a separate numeric creature-existence
 predicate. Intervening triggers and resolution instructions read complete
 current effective power or toughness under their locked controller. They

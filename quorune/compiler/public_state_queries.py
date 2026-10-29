@@ -1497,9 +1497,14 @@ def fixed_public_state_condition(
 ) -> FixedPublicStateConditionSpec | None:
     """Parse one closed condition without coupling it to a result body."""
 
-    atomic=_fixed_public_state_condition(text,source_name=source_name)
+    def compile_atomic(term):
+        atomic=_fixed_public_state_condition(term,source_name=source_name)
+        if atomic is not None:return atomic
+        from .public_history_conditions import fixed_public_history_condition
+        return fixed_public_history_condition(term)
+    atomic=compile_atomic(text)
     return atomic if atomic is not None else compose_public_conditions(text,
-        compile_atomic=lambda term:_fixed_public_state_condition(term,source_name=source_name),
+        compile_atomic=compile_atomic,
         source_pattern=_condition_source_subject_pattern(source_name))
 
 

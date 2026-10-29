@@ -687,9 +687,11 @@ class FixedCounterTriggerBinding:
     @property
     def explicit_capabilities(self) -> tuple[str, ...]:
         from ..characteristic_fragments import characteristic_quantity_capabilities
+        from ..public_history_query_model import public_history_query_dependencies
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
-        return (*self.public_capabilities,*condition_capabilities, *(("trigger.event.spell_cast_creature_target",)
+        return (*self.public_capabilities,*condition_capabilities,*public_history_query_dependencies(
+            self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
     @property

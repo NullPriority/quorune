@@ -50,6 +50,8 @@ FIXED_PUBLIC_STATE_INTERVENING_COVERAGE = (
 
 
 class FixedPublicStateConditionKind(StrEnum):
+    HISTORY_COUNT_AT_LEAST='history_count_at_least'
+    HISTORY_COUNT_AT_MOST='history_count_at_most'
     ALL = 'all'
     ANY = 'any'
     CONTROLLER_TURN = "controller_turn"
@@ -339,6 +341,7 @@ class FixedPublicStateConditionSpec:
     fact_parameter: str | None = None
     schema_version: int = 1
     terms: tuple['FixedPublicStateConditionSpec', ...] = ()
+    history_query: Any = None
 
     def leaf_conditions(self):
         return self.terms if self.terms else (self,)
@@ -352,7 +355,19 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError('Boolean conditions require a versioned flat composition of closed leaves')
         object.__setattr__(self,'terms',terms)
 
+    def _validate_history(self):
+        from .public_history_query_model import PublicHistoryQuerySpec
+        if (type(self.schema_version) is not int or self.schema_version!=8
+                or self.kind not in {FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}
+                or not isinstance(self.history_query,PublicHistoryQuerySpec) or type(self.amount) is not int or self.amount<0
+                or any(v is not None for v in (self.counter_name,self.predicate,self.quantity,self.fact,self.fact_parameter)) or self.terms):
+            raise FixedPublicStateConditionError('History conditions require version8, one typed query and a nonnegative threshold')
+
     def __post_init__(self) -> None:
+        if self.schema_version==8 or self.history_query is not None or self.kind in {
+                FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}:
+            self._validate_history()
+            return
         if not isinstance(self.terms,(list,tuple)):
             raise FixedPublicStateConditionError('Boolean condition leaves must be an array')
         object.__setattr__(self,'terms',tuple(self.terms))
@@ -497,6 +512,8 @@ class FixedPublicStateConditionSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version==8:
+            return {'schema_version':8,'kind':self.kind.value,'amount':self.amount,'counter_name':None,'history_query':self.history_query.to_dict()}
         value = {
             "schema_version": self.schema_version,
             "kind": self.kind.value,
@@ -535,6 +552,13 @@ class FixedPublicStateConditionSpec:
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "FixedPublicStateConditionSpec":
+        if isinstance(value,Mapping) and (value.get('schema_version')==8 or 'history_query' in value):
+            from .public_history_query_model import PublicHistoryQuerySpec,public_history_query_dependencies
+            try:
+                public_history_query_dependencies(value)
+                return cls(FixedPublicStateConditionKind(value['kind']),amount=value['amount'],schema_version=value['schema_version'],
+                    history_query=PublicHistoryQuerySpec.from_dict(value['history_query']))
+            except (ValueError,TypeError,KeyError) as exc:raise FixedPublicStateConditionError(str(exc)) from exc
         legacy_fields = {
             "schema_version",
             "kind",
@@ -604,6 +628,9 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Fixed public-state matching requires a typed snapshot"
             )
+        if self.kind in {FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}:
+            return snapshot.condition_quantity is not None and (snapshot.condition_quantity>=self.amount
+                if self.kind is FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST else snapshot.condition_quantity<=self.amount)
         if self.terms:
             if len(snapshot.term_snapshots)!=len(self.terms):
                 raise FixedPublicStateConditionError('Boolean matching requires each leaf snapshot')

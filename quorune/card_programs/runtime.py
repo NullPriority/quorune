@@ -110,6 +110,9 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> int | None:
+        if condition.history_query is not None:
+            from ..public_history_query_model import public_history_query_value
+            return public_history_query_value(self.state,source.controller,condition.history_query)
         if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
             if self.public_object_resolver is None:
                 return None
@@ -519,12 +522,16 @@ def fixed_public_state_condition_matches(
         quantity_resolver=quantity_resolver,
     )
     snapshot = resolver.snapshot(source, condition)
-    if require_available and condition.kind in {
+    quantity_kinds={
         FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
         FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
         FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
         FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
-    } and snapshot.condition_quantity is None:
+        FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
+        FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST,
+    }
+    leaves=condition.leaf_conditions();snapshots=snapshot.term_snapshots if condition.terms else (snapshot,)
+    if require_available and any(leaf.kind in quantity_kinds and child.condition_quantity is None for leaf,child in zip(leaves,snapshots)):
         raise FixedPublicStateConditionError("The public resolution condition is unavailable")
     return condition.matches(snapshot)
 

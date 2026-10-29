@@ -80,19 +80,30 @@ def _cost_metric_runtime_requirements(handlers):
     return required, blockers
 
 
+def _event_query_runtime_requirements(program):
+    """Infer the query dependencies of normalized attack and history events."""
+    from ..public_history_query_model import public_history_query_dependencies
+    from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
+    from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
+    required,blockers=set(),set()
+    for resolver,value,label in (
+        (public_history_query_dependencies,program.event_condition,'public_history'),
+        (qualified_attack_runtime_dependencies,program,'qualified_attack'),
+        (qualified_attack_batch_runtime_dependencies,program,'qualified_attack_batch'),
+    ):
+        try:required.update(resolver(value))
+        except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')
+    return required,blockers
+
+
 def program_dynamic_runtime_requirements(program):
     from ..rules.fuse_shapes import fuse_runtime_requirements
     try:
         fused=fuse_runtime_requirements(program)
         if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
-    required={ADVENTURE_CAPABILITY} if ADVENTURE_COVERAGE in program.coverage else set();blockers=set()
-    from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
-    try:required.update(qualified_attack_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_qualified_attack:invalid:{exc}')
-    from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
-    try:required.update(qualified_attack_batch_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_qualified_attack_batch:invalid:{exc}')
+    required,blockers=_event_query_runtime_requirements(program)
+    if ADVENTURE_COVERAGE in program.coverage:required.add(ADVENTURE_CAPABILITY)
     from ..characteristic_fragments import characteristic_quantity_capabilities
     required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     try:required.update(city_activation_runtime_dependencies(program))

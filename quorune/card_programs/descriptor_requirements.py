@@ -7,6 +7,10 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..public_history_query_model import public_history_query_dependencies
+        history=public_history_query_dependencies(value) if 'history_query' in value or value.get('kind') in {'history_count_at_least','history_count_at_most'} else ()
+        if history:
+            return tuple(sorted({*history,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..rules.modal_node_capabilities import modal_schema_runtime_dependencies
         modal=modal_schema_runtime_dependencies(value)
         if modal:
