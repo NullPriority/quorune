@@ -39,6 +39,7 @@
         "starting_life": {"type": "integer", "minimum": 1},
         "free_mulligans": {"type": "integer", "minimum": 0},
         "first_player_draws": {"type": "boolean"},
+        "cast_source_placement_version": {"type": "integer", "const": 1},
         "commander_damage_identity_version": {
           "type": "integer",
           "enum": [1, 2]

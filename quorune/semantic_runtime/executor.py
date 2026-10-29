@@ -740,6 +740,8 @@ def _execute_tap_state_intent(
 def _synchronize_instruction_observers(sink):
     from ..rules.city_blessing import synchronize_citys_blessing
     synchronize_citys_blessing(sink, reason='semantic instruction committed')
+    from ..rules.state_triggers import observe_public_state_triggers
+    observe_public_state_triggers(sink)
     if getattr(getattr(sink, 'state', None), 'soulbond_pairs', None):
         from ..soulbond_state import reconcile_soulbond_pairs
         reconcile_soulbond_pairs(sink)

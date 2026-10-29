@@ -301,6 +301,7 @@
     "tests/fixtures/public-quantity-mana-cards.json",
     "tests/fixtures/public-scalar-stat-cards.json",
     "tests/fixtures/public-self-replacement-cards.json",
+    "tests/fixtures/public-state-trigger-cards.json",
     "tests/fixtures/public-static-action-rule-cards.json",
     "tests/fixtures/public-target-spell-cost-cards.json",
     "tests/fixtures/public-value-cost-cards.json",

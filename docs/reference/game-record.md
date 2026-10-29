@@ -15,6 +15,13 @@ one game. It separates canonical state and accepted inputs from delivery state
 and derived review. The schemas under `schemas/game-record-v3-*.schema.json`
 and the serializer implementation define the exact format.
 
+New checkpoints carry `cast_source_placement_version: 1`, mirrored in manifest
+format provenance. The marker places the actual casting source on the stack
+before payment and completes that same spell with the paid facts. Historical
+absence retains the earlier transition order and remains absent on serialization.
+Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
+See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
+
 ## Directory contract
 
 | File | Contract |

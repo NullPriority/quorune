@@ -9,6 +9,30 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/state_trigger_nodes.py` lowers complete controlled-battlefield state
+conditions followed by mandatory source sacrifice. A versioned subscription
+reuses existing public count, source exclusion and numeric existence queries.
+The existing source-maintenance result with no payment supplies the automatic
+controlled, incarnation-bound sacrifice. Unsupported conditions and result
+bodies remain residual.
+
+The state observer uses committed occurrence, instruction, complete zone-batch
+and pre-SBA boundaries, then queues ordinary APNAP occurrences. Pending batches
+and stack entries suppress another instance of the same source incarnation and
+ability. Condition relief after discovery does not cancel the result. This
+differs from an intervening if clause. Runtime binding derives the subscription
+and result owners without coverage annotations. See
+[ADR 0129](../adr/0129-public-state-trigger-observation.md).
+
+Current casting source placement precedes payment under an explicit checkpoint
+version. Affordability binds pure mana and layered characteristic queries to a
+read-only prospective source view. Accepted casts complete the same real spell
+with actual paid costs; historical absence keeps its earlier order. See
+[ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
+An older checkpoint cannot activate a newly introduced state subscription
+without the current placement version; its historical registry and casts retain
+their earlier behavior.
+
 Attached-source casting restrictions opt in through version two of the existing
 player-restriction descriptor. The source-turn opponent rule reads a current
 reciprocal attachment to a battlefield creature, including its effective type;

@@ -143,3 +143,5 @@ deployment modes, or architecture review thresholds.
 - [ADR 0126 — keyword-layer characteristic quantities](0126-keyword-layer-characteristic-quantities.md)
 - [ADR 0127 — prospective public self-cost conditions](0127-prospective-public-self-cost-conditions.md)
 - [ADR 0128 — payment-time Expend occurrences](0128-payment-time-expend-occurrences.md)
+- [ADR 0129 — public-state trigger observation](0129-public-state-trigger-observation.md)
+- [ADR 0130 — casting source placement before costs](0130-casting-source-placement-before-costs.md)

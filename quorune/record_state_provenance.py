@@ -31,6 +31,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
+        **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
     }
 
 
@@ -62,6 +63,10 @@ def validate_state_versions(
     tap_version = format_value.get("tap_state_event_version", 0)
     if type(tap_version) is not int or tap_version not in {0, 1} or tap_version != (state.tap_state_event_version or 0):
         raise ValueError("Tap-state event provenance does not match the initial checkpoint")
+    from .cast_source_placement_model import cast_source_placement_version
+    placement=format_value.get('cast_source_placement_version',0)
+    if type(placement) is not int or placement not in {0,1} or placement!=(cast_source_placement_version(getattr(state,'cast_source_placement_version',None)) or 0):
+        raise ValueError('Casting source placement provenance does not match the initial checkpoint')
 
 
 __all__ = ["format_state_versions", "validate_state_versions"]

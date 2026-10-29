@@ -511,6 +511,7 @@ class SemanticRegistry:
     ):
         self.path = Path(path) if path else None
         self._programs: dict[str, SemanticProgram] = {}
+        self._event_program_cache: dict[str, tuple[SemanticProgram, ...]] | None = None
         self._card_program_cache: dict[str, Any] | None = None
         self._runtime_handler_compatibility: dict[
             tuple[str, str, str], tuple[SemanticProgram, ...]
@@ -542,6 +543,7 @@ class SemanticRegistry:
     def load(self) -> None:
         if not self.path:
             return
+        self._event_program_cache = None
         raw = json.loads(self.path.read_text(encoding="utf-8"))
         if raw.get("include_builtin_packs") is False:
             # A saved game carries a complete registry snapshot. Clearing the
@@ -600,6 +602,7 @@ class SemanticRegistry:
     def load_packs(self, paths: Iterable[str | Path]) -> None:
         """Load declarative semantic packs without coupling them to the kernel."""
 
+        self._event_program_cache = None
         candidates: list[Path] = []
         for raw in paths:
             path = Path(raw)
@@ -667,16 +670,27 @@ class SemanticRegistry:
             program = SemanticProgram.from_dict(program)
         self._programs[program.key] = program
         self._card_program_cache = None
+        self._event_program_cache = None
         self.save()
         return program
 
     def remove(self, key: str) -> None:
         self._programs.pop(key, None)
         self._card_program_cache = None
+        self._event_program_cache = None
         self.save()
 
     def keys(self) -> list[str]:
         return sorted(self._programs)
+
+    def programs_for_event(self, event: str) -> tuple[SemanticProgram, ...]:
+        """Read one derived index of this registry's current programs."""
+        if self._event_program_cache is None:
+            grouped: dict[str, list[SemanticProgram]] = {}
+            for program in sorted(self._programs.values(),key=lambda p:p.key):
+                grouped.setdefault(program.event,[]).append(program)
+            self._event_program_cache={key:tuple(values) for key,values in grouped.items()}
+        return self._event_program_cache.get(event,())
 
     def programs_for_oracle(
         self,

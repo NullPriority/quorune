@@ -769,6 +769,8 @@ class ZoneTransitionOwner:
         if not defer_control_sync:
             from .counter_placement_events import dispatch_counter_event_trees
             dispatch_counter_event_trees(self.host, (plan.prepared_replacement,), reason=reason,trigger_batch=trigger_batch)
+            from .rules.state_triggers import observe_public_state_triggers
+            observe_public_state_triggers(self.host,trigger_batch=trigger_batch)
             enqueue_trigger_batch(self.host,trigger_batch)
             from .conditional_exile_return import return_from_departure_snapshots
             return_from_departure_snapshots(self.host, ((card, departure),))
@@ -1077,6 +1079,8 @@ class ZoneTransitionOwner:
                 reason="simultaneous bound permanents entered the battlefield",
                 trigger_batch=trigger_batch,
             )
+        from .rules.state_triggers import observe_public_state_triggers
+        observe_public_state_triggers(self.host,trigger_batch=trigger_batch)
         enqueue_trigger_batch(self.host, trigger_batch)
         from .conditional_exile_return import return_from_departure_snapshots
         return_from_departure_snapshots(self.host, snapshots)

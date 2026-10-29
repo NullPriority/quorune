@@ -22,6 +22,7 @@ from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts
 from .ability_source_information import ability_source_information_version
 from .qualified_attack_model import qualified_attack_facts_version
 from .cast_face_offers import cast_face_offers_version
+from .cast_source_placement_model import cast_source_placement_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
 
@@ -1004,6 +1005,7 @@ class GameState:
     spell_mana_counts_version: int | None = 1
     ability_source_information_version: int | None = 1
     cast_face_offers_version: int | None = 1
+    cast_source_placement_version: int | None = 1
     qualified_attack_facts_version: int | None = 1
 
     def active_seats(self) -> list[str]:
@@ -1012,6 +1014,7 @@ class GameState:
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
         ability_source_information_version(self.ability_source_information_version)
         cast_face_offers_version(self.cast_face_offers_version)
+        cast_source_placement_version(self.cast_source_placement_version)
         qualified_attack_facts_version(self.qualified_attack_facts_version)
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
@@ -1047,6 +1050,7 @@ class GameState:
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
             **({'qualified_attack_facts_version':self.qualified_attack_facts_version} if self.qualified_attack_facts_version is not None else {}),
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
+            **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1113,6 +1117,7 @@ class GameState:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameState":
         return cls(
+            cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
             game_id=str(data["game_id"]),
             config=GameConfig.from_dict(data["config"]),
             players={seat: PlayerState.from_dict(player) for seat, player in data["players"].items()},

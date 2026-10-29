@@ -41,6 +41,8 @@ def synchronize_state_based_observers(host):
     from .soulbond_state import reconcile_soulbond_pairs
     reconcile_soulbond_pairs(host)
     host._synchronize_world_supertype_timestamps()
+    from .rules.state_triggers import observe_public_state_triggers
+    observe_public_state_triggers(host)
 
 
 class StateBasedSnapshotHost(Protocol):

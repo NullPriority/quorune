@@ -1482,6 +1482,8 @@ def build_cast_cost_options(
 ) -> tuple[CastCostOption, ...]:
     """Return immutable, currently payable server-authoritative cost choices."""
 
+    from .source_placement import casting_affordability_host
+    host=casting_affordability_host(host,card)
     submission = dict(response or {})
     initial = _initial_options(
         host,

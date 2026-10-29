@@ -1030,6 +1030,8 @@ def _semantic_trigger_context(
             else {}
         ),
     }
+    from .rules.state_triggers import state_trigger_context
+    stack_context.update(state_trigger_context(source,program))
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
     from .rules.event_spell_copy import event_spell_copy_trigger_context
     try:stack_context.update(event_spell_copy_trigger_context(host,program,event,context))
@@ -1368,6 +1370,8 @@ def dispatch_semantic_event(
                 continue
             if not _program_trigger_ability_is_present(program, characteristics):
                 continue
+            from .rules.state_triggers import state_trigger_available
+            if not state_trigger_available(host,source,program,trigger_batch):continue
             if not semantic_event_matches(
                 host,
                 program,

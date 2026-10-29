@@ -48,13 +48,18 @@ def self_public_condition_multiplier(host,seat,source,condition):
     from ...dynamic_characteristics import query_characteristic_count
     from ...self_cast_reductions import SelfCastReductionError
     view,spell=prospective_cost_condition_view(host,seat,source)
+    read_host=host
+    from ...cast_source_placement_model import cast_source_placement_version
+    if cast_source_placement_version(getattr(host.state,'cast_source_placement_version',None))==1:
+        from .source_placement import prospective_characteristic_read_host
+        read_host=prospective_characteristic_read_host(host,seat,source)
     def public_object(card):
         current=spell if card.object_id==spell.object_id else card
-        return host._public_object_query_result(current,_maximum_layer=None)
+        return read_host._public_object_query_result(current,_maximum_layer=None)
     try:
         return int(fixed_public_state_condition_matches(view.state,spell,condition,
             public_object_resolver=public_object,
-            quantity_resolver=partial(query_characteristic_count,view,_maximum_layer=None),require_available=True))
+            quantity_resolver=partial(query_characteristic_count,view if read_host is host else read_host,_maximum_layer=None),require_available=True))
     except (AttributeError,KeyError,TypeError,ValueError) as exc:
         raise SelfCastReductionError('Shared self cost public facts are unavailable') from exc
 

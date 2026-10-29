@@ -9476,6 +9476,45 @@
         "test_permanent_additional_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "public-state-trigger-and-cast-source-placement",
+      "patterns": [
+        "quorune/cast_source_placement_model.py",
+        "quorune/compiler/state_trigger_nodes.py",
+        "quorune/record_state_provenance.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/casting/costs.py",
+        "quorune/rules/casting/public_conditions.py",
+        "quorune/rules/casting/source_placement.py",
+        "quorune/rules/casting/spell_context.py",
+        "quorune/rules/state_triggers.py",
+        "quorune/semantics.py",
+        "quorune/state_based_execution.py",
+        "quorune/state_trigger_model.py",
+        "tests/fixtures/public-state-trigger-cards.json",
+        "tests/state_trigger_fixture.py",
+        "tests/test_cast_source_placement.py",
+        "tests/test_public_state_triggers.py",
+        "tests/test_state_trigger_boundaries.py",
+        "tests/test_state_trigger_model.py",
+        "tests/test_state_trigger_predicates.py"
+      ],
+      "test_modules": [
+        "test_state_trigger_model",
+        "test_public_state_triggers",
+        "test_state_trigger_boundaries",
+        "test_state_trigger_predicates",
+        "test_cast_source_placement",
+        "test_expend_events",
+        "test_paid_entry_copy",
+        "test_prototype_rules",
+        "test_fuse_rules",
+        "test_global_alternative_costs",
+        "test_permanent_additional_costs",
+        "test_game_record_v3",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

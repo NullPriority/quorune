@@ -3274,7 +3274,7 @@ class CommanderEngine(
     ) -> list[str]:
         from .rules.city_blessing import synchronize_citys_blessing
         synchronize_citys_blessing(self,reason='before semantic trigger discovery')
-        return dispatch_semantic_event(
+        triggered = dispatch_semantic_event(
             self,
             event,
             context,
@@ -3283,6 +3283,11 @@ class CommanderEngine(
             source_characteristics=source_characteristics,
             trigger_batch=trigger_batch,
         )
+        from .state_trigger_model import STATE_TRIGGER_EVENT
+        if event != STATE_TRIGGER_EVENT:
+            from .rules.state_triggers import observe_public_state_triggers
+            triggered.extend(observe_public_state_triggers(self,trigger_batch=trigger_batch))
+        return triggered
 
 
     @staticmethod

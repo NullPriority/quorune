@@ -172,7 +172,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v650"
+ORACLE_COMPILER_VERSION = "oracle-ir-v651"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1027,6 +1027,11 @@ def _activated_or_fixed_event_trigger_node(
     trigger_effect_template: Any | None = None,
 ) -> OracleNode | None:
     from .compiler.trigger_limit_nodes import limited_trigger_node
+    from .compiler.state_trigger_nodes import public_state_trigger_node
+    state_trigger=public_state_trigger_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        card_name=card_name,type_line=type_line,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals)
+    if state_trigger is not None:return state_trigger
     limited = limited_trigger_node(line=line, material_line=material_line, compile_inner=_activated_or_fixed_event_trigger_node,
         arguments=dict(node_id=node_id, span=span, card_name=card_name, type_line=type_line, keywords=keywords,
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
