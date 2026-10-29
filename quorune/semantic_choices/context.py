@@ -8,6 +8,7 @@ from ..ring_model import RingBearerChoicePlan, RingStateError
 from ..drawing.restrictions import DrawPermission
 from ..object_query import ObjectQueryResult
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
+from ..semantic_runtime.context import SemanticSourceContext
 
 ChoiceObjectView = ObjectQueryResult
 
@@ -106,6 +107,9 @@ class SemanticChoiceQuery(
     @property
     def active_seats(self) -> tuple[str, ...]: ...
 
+    @property
+    def resolution_source(self) -> SemanticSourceContext | None: ...
+
     def player_life(self, seat: str) -> int: ...
 
     def player_counter(self, seat: str, counter: str) -> int: ...
@@ -180,8 +184,11 @@ class SnapshotSemanticChoiceQuery:
     library_search_allowed_by_seat: FrozenMap = field(default_factory=FrozenMap)
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
     ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
+    resolution_source: SemanticSourceContext | None = None
 
     def __post_init__(self) -> None:
+        if self.resolution_source is not None and not isinstance(self.resolution_source, SemanticSourceContext):
+            raise ValueError('Choice resolution source requires an immutable typed snapshot')
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):
             raise ValueError('Choice counter permissions require an immutable typed snapshot')
         for field_name in (

@@ -65,6 +65,14 @@ after the draw, includes the resulting hand, and remains private to its chooser.
 Arbitrary linked conditions, random counts, and unrepresented player variants
 remain residuals.
 
+Optional-result validation receives the existing immutable resolving-source
+snapshot from the owning stack item, both when preparing a choice and when
+validating its continuation. Source-dependent handlers retain their ordinary
+provenance checks inside optional effects and fixed payments. This snapshot
+contains public identity and duration facts; it carries no mutable game state
+or hidden-zone data. Missing or malformed required provenance still rejects
+the instruction before payment or mutation.
+
 The existing characteristic operation accepts a closed version-six target-set
 instruction. Canonical target revalidation supplies each surviving original
 reference, and the continuous-effect state owner applies identical represented

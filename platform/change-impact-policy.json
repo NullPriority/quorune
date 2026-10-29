@@ -9665,6 +9665,43 @@
         "test_received_damage_model",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "optional-bound-result-original-card-compositions",
+      "patterns": [
+        "quorune/compiler/binding_optional_results.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/fixed_stack_spell_copy.py",
+        "quorune/compiler/token_copy_templates.py",
+        "quorune/cast_event_amounts.py",
+        "quorune/scalar_effect_amounts.py",
+        "quorune/adventure.py",
+        "quorune/semantic_choices/context.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/optional_effect.py",
+        "tests/fixtures/optional-result-followup-cards.json",
+        "tests/test_optional_spell_copy_followups.py",
+        "tests/test_optional_entry_followups.py",
+        "tests/test_optional_combat_followups.py",
+        "tests/test_optional_control_and_counter_followups.py",
+        "tests/optional_result_followup_fixture.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_cast_spell_mana_values",
+        "test_event_spell_copy",
+        "test_fixed_control_effects",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_optional_combat_followups",
+        "test_optional_control_and_counter_followups",
+        "test_optional_entry_followups",
+        "test_optional_spell_copy_followups",
+        "test_paid_event_spell_copy",
+        "test_recipient_result_composition",
+        "test_scalar_effect_amounts"
+      ]
     }
   ],
   "symbol_rules": [

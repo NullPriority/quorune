@@ -14,6 +14,7 @@ from ..connive import connive_discard_characteristic_ids, bind_connive_instructi
 from ..object_query import object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
+from ..semantic_runtime.context import semantic_source_context
 from ..semantic_runtime.hand_visibility import hand_card_is_known_to, public_hand_owners
 from ..semantic_runtime import (
     IntentPlan,
@@ -523,6 +524,7 @@ class SemanticChoiceCoordinationMixin:
         response: Mapping[str, Any] | None = None,
         effect: Mapping[str, Any] | None = None,
         source_ref: str | None = None,
+        stack_item: StackItem | None = None,
     ) -> SnapshotSemanticChoiceQuery:
         """Materialize only actor-visible, immutable choice facts."""
 
@@ -547,6 +549,7 @@ class SemanticChoiceCoordinationMixin:
         from ..rules.library_search_rules import optional_search_permissions
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
         return SnapshotSemanticChoiceQuery(
+            resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             counter_permissions=collect_counter_permissions(self),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
@@ -668,6 +671,7 @@ class SemanticChoiceCoordinationMixin:
                 actor,
                 effect=effect,
                 source_ref=source.ref if source is not None else None,
+                stack_item=item,
             ),
             source_logical_object_id=(
                 str(item.context.get("source_logical_object_id") or "")
@@ -828,6 +832,7 @@ class SemanticChoiceCoordinationMixin:
                     seat,
                     response=response,
                     effect=continuation.effect,
+                    stack_item=item,
                     source_ref=(
                         self.state.cards[
                             item.source_object_id
