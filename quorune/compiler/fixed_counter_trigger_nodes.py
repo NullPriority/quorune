@@ -141,6 +141,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
         "controller_attack_batch_at_least_3",
+        "one_or_more_qualified_attack",
         "controller_cycles",
         "one_or_more_controlled_tokens_enter",
         "controlled_token_leaves",
@@ -226,6 +227,7 @@ _NONCOUNTER_PUBLIC_EVENT_VARIANTS = (_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
         QUALIFIED_DAMAGE_BATCH_VARIANT,
+        "one_or_more_qualified_attack",
         AGGREGATED_ZONE_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",

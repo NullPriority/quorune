@@ -9115,6 +9115,24 @@
         "test_fixed_source_characteristic_effects",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "qualified-attack-batches",
+      "patterns": [
+        "quorune/attack_batch_model.py",
+        "quorune/rules/attack_batches.py",
+        "quorune/compiler/qualified_attack_batches.py",
+        "tests/test_qualified_attack_batches.py",
+        "tests/fixtures/qualified-attack-batch-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_attack_batches",
+        "test_qualified_attack_subjects",
+        "test_aggregated_zone_event_triggers",
+        "test_public_state_event_actions",
+        "test_attack_transitions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

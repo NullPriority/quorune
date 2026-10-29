@@ -298,6 +298,10 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
         characteristic_contexts = {assignment.attacker_object_id:
             attack_characteristic_context(engine, engine.state.cards[assignment.attacker_object_id])
             for assignment in event.assignments}
+        from .rules.attack_batches import seal_attack_declaration
+        from .attack_batch_model import ATTACK_BATCH_CONTEXT
+        declaration_context = ({ATTACK_BATCH_CONTEXT:seal_attack_declaration(event,characteristic_contexts)}
+            if any(characteristic_contexts.values()) else {})
         semantic_sources = tuple(
             engine._semantic_event_sources(zones={"battlefield"})
         )
@@ -332,6 +336,8 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                         "attacker_count": len(event.assignments),
                         "attack_transition": event.to_dict(),
                         **characteristic_contexts[assignment.attacker_object_id],
+                        **declaration_context,
+                        **({'attacked_recipient_kind':assignment.recipient.kind.value} if declaration_context else {}),
                     },
                     sources=semantic_sources,
                     trigger_batch=stack_items,

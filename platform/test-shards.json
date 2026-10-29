@@ -132,6 +132,7 @@
       "test_public_state_predefined_token_actions",
       "test_public_target_spell_costs",
       "test_public_value_costs",
+      "test_qualified_attack_batches",
       "test_qualified_attack_subjects",
       "test_qualified_entry_state",
       "test_quantified_counter_targets",

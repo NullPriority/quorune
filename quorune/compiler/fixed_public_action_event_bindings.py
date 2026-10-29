@@ -671,7 +671,8 @@ def _public_attack_spec(
 ) -> FixedPublicEventBindingSpec | None:
     match = _PUBLIC_ATTACK_BATCH_TRIGGER.fullmatch(material_line)
     if match is None:
-        return None
+        from .qualified_attack_batches import qualified_attack_batch_binding_spec
+        return qualified_attack_batch_binding_spec(material_line)
     minimum = {"two": 2, "three": 3}.get(
         str(match.group("count") or "").casefold()
     )

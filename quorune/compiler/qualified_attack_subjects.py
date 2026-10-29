@@ -8,6 +8,7 @@ from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..qualified_attack_model import QUALIFIED_ATTACK_CAPABILITY, QUALIFIED_ATTACK_VARIANT, ATTACK_FACT_PREFIX
 from .public_event_query_conditions import public_event_query_conditions
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
+from ..attack_batch_model import validate_attack_characteristic_query
 
 
 def _attack_subject_query(text):
@@ -31,13 +32,8 @@ def _attack_subject_query(text):
     if parsed is None or parsed[0] != 'source_controller': return None
     query = parsed[1]
     query = replace(query, types_all=tuple(sorted(set(query.types_all) | {'creature'})))
-    projected = ObjectQuerySpec(zones=('battlefield',), types_all=query.types_all, types_any=query.types_any,
-        excluded_types=query.excluded_types, subtypes_all=query.subtypes_all, subtypes_any=query.subtypes_any,
-        excluded_subtypes=query.excluded_subtypes, colors_all=query.colors_all, colors_any=query.colors_any,
-        colorless=query.colorless, supertypes_all=query.supertypes_all, keywords_all=query.keywords_all,
-        keywords_none=query.keywords_none, token=query.token, state_predicate=query.state_predicate,
-        numeric_characteristic=query.numeric_characteristic, commander=query.commander)
-    if query != projected: return None
+    try:validate_attack_characteristic_query(query)
+    except ValueError:return None
     return query, parsed[2]
 
 

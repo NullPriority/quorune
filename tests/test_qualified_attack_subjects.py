@@ -33,7 +33,7 @@ class QualifiedAttackCompilerTests(unittest.TestCase):
             node=ir.faces[0].nodes[0];self.assertIn(CAPABILITY,node.capability_dependencies)
             self.assertEqual('creature.attacks',node.event)
             self.assertIn(PREFIX+'version',json.dumps(node.event_condition))
-        for text in ('Whenever one or more Dragons you control attack, draw a card.',
+        for text in ('Whenever one or more chosen creatures you control attack, draw a card.',
                 'Whenever a creature you own attacks, draw a card.',
                 'Whenever a chosen creature you control attacks, draw a card.',
                 'Whenever a Dragon you control attacks, rewrite history.',

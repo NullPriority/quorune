@@ -3691,8 +3691,13 @@ declared attacker is a separate occurrence. Source exclusion and attacking
 alone retain their ordinary meaning. Later changes do not retroactively alter
 qualification, and independently exact effects use the existing trigger and
 result owners. The snapshot has its own inferred capability requirement;
-one-or-more declarations and defending-recipient grouping retain separate
-productions. Old qualified-damage query admission stays unchanged.
+qualified one-or-more declarations use a separate immutable count and grouping
+specification. Its minimum counts matching creatures in the sealed declaration,
+and a nonmatching occurrence cannot create the trigger. Declaration-wide,
+attacked-player and attacked-player-or-planeswalker scopes reuse the existing
+APNAP coalescing owner. Distinct planeswalkers stay distinct even when one seat
+controls them; attacking a battle never satisfies a player or planeswalker
+recipient. Ordinary singular and old qualified-damage admission stay unchanged.
 An explicit attacker-pronoun characteristic result binds the occurrence's
 logical object, separately from an explicit observer result. The existing
 sealed-object resolver prevents a blink from redirecting the result to a new

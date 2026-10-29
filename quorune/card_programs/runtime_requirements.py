@@ -90,6 +90,9 @@ def program_dynamic_runtime_requirements(program):
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
     try:required.update(qualified_attack_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_qualified_attack:invalid:{exc}')
+    from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
+    try:required.update(qualified_attack_batch_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_qualified_attack_batch:invalid:{exc}')
     from ..characteristic_fragments import characteristic_quantity_capabilities
     required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     try:required.update(city_activation_runtime_dependencies(program))

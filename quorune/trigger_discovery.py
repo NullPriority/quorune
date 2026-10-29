@@ -388,6 +388,11 @@ def _semantic_condition_actual(
     field = str(condition.get("field") or "")
     if not field:
         raise GameRuleError("Semantic event condition requires a field")
+    from .attack_batch_model import ATTACK_BATCH_CONDITION
+    if field == ATTACK_BATCH_CONDITION:
+        from .rules.attack_batches import qualified_attack_match_count
+        try:return qualified_attack_match_count(source,condition,context)
+        except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     if field == "counter_names":
         names = context.get(field)
         if (not isinstance(names, Sequence) or isinstance(names, (str, bytes))
@@ -1040,6 +1045,10 @@ def _semantic_trigger_context(
             if event == "damage.dealt"
             else {}
         )
+        if event == 'creature.attacks':
+            from .rules.attack_batches import attack_batch_aggregation_scope
+            try:aggregation_scope=attack_batch_aggregation_scope(program,context)
+            except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
         stack_context["one_or_more_aggregation_id"] = hashlib.sha256(
             stable_json(
                 {

@@ -263,6 +263,12 @@ later characteristic changes, source departure, save/load and replay.
 Checkpoints without the execution marker retain the older event contexts and
 hashes; replay does not append the new fields. Unknown versions and Boolean
 versions are rejected.
+The same execution marker enables a sealed `declared_attacker_snapshots`
+collection containing public traits, attacker logical identities and declared
+recipients. Qualified batch conditions count this collection rather than live
+permanents. Their aggregation key records the actual recipient kind and
+reference and permanent incarnation when grouping by player or planeswalker, independently from the
+defending controller. Legacy unmarked checkpoints omit these additive facts.
 Receiver-bound attack characteristic results reuse the sealed
 `event_counter_recipient` reference and logical identity. A departed or new
 incarnation is skipped at resolution; the observer's identity remains the

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 547,
+  "registry_version": 548,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -64785,6 +64785,140 @@
       "dependency_fail_closed_rationale": "Verified receiver-result withdrawal leaves the Asari composition partial and preserves the unrelated qualified Dragon-token result; runtime binding infers the receiver capability from the occurrence operand.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the attacker-result binder reproduces observer binding and is killed by the explicit effect-operand witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.qualified_attack_batch",
+      "version": 1,
+      "official_rules": [
+        "508.1f",
+        "508.1j",
+        "508.1k",
+        "508.1m",
+        "508.2a",
+        "508.3a",
+        "508.3b",
+        "508.3c",
+        "508.3d",
+        "603.2c",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed minimum matching-attacker counts read one sealed declaration. Explicit declaration, attacked-player and attacked-player-or-planeswalker grouping reuse APNAP trigger coalescing. Recipient objects remain distinct from their defending controller.",
+        "inputs": [
+          "Version1 public attacker snapshots and identities",
+          "Closed fixed public creature query",
+          "Fixed minimum and explicit recipient grouping"
+        ],
+        "outputs": [
+          "One trigger for each qualifying declaration group",
+          "Original controller and source-independent queued results"
+        ],
+        "exclusions": [
+          "Chosen or unknown qualifiers",
+          "Battle recipients in player/planeswalker groups",
+          "Unknown batch-relative result amounts"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_public_action",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.attack_batch_model.QualifiedAttackBatchSpec",
+        "quorune.rules.attack_batches.qualified_attack_match_count",
+        "quorune.rules.attack_batches.attack_batch_aggregation_scope",
+        "quorune.rules.attack_batches.seal_attack_declaration",
+        "quorune.compiler.qualified_attack_batches.qualified_attack_batch_binding_spec",
+        "quorune.trigger_discovery._semantic_trigger_context"
+      ],
+      "positive_tests": [
+        "test_actual_ancestor_keeps_one_trigger_but_counts_current_attackers_at_resolution",
+        "test_actual_jolene_numeric_qualification_survives_later_power_reduction",
+        "test_actual_landroval_minimum_is_per_player_and_planeswalker_attack_does_not_complete_it",
+        "test_actual_mavren_fires_once_across_defenders_and_queued_token_survives_giver_departure",
+        "test_actual_mavren_token_only_declaration_does_not_qualify",
+        "test_actual_meriadoc_groups_by_player_and_excludes_a_planeswalker_recipient",
+        "test_actual_metropolis_accepts_any_counter_and_keeps_one_draw_after_counter_removal",
+        "test_actual_rigo_keeps_two_planeswalkers_and_their_controller_as_three_recipients",
+        "test_actual_tide_minimum_counts_fliers_and_keeps_queued_draw_after_they_leave",
+        "test_batch_subjects_and_explicit_grouping_are_closed_and_versioned",
+        "test_declaration_collection_is_immutable_and_legacy_context_stays_omitted",
+        "test_matching_minimum_and_recipient_matrix_use_sealed_values_without_mutation",
+        "test_snapshot_codec_rejects_contradictory_facts_and_counts_total_counters"
+      ],
+      "negative_tests": [
+        "test_actual_ancestor_keeps_one_trigger_but_counts_current_attackers_at_resolution",
+        "test_actual_jolene_numeric_qualification_survives_later_power_reduction",
+        "test_actual_landroval_minimum_is_per_player_and_planeswalker_attack_does_not_complete_it",
+        "test_actual_mavren_fires_once_across_defenders_and_queued_token_survives_giver_departure",
+        "test_actual_mavren_token_only_declaration_does_not_qualify",
+        "test_actual_meriadoc_groups_by_player_and_excludes_a_planeswalker_recipient",
+        "test_actual_metropolis_accepts_any_counter_and_keeps_one_draw_after_counter_removal",
+        "test_actual_rigo_keeps_two_planeswalkers_and_their_controller_as_three_recipients",
+        "test_actual_tide_minimum_counts_fliers_and_keeps_queued_draw_after_they_leave",
+        "test_batch_subjects_and_explicit_grouping_are_closed_and_versioned",
+        "test_declaration_collection_is_immutable_and_legacy_context_stays_omitted",
+        "test_matching_minimum_and_recipient_matrix_use_sealed_values_without_mutation",
+        "test_runtime_batch_capability_and_coverage_cannot_be_omitted",
+        "test_snapshot_codec_rejects_contradictory_facts_and_counts_total_counters",
+        "test_verified_batch_owner_withdrawal_keeps_singular_attack_control"
+      ],
+      "interaction_tests": [
+        "test_actual_ancestor_keeps_one_trigger_but_counts_current_attackers_at_resolution",
+        "test_actual_jolene_numeric_qualification_survives_later_power_reduction",
+        "test_actual_landroval_minimum_is_per_player_and_planeswalker_attack_does_not_complete_it",
+        "test_actual_mavren_fires_once_across_defenders_and_queued_token_survives_giver_departure",
+        "test_actual_mavren_token_only_declaration_does_not_qualify",
+        "test_actual_meriadoc_groups_by_player_and_excludes_a_planeswalker_recipient",
+        "test_actual_metropolis_accepts_any_counter_and_keeps_one_draw_after_counter_removal",
+        "test_actual_rigo_keeps_two_planeswalkers_and_their_controller_as_three_recipients",
+        "test_actual_tide_minimum_counts_fliers_and_keeps_queued_draw_after_they_leave",
+        "test_matching_minimum_and_recipient_matrix_use_sealed_values_without_mutation"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ancestor_keeps_one_trigger_but_counts_current_attackers_at_resolution",
+        "test_actual_jolene_numeric_qualification_survives_later_power_reduction",
+        "test_actual_landroval_minimum_is_per_player_and_planeswalker_attack_does_not_complete_it",
+        "test_actual_mavren_fires_once_across_defenders_and_queued_token_survives_giver_departure",
+        "test_actual_mavren_token_only_declaration_does_not_qualify",
+        "test_actual_meriadoc_groups_by_player_and_excludes_a_planeswalker_recipient",
+        "test_actual_metropolis_accepts_any_counter_and_keeps_one_draw_after_counter_removal",
+        "test_actual_rigo_keeps_two_planeswalkers_and_their_controller_as_three_recipients",
+        "test_actual_tide_minimum_counts_fliers_and_keeps_queued_draw_after_they_leave"
+      ],
+      "privacy_tests": [
+        "test_actual_tide_minimum_counts_fliers_and_keeps_queued_draw_after_they_leave"
+      ],
+      "replay_tests": [
+        "test_actual_ancestor_keeps_one_trigger_but_counts_current_attackers_at_resolution",
+        "test_actual_jolene_numeric_qualification_survives_later_power_reduction",
+        "test_actual_landroval_minimum_is_per_player_and_planeswalker_attack_does_not_complete_it",
+        "test_actual_mavren_fires_once_across_defenders_and_queued_token_survives_giver_departure",
+        "test_actual_mavren_token_only_declaration_does_not_qualify",
+        "test_actual_meriadoc_groups_by_player_and_excludes_a_planeswalker_recipient",
+        "test_actual_metropolis_accepts_any_counter_and_keeps_one_draw_after_counter_removal",
+        "test_actual_rigo_keeps_two_planeswalkers_and_their_controller_as_three_recipients",
+        "test_actual_tide_minimum_counts_fliers_and_keeps_queued_draw_after_they_leave"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified batch capability withdrawal preserves singular attack control; runtime binding rejects missing capability or coalescing coverage.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A total-attacker proxy is killed by one matching flier and one nonmatching creature.",
       "blockers": [],
       "status": "trusted"
     }
