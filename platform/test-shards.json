@@ -135,6 +135,7 @@
       "test_modular_rules",
       "test_monarch_rules",
       "test_object_identity",
+      "test_ordered_composition_followups",
       "test_paid_event_spell_copy",
       "test_persist_undying_rules",
       "test_public_compositions",

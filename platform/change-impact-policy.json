@@ -9584,6 +9584,26 @@
         "test_fixed_controller_effect_sequences",
         "test_optional_draw_discard_sequences"
       ]
+    },
+    {
+      "id": "ordered-composition-followup-consumers",
+      "patterns": [
+        "tests/test_ordered_composition_followups.py",
+        "tests/fixtures/ordered-composition-followup-cards.json",
+        "quorune/compiler/closed_effect_programs.py",
+        "quorune/compiler/fixed_controller_effect_sequences.py",
+        "quorune/rules/fixed_controller_effect_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/compiler/fixed_top_order_templates.py",
+        "quorune/rules/library_order_shapes.py",
+        "quorune/semantic_runtime/library_shuffle.py",
+        "quorune/compiler/optional_effect_templates.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/compiler/fixed_resolution_mana.py"
+      ],
+      "test_modules": [
+        "test_ordered_composition_followups"
+      ]
     }
   ],
   "symbol_rules": [

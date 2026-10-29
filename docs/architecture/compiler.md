@@ -626,6 +626,16 @@ conditional or linked results do not become executable. The
 [rules-kernel contract](rules-kernel.md) owns the public choice and shared
 simultaneous tap-state mutation.
 
+Complete ordered-program witnesses also bind the later result after a private
+draw/discard choice: fixed resolution mana is added once, and a predefined
+Powerstone enters tapped only after discard completes. Its restricted mana
+retains ordinary spending ownership. A conditional instruction checks actual
+current-turn death history and completes private Surveil before investigate;
+the resulting Clue retains its ordinary paid, counterable draw ability.
+Controller-gated activated shuffle uses current permanent colors, including a
+colorless land with a colored basic-land mana ability. These compositions retain
+their leaf owners and pending replay rather than separate card executors.
+
 `compiler/spell_self_exile.py` recognizes a terminal source-self exile clause
 only at the end of an ordinary single-face spell's complete source. Its body
 must compile independently with unchanged targets and prices. The resulting
