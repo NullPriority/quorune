@@ -11,7 +11,9 @@ from .node_capability_shapes import (
 )
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
+    fixed_controller_discard_node_capabilities,
 )
+from ..compiler.affected_player_discard_templates import FIXED_CONTROLLER_DISCARD_MECHANIC
 
 
 _FIXED_CONTROLLER_SEQUENCE_MECHANIC = "fixed-controller-effect-sequence"
@@ -150,7 +152,9 @@ def fixed_controller_effect_sequence_node_capabilities(
         elif operation == "choose_cards_apnap":
             if effect.get("players") != ["$controller"]:
                 return ()
-            required = fixed_affected_player_discard_node_capabilities(
+            required = fixed_controller_discard_node_capabilities(
+                effects=(effect,), target_schema=None, mechanic_ids=mechanics,
+            ) if FIXED_CONTROLLER_DISCARD_MECHANIC in mechanics else fixed_affected_player_discard_node_capabilities(
                 effects=(effect,),
                 target_schema=None,
                 mechanic_ids=(

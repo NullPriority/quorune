@@ -6,6 +6,7 @@
     "tests/fixtures/ability-label-composition-cards.json",
     "tests/fixtures/ability-source-counter-cards.json",
     "tests/fixtures/activated-self-transform-cards.json",
+    "tests/fixtures/activation-public-state-cards.json",
     "tests/fixtures/activation-restriction-material-cards.json",
     "tests/fixtures/activation-result-views-cards.json",
     "tests/fixtures/activation-target-view-cards.json",
@@ -18,6 +19,7 @@
     "tests/fixtures/affinity-rules-cards.json",
     "tests/fixtures/aftermath-cards.json",
     "tests/fixtures/aggregated-zone-event-triggers.json",
+    "tests/fixtures/all-blocker-requirement-cards.json",
     "tests/fixtures/all-colors-cards.json",
     "tests/fixtures/all-counter-self-cost-cards.json",
     "tests/fixtures/all-kind-counter-cards.json",
@@ -40,25 +42,34 @@
     "tests/fixtures/attached-prevention-cards.json",
     "tests/fixtures/attached-protection-cards.json",
     "tests/fixtures/attached-pt-keyword-removal-cards.json",
+    "tests/fixtures/attached-untap-restraint-cards.json",
+    "tests/fixtures/attachment-damage-cards.json",
     "tests/fixtures/backup-cards.json",
     "tests/fixtures/banding-cards.json",
+    "tests/fixtures/bargain-cards.json",
     "tests/fixtures/batch-interaction-recovery-cards.json",
     "tests/fixtures/batched-public-assurance-cards.json",
     "tests/fixtures/batched-support-assurance-cards.json",
     "tests/fixtures/battlefield-target-reduction-cards.json",
     "tests/fixtures/bestow-cards.json",
+    "tests/fixtures/bestow-typed-grant-cards.json",
     "tests/fixtures/binding-aware-event-payments.json",
     "tests/fixtures/block-capacity-cards.json",
     "tests/fixtures/boast-restriction-cards.json",
+    "tests/fixtures/bound-static-declaration-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",
     "tests/fixtures/cast-creature-targets.json",
+    "tests/fixtures/cast-spell-mana-value-cards.json",
     "tests/fixtures/casting-activation-metadata-cards.json",
     "tests/fixtures/casting-payment-keywords-cards.json",
+    "tests/fixtures/casualty-cards.json",
+    "tests/fixtures/champion-cards.json",
     "tests/fixtures/characteristic-query-union-cards.json",
     "tests/fixtures/chosen-aura-protection-cards.json",
     "tests/fixtures/chosen-color-mana-cards.json",
+    "tests/fixtures/cipher-cards.json",
     "tests/fixtures/classic-flash-cards.json",
     "tests/fixtures/classified-interaction-assurance-cards.json",
     "tests/fixtures/closed-effect-program-cards.json",
@@ -68,6 +79,7 @@
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/commander-learn-cards.json",
     "tests/fixtures/complex-activation-mana-cards.json",
+    "tests/fixtures/composite-quoted-grant-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/compound-activation-restriction-cards.json",
     "tests/fixtures/compound-damage-recipient-cards.json",
@@ -98,20 +110,27 @@
     "tests/fixtures/counter-replacement-cards.json",
     "tests/fixtures/created-token-counter-cards.json",
     "tests/fixtures/creature-power-departure-cards.json",
+    "tests/fixtures/creature-power-multiple-cards.json",
+    "tests/fixtures/creature-subtype-addition-cards.json",
     "tests/fixtures/cycle-or-discard-event-cards.json",
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/defender-declaration-numeric-cards.json",
     "tests/fixtures/defender-permission-cards.json",
     "tests/fixtures/delivery-interaction-boundary-cards.json",
+    "tests/fixtures/designation-event-cards.json",
     "tests/fixtures/designation-prevention-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",
     "tests/fixtures/devour-cards.json",
+    "tests/fixtures/discard-result-cards.json",
+    "tests/fixtures/disjoint-negative-keyword-cards.json",
+    "tests/fixtures/distinct-target-cost-cards.json",
     "tests/fixtures/draw-rules-cards.json",
     "tests/fixtures/each-player-life-cards.json",
     "tests/fixtures/each-player-mill-cards.json",
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/empty-fixed-target-batch-cards.json",
     "tests/fixtures/empty-permanent-cards.json",
+    "tests/fixtures/enchanted-player-static-cards.json",
     "tests/fixtures/energy-activation-cards.json",
     "tests/fixtures/enlist-cards.json",
     "tests/fixtures/entry-color-composition-cards.json",
@@ -123,9 +142,14 @@
     "tests/fixtures/entry-value-consumer-cards.json",
     "tests/fixtures/escaped-entry-counter-cards.json",
     "tests/fixtures/event-card-return.json",
+    "tests/fixtures/event-player-fixed-damage-cards.json",
+    "tests/fixtures/event-player-sacrifice-cards.json",
     "tests/fixtures/event-player-subject-cards.json",
+    "tests/fixtures/event-spell-copy-cards.json",
+    "tests/fixtures/evolve-cards.json",
     "tests/fixtures/exert-cards.json",
     "tests/fixtures/expanded-basic-type-setting-cards.json",
+    "tests/fixtures/expend-cards.json",
     "tests/fixtures/explore-cards.json",
     "tests/fixtures/external-entry-counter-cards.json",
     "tests/fixtures/external-entry-tapped-cards.json",
@@ -171,17 +195,22 @@
     "tests/fixtures/fixed-tap-payment-cards.json",
     "tests/fixtures/fixed-token-creation-cards.json",
     "tests/fixtures/fixed-token-production-cards.json",
+    "tests/fixtures/fixed-top-order-cards.json",
     "tests/fixtures/fixed-type-aura-protection-cards.json",
     "tests/fixtures/fixed-untap-participation-cards.json",
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/flavor-named-trigger-cards.json",
+    "tests/fixtures/forecast-cards.json",
     "tests/fixtures/fractional-player-result-cards.json",
     "tests/fixtures/fuse-cards.json",
     "tests/fixtures/gain-and-get-cards.json",
     "tests/fixtures/global-alternative-cost-cards.json",
     "tests/fixtures/global-plural-characteristic-sets.json",
     "tests/fixtures/graft-cards.json",
+    "tests/fixtures/granted-keyword-event-cards.json",
     "tests/fixtures/granted-skulk-cards.json",
+    "tests/fixtures/granted-static-characteristic-cards.json",
+    "tests/fixtures/granted-static-cost-cards.json",
     "tests/fixtures/graveyard-copy-keyword-cards.json",
     "tests/fixtures/graveyard-exile-payment-cards.json",
     "tests/fixtures/graveyard-resolution-condition-cards.json",
@@ -192,6 +221,7 @@
     "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/history-entry-counters.json",
     "tests/fixtures/increment-cards.json",
+    "tests/fixtures/inherited-rule-composition-cards.json",
     "tests/fixtures/intrinsic-basic-land-mana-cards.json",
     "tests/fixtures/intrinsic-mana-ability-loss-cards.json",
     "tests/fixtures/job-select-cards.json",
@@ -217,17 +247,20 @@
     "tests/fixtures/live-modifier-quantity-cards.json",
     "tests/fixtures/main-phase-trigger-cards.json",
     "tests/fixtures/mana-color-result-cards.json",
+    "tests/fixtures/mana-component-composition-cards.json",
     "tests/fixtures/mana-discard-payment-cards.json",
     "tests/fixtures/manifest-cards.json",
     "tests/fixtures/mayhem-cards.json",
     "tests/fixtures/mixed-permanent-target-cards.json",
     "tests/fixtures/mixed-stack-counter-cards.json",
     "tests/fixtures/modal-activation-admission-cards.json",
+    "tests/fixtures/modal-event-composition-cards.json",
     "tests/fixtures/modal-token-program-cards.json",
     "tests/fixtures/multikicker-entry-counter-cards.json",
     "tests/fixtures/multikicker-result-cards.json",
     "tests/fixtures/multisentence-effect-cards.json",
     "tests/fixtures/myrel-composition-cards.json",
+    "tests/fixtures/named-source-result-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
     "tests/fixtures/noncreature-subtype-targets.json",
     "tests/fixtures/nonmana-buyback-cost-cards.json",
@@ -241,15 +274,19 @@
     "tests/fixtures/optional-draw-discard-sequences.json",
     "tests/fixtures/optional-life-cost-cards.json",
     "tests/fixtures/optional-object-action-counters.json",
+    "tests/fixtures/optional-result-followup-cards.json",
     "tests/fixtures/ordered-amount-clause-cards.json",
+    "tests/fixtures/ordered-composition-followup-cards.json",
     "tests/fixtures/ordered-quantity-results.json",
     "tests/fixtures/paid-color-entry-cards.json",
     "tests/fixtures/paid-entry-copy-cards.json",
+    "tests/fixtures/paid-event-copy-cards.json",
     "tests/fixtures/paid-graveyard-cast-cards.json",
     "tests/fixtures/paid-mana-resolution-cards.json",
     "tests/fixtures/paired-typecycling-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
+    "tests/fixtures/persist-undying-cards.json",
     "tests/fixtures/persistent-hand-visibility-cards.json",
     "tests/fixtures/player-speed-cards.json",
     "tests/fixtures/player-target-protection-cards.json",
@@ -257,6 +294,7 @@
     "tests/fixtures/predefined-role-cards.json",
     "tests/fixtures/predefined-token-view-cards.json",
     "tests/fixtures/preparation-cards.json",
+    "tests/fixtures/prepared-power-damage-cards.json",
     "tests/fixtures/prevention-composition-cards.json",
     "tests/fixtures/priced-mana-source-cards.json",
     "tests/fixtures/protection-list-cards.json",
@@ -266,9 +304,11 @@
     "tests/fixtures/public-activation-condition-cards.json",
     "tests/fixtures/public-any-counter-cards.json",
     "tests/fixtures/public-collection-quantity-cards.json",
+    "tests/fixtures/public-composition-cards.json",
     "tests/fixtures/public-condition-self-replacement-cards.json",
     "tests/fixtures/public-condition-surface-cards.json",
     "tests/fixtures/public-cost-subject-cards.json",
+    "tests/fixtures/public-history-query-cards.json",
     "tests/fixtures/public-library-action-permission-cards.json",
     "tests/fixtures/public-negative-color-cards.json",
     "tests/fixtures/public-negative-keyword-cards.json",
@@ -276,15 +316,25 @@
     "tests/fixtures/public-quantity-mana-cards.json",
     "tests/fixtures/public-scalar-stat-cards.json",
     "tests/fixtures/public-self-replacement-cards.json",
+    "tests/fixtures/public-state-trigger-cards.json",
     "tests/fixtures/public-static-action-rule-cards.json",
+    "tests/fixtures/public-target-spell-cost-cards.json",
+    "tests/fixtures/public-value-cost-cards.json",
     "tests/fixtures/public-zone-condition-cards.json",
     "tests/fixtures/public-zone-quantity-cards.json",
+    "tests/fixtures/qualified-attack-batch-cards.json",
+    "tests/fixtures/qualified-attack-cards.json",
     "tests/fixtures/qualified-declaration-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",
+    "tests/fixtures/qualified-entry-state-cards.json",
     "tests/fixtures/qualified-graveyard-grant-cards.json",
     "tests/fixtures/qualified-hexproof-cards.json",
     "tests/fixtures/qualified-landwalk-cards.json",
+    "tests/fixtures/qualified-public-history-cards.json",
+    "tests/fixtures/qualified-quantity-cards.json",
+    "tests/fixtures/qualified-quantity-retention-cards.json",
     "tests/fixtures/qualified-regeneration-cards.json",
+    "tests/fixtures/qualified-spell-ordinal-cards.json",
     "tests/fixtures/quantified-counter-target-cards.json",
     "tests/fixtures/quantified-target-keyword-cards.json",
     "tests/fixtures/query-gated-self-characteristics-cards.json",
@@ -296,17 +346,22 @@
     "tests/fixtures/random-discard-cards.json",
     "tests/fixtures/random-graveyard-return-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
+    "tests/fixtures/received-damage-cards.json",
     "tests/fixtures/recipient-modifier-cards.json",
+    "tests/fixtures/recipient-result-cards.json",
     "tests/fixtures/reconfigure-cards.json",
     "tests/fixtures/reflexive-payment-cards.json",
     "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-mana-choice-cards.json",
     "tests/fixtures/resolution-public-condition-cards.json",
+    "tests/fixtures/restricted-mana-grant-cards.json",
     "tests/fixtures/restricted-self-return-cards.json",
     "tests/fixtures/retained-owner-composition-cards.json",
     "tests/fixtures/reveal-entry-cards.json",
+    "tests/fixtures/ring-original-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scalar-mill-wording-cards.json",
+    "tests/fixtures/scheduled-event-pair-cards.json",
     "tests/fixtures/scheduled-half-life-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",
     "tests/fixtures/scoped-basic-type-addition-cards.json",
@@ -314,23 +369,33 @@
     "tests/fixtures/scryfall-exact-lists.json",
     "tests/fixtures/self-cast-restriction-cards.json",
     "tests/fixtures/self-exile-return-cards.json",
+    "tests/fixtures/self-public-cost-cards.json",
     "tests/fixtures/self-public-zone-cards.json",
     "tests/fixtures/self-target-reduction-cards.json",
     "tests/fixtures/self-zone-discard-cast-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
+    "tests/fixtures/shared-creature-type-cards.json",
+    "tests/fixtures/singular-token-entry-cards.json",
     "tests/fixtures/soulbond-cards.json",
+    "tests/fixtures/source-attack-alone-cards.json",
     "tests/fixtures/source-block-pair-cards.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-counter-anthem-cards.json",
+    "tests/fixtures/source-counter-pronoun-cards.json",
     "tests/fixtures/source-damage-death-cards.json",
+    "tests/fixtures/source-damage-scalar-cards.json",
+    "tests/fixtures/source-explore-cards.json",
     "tests/fixtures/source-fixed-protection-cards.json",
     "tests/fixtures/source-keyword-choice-cards.json",
+    "tests/fixtures/source-label-characteristic-cards.json",
     "tests/fixtures/source-maintenance-cards.json",
     "tests/fixtures/source-pronoun-results.json",
     "tests/fixtures/source-protection-choice-cards.json",
     "tests/fixtures/source-reference-closure-cards.json",
     "tests/fixtures/source-self-optional-cards.json",
     "tests/fixtures/source-specific-blocking-cards.json",
+    "tests/fixtures/source-zone-ability-grant-cards.json",
+    "tests/fixtures/special-trigger-envelope-cards.json",
     "tests/fixtures/spell-history-transformations-cards.json",
     "tests/fixtures/spell-random-discard-cost-cards.json",
     "tests/fixtures/split-second-cards.json",
@@ -347,14 +412,18 @@
     "tests/fixtures/static-land-animation-cards.json",
     "tests/fixtures/static-mana-spending-cards.json",
     "tests/fixtures/static-player-restriction-cards.json",
+    "tests/fixtures/station-activation-cards.json",
     "tests/fixtures/station-rules-cards.json",
+    "tests/fixtures/station-symbol-cards.json",
     "tests/fixtures/storm-cards.json",
+    "tests/fixtures/subtype-composite-grant-cards.json",
     "tests/fixtures/subtype-union-condition-cards.json",
     "tests/fixtures/support-integration-retention-cards.json",
     "tests/fixtures/tagged-partner-cards.json",
     "tests/fixtures/tap-controller-information-cards.json",
     "tests/fixtures/target-announcements.json",
     "tests/fixtures/target-characteristic-sets.json",
+    "tests/fixtures/target-dependent-activation-cards.json",
     "tests/fixtures/target-player-hand-count-cards.json",
     "tests/fixtures/target-restriction-cards.json",
     "tests/fixtures/targeted-owner-library-cards.json",
@@ -374,6 +443,7 @@
     "tests/fixtures/turn-cast-grant-cards.json",
     "tests/fixtures/turn-cast-rider-cards.json",
     "tests/fixtures/turn-count-self-cost-cards.json",
+    "tests/fixtures/type-replacement-grant-cards.json",
     "tests/fixtures/typecycling-cards.json",
     "tests/fixtures/typed-grant-carrier-cards.json",
     "tests/fixtures/typed-land-entry-cards.json",
@@ -383,23 +453,14 @@
     "tests/fixtures/union-receiver-cards.json",
     "tests/fixtures/unpreventable-damage-cards.json",
     "tests/fixtures/untap-selection-limit-cards.json",
+    "tests/fixtures/untargeted-untap-cards.json",
     "tests/fixtures/vanishing-cards.json",
     "tests/fixtures/variable-library-count-cards.json",
     "tests/fixtures/waterbend-cards.json",
-    "tests/fixtures/whole-hand-discard-cards.json"
+    "tests/fixtures/whole-hand-discard-cards.json",
+    "tests/fixtures/worldwagon-cards.json"
   ],
   "dynamic_requirements": [
-    {
-      "source": "tests/test_high_risk_interaction_assurance.py",
-      "symbol": "HighRiskInteractionAssuranceTests.test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
-      "card_names": [],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/source-reference-closure-cards.json"
-      ],
-      "rationale": "The bounded dictionary iterates complete pinned Zabaz, Nemata and Kytheon/Gideon records from the named source-reference fixture to prove residual runtime admission remains blocked."
-    },
     {
       "source": "tests/test_attached_static_characteristics.py",
       "symbol": "AttachedContinuousCompilerTests.test_measured_attached_characteristic_cohort_is_capability_closed",
@@ -421,6 +482,43 @@
         "tests/fixtures/closed-effect-program-cards.json"
       ],
       "rationale": "The exact 53-card measured cohort is iterated by name from the dedicated pinned fixture."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/entry-copy-cards.json"
+      ],
+      "rationale": "The fixed four-original selector loop delegates its current card name through the existing assert_original_closed helper before controlled dependency-removal compiler checks. The canonical entry-copy fixture owns those original records."
+    },
+    {
+      "source": "tests/test_cumulative_upkeep_counter_placement.py",
+      "symbol": "CumulativeUpkeepRuntimeTests.queue_life_upkeep",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/fixed-life-cumulative-upkeep-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The per-test life-upkeep reader returns directly constructed synthetic keyword-body records and delegates other Oracle IDs to these finite focused inputs; the same reader remains active for pending replay and load."
+    },
+    {
+      "source": "tests/test_evolve_counter_placement.py",
+      "symbol": "EvolveRuntimeTests.register_evolve",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/evolve-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The repeated-Evolve reader returns its explicitly constructed double-keyword record and delegates remaining source/deck IDs to the finite focused fixture inputs."
     },
     {
       "source": "tests/test_fixed_library_selection.py",
@@ -462,60 +560,6 @@
       "rationale": "The exact 50-card measured cohort is iterated by name from the dedicated pinned fixture."
     },
     {
-      "source": "tests/test_surveil_rules.py",
-      "symbol": "FixedSurveilRuntimeTests.register",
-      "card_names": [
-        "Dauthi Voidwalker"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [],
-      "rationale": "The helper accepts explicit replacement-source witness names; this module calls it only for Dauthi Voidwalker."
-    },
-    {
-      "source": "tests/test_high_risk_interaction_assurance.py",
-      "symbol": "HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
-      "card_names": [
-        "Grim Reminder",
-        "Orcish Healer",
-        "Shadow Guildmage"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/new-support-residual-boundaries.json"
-      ],
-      "rationale": "The exact bounded original-card dictionary exercises whole-program rejection of residual regeneration, targeting and separate-damage siblings."
-    },
-    {
-      "source": "tests/test_fixed_query_keyword_grants.py",
-      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
-      "card_names": [
-        "Bitterblossom",
-        "Naturalize",
-        "Scion of Oona",
-        "Willow Faerie"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [],
-      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
-    },
-    {
-      "source": "tests/test_fixed_query_keyword_grants.py",
-      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
-      "card_names": [
-        "Bitterblossom",
-        "Control Magic",
-        "Scion of Oona",
-        "Unsummon"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [],
-      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
-    },
-    {
       "source": "tests/test_fixed_query_keyword_grants.py",
       "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
       "card_names": [
@@ -542,6 +586,45 @@
       "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
     },
     {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+      "card_names": [
+        "Bitterblossom",
+        "Control Magic",
+        "Scion of Oona",
+        "Unsummon"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
+    },
+    {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+      "card_names": [
+        "Bitterblossom",
+        "Naturalize",
+        "Scion of Oona",
+        "Willow Faerie"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
+    },
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/source-reference-closure-cards.json"
+      ],
+      "rationale": "The bounded dictionary iterates complete pinned Zabaz, Nemata and Kytheon/Gideon records from the named source-reference fixture to prove residual runtime admission remains blocked."
+    },
+    {
       "source": "tests/test_high_risk_interaction_assurance.py",
       "symbol": "HighRiskInteractionAssuranceTests.test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
       "card_names": [
@@ -559,17 +642,31 @@
     },
     {
       "source": "tests/test_high_risk_interaction_assurance.py",
-      "symbol": "HighRiskInteractionAssuranceTests.test_event_recipient_promotions_preserve_original_residual_admission_boundaries",
+      "symbol": "HighRiskInteractionAssuranceTests.test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/casualty-cards.json",
+        "tests/fixtures/fixed-resolution-mana-cards.json",
+        "tests/fixtures/untargeted-untap-cards.json"
+      ],
+      "rationale": "The fixed original-card mapping checks represented untap, public-set target and draw pieces beside unsupported face, replacement and copy siblings before whole-CardProgram runtime admission. These canonical finite fixtures own the exact original records."
+    },
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
       "card_names": [
-        "Merfolk Windrobber",
-        "Securitron Squadron"
+        "Grim Reminder",
+        "Orcish Healer",
+        "Shadow Guildmage"
       ],
       "oracle_ids": [],
       "deck_files": [],
       "fixture_files": [
-        "tests/fixtures/batched-support-assurance-cards.json"
+        "tests/fixtures/new-support-residual-boundaries.json"
       ],
-      "rationale": "The bounded original-card dictionary checks whole-program rejection of the unsupported Squad replacement and graveyard-conditioned activation beside newly supported event-recipient counter and mill leaves."
+      "rationale": "The exact bounded original-card dictionary exercises whole-program rejection of residual regeneration, targeting and separate-damage siblings."
     },
     {
       "source": "tests/test_high_risk_interaction_assurance.py",
@@ -586,15 +683,55 @@
       "rationale": "The bounded original-card dictionary verifies remaining transformed Saga replacement siblings reject complete runtime admission beside fixed control and public-quantity mana leaves."
     },
     {
-      "source": "tests/test_copy_objects.py",
-      "symbol": "EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
+      "source": "tests/test_persist_undying_rules.py",
+      "symbol": "PersistUndyingRuntimeTests.register_keyword",
       "card_names": [],
       "oracle_ids": [],
       "deck_files": [],
       "fixture_files": [
-        "tests/fixtures/entry-copy-cards.json"
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/persist-undying-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
       ],
-      "rationale": "The fixed four-original selector loop delegates its current card name through the existing assert_original_closed helper before controlled dependency-removal compiler checks. The canonical entry-copy fixture owns those original records."
+      "rationale": "The per-test reader maps deterministic synthetic keyword-body identities to directly constructed records and delegates other IDs to the exact-list, counter and death-return fixtures; the same reader survives pending replay/load."
+    },
+    {
+      "source": "tests/test_proliferate_rules.py",
+      "symbol": "ProliferateEngineTests.test_generated_proliferate_trigger_runs_without_name_dispatch",
+      "card_names": [
+        "Sol Ring"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The test reader returns the explicit synthetic proliferate source and delegates canonical target/deck IDs to the exact-list database; no arbitrary external Oracle data is read."
+    },
+    {
+      "source": "tests/test_public_query_effect_amounts.py",
+      "symbol": "PublicQueryEffectAmountRuntimeTests.test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
+      "card_names": [
+        "Boon Reflection"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The test reader returns its directly constructed synthetic end-step record and delegates remaining IDs to the canonical deck/counter fixture database; the synthetic identity is not a compact-database card."
+    },
+    {
+      "source": "tests/test_surveil_rules.py",
+      "symbol": "FixedSurveilRuntimeTests.register",
+      "card_names": [
+        "Dauthi Voidwalker"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The helper accepts explicit replacement-source witness names; this module calls it only for Dauthi Voidwalker."
     },
     {
       "source": "tests/test_undaunted.py",

@@ -210,6 +210,7 @@ class FixedSpellCastSubject:
 
     targets_creature: bool = False
     targets_controlled_creature: bool = False
+    qualified_spell_number: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.controller, FixedSpellCastController):
@@ -260,6 +261,7 @@ class FixedSpellCastSubject:
             "mana_value_minimum",
             "caster_spell_number",
             "caster_spell_number_minimum",
+            "qualified_spell_number",
         ):
             value = getattr(self, name)
             if value is not None and (type(value) is not int or value <= 0):
@@ -281,6 +283,29 @@ class FixedSpellCastSubject:
             self.turn_relation, FixedSpellCastTurnRelation
         ):
             raise ValueError("Spell-cast turns require a closed relation")
+        if self.qualified_spell_number is not None:
+            self.qualified_ordinal_spec
+            if (self.caster_spell_number is not None or self.caster_spell_number_minimum is not None or self.source_spell
+                    or self.characteristic_query is not None or self.mana_value_minimum is not None or self.requires_kicked
+                    or self.requires_x_cost or self.requires_adventure or self.requires_main_phase or self.not_owned_by_controller or self.targets_creature):
+                raise ValueError('Qualified spell ordinals cannot count unrecorded historical predicates')
+
+    @property
+    def qualified_ordinal_spec(self):
+        if self.qualified_spell_number is None:return None
+        from ..public_history_query_model import PublicHistoryQuerySpec
+        from ..spell_history_ordinal_model import QualifiedSpellOrdinalSpec
+        if self.quality is None or self.origin is FixedSpellCastOrigin.NOT_HAND:raise ValueError('Qualified spell ordinal needs a closed recorded type and origin')
+        quality=self.quality
+        types_any=('instant','sorcery') if quality is FixedSpellCastQuality.INSTANT_OR_SORCERY else (
+            'artifact','battle','creature','enchantment','planeswalker') if quality is FixedSpellCastQuality.PERMANENT else ()
+        origin=self.origin.value if self.origin is not None else None
+        query=PublicHistoryQuerySpec('spell_cast',types_all=(quality.value,) if quality not in {
+            FixedSpellCastQuality.ANY,FixedSpellCastQuality.NONCREATURE,FixedSpellCastQuality.INSTANT_OR_SORCERY,FixedSpellCastQuality.PERMANENT} else (),
+            types_any=types_any,excluded_types=('creature',) if quality is FixedSpellCastQuality.NONCREATURE else (),
+            schema_version=2 if origin else 1,origin=origin)
+        return QualifiedSpellOrdinalSpec(query,self.qualified_spell_number)
+
     @property
     def variant(self) -> str:
         predicates = []
@@ -294,6 +319,8 @@ class FixedSpellCastSubject:
             predicates.append(f"mana_value_gte_{self.mana_value_minimum}")
         if self.caster_spell_number is not None:
             predicates.append(f"spell_number_{self.caster_spell_number}")
+        if self.qualified_spell_number is not None:
+            predicates.append(f'qualified_spell_number_{self.qualified_spell_number}')
         if self.caster_spell_number_minimum is not None:
             predicates.append(
                 f"spell_number_gte_{self.caster_spell_number_minimum}"
@@ -322,6 +349,7 @@ class FixedSpellCastSubject:
                 self.targets_creature,
                 self.mana_value_minimum is not None,
                 self.caster_spell_number is not None,
+                self.qualified_spell_number is not None,
                 self.caster_spell_number_minimum is not None,
                 self.origin is not None,
                 self.turn_relation is not None,
@@ -402,6 +430,7 @@ class FixedSpellCastSubject:
 
     def _fact_conditions(self) -> tuple[Mapping[str, Any], ...]:
         conditions: list[Mapping[str, Any]] = []
+        if self.qualified_ordinal_spec is not None:conditions.append(self.qualified_ordinal_spec.to_condition())
         if self.targets_creature:
             conditions.append({"field": "creature_target_controllers", "op": "contains_any", "value": ["$source.controller"]}
                 if self.targets_controlled_creature else {"field": "creature_target_controllers", "op": "count_gte", "value": 1})
@@ -648,6 +677,9 @@ def _basic_spell_cast_binding(
             ),
             body=ordinary.group("body"),
         )
+    subtyped = _subtyped_creature_spell_cast_binding(material_line)
+    if subtyped is not None:
+        return subtyped
     characteristic = _CHARACTERISTIC_SPELL_CAST_TRIGGER.fullmatch(material_line)
     if characteristic is None:
         return None
@@ -665,9 +697,41 @@ def _basic_spell_cast_binding(
     )
 
 
+def _subtyped_creature_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
+    match = re.fullmatch(
+        r'Whenever (?P<relation>you cast|an opponent casts|a player casts) '
+        r'(?P<article>a|an) (?P<subtypes>[A-Za-z][A-Za-z ,\'-]*?) creature spell, (?P<body>.+)',
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    words = match['subtypes'].casefold()
+    parts = re.split(r', or |, | or ', words)
+    if (not 1 <= len(parts) <= 3 or len(set(parts)) != len(parts)
+            or words != (parts[0] if len(parts) == 1 else ' or '.join(parts) if len(parts) == 2 else ', '.join(parts[:2]) + ', or ' + parts[2])
+            or match['article'].casefold() != ('an' if words[0] in 'aeiou' else 'a')):
+        return None
+    subtypes = [canonical_creature_subtype(value) for value in parts]
+    if any(value is None for value in subtypes):
+        return None
+    return FixedSpellCastBindingSpec(
+        subject=FixedSpellCastSubject(
+            controller=_spell_cast_controller(match['relation']),
+            quality=FixedSpellCastQuality.CREATURE,
+            characteristic_query=FixedSpellCastCharacteristicQuery(tuple(
+                FixedSpellCastCharacteristicTerm(FixedSpellCastCharacteristicKind.SUBTYPE, value)
+                for value in subtypes
+            )),
+        ),
+        body=match['body'],
+    )
+
+
 def _history_spell_cast_binding(
     material_line: str,
 ) -> FixedSpellCastBindingSpec | None:
+    qualified=_qualified_ordinal_spell_cast_binding(material_line)
+    if qualified is not None:return qualified
     source_spell = re.fullmatch(
         r"When you cast this spell, (?P<body>.+)", material_line, re.IGNORECASE
     )
@@ -692,7 +756,7 @@ def _history_spell_cast_binding(
             mana_value_minimum=int(mana_value.group("amount")),
         )
     ordinal = re.fullmatch(
-        r"Whenever you cast your (?P<ordinal>first|second) spell each turn, "
+        r"Whenever you cast your (?P<ordinal>first|second|third|fourth) spell each turn, "
         r"(?P<body>.+)",
         material_line,
         re.IGNORECASE,
@@ -701,7 +765,7 @@ def _history_spell_cast_binding(
         return _binding(
             body=ordinal.group("body"),
             controller=FixedSpellCastController.SOURCE,
-            caster_spell_number={"first": 1, "second": 2}[
+            caster_spell_number={"first": 1, "second": 2,"third":3,"fourth":4}[
                 ordinal.group("ordinal").casefold()
             ],
         )
@@ -719,7 +783,7 @@ def _history_spell_cast_binding(
             turn_relation=FixedSpellCastTurnRelation.OPPONENT,
         )
     player_ordinal = re.fullmatch(
-        r"Whenever (?P<controller>a player|an opponent) casts their second "
+        r"Whenever (?P<controller>a player|an opponent) casts their (?P<ordinal>first|second|third|fourth) "
         r"spell each turn, (?P<body>.+)",
         material_line,
         re.IGNORECASE,
@@ -728,9 +792,25 @@ def _history_spell_cast_binding(
         return _binding(
             body=player_ordinal.group("body"),
             controller=_spell_cast_controller(player_ordinal.group("controller")),
-            caster_spell_number=2,
+            caster_spell_number={'first':1,'second':2,'third':3,'fourth':4}[player_ordinal['ordinal'].casefold()],
         )
     return _turn_spell_cast_binding(material_line)
+
+
+def _qualified_ordinal_spell_cast_binding(material_line):
+    match=re.fullmatch(r'Whenever (?P<relation>you cast|an opponent casts|a player casts) (?P<possessive>your|their) '
+        r'(?P<number>first|second|third|fourth) (?P<quality>noncreature |instant or sorcery |permanent |creature |artifact |enchantment |instant |sorcery )?'
+        r'spell(?: from (?P<origin>exile|your graveyard|their graveyard))? each turn, (?P<body>.+)',material_line,re.I)
+    if match is None or not match['quality'] and not match['origin']:return None
+    controller=_spell_cast_controller(match['relation']);possessive='your' if controller is FixedSpellCastController.SOURCE else 'their'
+    if match['possessive'].casefold()!=possessive:return None
+    origin=match['origin']
+    if origin and 'graveyard' in origin.casefold() and not origin.casefold().startswith(possessive+' '):return None
+    quality=(match['quality'] or '').strip().casefold()
+    return FixedSpellCastBindingSpec(body=match['body'],subject=FixedSpellCastSubject(controller=controller,
+        quality=FixedSpellCastQuality.INSTANT_OR_SORCERY if quality=='instant or sorcery' else FixedSpellCastQuality(quality) if quality else FixedSpellCastQuality.ANY,
+        origin=FixedSpellCastOrigin.EXILE if origin and origin.casefold()=='exile' else FixedSpellCastOrigin.GRAVEYARD if origin else None,
+        qualified_spell_number={'first':1,'second':2,'third':3,'fourth':4}[match['number'].casefold()]))
 
 
 def _turn_spell_cast_binding(

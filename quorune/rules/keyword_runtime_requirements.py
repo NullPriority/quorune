@@ -35,12 +35,41 @@ def _fragment_descriptor_requirements(value):
         keyword_arrays = (value.get(field, ()) for field in ('keywords', 'add_abilities', 'remove_abilities'))
         own = {'combat.banding'} if any(isinstance(words, (list, tuple)) and 'Banding' in words
             for words in keyword_arrays) else set()
+        if value.get('kind') == 'public_fact_at_least' and value.get('fact') == 'source_renowned':
+            from ..continuous_conditions import FixedPublicStateConditionSpec
+            FixedPublicStateConditionSpec.from_dict(value)
+            own.add('permanent.designation.renowned')
+        if value.get('handler_id')=='continuous.ability.disjoint-negative-keyword-grant.v1':
+            from ..semantic_runtime.negative_keyword_grants import DisjointNegativeKeywordGrantHandler,NEGATIVE_KEYWORD_GRANT_CAPABILITY
+            DisjointNegativeKeywordGrantHandler().validate(value)
+            own.add(NEGATIVE_KEYWORD_GRANT_CAPABILITY)
+        if value.get('handler_id') == 'continuous.basic_land_type.fixed-addition.v1':
+            from ..basic_type_addition_model import BasicTypeAdditionSpec
+            own.add(BasicTypeAdditionSpec.from_dict(value['addition']).capability_id)
         if value.get('kind') in {'declaration_cost','declaration_requirement','declaration_restriction'}:
             from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
             # Decode the actual persisted fragment; annotations cannot replace
             # the capability required by a nested executable declaration rule.
-            ability_fragment_from_dict(value)
+            fragment = ability_fragment_from_dict(value)
             own.add(DECLARATION_COMPONENT_CAPABILITY_ID)
+            owner = getattr(fragment, 'capability_id', None)
+            if owner is not None: own.add(owner)
+            if value.get('kind') == 'declaration_requirement' and fragment.condition is not None:
+                own.add('continuous.characteristics.fixed_public_state')
+        if value.get('kind') == 'static_component':
+            fragment = ability_fragment_from_dict(value)
+            owner = getattr(fragment, 'capability_id', None)
+            if owner is not None: own.add(owner)
+        if value.get('kind')=='bound_static_declaration_rules':
+            own.update(ability_fragment_from_dict(value).required_capabilities())
+        if value.get('kind') in {'granted_activated','attached_untap_restraint','enchanted_player_attack_requirement','activation_prohibition'}:
+            fragment = ability_fragment_from_dict(value)
+            owner = getattr(fragment, 'capability_id', None)
+            if owner is not None: own.add(owner)
+        if value.get('kind') == 'granted_triggered' and value.get('value', {}).get('schema_version') == 2:
+            from ..cipher_model import CIPHER_CAPABILITY
+            ability_fragment_from_dict(value)
+            own.add(CIPHER_CAPABILITY)
         return {*own, *(cap for child in value.values() for cap in _fragment_descriptor_requirements(child))}
     if isinstance(value, (list, tuple)):
         return {cap for child in value for cap in _fragment_descriptor_requirements(child)}
@@ -48,8 +77,36 @@ def _fragment_descriptor_requirements(value):
 
 
 def keyword_runtime_dependencies(program):
+    from ..cipher_model import CIPHER_CAPABILITY
     required = set(attached_keyword_runtime_dependencies(program))
+    from ..declared_cast_cost_model import declared_cost_event_dependencies
+    required.update(declared_cost_event_dependencies(getattr(program, 'condition', None)))
+    if any(effect.get('op') == 'encode_cipher' for effect in program.effects):
+        required.add(CIPHER_CAPABILITY)
+    if 'fixed_keyword_event_grant' in program.coverage:
+        required.add('continuous.ability.fixed_keyword_event_grant')
     if 'banding' in program.coverage:
         required.add('combat.banding')
     required.update(_fragment_descriptor_requirements((program.handlers, program.effects)))
+    if program.provenance.get('granted_only') and program.ability_id.startswith('ability:granted:'):
+        from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
+        from ..granted_activation_model import RESTRICTED_MANA_GRANT_CAPABILITY
+        from ..fixed_mana_abilities import FIXED_MANA_HANDLER_ID, FixedActivatedManaAbilitySpec
+        restrictions = [ability.mana_spend_restriction
+            for ability in activated_abilities_from_descriptors(program.handlers)]
+        restrictions.extend(FixedActivatedManaAbilitySpec.from_dict(descriptor['ability']).spend_restriction
+            for descriptor in program.handlers if descriptor.get('handler_id') == FIXED_MANA_HANDLER_ID)
+        if any(restriction not in {None, 'nonartifact_spell_prohibited'} for restriction in restrictions):
+            required.add(RESTRICTED_MANA_GRANT_CAPABILITY)
+    if program.provenance.get('granted_only') and any(
+            value.get('handler_id') == 'modification.cast-cost.targeted-fixed.v1' for value in program.handlers):
+        from ..static_component_scope import GRANTED_STATIC_COST_CAPABILITY
+        required.add(GRANTED_STATIC_COST_CAPABILITY)
+    if (program.provenance.get('granted_only') and program.event == 'characteristics.evaluate'
+            and program.ability_id.startswith('static:granted:')):
+        from ..rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed
+        from ..static_component_scope import GRANTED_STATIC_CHARACTERISTIC_CAPABILITY
+        if not granted_characteristic_handlers_are_closed(program.handlers):
+            raise ValueError('Granted static characteristic child has an unrepresented shape')
+        required.add(GRANTED_STATIC_CHARACTERISTIC_CAPABILITY)
     return tuple(sorted(required))

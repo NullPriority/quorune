@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "casualty",
+  "official_name": "Casualty",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "601.2a",
+    "601.2b",
+    "601.2f",
+    "601.2h",
+    "601.2i",
+    "702.153",
+    "702.153a",
+    "702.153b",
+    "707.10",
+    "707.10a",
+    "707.10c"
+  ],
+  "glossary_references": [
+    "casualty",
+    "additional cost",
+    "copy"
+  ],
+  "dependencies": [
+    "casting spells",
+    "power",
+    "sacrifice",
+    "replacement effects",
+    "triggered abilities",
+    "copying spells"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "source cast to stack; price creature on battlefield; ordinary graveyard or replaced sacrifice destination"
+    ],
+    "objects": [
+      "one source-pinned fixed Casualty instance",
+      "one current controlled creature incarnation",
+      "ordinary spell copy"
+    ],
+    "events": [
+      "optional price selection",
+      "canonical sacrifice payment",
+      "spell becomes cast",
+      "ordinary one-copy trigger",
+      "independent copy and original resolution"
+    ],
+    "state_reads": [
+      "current creature power after source placement",
+      "source admission and original declaration",
+      "sealed selected incarnation and committed cost facts",
+      "ordinary spell-copy template and targets"
+    ],
+    "state_writes": [
+      "existing casting, zone-cost and spell-copy owners only"
+    ],
+    "costs": [
+      "optional sacrifice of exactly one controlled creature with effective power at least the fixed threshold",
+      "ordinary mana and mandatory costs remain payable",
+      "tapped and summoning-sick creatures remain eligible"
+    ],
+    "timing": [
+      "costs commit before the cast trigger",
+      "copy normally resolves before original",
+      "copy is not cast"
+    ],
+    "targets": [
+      "cost is nontargeted",
+      "ordinary copy chooses fresh legal targets or retains original targets"
+    ],
+    "choices": [
+      "ordinary sacrifice field in cast cost option",
+      "existing spell-copy target choice",
+      "independent ordinary resolution choices"
+    ],
+    "hidden_information": [
+      "battlefield price and payment are public",
+      "opponents hands and private library choices retain ordinary projection",
+      "authoritative replacement continuations are never projected wholesale"
+    ],
+    "apnap": [
+      "ordinary cast/payment triggers join existing APNAP batch"
+    ],
+    "layers": [
+      "price uses current effective power including continuous modifiers and type changes"
+    ],
+    "replacement_effects": [
+      "canonical sacrifice replacement journal determines actual destination",
+      "redirected sacrifice remains payment",
+      "pending cast resumes with its original chosen incarnation"
+    ],
+    "copy": [
+      "one copy per paid represented instance",
+      "retains X and original choices",
+      "resolution-time choices remain independent",
+      "copy does not trigger another Casualty payment"
+    ],
+    "control_change": [
+      "price must be controlled by the caster at payment",
+      "trigger and copy retain cast-time controller"
+    ],
+    "zone_change": [
+      "selected price incarnation is sealed",
+      "source reaches stack before payment under the existing versioned placement contract"
+    ],
+    "source_leaves": [
+      "retained trigger can copy after the original spell leaves the stack"
+    ]
+  },
+  "variants": [
+    "paid and unpaid ordinary casting",
+    "current power changes",
+    "tapped/token/borrowed creature prices",
+    "redirected sacrifice",
+    "original countered before copy",
+    "copied X",
+    "independent private choices",
+    "source-placement-dependent power"
+  ],
+  "witness_cards": [
+    {
+      "name": "Flawless Forgery",
+      "oracle_id": "0e3cb267-5704-4708-94c8-e2fbce4978af"
+    },
+    {
+      "name": "A Little Chat",
+      "oracle_id": "1167fe30-32b8-4381-8067-a05cd345977b"
+    },
+    {
+      "name": "Dig Up the Body",
+      "oracle_id": "144e3d90-8ed8-4c21-941d-fc59cec042a2"
+    },
+    {
+      "name": "Xander's Pact",
+      "oracle_id": "3df11e5c-19aa-441c-a889-6b40eb3fdabf"
+    },
+    {
+      "name": "Audacious Swap",
+      "oracle_id": "40b0b93d-4075-42d6-bcd8-b2f9910cc7d2"
+    },
+    {
+      "name": "Cut Your Losses",
+      "oracle_id": "54530a84-8278-4c93-a2cb-f5c86619a053"
+    },
+    {
+      "name": "Make Disappear",
+      "oracle_id": "5f12f665-f083-48ae-b61a-541051c996ec"
+    },
+    {
+      "name": "Illicit Shipment",
+      "oracle_id": "81d62f0a-b2ba-4e87-9003-e5472bd1101f"
+    },
+    {
+      "name": "Join the Maestros",
+      "oracle_id": "849a7ae8-2b4e-4fa5-9607-2bfc961fee40"
+    },
+    {
+      "name": "Rooftop Nuisance",
+      "oracle_id": "8843faa9-0cd5-4ef3-8e7b-b8833db9dc84"
+    },
+    {
+      "name": "Cut of the Profits",
+      "oracle_id": "8ce63f60-0211-46c7-8fb6-c5484ebfa029"
+    },
+    {
+      "name": "Ob Nixilis, the Adversary",
+      "oracle_id": "a6abb6af-7ea2-43f3-8718-2a077ad0c947"
+    },
+    {
+      "name": "Grisly Sigil",
+      "oracle_id": "b9d9d118-a073-4e73-90fe-026462d1d895"
+    },
+    {
+      "name": "Light 'Em Up",
+      "oracle_id": "c6932bcf-d66b-42c1-8ca4-6a4573e0f6bf"
+    },
+    {
+      "name": "Rob the Archives",
+      "oracle_id": "df45a344-5937-4a3f-a80f-581ea456ea05"
+    }
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_casualty_spec_and_payment_fact_seal_one_distinct_instance_and_incarnation",
+    "test_casualty_power_cost_uses_current_creature_power_and_control_without_tap_price",
+    "test_casualty_numeric_cost_version_and_payload_reject_unrepresented_variants",
+    "test_casualty_source_span_and_complete_companion_require_independent_owners",
+    "test_casualty_verified_capability_withdrawal_rejects_source_and_keeps_plain_draw",
+    "test_actual_casualty_current_power_buff_and_original_counter_do_not_erase_retained_copy",
+    "test_actual_casualty_redirected_sacrifice_retains_private_pending_cast_and_exact_replay",
+    "test_actual_make_disappear_copy_and_original_issue_independent_target_controller_payments",
+    "test_actual_casualty_power_offer_reads_hand_size_after_cast_source_placement",
+    "test_actual_light_em_up_sacrifices_a_tapped_current_creature_and_retargets_once",
+    "test_actual_join_maestros_without_eligible_price_keeps_ordinary_cast_and_one_token",
+    "test_actual_cut_profits_copy_retains_x_and_both_draw_life_results",
+    "test_actual_chat_and_shipment_copy_and_original_make_independent_private_choices",
+    "test_actual_rooftop_nuisance_copy_taps_fresh_recipient_and_both_draw_tails_resolve",
+    "test_actual_rob_archives_copy_exiles_four_cards_and_offers_actual_same_turn_cast"
+  ],
+  "implementation": {
+    "component": "FixedCasualtySpec and existing typed zone-cost, cast-commit and spell-copy owners",
+    "version": "fixed-printed-casualty-v1",
+    "capability_ids": [
+      "casting.additional_cost.creature_power_minimum",
+      "casting.additional_cost.casualty_fixed"
+    ],
+    "supported_slice": "A fixed printed Casualty declaration on an independently complete ordinary instant or sorcery; optional schema-four current-power price and ordinary retained cast-copy trigger."
+  },
+  "known_blockers": [
+    "variable/permanent-copy exception",
+    "multiple and granted instances",
+    "mixed consuming costs without their own contract",
+    "unrepresented ordinary companion bodies",
+    "aggregate Casualty remains incomplete"
+  ],
+  "review_status": "reviewed"
+}

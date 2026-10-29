@@ -105,6 +105,8 @@ def counter_stack_item(
             importance=2,
         )
         return item
+    from .rules.event_spell_copy import pin_event_spell_copy_departure
+    pin_event_spell_copy_departure(host,item)
     host.state.stack.remove(item)
     cleanup_ninjutsu_reveal(host, item)
     cleanup_stack_cost_hand_reveals(host,item)

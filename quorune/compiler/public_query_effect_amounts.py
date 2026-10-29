@@ -25,6 +25,7 @@ from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_C
 from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC,TARGET_HAND_COUNT_CAPABILITY
 from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC, MULTIKICKER_AMOUNT_CAPABILITY
 from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_CAPABILITY
+from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC,CAST_MANA_VALUE_CAPABILITY
 
 
 PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
@@ -33,6 +34,7 @@ AMOUNT_MECHANIC_CAPABILITIES = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (PUBLIC_QUE
                                TARGET_HAND_COUNT_MECHANIC:(TARGET_HAND_COUNT_CAPABILITY,),
                                MULTIKICKER_AMOUNT_MECHANIC:(MULTIKICKER_AMOUNT_CAPABILITY,'casting.multikicker.fixed_mana'),
                                MANA_COLOR_AMOUNT_MECHANIC:(MANA_COLOR_AMOUNT_CAPABILITY,)}
+AMOUNT_MECHANIC_CAPABILITIES[CAST_MANA_VALUE_MECHANIC]=(CAST_MANA_VALUE_CAPABILITY,)
 
 CompiledEffectTemplate = tuple[
     str | None,
@@ -579,6 +581,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities
     from ..rules.fixed_controller_effect_shapes import fixed_controller_effect_sequence_node_capabilities
     from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
+    from ..rules.attack_event_results import attack_event_characteristic_capabilities
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
@@ -612,6 +615,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_token_creation_node_capabilities,
             fixed_target_characteristics_node_capabilities,
             fixed_source_characteristics_node_capabilities,
+            attack_event_characteristic_capabilities,
             fixed_resolution_characteristic_set_node_capabilities,
             fixed_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,
@@ -631,10 +635,12 @@ def public_query_amount_shape_context(
     from ..rules.target_hand_count_shapes import target_hand_count_dependencies
     from ..multikicker_result_amounts import multikicker_amount_dependencies
     from ..mana_spent_amounts import mana_color_amount_dependencies
+    from ..cast_event_amounts import cast_mana_value_amount_dependencies
     try:
         target_hand_count_dependencies(effects,target_schema,mechanics)
         multikicker_amount_dependencies(effects,mechanics)
         mana_color_amount_dependencies(effects,mechanics)
+        cast_mana_value_amount_dependencies(effects,mechanics)
     except (TypeError,ValueError):return None
 
     if SCALAR_AMOUNT_MECHANIC in mechanics:

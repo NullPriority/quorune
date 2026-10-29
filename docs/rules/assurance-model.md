@@ -64,6 +64,11 @@ dependencies, and reviewed summaries rather than redistributing the prose.
 Derived records never replace source meaning. A successful structural validator
 proves internal consistency, not rules completeness.
 
+A dated ruling can describe an older rule. When the pinned rules contain a
+later relevant change, record that conflict in the independent contract and
+use the pinned rule for expected behavior; do not silently preserve the older
+ruling's timing or classification.
+
 ## Expected-behavior contract
 
 Before production edits, each substantive rules family records a small

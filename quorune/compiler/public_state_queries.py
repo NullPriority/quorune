@@ -514,6 +514,13 @@ def _extended_public_battlefield_query(
     if qualified is None:
         return None
     text, relation, exclude_source, keyword_fields, state_fields = qualified
+    from ..basic_land_types import LAND_SUBTYPES
+    land_subtype = text.casefold()
+    if land_subtype not in LAND_SUBTYPES and land_subtype.endswith('s'):
+        land_subtype = land_subtype[:-1]
+    if land_subtype in LAND_SUBTYPES:
+        return relation, ObjectQuerySpec(zones=('battlefield',),types_all=('land',),
+            subtypes_all=(land_subtype,),**keyword_fields,**state_fields),exclude_source
     parsed = _public_query_characteristic_fields(text)
     if parsed is None:
         return None
@@ -1290,6 +1297,10 @@ def _object_public_state_condition(
     source_name: str,
 ) -> FixedPublicStateConditionSpec | None:
     subject = _condition_source_subject_pattern(source_name)
+    if re.fullmatch(rf"(?:it['’]s|{subject} is) renowned",normalized,re.I):
+        from ..continuous_conditions import FixedPublicStateFact
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+            amount=1,fact=FixedPublicStateFact.SOURCE_RENOWNED,schema_version=4)
     source_state = re.fullmatch(
         rf"(?:it['’]s|{subject} is) (?P<state>attacking|blocking|enchanted|"
         r"equipped|modified|monstrous|tapped|untapped)",
@@ -1486,9 +1497,14 @@ def fixed_public_state_condition(
 ) -> FixedPublicStateConditionSpec | None:
     """Parse one closed condition without coupling it to a result body."""
 
-    atomic=_fixed_public_state_condition(text,source_name=source_name)
+    def compile_atomic(term):
+        atomic=_fixed_public_state_condition(term,source_name=source_name)
+        if atomic is not None:return atomic
+        from .public_history_conditions import fixed_public_history_condition
+        return fixed_public_history_condition(term)
+    atomic=compile_atomic(text)
     return atomic if atomic is not None else compose_public_conditions(text,
-        compile_atomic=lambda term:_fixed_public_state_condition(term,source_name=source_name),
+        compile_atomic=compile_atomic,
         source_pattern=_condition_source_subject_pattern(source_name))
 
 

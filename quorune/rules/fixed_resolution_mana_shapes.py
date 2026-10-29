@@ -32,3 +32,27 @@ def is_closed_fixed_resolution_mana_program(program):
 def fixed_resolution_mana_choice_capabilities(*,effects,target_schema,mechanic_ids):
     if len(effects)!=1 or effects[0].get('op')!='choose_mana':return ()
     return fixed_resolution_mana_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
+
+
+def fixed_resolution_mana_runtime_dependencies(program):
+    """Bind canonical fixed mana leaves even inside unannotated wrappers."""
+    from collections.abc import Mapping
+    required=set()
+    def visit(value):
+        if isinstance(value,Mapping):
+            if (value.get('op')=='mana' and value.get('player')=='$controller'
+                    and value.get('source')=='$source' and not isinstance(value.get('amount'),Mapping)):
+                if 'retain_until' in value:
+                    from ..compiler.keyword_event_effect_nodes import FixedKeywordEventEffectSpec
+                    spec=FixedKeywordEventEffectSpec('firebending',value.get('amount'))
+                    if value!=spec.effects[0]:raise ValueError('Retained combat mana leaf is malformed')
+                    owned=(spec.capability_id,)
+                else:
+                    owned=fixed_resolution_mana_capabilities(effects=(value,),target_schema=None,mechanic_ids=('fixed-resolution-mana',))
+                if not owned:raise ValueError('Fixed resolution mana leaf is malformed')
+                required.update(owned)
+            for child in value.values():visit(child)
+        elif isinstance(value,(list,tuple)):
+            for child in value:visit(child)
+    visit((program.effects,program.target_schema))
+    return tuple(sorted(required))

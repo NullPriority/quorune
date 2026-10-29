@@ -12,6 +12,7 @@ from ..errors import GameRuleError
 from ..model import StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..spell_copy_engine_adapter import dispatch_normalized_spell_copy_event
+from ..declared_cast_cost_model import declared_cost_copy_fields
 from ..storm import STORM_SEMANTIC_KEY, SPELL_COPY_TRIGGER_KEYS, validated_spell_copy_trigger
 from .copy_targets import copy_target_public_schema, prepare_copy_targets
 from .model import (
@@ -280,6 +281,7 @@ class StormTargetChoiceOwnerMixin:
                         template.get("referred_object_ids") or []
                     ),
                     context={
+                        **declared_cost_copy_fields(template),
                         "target_groups": grouped,
                         "target_snapshots": thaw_value(assignment.snapshots),
                         "targets_revalidated": False,

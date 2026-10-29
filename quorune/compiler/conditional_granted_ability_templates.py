@@ -8,6 +8,8 @@ from typing import Any, Mapping
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID,
     FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
+    GRAVEYARD_TYPED_GRANT_CAPABILITY_ID,GRAVEYARD_QUERY_GRANT_HANDLER_ID,
+    GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID,
 )
 from .continuous_templates import (
     _ATTACHED_QUOTED_ABILITY_SENTINELS,
@@ -15,6 +17,13 @@ from .continuous_templates import (
     fixed_public_state_characteristics_handler,
     fixed_query_keyword_grant_handler,
 )
+
+
+def graveyard_quoted_source_parts(text):
+    match=re.fullmatch(r'As long as this card is in your graveyard(?P<tail>, .+| and .+)',text,re.I)
+    if match is None:return None
+    tail=match['tail']
+    return (tail[2:],False) if tail.startswith(', ') else ('As long as '+tail[5:],True)
 
 
 def conditional_typed_keyword_handler(text: str, *, source_name: str):
@@ -60,6 +69,8 @@ def conditional_typed_keyword_handler(text: str, *, source_name: str):
             capabilities.add('variant.monarch.designate')
         elif source_condition.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED:
             capabilities.add('variant.speed.player')
+        if any(leaf.fact is not None and leaf.fact.value=='source_renowned' for leaf in source_condition.leaf_conditions()):
+            capabilities.add('permanent.designation.renowned')
         return 'continuous-conditional-typed-keywords-v1', descriptor, tuple(sorted(capabilities))
     return None
 
@@ -106,20 +117,33 @@ def _conditional_quoted_ability_shell(
     quoted = oracle_line[start + 1:end].strip()
     if not quoted or "\n" in quoted:
         return None
+    from .granted_characteristic_nodes import granted_characteristic_reference_is_closed
+    static_characteristic = granted_characteristic_reference_is_closed(quoted)
+    graveyard = graveyard_quoted_source_parts(oracle_line)
     for sentinel in _ATTACHED_QUOTED_ABILITY_SENTINELS:
         if sentinel.casefold() in oracle_line.casefold():
             continue
         synthetic = oracle_line[:start] + sentinel + oracle_line[end + 1:]
+        graveyard_synthetic=graveyard_quoted_source_parts(synthetic) if graveyard else None
         # Both forms conjoin a fixed modifier and independently granted abilities.
         synthetic = re.sub(
             r", has (?P<keywords>[^,.]+), and has " + re.escape(sentinel),
             lambda match: " and has " + match.group("keywords") + " and " + sentinel,
             synthetic, flags=re.IGNORECASE,
         )
-        compiled = fixed_public_state_characteristics_handler(
-            synthetic, source_name=source_name,
-        )
-        if compiled is None:
+        if graveyard_synthetic is not None and not graveyard_synthetic[1]:
+            compiled = fixed_query_keyword_grant_handler(graveyard_synthetic[0])
+            if compiled is not None:
+                compiled=(compiled[0],{**compiled[1],'handler_id':GRAVEYARD_QUERY_GRANT_HANDLER_ID},compiled[2])
+        else:
+            compiled = fixed_public_state_characteristics_handler(
+                graveyard_synthetic[0] if graveyard_synthetic is not None else synthetic,
+                source_name=source_name, attached_permanent_subject=static_characteristic,
+            )
+            if compiled is not None and graveyard_synthetic is not None:
+                if compiled[1]['target']['kind'] != 'fixed_query':continue
+                compiled=(compiled[0],{**compiled[1],'handler_id':GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID},compiled[2])
+        if compiled is None and graveyard_synthetic is None:
             from .conditional_color_grants import conditional_color_grant_shell
             compiled = conditional_color_grant_shell(synthetic, source_name=source_name)
         if compiled is not None and compiled[1]["modifier"]["add_abilities"].count(sentinel) == 1:
@@ -144,15 +168,30 @@ def conditional_quoted_ability_handler(
     modifier = dict(descriptor["modifier"])
     modifier["add_abilities"] = [a for a in modifier["add_abilities"] if a != sentinel]
     modifier["add_ability_fragments"] = [dict(fragment)]
-    if 'set_colors' in descriptor:
+    if descriptor['handler_id'] == GRAVEYARD_QUERY_GRANT_HANDLER_ID:
+        descriptor['modifier']={'add_ability_fragments':[dict(fragment)],
+            **({'add_abilities':modifier['add_abilities']} if modifier['add_abilities'] else {})}
+        grant_capability=GRAVEYARD_TYPED_GRANT_CAPABILITY_ID
+        extra={'continuous.ability.fixed_query_grant','continuous.ability.graveyard_static_grant'}
+    elif descriptor['handler_id'] == GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID:
+        descriptor.update(schema_version=2,modifier=modifier)
+        grant_capability=GRAVEYARD_TYPED_GRANT_CAPABILITY_ID
+        extra={FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID,'continuous.ability.graveyard_static_grant'}
+    elif 'set_colors' in descriptor:
         from ..semantic_runtime.conditional_color_grants import CONDITIONAL_COLOR_GRANT_CAPABILITY
         descriptor['modifier'] = modifier
         grant_capability = CONDITIONAL_COLOR_GRANT_CAPABILITY
+        extra={FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID}
     else:
         descriptor.update(handler_id=FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID,
             schema_version=2, modifier=modifier)
         grant_capability = FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID
+        extra={FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID}
     capabilities = (
         set(compiled[2]) - set(_attached_ability_capabilities((sentinel,)))
-    ) | set(fragment_capabilities) | {grant_capability, FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID}
+    ) | set(fragment_capabilities) | {grant_capability,*extra}
+    from ..continuous_conditions import FixedPublicStateFact
+    raw_condition=descriptor.get('source_condition')
+    if isinstance(raw_condition,Mapping) and raw_condition.get('fact')==FixedPublicStateFact.SOURCE_RENOWNED.value:
+        capabilities.add('permanent.designation.renowned')
     return "continuous-public-conditional-typed-grant-v1", descriptor, tuple(sorted(capabilities))

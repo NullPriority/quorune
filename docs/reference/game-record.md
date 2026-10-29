@@ -2,7 +2,7 @@
 title: "Game Record v3"
 status: "current"
 authoritative_source: "quorune/record.py, quorune/replacement/model.py, quorune/replacement/ordering.py, persistence implementation, and Game Record schemas"
-verified: "2026-08-06"
+verified: "2026-10-28"
 audience: "engine, persistence, replay, and analyst contributors"
 maintenance: "hand-maintained"
 concern: "game-record"
@@ -10,10 +10,35 @@ concern: "game-record"
 
 # Game Record v3
 
+Cipher records retain a version-one typed `cipher_encoding` link on the
+physical exiled card, including both original incarnations. A committed encoded
+object departure ends the link for future grants. Existing pending triggers
+retain their own encoded-card reference and damage-time controller. Version-two
+granted-trigger fragments add `cipher_card_ref`; version-one fragment fields
+remain unchanged. Encoding and one-shot copy-cast continuations validate actor,
+offered object identity and current casting options. Runtime trigger derivation
+does not mutate the semantic registry. See
+[ADR 0135](../adr/0135-cipher-linked-grants-and-copy-casting.md).
+
 Game Record v3 is the authoritative persistence, replay, and audit directory for
 one game. It separates canonical state and accepted inputs from delivery state
 and derived review. The schemas under `schemas/game-record-v3-*.schema.json`
 and the serializer implementation define the exact format.
+
+New checkpoints carry `cast_source_placement_version: 1`, mirrored in manifest
+format provenance. The marker places the actual casting source on the stack
+before payment and completes that same spell with the paid facts. Historical
+absence retains the earlier transition order and remains absent on serialization.
+Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
+See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
+
+New checkpoints also carry `explore_action_version: 1` in matching format
+provenance. Empty-library Explore attempts a counter on the retained current
+explorer before completion through the ordinary replacement owner. Historical
+absence keeps the former empty result and serializes without the marker.
+Manifest/checkpoint disagreement and unsupported versions reject before replay.
+Existing Explore instructions and Map builtins retain their schemas. See
+[ADR 0134](../adr/0134-versioned-explore-action-semantics.md).
 
 ## Directory contract
 
@@ -116,6 +141,20 @@ The binding is internal; it does not add projected choice authority. Older
 frames without it remain structurally readable under the existing execution
 provenance contract.
 
+Count-sensitive casting options use version three of the targeted-cost fact.
+It retains the positive generic total, generic reduction total and each applied
+source's identity, controller, component identity and signed adjustment. The
+amounts are locked from the validated selected targets before payment. Versions
+one and two retain their exact historical fields and serialization. Public
+price rows for count-sensitive choices include signed generic adjustments so
+the projected form can distinguish different counts from the same sources.
+
+Self-cost metric schema five stores one closed `public_state` condition in the
+existing term list. Earlier metrics omit it and preserve their payloads. The
+prospective stack/controller view used to price it is read-only and ephemeral;
+it adds no saved GameState field. Independent paired discounts retain separate
+terms. See [ADR 0127](../adr/0127-prospective-public-self-cost-conditions.md).
+
 Fixed additional tap prices record `fixed_additional_tap_payment` in the
 selected casting option. Its closed version-one frame contains the compiled
 price and each selected physical object, logical incarnation and reference.
@@ -127,7 +166,10 @@ frame and retain their serialized form.
 
 Fixed random spell prices use the closed `random_discard` additional-cost
 descriptor with schema one and count one. Suspended payments reuse the private
-`_random_discard_cost_refs` response field and server payment identity. The
+`_random_discard_cost_refs` response field and server payment identity. New
+source-placement records bind selection to that payment and the stable source
+object, so stack placement and rollback retries cannot reroll it. Historical
+records retain their original incarnation-based randomization key. The
 continuation accepts one distinct current payment reference, excluding the
 casting spell, for a hand-to-graveyard discard event. It still validates the
 affected object, event identity and original source cost before resuming. The
@@ -248,6 +290,24 @@ meaning where the schema allows it. A current runtime never silently recompiles
 or reinterprets an old record as if it used current Oracle, rules, or
 CardPrograms.
 
+Current games pin `qualified_attack_facts_version: 1`. Declared-attack
+occurrences carry versioned public attacker characteristics sealed after
+declaration and before discovery. Pending triggers retain those facts across
+later characteristic changes, source departure, save/load and replay.
+Checkpoints without the execution marker retain the older event contexts and
+hashes; replay does not append the new fields. Unknown versions and Boolean
+versions are rejected.
+The same execution marker enables a sealed `declared_attacker_snapshots`
+collection containing public traits, attacker logical identities and declared
+recipients. Qualified batch conditions count this collection rather than live
+permanents. Their aggregation key records the actual recipient kind and
+reference and permanent incarnation when grouping by player or planeswalker, independently from the
+defending controller. Legacy unmarked checkpoints omit these additive facts.
+Receiver-bound attack characteristic results reuse the sealed
+`event_counter_recipient` reference and logical identity. A departed or new
+incarnation is skipped at resolution; the observer's identity remains the
+effect's source. Public quantity evaluation retains the trigger controller.
+
 Current games pin `spell_mana_counts_version: 1` in the initial checkpoint.
 Each original cast stores an optional version-one `mana_spent_counts` stack
 fact with its physical/logical incarnation and exact concrete WUBRGC amounts.
@@ -279,6 +339,15 @@ original spell is still on the stack. Records without runtime-trust metadata
 retain their earlier fallback-lookup behavior. This does not admit an
 unsupported copy-producing card or alter copied casting decisions.
 
+An event-bound spell-copy trigger stores an optional `event_spell_copy_source`
+version-one context containing the original stack item, logical incarnation,
+copiable characteristics, target schema and departure flag. Live references
+read current spell choices; departure updates both placed and waiting trigger
+occurrences before removal. The copy choice continuation retains the same
+reference so load and replay cannot substitute a returned card. Execution
+progress is excluded from the copied snapshot. Existing targeted-copy records
+omit this context and retain their earlier behavior.
+
 Paid-mana result instructions retain a closed threshold and an original-spell
 mana-unit reference. The bound count and selected branch use the existing
 resolution continuation; private Scry still uses its ordinary principal-scoped
@@ -287,6 +356,59 @@ stores version-one physical identity, zone-change counter and departure
 controller only for a represented target-information reference. Loading keeps
 that original incarnation; re-entry does not replace it. Earlier records omit
 the book, and earlier resolution-condition schemas keep their payloads.
+
+Scalar amount schema eight represents a committed cast spell's mana value.
+Its origin and `mana_value` characteristic are closed, and it reads the
+original normalized cast context rather than a current zone object or casting
+payment. A declared scalar cache also binds that cast's incarnation, stack
+reference, caster and value. The reader requires existing complete cast-event
+facts and adds no checkpoint or event fields. Scalar schemas one through seven
+retain their exact payloads.
+
+Activation-condition schema two contains a closed `fixed_public_state` kind
+and its existing typed condition payload. Source names participate only in
+compilation; replay uses the pinned predicate rather than reparsing Oracle.
+Legacy activation condition fields and fixed-mana payloads keep their original
+forms. The new discriminator adds no game-state or event-history fields.
+
+Public-condition schema eight stores one closed `history_query` and a
+nonnegative count or amount threshold. Its version-one query identifies the
+typed event, principal relation, card-type filters and reduction. It reads the
+existing current-turn history; it adds no presentation-log dependency or new
+event fields. Departure and graveyard-arrival queries require their existing
+history-mode markers. An absent mode is unavailable rather than a known zero.
+Condition schemas one through seven retain their original serialized shapes.
+
+History-query schema two adds a closed origin selector and permits card-type
+filters on graveyard arrivals. Complete facts require additive
+`turn_history.spell_origin_history_version` and
+`turn_history.graveyard_type_history_version` markers, each one when enabled.
+New games enable them; rollover and reset preserve them. The record manifest
+binds their versions to the initial checkpoint. Historical absence omits cast
+origins and retains empty arrival types, so replay adds no previously absent
+facts. Missing modes cannot establish a qualified zero-history condition.
+
+`turn_history.spell_mana_history_version` enables complete current-turn spell
+payment facts when set to one. Each `spell_mana_spent` fact stores its player
+and positive actual paid amount. Reset clears the facts while preserving the
+mode; historical absence omits it and adds no new facts during replay. The
+manifest binds this mode to the initial checkpoint. Expend occurrences retain
+an immutable player and before/after payment totals; later spending cannot
+change a queued crossing.
+
+The version-one `qualified_spell_cast_number` event condition stores one
+closed spell-history query and a fixed positive equality threshold. It locates
+the exact committed cast incarnation in the existing current-turn journal and
+uses only the matching prefix through that occurrence. Later casts therefore
+preserve the queued event's ordinal during replay and any intervening-if
+recheck. It adds no fields to historical cast events or checkpoints. Earlier
+unqualified spell-number conditions keep their serialized form.
+
+Fixed event-player damage reuses the existing damage instruction and sealed
+context player references. Its distinct capability identifies the closed
+source/recipient binding; it adds no checkpoint fields or projected target
+choice. Pending frames retain their original event player after source
+departure and through save/load.
 
 Upkeep-relative control history is one such additive boundary. New records pin
 its version in both the initial checkpoint and manifest; records without the
@@ -312,6 +434,41 @@ Principal projections expose only the current public counterpart reference as
 `paired_with` on battlefield objects; internal pair and incarnation identities
 remain authoritative record data.
 
+Composite quoted children use stable `:quote:<slot>` suffixes within the
+ordinary granted ability identity. Each child keeps its own semantic key and
+activation cost; the parent stores a closed characteristic modifier and the
+existing attachment or public-query target. Single-quote identities retain
+their historical form. Version-two basic-type addition payloads add an explicit
+schema version for the controller's nontoken-creature scope; version-one
+land-only payloads retain their exact fields.
+
+A distinct version-two type-replacement handler stores the existing closed
+type/color/ability modifier for a single attachment. It uses standard type
+operations and independently bound quoted child identities, with no new
+GameState field. Version-one composite handlers keep their prior identity and
+schema. Correlated subtype cleanup derives from the pinned type vocabulary;
+subtypes and supertypes remain separate characteristics.
+
+Layer-six source participation is derived from the current canonical effect
+order. Its candidate-source metadata and read-frame caches are not GameState,
+checkpoint or projection fields. Replay recomputes them from the same source,
+timestamps, modifiers and semantic programs.
+
+The version-four public-state fact codec also admits `source_renowned`, with a
+fixed threshold of one and no parameter. Evaluation reads the existing
+noncopiable renowned designation rather than counter count. The condition adds
+no new per-card state or replay mutation. Explicit graveyard typed-grant
+programs retain their source zone and independently registered handler identity;
+their granted child retains its battlefield activity and recipient identity.
+
+Granted activated-ability fragments retain their historical version-one,
+version-two and Crew version-three payloads. Version four uses the version-two
+field set with a closed canonical fixed-output mana spending restriction;
+it admits no Crew threshold or additional spending result. The stored
+restriction survives grant removal through the ordinary produced-mana
+provenance records. Unknown fields, malformed restriction encodings and
+unsupported versions reject during decoding.
+
 Resolution-created declaration rules retain their legacy locked-object payload
 when they apply to explicit target or source incarnations. Live creature-group
 rules use an additive `schema_version: 2` payload with `live_query` and an empty
@@ -320,6 +477,14 @@ public predicate; save/load preserves empty groups so later entrants can match.
 The decoder accepts the legacy shape and the exact version-two shape, rejecting
 unknown fields, malformed queries, or mixed live and locked recipients. Both
 shapes expire through the same continuous-effect cleanup owner.
+
+A resolved all-able-blocker requirement uses the additive exact
+`schema_version: 3` shape. Its `requirement` field replaces `restriction` and
+contains the historical self-scoped typed requirement payload. It locks exactly
+one battlefield incarnation and has no `live_query`. Unknown fields, mixed
+restriction and requirement payloads, other requirement kinds and malformed
+versions reject. It shares the same until-end-of-turn duration, cleanup,
+rollback and replay owner as the older forms.
 
 An optional source untap uses a version-one owned continuation inside the
 pending decision. It retains the physical turn and step, immutable participation
@@ -360,6 +525,44 @@ unavailable rather than treating the incomplete history as known empty.
 Turn rollover and checkpoint hydration preserve the chosen mode. A historical
 record with incompatible runtime trust provenance is explicitly rejected,
 not silently recompiled with new predicates.
+
+Attached untap restraints use version-one typed ability fragments with a
+closed mode and permanent-type subject. Current giver presence and attachment
+determine their applicability. They add no GameState journal or record marker;
+ordinary trusted program registration reproduces step and direct-cost checks.
+The existing untap-step descriptor does not admit the new internal any-turn
+participation relation.
+
+Player-attached characteristic contexts contain a derived enchanted-player
+identity read from the current reciprocal attachment. The fixed descriptor
+contains no player ID, and no additional GameState field or journal is stored.
+Giver-owned attack requirements use a closed version-one fragment. Attached
+activation prohibitions add a version-two fragment carrying the attached
+relation; version one retains exactly its prior version and scope fields.
+Newly generated battlefield triggers serialize the existing current-component
+coverage marker. Previously serialized unmarked programs retain their explicit
+coverage and the ordinary runtime-trust admission contract.
+
+Disjoint absent-keyword grants use a distinct version-one runtime descriptor
+with the existing object-query and keyword-list shapes. Its capability is
+required independently during binding. Earlier keyword-grant descriptors keep
+their identity and decoding behavior, and the new admission adds no GameState
+field or journal.
+
+Characteristic quantity schema six adds an explicit keyword-layer battlefield
+count. Its existing scope, predicate and exclusion fields retain their meaning;
+the serialized reduction is the fixed object-count mode. Earlier versions keep
+their original fields and earlier evaluation boundary. The version supplies no
+new GameState field and cannot encode a hidden-zone keyword count or a
+count-controlled same-layer ability grant. See
+[ADR 0126](../adr/0126-keyword-layer-characteristic-quantities.md).
+
+Bound static declaration rules use a version-one typed fragment containing a
+closed relative receiver selector, public giver condition and intrinsic rule
+children. Giver and receiver references are derived from current state during
+declaration queries. They add no GameState field or resolution journal. The
+older characteristic-grant and conditional schema-six descriptors keep their
+serialized forms and ordinary historical admission behavior.
 
 Tap-state events use an additive `tap_state_event_version` marker. New games
 pin its version in checkpoint and record format. Absence preserves historical
@@ -477,3 +680,59 @@ designation and emit that same version-three fixed-color value. No additional
 designation or private-choice state is introduced. Pending entry reload
 reissues the entering Aura controller's capability; return and a later entry
 retain ordinary new-incarnation semantics and a fresh choice.
+
+Whole-hand result preparations use the closed `discard_hand_result` replacement
+intent kind. It retains affected players and private hand member identities so
+resumption rejects a changed incarnation or membership. These identities stay
+inside the authoritative continuation. Once the discard commits, any suspended
+conditional return retains the bound ordinary draw instructions through the
+existing completed-choice codec. The result introduces no state or checkpoint
+field; earlier whole-hand instructions retain their original representation.
+
+Zone-change additional-cost schema four retains the existing fixed-cost field
+set and adds a closed current-power sacrifice meaning. Schemas one through
+three keep their prior codecs. A fixed Casualty declaration and paid fact retain
+their instance, threshold and selected creature incarnation. Preparation may
+serialize that sealed fact before costs are paid; cast-trigger construction
+checks it against the ordinary committed cost context. The existing spell-copy
+template retains X and targets independently of later source departure. Existing
+cast-source-placement modes govern prospective power reads; no new state mode,
+checkpoint field or alternate replacement/copy continuation is introduced.
+
+Zone-cost schema five adds a closed `predicate_union` field for alternative
+current permanent type/token predicates. Earlier schemas omit and reject that
+field. `declared_cast_costs` is a versioned container of source-local instance,
+cost kind and boolean declaration choices. It is carried only by casts that
+use this representation; existing Kicker and other cost fields retain their
+prior codecs. Version-twelve public-condition instructions reference this
+container and validate the linked instance before selecting a result.
+
+Original stack-to-battlefield occurrences may include immutable declaration
+facts. Older occurrences omit the field and retain their existing fingerprints.
+Normalized entry events expose only the chosen instance identifiers. Spell
+copies retain declarations through ordinary copy context and copy templates;
+ordinary permanent copies do not copy another object's casting history.
+Departure and reentry clear the previous object's facts under the existing
+zone-state owner. No checkpoint or game-state mode is added.
+
+Activated descriptors may include the optional true `forecast` marker. Older
+descriptors omit it. The marker requires hand-zone, owner-upkeep and
+once-per-turn metadata and delegates reveal/payment to existing owners.
+`forecast_reveal_v1` is an incarnation-bound source annotation containing the
+original subject, owner, turn and prior disclosure. Actual hand departure and
+non-upkeep step entry end that scope; learned identity remains. A later hand
+incarnation cannot inherit the old reveal or usage.
+
+Selected-tap schema two retains the existing field set and adds a closed color
+alternative predicate. Its internal plan seals the ability source zone and
+logical identity independently of the selected battlefield objects. Schema-one
+costs and earlier battlefield source defaults retain their prior meaning.
+
+Creature-power damage instructions with fixed doubling use explicit
+`schema_version: 2` and `power_multiplier: 2`. Both fields are required together
+and the extension applies only to one-way damage. Historical instructions omit
+both fields and retain their previous meaning and serialized shape. Runtime
+binding infers the fixed-multiple capability from these fields; removing a
+program annotation cannot remove that requirement. Source and target identity,
+current-power timing, replacement continuations and damage attribution retain
+the existing record owners.

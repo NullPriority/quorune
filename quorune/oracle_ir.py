@@ -86,6 +86,8 @@ from .compiler.fractional_player_templates import fixed_player_result_template
 from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
+from .compiler import cipher_nodes as cipher_context_owner
+from .compiler.bargain_nodes import printed_bargain_spec
 from .compiler.leveler_context_nodes import (
     leveler_compilation_rows as _leveler_compilation_rows,
     leveler_face_ir as _leveler_face_ir,
@@ -104,6 +106,7 @@ from .compiler.modal_templates import (
     fixed_nonrepeating_modal_template,
 )
 from .compiler.monarch_templates import fixed_monarch_effect_template
+from .compiler.ring_templates import fixed_ring_temptation_template
 from .compiler.keyword_nodes import (
     bloodthirst_keyword_node,
     closed_special_keyword_node,
@@ -171,7 +174,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v598"
+ORACLE_COMPILER_VERSION = "oracle-ir-v674"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -263,6 +266,9 @@ def _effect_template(
     monarch = fixed_monarch_effect_template(normalized)
     if monarch is not None:
         return monarch.compiled()
+    ring = fixed_ring_temptation_template(normalized)
+    if ring is not None:
+        return ring.compiled()
     delayed_draw = fixed_next_turn_upkeep_draw_effect_template(normalized)
     if delayed_draw is not None:
         return delayed_draw.compiled()
@@ -1021,16 +1027,24 @@ def _activated_or_fixed_event_trigger_node(
     residuals: list[OracleResidual],
     effect_template: Any,
     trigger_effect_template: Any | None = None,
+    activation_parse_line: str | None = None,
+    bargain_spec: Any = None,
 ) -> OracleNode | None:
     from .compiler.trigger_limit_nodes import limited_trigger_node
+    from .compiler.state_trigger_nodes import public_state_trigger_node
+    state_trigger=public_state_trigger_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        card_name=card_name,type_line=type_line,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals)
+    if state_trigger is not None:return state_trigger
     limited = limited_trigger_node(line=line, material_line=material_line, compile_inner=_activated_or_fixed_event_trigger_node,
         arguments=dict(node_id=node_id, span=span, card_name=card_name, type_line=type_line, keywords=keywords,
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
-            residuals=residuals, effect_template=effect_template, trigger_effect_template=trigger_effect_template))
+            residuals=residuals, effect_template=effect_template, trigger_effect_template=trigger_effect_template, bargain_spec=bargain_spec))
     if limited is not None:
         return limited
     activated = activated_oracle_node(
         node_id=node_id, line=line, span=span,
+        parse_line=activation_parse_line,
         card_name=card_name, type_line=type_line,
         keywords=keywords, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
@@ -1039,6 +1053,11 @@ def _activated_or_fixed_event_trigger_node(
     )
     if activated is not None:
         return activated
+    from .compiler.bargain_nodes import bargain_entry_trigger_node
+    bargain_entry = bargain_entry_trigger_node(bargain_spec=bargain_spec, node_id=node_id, line=line, material_line=material_line,
+        span=span, card_name=card_name, effect_template=trigger_effect_template or effect_template, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if bargain_entry is not None:return bargain_entry
     from .compiler.kicked_entry_trigger_nodes import fixed_source_entry_or_step_trigger_node
     source_entry = fixed_source_entry_or_step_trigger_node(
         node_id=node_id, line=line, material_line=material_line, span=span,
@@ -1145,6 +1164,10 @@ def _compile_face(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
     contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
+    from .compiler import station_context_nodes as station_context_owner
+    material_rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, material_rows)
+    from .compiler.bestow_nodes import face_has_fixed_bestow
+    bestow_grant_context=source_attachment_relation is None and face_has_fixed_bestow(material_rows)
     class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=material_rows)
     printed_subtypes, saga_chapters = _read_ahead_face_context(type_line, material_rows)
 
@@ -1159,7 +1182,7 @@ def _compile_face(
             capability_profile=capability_profile, residuals=residuals,
         )
         if typed_face is not None:
-            return typed_face
+            return cipher_context_owner.apply_cipher_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
     modal_blocks = fixed_nonrepeating_modal_context_blocks(
         material_rows=material_rows, face_id=face_id, oracle_text=oracle_text, card_name=face_name or record.name, type_line=type_line, keywords=keywords,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
@@ -1183,7 +1206,9 @@ def _compile_face(
             printed_card_types=tuple(sorted(card_types)),
             printed_subtypes=printed_subtypes, saga_chapters=saga_chapters,
             printed_power=None if record.faces else record.power,
-            source_attachment_relation=source_attachment_relation, trusted_mechanics=trusted_mechanics,
+            source_attachment_relation=(AttachmentReferenceKind.ENCHANTED if bestow_grant_context
+                and material_line.casefold().startswith('enchanted creature ') and '"' in material_line
+                else source_attachment_relation), trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals, keyword_node_compiler=_keyword_nodes, compile_inner=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates, material_line_for=_without_parenthetical_reminder,
         )
@@ -1193,8 +1218,10 @@ def _compile_face(
 
         ability_node = _activated_or_fixed_event_trigger_node(
             node_id=node_id, line=line, material_line=material_line, span=span,
+            activation_parse_line=material_line if station_context is not None
+                and any(span.line in symbol.member_lines for symbol in station_context.symbols) else None,
             card_name=face_name or record.name, type_line=type_line,
-            keywords=keywords, trusted_mechanics=trusted_mechanics,
+            keywords=keywords, trusted_mechanics=trusted_mechanics, bargain_spec=printed_bargain_spec(record),
             capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
             effect_template=contextual_effect_template, trigger_effect_template=contextual_trigger_effect_template,
@@ -1237,7 +1264,7 @@ def _compile_face(
 
         unowned_replacement=unowned_replacement_node(node_id=node_id,line=line,
             material_line=material_line,span=span,source_name=face_name or record.name,
-            spell=spell,permanent=permanent,has_faces=bool(record.faces),
+            spell=spell,permanent=permanent,has_faces=bool(record.faces),bargain_available=printed_bargain_spec(record) is not None,
             compile_effect=contextual_effect_template,residuals=residuals)
         if unowned_replacement is not None:
             nodes.append(unowned_replacement)
@@ -1343,7 +1370,10 @@ def _compile_face(
             )
         )
     resolved_nodes = _class_context.apply_class_context(context=class_context, oracle_id=record.oracle_id, face_id=face_id, material_rows=material_rows, printed_keywords=keywords, nodes=reject_cast_cost_composition(restrict_temporary_interaction_context(record, face_id, nodes, residuals), residuals), residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
-    return _leveler_face_ir(
+    resolved_nodes = station_context_owner.apply_station_context(context=station_context, oracle_id=record.oracle_id,
+        face_id=face_id, oracle_text=oracle_text, material_rows=material_rows, nodes=resolved_nodes,
+        residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
+    return cipher_context_owner.finish_contextual_face(cipher_context,
         leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
         keywords, resolved_nodes, residuals, capability_registry, capability_profile,
     )

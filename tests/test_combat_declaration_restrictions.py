@@ -40,7 +40,7 @@ from quorune.declaration_restrictions import (
     parse_declaration_restriction_line,
 )
 from quorune.declaration_requirements import parse_declaration_requirement_line
-from quorune.declaration_fragments import DeclarationRestrictionTemplate
+from quorune.declaration_fragments import DeclarationRestrictionTemplate,DeclarationRequirementTemplate
 from quorune.errors import GameRuleError
 from quorune.semantic_runtime.context import SemanticNodeError
 from quorune.model import CombatState
@@ -2098,38 +2098,38 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
         cases = (
             (
                 "All creatures attack each combat if able.",
-                "continuous-fixed-query-declaration-grant-v1",
+                "static-bound-declaration-rules-v1",
                 "declaration_requirement",
                 (),
             ),
             (
                 "Black creatures can't attack or block.",
-                "continuous-fixed-query-declaration-grant-v1",
+                "static-bound-declaration-rules-v1",
                 "declaration_restriction",
                 (),
             ),
             (
                 "Equipped creature can't be blocked except by Walls.",
-                "continuous-attached-declaration-grant-v1",
+                "static-bound-declaration-rules-v1",
                 "declaration_restriction",
                 (),
             ),
             (
                 "Enchanted creature gets +2/+2 and attacks each combat if able.",
-                "continuous-attached-characteristics-declaration-grant-v1",
+                "static-attached-characteristics-bound-rules-v1",
                 "declaration_requirement",
                 (),
             ),
             (
                 "All creatures have double strike and attack each combat if able.",
-                "continuous-fixed-query-keywords-declaration-grant-v1",
+                "static-query-keywords-bound-rules-v1",
                 "declaration_requirement",
                 ("Double Strike",),
             ),
             (
                 "Equipped creature gets +1/+2, has reach, and can't be blocked "
                 "by more than one creature.",
-                "continuous-attached-characteristics-declaration-grant-v1",
+                "static-attached-characteristics-bound-rules-v1",
                 "declaration_restriction",
                 ("Reach",),
             ),
@@ -2172,16 +2172,17 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 self.assertEqual("exact", ir.status, ir.material_residuals)
                 node = ir.faces[0].nodes[0]
                 self.assertEqual(template_id, node.template_id)
-                self.assertEqual(
-                    fragment_kind,
-                    node.handlers[0]["modifier"]["add_ability_fragments"][0][
-                        "kind"
-                    ],
-                )
-                self.assertEqual(
-                    list(keywords),
-                    node.handlers[0]["modifier"].get("add_abilities", []),
-                )
+                from quorune.ability_fragments import ability_fragment_from_dict
+                from quorune.bound_declaration_model import BoundStaticDeclarationRulesSpec
+                rules=[]
+                for handler in node.handlers:
+                    if 'fragment' not in handler:continue
+                    fragment=ability_fragment_from_dict(handler['fragment'])
+                    rules.extend(fragment.rules if isinstance(fragment,BoundStaticDeclarationRulesSpec) else (fragment,))
+                self.assertEqual(1,len(rules))
+                self.assertEqual(fragment_kind,'declaration_requirement' if isinstance(rules[0],DeclarationRequirementTemplate) else 'declaration_restriction')
+                self.assertEqual(list(keywords),[word for handler in node.handlers for word in handler.get('modifier',{}).get('add_abilities',[])])
+                self.assertFalse(any(handler.get('modifier',{}).get('add_ability_fragments') for handler in node.handlers))
                 self.assertIn(
                     "combat.declaration.typed_components",
                     node.capability_dependencies,
@@ -2303,7 +2304,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 "All creatures attack each combat if able.",
                 {
                     "combat.declaration.typed_components",
-                    "continuous.ability.fixed_query_grant",
+                    "combat.declaration.bound_static_rules",
                 },
             ),
             (
@@ -2321,7 +2322,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 {
                     "combat.damage.participation.strike_steps",
                     "combat.declaration.typed_components",
-                    "continuous.ability.fixed_query_grant",
+                    "combat.declaration.bound_static_rules",
                     "continuous.ability.fixed_query_keyword_grant",
                 },
             ),
@@ -2431,37 +2432,8 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
     def test_static_query_declaration_grant_uses_offer_commit_authority(self):
         session = self.make_combat_session(508_020_003, players=2)
         engine = session.engine
-        compiled = fixed_static_declaration_grant_handler(
-            (
-                "All creatures have double strike and attack each combat "
-                "if able."
-            ),
-            source_name="Global Requirement Fixture",
-        )
-        self.assertIsNotNone(compiled)
-        assert compiled is not None
-        semantic_key = "test:static-declaration-grant:global"
-        engine.semantics.put(
-            SemanticProgram(
-                key=semantic_key,
-                label="Global attack requirement",
-                oracle_id="test:static-declaration-grant",
-                ability_id=f"static:{semantic_key}",
-                active_zone="battlefield",
-                event="characteristics.evaluate",
-                handlers=[compiled[1]],
-                trust_level="provisional",
-            )
-        )
-        self.permanent(
-            engine,
-            "B",
-            "Global Requirement Fixture",
-            type_line="Token Enchantment",
-            ability_fragments=[
-                ability_fragment_to_dict(StaticComponentSpec(semantic_key))
-            ],
-        )
+        self.compiled_static_grant_source(engine,seat='B',name='Global Requirement Fixture',
+            text='All creatures have double strike and attack each combat if able.')
         required = self.creature(
             engine,
             "A",
@@ -2529,7 +2501,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 ["B"],
                 engine._effective_card_data(attacker)["colors"],
             )
-            self.assertTrue(
+            self.assertFalse(
                 any(
                     isinstance(fragment, DeclarationRestrictionTemplate)
                     for fragment in engine._effective_ability_fragments(
@@ -2538,6 +2510,9 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                     )
                 )
             )
+            from quorune.rules.temporary_declaration_restrictions import current_declaration_restrictions
+            self.assertTrue(any(p.giver is source and p.source is attacker
+                for p in current_declaration_restrictions(engine,error_type=AssertionError)))
             before = authoritative_state_hash(engine.state)
             rejected = session.act(
                 "pilot:A",

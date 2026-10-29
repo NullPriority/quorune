@@ -4,7 +4,7 @@ from ..entry_copy import copiable_oracle_id
 from dataclasses import dataclass, field, replace
 from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 
-from ..attachments import attached_object_identity
+from ..attachments import attached_object_identity,current_attached_player_seat
 from ..ability_fragments import static_component_keys
 from ..continuous_effects import ContinuousEffect
 from ..continuous_conditions import (
@@ -110,6 +110,9 @@ class _FixedPublicStateSnapshotResolver:
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> int | None:
+        if condition.history_query is not None:
+            from ..public_history_query_model import public_history_query_value
+            return public_history_query_value(self.state,source.controller,condition.history_query)
         if condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
             if self.public_object_resolver is None:
                 return None
@@ -156,6 +159,8 @@ class _FixedPublicStateSnapshotResolver:
             return int(any(card.zone == 'battlefield' and not card.phased_out
                 and card.is_commander and card.owner == source.controller and card.controller == source.controller
                 for card in self.state.cards.values()))
+        if fact is FixedPublicStateFact.SOURCE_RENOWNED:
+            return int(source.zone == 'battlefield' and not source.phased_out and source.renowned)
         if fact in {
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES,
@@ -517,13 +522,21 @@ def fixed_public_state_condition_matches(
         quantity_resolver=quantity_resolver,
     )
     snapshot = resolver.snapshot(source, condition)
-    if require_available and condition.kind in {
+    quantity_kinds={
         FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST,
         FixedPublicStateConditionKind.QUERY_COUNT_AT_MOST,
         FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
         FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
-    } and snapshot.condition_quantity is None:
+        FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
+        FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST,
+    }
+    leaves=condition.leaf_conditions();snapshots=snapshot.term_snapshots if condition.terms else (snapshot,)
+    if require_available and any(leaf.kind in quantity_kinds and child.condition_quantity is None for leaf,child in zip(leaves,snapshots)):
         raise FixedPublicStateConditionError("The public resolution condition is unavailable")
+    if require_available and any((leaf.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY and child.source_query_matches is None)
+            or (leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY and child.attached_query_matches is None)
+            for leaf,child in zip(leaves,snapshots)):
+        raise FixedPublicStateConditionError('The public object condition is unavailable')
     return condition.matches(snapshot)
 
 
@@ -583,17 +596,33 @@ def _annotated_static_component_keys(source: Any) -> tuple[str, ...]:
     )
 
 
+def _cipher_encoded_object(state, source, descriptor):
+    from ..cipher_model import CIPHER_GRANT_HANDLER
+    if descriptor.get('handler_id') != CIPHER_GRANT_HANDLER:
+        return None
+    from ..rules.cipher import current_cipher_encoding
+    link = current_cipher_encoding(state, source)
+    return link.creature if link is not None else None
+
+
 def _continuous_programs_for_source(
     semantics: "SemanticRegistry",
     source: Any,
     static_component_resolver: Callable[[Any], Sequence[str]] | None,
     early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     maximum_layer: Layer | None = None,
+    ability_source_participation: Callable[[Any,str],bool|None] | None = None,
 ) -> tuple["SemanticProgram", ...]:
+    if source.zone == 'exile':
+        from ..cipher_model import CIPHER_GRANT_HANDLER
+        return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
+            active_zone='exile', event='characteristics.evaluate') if any(d.get('handler_id') == CIPHER_GRANT_HANDLER for d in p.handlers))
     if source.zone == 'graveyard':
+        from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID, GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
         return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
             active_zone='graveyard', event='characteristics.evaluate') if any(
-            d.get('handler_id') == 'continuous.characteristics.graveyard-public-state.v1' for d in p.handlers))
+            d.get('handler_id') in {'continuous.characteristics.graveyard-public-state.v1',
+                GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID} for d in p.handlers))
     if static_component_resolver is not None:
         programs = {program.key: program for program in _applicable_static_programs(
             semantics, source, static_component_resolver(source))}
@@ -602,6 +631,11 @@ def _continuous_programs_for_source(
             layer = min((registry.source_component_layer(descriptor) for descriptor in program.handlers),
                 default=Layer.ABILITY)
             if layer >= Layer.ABILITY:
+                if ability_source_participation is not None and (maximum_layer is None or maximum_layer>=Layer.ABILITY):
+                    present=ability_source_participation(source,program.key)
+                    if present is not None:
+                        programs.pop(program.key,None)
+                        if present:programs[program.key]=program
                 continue
             if maximum_layer is not None and maximum_layer <= layer:
                 programs.pop(program.key, None)
@@ -651,7 +685,8 @@ def _component_public_state_snapshot(
     """Keep early-layer settings separate from characteristic query conditions."""
     handler_id = descriptor.get('handler_id')
     from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
-    if handler_id==QUANTIFIED_ANTHEM_HANDLER and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
+    from ..semantic_runtime.shared_type_anthems import SHARED_TYPE_ANTHEM_HANDLER
+    if handler_id in {QUANTIFIED_ANTHEM_HANDLER,SHARED_TYPE_ANTHEM_HANDLER} and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
         return True,None
     if handler_id == 'continuous.characteristics.conditional-creature-type-removal.v1':
         from ..semantic_runtime.fixed_characteristic_settings import ConditionalCreatureTypeRemovalHandler
@@ -674,6 +709,7 @@ def _component_public_state_snapshot(
         CONDITIONAL_DEFENDER_PERMISSION_HANDLER, CONDITIONAL_AS_UNBLOCKED_HANDLER,
         'continuous.block-capacity.public-state.v1', 'continuous.declaration.public-state.v1',
         'continuous.characteristics.graveyard-public-state.v1',
+        'continuous.ability.graveyard-public-state-grant.v2',
         'continuous.characteristics.public-state-keywords.v1',
         'continuous.characteristics.conditional-chosen-designation.v1',
         'continuous.ability.conditional-flash.v1',
@@ -698,6 +734,53 @@ def _descriptor_characteristic_quantity(source,descriptor,*,quantity_resolver,ma
     return None
 
 
+def _descriptor_public_type_objects(source,descriptor,*,state,resolver):
+    from ..semantic_runtime.shared_type_anthems import SHARED_TYPE_ANTHEM_HANDLER
+    if descriptor.get('handler_id')!=SHARED_TYPE_ANTHEM_HANDLER:
+        return None
+    if descriptor.get('relation')=='source_attached_to_object' and not getattr(source,'attached_to',None):
+        return None
+    if resolver.public_object_resolver is None:
+        raise SemanticNodeError('Shared-type effects require a cycle-safe public object resolver')
+    objects=(card for card in state.cards.values() if card.zone=='battlefield' and not card.phased_out)
+    return tuple(resolver._public_object(card) for card in sorted(objects,key=lambda card:card.object_id))
+
+
+def _continuous_program_instances(semantics, source, programs, granted_resolver):
+    if granted_resolver is None:
+        return tuple((program, None, None) for program in programs)
+    from ..rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed
+    result = [(program, None, None) for program in programs
+        if not (program.provenance.get('granted_only') and program.ability_id.startswith('static:granted:')
+            and program.event == 'characteristics.evaluate')]
+    for ordinal, (key, timestamp) in enumerate(granted_resolver(source)):
+        program = semantics.get(key)
+        if (program is None or program.provenance.get('granted_only') is not True
+                or program.active_zone != 'battlefield' or program.event != 'characteristics.evaluate'
+                or not program.ability_id.startswith('static:granted:') or program.effects
+                or not granted_characteristic_handlers_are_closed(program.handlers)):
+            raise SemanticNodeError('Current granted characteristic references an unknown or different static child')
+        result.append((program, timestamp, ordinal))
+    return tuple(result)
+
+
+def _granted_characteristic_timestamp_order(effects, grant_order):
+    groups = {}
+    for effect in effects:
+        groups.setdefault((effect.source_id, effect.layer, effect.sublayer, effect.timestamp), []).append(effect)
+    replacements = {}
+    for group in groups.values():
+        if not any(effect.effect_id in grant_order for effect in group):
+            continue
+        ordered = sorted(group, key=lambda effect: (effect.effect_id in grant_order,
+            grant_order.get(effect.effect_id, (0, 0, '')), effect.effect_id))
+        for previous, effect in zip(ordered, ordered[1:]):
+            if effect.effect_id in grant_order:
+                replacements[effect.effect_id] = replace(effect,
+                    depends_on=tuple(sorted({*effect.depends_on, previous.effect_id})))
+    return tuple(replacements.get(effect.effect_id, effect) for effect in effects)
+
+
 def collect_card_program_continuous_effects(
     state: ContinuousRuntimeState,
     semantics: "SemanticRegistry",
@@ -712,6 +795,9 @@ def collect_card_program_continuous_effects(
     static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
     early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     static_component_presence_only: bool = False,
+    granted_characteristic_resolver: Callable[[Any], Sequence[tuple[str, int]]] | None = None,
+    ability_source_participation: Callable[[Any,str],bool|None] | None = None,
+    generated_effect_sources: dict[str,tuple[str,str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
     registered_handler_ids = frozenset(
@@ -720,6 +806,7 @@ def collect_card_program_continuous_effects(
     if metrics is not None:
         metrics.collection_calls += 1
     effects: list[ContinuousEffect] = []
+    grant_order = {}
     public_state_resolver = _FixedPublicStateSnapshotResolver(
         state=state,
         public_object_resolver=public_object_resolver,
@@ -732,25 +819,27 @@ def collect_card_program_continuous_effects(
 
     for seat in state.turn_order:
         player = state.players[seat]
-        for object_id in [*player.zones['battlefield'], *player.zones['graveyard']]:
+        for object_id in [*player.zones['battlefield'], *player.zones['graveyard'], *player.zones['exile']]:
             source = state.cards[object_id]
             if metrics is not None and source.zone == 'battlefield':
                 metrics.battlefield_objects_inspected += 1
             if (
-                (source.owner if source.zone == 'graveyard' else source.controller) != seat
+                (source.owner if source.zone in {'graveyard', 'exile'} else source.controller) != seat
                 or source.phased_out
-                or getattr(source, "face_down", False)
+                or getattr(source, "face_down", False) and granted_characteristic_resolver is None
             ):
                 continue
             if source.zone == 'graveyard':
                 from ..continuous_conditions import OwnerRelativeConditionSource
                 source = OwnerRelativeConditionSource(source)
-            programs = _continuous_programs_for_source(
-                semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer
+            programs = () if getattr(source, 'face_down', False) else _continuous_programs_for_source(
+                semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer,
+                ability_source_participation,
             )
             if metrics is not None:
                 metrics.card_program_lookups += 1
-            for program in programs:
+            for program, grant_timestamp, occurrence in _continuous_program_instances(
+                    semantics, source, programs, granted_characteristic_resolver):
                 if not program_is_trusted(program):
                     continue
                 for descriptor_index, descriptor in enumerate(
@@ -777,14 +866,16 @@ def collect_card_program_continuous_effects(
                         from ..soulbond_state import paired_object_identity
                         paired_object = paired_object_identity(state, source)
                     context = ContinuousEffectSourceContext(
+                        cipher_encoded_object=_cipher_encoded_object(state, source, descriptor),
+                        enchanted_player=current_attached_player_seat(source,state.players),
                         source_object_id=source.object_id,
                         source_ref=source.ref,
                         source_controller=source.controller,
                         source_timestamp=max(
-                            0, int(source.zone_timestamp)
+                            0, int(source.zone_timestamp), grant_timestamp if grant_timestamp is not None else 0
                         ),
                         component_id=(
-                            f"{program.key}:{descriptor_index}"
+                            f"{program.key}:{descriptor_index}" + (f':grant:{occurrence}' if occurrence is not None else '')
                         ),
                         source_logical_object_id=source.logical_object_id,
                         source_counters=FrozenMap(
@@ -798,6 +889,8 @@ def collect_card_program_continuous_effects(
                         public_state=public_state,
                         resolved_quantity=resolved_quantity,
                         paired_object=paired_object,
+                        public_type_objects=_descriptor_public_type_objects(source,descriptor,state=state,
+                                                                           resolver=public_state_resolver),
                         attached_object=(
                             attached_object_identity(state.cards, source)
                             if getattr(source, "attached_to", None)
@@ -812,11 +905,15 @@ def collect_card_program_continuous_effects(
                             if effect.layer <= maximum_layer
                         )
                     effects.extend(lowered)
+                    if generated_effect_sources is not None:
+                        generated_effect_sources.update({effect.effect_id:(source.object_id,program.key) for effect in lowered})
+                    if grant_timestamp is not None:
+                        grant_order.update({effect.effect_id:(grant_timestamp, occurrence, program.key) for effect in lowered})
                     if metrics is not None:
                         metrics.effects_produced += len(lowered)
     return tuple(
         sorted(
-            effects,
+            _granted_characteristic_timestamp_order(effects, grant_order),
             key=lambda effect: (
                 int(effect.layer),
                 effect.sublayer,

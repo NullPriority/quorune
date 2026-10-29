@@ -204,7 +204,8 @@ class FixedCounterZoneTriggerRuntimeTests(unittest.TestCase):
             revealed_to=list(engine.seats) if public else [],
         )
         engine.state.cards[card.object_id] = card
-        engine.state.players[seat].zones[zone].append(card.object_id)
+        zone_seat = current_controller if zone == 'battlefield' else seat
+        engine.state.players[zone_seat].zones[zone].append(card.object_id)
         return card
 
     @staticmethod

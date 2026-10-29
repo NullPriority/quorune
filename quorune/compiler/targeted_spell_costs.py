@@ -35,7 +35,7 @@ def self_target_reduction_template(text):
         'event':TARGETED_SPELL_COST_EVENT,'modifier':spec.to_dict()},(TARGETED_SPELL_COST_CAPABILITY,SELF_TARGET_REDUCTION_CAPABILITY)
 
 
-def targeted_spell_cost_template(text,*,source_name):
+def _legacy_targeted_spell_cost_template(text,*,source_name):
     reduction=re.fullmatch(r'Spells(?P<caster> you cast| your opponents cast)? that target (?P<subject>.+?) cost \{(?P<amount>[1-9]\d*)\} less to cast\.?',text.strip(),re.I)
     if reduction is not None:
         subject=reduction['subject'].strip();relation={None:'any',' you cast':'source_controller',' your opponents cast':'source_opponents'}[reduction['caster'].casefold() if reduction['caster'] else None]
@@ -56,3 +56,10 @@ def targeted_spell_cost_template(text,*,source_name):
     spec=TargetedSpellCostSpec(kind,int(match['amount']))
     return 'targeted-fixed-spell-cost-v1',{'handler_id':TARGETED_SPELL_COST_HANDLER,'schema_version':1,
         'event':TARGETED_SPELL_COST_EVENT,'modifier':spec.to_dict()},TARGETED_SPELL_COST_CAPABILITY
+
+
+def targeted_spell_cost_template(text,*,source_name):
+    from .public_target_spell_costs import public_target_spell_cost_template
+    from .distinct_target_costs import distinct_target_cost_template
+    return (_legacy_targeted_spell_cost_template(text,source_name=source_name)
+        or public_target_spell_cost_template(text,source_name=source_name) or distinct_target_cost_template(text))

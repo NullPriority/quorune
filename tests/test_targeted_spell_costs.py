@@ -29,8 +29,8 @@ class TargetedSpellCostCompilerTests(unittest.TestCase):
         self.assertEqual('exact',ir.status)
         self.assertEqual(-2,ir.faces[0].nodes[0].handlers[0]['modifier']['generic'])
         self.assertEqual('source_opponents',ir.faces[0].nodes[0].handlers[0]['modifier']['caster_relation'])
-        for variant in (text.replace('this creature','a Merfolk you control'),text.replace('{2}','{U}'),
-                text.replace('Spells','Abilities').replace('cast','activate')):
+        for variant in (text.replace('this creature','a creature with an odd number of counters'),text.replace('{2}','{U}'),
+                text.replace('Spells','Abilities').replace('cast','activate').replace('{2}','{U}')):
             self.assertNotEqual('exact',compile_oracle_card(record(variant,'Creature'),capability_registry=self.registry).status)
         raw=TargetedSpellCostSpec(TargetedCostSubject.SOURCE,2).to_dict()
         for change in ({'schema_version':True},{'generic':True},{'generic':0},{'subject':'all_creatures'},{'extra':1}):

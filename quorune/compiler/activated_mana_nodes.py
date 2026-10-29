@@ -310,7 +310,10 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    'choose_untap_lands',
+    'order_library_top','shuffle_controller_library',
     'create_token_then_counters',
+    'discard_hands_then_draw',
     'prohibit_casting_until_end_of_turn',
     'return_random_graveyard_cards',
     "copy_stack_item",
@@ -520,7 +523,7 @@ _ACTIVATION_RESTRICTION_PREFIX = re.compile(
     r"^(?P<effect>.+?)\s+activate only ",
     re.IGNORECASE,
 )
-def _activated_effect_material(ability: ActivatedAbility) -> str:
+def _activated_effect_material(ability: ActivatedAbility, *, source_name=None) -> str:
     """Remove only a complete restriction already present in typed metadata."""
 
     material = ability.effect_text.strip()
@@ -528,7 +531,7 @@ def _activated_effect_material(ability: ActivatedAbility) -> str:
     if prefix is None:
         return material
     represented = activation_restriction_spec(
-        material[prefix.end() :]
+        material[prefix.end() :],source_name=source_name
     )
     if represented is None:
         return material
@@ -653,7 +656,10 @@ def _compiled_activated_effect(
     return (
         compiled.compiled()
         if compiled is not None
-        else effect_template(text, card_name=card_name)
+        else effect_template(
+            re.sub(r'^It deals (?=damage equal to )', 'This permanent deals ', text, flags=re.I),
+            card_name=card_name,
+        )
     )
 
 
@@ -675,6 +681,7 @@ def activated_oracle_node(
         Mapping[str, Any] | None,
         tuple[str, ...],
     ]],
+    parse_line: str | None = None,
 ) -> OracleNode | None:
     """Compile one complete colon-form activated-ability Oracle line."""
 
@@ -695,7 +702,7 @@ def activated_oracle_node(
         )
     abilities = parse_activated_abilities(
         card_name=card_name,
-        oracle_text=line,
+        oracle_text=line if parse_line is None else parse_line,
         keywords=keywords,
     )
     if not abilities:
@@ -718,7 +725,7 @@ def activated_oracle_node(
     )
     if color_set_mana is not None:
         return color_set_mana
-    effect_material = _activated_effect_material(ability)
+    effect_material = _activated_effect_material(ability,source_name=card_name)
     self_zone_move = compile_self_zone_move(ability)
     handlers: tuple[Mapping[str, Any], ...] = ()
     if self_zone_move is not None:

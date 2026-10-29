@@ -52,6 +52,8 @@ from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
 from .static_component_scope import (
+    GRANTED_STATIC_COST_EVENT, GRANTED_STATIC_COST_CAPABILITY,
+    GRANTED_STATIC_CHARACTERISTIC_EVENT, GRANTED_STATIC_CHARACTERISTIC_CAPABILITY,
     StaticComponentApplicabilitySpec,
     StaticComponentScopeSpec,
 )
@@ -97,30 +99,36 @@ class DamageKeywordTriggerKind(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class ActivationProhibitionSpec:
-    """One layer-6 prohibition carried by the affected source object."""
+    """An affected-source prohibition or independently admitted attached rule."""
 
     scope: str
     schema_version: int = 1
+    relation: str = 'self'
 
     def __post_init__(self) -> None:
-        if self.scope not in {"all", "nonmana"}:
+        if type(self.scope) is not str or self.scope not in {"all", "nonmana"}:
             raise AbilityFragmentError(
                 "Activation prohibitions require all or nonmana scope"
             )
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if (type(self.schema_version) is not int or self.schema_version not in {1,2}
+                or self.relation!=('self' if self.schema_version==1 else 'attached')):
             raise AbilityFragmentError(
                 "Activation-prohibition schema version is unsupported"
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version": self.schema_version, "scope": self.scope}
+        result={"schema_version": self.schema_version, "scope": self.scope}
+        if self.schema_version==2:result['relation']=self.relation
+        return result
+
+    @property
+    def capability_id(self):
+        return 'activation.restriction.attached_static_rule' if self.schema_version==2 else None
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ActivationProhibitionSpec":
-        if not isinstance(value, Mapping) or set(value) != {
-            "schema_version",
-            "scope",
-        }:
+        if not isinstance(value, Mapping) or set(value) != ({'schema_version','scope','relation'}
+                if value.get('schema_version')==2 else {'schema_version','scope'}):
             raise AbilityFragmentError(
                 "Activation-prohibition fragments have a closed schema"
             )
@@ -446,6 +454,9 @@ class ProtectionSpec:
 
 
 from .granted_activation_model import GrantedActivatedAbilitySpec
+from .untap_restraint_model import AttachedUntapRestraintSpec
+from .enchanted_player_model import EnchantedPlayerAttackRequirementSpec
+from .bound_declaration_model import BoundStaticDeclarationRulesSpec
 
 
 def _nonempty_string(value: Any, *, field: str) -> str:
@@ -464,12 +475,18 @@ class GrantedTriggeredAbilitySpec:
     event: str
     label: str
     schema_version: int = 1
+    cipher_card_ref: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise AbilityFragmentError(
                 "Unsupported granted triggered-ability schema version"
             )
+        if self.schema_version == 1 and self.cipher_card_ref is not None:
+            raise AbilityFragmentError('Version-one granted triggers reserve Cipher identity')
+        if self.schema_version == 2:
+            if type(self.cipher_card_ref) is not str or not self.cipher_card_ref or self.semantic_key != 'builtin:cipher' or self.event != 'damage.dealt.self':
+                raise AbilityFragmentError('Version-two granted triggers require their Cipher identity')
         for field in ("ability_id", "semantic_key", "event", "label"):
             object.__setattr__(
                 self,
@@ -478,13 +495,16 @@ class GrantedTriggeredAbilitySpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "schema_version": self.schema_version,
             "ability_id": self.ability_id,
             "semantic_key": self.semantic_key,
             "event": self.event,
             "label": self.label,
         }
+        if self.schema_version == 2:
+            result['cipher_card_ref'] = self.cipher_card_ref
+        return result
 
     @classmethod
     def from_dict(
@@ -497,7 +517,7 @@ class GrantedTriggeredAbilitySpec:
             "event",
             "label",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        if not isinstance(value, Mapping) or set(value) != expected | ({'cipher_card_ref'} if value.get('schema_version') == 2 else set()):
             raise AbilityFragmentError(
                 "Granted triggered-ability fragments have a closed schema"
             )
@@ -686,12 +706,21 @@ class StaticComponentSpec:
 
     semantic_key: str
     schema_version: int = 1
+    event: str | None = None
+    grant_timestamp: int | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2, 3):
             raise AbilityFragmentError(
                 "Unsupported static-component fragment schema version"
             )
+        if (self.schema_version == 1 and self.event is not None
+                or self.schema_version == 2 and self.event != GRANTED_STATIC_COST_EVENT
+                or self.schema_version == 3 and self.event != GRANTED_STATIC_CHARACTERISTIC_EVENT):
+            raise AbilityFragmentError('Granted static component requires its closed cost event')
+        if (self.schema_version != 3 and self.grant_timestamp is not None
+                or self.grant_timestamp is not None and (type(self.grant_timestamp) is not int or self.grant_timestamp < 0)):
+            raise AbilityFragmentError('Only version3 characteristic grants carry a nonnegative grant timestamp')
         if (
             type(self.semantic_key) is not str
             or not self.semantic_key.strip()
@@ -702,14 +731,28 @@ class StaticComponentSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "semantic_key": self.semantic_key,
         }
+        if self.schema_version in {2, 3}:
+            value['event'] = self.event
+        if self.schema_version == 3:
+            value['grant_timestamp'] = self.grant_timestamp
+        return value
+
+    @property
+    def capability_id(self):
+        return (GRANTED_STATIC_COST_CAPABILITY if self.schema_version == 2 else
+            GRANTED_STATIC_CHARACTERISTIC_CAPABILITY if self.schema_version == 3 else None)
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "StaticComponentSpec":
         expected = {"schema_version", "semantic_key"}
+        if isinstance(value, Mapping) and value.get('schema_version') in {2, 3}:
+            expected.add('event')
+        if isinstance(value, Mapping) and value.get('schema_version') == 3:
+            expected.add('grant_timestamp')
         if not isinstance(value, Mapping) or set(value) != expected:
             raise AbilityFragmentError(
                 "Static-component fragments have a closed schema"
@@ -723,6 +766,9 @@ StaticAbilityFragment: TypeAlias = (
     | LinkedGraveyardCreatureEnchantSpec
     | ProtectionSpec
     | GrantedActivatedAbilitySpec
+    | AttachedUntapRestraintSpec
+    | EnchantedPlayerAttackRequirementSpec
+    | BoundStaticDeclarationRulesSpec
     | GrantedTriggeredAbilitySpec
     | CombatKeywordTriggerSpec
     | DamageKeywordTriggerSpec
@@ -770,6 +816,12 @@ def ability_fragment_to_dict(
         kind = "protection"
     elif isinstance(fragment, GrantedActivatedAbilitySpec):
         kind = "granted_activated"
+    elif isinstance(fragment, AttachedUntapRestraintSpec):
+        kind = 'attached_untap_restraint'
+    elif isinstance(fragment, EnchantedPlayerAttackRequirementSpec):
+        kind = 'enchanted_player_attack_requirement'
+    elif isinstance(fragment, BoundStaticDeclarationRulesSpec):
+        kind = 'bound_static_declaration_rules'
     elif isinstance(fragment, GrantedTriggeredAbilitySpec):
         kind = "granted_triggered"
     elif isinstance(fragment, CombatKeywordTriggerSpec):
@@ -862,6 +914,12 @@ def ability_fragment_from_dict(
         return ProtectionSpec.from_dict(value["value"])
     if value["kind"] == "granted_activated":
         return GrantedActivatedAbilitySpec.from_dict(value["value"])
+    if value['kind']=='attached_untap_restraint':
+        return AttachedUntapRestraintSpec.from_dict(value['value'])
+    if value['kind']=='enchanted_player_attack_requirement':
+        return EnchantedPlayerAttackRequirementSpec.from_dict(value['value'])
+    if value['kind']=='bound_static_declaration_rules':
+        return BoundStaticDeclarationRulesSpec.from_dict(value['value'])
     if value["kind"] == "granted_triggered":
         return GrantedTriggeredAbilitySpec.from_dict(value["value"])
     if value["kind"] == "combat_keyword_trigger":
@@ -980,6 +1038,9 @@ def canonical_ability_fragments(
                 LinkedGraveyardCreatureEnchantSpec,
                 ProtectionSpec,
                 GrantedActivatedAbilitySpec,
+                AttachedUntapRestraintSpec,
+                EnchantedPlayerAttackRequirementSpec,
+                BoundStaticDeclarationRulesSpec,
                 GrantedTriggeredAbilitySpec,
                 CombatKeywordTriggerSpec,
                 DamageKeywordTriggerSpec,
@@ -1390,6 +1451,9 @@ __all__ = [
     "DeclarationRequirementTemplate",
     "DeclarationRestrictionTemplate",
     "GrantedActivatedAbilitySpec",
+    "AttachedUntapRestraintSpec",
+    "EnchantedPlayerAttackRequirementSpec",
+    "BoundStaticDeclarationRulesSpec",
     "GrantedTriggeredAbilitySpec",
     "PartnerWithSpec",
     "ActivationProhibitionSpec",

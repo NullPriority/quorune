@@ -75,6 +75,12 @@ its class through the module. Importing a helper `TestCase` class into a module
 global makes unittest collect it again. Shard validation rejects that duplicate
 collection boundary before launching a matrix.
 
+Long native composition tests are divided along coherent rules owners so the
+existing `loadfile` workers can schedule separate modules. Shared fixture and
+action helpers remain in a non-`TestCase` mixin referenced through its module.
+Partitioning preserves every scenario and assertion; it changes neither the
+fixed worker budget nor the primary ownership rule.
+
 Scheduler ranking fixtures explicitly satisfy unrelated interaction exit debt
 when testing harvest ranking or measurement freshness. Dedicated assurance tests
 retain the current inventory and set their own debt boundary; live corpus growth

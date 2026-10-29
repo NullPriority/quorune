@@ -31,9 +31,12 @@ def named_source_union_candidate(text: str) -> bool:
     return _NAMED_SOURCE_UNION_PREFIX.match(text) is not None
 
 
-def normalized_source_event_line(text: str, *, source_name: str) -> str | None:
+def normalized_source_event_line(text: str, *, source_name: str, named_only: bool = False) -> str | None:
     """Normalize only an independently closed self-action event subject."""
-    if _SOURCE_EVENT.fullmatch(text) is None:
+    event = _SOURCE_EVENT.fullmatch(text)
+    if event is None:
+        return None
+    if named_only and not SourceReferenceSpec(source_name).matches(event['subject']):
         return None
     source = re.fullmatch(
         rf"(?P<prefix>(?:When|Whenever) )(?P<subject>{SourceReferenceSpec(source_name).regex_pattern}"
@@ -54,6 +57,10 @@ def source_self_contextual_effect_template(
     compile_effect: Any = None,
 ) -> tuple[Any, ...] | None:
     """Delegate one source-bound body to its closed typed leaf owner."""
+
+    from .event_player_choice_templates import source_death_player_sacrifice_result
+    sacrifice = source_death_player_sacrifice_result(text, event_phrase=event_phrase)
+    if sacrifice is not None:return sacrifice
 
     counter_payment = _source_self_counter_payment(text,card_name=card_name,compile_effect=compile_effect)
     if counter_payment is not None:
@@ -135,6 +142,7 @@ def normalized_source_result_body(body: str) -> str | None:
     """Bind only a complete source-led result, never new-object anaphora."""
     if re.search(r'\b(?:target|create|choose|another|that)\b',body,re.I):return None
     if not (re.match(r'(?:it|him|her) (?:gets|gains|deals)\b',body,re.I)
+            or re.fullmatch(r'(?:Tap|Untap) (?:it|him|her)\.',body,re.I)
             or re.fullmatch(r'(?:(?:you may )?put .+? counter(?:s)? on|double the number of .+? counters on) (?:it|him|her)\.',body,re.I)):
         return None
     return re.sub(r'\b(?:it|him|her)\b','this creature',body,flags=re.I)

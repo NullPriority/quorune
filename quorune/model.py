@@ -20,7 +20,10 @@ from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
 from .ability_source_information import ability_source_information_version
+from .qualified_attack_model import qualified_attack_facts_version
 from .cast_face_offers import cast_face_offers_version
+from .cast_source_placement_model import cast_source_placement_version
+from .explore_action_model import explore_action_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
 
@@ -54,6 +57,7 @@ PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
 PLAYER_COUNTERS_FIELD = "counters"
 
 TurnHistoryEventKind = Literal[
+    "spell_mana_spent",
     "spell_cast",
     "card_discarded",
     "creature_attacked",
@@ -91,11 +95,17 @@ class TurnHistoryEvent:
     origin: str | None = None
 
     def __post_init__(self):
-        if self.origin is not None and (type(self.origin) is not str or self.origin not in {'battlefield','hand','library','stack','exile','command','outside'}):
+        if self.kind=='spell_mana_spent' and (
+                type(self.actor) is not str or not self.actor or type(self.amount) is not int or self.amount<=0
+                or any(value is not None for value in (self.object_incarnation,self.target,self.target_kind,
+                    self.target_object_incarnation,self.origin)) or self.types):
+            raise ValueError('Spell-mana history requires one positive player payment')
+        if self.origin is not None and (type(self.origin) is not str or self.origin not in {'battlefield','hand','library','graveyard','stack','exile','command','outside'}):
             raise ValueError('Turn-history arrival origin is closed')
-        if self.kind=='card_arrived_graveyard' and (self.origin is None or type(self.object_incarnation) is not str or not self.object_incarnation):
+        if self.kind=='card_arrived_graveyard' and (self.origin is None or self.origin=='graveyard' or type(self.object_incarnation) is not str or not self.object_incarnation):
             raise ValueError('Graveyard arrival needs its exact arrived incarnation and origin')
-        if self.kind!='card_arrived_graveyard' and self.origin is not None:raise ValueError('Only graveyard arrival history has an origin')
+        if self.kind not in {'card_arrived_graveyard','spell_cast'} and self.origin is not None:raise ValueError('Only cast and graveyard arrival history has an origin')
+        if self.kind=='spell_cast' and self.origin in {'battlefield','stack'}:raise ValueError('A cast needs a supported pre-stack origin')
         if self.kind=='card_milled_graveyard' and (type(self.object_incarnation) is not str or not self.object_incarnation):
             raise ValueError('Mill arrival history needs its exact graveyard incarnation')
 
@@ -131,6 +141,9 @@ class TurnHistory:
     departure_history_version: int | None = None
     arrival_history_version: int | None = None
     mill_history_version: int | None = None
+    spell_origin_history_version: int | None = None
+    graveyard_type_history_version: int | None = None
+    spell_mana_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -144,10 +157,15 @@ class TurnHistory:
             raise ValueError("Unsupported departure-history version")
         if self.arrival_history_version is not None and (type(self.arrival_history_version) is not int or self.arrival_history_version!=1):raise ValueError('Unsupported arrival-history version')
         if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
+        for mode in (self.spell_origin_history_version,self.graveyard_type_history_version,self.spell_mana_history_version):
+            if mode is not None and (type(mode) is not int or mode!=1):raise ValueError('Unsupported qualified history version')
+        if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
         ):
             raise ValueError("Turn-history events must be typed")
+        if self.spell_mana_history_version is None and any(event.kind=='spell_mana_spent' for event in self.events):
+            raise ValueError('Spell-mana facts require complete payment history')
         previous_absent = self.previous_turn_sequence is None
         if previous_absent != (self.previous_active_player is None):
             raise ValueError(
@@ -183,6 +201,9 @@ class TurnHistory:
             "events": [event.to_dict() for event in self.events],
             **({"arrival_history_version":1} if self.arrival_history_version is not None else {}),
             **({"mill_history_version":1} if self.mill_history_version is not None else {}),
+            **({"spell_origin_history_version":1} if self.spell_origin_history_version is not None else {}),
+            **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
+            **({"spell_mana_history_version":1} if self.spell_mana_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -216,6 +237,9 @@ class TurnHistory:
             departure_history_version=data.get("departure_history_version"),
             arrival_history_version=data.get("arrival_history_version"),
             mill_history_version=data.get("mill_history_version"),
+            spell_origin_history_version=data.get("spell_origin_history_version"),
+            graveyard_type_history_version=data.get("graveyard_type_history_version"),
+            spell_mana_history_version=data.get("spell_mana_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)
@@ -982,6 +1006,9 @@ class GameState:
     spell_mana_counts_version: int | None = 1
     ability_source_information_version: int | None = 1
     cast_face_offers_version: int | None = 1
+    cast_source_placement_version: int | None = 1
+    explore_action_version: int | None = 1
+    qualified_attack_facts_version: int | None = 1
 
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
@@ -989,6 +1016,9 @@ class GameState:
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
         ability_source_information_version(self.ability_source_information_version)
         cast_face_offers_version(self.cast_face_offers_version)
+        cast_source_placement_version(self.cast_source_placement_version)
+        explore_action_version(self.explore_action_version)
+        qualified_attack_facts_version(self.qualified_attack_facts_version)
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
         ):
@@ -1021,7 +1051,10 @@ class GameState:
             ),
             **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
+            **({'qualified_attack_facts_version':self.qualified_attack_facts_version} if self.qualified_attack_facts_version is not None else {}),
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
+            **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
+            **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1088,6 +1121,8 @@ class GameState:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameState":
         return cls(
+            cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
+            explore_action_version=explore_action_version(data.get('explore_action_version')),
             game_id=str(data["game_id"]),
             config=GameConfig.from_dict(data["config"]),
             players={seat: PlayerState.from_dict(player) for seat, player in data["players"].items()},
@@ -1103,6 +1138,7 @@ class GameState:
             spell_mana_counts_version=spell_mana_counts_version(data.get('spell_mana_counts_version')),
             ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
             cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
+            qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
             commander_damage_identity_version=(
                 int(data["commander_damage_identity_version"])
                 if data.get("commander_damage_identity_version") is not None

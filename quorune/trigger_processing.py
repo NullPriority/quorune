@@ -81,10 +81,16 @@ class TriggerProcessingOwner:
         condition: Mapping[str, Any],
         stack_template: Mapping[str, Any],
         source_object_id: str | None = None,
+        source_logical_object_id: str | None = None,
         referred_object_ids: Sequence[str] = (),
         once: bool = True,
         expires_turn_sequence: int | None = None,
     ) -> DelayedTrigger:
+        if source_logical_object_id is not None and (
+            type(source_logical_object_id) is not str or not source_logical_object_id
+            or type(source_object_id) is not str or not source_object_id
+        ):
+            raise ValueError('Captured delayed source requires its exact physical and logical identity')
         ref = self.host._next_ref("DT")
         source = (
             self.state.cards.get(source_object_id)
@@ -98,7 +104,8 @@ class TriggerProcessingOwner:
             label=label,
             source_object_id=source_object_id,
             source_logical_object_id=(
-                source.logical_object_id if source is not None else None
+                source_logical_object_id if source_logical_object_id is not None
+                else source.logical_object_id if source is not None else None
             ),
             event_kind=event_kind,
             condition=dict(condition),

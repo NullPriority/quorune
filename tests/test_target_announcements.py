@@ -265,9 +265,9 @@ class TargetAnnouncementActionTests(unittest.TestCase):
                     self.assertEqual(['A'], session.state.pending_decision.actors)
                     for seat in 'BCD': self.assertIsNone(session.packet('pilot:' + seat, full=True)['decision'])
                     before = authoritative_state_hash(session.state)
-                    bad = session.act('pilot:B', {'action_id': 'choose', 'apply': True})
+                    bad = session.act('pilot:B', {'action_id': 'choose', 'choice': 'apply'})
                     self.assertFalse(bad.ok); self.assertEqual(before, authoritative_state_hash(session.state))
-                    result = session.act('pilot:A', {'action_id': 'choose', 'choice': 'draw'})
+                    result = session.act('pilot:A', {'action_id': 'choose', 'choice': 'apply'})
                     self.assertTrue(result.ok, result.summary)
                     self.assertEqual(hand_before + 1, len(session.state.players['A'].zones['hand']))
                     self.resolve(session)
@@ -334,7 +334,7 @@ class TargetAnnouncementActionTests(unittest.TestCase):
             path = Path(directory) / 'pending-target-draw'; session.save(path)
             session = CommanderSession.load(self.db, path)
         for seat in 'BCD': self.assertIsNone(session.packet('pilot:' + seat, full=True)['decision'])
-        result = session.act('pilot:A', {'action_id': 'choose', 'choice': 'draw'})
+        result = session.act('pilot:A', {'action_id': 'choose', 'choice': 'apply'})
         self.assertTrue(result.ok, result.summary); self.resolve(session); self.replay(session)
 
     def test_target_dispatch_omission_mutant_is_killed_by_actual_cast(self):

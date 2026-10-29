@@ -885,6 +885,16 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
         self.assertEqual(("draw","discard_random_cards"),tuple(effect['op'] for effect in ir.faces[0].nodes[0].effects))
         composed = "Draw a card. Scry 1. You gain 1 life."
         self.assertIsNone(fixed_controller_effect_sequence_template(composed))
+        promoted = "Discard a card, then draw a card, then lose 1 life."
+        self.assertIsNone(fixed_controller_effect_sequence_template(promoted))
+        ir = compile_oracle_card(self.fixture(promoted), capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effects = ir.faces[0].nodes[0].effects
+        self.assertEqual(("choose_cards_apnap", "draw", "lose_life"), tuple(effect['op'] for effect in effects))
+        self.assertEqual((['$controller'], 'discard', 1),
+            (effects[0]['players'], effects[0]['then'], effects[0]['count']))
+        self.assertEqual((1, 1), (effects[1]['count'], effects[2]['amount']))
         for text in (
             "Draw cards equal to the number of different powers among creatures you control. Scry 1.",
             "Scry 1, then you may draw a card.",
@@ -894,7 +904,7 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
             "Draw two cards, then discard each opponent's hand.",
             "Draw two cards, then discard two cards if you control a Wizard.",
             "Draw a card, then discard five cards.",
-            "Discard a card, then draw a card, then lose 1 life.",
+            "Discard a card with the chosen name, then draw a card, then lose 1 life.",
         ):
             with self.subTest(text=text):
                 self.assertIsNone(fixed_controller_effect_sequence_template(text))
@@ -945,15 +955,24 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                 assert_exact()
         with patch(
             "quorune.compiler.fixed_controller_effect_sequences."
-            "fixed_controller_discard_effect_template",
+            "standalone_controller_discard_effect_template",
             return_value=None,
         ):
+            self.assertIsNone(fixed_controller_effect_sequence_template(records[1].oracle_text))
             ir = compile_oracle_card(
                 records[1],
                 capability_registry=self.capabilities,
                 capability_profile="commander_review",
             )
-            self.assertNotEqual("exact", ir.status)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+            self.assertNotEqual("fixed-controller-draw-effect-sequence-v1", ir.faces[0].nodes[0].template_id)
+            draw, discard = ir.faces[0].nodes[0].effects
+            self.assertEqual({"op": "draw", "player": "$controller", "count": 2, "private": True}, draw)
+            self.assertEqual('choose_cards_apnap', discard['op'])
+            self.assertEqual('$controller', discard['actor'])
+            self.assertEqual(['$controller'], list(discard['players']))
+            self.assertEqual(('hand', 1, 'discard', True),
+                tuple(discard[key] for key in ('zone', 'count', 'then', 'hidden')))
 
 
 class FixedControllerEffectSequenceRuntimeTests(unittest.TestCase):

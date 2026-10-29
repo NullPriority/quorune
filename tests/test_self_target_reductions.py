@@ -323,11 +323,11 @@ class SelfTargetReductionRuntimeTests(unittest.TestCase):
 
     def test_fresh_original_quicksand_kills_non_target_qualifier_substitution(self):
         from quorune.targeted_spell_costs import TargetedSpellCostSource
-        original=TargetedSpellCostSource.applies
-        def all_qualifiers(source,targets):
-            return bool(source.eligible_target_refs) if source.spec.generic<0 else original(source,targets)
+        original=TargetedSpellCostSource.matches_target
+        def all_qualifiers(source,target):
+            return bool(source.eligible_target_refs) if source.spec.generic<0 else original(source,target)
         method='test_original_quicksand_offers_cheaper_tapped_target_and_rejects_cheap_untapped_payment_atomically'
-        with patch.object(TargetedSpellCostSource,'applies',all_qualifiers):
+        with patch.object(TargetedSpellCostSource,'matches_target',all_qualifiers):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
 
     def test_original_graveyard_reductions_use_selected_card_value_and_keep_return_ownership(self):

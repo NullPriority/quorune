@@ -10,6 +10,8 @@ from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
 from .object_selection import OBJECT_SELECTION_HANDLERS
 from .library_and_hand import LIBRARY_AND_HAND_CHOICE_HANDLERS
 from .ordering import ORDERING_CHOICE_HANDLERS
+from .fixed_top_order import FIXED_TOP_ORDER_HANDLERS
+from .untargeted_untap import FixedLandUntapChoiceHandler
 from .scry import SCRY_CHOICE_HANDLERS
 from .surveil import SURVEIL_CHOICE_HANDLERS
 from .fixed_library_selection import (
@@ -45,6 +47,10 @@ from .hand_inspection import HAND_INSPECTION_CHOICE_HANDLERS
 from .connive import FixedConniveChoiceHandler
 from .exploit import ExploitChoiceHandler
 from .soulbond import SoulbondPairChoiceHandler
+from .ring import RingTemptationChoiceHandler
+from .champion import ChampionExileChoiceHandler, ChampionReturnChoiceHandler
+from .cipher import CipherEncodingChoiceHandler
+from .discard_results import DiscardResultDrawHandler
 
 
 @lru_cache(maxsize=1)
@@ -53,12 +59,15 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
         (
             ExtortChoiceHandler(),
             ActualLifeTransferHandler(),
+            DiscardResultDrawHandler(),
             *CREATED_TOKEN_COUNTER_HANDLERS,
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,
             *LIBRARY_AND_HAND_CHOICE_HANDLERS,
             *ORDERING_CHOICE_HANDLERS,
+            *FIXED_TOP_ORDER_HANDLERS,
+            FixedLandUntapChoiceHandler(),
             *SCRY_CHOICE_HANDLERS,
             *SURVEIL_CHOICE_HANDLERS,
             *FIXED_LIBRARY_SELECTION_CHOICE_HANDLERS,
@@ -87,5 +96,9 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             FixedConniveChoiceHandler(),
             ExploitChoiceHandler(),
             SoulbondPairChoiceHandler(),
+            RingTemptationChoiceHandler(),
+            ChampionExileChoiceHandler(),
+            CipherEncodingChoiceHandler(),
+            ChampionReturnChoiceHandler(),
         )
     ).freeze()

@@ -5,7 +5,24 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Literal, Mapping
 
-from .continuous_conditions import FixedPublicStateConditionSpec
+from .continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+
+
+def bound_block_requirement_condition_is_closed(condition: FixedPublicStateConditionSpec) -> bool:
+    if not isinstance(condition, FixedPublicStateConditionSpec):
+        return False
+    if condition.kind in {
+        FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
+        FixedPublicStateConditionKind.CONTROLLER_GRAVEYARD_CARD_COUNT_AT_LEAST,
+    }:
+        return True
+    return bool(
+        condition.kind is FixedPublicStateConditionKind.QUERY_COUNT_AT_LEAST
+        and condition.quantity is not None
+        and condition.quantity.scope.value == 'controller_zone'
+        and condition.quantity.query is not None
+        and condition.quantity.query.zones == ('graveyard',)
+    )
 
 
 DeclarationKind = Literal["attack", "block"]
@@ -192,8 +209,26 @@ class DeclarationRequirementTemplate:
     template_id: str
     declaration: DeclarationKind
     kind: DeclarationRequirementKind
+    schema_version: int = 1
+    scope: str = 'self'
+    condition: FixedPublicStateConditionSpec | None = None
 
     def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
+            raise ValueError('Unsupported declaration requirement version')
+        if type(self.scope) is not str:
+            raise ValueError('Declaration requirement scope must be a string')
+        if self.schema_version == 1 and (self.scope != 'self' or self.condition is not None):
+            raise ValueError('Historical requirements reserve subject and condition fields')
+        if self.schema_version == 2 and (
+            self.kind != 'all_able_blockers'
+            or self.scope not in {'self', 'attached'}
+            or self.scope == 'self' and self.condition is None
+            or self.condition is not None and (
+                not bound_block_requirement_condition_is_closed(self.condition)
+            )
+        ):
+            raise ValueError('Bound requirements need an attached subject or a closed public condition')
         expected_domain = {
             "attack_each_combat": "attack",
             "block_each_combat": "block",
@@ -217,22 +252,33 @@ class DeclarationRequirementTemplate:
     def mechanics(self) -> tuple[str, ...]:
         return _mechanics((self.declaration,))
 
+    @property
+    def capability_id(self) -> str | None:
+        return 'combat.requirement.bound_static_all_blockers' if self.schema_version == 2 else None
+
     def to_dict(self) -> dict[str, object]:
-        return {
+        value = {
             "template_id": self.template_id,
             "declaration": self.declaration,
             "kind": self.kind,
         }
+        if self.schema_version == 2:
+            value.update(schema_version=2, scope=self.scope,
+                condition=self.condition.to_dict() if self.condition is not None else None)
+        return value
 
     @classmethod
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "DeclarationRequirementTemplate":
-        if not isinstance(value, Mapping) or set(value) != {
+        expected = {
             "template_id",
             "declaration",
             "kind",
-        }:
+        }
+        if isinstance(value, Mapping) and value.get('schema_version') == 2:
+            expected |= {'schema_version', 'scope', 'condition'}
+        if not isinstance(value, Mapping) or set(value) != expected:
             raise ValueError(
                 "Declaration requirement fragments have a closed schema"
             )
@@ -240,6 +286,8 @@ class DeclarationRequirementTemplate:
             template_id=value["template_id"],
             declaration=value["declaration"],
             kind=value["kind"],
+            schema_version=value.get('schema_version', 1), scope=value.get('scope', 'self'),
+            condition=FixedPublicStateConditionSpec.from_dict(value['condition']) if value.get('condition') is not None else None,
         )
 
 

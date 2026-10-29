@@ -301,7 +301,7 @@ class FixedCreaturePowerDamageCompilerTests(unittest.TestCase):
         unsupported = (
             "Target creature you control fights a random creature.",
             "Target creature you control deals damage equal to its toughness to any target.",
-            "Target creature you control deals damage equal to twice its power to any target.",
+            "Target creature you control deals damage equal to three times its power to any target.",
             "Target creature you control deals damage equal to its power divided as you choose among any number of targets.",
             "It deals damage equal to its power to any target.",
             "Whenever another creature enters, it deals damage equal to its power to any target.",
@@ -581,9 +581,12 @@ class FixedCreaturePowerDamageRuntimeTests(unittest.TestCase):
             for value in engine.state.stack
             if value.semantic_key == program.key
         )
-        snapshot = item.context[CREATURE_POWER_DAMAGE_LKI_CONTEXT]
+        from quorune.scalar_effect_amount_model import SCALAR_REFERENCE_CONTEXT
+        from quorune.rules.stack_damage_sources import SOURCE_DAMAGE_CONTEXT
+        snapshot = item.context[SCALAR_REFERENCE_CONTEXT]['source']
         self.assertEqual(4, snapshot["power"])
-        self.assertEqual(old_identity, snapshot["source"]["logical_object_id"])
+        self.assertEqual(old_identity, snapshot["logical_object_id"])
+        self.assertEqual(old_identity, item.context[SOURCE_DAMAGE_CONTEXT]['logical_object_id'])
         self.assertEqual("semantic.target", engine.state.pending_decision.kind)
         session.initial_checkpoint = checkpoint_envelope(engine.state)
         session.commands.clear()

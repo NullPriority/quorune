@@ -426,7 +426,7 @@ class FixedStackSpellCopyRuntimeTests(unittest.TestCase):
     def test_original_copy_candidates_need_complete_siblings_and_current_generated_registration(self):
         expected = {'Geistblast', 'Reiterate', 'Dual Casting', 'Sigil Tracer', 'Naru Meha, Master Wizard',
             'Mirrorpool', 'Dualcaster Mage', 'Twincast', 'Uyo, Silent Prophet', 'Reverberate',
-            'Nivix Guildmage', 'Flare of Duplication'}
+            'Nivix Guildmage', 'Flare of Duplication', 'Kitsa, Otterball Elite', 'Stella Lee, Wild Card'}
         pattern = re.compile(r'Copy target instant or sorcery spell(?: you control)?\. You may choose new targets for the copy\.', re.I)
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards'] if pattern.search(r.get('oracle_text') or '')]
         self.assertEqual(24, len(rows))

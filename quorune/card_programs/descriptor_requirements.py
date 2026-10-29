@@ -7,6 +7,32 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        if value.get('op') == 'creature_power_damage':
+            from ..creature_power_damage_model import creature_power_damage_multiplier, CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY
+            if creature_power_damage_multiplier(value) == 2:
+                return (CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,)
+        if value.get('op') == 'apply_if_public_condition' and value.get('schema_version') == 12:
+            from ..declared_cost_conditions import validate_declared_cost_instruction
+            from ..declared_cast_cost_model import DECLARED_CAST_COST_CAPABILITY
+            validate_declared_cost_instruction(value)
+            return tuple(sorted({DECLARED_CAST_COST_CAPABILITY, 'resolution.effect.public_condition',
+                *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child, mechanics=mechanics))}))
+        from ..discard_result_model import DISCARD_RESULT_OPERATION, DISCARD_RESULT_CAPABILITY, validate_discard_draw
+        if value.get('op') == DISCARD_RESULT_OPERATION:
+            validate_discard_draw(value)
+            return (DISCARD_RESULT_CAPABILITY,)
+        from ..rules.untargeted_untap_shapes import untargeted_untap_payload_dependencies
+        untap = untargeted_untap_payload_dependencies(value)
+        if untap:return untap
+        from ..rules.library_order_shapes import library_order_payload_dependencies
+        library_order=library_order_payload_dependencies(value)
+        if library_order:return library_order
+        from ..public_history_query_model import public_history_query_dependencies
+        from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies,QUALIFIED_SPELL_ORDINAL_FIELD
+        history=public_history_query_dependencies(value) if 'history_query' in value or value.get('kind') in {'history_count_at_least','history_count_at_most'} else ()
+        if value.get('field')==QUALIFIED_SPELL_ORDINAL_FIELD:history=(*history,*qualified_spell_ordinal_dependencies(value))
+        if history:
+            return tuple(sorted({*history,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..rules.modal_node_capabilities import modal_schema_runtime_dependencies
         modal=modal_schema_runtime_dependencies(value)
         if modal:
@@ -79,7 +105,10 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if value.get('kind') == 'scalar_effect_amount':
             from ..scalar_effect_amount_model import ScalarEffectAmountSpec, SCALAR_AMOUNT_CAPABILITY
             spec = ScalarEffectAmountSpec.from_dict(value)
+            from ..scalar_effect_amount_model import ScalarAmountOrigin
+            from ..cast_event_amounts import CAST_MANA_VALUE_CAPABILITY
             return tuple(sorted({SCALAR_AMOUNT_CAPABILITY,
+                                 *((CAST_MANA_VALUE_CAPABILITY,) if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE else ()),
                                  *((DECLARED_AMOUNT_CAPABILITY,) if spec.binding_id is not None else ())}))
         return tuple(sorted({*own, *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
     if isinstance(value, (list, tuple)):

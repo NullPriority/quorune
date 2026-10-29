@@ -12,6 +12,8 @@ from ..ability_fragments import (
     ability_fragment_to_dict,
 )
 from ..fixed_mana_abilities import compile_fixed_activated_mana_ability
+from ..mana_restrictions import valid_mana_spend_restriction
+from ..granted_activation_model import RESTRICTED_MANA_GRANT_CAPABILITY
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
 from .continuous_templates import (
@@ -28,6 +30,8 @@ from .public_query_effect_amounts import (
     _source_characteristic_amount_base,
 )
 from .granted_program_bounds import granted_effect_values_are_closed
+from .granted_static_costs import compile_static_cost_or_ordinary_inner
+from .granted_characteristic_nodes import granted_characteristic_reference_is_closed
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .static_runtime_nodes import runtime_handler_node
 
@@ -35,11 +39,13 @@ from .static_runtime_nodes import runtime_handler_node
 GRANTED_ACTIVATED_ABILITY_KIND = "granted_activated_ability"
 GRANTED_MANA_ABILITY_KIND = "granted_mana_ability"
 GRANTED_TRIGGERED_ABILITY_KIND = "granted_triggered_ability"
+GRANTED_STATIC_ABILITY_KIND = 'granted_static_ability'
 GRANTED_ABILITY_KINDS = frozenset(
     {
         GRANTED_ACTIVATED_ABILITY_KIND,
         GRANTED_MANA_ABILITY_KIND,
         GRANTED_TRIGGERED_ABILITY_KIND,
+        GRANTED_STATIC_ABILITY_KIND,
     }
 )
 _EXTERNAL_ATTACHMENT_REFERENCE = re.compile(
@@ -57,6 +63,7 @@ class AttachedGrantedAbilityPlan:
     ability_id: str
     semantic_key: str
     fragment: Mapping[str, Any]
+    capability_dependencies: tuple[str, ...] = ()
 
 
 def attached_granted_program_ability_id(
@@ -73,6 +80,9 @@ def attached_granted_program_ability_id(
     )
     if token_match is not None:
         token_slot = f":token:{token_match.group('slot')}"
+    quote_match = re.search(r':quoted-ability:(?P<slot>[1-9][0-9]*)(?::granted)?$',str(node_id or ''))
+    if quote_match is not None:
+        token_slot = f":quote:{quote_match.group('slot')}"
     if kind in {
         GRANTED_ACTIVATED_ABILITY_KIND,
         GRANTED_MANA_ABILITY_KIND,
@@ -80,12 +90,19 @@ def attached_granted_program_ability_id(
         return f"ability:granted:{face_id}:n{line}{token_slot}"
     if kind == GRANTED_TRIGGERED_ABILITY_KIND:
         return f"trigger:{face_id}:n{line}:granted{token_slot}"
+    if kind == GRANTED_STATIC_ABILITY_KIND:
+        return f'static:granted:{face_id}:n{line}{token_slot}'
     return None
 
 
 def _closed_granted_activation(ability: ActivatedAbility) -> bool:
     """Keep grants inside the shared closed granted-activation schema."""
 
+    from ..granted_activation_model import normalize_granted_cost_choices
+    try:
+        normalize_granted_cost_choices(tuple(choice.to_dict() for choice in ability.choices))
+    except ValueError:
+        return False
     return bool(
         ability.zones == ("battlefield",)
         and ability.compiled_cost
@@ -104,8 +121,9 @@ def _closed_granted_activation(ability: ActivatedAbility) -> bool:
         and not ability.library_search_types
         and not ability.activation_conditions
         and ability.dynamic_mana_output is None
-        and ability.mana_spend_restriction
-        in {None, "nonartifact_spell_prohibited"}
+        and (ability.mana_spend_restriction is None or (
+            valid_mana_spend_restriction(ability.mana_spend_restriction)
+            and ability.mana_spend_restriction != 'legendary_spell_uncounterable'))
     )
 
 
@@ -120,6 +138,7 @@ def attached_granted_ability_plan(
     keywords: Sequence[str],
     node_id: str | None = None,
     display_text: str | None = None,
+    allow_static_cost: bool = False,
 ) -> AttachedGrantedAbilityPlan | None:
     """Build one closed typed grant from an independently exact inner node."""
 
@@ -129,6 +148,14 @@ def attached_granted_ability_plan(
         or not granted_effect_values_are_closed(node.effects)
     ):
         return None
+    if allow_static_cost and node.event == 'cast.cost.modify':
+        from .granted_static_costs import static_cost_granted_plan
+        return static_cost_granted_plan(node=node, oracle_id=oracle_id, face_id=face_id,
+            source_line=source_line, node_id=node_id)
+    if allow_static_cost and node.event == 'characteristics.evaluate':
+        from .granted_characteristic_nodes import characteristic_granted_plan
+        return characteristic_granted_plan(node=node, oracle_id=oracle_id, face_id=face_id,
+            source_line=source_line, node_id=node_id)
     if node.kind in {"activated_ability", "mana_ability"}:
         abilities = parse_activated_abilities(
             card_name=card_name,
@@ -166,6 +193,7 @@ def attached_granted_ability_plan(
             or ability.choices
             or ability.mana_spend_restriction is not None
         )
+        restricted_grant = ability.mana_spend_restriction not in {None, 'nonartifact_spell_prohibited'}
         fragment = ability_fragment_to_dict(
             GrantedActivatedAbilitySpec(
                 ability_id=ability_id,
@@ -188,7 +216,7 @@ def attached_granted_ability_plan(
                 choices=tuple(choice.to_dict() for choice in ability.choices),
                 mana_spend_restriction=ability.mana_spend_restriction,
                 crew_threshold=ability.crew_threshold,
-                schema_version=3 if ability.crew_threshold is not None else 2 if extended_cost else 1,
+                schema_version=4 if restricted_grant else 3 if ability.crew_threshold is not None else 2 if extended_cost else 1,
             )
         )
         return AttachedGrantedAbilityPlan(
@@ -196,6 +224,7 @@ def attached_granted_ability_plan(
             ability_id=ability_id,
             semantic_key=semantic_key,
             fragment=fragment,
+            capability_dependencies=(RESTRICTED_MANA_GRANT_CAPABILITY,) if restricted_grant else (),
         )
     if node.kind != "triggered_ability" or not node.event:
         return None
@@ -251,7 +280,7 @@ def _compile_granted_ability_pair(
     """Compile one accepted grant shell and one independent inner ability."""
 
     inner_residuals: list[OracleResidual] = []
-    inner = compile_inner(
+    inner = compile_static_cost_or_ordinary_inner(compile_inner,
         node_id=f"{node_id}:granted",
         line=quoted,
         material_line=material_line_for(quoted),
@@ -294,10 +323,16 @@ def _compile_granted_ability_pair(
         oracle_id=record.oracle_id,
         face_id=face_id,
         source_line=span.line,
+        node_id=node_id if ':quoted-ability:' in node_id else None,
         card_name="Granted creature",
         keywords=(),
+        allow_static_cost=True,
     )
     if plan is None:
+        return None
+    from .granted_static_costs import bind_granted_plan_dependencies
+    inner = bind_granted_plan_dependencies(inner, plan, capability_registry, capability_profile)
+    if inner is None:
         return None
     compiled = compile_shell(
         plan.fragment,
@@ -305,6 +340,7 @@ def _compile_granted_ability_pair(
     )
     if compiled is None:
         return None
+    from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
     outer = runtime_handler_node(
         node_id=node_id,
         line=line,
@@ -312,6 +348,8 @@ def _compile_granted_ability_pair(
         compiled=compiled,
         kind="static_ability",
         event="characteristics.evaluate",
+        active_zone='graveyard' if compiled[1].get('handler_id') in {
+            GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID} else 'battlefield',
         runtime_coverage=(runtime_coverage,),
         dependency_reason=dependency_reason,
         capability_registry=capability_registry,
@@ -361,7 +399,7 @@ def compile_attached_granted_ability_nodes(
         material_line,
         source_name=source_name,
     )
-    if quoted is None or _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+    if quoted is None or (_EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) and not granted_characteristic_reference_is_closed(quoted)):
         return None
     normalized_name = source_name.casefold().strip()
     if normalized_name and normalized_name in quoted.casefold():
@@ -418,8 +456,16 @@ def compile_fixed_query_granted_ability_nodes(
 ) -> tuple[OracleNode, OracleNode] | None:
     """Compile a typed quoted ability granted to one closed live query."""
 
+    from .granted_keyword_event_nodes import compile_granted_keyword_event_nodes
+    keyword_grant = compile_granted_keyword_event_nodes(record=record, face_id=face_id,
+        node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals, effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template, material_line_for=material_line_for)
+    if keyword_grant is not None:
+        return keyword_grant
     quoted = fixed_query_quoted_ability_text(material_line)
-    if quoted is None or _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+    if quoted is None or (_EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) and not granted_characteristic_reference_is_closed(quoted)):
         return None
     normalized_name = source_name.casefold().strip()
     if normalized_name and normalized_name in quoted.casefold():
@@ -530,6 +576,10 @@ def compile_keyword_or_attached_grant_nodes(
     grant_effect_templates: Callable[..., tuple[Any, Any]],
     material_line_for: Callable[[str], str],
 ) -> tuple[OracleNode, ...] | None:
+    from .enchanted_player_statics import enchanted_player_static_node
+    player_scoped=enchanted_player_static_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if player_scoped is not None:return (player_scoped,)
     source_cost = _source_bound_cost_nodes(record=record, node_id=node_id, line=line,
         material_line=material_line, span=span, source_name=source_name, effect_template=effect_template,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
@@ -581,6 +631,10 @@ def compile_keyword_or_attached_grant_nodes(
     )
     if typed_token_nodes is not None:
         return typed_token_nodes
+    from .attached_untap_restraints import attached_untap_restraint_node
+    restraint=attached_untap_restraint_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if restraint is not None:return (restraint,)
     keyword_nodes = keyword_node_compiler(
         record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,
@@ -598,11 +652,24 @@ def compile_keyword_or_attached_grant_nodes(
         True, ("creature",), None
     )
     compile_inner = _ordinary_granted_inner(compile_inner, trigger_node)
+    return _compile_quoted_grant_forms(record=record,face_id=face_id,node_id=node_id,line=line,
+        material_line=material_line,span=span,source_name=source_name,printed_card_types=printed_card_types,
+        source_attachment_relation=source_attachment_relation,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals,
+        compile_inner=compile_inner,trigger_node=trigger_node,keyword_node_compiler=keyword_node_compiler,
+        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for)
+
+
+def _compile_quoted_grant_forms(*,record,face_id,node_id,line,material_line,span,source_name,
+        printed_card_types,source_attachment_relation,trusted_mechanics,capability_registry,
+        capability_profile,residuals,compile_inner,trigger_node,keyword_node_compiler,
+        effect_template,trigger_effect_template,material_line_for):
+    """Route complete quoted children after ordinary keywords and source costs."""
     from .entry_copy_ability_nodes import entry_copy_ability_nodes
     copied = entry_copy_ability_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
         material_line=material_line,span=span,source_name=source_name,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,compile_inner=compile_inner,
-        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
+        effect_template=effect_template,trigger_effect_template=trigger_effect_template,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
     if copied is not None:return copied
     from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
     temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,
@@ -610,12 +677,19 @@ def compile_keyword_or_attached_grant_nodes(
         source_name=source_name, printed_card_types=printed_card_types,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals, compile_inner=compile_inner,
-        effect_template=granted_effect, trigger_effect_template=granted_trigger_effect,
+        effect_template=effect_template, trigger_effect_template=trigger_effect_template,
         trigger_node=trigger_node, material_line_for=material_line_for)
     if temporary is not None:
         return temporary
+    from .composite_grant_nodes import composite_granted_ability_nodes
+    composite=composite_granted_ability_nodes(record=record,face_id=face_id,node_id=node_id,
+        line=line,material_line=material_line,span=span,source_name=source_name,
+        trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals,compile_inner=compile_inner,
+        effect_template=effect_template,trigger_effect_template=trigger_effect_template,material_line_for=material_line_for)
+    if composite is not None:return composite
     quoted = conditional_quoted_ability_text(material_line, source_name=source_name)
-    if quoted is not None and not _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+    if quoted is not None and (not _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) or granted_characteristic_reference_is_closed(quoted)):
         conditional = _compile_granted_ability_pair(
             record=record, face_id=face_id, node_id=node_id, line=line,
             material_line=material_line, span=span, quoted=quoted,
@@ -626,8 +700,8 @@ def compile_keyword_or_attached_grant_nodes(
             dependency_reason="conditional typed grant requires outer and inner capability closure",
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
-            compile_inner=compile_inner, effect_template=granted_effect,
-            trigger_effect_template=granted_trigger_effect, material_line_for=material_line_for,
+            compile_inner=compile_inner, effect_template=effect_template,
+            trigger_effect_template=trigger_effect_template, material_line_for=material_line_for,
         )
         if conditional is not None:
             return conditional
@@ -638,8 +712,8 @@ def compile_keyword_or_attached_grant_nodes(
         capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
         compile_inner=compile_inner,
-        effect_template=granted_effect,
-        trigger_effect_template=granted_trigger_effect,
+        effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template,
         material_line_for=material_line_for,
     )
     if fixed_query_grant is not None:
@@ -652,8 +726,8 @@ def compile_keyword_or_attached_grant_nodes(
         capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
         compile_inner=compile_inner,
-        effect_template=granted_effect,
-        trigger_effect_template=granted_trigger_effect,
+        effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template,
         material_line_for=material_line_for,
     )
 
@@ -664,6 +738,7 @@ __all__ = [
     "GRANTED_ACTIVATED_ABILITY_KIND",
     "GRANTED_MANA_ABILITY_KIND",
     "GRANTED_TRIGGERED_ABILITY_KIND",
+    "GRANTED_STATIC_ABILITY_KIND",
     "attached_granted_ability_plan",
     "attached_granted_program_ability_id",
     "compile_attached_granted_ability_nodes",

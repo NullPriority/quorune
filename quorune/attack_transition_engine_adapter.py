@@ -288,10 +288,20 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                 )
             )
         semantic_trigger_refs: list[str] = []
+        from .ring_triggers import ring_attack_stack_items
+        stack_items.extend(ring_attack_stack_items(engine, event))
         participants = {
             participant.object_id: participant
             for participant in event.participants
         }
+        from .rules.qualified_attacks import attack_characteristic_context
+        characteristic_contexts = {assignment.attacker_object_id:
+            attack_characteristic_context(engine, engine.state.cards[assignment.attacker_object_id])
+            for assignment in event.assignments}
+        from .rules.attack_batches import seal_attack_declaration
+        from .attack_batch_model import ATTACK_BATCH_CONTEXT
+        declaration_context = ({ATTACK_BATCH_CONTEXT:seal_attack_declaration(event,characteristic_contexts)}
+            if any(characteristic_contexts.values()) else {})
         semantic_sources = tuple(
             engine._semantic_event_sources(zones={"battlefield"})
         )
@@ -325,6 +335,9 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                         "attacking_alone": len(event.assignments) == 1,
                         "attacker_count": len(event.assignments),
                         "attack_transition": event.to_dict(),
+                        **characteristic_contexts[assignment.attacker_object_id],
+                        **declaration_context,
+                        **({'attacked_recipient_kind':assignment.recipient.kind.value} if declaration_context else {}),
                     },
                     sources=semantic_sources,
                     trigger_batch=stack_items,

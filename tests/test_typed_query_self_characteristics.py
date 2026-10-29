@@ -305,11 +305,19 @@ class TypedQuerySelfCharacteristicCompilerTests(unittest.TestCase):
                 self.assertEqual((), program.residuals)
 
     def test_query_characteristic_grammar_keeps_ambiguous_families_residual(self):
+        promoted = 'This creature gets +1/+1 for each creature you control with flying.'
+        compiled = query_self_characteristics_handler(promoted, source_name='Query Source')
+        self.assertIsNotNone(compiled)
+        quantity = compiled[1]['fragment']['value']['quantity']
+        self.assertEqual(6, quantity['schema_version'])
+        self.assertEqual(['flying'], list(quantity['query']['keywords_all']))
+        program = self.compile(permanent(promoted, suffix=122_000_999), trust_level='provisional')
+        self.assertEqual((), program.residuals)
         excluded = (
             "Domain — This creature gets +1/+1 for each basic land type among lands in the chosen player's graveyard.",
             "This creature gets +1/+1 for each card type among cards in your hand.",
             "This creature gets +1/+1 for each creature named Query Source you control.",
-            "This creature gets +1/+1 for each creature you control with flying.",
+            "This creature gets +1/+1 for each creature you control with flying and has flying.",
             "This creature gets +1/+1 for each color among permanents with the chosen name.",
             "This creature gets +1/+1 for each artifact you control and has flying.",
             "{2}: This creature gets +1/+1 for each artifact you control.",

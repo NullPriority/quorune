@@ -259,7 +259,7 @@ class StationCompilerTests(unittest.TestCase):
 
         real_ir, real_node = self.station_node()
         self.assertTrue(real_node.exact)
-        self.assertTrue(real_ir.material_residuals)
+        self.assertEqual('exact', real_ir.status, real_ir.material_residuals)
         capability = self.capabilities.capability(STATION_CAPABILITY)
         assert capability is not None
         exclusions = " ".join(capability["applicability"]["exclusions"])
@@ -603,7 +603,12 @@ class StationRuntimeTests(unittest.TestCase):
             name="Wedgelight Rammer",
             ref="A-station-unresolved",
         )
-        self.creature(engine, "A", "Unresolved Worker", "*")
+        undefined = self.creature(engine, "A", "Undefined Worker", "*")
+        # CR 107.2/208.5 give an undefined printed star its numeric zero.
+        candidates = station_candidates(engine, "A", source)
+        self.assertEqual(0, next(row.activation_power for row in candidates
+            if row.object_id == undefined.object_id))
+        self.creature(engine, "A", "Unresolved Worker", "unrepresented")
         before = authoritative_state_hash(engine.state)
         with self.assertRaisesRegex(StationAbilityError, "unresolved"):
             station_candidates(engine, "A", source)

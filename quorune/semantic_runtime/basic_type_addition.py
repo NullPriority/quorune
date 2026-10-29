@@ -32,9 +32,12 @@ class ScopedBasicTypeAdditionHandler:
         if node.scope=='attached_land':
             if context.attached_object is None:return ()
             common={'relation':ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,'related_object':context.attached_object}
-        query=ObjectQuerySpec(zones=('battlefield',),types_all=('land',),
-            controller=context.source_controller if node.scope=='controller_lands' else None)
+        creature=node.schema_version==2
+        query=ObjectQuerySpec(zones=('battlefield',),types_all=('creature',) if creature else ('land',),
+            token=False if creature else None,
+            controller=context.source_controller if creature or node.scope=='controller_lands' else None)
         return (ContinuousEffect(effect_id=f'{context.source_object_id}:{context.component_id}',
             source_id=context.source_object_id,layer=Layer.TYPE,sublayer='4',timestamp=context.source_timestamp,
-            operations=(ContinuousOperation('add_types',list(node.basic_types),field='subtypes'),),
+            operations=(*((ContinuousOperation('add_types',['Land'],field='card_types'),) if creature else ()),
+                ContinuousOperation('add_types',list(node.basic_types),field='subtypes')),
             origin=ContinuousEffectOrigin.STATIC_ABILITY,applies=query,**common),)

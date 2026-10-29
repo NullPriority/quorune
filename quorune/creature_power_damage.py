@@ -213,7 +213,7 @@ def _source_lki_value(
 
 def _instruction(
     effect: Mapping[str, Any],
-) -> tuple[str, str | None, str | None, bool]:
+) -> tuple[str, str | None, str | None, bool, int]:
     allowed = {
         "op",
         "kind",
@@ -225,6 +225,8 @@ def _instruction(
         "_replacement_event_ids",
         "_replacement_selections",
         "_runtime_source",
+        'schema_version',
+        'power_multiplier',
     }
     required = {
         "op",
@@ -251,7 +253,12 @@ def _instruction(
         kind == "fight" and must_be_creature is not True
     ):
         raise CreaturePowerDamageError("Creature-power target domain is malformed")
-    return kind, source_ref, target_ref, must_be_creature
+    from .creature_power_damage_model import creature_power_damage_multiplier
+    try:
+        multiplier = creature_power_damage_multiplier(effect)
+    except (TypeError, ValueError) as exc:
+        raise CreaturePowerDamageError(str(exc)) from exc
+    return kind, source_ref, target_ref, must_be_creature, multiplier
 
 
 def resolve_creature_power_damage(
@@ -263,7 +270,7 @@ def resolve_creature_power_damage(
 ) -> tuple[int, ...]:
     """Resolve one Fight or bite through the canonical damage batch."""
 
-    kind, source_ref, target_ref, must_be_creature = _instruction(effect)
+    kind, source_ref, target_ref, must_be_creature, multiplier = _instruction(effect)
     if source_ref is None or target_ref is None:
         return ()
     if kind == "fight":
@@ -358,7 +365,7 @@ def resolve_creature_power_damage(
                     actor=actor,
                     source_ref=source_damage.ref,
                     target=target_ref,
-                    amount=source_power,
+                    amount=source_power * multiplier,
                     combat=False,
                     reason=reason,
                     source_override=source_damage,

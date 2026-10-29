@@ -18,7 +18,9 @@ from .errors import StateInvariantError
 STORM_SEMANTIC_KEY = "builtin:storm"
 from .replicate_model import REPLICATE_SEMANTIC_KEY
 from .conspire_model import CONSPIRE_SEMANTIC_KEY
-SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY})
+from .declared_cast_cost_model import declared_cost_copy_fields
+from .casualty_model import CASUALTY_SEMANTIC_KEY
+SPELL_COPY_TRIGGER_KEYS = frozenset({STORM_SEMANTIC_KEY, REPLICATE_SEMANTIC_KEY, CONSPIRE_SEMANTIC_KEY, CASUALTY_SEMANTIC_KEY})
 
 
 class StormHost(Protocol):
@@ -98,6 +100,7 @@ def spell_copy_template(host, spell, program):
     )
     return {
         "label": spell.label,
+        **declared_cost_copy_fields(spell.context),
         "source_spell_ref": spell.ref,
         "controller": spell.controller,
         "card_object_id": spell.card_object_id,
@@ -191,6 +194,9 @@ def validated_storm_trigger(
 
 
 def validated_spell_copy_trigger(item):
+    if item.semantic_key == CASUALTY_SEMANTIC_KEY:
+        from .casualty import validated_casualty_trigger
+        return validated_casualty_trigger(item)
     if item.semantic_key == CONSPIRE_SEMANTIC_KEY:
         from .conspire import validated_conspire_trigger
         return validated_conspire_trigger(item)

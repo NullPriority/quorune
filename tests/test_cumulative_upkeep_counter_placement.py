@@ -517,8 +517,11 @@ class CumulativeUpkeepRuntimeTests(unittest.TestCase):
         life_per_counter: int,
     ) -> StackItem:
         engine = session.engine
+        from uuid import NAMESPACE_URL, uuid5
+        identity = str(uuid5(NAMESPACE_URL, f'life-upkeep-fixture:{source.object_id}:{life_per_counter}'))
         record = replace(
-            self.db.lookup(source.printed_name),
+            self.db.by_oracle_id(source.oracle_id),
+            oracle_id=identity, name='Generic Life Upkeep Runtime Body',
             oracle_text=(
                 f"Cumulative upkeep—Pay {life_per_counter} life. "
                 "(At the beginning of your upkeep, put an age counter on "
@@ -527,6 +530,14 @@ class CumulativeUpkeepRuntimeTests(unittest.TestCase):
             ),
             keywords=("Cumulative upkeep",),
         )
+        if not hasattr(self, '_life_upkeep_records'):
+            self._life_upkeep_records = {}
+            by_oracle_id = self.db.by_oracle_id
+            self.enterContext(patch.object(self.db, 'by_oracle_id', side_effect=lambda value:
+                self._life_upkeep_records[value] if value in self._life_upkeep_records else by_oracle_id(value)))
+        self._life_upkeep_records[identity] = record
+        source.oracle_id = identity
+        source.printed_name = record.name
         program = next(
             value
             for value in generated_programs(

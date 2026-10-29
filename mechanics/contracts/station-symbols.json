@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "cr-721-station-cards",
+  "official_name": "Station Cards",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "201.5",
+    "702.184",
+    "702.184a",
+    "702.184b",
+    "721",
+    "721.1",
+    "721.2",
+    "721.2a",
+    "721.2b",
+    "721.2c",
+    "721.3",
+    "721.4",
+    "613.1d",
+    "613.1f",
+    "613.4b",
+    "613.6"
+  ],
+  "glossary_references": [
+    "station",
+    "station card",
+    "station symbol"
+  ],
+  "dependencies": [
+    "activated abilities",
+    "continuous effects",
+    "counters",
+    "copying objects",
+    "layers",
+    "replacement effects",
+    "zones"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "battlefield",
+      "every nonbattlefield zone"
+    ],
+    "objects": [
+      "one source with one or two increasing Station symbols",
+      "independently compiled children",
+      "ordinary copies with independent counters"
+    ],
+    "events": [
+      "evaluate characteristics and ability membership",
+      "place or remove charge counters",
+      "copy symbols",
+      "remove or restore source abilities"
+    ],
+    "state_reads": [
+      "source identity, timestamp and charge counters",
+      "compiled symbol membership and explicit P/T-box placement",
+      "shared component presence"
+    ],
+    "state_writes": [
+      "none during evaluation",
+      "Station and child results delegate transitions to their canonical owners"
+    ],
+    "costs": [
+      "independently compiled Station retains its ordinary cost at any charge count"
+    ],
+    "timing": [
+      "continuous battlefield evaluation; children retain their ordinary timing"
+    ],
+    "targets": [
+      "children retain their complete independently compiled target schema"
+    ],
+    "choices": [
+      "existing private, optional, target, search, library-order and APNAP owners execute child choices"
+    ],
+    "hidden_information": [
+      "counters and characteristics are public; private child choices retain ordinary principal projection"
+    ],
+    "apnap": [
+      "ordinary trigger stacking and affected-player APNAP choices"
+    ],
+    "layers": [
+      "thresholds accumulate",
+      "a P/T-bearing symbol adds creature in layer4",
+      "keywords and child membership participate in layer6",
+      "the fixed P/T box sets base values in layer7b",
+      "earlier-layer effects retain CR613.6 participation",
+      "unconditional base values exclude the conditional P/T box"
+    ],
+    "replacement_effects": [
+      "Station counter production uses the existing replacement-aware transaction"
+    ],
+    "copy": [
+      "copied symbols use the copy own counters; current counters and derived animation are not copied"
+    ],
+    "control_change": [
+      "thresholds are source-relative; child controllers and subjects retain their existing ownership"
+    ],
+    "zone_change": [
+      "no power or toughness outside the battlefield; new incarnations lose old counters and copy identity"
+    ],
+    "source_leaves": [
+      "source-bound symbol effects cease for that incarnation"
+    ]
+  },
+  "variants": [
+    "one or two cumulative fixed thresholds",
+    "independently closed keyword, static, triggered and activated children",
+    "fixed P/T boxes",
+    "counter loss, copies, ability removal, private choices and replay"
+  ],
+  "witness_cards": [
+    {
+      "name": "Wedgelight Rammer",
+      "oracle_id": "03259ab0-caa8-4620-b070-127e2c712252"
+    },
+    {
+      "name": "Rescue Skiff",
+      "oracle_id": "112aaaf0-3301-4f79-9640-d36c75a0fb30"
+    },
+    {
+      "name": "Wurmwall Sweeper",
+      "oracle_id": "320ed2ec-ef06-41fb-ac8a-72579f11544c"
+    },
+    {
+      "name": "Lumen-Class Frigate",
+      "oracle_id": "3aa0cda4-fb2d-4fd4-84f6-482089a85547"
+    },
+    {
+      "name": "Atmospheric Greenhouse",
+      "oracle_id": "52c6afc6-aff1-46a8-b1ea-b183facec1ae"
+    },
+    {
+      "name": "Uthros Scanship",
+      "oracle_id": "7b4c37dc-8cb0-4870-929e-11c2a45952a2"
+    },
+    {
+      "name": "The Seriema",
+      "oracle_id": "a6bcec1f-f515-4e63-9e84-8eb04cc582ff"
+    },
+    {
+      "name": "Sledge-Class Seedship",
+      "oracle_id": "bcd086ce-de5c-4b34-92a1-ece22055e479"
+    },
+    {
+      "name": "Infinite Guideline Station",
+      "oracle_id": "cda39514-86c9-483e-8d95-fd08138ce33a"
+    },
+    {
+      "name": "Galvanizing Sawship",
+      "oracle_id": "dfe8f77a-cc26-438b-92ae-2ca7a91f813b"
+    },
+    {
+      "name": "Susurian Dirgecraft",
+      "oracle_id": "f1d826d1-d2da-46ce-b1db-81393c88d865"
+    }
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_station_symbols_roundtrip_reject_ambiguous_boxes_members_and_counter_facts",
+    "test_station_symbols_emit_cumulative_members_and_separate_type_ability_base_layers",
+    "test_station_threshold_predicate_mutant_is_killed",
+    "test_spacecraft_self_zone_labels_share_canonical_vehicle_occurrences_without_type_predicates",
+    "test_station_symbols_preserve_spans_and_members_without_promoting_unknown_children",
+    "test_station_symbols_verified_owner_withdrawal_blocks_whole_source",
+    "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+    "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+    "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+    "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+    "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+    "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+    "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+  ],
+  "implementation": {
+    "component": "StationSymbolsSpec, StationSymbolsHandler, Station compiler context, existing static-component scopes and canonical layer/counter/choice owners",
+    "version": "typed-station-symbols-v1",
+    "capability_ids": [
+      "continuous.characteristics.station_symbols"
+    ],
+    "supported_slice": "One or two increasing N+ striations with independently closed children and one optional final fixed P/T box explicitly located by the pinned export annotation."
+  },
+  "known_blockers": [
+    "unrepresented children",
+    "ambiguous, missing or inconsistent P/T-box placement",
+    "variable P/T or thresholds",
+    "more than two or malformed symbols",
+    "unowned characteristic applicability cycles",
+    "arbitrary text-changing, merged or granted symbol layouts",
+    "aggregate Station Cards coverage remains incomplete"
+  ],
+  "review_status": "reviewed"
+}

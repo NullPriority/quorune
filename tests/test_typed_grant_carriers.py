@@ -676,7 +676,7 @@ class TypedGrantCarrierTests(unittest.TestCase):
             rejected = compile_oracle_card(replace(record, oracle_text=text), capability_registry=registry, capability_profile="commander_review")
             self.assertNotEqual("exact", rejected.status, text)
         rune = compile_oracle_card(self.db.lookup("Rune of Might"), capability_registry=registry, capability_profile="commander_review")
-        self.assertNotEqual("exact", rune.status)
+        self.assertEqual("exact", rune.status, rune.material_residuals)
 
     def test_printed_land_grant_uses_recipient_and_replays(self):
         session = self.session(61130001)

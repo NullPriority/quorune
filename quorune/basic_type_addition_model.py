@@ -6,25 +6,39 @@ from .basic_land_types import BASIC_LAND_MANA
 
 BASIC_TYPE_ADDITION_HANDLER='continuous.basic_land_type.fixed-addition.v1'
 BASIC_TYPE_ADDITION_CAPABILITY='continuous.basic_land_type.fixed_addition'
+CREATURE_LAND_ADDITION_CAPABILITY='continuous.basic_land_type.creature_addition'
 
 
 @dataclass(frozen=True,slots=True)
 class BasicTypeAdditionSpec:
     scope:str
     basic_types:tuple[str,...]
+    schema_version:int=1
 
     def __post_init__(self):
-        if type(self.scope) is not str or self.scope not in {'all_lands','controller_lands','attached_land'}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
+            raise ValueError('Basic type addition schema version is unsupported')
+        scopes={'controller_nontoken_creatures'} if self.schema_version==2 else {'all_lands','controller_lands','attached_land'}
+        if type(self.scope) is not str or self.scope not in scopes:
             raise ValueError('Basic type addition requires a fixed land scope')
         if (not isinstance(self.basic_types,tuple) or not self.basic_types
             or any(type(t) is not str or t not in BASIC_LAND_MANA for t in self.basic_types)
             or self.basic_types!=tuple(sorted(set(self.basic_types)))):
             raise ValueError('Basic type addition requires canonical distinct basic types')
 
-    def to_dict(self)->dict[str,Any]:return {'scope':self.scope,'basic_types':list(self.basic_types)}
+    @property
+    def capability_id(self):
+        return CREATURE_LAND_ADDITION_CAPABILITY if self.schema_version==2 else BASIC_TYPE_ADDITION_CAPABILITY
+
+    def to_dict(self)->dict[str,Any]:
+        result={'scope':self.scope,'basic_types':list(self.basic_types)}
+        if self.schema_version==2:result['schema_version']=2
+        return result
 
     @classmethod
     def from_dict(cls,value:Mapping[str,Any]):
-        if not isinstance(value,Mapping) or set(value)!={'scope','basic_types'} or not isinstance(value['basic_types'],list):
+        fields={'scope','basic_types'}
+        if isinstance(value,Mapping) and value.get('schema_version')==2:fields.add('schema_version')
+        if not isinstance(value,Mapping) or set(value)!=fields or not isinstance(value['basic_types'],list):
             raise ValueError('Basic type addition has a closed schema')
-        return cls(value['scope'],tuple(value['basic_types']))
+        return cls(value['scope'],tuple(value['basic_types']),value.get('schema_version',1))

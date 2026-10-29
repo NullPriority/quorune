@@ -176,10 +176,15 @@ class FixedActivationTapCostCompilerTests(unittest.TestCase):
                 self.assertFalse(lowered.uncompiled_costs)
 
     def test_tap_cost_grammar_rejects_qualified_and_open_variants(self):
+        promoted = fixture_card("Qualified White Tap Cost", "Tap an untapped white creature you control: Draw a card.")
+        node = self.compile(promoted).faces[0].nodes[0]
+        self.assertTrue(node.exact)
+        self.assertFalse(node.cost.get("uncompiled_costs"))
+        self.assertEqual(["W"], node.cost["choices"][0]["q"]["colors_any"])
         unsupported = (
             "Tap any number of untapped creatures you control",
             "Tap two untapped artifacts and/or creatures you control",
-            "Tap an untapped white creature you control",
+            "Tap an untapped creature you control with the chosen color",
             "Tap an untapped legendary permanent you control",
             "Tap an untapped snow land you control",
             "Tap an untapped nontoken artifact you control",

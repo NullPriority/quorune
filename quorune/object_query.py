@@ -84,6 +84,10 @@ def exact_numeric_characteristic(
 
     if stat not in {"power", "toughness"}:
         raise ValueError("Exact numeric characteristics are power or toughness")
+    if getattr(card,'zone',None)=='battlefield' and 'type_line' in effective:
+        from .characteristic_evaluation import type_parts
+        if 'creature' not in type_parts(str(effective['type_line']))[0]:
+            return None
 
     def exact_integer(value: Any) -> int | None:
         if type(value) is int:

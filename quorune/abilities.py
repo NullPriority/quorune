@@ -29,7 +29,9 @@ from .activation_condition_model import (
 )
 from .activation_restriction_composition import activation_restriction_from_effect
 from .activated_ability_descriptor import validate_activated_ability_descriptor
-from .boast import keyword_activation_restrictions,validate_boast_ability
+from .boast import keyword_activation_restrictions,validate_boast_ability,validate_forecast_ability
+from .forecast_model import FORECAST_UNCOMPILED
+from .ability_line_normalization import forecast_cost_without_source_reveal
 from .replacement.immutable import FrozenMap, thaw_value
 from .color_set_mana_abilities import ColorSetActivatedManaAbilitySpec
 from .creature_subtypes import canonical_creature_subtype
@@ -216,7 +218,7 @@ class CostChoice:
             return None
         return FixedTapActivationCost.from_descriptor(
             {
-                "schema_version": 1,
+                "schema_version": 2 if self.predicate.get('colors_any') else 1,
                 "kind": self.kind,
                 "count": self.count,
                 "zone": self.zone,
@@ -318,6 +320,7 @@ class ActivatedAbility:
     announced_x_symbols: int | None = None
     boast: bool = False
     reconfigure: bool = False
+    forecast: bool = False
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
@@ -331,6 +334,7 @@ class ActivatedAbility:
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
         validate_boast_ability(self)
+        validate_forecast_ability(self)
 
     def to_dict(self) -> dict[str, Any]:
         result = {
@@ -400,6 +404,7 @@ class ActivatedAbility:
         if self.announced_x_symbols is not None:result['announced_x_symbols']=self.announced_x_symbols
         if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
+        if self.forecast:result['forecast']=True
         return result
 
     @classmethod
@@ -410,6 +415,7 @@ class ActivatedAbility:
             announced_x_symbols=value.get('announced_x_symbols'),
             boast=value.get('boast',False),
             reconfigure=value.get('reconfigure', False),
+            forecast=value.get('forecast', False),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],
@@ -761,7 +767,7 @@ def _ability_zones(
 
     if prefix == "channel" or ("channel" in keyword_set and lower_line.startswith("channel")):
         return ("hand",)
-    if prefix == "cycling":
+    if prefix in {"cycling", "forecast"}:
         return ("hand",)
     if "discard this card" in lower_cost and (prefix or "channel" in keyword_set):
         return ("hand",)
@@ -1201,12 +1207,12 @@ def _normalized_ability_line(raw_line: str) -> tuple[str,str | None]:
     return normalized_ability_line(raw_line)
 
 
-def _activation_conditions(effect_text: str) -> tuple[ActivationCondition, ...]:
+def _activation_conditions(effect_text: str, *, source_name=None) -> tuple[ActivationCondition, ...]:
     lower = " ".join(effect_text.casefold().split())
     marker = "activate only "
     if marker in lower:
         restriction = lower.rsplit(marker, 1)[1]
-        represented = activation_restriction_spec(restriction)
+        represented = activation_restriction_spec(restriction,source_name=source_name)
         if represented is not None:
             return represented.conditions
         if ' and only ' in restriction:return (ActivationCondition(ActivationConditionKind.UNSUPPORTED),)
@@ -1386,6 +1392,8 @@ def _mana_restriction_quality(
     kind: str,
     value: str,
 ) -> tuple[str, str, tuple[str, ...]] | None:
+    if kind == 'spell' and value.strip() == 'instant and sorcery':
+        return 'spell', 'types_any', ('instant', 'sorcery')
     terms = _mana_restriction_terms(value)
     if not terms:
         return None
@@ -1485,8 +1493,9 @@ def _parse_activated_line(
     if not effect_text:
         return ()
     actual_cost, keyword_prefix = _strip_keyword_prefix(left.strip())
-    cost = _parse_cost(actual_cost, card_name)
     prefix = (keyword_override or keyword_prefix or "").casefold()
+    parsed_cost, forecast = forecast_cost_without_source_reveal(prefix, actual_cost)
+    cost = _parse_cost(parsed_cost, card_name)
     if prefix == "exhaust":
         effect_text = re.sub(
             r"\s*\(activate each exhaust ability only once\.\)\s*$",
@@ -1504,8 +1513,8 @@ def _parse_activated_line(
     builtin_semantic_key, target_schema = _builtin_effect_descriptor(effect_text)
     if (keyword_override or keyword_prefix or "").casefold() == "equip":
         builtin_semantic_key, target_schema = _equip_effect_descriptor()
-    activation_limit,conditions,boast=keyword_activation_restrictions(prefix,effect_lower,_activation_conditions(effect_text))
-    restriction=activation_restriction_from_effect(effect_text)
+    activation_limit,conditions,boast=keyword_activation_restrictions(prefix,effect_lower,_activation_conditions(effect_text,source_name=card_name),source_name=card_name)
+    restriction=activation_restriction_from_effect(effect_text,source_name=card_name)
     return (
         ActivatedAbility(
             ability_id=f"ab{line_index + 1}",
@@ -1534,7 +1543,7 @@ def _parse_activated_line(
             loyalty_delta=cost.loyalty_delta,
             source_counter_removal_cost=cost.source_counter_removal_cost,
             choices=cost.choices,
-            uncompiled_costs=(*cost.uncompiled, *((POWER_UP_UNCOMPILED,) if prefix == "power-up" else ())),
+            uncompiled_costs=(*cost.uncompiled, *((POWER_UP_UNCOMPILED,) if prefix == "power-up" else ()), *((FORECAST_UNCOMPILED,) if prefix == 'forecast' and not forecast else ())),
             mana_ability=mana_ability,
             sorcery_speed=(restriction.sorcery_speed if restriction is not None else bool(_ACTIVATE_ONLY_SORCERY.search(effect_text))),
             generic_reduction_per_legendary_creature=int(
@@ -1550,6 +1559,7 @@ def _parse_activated_line(
             target_schema=target_schema,
             activation_limit=activation_limit,
             boast=boast,
+            forecast=forecast,
             library_search_types=_library_search_types(effect_text),
             activation_conditions=conditions,
             dynamic_mana_output=_dynamic_mana_output(effect_text),

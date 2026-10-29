@@ -146,6 +146,7 @@ def apply_static_reductions(
             host,
             seat,
             specification,
+            source=card,
         ).items():
             self_reduction[key] = self_reduction.get(key, 0) + amount
     applied_self: dict[str, int] = {}

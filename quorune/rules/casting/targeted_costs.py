@@ -4,39 +4,39 @@ from ...target_source import spell_targeting_source
 
 """Target-dependent costs around the existing cost and target authorities."""
 
-from itertools import combinations,combinations_with_replacement,product
+from itertools import combinations
 from ...targets import available_modes,target_plan
-from ...selection.target_validation import validate_grouped_target_assignment
+from ...selection.target_validation import (validate_grouped_target_assignment,
+    target_assignment_witnesses, public_target_schema_for_witnesses)
 from ...semantic_runtime.targeted_spell_costs import targeted_spell_cost_sources
 from ...errors import GameRuleError
 
 
 def target_cost_fact(sources,targets):
-    applied=tuple(source for source in sources if source.applies(targets))
-    reduction=any(source.spec.generic<0 for source in sources)
-    return {'schema_version':2 if reduction else 1,'generic':sum(max(0,source.spec.generic) for source in applied),
-        **({'generic_reduction':sum(max(0,-source.spec.generic) for source in applied)} if reduction else {}),
+    applied=tuple((source,source.adjustment(targets)) for source in sources if source.applies(targets))
+    counted=any(source.spec.schema_version==5 for source in sources)
+    reduction=counted or any(source.spec.generic<0 for source in sources)
+    return {'schema_version':3 if counted else 2 if reduction else 1,'generic':sum(max(0,amount) for source,amount in applied),
+        **({'generic_reduction':sum(max(0,-amount) for source,amount in applied)} if reduction else {}),
         'sources':[{'component_id':source.component_id,'source_ref':source.source_ref,'source_identity':source.source_identity,
-            'controller':source.controller,'generic':source.spec.generic} for source in applied]}
+            'controller':source.controller,'generic':amount} for source,amount in applied]}
 
 
-def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_targets=0):
+def _cost_signature(fact):
+    return tuple((row['component_id'],row['generic']) for row in fact['sources'])
+
+
+def _target_assignments(host,seat,card,schema,modes,*,required=None,extra_targets=0,sources=None):
     if schema is None:yield (),{};return
     plan=target_plan(schema,modes,require_modes=bool(available_modes(schema)))
     candidates=host._target_candidate_map(seat,plan,acting_source=spell_targeting_source(host,card), source_ref=card.ref)
-    choices=[]
-    for group in plan.groups:
-        refs=candidates[group.group_id]
-        choose=combinations if group.distinct and not group.allow_reuse else combinations_with_replacement
-        minimum=max(group.min_targets,1 if required is not None and required[0]==group.group_id else 0)
-        maximum=min(group.max_targets,len(refs),minimum+extra_targets)
-        choices.append(tuple(value for count in range(minimum,maximum+1) for value in choose(refs,count)
-            if required is None or required[0]!=group.group_id or required[1] in value))
-    for values in product(*choices):
-        grouped={group.group_id:list(refs) for group,refs in zip(plan.groups,values)}
-        try:targets=validate_grouped_target_assignment(host,plan,grouped,candidates)
-        except (ValueError,GameRuleError):continue
-        yield tuple(targets),grouped
+    eligible_sets=None
+    if sources is not None:
+        extra_targets=max(extra_targets,sum(group.max_targets-group.min_targets for group in plan.groups))
+        refs={ref for values in candidates.values() for ref in values}
+        eligible_sets=tuple(frozenset(ref for ref in refs if source.matches_target(ref)) for source in sources)
+    yield from target_assignment_witnesses(host,plan,candidates,required=required,
+        extra_targets=extra_targets,eligible_sets=eligible_sets)
 
 
 def _announced_tax_assignments(host,seat,card,schema,sources):
@@ -79,11 +79,15 @@ def _announced_tax_variants(host,seat,card,schema,sources,option,modes):
     if 'target_count_price' in option:
         from .target_count_costs import counted_target_tax_assignments
         assignments=counted_target_tax_assignments(host,seat,card,schema,sources,option['target_count_price'])
-    else:assignments=_announced_tax_assignments(host,seat,card,schema,sources)
+    else:
+        from .distinct_target_costs import has_distinct_target_modifiers,distinct_target_tax_assignments
+        assignments=(distinct_target_tax_assignments(host,seat,card,schema,sources)
+            if has_distinct_target_modifiers(sources) else _announced_tax_assignments(host,seat,card,schema,sources))
     for targets,grouped,limit in assignments:
         fact=target_cost_fact(sources,targets)
-        key=tuple(row['component_id'] for row in fact['sources'])
-        signatures.setdefault(key,(fact,[],limit))[1].append({'targets':grouped,'modes':list(modes)})
+        key=_cost_signature(fact)
+        value=signatures.setdefault(key,[fact,[],limit]);value[2]=max(value[2],limit)
+        value[1].append({'targets':grouped,'modes':list(modes)})
     for fact,witnesses,limit in signatures.values():
         smallest=min(witnesses,key=lambda w:sum(len(refs) for refs in w['targets'].values()))
         yield {**option,'targeted_cost':fact,'target_cost_witness':smallest,'target_count_preview_limit':limit,
@@ -111,6 +115,8 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
         names=available_modes(schema);minimum=int(schema.get('min_modes',schema.get('mode_count',1)));maximum=int(schema.get('max_modes',schema.get('mode_count',1)))
         mode_sets=tuple(value for count in range(minimum,maximum+1) for value in combinations(names,count))
     seen=set()
+    from .distinct_target_costs import has_distinct_target_modifiers
+    counted=has_distinct_target_modifiers(sources)
     for selected in mode_sets:
         required=(None,)
         if schema is not None:
@@ -118,8 +124,9 @@ def target_cost_variants(host,seat,card,program,option,response,*,hint):
             candidates=host._target_candidate_map(seat,plan,acting_source=spell_targeting_source(host,card), source_ref=card.ref)
             required=(*required,*((group.group_id,ref) for group in plan.groups for ref in candidates[group.group_id] if group.max_targets))
         for needed in required:
-            for targets,grouped in _target_assignments(host,seat,card,schema,selected,required=needed,extra_targets=len(sources)):
-                fact=target_cost_fact(sources,targets);key=(selected,needed,tuple(row['component_id'] for row in fact['sources']))
+            for targets,grouped in _target_assignments(host,seat,card,schema,selected,required=needed,
+                    extra_targets=len(sources),sources=sources if counted else None):
+                fact=target_cost_fact(sources,targets);key=(selected,needed,_cost_signature(fact))
                 if key in seen:continue
                 seen.add(key)
                 yield {**option,'targeted_cost':fact,'target_cost_witness':{'targets':grouped,'modes':list(selected)}}
@@ -135,18 +142,22 @@ def apply_target_cost_increase(option):
 
 def target_cost_for_x_preview(option):
     fact=option.get('targeted_cost')
-    return fact if 'target_count_parameter' in option or fact is not None and fact.get('schema_version')==2 else None
+    return fact if 'target_count_parameter' in option or fact is not None and fact.get('schema_version') in {2,3} else None
 
 
 def _preview_option_rank(option):
     raw=option.to_dict()
-    maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum',0) if raw.get('targeted_cost',{}).get('schema_version')==2 else 0
+    version=raw.get('targeted_cost',{}).get('schema_version')
+    maximum=raw.get('choice_schema',{}).get('x',{}).get('maximum',0) if version in {2,3} else 0
+    if version==3:return -maximum,sum(raw['requirements'].values())
     return sum(raw['requirements'].values()),-maximum
 
 
 def target_cost_clauses(host,seat,*,card=None,spell_program=None):
     return [{'generic':source.spec.generic,'any_target_refs':list(source.eligible_target_refs),
-        'source':source.source_ref,'component_id':source.component_id} for source in targeted_spell_cost_sources(host,seat,card=card,spell_program=spell_program)]
+        'source':source.source_ref,'component_id':source.component_id,
+        **({'counted_targets':source.spec.counted_targets} if source.spec.schema_version==5 else {})}
+        for source in targeted_spell_cost_sources(host,seat,card=card,spell_program=spell_program)]
 
 
 def consolidate_target_cost_options(options,*,hint):
@@ -164,10 +175,13 @@ def consolidate_target_cost_options(options,*,hint):
             modes=tuple(raw.get('target_cost_witness',{}).get('modes',()))
             components=tuple(row['component_id'] for row in raw['targeted_cost']['sources'])
             count=raw.get('target_count_price')
-            prices.setdefault(option.option_id,{})[(modes,components,count)]={'modes':list(modes),'components':list(components),
+            amounts=tuple(row['generic'] for row in raw['targeted_cost']['sources'])
+            prices.setdefault(option.option_id,{})[(modes,components,count,amounts)]={'modes':list(modes),'components':list(components),
+                **({'generic_adjustments':[{'component_id':row['component_id'],'generic':row['generic']}
+                    for row in raw['targeted_cost']['sources']]} if raw['targeted_cost'].get('schema_version')==3 else {}),
                 **({'target_count':count} if count is not None else {}),
                 'requirements':raw['requirements'], **({'maximum_x':raw['choice_schema']['x']['maximum']}
-                if ('target_count_parameter' in raw or raw['targeted_cost'].get('schema_version')==2) and 'x' in raw.get('choice_schema',{}) else {})}
+                if ('target_count_parameter' in raw or raw['targeted_cost'].get('schema_version') in {2,3}) and 'x' in raw.get('choice_schema',{}) else {})}
         prior=result.get(option.option_id)
         if prior is None or _preview_option_rank(option)<_preview_option_rank(prior):result[option.option_id]=option
     return tuple(CastCostOption.from_dict({**option.to_dict(),**({'payable_target_witnesses':witnesses[oid],
@@ -182,27 +196,14 @@ def public_target_costs(host,seat,option,*,card=None,spell_program=None):
         value=(f"{{{requirements['GENERIC']}}}" if requirements.get('GENERIC') else '')
         value+=''.join(('{'+key+'}')*requirements.get(key,0) for key in 'WUBRGC')
         return 'Pay '+(value or '{0}')
-    return {'kind':'generic_adjustment_once_per_source' if any(row['generic']<0 for row in clauses) else 'generic_increase_once_per_source','clauses':clauses,
-        'prices':[{**row,'label':f"Choose X up to {row['maximum_x']}" if option.get('targeted_cost',{}).get('schema_version')==2 and 'maximum_x' in row
+    kind=('generic_adjustment_per_distinct_target' if any('counted_targets' in row for row in clauses)
+        else 'generic_adjustment_once_per_source' if any(row['generic']<0 for row in clauses) else 'generic_increase_once_per_source')
+    return {'kind':kind,'clauses':clauses,
+        'prices':[{**row,'label':f"Choose X up to {row['maximum_x']}" if option.get('targeted_cost',{}).get('schema_version') in {2,3} and 'maximum_x' in row
             else label(row['requirements'])} for row in option.get('target_cost_prices',())]}
 
 
 def public_payable_target_schema(schema,option):
     witnesses=option.get('payable_target_witnesses')
     if witnesses is None:return schema
-    from copy import deepcopy
-    result=deepcopy(schema)
-    def filter_groups(value,selected):
-        allowed={}
-        for witness in selected:
-            for group,refs in witness['targets'].items():allowed.setdefault(group,set()).update(refs)
-        for group in value.get('groups',[]):group['legal_refs']=[ref for ref in group['legal_refs'] if ref in allowed.get(group['id'],())]
-        if 'legal_refs' in value:value['legal_refs']=[ref for ref in value['legal_refs'] if any(ref in refs for refs in allowed.values())]
-    if 'mode_schemas' in result:
-        for mode,value in result['mode_schemas'].items():filter_groups(value,[w for w in witnesses if mode in w['modes']])
-        legal_modes={mode for witness in witnesses for mode in witness['modes']}
-        result['legal_modes']=[mode for mode in result['legal_modes'] if mode in legal_modes]
-        result['mode_schemas']={mode:value for mode,value in result['mode_schemas'].items() if mode in legal_modes}
-        result['legal_refs']=list(dict.fromkeys(ref for value in result['mode_schemas'].values() for group in value.get('groups',()) for ref in group['legal_refs']))
-    else:filter_groups(result,witnesses)
-    return result
+    return public_target_schema_for_witnesses(schema,witnesses)

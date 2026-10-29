@@ -54,7 +54,7 @@ def _anywhere_graveyard_spec(material_line):
         'fixed-counter-public-anywhere-graveyard-trigger-v1', 'trigger-event-normalized-zone-change',
         condition={'all': conditions}, capabilities=(ANYWHERE_GRAVEYARD_CAPABILITY,))
 _PUBLIC_ATTACK_TRIGGER = re.compile(
-    r"^Whenever (?P<subject>this Vehicle|a creature|"
+    r"^Whenever (?P<subject>this creature|this Vehicle|a creature|"
     r"a creature you control|a creature with flying) "
     r"attacks(?P<alone> alone)?(?: (?P<recipient>you or a planeswalker "
     r"you control))?, (?P<body>.+)$",
@@ -116,7 +116,7 @@ _ATTACHMENT_ATTACK_TRIGGER = re.compile(
 )
 _ATTACHMENT_DAMAGE_TRIGGER = re.compile(
     r"^Whenever (?P<relation>enchanted|equipped) creature deals "
-    r"(?P<combat>combat )?damage to (?P<recipient>a player|an opponent), "
+    r"(?P<combat>combat )?damage(?: to (?P<recipient>a player|an opponent))?, "
     r"(?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -630,18 +630,13 @@ def _attachment_attack_or_damage_spec(
         )
     damage = _ATTACHMENT_DAMAGE_TRIGGER.fullmatch(material_line)
     if damage is not None:
-        recipient = damage.group("recipient").casefold()
+        recipient = (damage.group("recipient") or "").casefold()
         relation = damage.group("relation").casefold()
         combat = damage.group("combat") is not None
-        if (relation, combat, recipient) not in {
-            ("enchanted", False, "an opponent"),
-            ("equipped", True, "a player"),
-        }:
-            return None
         return _spec(
             "damage.dealt",
             f"{relation}_creature_{'combat_' if combat else ''}"
-            f"damage_{recipient.replace(' ', '_')}",
+            f"damage{('_' + recipient.replace(' ', '_')) if recipient else ''}",
             damage.group("body"),
             "fixed-counter-public-damage-trigger-v1",
             "trigger-event-normalized-damage",
@@ -651,7 +646,9 @@ def _attachment_attack_or_damage_spec(
                     "op": "eq",
                     "value": "$context.source",
                 },
-                {"field": "target_kind", "op": "eq", "value": "player"},
+                {"field": "target_kind", "op": "eq", "value": "player"}
+                if recipient
+                else None,
                 {"field": "combat", "op": "truthy", "value": True}
                 if combat
                 else None,
@@ -922,17 +919,20 @@ def _public_damage_spec(
 def _public_attack_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     match = _PUBLIC_ATTACK_TRIGGER.fullmatch(material_line)
     if match is None:
-        return None
+        from .qualified_attack_subjects import qualified_attack_binding_spec
+        return qualified_attack_binding_spec(material_line)
     subject = " ".join(match.group("subject").casefold().split())
+    if subject == "this creature" and (match.group("alone") is None or match.group("recipient") is not None):
+        return None
     return _spec(
         "creature.attacks",
-        "public_attack_" + subject.replace(" ", "_"),
+        "source_attacks" if subject == "this creature" else "public_attack_" + subject.replace(" ", "_"),
         match.group("body"),
         "fixed-counter-public-attack-trigger-v1",
         "trigger-event-normalized-public-action",
         condition=_all_conditions(
             {"field": "card", "op": "eq", "value": "$source.ref"}
-            if subject == "this vehicle"
+            if subject in {"this creature", "this vehicle"}
             else None,
             {"field": "controller", "op": "eq", "value": "$source.controller"}
             if subject == "a creature you control"
@@ -1084,13 +1084,14 @@ def _source_any_damage_spec(material_line, *, card_name):
     match=re.fullmatch(r'Whenever (?P<source>.+?) (?P<verb>deals|is dealt) (?P<combat>combat )?damage, (?P<body>.+)',material_line,re.I)
     if match is None or not _source_subject(match['source'],card_name=card_name):return None
     receiving=match['verb'].casefold()=='is dealt'
-    if receiving and not match['combat']:return None
     condition=_all_conditions(
         {'field':'target','op':'eq','value':'$source.ref'} if receiving else None,
         {'field':'combat','op':'eq','value':True} if match['combat'] else None)
-    return _spec('damage.dealt' if receiving else 'damage.dealt.self',
-        'source_received_combat_damage' if receiving else 'source_any_combat_damage' if match['combat'] else 'source_any_damage',
-        match['body'],'fixed-counter-public-damage-trigger-v1','trigger-event-normalized-damage',condition=condition)
+    from ..received_damage_model import RECEIVED_DAMAGE_EVENT, RECEIVED_COMBAT_DAMAGE_EVENT, RECEIVED_DAMAGE_MECHANIC
+    template = ('fixed-counter-source-received-combat-damage-trigger-v1' if match['combat'] else 'fixed-counter-source-received-damage-trigger-v1') if receiving else 'fixed-counter-public-damage-trigger-v1'
+    return _spec((RECEIVED_COMBAT_DAMAGE_EVENT if match['combat'] else RECEIVED_DAMAGE_EVENT) if receiving else 'damage.dealt.self',
+        ('source_received_combat_damage' if match['combat'] else 'source_dealt_damage') if receiving else 'source_any_combat_damage' if match['combat'] else 'source_any_damage',
+        match['body'],template,RECEIVED_DAMAGE_MECHANIC if receiving else 'trigger-event-normalized-damage',condition=condition)
 
 
 def fixed_public_event_binding_spec(
@@ -1098,6 +1099,12 @@ def fixed_public_event_binding_spec(
     *,
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
+    from .designation_event_bindings import designation_event_binding_spec
+    designation = designation_event_binding_spec(material_line, card_name=card_name)
+    if designation is not None:return designation
+    from .received_damage_bindings import received_permanent_binding_spec
+    received = received_permanent_binding_spec(material_line)
+    if received is not None:return received
     """Parse one bounded public occurrence without compiling its effect body."""
 
     exploit=re.fullmatch(r'(?:When|Whenever) (?P<source>.+?) exploits a creature, (?P<body>.+)',material_line,re.I)

@@ -2,7 +2,7 @@
 title: "Damage transaction"
 status: "current"
 authoritative_source: "quorune/rules/stack_damage_sources.py, quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, quorune/rules/damage_capability_shapes.py, and quorune/combat_damage_*"
-verified: "2026-10-16"
+verified: "2026-10-28"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -44,6 +44,13 @@ keywords such as lifelink; the resolving ability keeps its own controller.
 Current facts are read at the individual damage instruction after any paid
 prefix. Once a damage proposal is sealed, replacement-choice resumption retains
 that proposal's source facts.
+
+Closed event-player damage instructions retain that source contract while
+addressing the sealed occurrence player. A draw or cast participant is not
+replaced with the trigger controller. The instruction creates no target
+choice and enters the same damage transaction, including prevention and life
+consequences. Source departure preserves the queued instruction's normal
+source-information handling.
 Single-recipient, opponent-set and fixed affected-set damage feed the same
 validated snapshot into the canonical transaction. A source-excluding affected
 set excludes the original incarnation, so a returned creature is another object.
@@ -63,6 +70,25 @@ value cannot replace a later departure value, and a returned incarnation cannot
 replace the original source. A represented battlefield noncreature has no
 power and contributes numeric zero under CR 208.3 and 107.2. Fight still requires
 both current creatures; it never substitutes a departed participant's power.
+
+Prepared one-way damage uses ordinary fixed characteristic or counter effects
+before reading the targeted creature's current effective power. Counter
+replacement and prohibition therefore affect the later amount. Both target
+roles retain independent resolution revalidation: a legal source still receives
+its preparation if only the recipient becomes illegal, while an illegal source
+cannot supply damage through last-known information. The creature remains the
+damage source, including its lifelink and deathtouch; a trample grant does not
+redirect excess noncombat damage to a player. These compositions add no second
+damage or mutation owner.
+
+Version-two creature-power damage instructions add an explicit fixed multiplier
+of two for direct one-way damage. The source's current power is multiplied
+once before the ordinary damage proposal enters replacement and prevention.
+Damage attribution and result materialization still use the creature source.
+Legacy instructions omit both multiplier fields and retain their original
+meaning. Unknown versions, incomplete fields, other coefficients and Fight
+combinations fail closed. Runtime admission derives the multiplier capability
+from the instruction payload independently of program annotations.
 
 ```mermaid
 flowchart LR
@@ -191,6 +217,31 @@ damage to different players creates one occurrence per player. Separate damage
 transactions and combat-damage steps remain separate, fully prevented results
 create none, and the ordinary trigger owner retains APNAP placement and trigger
 multiplier behavior.
+
+Receiving abilities consume a distinct immutable recipient occurrence, rather
+than one trigger per dealer packet. `damage_received_events.py` groups positive
+committed results by the recipient's physical and logical incarnation within
+one transaction, in canonical recipient order. `damage.received` exposes the
+actual received total; `combat.damage.received` separately exposes the positive
+combat portion. Zero and fully prevented packets produce neither occurrence.
+The same recipient in a later transaction or damage step remains a new event.
+
+New compiler subscriptions require the receiving-event capability independently
+of coverage. Lethal damage still queues receiving abilities before state-based
+departure; their source, targets and current/LKI handling remain ordinary
+trigger and damage-source contracts. No mutation owner, dealer identity or
+persistent grouping state is replaced. Saved `damage.dealt` subscriptions keep
+their packet behavior. See
+[ADR 0133](../adr/0133-committed-damage-received-occurrences.md).
+
+Untargeted destruction on a receiving creature seals that event's recipient,
+not the giver's attachment when the queued ability later resolves. The existing
+event-object reference checks its logical incarnation; departure or reentry
+does not redirect the result. Ordinary regeneration, an exact prohibition of
+regeneration, and indestructibility retain the canonical destruction owner.
+Attached tap-or-damage subscriptions independently seal the same reference
+from each represented event transport. Unknown recipient predicates remain
+compiler residuals.
 
 ## Replay, privacy, and extension
 

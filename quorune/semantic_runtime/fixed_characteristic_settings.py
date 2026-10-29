@@ -44,6 +44,32 @@ def validate_setting_condition(condition: Mapping[str, Any], *, allow_devotion=F
     return parsed
 
 
+def fixed_setting_modifier_node(modifier):
+    """Validate the shared closed modifier independently of its receiver scope."""
+    from ..creature_subtypes import canonical_creature_subtype,CREATURE_SUBTYPES
+    from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+    allowed_types={'artifact','battle','creature','enchantment','land','planeswalker'}
+    node = _attached_characteristics_node((), modifier)
+    if not _has_characteristic_modifier(node) or node.quantity is not None or node.add_rules_text or node.add_ability_fragments:
+        raise SemanticNodeError("Fixed settings require represented constant operations")
+    if any(value not in FIXED_CHARACTERISTIC_KEYWORDS for value in node.add_abilities):
+        raise SemanticNodeError("Fixed setting keyword additions require represented rules")
+    if any(value not in FIXED_CHARACTERISTIC_KEYWORDS for value in node.remove_abilities):
+        raise SemanticNodeError('Fixed setting keyword removals require represented rules')
+    for operation in node.type_operations:
+        values=tuple(operation.value)
+        if operation.field=='card_types' and (operation.op!='add_types' or not set(v.lower() for v in values)<=allowed_types):
+            raise SemanticNodeError("Fixed settings preserve card types when adding represented permanent types")
+        if operation.field=='supertypes' and (operation.op!='add_types' or set(v.lower() for v in values)!={'legendary'}):
+            raise SemanticNodeError("Fixed setting supertype operation is unsupported")
+        if operation.field=='subtypes':
+            if operation.op=='set_types' or any(canonical_creature_subtype(value) is None for value in values):
+                raise SemanticNodeError("Fixed settings modify canonical creature subtype sets")
+            if operation.op=='remove_types' and {v.lower() for v in values}!=set(CREATURE_SUBTYPES):
+                raise SemanticNodeError("Subtype replacement removes exactly the creature vocabulary")
+    return node
+
+
 @dataclass(frozen=True, slots=True)
 class FixedCharacteristicSettingsHandler:
     handler_id: str = FIXED_SETTING_HANDLER_ID
@@ -106,26 +132,7 @@ class FixedCharacteristicSettingsHandler:
                 raise SemanticNodeError("Attached settings require one ordinary permanent subject type")
         elif target["controller"] not in {"any", "source_controller", "source_opponents"}:
             raise SemanticNodeError("Fixed setting controller relation is unsupported")
-        node = _attached_characteristics_node((), descriptor["modifier"])
-        if not _has_characteristic_modifier(node) or node.quantity is not None or node.add_rules_text or node.add_ability_fragments:
-            raise SemanticNodeError("Fixed settings require represented constant operations")
-        from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
-        from ..creature_subtypes import CREATURE_SUBTYPES
-        if any(value not in FIXED_CHARACTERISTIC_KEYWORDS for value in node.add_abilities):
-            raise SemanticNodeError("Fixed setting keyword additions require represented rules")
-        if any(value not in FIXED_CHARACTERISTIC_KEYWORDS for value in node.remove_abilities):
-            raise SemanticNodeError('Fixed setting keyword removals require represented rules')
-        for operation in node.type_operations:
-            values=tuple(operation.value)
-            if operation.field=='card_types' and (operation.op!='add_types' or not set(v.lower() for v in values)<=allowed_types):
-                raise SemanticNodeError("Fixed settings preserve card types when adding represented permanent types")
-            if operation.field=='supertypes' and (operation.op!='add_types' or set(v.lower() for v in values)!={'legendary'}):
-                raise SemanticNodeError("Fixed setting supertype operation is unsupported")
-            if operation.field=='subtypes':
-                if operation.op=='set_types' or any(canonical_creature_subtype(value) is None for value in values):
-                    raise SemanticNodeError("Fixed settings modify canonical creature subtype sets")
-                if operation.op=='remove_types' and {v.lower() for v in values}!=set(CREATURE_SUBTYPES):
-                    raise SemanticNodeError("Subtype replacement removes exactly the creature vocabulary")
+        node = fixed_setting_modifier_node(descriptor['modifier'])
         return target, predicate, node
 
     def lower(self, descriptor: Mapping[str, Any], context: ContinuousEffectSourceContext):

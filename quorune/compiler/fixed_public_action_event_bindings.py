@@ -50,7 +50,8 @@ _PUBLIC_GRAVEYARD_DEPARTURE_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _CONTROLLED_TOKEN_ENTRY_TRIGGER = re.compile(
-    r"^Whenever one or more tokens you control enter, (?P<body>.+)$",
+    r"^Whenever (?P<quantity>a token|one or more tokens) you control "
+    r"(?P<verb>enters|enter), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _CONTROLLED_TOKEN_LEAVE_TRIGGER = re.compile(
@@ -340,9 +341,12 @@ def _public_token_zone_spec(
 ) -> FixedPublicEventBindingSpec | None:
     token_entry = _CONTROLLED_TOKEN_ENTRY_TRIGGER.fullmatch(material_line)
     if token_entry is not None:
+        singular = token_entry.group("quantity").casefold() == "a token"
+        if token_entry.group("verb").casefold() != ("enters" if singular else "enter"):
+            return None
         return _spec(
             "permanent.enter",
-            "one_or_more_controlled_tokens_enter",
+            "controlled_token_enters" if singular else "one_or_more_controlled_tokens_enter",
             token_entry.group("body"),
             "fixed-counter-public-zone-trigger-v1",
             "trigger-event-normalized-zone-change",
@@ -550,26 +554,8 @@ def _qualified_damage_match_spec(match, *, singular: bool):
         conditions.append({'field':'combat','op':'truthy','value':True})
     if match['recipient'].casefold() == 'an opponent':
         conditions.append({'field':'player','op':'ne','value':'$source.controller'})
-    for field, values, operation, excluded in (
-        ('source_types',query.types_all,'contains_all',False),
-        ('source_types',query.types_any,'contains_any',False),
-        ('source_types',query.excluded_types,'contains_any',True),
-        ('source_subtypes',query.subtypes_all,'contains_all',False),
-        ('source_subtypes',query.subtypes_any,'contains_any',False),
-        ('source_subtypes',query.excluded_subtypes,'contains_any',True),
-        ('source_colors',query.colors_all,'contains_all',False),
-        ('source_colors',query.colors_any,'contains_any',False),
-        ('source_supertypes',query.supertypes_all,'contains_all',False),
-    ):
-        if values:
-            if operation == 'contains_all':
-                conditions.extend({'field':field,'op':'contains_any','value':[value]} for value in values)
-                continue
-            value = {'field':field,'op':operation,'value':list(values)}
-            conditions.append({'not':value} if excluded else value)
-    if query.colorless is not None:
-        value = {'field':'source_colors','op':'eq','value':[]}
-        conditions.append(value if query.colorless else {'not':value})
+    from .public_event_query_conditions import public_event_query_conditions
+    conditions.extend(public_event_query_conditions(query, prefix='source_'))
     return _spec('damage.dealt', QUALIFIED_DAMAGE_SINGULAR_VARIANT if singular else QUALIFIED_DAMAGE_BATCH_VARIANT, match['body'],
         'fixed-counter-public-damage-trigger-v1', 'trigger-event-normalized-damage',
         condition=_all_conditions(*conditions), capabilities=(QUALIFIED_DAMAGE_SINGULAR_CAPABILITY if singular else QUALIFIED_DAMAGE_BATCH_CAPABILITY,))
@@ -689,7 +675,8 @@ def _public_attack_spec(
 ) -> FixedPublicEventBindingSpec | None:
     match = _PUBLIC_ATTACK_BATCH_TRIGGER.fullmatch(material_line)
     if match is None:
-        return None
+        from .qualified_attack_batches import qualified_attack_batch_binding_spec
+        return qualified_attack_batch_binding_spec(material_line)
     minimum = {"two": 2, "three": 3}.get(
         str(match.group("count") or "").casefold()
     )
@@ -750,6 +737,8 @@ def fixed_public_action_event_binding_spec(
     del card_name
     return (
         _public_attack_spec(material_line)
+        or _public_expend_spec(material_line)
+        or _public_ring_spec(material_line)
         or _public_waterbend_spec(material_line)
         or _public_library_action_spec(material_line)
         or _public_damage_spec(material_line)
@@ -764,6 +753,35 @@ def _public_waterbend_spec(material_line):
     from ..waterbend import WATERBEND_CAPABILITY,WATERBEND_EVENT
     return _spec(WATERBEND_EVENT,'public_waterbend',match['body'],'fixed-waterbend-trigger-v1',
         'trigger-event-normalized-public-action',condition=_actor_condition(match['actor'],field='player'),capabilities=(WATERBEND_CAPABILITY,))
+
+
+def _public_expend_spec(material_line):
+    match=re.fullmatch(r'Whenever you expend (?P<threshold>[1-9]\d*), (?P<body>.+)',material_line,re.I)
+    if match is None:return None
+    from ..expend_model import EXPEND_CAPABILITY,SPELL_MANA_PAYMENT_EVENT
+    threshold=int(match['threshold'])
+    return _spec(SPELL_MANA_PAYMENT_EVENT,'player_expend',match['body'],
+        'fixed-expend-trigger-v1','cr-603-handling-triggered-abilities',
+        condition={'all':[{'field':'player','op':'eq','value':'$source.controller'},
+            {'field':'mana_before','op':'lt','value':threshold},
+            {'field':'mana_after','op':'gte','value':threshold}]},capabilities=(EXPEND_CAPABILITY,))
+
+
+def _public_ring_spec(material_line):
+    from ..ring_model import RING_TEMPTED_EVENT, RING_TEMPTATION_CAPABILITY
+    for phrase, variant, chosen in (
+        ('the Ring tempts you', 'public_ring_temptation', False),
+        ('you choose a creature as your Ring-bearer', 'public_ring_bearer_choice', True),
+    ):
+        match = re.fullmatch(r'Whenever ' + re.escape(phrase) + r', (?P<body>.+)', material_line, re.I)
+        if match is None:
+            continue
+        return _spec(RING_TEMPTED_EVENT, variant, match['body'],
+            'fixed-ring-action-trigger-v1', 'trigger-event-normalized-public-action',
+            condition=_all_conditions(_actor_condition('you', field='player'),
+                {'field': 'creature_chosen', 'op': 'eq', 'value': True} if chosen else None),
+            capabilities=(RING_TEMPTATION_CAPABILITY,))
+    return None
 
 
 def _public_library_action_spec(material_line: str) -> FixedPublicEventBindingSpec | None:

@@ -150,8 +150,13 @@ class AttackKeywordCompilerTests(unittest.TestCase):
                     capability_registry=self.capabilities,
                     capability_profile="commander_review",
                 )
-                self.assertNotEqual("exact", ir.status)
-                self.assertTrue(ir.faces[0].residuals)
+                if keyword == "Exalted":
+                    self.assertEqual("exact", ir.status, ir.material_residuals)
+                    self.assertFalse(ir.material_residuals)
+                    self.assertEqual("triggered_ability", ir.faces[0].nodes[0].kind)
+                else:
+                    self.assertNotEqual("exact", ir.status)
+                    self.assertTrue(ir.faces[0].residuals)
 
 
 if __name__ == "__main__":

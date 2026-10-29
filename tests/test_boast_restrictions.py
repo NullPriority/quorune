@@ -79,7 +79,7 @@ class BoastRestrictionTests(unittest.TestCase):
 
     def test_fresh_boast_producer_and_actual_source_attack_condition_omissions_are_killed(self):
         method='test_actual_duskwielder_rejects_boast_before_attacking_without_any_cost_or_effect'
-        def without_keyword(prefix,effect,conditions):return None,conditions,False
+        def without_keyword(prefix,effect,conditions,*,source_name=None):return None,conditions,False
         with patch('quorune.abilities.keyword_activation_restrictions',side_effect=without_keyword):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
         with patch('quorune.rules.activation.source_attack.source_attack_condition_status',return_value=('payable',None)):

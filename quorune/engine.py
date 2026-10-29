@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .characteristic_read_frames import characteristic_read_method
 
 from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
@@ -1204,7 +1205,7 @@ class CommanderEngine(
             str, Mapping[str, Any]
         ],
         reason: str,
-        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None, multikicker_paid: Mapping[str, Any] | None = None,
+        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None, multikicker_paid: Mapping[str, Any] | None = None, declared_cast_costs: Mapping[str, Any] | None = None,
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
     ) -> None:
@@ -1220,7 +1221,7 @@ class CommanderEngine(
                     characteristics=origin_data,
                     counters=origin_counters,
                     attachments=origin_attachments,
-                    attached_to=origin_attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy, multikicker_paid=multikicker_paid,
+                    attached_to=origin_attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy, multikicker_paid=multikicker_paid, declared_cast_costs=declared_cast_costs,
                     sources=departure_sources,
                     source_zones=departure_source_zones,
                     source_characteristics=departure_source_characteristics,
@@ -3273,7 +3274,7 @@ class CommanderEngine(
     ) -> list[str]:
         from .rules.city_blessing import synchronize_citys_blessing
         synchronize_citys_blessing(self,reason='before semantic trigger discovery')
-        return dispatch_semantic_event(
+        triggered = dispatch_semantic_event(
             self,
             event,
             context,
@@ -3282,6 +3283,11 @@ class CommanderEngine(
             source_characteristics=source_characteristics,
             trigger_batch=trigger_batch,
         )
+        from .state_trigger_model import STATE_TRIGGER_EVENT
+        if event != STATE_TRIGGER_EVENT:
+            from .rules.state_triggers import observe_public_state_triggers
+            triggered.extend(observe_public_state_triggers(self,trigger_batch=trigger_batch))
+        return triggered
 
 
     @staticmethod
@@ -3730,15 +3736,15 @@ class CommanderEngine(
         target_groups: Mapping[str, Sequence[str]],
         reason: str,
         target_snapshots: Mapping[str, Any] | None = None,
+        copiable_characteristics: Mapping[str, Any] | None = None,
     ) -> StackItem:
         """Create an independent stack copy without copying paid costs."""
 
         ref = self._next_ref("S")
         original_card = self.state.cards.get(target.card_object_id or "")
         original_data = (
-            self._copyable_characteristics(original_card)
-            if original_card is not None
-            else {}
+            dict(copiable_characteristics) if copiable_characteristics is not None
+            else self._copyable_characteristics(original_card) if original_card is not None else {}
         )
         original_types, _, _ = self._type_parts(
             str(original_data.get("type_line") or "")
@@ -6417,18 +6423,22 @@ class CommanderEngine(
             players=self.state.players,
         )
 
+    @characteristic_read_method
     def _legend_groups(self) -> list[tuple[str, str, list[str]]]:
         groups: dict[tuple[str, str], list[str]] = {}
         for seat in self.active_seats:
             for object_id in self.state.players[seat].zones["battlefield"]:
                 card = self.state.cards[object_id]
-                if card.controller != seat:
+                if card.controller != seat or card.phased_out:
                     continue
                 data = self._effective_card_data(card)
                 type_line = str(data.get("type_line") or "")
                 if "legendary" not in type_line.casefold():
                     continue
-                key = (seat, str(data.get("name") or card.printed_name))
+                name = str(data.get("name") or "")
+                if not name:
+                    continue
+                key = (seat, name)
                 groups.setdefault(key, []).append(object_id)
         return [(seat, name, ids) for (seat, name), ids in groups.items() if len(ids) > 1]
 
@@ -6443,14 +6453,7 @@ class CommanderEngine(
                 battle = self.state.cards[object_id]
                 if battle.zone != "battlefield" or battle.phased_out:
                     continue
-                card_types, subtypes, _ = self._type_parts(
-                    str(
-                        self._effective_card_data(battle).get(
-                            "type_line"
-                        )
-                        or ""
-                    )
-                )
+                card_types, subtypes, _ = self._effective_type_parts(battle)
                 if "battle" not in card_types:
                     continue
                 if not subtypes:
@@ -6804,6 +6807,9 @@ class CommanderEngine(
                 if card.owner == seat and card.zone != "outside":
                     hidden_identity = card.zone in HIDDEN_ZONES or card.face_down
                     if card.zone == "stack":
+                        from .rules.event_spell_copy import pin_event_spell_copy_departure
+                        for departing in tuple(self.state.stack):
+                            if departing.card_object_id==card.object_id:pin_event_spell_copy_departure(self,departing)
                         self.state.stack = [item for item in self.state.stack if item.card_object_id != card.object_id]
                         card.zone = "outside"
                     elif hidden_identity or not self.active_seats:

@@ -14,6 +14,7 @@ from .object_predicate import ObjectQueryError, ObjectQuerySpec
 
 ACTIVATION_PHASE_CONDITION_CAPABILITY = "activation.condition.phase_window"
 ACTIVATION_PUBLIC_QUERY_CAPABILITY = "activation.condition.public_query"
+ACTIVATION_PUBLIC_STATE_CAPABILITY='activation.condition.fixed_public_state'
 CLASS_LEVEL_ACTIVATION_CAPABILITY = "permanent.class.fixed_lifecycle"
 _BASIC_LAND_SUBTYPES = frozenset(
     {"plains", "island", "swamp", "mountain", "forest"}
@@ -21,6 +22,7 @@ _BASIC_LAND_SUBTYPES = frozenset(
 
 
 class ActivationConditionKind(str, Enum):
+    FIXED_PUBLIC_STATE='fixed_public_state'
     CONTROLLERS_TURN = "controllers_turn"
     CONTROLLERS_UPKEEP = "controllers_upkeep"
     CONTROLLERS_TURN_BEFORE_ATTACKERS = "controllers_turn_before_attackers"
@@ -92,6 +94,7 @@ class ActivationCondition:
     card_type: str | None = None
     maximum: int | None = None
     query: ObjectQuerySpec | None = None
+    public_state: Any = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.kind, ActivationConditionKind):
@@ -99,6 +102,12 @@ class ActivationCondition:
                 object.__setattr__(self, "kind", ActivationConditionKind(self.kind))
             except (TypeError, ValueError) as exc:
                 raise ValueError("unsupported activation condition kind") from exc
+        if self.kind is ActivationConditionKind.FIXED_PUBLIC_STATE:
+            from .continuous_conditions import FixedPublicStateConditionSpec
+            if not isinstance(self.public_state,FixedPublicStateConditionSpec) or any(v is not None for v in (self.minimum,self.maximum,self.card_type,self.query)):
+                raise ValueError('Shared activation conditions require only one typed public-state predicate')
+            return
+        if self.public_state is not None:raise ValueError('Legacy activation conditions cannot carry a public-state predicate')
         if self.card_type is not None and (
             not isinstance(self.card_type, str) or not self.card_type.strip()
         ):
@@ -155,6 +164,8 @@ class ActivationCondition:
             raise ValueError("this activation condition takes no parameters")
 
     def to_dict(self) -> dict[str, Any]:
+        if self.kind is ActivationConditionKind.FIXED_PUBLIC_STATE:
+            return {'schema_version':2,'kind':self.kind.value,'condition':self.public_state.to_dict()}
         value = {
             "kind": self.kind.value,
             "minimum": self.minimum,
@@ -172,6 +183,11 @@ class ActivationCondition:
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ActivationCondition":
+        if isinstance(value,Mapping) and (value.get('kind')=='fixed_public_state' or 'condition' in value):
+            from .continuous_conditions import FixedPublicStateConditionSpec
+            if set(value)!={'schema_version','kind','condition'} or type(value['schema_version']) is not int or value['schema_version']!=2 or value['kind']!='fixed_public_state':
+                raise ValueError('Shared activation conditions use one closed version2 payload')
+            return cls(ActivationConditionKind.FIXED_PUBLIC_STATE,public_state=FixedPublicStateConditionSpec.from_dict(value['condition']))
         fields = frozenset(value) if isinstance(value, Mapping) else frozenset()
         if fields not in {
             frozenset({"kind", "minimum", "card_type"}),
@@ -401,7 +417,7 @@ def _public_query_condition(text: str) -> ActivationCondition | None:
     )
 
 
-def activation_restriction_spec(text: str) -> ActivationRestrictionSpec | None:
+def activation_restriction_spec(text: str, *, source_name: str | None = None) -> ActivationRestrictionSpec | None:
     """Parse one complete activation restriction without interpreting an effect."""
 
     normalized = " ".join(text.casefold().rstrip(".").split())
@@ -470,8 +486,12 @@ def activation_restriction_spec(text: str) -> ActivationRestrictionSpec | None:
         return fixed[normalized]
     if ' and only ' in normalized:
         from .activation_restriction_composition import compound_activation_restriction
-        return compound_activation_restriction(normalized)
+        return compound_activation_restriction(normalized,source_name=source_name)
     query = _public_query_condition(normalized)
+    if query is None and normalized.startswith('if '):
+        from .compiler.public_state_queries import fixed_public_state_condition
+        shared=fixed_public_state_condition(normalized[3:],source_name=source_name or 'Source')
+        if shared is not None:return ActivationRestrictionSpec(conditions=(ActivationCondition(ActivationConditionKind.FIXED_PUBLIC_STATE,public_state=shared),))
     return (
         ActivationRestrictionSpec(conditions=(query,))
         if query is not None

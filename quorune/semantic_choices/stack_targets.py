@@ -40,6 +40,8 @@ class StackTargetChoiceHandler:
         "_choice_actor",
         "_validation_actor",
         "_stack_label",
+        "copy_source",
+        "retain_targets_only",
     )
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = (
@@ -83,7 +85,7 @@ class StackTargetChoiceHandler:
             target.ref,
             actor=validation_actor,
         )
-        if bundle is None or not target.targets:
+        if bundle is None or not target.targets or effect.get('retain_targets_only') is True:
             intents = ()
             if self.mode == "copy":
                 intents = (
@@ -97,6 +99,7 @@ class StackTargetChoiceHandler:
                         target_groups=target.target_groups,
                         reason=context.stack_label,
                         target_snapshots=target.target_snapshots,
+                        copy_source=target.copy_source,
                     ),
                 )
             return SemanticChoicePreparation(
@@ -121,6 +124,7 @@ class StackTargetChoiceHandler:
         continuation_effect = FrozenMap(
             {
                 **dict(effect),
+                **({'copy_source':target.copy_source} if target.copy_source is not None else {}),
                 "_target_stack_ref": target.ref,
                 "_target_schema": dict(authoritative),
                 "_default_targets": defaults,
@@ -199,6 +203,7 @@ class StackTargetChoiceHandler:
                 target_groups=groups,
                 reason=str(effect["_stack_label"]),
                 target_snapshots=FrozenMap(query.copied_target_snapshots(target_ref, actor=actor)),
+                copy_source=target.copy_source,
             )
         else:
             intent = RetargetStackItemIntent(

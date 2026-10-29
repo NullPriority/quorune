@@ -10,6 +10,79 @@ from ..replacement.immutable import FrozenMap
 from ..targets import TargetPlan
 
 
+def _cost_representatives(host, plan, candidates, eligible_sets, required, extra_targets):
+    """Keep enough interchangeable references for all structural relations."""
+    limit = sum(group.min_targets for group in plan.groups) + extra_targets + 1
+    owner_matters = any(group.same_owner for group in plan.groups)
+    controller_matters = bool(plan.same_player_groups)
+    signatures = {}
+    for ref in dict.fromkeys(ref for refs in candidates.values() for ref in refs):
+        snapshot = host._target_snapshot(ref) if owner_matters or controller_matters else {}
+        signatures[ref] = (tuple(ref in values for values in eligible_sets),
+            tuple(ref in candidates[group.group_id] for group in plan.groups),
+            snapshot.get('owner') if owner_matters else None,
+            snapshot.get('controller') if controller_matters else None)
+    result = {}
+    for group in plan.groups:
+        buckets = {}
+        for ref in candidates[group.group_id]:
+            buckets.setdefault(signatures[ref], []).append(ref)
+        refs = [ref for bucket in buckets.values() for ref in bucket[:limit]]
+        if required is not None and required[0] == group.group_id and required[1] not in refs:
+            refs.append(required[1])
+        result[group.group_id] = tuple(ref for ref in refs if ref in candidates[group.group_id])
+    return result
+
+
+def target_assignment_witnesses(host, plan, candidates, *, required=None,
+                                extra_targets=0, eligible_sets=None):
+    """Canonical cardinality/relation witnesses shared by target-aware prices."""
+    from itertools import combinations, combinations_with_replacement, product
+    if eligible_sets is not None:
+        candidates = _cost_representatives(host, plan, candidates, eligible_sets, required, extra_targets)
+    choices = []
+    for group in plan.groups:
+        refs = candidates[group.group_id]
+        choose = combinations if group.distinct and not group.allow_reuse else combinations_with_replacement
+        minimum = max(group.min_targets, 1 if required is not None and required[0] == group.group_id else 0)
+        maximum = min(group.max_targets, len(refs) if choose is combinations else group.max_targets,
+                      minimum + extra_targets)
+        choices.append(tuple(value for count in range(minimum, maximum + 1) for value in choose(refs, count)
+            if required is None or required[0] != group.group_id or required[1] in value))
+    for values in product(*choices):
+        grouped = {group.group_id: list(refs) for group, refs in zip(plan.groups, values)}
+        try:
+            targets = validate_grouped_target_assignment(host, plan, grouped, candidates)
+        except (ValueError, GameRuleError):
+            continue
+        yield tuple(targets), grouped
+
+
+def public_target_schema_for_witnesses(schema, witnesses):
+    from copy import deepcopy
+    result = deepcopy(schema)
+    def filter_groups(value, selected):
+        allowed = {}
+        for witness in selected:
+            for group, refs in witness['targets'].items():
+                allowed.setdefault(group, set()).update(refs)
+        for group in value.get('groups', []):
+            group['legal_refs'] = [ref for ref in group['legal_refs'] if ref in allowed.get(group['id'], ())]
+        if 'legal_refs' in value:
+            value['legal_refs'] = [ref for ref in value['legal_refs'] if any(ref in refs for refs in allowed.values())]
+    if 'mode_schemas' in result:
+        for mode, value in result['mode_schemas'].items():
+            filter_groups(value, [w for w in witnesses if mode in w['modes']])
+        legal_modes = {mode for witness in witnesses for mode in witness['modes']}
+        result['legal_modes'] = [mode for mode in result['legal_modes'] if mode in legal_modes]
+        result['mode_schemas'] = {mode: value for mode, value in result['mode_schemas'].items() if mode in legal_modes}
+        result['legal_refs'] = list(dict.fromkeys(ref for value in result['mode_schemas'].values()
+            for group in value.get('groups', ()) for ref in group['legal_refs']))
+    else:
+        filter_groups(result, witnesses)
+    return result
+
+
 class TargetSnapshotQuery(Protocol):
     def _target_snapshot(self, ref: str) -> Mapping[str, Any]: ...
 

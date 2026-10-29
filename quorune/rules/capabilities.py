@@ -44,6 +44,7 @@ from .attachment_action_capability_shapes import (
 )
 from .counter_capability_shapes import fixed_counter_placement_group_node_capabilities
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_covered_mechanics, fixed_creature_power_damage_node_capabilities
+from .prepared_creature_power_damage_shapes import PREPARED_POWER_DAMAGE_CAPABILITY, PREPARED_POWER_DAMAGE_MECHANIC
 from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from .crew_capability_shapes import ordinary_crew_node_capabilities
 from .station_capability_shapes import ordinary_station_node_capabilities
@@ -185,6 +186,9 @@ from ..compiler.delayed_draw_templates import (
     FIXED_NEXT_TURN_DRAW_MECHANIC,
 )
 from ..compiler.monarch_templates import MONARCH_MECHANIC
+from ..ring_model import RING_MECHANIC, RING_TEMPTATION_CAPABILITY
+from ..champion_model import CHAMPION_MECHANIC, CHAMPION_CAPABILITY
+from ..compiler.event_player_choice_templates import EVENT_PLAYER_CHOICE_CAPABILITY, EVENT_PLAYER_CHOICE_MECHANIC
 from ..compiler.self_return_templates import FIXED_SELF_RETURN_MECHANIC
 from ..compiler.impulse_access_templates import (
     IMPULSE_ACCESS_CAPABILITY_ID,
@@ -319,6 +323,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'overload': ('casting.alternative_cost.overload_fixed_mana',),
     'cleave': ('casting.alternative_cost.cleave_fixed_mana',),
     'fixed-stack-spell-copy': ('stack.copy.fixed_instant_or_sorcery', 'target.revalidate_resolution'),
+    'cast-event-spell-copy': ('stack.copy.cast_event_spell',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     'ascend':('player.designation.citys_blessing',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
@@ -362,6 +367,8 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'created-token-counter-followup':('token.creation.post_creation_counter',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     'whole-hand-discard': ('zone.discard.whole_hand',),
+    'whole-hand-discard-result': ('zone.discard.whole_hand_result',),
+    'declared-cast-cost-fact': ('casting.additional_cost.declared_instance',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS
@@ -455,6 +462,12 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "trigger-event-normalized-damage": (
         "trigger.event.normalized_damage",
     ),
+    "trigger-event-normalized-received-damage": (
+        "trigger.event.normalized_received_damage", "trigger.event.normalized_damage",
+    ),
+    "trigger-event-normalized-permanent-designation": (
+        "trigger.event.normalized_permanent_designation", "trigger.event.normalized_public_action",
+    ),
     "trigger-event-normalized-card-draw": (
         "trigger.event.normalized_card_draw",
     ),
@@ -505,7 +518,12 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'fixed-controller-top-order',
+        'fixed-untargeted-land-untap',
+        'fixed-controller-shuffle',
+        'fixed-public-state-trigger',
         'created-token-counter-followup',
+        'whole-hand-discard-result',
         'temporary-cast-prohibition',
         'temporary-library-search-prohibition',
         'random-own-graveyard-return',
@@ -552,6 +570,9 @@ _SHAPE_GATED_MECHANICS = frozenset(
         _CREW_MECHANIC,
         _STATION_MECHANIC,
         MONARCH_MECHANIC,
+        RING_MECHANIC,
+        CHAMPION_MECHANIC,
+        EVENT_PLAYER_CHOICE_MECHANIC,
         FIXED_SELF_RETURN_MECHANIC,
     }
 )
@@ -1135,9 +1156,9 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    from .special_node_shapes import special_node_capabilities
+    from .special_node_shapes import special_node_capabilities,special_trigger_envelope_capabilities
     special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
-    if special is not None:return special
+    if special is not None:return special_trigger_envelope_capabilities(special,mechanics)
     if mechanics.intersection(
         {
             FIXED_CHOOSE_ONE_MODAL_MECHANIC,
@@ -1275,6 +1296,11 @@ def capability_dependencies_for_node(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
+        PREPARED_POWER_DAMAGE_CAPABILITY: PREPARED_POWER_DAMAGE_MECHANIC,
+        'library.order.fixed_controller':'fixed-controller-top-order',
+        'permanent.untap.fixed_land_choice':'fixed-untargeted-land-untap',
+        'library.shuffle.fixed_controller':'fixed-controller-shuffle',
+        'trigger.state.fixed_public_condition':'fixed-public-state-trigger',
         FIXED_OPTIONAL_EFFECT_CAPABILITY: FIXED_OPTIONAL_EFFECT_MECHANIC,
         FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY: (
             FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC
@@ -1294,6 +1320,9 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
             FIXED_LIBRARY_SELECTION_MECHANIC
         ),
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
+        RING_TEMPTATION_CAPABILITY: RING_MECHANIC,
+        CHAMPION_CAPABILITY: CHAMPION_MECHANIC,
+        EVENT_PLAYER_CHOICE_CAPABILITY: EVENT_PLAYER_CHOICE_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
         "continuous.resolution.source_keyword_choice": "temporary-source-keyword-choice",

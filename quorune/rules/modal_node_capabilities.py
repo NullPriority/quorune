@@ -29,6 +29,21 @@ def modal_schema_runtime_dependencies(schema):
     return required
 
 
+def modal_event_runtime_dependencies(program):
+    """Retain primitive event authority when current modal coverage is removed."""
+    schema=program.target_schema
+    if not isinstance(schema,Mapping) or not isinstance(schema.get('modes'),Mapping):return ()
+    if 'min_modes' not in schema and not any(isinstance(d,Mapping) and 'mechanics' in d for d in schema['modes'].values()):return ()
+    from .event_subscriptions import FixedEventSubscriptionSet
+    subscribed=FixedEventSubscriptionSet.from_condition(program.event_condition)
+    events={s.event for s in subscribed.subscriptions} if subscribed else {program.event}
+    required=set()
+    if 'spell.cast' in events:required.add('trigger.event.normalized_spell_cast')
+    if events.intersection({'permanent.tap','permanent.untap','creature.blocks','creature.becomes_blocked'}):
+        required.add('trigger.event.normalized_public_action')
+    return tuple(sorted(required))
+
+
 def fixed_modal_capability_dependencies(
     *,
     effects: Sequence[Mapping[str, Any]],

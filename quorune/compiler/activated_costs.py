@@ -21,6 +21,11 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    if ability.forecast:
+        from ..forecast_model import FORECAST_CAPABILITY
+        additional.append(FORECAST_CAPABILITY)
+    from ..rules.activation.public_state_conditions import activation_public_state_dependencies
+    additional.extend(activation_public_state_dependencies(ability.activation_conditions))
     if ability.builtin_semantic_key == 'builtin:equip' and (
         ability.life_payment or ability.energy_payment or ability.choices
         or ability.source_counter_removal_cost is not None
@@ -89,6 +94,9 @@ def activated_ability_cost_capabilities(
         choice.fixed_tap_cost() is not None for choice in ability.choices
     ):
         additional.append("activation.selected_tap.fixed")
+    if any(choice.fixed_tap_cost() is not None and choice.fixed_tap_cost().schema_version == 2 for choice in ability.choices):
+        from ..rules.activation_costs import COLORED_TAP_ACTIVATION_CAPABILITY
+        additional.append(COLORED_TAP_ACTIVATION_CAPABILITY)
     return tuple(dict.fromkeys(additional))
 
 

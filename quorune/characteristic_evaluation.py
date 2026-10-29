@@ -82,6 +82,15 @@ def _numeric(value: Any) -> int | None:
         return None
 
 
+def _printed_stat(value: Any) -> int | None:
+    number=_numeric(value)
+    if number is not None:return number
+    text=str(value).replace(' ','')
+    star=re.fullmatch(r'(?:(?P<left>[+-]?\d+)\+)?\*(?:(?P<sign>[+-])(?P<right>\d+))?',text)
+    if star is None:return None
+    return int(star['left'] or 0)+(int(star['right'] or 0)*(-1 if star['sign']=='-' else 1))
+
+
 def _annotation_terms(
     card: CardInstance,
 ) -> tuple[dict[str, Any], list[str], list[str]]:
@@ -115,7 +124,7 @@ def _annotation_terms(
 
 
 def _base_characteristic_state(
-    card: CardInstance, result: Mapping[str, Any]
+    card: CardInstance, result: Mapping[str, Any], *, resolve_undefined_stats: bool = True,
 ) -> CharacteristicState:
     card_types, subtypes, supertypes = type_parts(
         str(result.get("type_line") or "")
@@ -147,8 +156,8 @@ def _base_characteristic_state(
             ActivatedAbility.from_dict(value)
             for value in result.get("activated_abilities", ())
         ],
-        power=_numeric(result.get("power")),
-        toughness=_numeric(result.get("toughness")),
+        power=(_printed_stat if resolve_undefined_stats else _numeric)(result.get("power")),
+        toughness=(_printed_stat if resolve_undefined_stats else _numeric)(result.get("toughness")),
         loyalty=_numeric(result.get("loyalty")),
         defense=_numeric(result.get("defense")),
     )
@@ -451,13 +460,14 @@ def _query_characteristic_effects(
     *,
     context: Mapping[str, Any],
     count_resolver: Callable[[CharacteristicQuantitySpec], int],
+    maximum_layer: Layer | None = None,
 ) -> list[ContinuousEffect]:
     """Materialize typed live quantities at their CR 613 layer boundary.
 
     The source fragment is selected after layer-6 ability applicability. Quantity
-    resolution is supplied by the engine through the layer-5 boundary, so
-    a counted object's later-layer power, toughness, or abilities cannot recurse
-    back into the quantity that is currently being evaluated.
+    resolution uses the quantity's versioned layer boundary. Keyword-layer
+    counts are deferred until their later modifier layer and cannot recurse
+    through an earlier view of that modifier.
     """
 
     if card.zone == "battlefield" and card.phased_out:
@@ -498,6 +508,8 @@ def _query_characteristic_effects(
             not isinstance(fragment, QueryCharacteristicModifierSpec)
             or card.zone != "battlefield"
         ):
+            continue
+        if fragment.quantity.schema_version == 6 and maximum_layer is not None and maximum_layer < Layer.POWER_TOUGHNESS:
             continue
         count = count_resolver(fragment.quantity)
         if type(count) is not int or count < 0:
@@ -704,7 +716,8 @@ def evaluate_card_characteristics(
     if not layered:
         return _normalized_unlayered_characteristics(result)
 
-    state = _base_characteristic_state(card, result)
+    state = _base_characteristic_state(card,result,resolve_undefined_stats=(
+        maximum_layer is None or maximum_layer>=Layer.POWER_TOUGHNESS))
     effects = _object_continuous_effects(
         card,
         overrides,
@@ -748,6 +761,7 @@ def evaluate_card_characteristics(
                 effects,
                 context=context,
                 count_resolver=query_count_resolver,
+                maximum_layer=maximum_layer,
             )
         )
     if maximum_layer is not None:

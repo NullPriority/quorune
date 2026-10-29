@@ -20315,6 +20315,303 @@
       ],
       "interaction_order": 2,
       "assertion": "The real Flare alternative is offered and accepted with zero mana only after a current nontoken red creature is sacrificed through the shared payment owner. A green creature cannot substitute; the independent original and copied Giant Growth resolve on distinct targets, with pending load and exact replay preserving the payment and mana."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_type_replacement_grants.TypeReplacementGrantNativeTests.test_actual_containment_sacrifices_nontoken_treasure_for_its_controller_and_keeps_colors",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.ability.fixed_composite_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.ability.fixed_composite_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing native aura cast and actual granted mana/sacrifice consequence. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_granted_keyword_events.GrantedKeywordEventNativeTests.test_annihilator_grant_keeps_defender_after_provider_removal",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.ability.fixed_keyword_event_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.ability.fixed_keyword_event_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing native aura cast, combat, provider removal, locked defender sacrifice, privacy and replay. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_composite_quoted_grants.CompositeQuotedGrantNativeTests.test_actual_blight_draws_preserves_basic_supertype_and_keeps_two_distinct_costs",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.ability.fixed_query_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.ability.fixed_query_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual aura and receiver program/cost consequences. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_granted_static_characteristics.GrantedStaticCharacteristicNativeTests.test_original_might_grants_stack_move_and_disappear_independently",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.ability.static_characteristic_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.ability.static_characteristic_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual aura->equipment->receiver grant, movement, removal, privacy and replay. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_type_replacement_grants.TypeReplacementGrantNativeTests.test_actual_containment_sacrifices_nontoken_treasure_for_its_controller_and_keeps_colors",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.characteristics.fixed_type_replacement"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.characteristics.fixed_type_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual type replacement and granted receiver mana. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_shared_creature_type_quantities.SharedCreatureTypeNativeTests.test_original_alpha_uses_its_attachment_and_live_cross_player_matches",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "capability.continuous.power_toughness.recipient_shared_type"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object",
+        "continuous.power_toughness.recipient_shared_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing cast, live cross-player count, response departure, removal and replay. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_type_replacement_grants.TypeReplacementGrantNativeTests.test_actual_deep_retains_split_second_then_a_tapped_nontoken_clue_draws_for_its_controller",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.ability.fixed_composite_grant"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.ability.fixed_composite_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing typed aura target, transformed receiver cost/draw, privacy/replay. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_enchanted_player_statics.EnchantedPlayerStaticNativeTests.test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.characteristics.enchanted_player_query"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.characteristics.enchanted_player_query"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual player aura targeting, live controlled receivers, ability suppression and response restoration. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_type_replacement_grants.TypeReplacementGrantNativeTests.test_actual_moon_preserves_land_types_and_supertypes_detaches_equipment_and_restores_on_departure",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "capability.continuous.characteristics.fixed_type_replacement"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction",
+        "continuous.characteristics.fixed_type_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual typed aura target, type replacement, response removal and replay. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_composite_quoted_grants.CompositeQuotedGrantNativeTests.test_actual_quiver_distinct_children_use_receiver_damage_and_independent_target_rules",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.ability.fixed_composite_grant"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.ability.fixed_composite_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual equip plus both receiver ability costs/targets and damage. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_granted_keyword_events.GrantedKeywordEventNativeTests.test_two_equipment_grants_add_instances_and_survive_source_departure",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.ability.fixed_keyword_event_grant"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.ability.fixed_keyword_event_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual equip, multiple granted afflict triggers, departed receiver, damage and replay. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_composite_quoted_grants.CompositeQuotedGrantNativeTests.test_actual_quiver_distinct_children_use_receiver_damage_and_independent_target_rules",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.ability.fixed_query_grant"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.ability.fixed_query_grant"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual equip receiver quote children. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_shared_creature_type_quantities.SharedCreatureTypeNativeTests.test_original_masterwork_counts_its_controller_after_receiver_control_changes",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_mana",
+        "capability.continuous.power_toughness.recipient_shared_type"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_mana",
+        "continuous.power_toughness.recipient_shared_type"
+      ],
+      "interaction_order": 2,
+      "assertion": "Existing actual equip, controller-specific shared-type count, control change, rollback/privacy/replay. The exact named pair is asserted by these native commands and consequences; coverage is limited to this represented composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_attachment_damage_results_native.AttachmentDamageResultNativeTests.test_actual_lost_jitte_counters_from_blocker_combat_exclude_noncombat_and_pay_modal_cost",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.continuous.resolution.declaration_rules_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "continuous.resolution.declaration_rules_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual equipped blocker combat produces the charge after its creature departs; the equipment remains unattached and a native paid modal activation consumes that charge. Resolution locks a block prohibition to the selected current incarnation; the shared block query rejects that creature and accepts an unaffected control, with wrong-principal rollback, private projection and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.permanent.untap.fixed_land_choice",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "permanent.untap.fixed_land_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "The pinned original is analyzed with each named represented piece and its material residual sibling, then rejected by complete CardProgram runtime binding with unresolved trust and no strict or compatible admission; an independent Divination control remains admitted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.permanent.untap.fixed_land_choice",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "permanent.untap.fixed_land_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "The pinned original is analyzed with each named represented piece and its material residual sibling, then rejected by complete CardProgram runtime binding with unresolved trust and no strict or compatible admission; an independent Divination control remains admitted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_discard_result_native.DiscardResultNativeTests.test_actual_incendiary_nonbasic_target_gates_the_untargeted_discard_mode",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.zone.discard.whole_hand_result"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "zone.discard.whole_hand_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "The actual modal cast rejects a basic-land target and a wrong principal, then destroys the current nonbasic target before each player discards and draws their own count. When its sole target departs with the conceding controller, neither mode resolves and every surviving hand is unchanged; pending load, private projection and replay are retained."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_public_compositions.PublicCompositionNativeTests.test_actual_summonings_revalidates_artifact_restriction_then_returns_current_instant_sorcery_union",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.zone.move.fixed_public_set"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "zone.move.fixed_public_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Metallurgic Summonings pays its current artifact-count price and exiles itself before the opponent targets a qualifying artifact with Disenchant. A real Counterspell preserves that target and the public-set return resolves on the current owned instant/sorcery union, excluding creature, land and foreign cards, with pending load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_discard_result_native.DiscardResultNativeTests.test_actual_incendiary_nonbasic_target_gates_the_untargeted_discard_mode",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.discard.whole_hand_result"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.discard.whole_hand_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "The actual modal cast rejects a basic-land target and a wrong principal, then destroys the current nonbasic target before each player discards and draws their own count. When its sole target departs with the conceding controller, neither mode resolves and every surviving hand is unchanged; pending load, private projection and replay are retained."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.zone.draw.library_to_hand",
+        "residual.copy_or_face.multiple-granted-instances-permanent-variable-copy-exceptions-and-mixed-consuming-costs"
+      ],
+      "capability_ids": [
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "The pinned original is analyzed with each named represented piece and its material residual sibling, then rejected by complete CardProgram runtime binding with unresolved trust and no strict or compatible admission; an independent Divination control remains admitted."
     }
   ]
 }

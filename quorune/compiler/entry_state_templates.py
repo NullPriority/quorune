@@ -322,6 +322,11 @@ def static_entry_state_handler(
     external=external_entry_state_handler(text)
     if external is not None:return external
 
+    from .qualified_entry_state_templates import qualified_entry_state_handler
+    qualified = qualified_entry_state_handler(text, source_name=source_name)
+    if qualified is not None:
+        return qualified
+
     normalized = text.strip()
     if _unconditional_match(normalized, source_name):
         return (

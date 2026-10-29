@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..city_blessing_model import AscendIntent
+from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
@@ -7,6 +8,8 @@ from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import GainControlIntent, GainControlSetIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
+from ..discard_result_model import DiscardWholeHandsResultIntent
+from ..rules.discard_results import execute_discard_result
 from .whole_hand_discard import execute_whole_hand_discard
 from ..random_discard import RandomDiscardIntent
 from .random_discard import execute_random_discard
@@ -17,6 +20,8 @@ from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
 from .stack_execution import STACK_INTENT_TYPES, execute_stack_intent
+from .ring_execution import RING_INTENT_TYPES, execute_ring_intent
+from .champion_execution import CHAMPION_INTENT_TYPES, execute_champion_intent
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
@@ -59,6 +64,8 @@ from .intents import (
     CopyControlledTokensIntent,
     CopyStackItemIntent,
     CreateTokenIntent,
+    ChampionExileIntent,
+    ReturnLinkedAbilityExileIntent,
     CreateRegenerationShieldIntent,
     DealFixedDamageSetIntent,
     DomainEffectIntent,
@@ -374,6 +381,8 @@ def prepare_draw_resolution(
 
 PermanentObjectIntent = (
     PairSoulbondIntent | GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
+    | ChampionExileIntent | ReturnLinkedAbilityExileIntent
+    | EncodeCipherIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
@@ -384,6 +393,8 @@ PermanentObjectIntent = (
     | ReturnGraveyardCardToOwnerHandIntent
 )
 PERMANENT_OBJECT_INTENT_TYPES = (
+    EncodeCipherIntent,
+    *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
     GainControlIntent, GainControlSetIntent,
     CreateRegenerationShieldIntent,
@@ -402,6 +413,11 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, EncodeCipherIntent):
+        from ..rules.cipher import encode_cipher
+        return 'cipher', encode_cipher(sink, intent)
+    if isinstance(intent, CHAMPION_INTENT_TYPES):
+        return execute_champion_intent(sink, intent)
     if isinstance(intent, PairSoulbondIntent):
         from ..soulbond_state import commit_soulbond_pair
         pair = commit_soulbond_pair(sink, pair_id=intent.pair_id,
@@ -603,8 +619,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -633,6 +649,7 @@ def _execute_player_intent(
             target_player=intent.target_player,source_id=intent.source_id)
     if isinstance(intent, DiscardWholeHandsIntent):
         return intent.actor, execute_whole_hand_discard(sink, intent)
+    if isinstance(intent, DiscardWholeHandsResultIntent):return intent.actor, execute_discard_result(sink, intent)
     if isinstance(intent, BecomeMonarchIntent):
         return intent.player, sink.become_monarch(
             intent.player,
@@ -732,6 +749,8 @@ def _execute_tap_state_intent(
 def _synchronize_instruction_observers(sink):
     from ..rules.city_blessing import synchronize_citys_blessing
     synchronize_citys_blessing(sink, reason='semantic instruction committed')
+    from ..rules.state_triggers import observe_public_state_triggers
+    observe_public_state_triggers(sink)
     if getattr(getattr(sink, 'state', None), 'soulbond_pairs', None):
         from ..soulbond_state import reconcile_soulbond_pairs
         reconcile_soulbond_pairs(sink)
@@ -744,6 +763,9 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         )
     results: list[tuple[str, object]] = []
     for intent in plan.intents:
+        if isinstance(intent, RING_INTENT_TYPES):
+            results.append(execute_ring_intent(sink, intent))
+            continue
         if isinstance(intent,AscendIntent):
             from ..rules.city_blessing import award_citys_blessing
             results.append((intent.player,award_citys_blessing(sink,intent.player,reason=intent.reason)))

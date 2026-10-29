@@ -8,7 +8,8 @@ from ..whole_hand_discard_model import WHOLE_HAND_DISCARD_CAPABILITY,WHOLE_HAND_
 def unchosen_hand_discard_node_capabilities(**kwargs):
     """Route whole-hand and random-subset instructions to their separate owners."""
     from ..random_discard import random_discard_node_capabilities
-    return whole_hand_discard_node_capabilities(**kwargs) or random_discard_node_capabilities(**kwargs)
+    from .discard_result_shapes import discard_result_node_capabilities
+    return whole_hand_discard_node_capabilities(**kwargs) or random_discard_node_capabilities(**kwargs) or discard_result_node_capabilities(**kwargs)
 
 
 def whole_hand_discard_node_capabilities(*,effects,target_schema,mechanic_ids,**kwargs):
@@ -28,6 +29,8 @@ def whole_hand_discard_node_capabilities(*,effects,target_schema,mechanic_ids,**
 
 
 def is_closed_whole_hand_discard_program(program):
+    from .discard_result_shapes import is_closed_discard_result_program
+    if is_closed_discard_result_program(program):return True
     deps=whole_hand_discard_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
     if not deps and program.provenance.get('template_id')=='whole-hand-discard-public-draw-sequence-v1':
         from ..query_effect_amount_model import PublicQueryAmountSpec,PUBLIC_QUERY_AMOUNT_KIND

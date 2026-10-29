@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Expand independently represented optional additional mana branches."""
+"""Assemble represented optional mana and resource prices in their fixed order."""
 
 import copy
 
@@ -44,3 +44,15 @@ def expand_optional_mana_costs(host, card, base, schema, *, response=None, hint=
     expanded = expand_multikicker_costs(expanded, schema, response=response, hint=hint)
     from .replicate_costs import expand_replicate_costs
     return expand_replicate_costs(expanded, schema, response=response, hint=hint)
+
+
+def expand_optional_resource_costs(host, seat, card, expanded, *, suppress_source_costs, mechanics, mandatory):
+    """Existing price owners retain their own selection and composition guards."""
+    from .conspire_costs import expand_conspire_options
+    expanded = expand_conspire_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
+        mechanics=mechanics, mandatory=mandatory)
+    from .casualty_costs import expand_casualty_options
+    expanded = expand_casualty_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
+    from .bargain_costs import expand_bargain_options
+    expanded = expand_bargain_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
+    return expanded

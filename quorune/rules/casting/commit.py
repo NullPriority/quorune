@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ...spell_mana_counts import capture_spell_mana_counts
+from .spell_context import declared_spell_context
 from ...adventure import adventure_stack_context
 from ..optional_life_cost_model import optional_life_cost_amount
 from .turn_cast_grants import underlying_cast_cost_option_id, commit_turn_cast_grant_use
@@ -20,6 +21,7 @@ from ...compiled_cast_costs import compiled_evoke_specs
 from ...storm import prior_storm_spell_count, storm_trigger_items
 from ...replicate import replicate_trigger_items
 from ...conspire import conspire_trigger_items
+from ...casualty import casualty_trigger_items
 from ...convoke import ConvokeError
 from ...counter_placement import (
     CounterPlacementError,
@@ -870,20 +872,6 @@ def _cast_provenance_context(
     }
 
 
-def _fixed_cast_lifecycle_cost_context(
-    costs: _AdditionalCostCommit,
-) -> dict[str, Any]:
-    return (
-        {
-            "fixed_cast_lifecycle_cost_objects": copy.deepcopy(
-                costs.paid_contexts
-            )
-        }
-        if costs.paid_contexts
-        else {}
-    )
-
-
 def _default_spell_destination(type_line: str) -> str:
     permanent_types = {
         "artifact",
@@ -909,27 +897,31 @@ def _create_spell_item(
     details: Mapping[str, Any],
     spent: Mapping[str, int],
     costs: _AdditionalCostCommit,
+    *, preparing: bool = False, existing_item: StackItem | None = None,
 ) -> StackItem:
     lifecycle_spec, rebound = _cast_lifecycle_stack_specs(
         host, proposal, card, selected_option
     )
-    card.annotations.pop("temporary_play_permission", None)
-    host._remove_from_zone(card)
-    host._reset_zone_change(card, "stack")
-    card.zone = "stack"
-    card.controller = proposal.seat
-    card.active_face = proposal.face
-    from .characteristic_methods import commit_cast_characteristics,characteristic_stack_context
-    commit_cast_characteristics(card,details)
-    if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
-        mark_card_kicked(card)
+    if not preparing:card.annotations.pop("temporary_play_permission", None)
+    if existing_item is None:
+        host._remove_from_zone(card)
+        host._reset_zone_change(card, "stack")
+        card.zone = "stack"
+        card.controller = proposal.seat
+        card.active_face = proposal.face
+    from .characteristic_methods import commit_cast_characteristics
+    if existing_item is None:
+        commit_cast_characteristics(card,details)
+        if str(selected_option.get("kind") or "").casefold() == KICKER_MECHANIC_ID:
+            mark_card_kicked(card)
     from ...zone_object_state import mark_multikicker_paid
-    mark_multikicker_paid(card, multikicker_cast_context(selected_option))
-    if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
-        mark_card_flashed_back(card)
-    _mark_selected_cast_lifecycle(card, lifecycle_spec, rebound)
+    if existing_item is None:
+        mark_multikicker_paid(card, multikicker_cast_context(selected_option))
+        if selected_option.get("id") == FLASHBACK_CAST_OPTION_ID:
+            mark_card_flashed_back(card)
+        _mark_selected_cast_lifecycle(card, lifecycle_spec, rebound)
     method_spec = _face_down_method_spec_from_details(details)
-    if method_spec is not None:
+    if method_spec is not None and existing_item is None:
         mark_card_face_down_for_morph(
             card,
             controller=proposal.seat,
@@ -941,12 +933,12 @@ def _create_spell_item(
         destination,
         rebound=rebound,
     )
-    ref = host._next_ref("S")
+    ref = existing_item.ref if existing_item is not None else host._next_ref("S")
     used_improvise = bool(
-        host.state.players[proposal.seat].stats.pop("next_spell_improvise", False)
+        (host.state.players[proposal.seat].stats.get if preparing else host.state.players[proposal.seat].stats.pop)("next_spell_improvise", False)
     )
     used_uncounterable = bool(
-        host.state.players[proposal.seat].stats.pop(
+        (host.state.players[proposal.seat].stats.get if preparing else host.state.players[proposal.seat].stats.pop)(
             "next_spell_uncounterable", False
         )
     )
@@ -980,74 +972,10 @@ def _create_spell_item(
             if type(spent.get(color, 0)) is int and spent.get(color, 0) > 0
         ),
         mana_spent_counts=capture_spell_mana_counts(host.state.spell_mana_counts_version,card,spent),
-        context={
-            **_cast_provenance_context(proposal,spent,state=host.state,record=record,card=card),
-            **paid_entry_copy_cast_context(selected_option),
-            **multikicker_cast_context(selected_option),
-            **replicate_cast_context(selected_option),
-            **conspire_cast_context(selected_option),
-            "target_groups": thaw_json(proposal.target_groups),
-            "target_snapshots": thaw_json(proposal.target_snapshots),
-            "targets_revalidated": False,
-            "targets_chosen_at_creation": True,
-            "aura_spell": bool(details.get("aura_spell", False)),
-            **(
-                {
-                    "aura_enchant_spec": copy.deepcopy(
-                        details["aura_enchant_spec"]
-                    )
-                }
-                if details.get("aura_enchant_spec") is not None
-                else {}
-            ),
-            "cant_be_countered": (
-                used_uncounterable or intrinsic_uncounterable
-            ),
-            "granted_improvise": used_improvise,
-            "cost_option": proposal.cost_option_id,
-            'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
-            **characteristic_stack_context(details),
-            **lifecycle_context,
-            **_fixed_cast_lifecycle_cost_context(costs),
-            **(
-                {
-                    EVOKE_PAYMENT_FIELD: copy.deepcopy(
-                        selected_option[EVOKE_PAYMENT_FIELD]
-                    )
-                }
-                if selected_option.get(EVOKE_PAYMENT_FIELD) is not None
-                else {}
-            ),
-            **(
-                {
-                    "cast_method": method_spec.method,
-                    (
-                        "morph_spec_fingerprint"
-                        if method_spec.method == MORPH_CAST_METHOD
-                        else "face_down_method_spec_fingerprint"
-                    ): method_spec.fingerprint,
-                }
-                if method_spec is not None
-                else {}
-            ),
-            **(
-                {"target_schema_override": details["target_schema_override"]}
-                if details.get("target_schema_override") is not None
-                else {}
-            ),
-            **(
-                {
-                    "cast_option_effects": copy.deepcopy(
-                        list(selected_option.get("effects", []))
-                    ),
-                    "dynamic_effects": copy.deepcopy(
-                        list(selected_option.get("effects", []))
-                    ),
-                }
-                if "effects" in selected_option
-                else {}
-            ),
-        },
+        context=declared_spell_context(proposal,details,selected_option,costs,
+            provenance=_cast_provenance_context(proposal,spent,state=host.state,record=record,card=card),
+            lifecycle_context=lifecycle_context,method_spec=method_spec,used_uncounterable=used_uncounterable,
+            intrinsic_uncounterable=intrinsic_uncounterable,used_improvise=used_improvise),
     )
 
 
@@ -1143,12 +1071,14 @@ def _dispatch_cast_events(
     *,
     prior_spell_count: int,
     prior_controller_spell_count: int,
+    payment_triggers: list[StackItem],
 ) -> None:
-    trigger_batch = list(
+    trigger_batch = [*payment_triggers, *(
         cascade_trigger_items(host, spell=item, card=card)
-    )
+    )]
     trigger_batch.extend(replicate_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(conspire_trigger_items(host, spell=item, card=card, program=program))
+    trigger_batch.extend(casualty_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(
         storm_trigger_items(
             host,
@@ -1196,6 +1126,7 @@ def _dispatch_cast_events(
         actor=proposal.seat,
         object_incarnation=card.logical_object_id,
         types=cast_types,
+        origin=proposal.origin if getattr(host.state.turn_history,'spell_origin_history_version',None)==1 else None,
     )
     context = SpellCastEvent(
         schema_version=7,
@@ -1491,6 +1422,15 @@ def _commit_cast_costs_and_stack(
     if 'waterbend_payment' in selected_option:
         from ..waterbend_payments import bind_waterbend_response
         bind_waterbend_response(response,selected_option['waterbend_payment'])
+    from ...cast_source_placement_model import cast_source_placement_version
+    prepared_item=None
+    if cast_source_placement_version(getattr(host.state,'cast_source_placement_version',None))==1:
+        prepared_item=_create_spell_item(host,proposal,card,record,program,selected_option,details,{},
+            _AdditionalCostCommit([],[],{},{},[],[]),preparing=True)
+        prepared_item.x_value=selected_option.get('announced_target_x',selected_option.get('announced_additional_x',response.get('x')))
+        host.state.stack.append(prepared_item)
+        from ..state_triggers import observe_public_state_triggers
+        observe_public_state_triggers(host)
     spent, activations = host._pay_for_cost(
         proposal.seat,
         requirements,
@@ -1498,6 +1438,8 @@ def _commit_cast_costs_and_stack(
         exclude_sources={card.object_id for card in tap_cards},
         spend_context=host._spell_mana_spend_context(proposal.type_line),
     )
+    from .spell_mana_payments import capture_spell_mana_payment
+    payment_triggers=capture_spell_mana_payment(host,player=proposal.seat,spent=spent)
     from .emerge_costs import validate_emerge_after_mana_payment
     try:
         validate_emerge_after_mana_payment(host, proposal.seat, card, selected_option)
@@ -1529,7 +1471,13 @@ def _commit_cast_costs_and_stack(
         details,
         spent,
         costs,
+        existing_item=prepared_item,
     )
+    if prepared_item is not None:
+        prepared_item.mana_colors_spent=item.mana_colors_spent
+        prepared_item.mana_spent_counts=item.mana_spent_counts
+        prepared_item.context=item.context
+        item=prepared_item
     item.x_value = selected_option.get("announced_target_x",
         selected_option.get("announced_additional_x", response.get("x")))
     commit_reveal_additional_costs(host,proposal,card,item,selected_option)
@@ -1539,7 +1487,7 @@ def _commit_cast_costs_and_stack(
         host,
         proposal.seat,
     )
-    host.state.stack.append(item)
+    if prepared_item is None:host.state.stack.append(item)
     from ..classic_flash import commit_classic_flash_permission
     commit_classic_flash_permission(host,proposal,card)
     from ...preparation import consume_prepared_cast
@@ -1566,6 +1514,7 @@ def _commit_cast_costs_and_stack(
         costs,
         prior_spell_count=prior_spell_count,
         prior_controller_spell_count=prior_controller_spell_count,
+        payment_triggers=payment_triggers,
     )
     collect_ward_occurrences(host, item)
     host.state.players[proposal.seat].yield_policy = YieldPolicy()

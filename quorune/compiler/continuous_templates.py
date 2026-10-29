@@ -246,6 +246,7 @@ def fixed_power_toughness_anthem_handler(
 
 def fixed_query_keyword_grant_handler(
     oracle_line: str,
+    *, allow_disjoint_negative: bool = False,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower one closed live-set combat-keyword grant.
 
@@ -265,7 +266,7 @@ def fixed_query_keyword_grant_handler(
     if match is None:
         return None
     parsed = fixed_characteristic_battlefield_query_subject(
-        match.group("subject")
+        match.group("subject"),allow_negative_keyword=allow_disjoint_negative
     )
     if parsed is None:
         return None
@@ -279,15 +280,21 @@ def fixed_query_keyword_grant_handler(
     ):
         return None
     abilities, fragments = granted
+    negative=bool(predicate.keywords_none)
+    if negative and (len(predicate.keywords_none)!=1 or fragments
+            or set(predicate.keywords_none).intersection(a.casefold() for a in abilities)):
+        return None
     capabilities = {
         "continuous.ability.fixed_query_keyword_grant",
         *_attached_ability_capabilities(abilities),
         *(('state_query.commander.designation',) if predicate.commander is True else ()),
+        *(('continuous.ability.disjoint_negative_keyword_grant',) if negative else ()),
     }
     return (
         "continuous-fixed-query-keyword-grant-v2",
         {
-            "handler_id": ('continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
+            "handler_id": ('continuous.ability.disjoint-negative-keyword-grant.v1' if negative else
+                           'continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
                            else "continuous.ability.fixed-query-keyword-grant.v1"),
             "schema_version": 2 if 'Protection' in abilities else 1,
             "event": "characteristics.evaluate",
@@ -377,8 +384,9 @@ def fixed_query_characteristic_grant_handler(
 
 
 def _self_subject_pattern(source_name: str) -> str:
+    from ..rules.source_references import source_self_permanent_pattern
     source = SourceReferenceSpec(source_name).regex_pattern
-    return rf"(?:This creature|This permanent|This token|{source})"
+    return rf"(?:{source_self_permanent_pattern()}|This token|{source})"
 
 
 def conditional_self_keyword_handler(
@@ -1009,7 +1017,9 @@ def _attached_quoted_ability_shell(
         not quoted
         or "\n" in quoted
         or not text[:quote_start].casefold().startswith(
-            ("enchanted creature ", "equipped creature ", "enchanted land ")
+            ("enchanted artifact ", "enchanted battle ", "enchanted creature ",
+             "enchanted enchantment ", "enchanted land ", "enchanted permanent ",
+             "enchanted planeswalker ", "equipped creature ")
         )
     ):
         return None
@@ -1201,6 +1211,19 @@ def _fixed_additive_modifier_body(body: str) -> str:
     return body
 
 
+def bind_conditional_subject(body,source_condition,*,attached_permanent_subject=False):
+    """Bind a leading pronoun through its already parsed public condition."""
+    if not re.match(r'^it\b',body,re.I):return body
+    attached=next((leaf for leaf in source_condition.leaf_conditions()
+        if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
+    if attached is None:subject='This creature'
+    else:
+        assert attached.predicate is not None
+        subject=('Enchanted land' if 'land' in attached.predicate.types_all else
+            'Enchanted permanent' if attached_permanent_subject and 'creature' not in attached.predicate.types_all else 'Enchanted creature')
+    return re.sub(r'^it\b',subject,body,count=1,flags=re.I)
+
+
 def _conditional_target(
     body: str,
     *,
@@ -1293,6 +1316,7 @@ def fixed_public_state_characteristics_handler(
     oracle_line: str,
     *,
     source_name: str,
+    attached_permanent_subject: bool = False,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower fixed characteristics gated by closed public state or queries.
 
@@ -1308,30 +1332,7 @@ def fixed_public_state_characteristics_handler(
     if parsed is None:
         return None
     source_condition, body = parsed
-    if re.match(r"^it\b", body, re.IGNORECASE):
-        attached=next((leaf for leaf in source_condition.leaf_conditions() if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
-        if attached is not None:
-            assert attached.predicate is not None
-            attached_subject = (
-                "Enchanted land"
-                if "land" in attached.predicate.types_all
-                else "Enchanted creature"
-            )
-            body = re.sub(
-                r"^it\b",
-                attached_subject,
-                body,
-                count=1,
-                flags=re.IGNORECASE,
-            )
-        else:
-            body = re.sub(
-                r"^it\b",
-                "This creature",
-                body,
-                count=1,
-                flags=re.IGNORECASE,
-            )
+    body=bind_conditional_subject(body,source_condition,attached_permanent_subject=attached_permanent_subject)
     compiled = _conditional_target(body, source_name=source_name)
     if compiled is None:
         return None
@@ -1342,6 +1343,8 @@ def fixed_public_state_characteristics_handler(
         is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
         else ('variant.speed.player',) if source_condition.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED else ()
     )
+    if any(leaf.fact is not None and leaf.fact.value == 'source_renowned' for leaf in source_condition.leaf_conditions()):
+        condition_capabilities = (*condition_capabilities,'permanent.designation.renowned')
     return (
         "continuous-fixed-public-state-characteristics-v1",
         {

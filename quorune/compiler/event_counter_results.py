@@ -69,7 +69,7 @@ def public_event_source_counter_result(binding, body, *, effect_template, card_n
 
 def entry_event_counter_result(binding,body,*,effect_template,card_name):
     entry=binding.event.value in {'permanent.enter','creature.enter','artifact.enter','enchantment.enter','land.enter'}
-    action=(binding.event.value=='creature.attacks' and binding.variant.startswith('public_attack_')
+    action=(binding.event.value=='creature.attacks' and (binding.variant.startswith('public_attack_') or binding.variant=='singular_qualified_attack')
         or binding.event.value=='damage.dealt' and binding.variant.startswith('public_deals_'))
     tap=binding.event.value in {'permanent.tap','permanent.untap'} and binding.variant in {'public_tap_state_transition','source_public_tap_state_transition'}
     if not entry and not action and not tap:return None

@@ -12,6 +12,7 @@ from ..station import (
     station_cost_choice,
 )
 from ..util import unique_preserving_order
+from ..characteristic_read_frames import characteristic_read_method
 from .action_proposals import (
     ActionOffer,
     action_offer_signature_facts,
@@ -392,6 +393,7 @@ def _staged_cast_offers(
     return refs, offers
 
 
+@characteristic_read_method
 def build_priority_action_catalog(
     host: ActionCatalogHost, seat: str
 ) -> dict[str, Any]:

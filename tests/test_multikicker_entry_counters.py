@@ -362,7 +362,7 @@ class MultikickerRuntimeTests(unittest.TestCase):
         with mock.patch.object(MultikickerEntrySpec, 'paid_count', new=one_count):
             with self.assertRaises(AssertionError):
                 self.assert_chalice_payment_and_entry(424041)
-        with mock.patch('quorune.rules.casting.commit.multikicker_cast_context', return_value={}):
+        with mock.patch('quorune.rules.casting.spell_context.multikicker_cast_context', return_value={}):
             with self.assertRaises(AssertionError):
                 self.assert_chalice_payment_and_entry(424042)
 
@@ -389,6 +389,6 @@ class MultikickerRuntimeTests(unittest.TestCase):
 
     def test_native_power_departure_pin_omission_is_killed(self):
         self.assert_yearling_departure_power(424050)
-        with mock.patch('quorune.rules.stack_damage_sources.pin_creature_power_damage_departures'):
+        with mock.patch('quorune.zone_transitions.pin_scalar_characteristic_departures'):
             with self.assertRaises(AssertionError):
                 self.assert_yearling_departure_power(424051)

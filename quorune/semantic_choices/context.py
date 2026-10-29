@@ -3,10 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Mapping, Protocol
 
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
+from ..ring_model import RingBearerChoicePlan, RingStateError
 from ..drawing.restrictions import DrawPermission
 from ..object_query import ObjectQueryResult
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
+from ..semantic_runtime.context import SemanticSourceContext
+from ..explore_action_model import explore_action_version
 
 ChoiceObjectView = ObjectQueryResult
 
@@ -21,8 +24,10 @@ class ChoiceStackView:
     modes: tuple[str, ...]
     target_groups: FrozenMap = field(default_factory=FrozenMap)
     target_snapshots: FrozenMap = field(default_factory=FrozenMap)
+    copy_source: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if self.copy_source is not None and not isinstance(self.copy_source,FrozenMap):object.__setattr__(self,'copy_source',FrozenMap(self.copy_source))
         if not isinstance(self.target_groups, FrozenMap):
             object.__setattr__(
                 self,
@@ -103,6 +108,12 @@ class SemanticChoiceQuery(
     @property
     def active_seats(self) -> tuple[str, ...]: ...
 
+    @property
+    def resolution_source(self) -> SemanticSourceContext | None: ...
+
+    @property
+    def explore_action_version(self) -> int | None: ...
+
     def player_life(self, seat: str) -> int: ...
 
     def player_counter(self, seat: str, counter: str) -> int: ...
@@ -143,6 +154,8 @@ class SemanticChoiceQuery(
     @property
     def turn_sequence(self) -> int: ...
 
+    def ring_choice_plan(self, player: str) -> RingBearerChoicePlan: ...
+
 
 @dataclass(frozen=True, slots=True)
 class SnapshotSemanticChoiceQuery:
@@ -174,8 +187,21 @@ class SnapshotSemanticChoiceQuery:
     rules_profile: str = ''
     library_search_allowed_by_seat: FrozenMap = field(default_factory=FrozenMap)
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
+    ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
+    resolution_source: SemanticSourceContext | None = None
+    explore_action_version: int | None = None
+    resolution_source_is_physical_card: bool | None = None
+    apnap_order: tuple[str, ...] = ()
+    discard_hand_inputs: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if self.discard_hand_inputs is not None and not isinstance(self.discard_hand_inputs, FrozenMap):
+            object.__setattr__(self, 'discard_hand_inputs', FrozenMap(self.discard_hand_inputs))
+        if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:
+            raise ValueError('Physical resolving-card facts must be boolean or absent')
+        explore_action_version(self.explore_action_version)
+        if self.resolution_source is not None and not isinstance(self.resolution_source, SemanticSourceContext):
+            raise ValueError('Choice resolution source requires an immutable typed snapshot')
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):
             raise ValueError('Choice counter permissions require an immutable typed snapshot')
         for field_name in (
@@ -191,6 +217,7 @@ class SnapshotSemanticChoiceQuery:
             "draw_permissions_by_seat",
             "resolution_condition_facts",
             "library_search_allowed_by_seat",
+            "ring_choice_plans",
         ):
             value = getattr(self, field_name)
             if not isinstance(value, FrozenMap):
@@ -219,6 +246,16 @@ class SnapshotSemanticChoiceQuery:
     @property
     def active_seats(self) -> tuple[str, ...]:
         return self.active_order
+
+    def ring_choice_plan(self, player: str) -> RingBearerChoicePlan:
+        from .model import SemanticChoiceError
+        try:
+            plan = RingBearerChoicePlan.from_dict(thaw_value(self.ring_choice_plans[player]))
+        except (KeyError, RingStateError) as exc:
+            raise SemanticChoiceError('Prepared Ring choice facts are unavailable') from exc
+        if plan.state.player != player:
+            raise SemanticChoiceError('Ring choice player binding changed')
+        return plan
 
     def objects(
         self,

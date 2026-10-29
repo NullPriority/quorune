@@ -33,7 +33,8 @@ from test_granted_skulk import record
 FIXTURE=ROOT/'tests/fixtures/external-entry-tapped-cards.json'
 CLOSED={'Orb of Dreams','Root Maze','Frozen Aether','Imposing Sovereign','Authority of the Consuls',
     'Urabrask the Hidden','Blind Obedience','Kismet','Loxodon Gatekeeper','Manglehorn',"Kinjalli's Sunwing",
-    'Spider-Woman, Stunning Savior','False Floor','Edgar, Master Machinist'}
+    'Spider-Woman, Stunning Savior','False Floor','Edgar, Master Machinist',
+    'Thalia, Heretic Cathar','Archon of Emeria','Archelos, Lagoon Mystic'}
 
 
 class ExternalEntryTappedCompilerTests(unittest.TestCase):

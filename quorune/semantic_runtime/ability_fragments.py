@@ -6,6 +6,7 @@ from typing import Any, Mapping
 
 from ..ability_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
+    ActivationProhibitionSpec,
     AbilityFragmentError,
     CombatKeywordTriggerKind,
     CombatKeywordTriggerSpec,
@@ -39,6 +40,9 @@ from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY,
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER
 from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER
 from ..umbra_armor_model import UmbraArmorSpec, UMBRA_ARMOR_FRAGMENT_CAPABILITY, UMBRA_ARMOR_HANDLER
+from ..untap_restraint_model import AttachedUntapRestraintSpec,UNTAP_RESTRAINT_CAPABILITY,UNTAP_RESTRAINT_HANDLER
+from ..enchanted_player_model import EnchantedPlayerAttackRequirementSpec,ENCHANTED_PLAYER_ATTACK_CAPABILITY,ENCHANTED_PLAYER_ATTACK_HANDLER
+from ..bound_declaration_model import BoundStaticDeclarationRulesSpec,BOUND_DECLARATION_CAPABILITY,BOUND_DECLARATION_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -444,6 +448,69 @@ class DeclarationRestrictionAbilityFragmentHandler:
     ) -> tuple[StaticAbilityFragment, ...]:
         del context
         return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True,slots=True)
+class AttachedUntapRestraintHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id:str=UNTAP_RESTRAINT_HANDLER
+    family:str='ability.static.attached_untap_restraint'
+    event:str='characteristics.evaluate'
+    rule_references:tuple[str,...]=('101.2','502.3','701.26b','611.3a','611.3b')
+    capability_dependencies:tuple[str,...]=(UNTAP_RESTRAINT_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=AttachedUntapRestraintSpec)
+
+
+@dataclass(frozen=True, slots=True)
+class EnchantedPlayerAttackRequirementHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id:str=ENCHANTED_PLAYER_ATTACK_HANDLER
+    family:str='ability.static.enchanted_player_attack_requirement'
+    event:str='characteristics.evaluate'
+    rule_references:tuple[str,...]=('303.4c','303.4e','508.1d','611.3a','611.3b')
+    capability_dependencies:tuple[str,...]=(ENCHANTED_PLAYER_ATTACK_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=EnchantedPlayerAttackRequirementSpec)
+
+
+@dataclass(frozen=True,slots=True)
+class BoundStaticDeclarationRulesHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id:str=BOUND_DECLARATION_HANDLER
+    family:str='ability.static.bound_declaration_rules'
+    event:str='characteristics.evaluate'
+    rule_references:tuple[str,...]=('611.1','611.3a','611.3b','508.1d','509.1b','509.1c')
+    capability_dependencies:tuple[str,...]=(BOUND_DECLARATION_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=BoundStaticDeclarationRulesSpec)
+
+
+@dataclass(frozen=True,slots=True)
+class AttachedActivationRuleHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id:str='ability.static.attached-activation-rule.v1'
+    family:str='ability.static.attached_activation_rule'
+    event:str='characteristics.evaluate'
+    rule_references:tuple[str,...]=('611.3a','611.3b','602.1b')
+    capability_dependencies:tuple[str,...]=('activation.restriction.attached_static_rule',)
+
+    def validate(self,descriptor):
+        spec=_fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=ActivationProhibitionSpec)
+        if spec.schema_version!=2:raise SemanticNodeError('Attached activation rules require their independent source scope')
+        return spec
+
+
+@dataclass(frozen=True,slots=True)
+class DeclarationRequirementComponentHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id: str = 'ability.static.declaration-requirement-component.v1'
+    event: str = 'characteristics.evaluate'
+    capability_dependencies: tuple[str, ...] = ('combat.requirement.bound_static_all_blockers',)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> DeclarationRequirementTemplate:
+        fragment = super(DeclarationRequirementComponentHandler, self).validate(descriptor)
+        if fragment.schema_version != 2:
+            raise SemanticNodeError('Bound requirement components need a version-two fragment')
+        return fragment
 
 
 @dataclass(frozen=True, slots=True)
@@ -1382,6 +1449,11 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ToughnessAssignmentFragmentHandler(),
             UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
+            AttachedUntapRestraintHandler(),
+            EnchantedPlayerAttackRequirementHandler(),
+            BoundStaticDeclarationRulesHandler(),
+            AttachedActivationRuleHandler(),
+            DeclarationRequirementComponentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),
             ConditionalKeywordAbilityFragmentHandler(),

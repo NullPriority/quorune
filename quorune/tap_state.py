@@ -202,6 +202,8 @@ def untap_permanent(
         raise TapStateError("Permanent tap state must be boolean")
     if not card.tapped:
         return False
+    from .rules.untap_permissions import untap_is_permitted
+    if not untap_is_permitted(host,card):return False
     stun_count = card.counters.get(STUN_COUNTER_NAME, 0)
     if type(stun_count) is not int:
         raise TapStateError("Stun-counter state is malformed")
@@ -287,9 +289,13 @@ def set_permanent_tapped(
     if tapped:
         changed = not card.tapped
         card.tapped = True
-    elif revert or untap_cost:
+    elif revert:
         changed = card.tapped
         card.tapped = False
+    elif untap_cost:
+        from .rules.untap_permissions import untap_is_permitted
+        if not untap_is_permitted(host,card):raise TapStateError('An absolute rule prohibits paying this untap cost')
+        changed=card.tapped;card.tapped=False
     else:
         changed = untap_permanent(
             host,

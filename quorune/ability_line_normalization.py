@@ -67,3 +67,9 @@ def normalized_ability_line(raw_line: str) -> tuple[str, str | None]:
             discard = ", Discard this card" if keyword == "Cycling" else ""
             return f"{match.group('cost')}{discard}: {effect}", keyword
     return line, None
+
+
+def forecast_cost_without_source_reveal(prefix: str, cost_text: str) -> tuple[str, bool]:
+    if prefix != 'forecast':return cost_text, False
+    match = re.fullmatch(r'(?:(?P<cost>.+?),\s*)?Reveal this (?:card|creature) from your hand', cost_text.strip(), re.I)
+    return ((match['cost'] or '').strip(), True) if match else (cost_text, False)

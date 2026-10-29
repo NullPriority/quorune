@@ -1105,6 +1105,10 @@ def temporary_declaration_restriction_node_capabilities(
     effect = effects[0]
     kind = effect.get("restriction")
     if isinstance(kind, Mapping):
+        from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND
+        if kind.get('kind') == TEMPORARY_ALL_BLOCKER_KIND:
+            from .temporary_all_blockers import temporary_all_blocker_node_capabilities
+            return temporary_all_blocker_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
         from ..source_block_pair_model import SOURCE_BLOCK_PAIR_KIND
         if kind.get('kind') == SOURCE_BLOCK_PAIR_KIND:
             from .source_block_pairs import source_block_pair_node_capabilities

@@ -104,6 +104,14 @@ def _sentence_partition(text: str) -> tuple[str, ...] | None:
     return tuple(clauses)
 
 
+def _comma_sequence_partition(text: str) -> tuple[str, ...] | None:
+    """Partition an action list; complete typed leaves still own admission."""
+    clauses = _partition(text, ', ')
+    if clauses is None:
+        return None
+    return tuple(re.sub(r'^(?:then|and)\s+', '', clause, flags=re.I) for clause in clauses)
+
+
 def _candidate_partitions(text: str) -> tuple[tuple[str, ...], ...]:
     candidates: list[tuple[str, ...]] = []
     sentences = _sentence_partition(text)
@@ -113,6 +121,9 @@ def _candidate_partitions(text: str) -> tuple[tuple[str, ...], ...]:
         clauses = _partition(text, separator)
         if clauses is not None:
             candidates.append(clauses)
+    comma = _comma_sequence_partition(text)
+    if comma is not None:
+        candidates.append(comma)
     return tuple(candidates)
 
 

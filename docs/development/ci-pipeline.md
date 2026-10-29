@@ -276,6 +276,12 @@ dependency. Neither the server nor browser invokes it. Its purpose is to keep
 tracked coverage, architecture, protocol, and status artifacts synchronized
 with their authoritative source before Git publishes a commit.
 
+Before the first database-backed writer, the local coordinator runs the existing
+semantic-transition policy validator. A stale compiler/declaration identity
+therefore fails before corpus work starts. Stabilization and scoped recovery
+retain their existing database reuse behavior; the check does not authorize
+skipping final freshness or publication checks.
+
 `platform/generated-artifacts.json` is the canonical ownership and dependency
 manifest for every tracked generated artifact. Its versioned discovery policy
 finds artifacts through generated path prefixes, top-level pinned-rules JSON,
@@ -1125,6 +1131,17 @@ that is absent from the prior cloud run requires a measured focused estimate,
 for example `--estimate test_new_family=42.5`; once CI observes it, later
 rebalances use the artifact value. Validate the resulting exact partition and
 review the predicted makespans before committing it.
+
+For initial placement of newly added modules, use measured focused estimates
+and the existing owners' observed loads to distribute the new work across
+functional shards. Keep every primary assignment already present in the base
+revision fixed. Preserve semantic overlays, test and fixture contents, launch
+order, workers and matrices. Record timing provenance and incomplete
+observations; an elapsed envelope covering several modules is a conservative
+estimate rather than a measured CI duration for each module. Leave modules
+without a complete focused estimate at their current owner until timing evidence
+is available. Validate the complete partition and its additive policy delta;
+the next complete public pipeline determines the actual scheduling improvement.
 
 Nightly uses the same manifest order, interleaved Ubuntu then Windows per
 shard, with `max-parallel: 6`. Its other browser, property, mutation, corpus,

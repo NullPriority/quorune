@@ -94,7 +94,8 @@ class SubtypeUnionConditionTests(unittest.TestCase):
         self.assertFalse(session.state.cards[foreign.object_id].tapped)
         self.assertEqual('battlefield',session.state.cards[source.object_id].zone)
         self.assertFalse(session.state.cards[source.object_id].tapped)
-        self.assertEqual(6,session.engine._numeric_stat(source.object_id,'power'))
+        # CR 208.3: this uncrewed Vehicle has no power as a permanent.
+        self.assertEqual(0,session.engine._numeric_stat(source.object_id,'power'))
         self.private_replay(session,private)
 
     def test_original_has_complete_nonempty_union_permission_and_retains_crew(self):

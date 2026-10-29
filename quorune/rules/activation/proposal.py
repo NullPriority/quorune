@@ -151,6 +151,15 @@ def _select_ability(
         raise ActivationProposalError(str(exc), reason="ability_selection") from exc
 
 
+def activation_result_is_represented(host, source, ability):
+    """A structural cost catalogue never stands in for an executable result."""
+    from .resolution import is_builtin_activation_semantic
+    key = host._semantic_key_for_ability(source, ability)
+    return (ability.mana_ability or host.semantics.get(key) is not None
+        or is_builtin_activation_semantic(key) or host._crew_threshold(ability) is not None
+        or station_cost_choice(ability) is not None or bool(ability.library_search_types))
+
+
 def _validate_activation_cost_contract(
     host: ActivationProposalHost,
     request: ActivationProposalRequest,
@@ -169,6 +178,9 @@ def _validate_activation_cost_contract(
             status="unresolved",
             reason="uncompiled_cost",
         )
+    if host.state.config.semantic_policy == 'trusted_only' and not activation_result_is_represented(host, source, ability):
+        raise ActivationProposalError('This ability has no compiled result semantics',
+            status='unresolved', reason='unresolved_result_semantics')
     status, reason = host._ability_availability(request.actor, source, ability)
     if status != "payable":
         raise ActivationProposalError(
@@ -231,6 +243,10 @@ def _validate_activation_timing_costs(
             status="unpayable",
             reason="untap_cost_unpayable",
         )
+    if ability.untap_source:
+        from ..untap_permissions import untap_is_permitted
+        if not untap_is_permitted(host,source):
+            raise ActivationProposalError('An absolute rule prohibits this untap cost',status='unpayable',reason='untap_cost_prohibited')
 
 
 def _creature_power_damage_context(
@@ -353,6 +369,7 @@ def build_activation_proposal(
                 source,
                 ability,
                 response.get("cost_option"),
+                targets=tuple(targets),
             )
         except ValueError as exc:
             raise ActivationProposalError(
@@ -363,14 +380,14 @@ def build_activation_proposal(
         requirements = dict(mana_option.requirements)
     else:
         from .x_costs import activation_requirements, validate_activation_x_payment
-        requirements, announced_x = activation_requirements(host, request.actor, source, ability, response)
+        requirements, announced_x = activation_requirements(host, request.actor, source, ability, response, targets=tuple(targets))
         if announced_x is not None:
             try: validate_activation_x_payment(host,request.actor,source,ability,requirements)
             except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
     waterbend_details={}
     if not ability.mana_cost_options:
         from .pricing import activation_price_details
-        waterbend_details.update(activation_price_details(host,request.actor,source,ability,response))
+        waterbend_details.update(activation_price_details(host,request.actor,source,ability,response,targets=tuple(targets)))
     if ability.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
         try:payment=activation_waterbend_plan(host,request.actor,source,ability,requirements,response,hint=False)
@@ -600,8 +617,8 @@ def build_activation_offer(
     fetch_types = selected.library_search_types
     if fetch_types:
         hint["search_types"] = list(fetch_types)
-    from .offer_payload import activation_offer_payload
-    payload=activation_offer_payload(source,selected,hint)
+    from .pricing import activation_priced_offer_payload
+    payload, public_schema = activation_priced_offer_payload(host,seat,source,selected,hint,public_schema)
     if selected.mana_cost_options:
         payload["cost_options"] = [
             {

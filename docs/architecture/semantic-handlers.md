@@ -56,6 +56,16 @@ Private candidate ordering is deterministic across checkpoint serialization.
 Variable counts, simultaneous connivers, Connive replacements and unrepresented
 listeners or reflexive results remain residuals.
 
+Explore uses one retained permanent and its current or last-known controller.
+In the current action mode, an empty library still prepares the ordinary
+replacement-aware counter before completion. Stale, phased or returned
+incarnations do not receive it. The same owner handles compiled instructions
+and Map builtins, including suspension and exact resumption of counter
+replacement. Historical absence of the mode retains the earlier empty result.
+Source departure capture follows independently owned optional-effect and
+payment wrappers in the current mode. See
+[the action-mode decision](../adr/0134-versioned-explore-action-semantics.md).
+
 The existing optional-effect choice also represents fixed controller draw
 followed by “If you do, discard” instructions. Decline performs neither action.
 Acceptance resumes the draw and then the mandatory private discard through
@@ -64,6 +74,14 @@ replacement changes or prevents the actual draw. The discard choice is issued
 after the draw, includes the resulting hand, and remains private to its chooser.
 Arbitrary linked conditions, random counts, and unrepresented player variants
 remain residuals.
+
+Optional-result validation receives the existing immutable resolving-source
+snapshot from the owning stack item, both when preparing a choice and when
+validating its continuation. Source-dependent handlers retain their ordinary
+provenance checks inside optional effects and fixed payments. This snapshot
+contains public identity and duration facts; it carries no mutable game state
+or hidden-zone data. Missing or malformed required provenance still rejects
+the instruction before payment or mutation.
 
 The existing characteristic operation accepts a closed version-six target-set
 instruction. Canonical target revalidation supplies each surviving original
@@ -159,6 +177,68 @@ missing base characteristic. Conditional, stale or wrong-face declarations do
 not supply it. Copyable values capture that printed fact before later ability
 removal; copied and token values retain their own captured keyword data.
 Whole-card command admission remains a separate authority.
+
+One fixed printed Casualty declaration adds an optional schema-four sacrifice
+price to ordinary casting. Its typed predicate requires one currently controlled
+creature with effective power at least the declared threshold. Tapped,
+summoning-sick and token creatures remain eligible. In new games, price offers
+use the existing prospective source-placement reader, so power depending on the
+hand or another origin zone agrees with actual payment after the source reaches
+the stack. Earlier zone-cost schemas retain their prior representation.
+
+The canonical zone-cost owner pays the price and retains the selected logical
+incarnation. The spell's declared context carries that sealed fact during
+preparation; cast-trigger construction validates it against committed cost
+objects after payment. This preserves the existing source-before-cost sequence.
+Destination redirection still pays sacrifice. The ordinary spell-copy trigger
+owner then creates one independent copy with retained X and optional fresh
+targets. It survives removal of the original spell, and the copy is not cast.
+Private choices in copied bodies retain ordinary projection and replay. Variable
+permanent-copy exceptions, multiple or granted instances, mixed consuming costs
+and unknown companion bodies remain residual. See
+[ADR 0136](../adr/0136-power-qualified-casualty-costs.md).
+
+Printed Bargain uses the same zone-cost selection and payment path with a
+schema-five disjunction of controlled-permanent predicates. An artifact,
+enchantment or token can pay; the predicates are alternatives. Current type,
+control and phase state govern eligibility, while tapping and summoning
+sickness do not restrict sacrifice. Destination replacement retains the
+ordinary sealed cost continuation.
+
+The existing option-expansion owner assembles optional resource prices in a
+fixed order. Each price owner retains its own selection, affordability and
+composition guards; the assembly adds no registry or payment path.
+
+`DeclaredCastCostFacts` records source-local optional-cost choices separately
+from existing Kicker and other historical fields. Bargain records the declared
+intention under CR 702.166b. Linked fixed spell results use version twelve of
+the existing public-condition instruction, with both branches independently
+closed and the same target contract. Entry results consume immutable original
+entry facts; a later departure or unpaid reentry cannot replace that occurrence.
+Spell copies retain declarations, while ordinary permanent copies do not
+inherit another object's casting history. No global flag or game-state mode is
+introduced. Conditional announcement targets, discounts and other unrepresented
+linked bodies remain residual. See
+[ADR 0137](../adr/0137-linked-optional-casting-declarations.md).
+
+Forecast is an optional marker in the existing activated-ability descriptor.
+It requires a hand source, owner-upkeep condition and once-per-turn usage limit;
+older descriptors omit the marker. Ordinary activation legality and payment
+remain authoritative. The source reveal delegates to the canonical scoped hand
+reveal owner. A typed frame retains the original hand incarnation and prior
+disclosure state until actual hand departure or entry into a non-upkeep step.
+Consecutive upkeep steps retain the disclosure. Ending it preserves learned
+identity and independent public-hand permissions. A later hand incarnation
+gets independent usage and reveal state.
+
+Selected-tap schema two adds fixed ordinary color alternatives to the existing
+controlled untapped permanent query. Its plan retains the ability source's
+allowed zone and logical identity; Forecast can use an owned hand source while
+the selected payment objects remain battlefield permanents. Battlefield source
+checks remain the default for earlier callers. Creature summoning sickness
+does not restrict a cost written as a selected-object tap. No new activation
+interpreter or game-state mode is introduced. See
+[ADR 0138](../adr/0138-forecast-hand-source-disclosure.md).
 
 Enlist's optional declaration taps and linked reflexive program use the
 existing tap, scalar, APNAP and continuous-effect owners. The trigger context
@@ -329,6 +409,18 @@ Replacement continuations seal private membership, including logical object
 identity, and reject a changed hand before resuming. This snapshot is not
 published to another principal.
 
+Linked whole-hand discard and draw instructions use a separate typed result
+from that same discard owner. Authoritative hand membership is materialized
+without adding opponents' cards to the actor-visible object query. The result
+counts only new committed discard occurrences of those sealed incarnations,
+including redirected destinations. `IntentResultPlayerDraws` binds either each
+player's own count or the greatest affected count, with an explicit optional
+plus one, to ordinary draw instructions in APNAP order. Empty hands contribute
+zero. Casting-cost discards and earlier turn-history events cannot enter the
+result. Replacement suspension retains the intent identity; conditional return
+suspension retains the already bound draws through the existing completed-choice
+continuation. No new game-state cache or mutation owner is introduced.
+
 Mandatory “sacrifice a permanent” instructions for the resolving controller
 reuse the same `choose_cards_apnap` owner as fixed player-targeted sacrifices.
 The controller chooses only current eligible permanents they control, including
@@ -356,8 +448,10 @@ independent controller quantities read the public collection or current-turn
 history after the discard. The scalar history vocabulary includes cards
 discarded this turn from the existing normalized journal, including redirected
 discards. Optional wrappers keep their existing controller choice. Team-wide
-choices, filtered entire hands, greatest-discarded-this-way counts, and
-unrepresented linked tails remain residual.
+choices, filtered entire hands and unrepresented linked tails remain residual.
+Only complete represented discard-and-draw bodies gain the committed-count
+binding; token, characteristic-dependent and selected-subset results require
+their own contracts.
 
 Departure relevance is determined from object identity, expected incarnation,
 and public zone before a pending characteristic is evaluated. Empty departure
@@ -522,6 +616,12 @@ To migrate an instruction, characterize existing output and replay, define the
 smallest typed node/query/intent surface, register one stable handler, add
 success and malformed-input rollback tests, and remove every parallel dispatch
 path. Registration does not itself raise the trust level of any CardProgram.
+
+See [ADR 0135](../adr/0135-cipher-linked-grants-and-copy-casting.md) for Cipher's
+physical-card encoding choice, linked exile grant and existing copy-cast path.
+Its immutable choice facts distinguish a physical resolving card from a
+noncard copy. The encoding intent delegates movement to the canonical zone
+owner; continuous evaluation reads the typed link without mutation.
 
 See [ADR 0006](../adr/0006-typed-semantic-handler-boundary.md),
 [ADR 0009](../adr/0009-typed-tap-state-mutation-owner.md), and

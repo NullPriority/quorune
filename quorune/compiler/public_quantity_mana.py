@@ -30,6 +30,11 @@ def _amount(value: str, *, source_name: str, count: bool):
     normalized = " ".join(value.rstrip(".").split())
     quantity = (query_characteristic_quantity(normalized, source_name=source_name, definition_extensions=True)
         if count else query_characteristic_value(normalized, source_name=source_name))
+    if quantity is not None:
+        try:
+            PublicQuantityManaTemplate('fixed', ('G',), quantity)
+        except ValueError:
+            quantity = None
     if quantity is None:
         quantity = resolution_quantity(normalized, source_name=source_name, complete_value=not count)
     if quantity is not None:

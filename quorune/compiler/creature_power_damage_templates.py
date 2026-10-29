@@ -36,7 +36,7 @@ _SOURCE_FIGHT = re.compile(
     re.IGNORECASE,
 )
 _DIRECT_BITE = re.compile(
-    rf"^(?P<first>Target {_QUALITY} you control) deals damage equal to its "
+    rf"^(?P<first>Target {_QUALITY} you control) deals damage equal to (?P<multiple>twice )?its "
     r"power to (?P<second>any other target|any target|"
     rf"another target {_QUALITY}|target {_QUALITY}|target creature or planeswalker)"
     r"(?P<relation> you don't control| an opponent controls)?\.?$",
@@ -405,6 +405,7 @@ def _direct_bite(
                 "target": "$target.1",
                 "target_must_be_creature": must_be_creature,
                 "source_lki": None,
+                **({'schema_version': 2, 'power_multiplier': 2} if match.group('multiple') else {}),
             },
         ),
         target_schema={"groups": [fighter, target]},

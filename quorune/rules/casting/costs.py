@@ -548,9 +548,8 @@ def _initial_options(
     expanded = with_spree_mode_cost_options(program, schema, expanded, response, hint=hint)
     from .entwine_costs import with_entwine_mode_cost_options
     expanded = with_entwine_mode_cost_options(program,schema,expanded,response,hint=hint)
-    from .conspire_costs import expand_conspire_options
-    expanded = expand_conspire_options(host, seat, card, expanded, suppress_source_costs=suppress_source_costs,
-        mechanics=mechanics, mandatory=mandatory)
+    from .option_expansion import expand_optional_resource_costs
+    expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
     from .aftermath import with_aftermath_stack_context
     return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 
@@ -1464,6 +1463,10 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         option["choice_schema"] = choice_schema
     from .turn_cast_grants import finalize_turn_cast_grant_option
     finalize_turn_cast_grant_option(option)
+    from .casualty_costs import finalize_casualty_option
+    if not finalize_casualty_option(host,seat,card,option,hint=hint):return None
+    from .bargain_costs import finalize_bargain_option
+    if not finalize_bargain_option(host,seat,card,option,hint=hint):return None
     return CastCostOption.from_dict(option)
 
 
@@ -1482,6 +1485,8 @@ def build_cast_cost_options(
 ) -> tuple[CastCostOption, ...]:
     """Return immutable, currently payable server-authoritative cost choices."""
 
+    from .source_placement import casting_affordability_host
+    host=casting_affordability_host(host,card)
     submission = dict(response or {})
     initial = _initial_options(
         host,

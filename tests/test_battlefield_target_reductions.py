@@ -57,11 +57,24 @@ class BattlefieldTargetReductionModelTests(unittest.TestCase):
             spec = TargetedSpellCostSpec.from_dict(compiled[1]['modifier'])
             self.assertEqual((3, -2, subject, relation),
                 (spec.schema_version, spec.generic, spec.subject.value, spec.caster_relation))
+        promoted = targeted_spell_cost_template(
+            'Spells you cast cost {1} less to cast for each target.', source_name='Generic Target Reducer')
+        self.assertIsNotNone(promoted)
+        modifier = promoted[1]['modifier']
+        self.assertEqual((5, 'distinct_targets', -1),
+            (modifier['schema_version'], modifier['subject'], modifier['generic']))
+        controlled = targeted_spell_cost_template(
+            'Spells you cast that target a creature you control cost {2} less to cast.', source_name='Generic Target Reducer')
+        self.assertIsNotNone(controlled)
+        modifier = controlled[1]['modifier']
+        self.assertEqual((4, 'public_target', -2),
+            (modifier['schema_version'], modifier['subject'], modifier['generic']))
+        self.assertEqual('source_controller', modifier['target_subject']['controller_relation'])
         for text in (
-            'Spells you cast cost {1} less to cast for each target.',
+            'Spells you cast cost {1} less to cast for each different creature type among its targets.',
             'Spells you cast that target a creature cost {U} less to cast.',
             'Spells you cast that target a creature cost {X} less to cast.',
-            'Spells you cast that target a creature you control cost {2} less to cast.',
+            'Spells you cast that target a creature with the chosen name cost {2} less to cast.',
         ):
             self.assertIsNone(targeted_spell_cost_template(text, source_name='Generic Target Reducer'))
 
@@ -215,8 +228,37 @@ class BattlefieldTargetReductionRuntimeTests(unittest.TestCase):
 
     def test_per_target_count_companions_stay_residual_and_do_not_receive_a_fixed_discount(self):
         s = self.session(785060)
-        for name in ('Battlefield Thaumaturge', 'Hinata, Dawn-Crowned'):
-            card = self.add(s.engine, name); self.assertFalse(self.binding(s, card)['strict_capability_ready'])
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        from quorune.oracle_ir import compile_oracle_card
+        # Preserve this evidence ID's residual control with an explicitly
+        # unsupported count; the original distinct-target cards now close.
+        for index, name in enumerate(('Battlefield Thaumaturge', 'Hinata, Dawn-Crowned')):
+            card = self.add(s.engine, name)
+            self.assertTrue(self.binding(s, card)['strict_capability_ready'])
+            record = self.db.lookup(name)
+            text = record.oracle_text.replace(
+                'for each creature it targets', 'for each different creature type among its targets',
+            ).replace('for each target', 'for each different creature type among its targets')
+            self.assertNotEqual(record.oracle_text, text)
+            boundary = replace(record,
+                oracle_id=f'00000000-0000-4000-8000-{785060001 + index:012d}',
+                name='Generic Unsupported Per-Target Companion', oracle_text=text +
+                '\nSpells you cast that target a creature cost {2} less to cast.')
+            ir = compile_oracle_card(boundary, capability_registry=self.registry,
+                capability_profile='commander_review')
+            self.assertTrue(ir.material_residuals)
+            self.assertTrue(any('casting.cost.targeted_fixed_generic' in node.capability_dependencies
+                for face in ir.faces for node in face.nodes))
+            program = compile_best_available_card_program(self.db, boundary,
+                semantic_registry=SemanticRegistry(), capability_registry=self.registry,
+                capability_profile='commander_review')
+            binding = bind_card_program_runtime(program, capability_registry=self.registry,
+                profile='commander_review')
+            self.assertFalse(binding['strict_capability_ready'])
+            self.assertFalse(binding['compatible_ready'])
+            self.assertIn('trust_basis:unresolved', binding['blockers'])
         self.prepare(s); self.checkpoint(s); self.replay(s)
 
     def test_announced_x_keeps_its_value_and_colored_mana_after_one_fixed_reduction(self):

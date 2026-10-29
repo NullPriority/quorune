@@ -510,6 +510,9 @@ class FixedSacrificeAdditionalCostRuntimeTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("replacement.order", engine.state.pending_decision.kind)
+        # Suspending payment rolls back the attempted cast and replaces cards.
+        creature = engine.state.cards[creature.object_id]
+        spell = engine.state.cards[spell.object_id]
         self.assertEqual("battlefield", creature.zone)
         self.assertEqual("hand", spell.zone)
         self.assertFalse(engine.state.stack)

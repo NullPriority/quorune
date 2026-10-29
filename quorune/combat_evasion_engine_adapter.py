@@ -13,6 +13,9 @@ from .keyword_abilities import normalized_characteristic_keywords
 from .landwalk import BASIC_LAND_TYPES, LandwalkLandCharacteristics, LandwalkRuleError
 from .semantic_runtime.block_restrictions import current_self_block_prohibitions
 from .rules.landwalk_permissions import current_landwalk_block_exceptions
+from .ring_effects import ring_power_block_allowed
+from .ring_state import current_ring_rule_views
+from .ring_model import RingObjectIdentity
 
 if TYPE_CHECKING:
     from .engine import CommanderEngine
@@ -71,12 +74,19 @@ def engine_combat_evasion_verdict(
             False,
             "blocker_has_self_counter_prohibition",
         )
-    return combat_evasion_verdict(
-        combatant_evasion_characteristics(engine, attacker),
-        combatant_evasion_characteristics(engine, blocker),
+    attacker_facts = combatant_evasion_characteristics(engine, attacker)
+    blocker_facts = combatant_evasion_characteristics(engine, blocker)
+    ordinary = combat_evasion_verdict(
+        attacker_facts,
+        blocker_facts,
         defending_land_characteristics(engine, defending_player),
         ignored_landwalk_keywords=current_landwalk_block_exceptions(engine, blocker),
     )
+    if not ring_power_block_allowed(current_ring_rule_views(engine),
+            attacker=RingObjectIdentity(attacker.object_id,attacker.ref,attacker.logical_object_id),
+            attacker_power=attacker_facts.power,blocker_power=blocker_facts.power):
+        return CombatEvasionVerdict(False,'external_greater_power_restriction')
+    return ordinary
 
 
 def combatant_evasion_characteristics(

@@ -17,6 +17,51 @@ class MultiplayerRuleTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def nameless_legend_fixture(self, seed):
+        session=make_session(self.db,self.mishra,self.zimone,seed=seed)
+        keep_all(session);engine=session.engine
+        engine.permissions.invalidate_current();engine.state.pending_decision=None;engine.state.priority_player=None
+        cards=[]
+        for _ in range(2):
+            ref=engine.create_token('A',name='Shared display label',characteristics={
+                'type_line':'Legendary Creature — Hound','power':'2','toughness':'2'})[0]
+            card=engine._resolve_object('A',ref,zones={'battlefield'})
+            card.annotations['copy_overrides']={'name':'','type_line':'Legendary Creature — Hound',
+                'power':'2','toughness':'2','mana_cost':'','colors':[],'ability_fragments':[]}
+            cards.append(card)
+        return session,cards
+
+    def test_nameless_legendaries_never_group_by_their_display_label(self):
+        from quorune.record import authoritative_state_hash
+        session,cards=self.nameless_legend_fixture(20170401)
+        self.assertEqual(['',''],[session.engine._effective_card_data(c)['name'] for c in cards])
+        before=authoritative_state_hash(session.state)
+        self.assertEqual([],session.engine._legend_groups())
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        self.assertFalse(session.engine._stabilize())
+        self.assertIsNone(session.state.pending_decision)
+        self.assertTrue(all(session.state.cards[c.object_id].zone=='battlefield' for c in cards))
+
+    def test_current_named_legends_group_after_projection_changes_and_ignore_phasing(self):
+        from quorune.record import authoritative_state_hash
+        session,cards=self.nameless_legend_fixture(20170402);engine=session.engine
+        self.assertEqual([],engine._legend_groups())
+        for card in cards:card.annotations['copy_overrides']['name']='Shared current name'
+        groups=engine._legend_groups()
+        self.assertEqual(1,len(groups));self.assertEqual(('A','Shared current name'),groups[0][:2])
+        cards[1].phased_out=True
+        self.assertEqual([],engine._legend_groups())
+        cards[1].phased_out=False
+        self.assertEqual(1,len(engine._legend_groups()))
+        self.assertTrue(engine._stabilize());self.assertEqual('state.legend',session.state.pending_decision.kind)
+        session.packet('pilot:A',full=True)
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B',{'action_id':'choose','card':cards[0].ref}).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        accepted=session.act('pilot:A',{'action_id':'choose','card':session.state.cards[cards[0].object_id].ref})
+        self.assertTrue(accepted.ok,accepted.summary)
+        self.assertEqual(1,sum(session.state.cards[c.object_id].zone=='battlefield' for c in cards))
+
     def test_extra_turns_are_lifo_then_normal_order_resumes(self):
         session = make_session(self.db, self.mishra, self.zimone, seed=31)
         keep_all(session)

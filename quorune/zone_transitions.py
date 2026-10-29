@@ -289,6 +289,8 @@ class ZoneTransitionOwner:
             zone_timestamp=zone_timestamp,
             reveal_to=tuple(reveal_to or ()),
         )
+        from .rules.cipher import reconcile_cipher_links
+        reconcile_cipher_links(self.host)
         self._journal_move(
             plan,
             departure,
@@ -534,6 +536,9 @@ class ZoneTransitionOwner:
         reveal_to: tuple[str, ...],
     ) -> None:
         card = plan.card
+        if departure.origin == 'hand' and plan.destination != 'hand':
+            from .forecast import end_forecast_reveal
+            end_forecast_reveal(self.host, card)
         if plan.prepared_life_payment is not None:
             try:
                 commit_life_payment(
@@ -543,6 +548,9 @@ class ZoneTransitionOwner:
             except LifeStateError as exc:
                 raise GameRuleError(str(exc)) from exc
         if departure.origin == "stack":
+            from .rules.event_spell_copy import pin_event_spell_copy_departure
+            for departing in tuple(self.state.stack):
+                if departing.card_object_id==card.object_id:pin_event_spell_copy_departure(self.host,departing)
             from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
             for item in tuple(self.state.stack):
                 if item.card_object_id==card.object_id:cleanup_stack_cost_hand_reveals(self.host,item)
@@ -760,12 +768,14 @@ class ZoneTransitionOwner:
                 ),
                 cast_option=departure.cast_option,
                 paid_entry_copy=departure.paid_entry_copy,
-                multikicker_paid=departure.multikicker_paid,
+                multikicker_paid=departure.multikicker_paid, declared_cast_costs=departure.declared_cast_costs if card.zone == 'battlefield' else None,
                 trigger_batch=trigger_batch,
             )
         if not defer_control_sync:
             from .counter_placement_events import dispatch_counter_event_trees
             dispatch_counter_event_trees(self.host, (plan.prepared_replacement,), reason=reason,trigger_batch=trigger_batch)
+            from .rules.state_triggers import observe_public_state_triggers
+            observe_public_state_triggers(self.host,trigger_batch=trigger_batch)
             enqueue_trigger_batch(self.host,trigger_batch)
             from .conditional_exile_return import return_from_departure_snapshots
             return_from_departure_snapshots(self.host, ((card, departure),))
@@ -942,6 +952,7 @@ class ZoneTransitionOwner:
             cast_option=departure.cast_option if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             paid_entry_copy=departure.paid_entry_copy if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             multikicker_paid=departure.multikicker_paid if departure.origin == 'stack' and card.zone == 'battlefield' else None,
+            declared_cast_costs=departure.declared_cast_costs if departure.origin == 'stack' and card.zone == 'battlefield' else None,
         )
 
     def move_cards_simultaneously(
@@ -1054,7 +1065,7 @@ class ZoneTransitionOwner:
                 origin_attached_to=departure.attached_to,
                 cast_option=departure.cast_option,
                 paid_entry_copy=departure.paid_entry_copy,
-                multikicker_paid=departure.multikicker_paid,
+                multikicker_paid=departure.multikicker_paid, declared_cast_costs=departure.declared_cast_costs if card.zone == 'battlefield' else None,
                 departure_sources=sources.sources,
                 departure_source_zones=sources.source_zones,
                 departure_source_characteristics=(
@@ -1074,6 +1085,8 @@ class ZoneTransitionOwner:
                 reason="simultaneous bound permanents entered the battlefield",
                 trigger_batch=trigger_batch,
             )
+        from .rules.state_triggers import observe_public_state_triggers
+        observe_public_state_triggers(self.host,trigger_batch=trigger_batch)
         enqueue_trigger_batch(self.host, trigger_batch)
         from .conditional_exile_return import return_from_departure_snapshots
         return_from_departure_snapshots(self.host, snapshots)

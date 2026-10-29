@@ -70,8 +70,13 @@ def random_spell_cost_refs(host,seat,source,response):
         raise GameRuleError('Random spell payment is not a selected card cost')
     payment_id=response.get('_mana_payment_id')
     if type(payment_id) is not str or not payment_id:raise GameRuleError('Random spell payment requires its server identity')
+    from ..cast_source_placement_model import cast_source_placement_version
+    # One server payment identity spans placement and any rolled-back retry.
+    # New casting moves the source to a fresh stack incarnation before payment.
+    identity=(source.object_id if cast_source_placement_version(
+        getattr(host.state,'cast_source_placement_version',None))==1 else source.logical_object_id)
     intent=RandomDiscardIntent(actor=seat,players=(seat,),count=1,
-        randomization_key=f'{payment_id}|spell-random-discard|{source.logical_object_id}',reason='spell additional cost')
+        randomization_key=f'{payment_id}|spell-random-discard|{identity}',reason='spell additional cost')
     refs=tuple(resolve_random_discard(host,intent,commit_batch=lambda values:values,exclude_object_ids=(source.object_id,)))
     if len(refs)!=1:raise GameRuleError('Random spell payment requires another current hand card')
     frozen=response.get('_random_discard_cost_refs')

@@ -318,9 +318,17 @@ class EvolveRuntimeTests(unittest.TestCase):
         if repeated:
             record = replace(
                 record,
+                oracle_id="00000000-0000-4000-8000-000070210002",
+                name="Generic Double Evolve Fixture",
                 oracle_text="Evolve, evolve",
                 keywords=("Evolve",),
             )
+            from unittest.mock import patch
+            by_oracle_id = self.db.by_oracle_id
+            self.enterContext(patch.object(self.db, 'by_oracle_id', side_effect=lambda identity:
+                record if identity == record.oracle_id else by_oracle_id(identity)))
+            source.oracle_id = record.oracle_id
+            source.printed_name = record.name
         for program in tuple(engine.semantics.programs_for_oracle(source.oracle_id)):
             if program.event == "creature.enter":
                 engine.semantics.remove(program.key)

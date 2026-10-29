@@ -388,6 +388,16 @@ def _semantic_condition_actual(
     field = str(condition.get("field") or "")
     if not field:
         raise GameRuleError("Semantic event condition requires a field")
+    from .attack_batch_model import ATTACK_BATCH_CONDITION
+    from .spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_FIELD
+    if field==QUALIFIED_SPELL_ORDINAL_FIELD:
+        from .rules.spell_history_ordinals import qualified_spell_cast_number
+        try:return qualified_spell_cast_number(host.state,condition,context)
+        except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
+    if field == ATTACK_BATCH_CONDITION:
+        from .rules.attack_batches import qualified_attack_match_count
+        try:return qualified_attack_match_count(source,condition,context)
+        except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     if field == "counter_names":
         names = context.get(field)
         if (not isinstance(names, Sequence) or isinstance(names, (str, bytes))
@@ -965,7 +975,13 @@ def _event_programs_for_source(
     ):
         if granted.event.removesuffix(".self") != event:
             continue
-        program = host.semantics.get(granted.semantic_key)
+        if granted.cipher_card_ref is not None:
+            from .rules.cipher import cipher_granted_program
+            program = cipher_granted_program(host, source, granted)
+            if program is None:
+                continue
+        else:
+            program = host.semantics.get(granted.semantic_key)
         if program is None:
             raise GameRuleError(
                 "A typed granted trigger references an unknown "
@@ -1020,7 +1036,14 @@ def _semantic_trigger_context(
             else {}
         ),
     }
+    if 'cipher_grant' in program.provenance:
+        stack_context['cipher_grant'] = copy.deepcopy(program.provenance['cipher_grant'])
+    from .rules.state_triggers import state_trigger_context
+    stack_context.update(state_trigger_context(source,program))
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
+    from .rules.event_spell_copy import event_spell_copy_trigger_context
+    try:stack_context.update(event_spell_copy_trigger_context(host,program,event,context))
+    except (TypeError,ValueError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     stack_context.update(printed_backup_source_context(source,program))
     from .connive import connive_trigger_departure_context
     stack_context.update(connive_trigger_departure_context(host, source, program))
@@ -1040,6 +1063,10 @@ def _semantic_trigger_context(
             if event == "damage.dealt"
             else {}
         )
+        if event == 'creature.attacks':
+            from .rules.attack_batches import attack_batch_aggregation_scope
+            try:aggregation_scope=attack_batch_aggregation_scope(program,context)
+            except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
         stack_context["one_or_more_aggregation_id"] = hashlib.sha256(
             stable_json(
                 {
@@ -1107,7 +1134,7 @@ def _semantic_trigger_context(
     return stack_context
 
 
-def _trigger_multiplier_copies(
+def trigger_multiplier_copies(
     host: TriggerDiscoveryHost,
     *,
     item: StackItem,
@@ -1273,11 +1300,21 @@ def _granted_prowess_trigger_items(host, source, event, context, *, active_zone,
             },
         )
         result.append(item)
-        result.extend(_trigger_multiplier_copies(host, item=item, source=source, event=event, context=context))
+        result.extend(trigger_multiplier_copies(host, item=item, source=source, event=event, context=context))
     return tuple(result)
 
 
+def _trigger_program_is_current_trusted(host, program):
+    if 'cipher_grant' in program.provenance:
+        from .rules.cipher import cipher_program_is_current_trusted
+        return cipher_program_is_current_trusted(host, program)
+    return host.semantic_program_is_current_trusted(program)
+
+
 def _program_trigger_ability_is_present(program, characteristics):
+    if ('identity_pinned_champion' in program.coverage
+            and 'champion' not in {str(keyword).casefold() for keyword in characteristics.get('keywords', ())}):
+        return False
     if ('identity_pinned_soulbond_pairing' in program.coverage
             and 'soulbond' not in {str(keyword).casefold() for keyword in characteristics.get('keywords', ())}):
         return False
@@ -1306,7 +1343,7 @@ def dispatch_semantic_event(
         if evoke_item is not None:
             triggered.append(evoke_item)
             triggered.extend(
-                _trigger_multiplier_copies(
+                trigger_multiplier_copies(
                     host,
                     item=evoke_item,
                     source=source,
@@ -1333,7 +1370,7 @@ def dispatch_semantic_event(
         if blitz_item is not None:
             triggered.append(blitz_item)
             triggered.extend(
-                _trigger_multiplier_copies(
+                trigger_multiplier_copies(
                     host,
                     item=blitz_item,
                     source=source,
@@ -1348,6 +1385,8 @@ def dispatch_semantic_event(
                 continue
             if not _program_trigger_ability_is_present(program, characteristics):
                 continue
+            from .rules.state_triggers import state_trigger_available
+            if not state_trigger_available(host,source,program,trigger_batch):continue
             if not semantic_event_matches(
                 host,
                 program,
@@ -1362,7 +1401,7 @@ def dispatch_semantic_event(
                 continue
             if (
                 host.state.config.semantic_policy == "trusted_only"
-                and not host.semantic_program_is_current_trusted(program)
+                and not _trigger_program_is_current_trusted(host, program)
             ):
                 host._pause_for_unsupported_semantic(
                     program=program,
@@ -1418,7 +1457,7 @@ def dispatch_semantic_event(
             triggered.append(item)
             if program.trigger_limit is None:
                 triggered.extend(
-                    _trigger_multiplier_copies(
+                    trigger_multiplier_copies(
                         host,
                         item=item,
                         source=source,
@@ -1445,4 +1484,5 @@ __all__ = [
     "semantic_event_matches",
     "semantic_event_value",
     "trigger_multiplier_participations",
+    "trigger_multiplier_copies",
 ]

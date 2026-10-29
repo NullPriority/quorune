@@ -460,6 +460,8 @@ class FixedCounterAdditionalCostRuntimeTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("replacement.order", engine.state.pending_decision.kind)
+        spell = engine.state.cards[spell.object_id]
+        creature = engine.state.cards[creature.object_id]
         self.assertEqual("hand", spell.zone)
         self.assertEqual({}, creature.counters)
         self.assertEqual(1, engine.state.players["A"].mana_pool["B"])

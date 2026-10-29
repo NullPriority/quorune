@@ -220,7 +220,7 @@ class ManaDiscardPaymentTests(unittest.TestCase):
         current=s.state.cards[creature.object_id];self.assertTrue(s.engine._compiled_zone_cast_permission('A',current))
         from quorune.model import TurnHistory
         from quorune.turn_history import current_graveyard_incarnation_qualifies
-        legacy=s.state.turn_history.to_dict();legacy.pop('arrival_history_version')
+        legacy=s.state.turn_history.to_dict();legacy.pop('arrival_history_version');legacy.pop('graveyard_type_history_version')
         old=TurnHistory.from_dict(legacy);self.assertNotIn('arrival_history_version',old.to_dict())
         self.assertFalse(current_graveyard_incarnation_qualifies(old,turn_sequence=s.state.turn_sequence,card=current,qualification='nonbattlefield_arrival_this_turn'))
         option=next((o for o in self.options(s,warp) if o['id']=='normal'),None);self.assertIsNotNone(option)

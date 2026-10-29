@@ -204,8 +204,11 @@ def _current_target_hand_count(host,seat):
 
 def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any], item) -> int:
     spec = ScalarEffectAmountSpec.from_dict(value)
+    from .cast_event_amounts import committed_cast_mana_value_facts
+    cast_facts=committed_cast_mana_value_facts(item) if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE else None
     cache = item.context.setdefault("declared_scalar_amounts", {}) if spec.binding_id else None
     identity = {"controller": item.controller, **spec.producer_identity}
+    if cast_facts is not None:identity['cast_spell']=cast_facts
     hand_target=_hand_count_target(item,spec) if spec.origin is ScalarAmountOrigin.TARGET_HAND_COUNT else None
     if hand_target is not None:identity['target_player']=hand_target
     if cache is not None:
@@ -216,7 +219,9 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             if not isinstance(previous, Mapping) or set(previous) != {"identity", "value"} or previous["identity"] != identity or type(previous["value"]) is not int or previous["value"] < 0:
                 raise PublicQueryAmountError("Scalar declaration changed identity or value")
             return spec.coefficient * previous["value"]
-    if spec.origin is ScalarAmountOrigin.CAST_MANA_COLOR_COUNT:
+    if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:
+        amount=cast_facts['mana_value']
+    elif spec.origin is ScalarAmountOrigin.CAST_MANA_COLOR_COUNT:
         from .mana_spent_amounts import resolve_spent_mana_color_amount
         amount = resolve_spent_mana_color_amount(item)
     elif spec.origin is ScalarAmountOrigin.MULTIKICKER_COUNT:

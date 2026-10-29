@@ -1303,7 +1303,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
     def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
         cases = (
             "Whenever an opponent casts or copies a spell, draw a card.",
-            "Whenever this creature attacks alone, draw a card.",
+            "Whenever this creature is attacking alone, draw a card.",
             "When you do, draw a card.",
             "At the beginning of your upkeep, choose one —",
         )
@@ -1463,14 +1463,14 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             (
                 "Whenever this creature is dealt damage, you gain 1 life.",
                 "Creature — Beast",
-                "damage.dealt",
-                "fixed-typed-effect-source-dealt-damage-trigger-v1",
+                "damage.received",
+                "fixed-typed-effect-source-received-damage-trigger-v1",
                 {
                     "field": "target",
                     "op": "eq",
                     "value": "$source.ref",
                 },
-                "trigger.event.normalized_damage",
+                "trigger.event.normalized_received_damage",
             ),
         )
         for (
@@ -1526,7 +1526,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "draw a card.",
             "Whenever this creature deals damage to a creature, draw a card.",
             "Whenever this creature deals damage, draw a card for each counter on it.",
-            "Whenever equipped creature deals combat damage to an opponent, draw "
+            "Whenever equipped creature deals combat damage to two opponents, draw "
             "a card.",
             "Whenever one or more creatures deal combat damage to a player, "
             "draw a card.",
@@ -2516,7 +2516,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         variants = (
             "Whenever you cast or copy a noncreature spell, put a +1/+1 counter on this creature.",
             "Whenever an opponent casts or copies a noncreature spell, put a +1/+1 counter on this creature.",
-            "Whenever this creature attacks alone, put a +1/+1 counter on this creature.",
+            "Whenever this creature is attacking alone, put a +1/+1 counter on this creature.",
             "Whenever an opponent gains life, put a +1/+1 counter on this creature.",
             "Whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
             "At the beginning of your upkeep, if a chosen player controls a "
@@ -3237,7 +3237,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             (
                 "When this creature enters or becomes monstrous, draw a card.",
                 "Creature — Kraken",
-                ("permanent.enter", "permanent.becomes_monstrous"),
+                ("permanent.enter", "permanent.designated_monstrous"),
             ),
             (
                 "Whenever enchanted creature attacks or blocks, you gain 1 life.",
@@ -3528,21 +3528,22 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
 
     def test_public_event_near_misses_remain_material(self):
         self.assertEqual("exact", self.compile("Whenever a creature you control becomes tapped, you may gain 1 life.", type_line="Creature — Fixture").status)
+        self.assertEqual("exact", self.compile("Whenever one or more creatures you control attack, you may draw a card.", type_line="Creature — Fixture").status)
         cases = (
             "Whenever an opponent discards one or more cards, you may draw a card.",
             "Whenever you sacrifice a green creature, you may gain 2 life.",
             "Whenever equipped creature attacks alone, you may draw a card.",
             "Whenever enchanted permanent dies, you may gain 2 life.",
-            "Whenever equipped creature deals damage to an opponent, you "
+            "Whenever equipped creature deals damage to each opponent simultaneously, you "
             "may draw a card.",
-            "Whenever enchanted creature deals combat damage to a player, "
+            "Whenever enchanted creature deals combat damage to a chosen player, "
             "you may draw a card.",
             "Whenever one or more cards leave an opponent's graveyard, create a 2/2 "
             "red and white Spirit creature token.",
             "Whenever another creature you control with power X or less "
             "enters, you may draw a card.",
             "Whenever you cycle one or more cards, you may gain 1 life.",
-            "Whenever one or more creatures you control attack, you may draw a card.",
+            "Whenever one or more creatures you control attack for the first time each turn, you may draw a card.",
             "Whenever a creature you control becomes the target of a spell for the first time each turn, you "
             "may draw a card.",
             "Whenever a creature you control becomes tapped, you may gain 1 life. This ability triggers only once during each opponent's turn.",

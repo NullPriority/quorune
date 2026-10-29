@@ -1,7 +1,9 @@
 from __future__ import annotations
 from ..city_blessing_model import AscendIntent
+from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
+from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
@@ -11,6 +13,8 @@ from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
 from .counter_movement_intent import MoveCountersIntent
 from .connive_intent import ConniveCompletedIntent
+from .ring_intent import BeginRingTemptationIntent, CompleteRingBearerIntent
+from .champion_intent import ChampionExileIntent, ReturnLinkedAbilityExileIntent
 from .energy_payment import PayEnergyIntent
 from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
 
@@ -1264,8 +1268,10 @@ class CopyStackItemIntent:
     target_groups: FrozenMap
     reason: str
     target_snapshots: FrozenMap | None = None
+    copy_source: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if self.copy_source is not None and not isinstance(self.copy_source,FrozenMap):object.__setattr__(self,'copy_source',FrozenMap(self.copy_source))
         if self.target_snapshots is not None and not isinstance(self.target_snapshots, FrozenMap):
             object.__setattr__(self, "target_snapshots", FrozenMap(self.target_snapshots))
         if not isinstance(self.target_groups, FrozenMap):
@@ -1587,6 +1593,11 @@ SemanticIntent: TypeAlias = (
     | PairSoulbondIntent
     | RecordChoiceIntent
     | ConniveCompletedIntent
+    | BeginRingTemptationIntent
+    | CompleteRingBearerIntent
+    | ChampionExileIntent
+    | EncodeCipherIntent
+    | ReturnLinkedAbilityExileIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
     | MadnessChoiceIntent
@@ -1624,6 +1635,7 @@ SemanticIntent: TypeAlias = (
     | ProliferateIntent
     | DomainEffectIntent
     | DiscardWholeHandsIntent
+    | DiscardWholeHandsResultIntent
     | RandomDiscardIntent
     | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent

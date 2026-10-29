@@ -18,6 +18,7 @@ from ..declaration_rule_effects import declaration_group_query_is_closed
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from .fixed_blocker_restrictions import FixedBlockerRestrictionTemplate, fixed_blocker_restriction_template
 from .source_block_pairs import SourceBlockPairTemplate, source_block_pair_template
+from .temporary_all_blockers import TemporaryAllBlockerTemplate, temporary_all_blocker_template
 
 
 _TARGET_TEMPORARY_DECLARATION_RESTRICTION = re.compile(
@@ -219,7 +220,7 @@ class ActivatedTemporaryDeclarationRestrictionTemplate:
 
 def activated_temporary_declaration_restriction_effect_template(
     text: str, *, card_name: str = ""
-) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | None:
+) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | TemporaryAllBlockerTemplate | None:
     """Parse one closed activated temporary declaration instruction."""
 
     return temporary_declaration_restriction_effect_template(
@@ -234,10 +235,12 @@ def temporary_declaration_restriction_effect_template(
     *,
     card_name: str,
     allow_source: bool,
-) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | None:
+) -> ActivatedTemporaryDeclarationRestrictionTemplate | GroupTemporaryDeclarationRestrictionTemplate | FixedBlockerRestrictionTemplate | SourceBlockPairTemplate | TemporaryAllBlockerTemplate | None:
     """Parse fixed targets, source creatures, or live public creature groups."""
 
     normalized = " ".join(text.strip().split())
+    if requirement := temporary_all_blocker_template(normalized, card_name=card_name, allow_source=allow_source):
+        return requirement
     if source_pair := source_block_pair_template(normalized, allow_source=allow_source):
         return source_pair
     if fixed_blocker := fixed_blocker_restriction_template(normalized):

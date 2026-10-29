@@ -165,7 +165,7 @@ class SourceDamageDeathActionTests(unittest.TestCase):
         self.assertEqual('semantic.choice', self.resolve(session).kind)
         hand = set(session.state.players['A'].zones['hand'])
         session = self.replay(session, load=True)
-        accepted = session.act('pilot:A', {'action_id': 'choose', 'choice': 'draw'})
+        accepted = session.act('pilot:A', {'action_id': 'choose', 'choice': 'apply'})
         self.assertTrue(accepted.ok, accepted.summary)
         self.resolve(session)
         drawn = set(session.state.players['A'].zones['hand']) - hand

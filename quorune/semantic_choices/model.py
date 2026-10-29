@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Any, Iterable, Literal, Mapping, Sequence
 
 from ..replacement.immutable import FrozenMap, freeze_value, thaw_value
+from ..discard_result_model import IntentResultPlayerDraws
 
 
 class SemanticChoiceError(ValueError):
@@ -764,9 +765,11 @@ class AutoContinue:
     prepend_effects: tuple[FrozenMap, ...] = ()
     amount_from_result: IntentResultAmount | None = None
     objects_from_result: IntentResultObjects | None = None
+    player_draws_from_result: IntentResultPlayerDraws | None = None
 
     def __post_init__(self) -> None:
         _string(self.reason, field_name="auto-continue reason")
+        if self.player_draws_from_result is not None and not isinstance(self.player_draws_from_result, IntentResultPlayerDraws):raise SemanticChoiceError('Player result drawing must be typed')
         if self.amount_from_result is not None and not isinstance(self.amount_from_result,IntentResultAmount):raise SemanticChoiceError('Automatic result amount binding must be typed')
         if self.objects_from_result is not None and not isinstance(self.objects_from_result,IntentResultObjects):raise SemanticChoiceError('Automatic object result binding must be typed')
         object.__setattr__(
@@ -782,6 +785,10 @@ class AutoContinue:
 
 
     def resolved_effects(self,results):
+        if self.player_draws_from_result is not None:
+            if self.amount_from_result is not None or self.objects_from_result is not None:raise SemanticChoiceError('Player draw results cannot share a scalar result binding')
+            try:return (*self.player_draws_from_result.resolved_effects(results.get(self.player_draws_from_result.intent_index)), *self.prepend_effects)
+            except ValueError as exc:raise SemanticChoiceError(str(exc)) from exc
         if self.amount_from_result is None and self.objects_from_result is None:
             return self.prepend_effects
         effects=list(self.prepend_effects)

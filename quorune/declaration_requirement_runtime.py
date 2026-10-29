@@ -20,11 +20,13 @@ def typed_attacker_requirements(
     """Return current intrinsic attack requirements for one legal attacker."""
 
     result: list[DeclarationRequirement] = []
-    for index, requirement in enumerate(
+    from .rules.bound_static_declarations import bound_declaration_requirements
+    intrinsic=tuple(enumerate(
         declaration_requirement_specs(
             host._effective_ability_fragments(attacker, error_type=error_type)
         )
-    ):
+    ))
+    for index, requirement in (*intrinsic,*bound_declaration_requirements(host,attacker,error_type=error_type)):
         if requirement.kind != "attack_each_combat":
             continue
         result.append(
@@ -39,6 +41,8 @@ def typed_attacker_requirements(
             )
         )
     encore_opponent = encore_attack_requirement(attacker)
+    from .rules.enchanted_player_requirements import enchanted_player_attacker_requirements
+    result.extend(enchanted_player_attacker_requirements(host,attacker,error_type=error_type))
     if encore_opponent in active_seats:
         result.append(
             DeclarationRequirement(
@@ -79,9 +83,9 @@ def typed_blocker_requirements(
             blocker,
             error_type=error_type,
         )
-        for index, requirement in enumerate(
-            declaration_requirement_specs(fragments)
-        ):
+        from .rules.bound_static_declarations import bound_declaration_requirements
+        for index, requirement in (*enumerate(declaration_requirement_specs(fragments)),
+                *bound_declaration_requirements(host,blocker,error_type=error_type)):
             if requirement.kind == "block_each_combat":
                 result.append(
                     DeclarationRequirement(
@@ -108,13 +112,8 @@ def typed_attacker_block_requirements(
     error_type: type[Exception],
 ) -> list[DeclarationRequirement]:
     result: list[DeclarationRequirement] = []
-    fragments = host._effective_ability_fragments(
-        attacker,
-        error_type=error_type,
-    )
-    for index, requirement in enumerate(
-        declaration_requirement_specs(fragments)
-    ):
+    from .rules.all_blocker_requirements import current_attacker_block_requirements
+    for index, requirement in current_attacker_block_requirements(host,attacker,error_type=error_type):
         if requirement.kind == "must_be_blocked":
             result.append(
                 DeclarationRequirement(

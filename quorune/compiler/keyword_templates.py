@@ -19,14 +19,14 @@ _FIXED_ENTRY_MECHANICS = ("fading", "graft", "vanishing")
 
 _KEYWORD_WITH_VALUE = re.compile(
     rf"^(?P<name>{re.escape(_BLOODTHIRST_MECHANIC)}|{re.escape(_RENOWN_MECHANIC)}|{re.escape(_MODULAR_MECHANIC)}|{'|'.join(map(re.escape, _FIXED_ENTRY_MECHANICS))}|ward|equip|enchant|bushido|rampage|cycling|crew|dredge|kicker|toxic|"
-    r"cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|offspring|squad|flashback|unearth|embalm|eternalize|blitz|buyback|commander ninjutsu|dash|encore|escape|foretell|freerunning|madness|mayhem|myriad|ninjutsu|plot|prototype|prowl|sneak|spectacle|surge|warp|web-slinging|suspend|level up|outlast|reinforce|scavenge|transmute)"
+    r"casualty|champion|cumulative upkeep|echo|evolve|fabricate|persist|undying|riot|sunburst|unleash|prowess|afterlife|convoke|affinity|morph|megamorph|disguise|bestow|evoke|offspring|squad|flashback|unearth|embalm|eternalize|blitz|buyback|commander ninjutsu|dash|encore|escape|foretell|freerunning|madness|mayhem|myriad|ninjutsu|plot|prototype|prowl|sneak|spectacle|surge|warp|web-slinging|suspend|level up|outlast|reinforce|scavenge|transmute)"
     r"(?:\s+(?P<value>.+))?$",
     re.IGNORECASE,
 )
 _KNOWN_BARE_KEYWORDS = frozenset(
     "deathtouch|defender|double strike|first strike|flash|flying|haste|"
     "flanking|hexproof|indestructible|infect|lifelink|menace|reach|shadow|shroud|"
-    "trample|vigilance|wither|umbra armor|split second|extort|increment|aftermath|start your engines!".split("|")
+    "trample|vigilance|wither|umbra armor|split second|extort|increment|aftermath|start your engines!|bargain".split("|")
 ) | frozenset(QUALIFIED_LANDWALK_KEYWORDS)
 _TYPECYCLING = re.compile(
     r"^(?:basic land|plains|island|swamp|mountain|forest|artifact land|"

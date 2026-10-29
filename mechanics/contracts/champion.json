@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "champion",
+  "official_name": "Champion",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["702.72", "702.72a", "702.72b", "702.72c", "607.1", "607.2a", "607.2k", "400.7", "701.21a", "614.12", "616.1", "122.6"],
+  "glossary_references": [],
+  "dependencies": ["triggered-abilities", "exile", "object-identity", "multiplayer", "projection", "replay"],
+  "coverage_status": "partial",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["battlefield", "stack", "exile", "graveyard", "hand"],
+    "objects": ["original Champion source incarnation", "another qualifying controlled permanent", "actual exiled card incarnations"],
+    "events": ["source enters", "source leaves the battlefield"],
+    "state_reads": ["current control, phasing and effective permanent types", "original source and linked ability pair", "actual retained exile incarnations"],
+    "state_writes": ["versioned exile-link annotation on actually exiled cards", "canonical exile, sacrifice and owner-controlled battlefield movement"],
+    "costs": ["the entry trigger sacrifices its original source unless its controller chooses the exile action"],
+    "timing": ["entry and leaving triggers resolve independently", "an early returning trigger does not create a later return duration"],
+    "targets": ["the entry choice is untargeted"],
+    "choices": ["zero or one current qualifying controlled permanent", "ownership does not restrict eligibility", "subtype-only subjects include qualifying Kindred permanents"],
+    "hidden_information": ["the choice and exile are public", "unrelated hands remain principal-scoped"],
+    "apnap": ["ordinary normalized zone triggers use the existing shared placement owner"],
+    "layers": ["subject eligibility reads current represented type and subtype characteristics"],
+    "replacement_effects": ["movement delegates to canonical replacement-aware zone owners", "entry replacements use the prospective returned controller and resume the same linked return after a choice", "decline preserves its sacrifice across destination replacement choices"],
+    "copy": ["copied entry abilities may retain multiple cards for the same original source and pair"],
+    "control_change": ["trigger control stays locked", "declining cannot sacrifice a source currently controlled by another player", "returned cards enter under their owners' control"],
+    "zone_change": ["links do not follow an exiled card after it changes incarnation", "a returned source is another object for its earlier entry trigger"],
+    "source_leaves": ["source absence does not prevent the entry exile", "only the explicit linked return ability returns its retained cards"]
+  },
+  "variants": ["creature subject", "one subtype", "two alternative subtypes", "borrowed permanent", "Kindred permanent", "declined exile", "impossible exile", "source leaves before entry resolution"],
+  "witness_cards": [
+    {"name": "Changeling Titan", "oracle_id": "c1409a11-3780-40e4-abe6-df53d26b2dd6"},
+    {"name": "Thoughtweft Trio", "oracle_id": "15fca8d6-8a86-4c24-9178-f0b6496518ab"}
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_native_entry_exiles_borrowed_creature_and_return_uses_its_owner",
+    "test_native_decline_and_impossible_choice_sacrifice_only_original_source",
+    "test_early_leaving_trigger_does_not_return_a_later_exiled_card",
+    "test_kindred_permanent_matches_subtype_only_champion",
+    "test_decline_cannot_sacrifice_a_new_incarnation_or_another_controller",
+    "test_stale_zone_control_and_unoffered_references_reject",
+    "test_missing_link_choice_or_zone_dependency_rejects_with_unrelated_control",
+    "test_owner_entry_replacement_choice_resumes_only_the_linked_return",
+    "test_decline_completion_retains_sacrifice_across_destination_replacement_choice",
+    "test_exile_link_omission_mutant_is_killed"
+  ],
+  "implementation": {
+    "component": "quorune.champion_model, champion_state, linked_ability_exile_model, linked_ability_exile_state, typed Champion choice/intents and paired compiler productions",
+    "version": "champion-v1"
+  },
+  "known_blockers": ["Modified Champion subject grammar remains residual.", "Source-specific championed-object event and result bodies remain residual unless independently lowered."],
+  "review_status": "draft"
+}

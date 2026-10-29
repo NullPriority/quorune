@@ -54,7 +54,7 @@ _FIXED_TAP_COST = re.compile(
     r"^tap\s+(?:(?P<another>another)|"
     r"(?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*)"
     r"(?:\s+(?P<other>other))?)\s+untapped\s+"
-    r"(?P<quality>[A-Za-z][A-Za-z'’ -]*)\s+you\s+control$",
+    r"(?P<quality>[A-Za-z][A-Za-z'’ /-]*)\s+you\s+control$",
     re.IGNORECASE,
 )
 
@@ -101,6 +101,11 @@ def fixed_tap_activation_cost_choice(cost_text: str) -> CostChoice | None:
     count = 1 if match.group("another") is not None else _fixed_count(match.group("count"))
     quality = " ".join(match.group("quality").casefold().split())
     fields: dict[str, tuple[str, ...]] = {}
+    color = re.fullmatch(r'(?P<first>white|blue|black|red|green)(?: and/or (?P<second>white|blue|black|red|green))? (?P<body>.+)', quality)
+    if color is not None:
+        symbols = {'white':'W','blue':'U','black':'B','red':'R','green':'G'}
+        fields['colors_any'] = tuple(dict.fromkeys(symbols[name] for name in (color['first'], color['second']) if name))
+        quality = color['body']
     singular_type = quality.removesuffix("s")
     if singular_type in _PERMANENT_CARD_TYPES and (
         (count == 1 and quality == singular_type)
@@ -140,7 +145,7 @@ def fixed_activated_tap_cost(ability: ActivatedAbility) -> ActivatedAbility:
     """Lower one independently closed fixed tap cost on a stack activation."""
 
     if (
-        ability.zones != ("battlefield",)
+        ability.zones != ("battlefield",) and not ability.forecast
         or ability.complex_symbols
         or ability.untap_source
         or ability.discard_source

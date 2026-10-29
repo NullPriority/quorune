@@ -10,7 +10,22 @@ from .fixed_source_combat_growth import fixed_source_combat_growth_effect_templa
 from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
-def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=()):
+def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    if _allow_optional:
+        from .binding_optional_results import binding_aware_optional_result
+        optional = binding_aware_optional_result(body, compile_child=lambda text: binding_effect_template(binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=False))
+        if optional is not None:return optional
+    from ..expend_model import EXPEND_CAPABILITY
+    if EXPEND_CAPABILITY in binding.explicit_capabilities:
+        from .source_self_effect_templates import normalized_source_result_body
+        normalized=normalized_source_result_body(body)
+        if normalized is not None:body=normalized
+    from .fixed_stack_spell_copy import cast_event_spell_copy_template
+    cast_copy=cast_event_spell_copy_template(binding,body)
+    if cast_copy is not None:return cast_copy
+    from .attack_event_results import qualified_attack_characteristic_result
+    attack_result=qualified_attack_characteristic_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if attack_result is not None:return attack_result
     from .occurrence_object_results import occurrence_object_result
     occurrence=occurrence_object_result(binding,body,effect_template=effect_template,card_name=card_name)
     if occurrence is not None:return occurrence
@@ -35,10 +50,20 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     from .event_player_results import fixed_event_player_result
     player_result=fixed_event_player_result(binding,body,effect_template=effect_template,card_name=card_name)
     if player_result is not None:return player_result
+    from .event_player_results import fixed_event_player_damage_result
+    player_damage=fixed_event_player_damage_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if player_damage is not None:return player_damage
+    from .event_player_choice_templates import fixed_event_player_sacrifice_result
+    player_choice = fixed_event_player_sacrifice_result(binding, body,
+        effect_template=effect_template, card_name=card_name)
+    if player_choice is not None:return player_choice
     from .mill_templates import event_recipient_mill_result
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
     if mill is not None:return mill
-    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked'}:
+    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked', 'source_dealt_damage', 'source_received_combat_damage'}:
+        from .explore_templates import single_explore_effect_template
+        explored = single_explore_effect_template(body, allow_source_pronoun=True)
+        if explored is not None:return explored.compiled(), False
         from .damage_templates import source_pronoun_damage_effect_template
         damage=source_pronoun_damage_effect_template(body)
         if damage is not None:return damage.compiled(),False

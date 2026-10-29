@@ -508,7 +508,7 @@ class ScalarEffectAmountCompilerTests(unittest.TestCase):
         cases=(
             ('Whenever this creature deals damage, you gain that much life.','damage.dealt.self',None),
             ('Whenever this creature deals combat damage, you gain that much life.','damage.dealt.self',{'field':'combat','op':'eq','value':True}),
-            ('Whenever this creature is dealt combat damage, you gain that much life.','damage.dealt',{'all':[
+            ('Whenever this creature is dealt combat damage, you gain that much life.','combat.damage.received',{'all':[
                 {'field':'target','op':'eq','value':'$source.ref'},{'field':'combat','op':'eq','value':True}]}),
         )
         for text,event,condition in cases:

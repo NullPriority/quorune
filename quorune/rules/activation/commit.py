@@ -183,7 +183,7 @@ def _revalidate_activation(
             snapshot=details.get('static_activation_price') or {}
             response={'x':details.get('announced_x')}
             if snapshot:response['cost_reduction_order']=snapshot['order']
-            expected, value = activation_requirements(host,proposal.seat,source,ability,response)
+            expected, value = activation_requirements(host,proposal.seat,source,ability,response,targets=proposal.targets)
             if ability.waterbend is not None:
                 payment=details.get('waterbend_payment') or {}
                 expected['GENERIC']-=len(payment.get('objects',()))
@@ -206,6 +206,7 @@ def _revalidate_activation(
                 source,
                 ability,
                 proposed.option_id,
+                targets=proposal.targets,
             )
         except ValueError as exc:
             raise ActivationProposalError(
@@ -440,6 +441,7 @@ def _pay_object_and_mana_costs(
                 choice=ability.choices[0],
                 response=response,
                 tap_source=ability.tap_source,
+                source_zone='hand' if ability.forecast else 'battlefield',
             )
         except FixedTapActivationCostError as exc:
             raise ActivationProposalError(
@@ -535,8 +537,12 @@ def _commit_source_cost(
     source: Any,
     ability: ActivatedAbility,
     response: Mapping[str, Any],
+    *, actor: str | None = None,
 ) -> str:
     origin = source.zone
+    if ability.forecast:
+        from ...forecast import begin_forecast_reveal
+        begin_forecast_reveal(host, actor, source)
     destination = None
     if ability.discard_source:
         if source.zone != "hand":
@@ -808,7 +814,7 @@ def _commit_activation_costs_and_stack(
     )
     from ...public_quantity_mana_runtime import capture_mana_source_information
     mana_source_information = capture_mana_source_information(host, proposal.seat, source, ability)
-    origin = _commit_source_cost(host, source, ability, response)
+    origin = _commit_source_cost(host, source, ability, response, actor=proposal.seat)
     from ...transmute import finalize_transmute_discard
     finalize_transmute_discard(host, source, transmute_context)
     source_activation_context = dict(transmute_context) or None

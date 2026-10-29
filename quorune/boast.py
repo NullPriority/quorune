@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Intrinsic Boast metadata in the existing activation condition/usage model."""
+"""Intrinsic activated-keyword restrictions in the shared condition/usage model."""
 
 from .activation_condition_model import ActivationCondition,ActivationConditionKind
 from .activation_usage import ActivationLimit
@@ -10,10 +10,12 @@ from .activation_restriction_composition import activation_restriction_from_effe
 BOAST_CAPABILITY='activation.boast.fixed_restrictions'
 
 
-def keyword_activation_restrictions(prefix,effect_lower,conditions):
+def keyword_activation_restrictions(prefix,effect_lower,conditions,*,source_name=None):
+    if prefix == 'forecast':
+        return ActivationLimit.ONCE_PER_TURN, tuple(dict.fromkeys((*conditions, ActivationCondition(ActivationConditionKind.CONTROLLERS_UPKEEP)))), False
     limit=(ActivationLimit.EXHAUST_ONCE if prefix=='exhaust' else ActivationLimit.ONCE_PER_TURN
         if prefix=='boast' or 'only once each turn' in effect_lower else None)
-    represented=activation_restriction_from_effect(effect_lower)
+    represented=activation_restriction_from_effect(effect_lower,source_name=source_name)
     if represented is not None and prefix not in {'exhaust','boast'}:limit=represented.activation_limit
     if prefix!='boast':return limit,conditions,False
     condition=ActivationCondition(ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN)
@@ -26,6 +28,13 @@ def validate_boast_ability(ability):
             or ability.activation_limit is not ActivationLimit.ONCE_PER_TURN
             or not any(c.kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN for c in ability.activation_conditions)):
         raise ValueError('Boast requires its source attack condition and once-per-turn limit')
+
+
+def validate_forecast_ability(ability):
+    if type(ability.forecast) is not bool:raise ValueError('Forecast marker must be boolean')
+    if ability.forecast and (ability.zones != ('hand',) or ability.activation_limit is not ActivationLimit.ONCE_PER_TURN
+            or not any(c.kind is ActivationConditionKind.CONTROLLERS_UPKEEP for c in ability.activation_conditions)):
+        raise ValueError('Forecast requires owner-hand, owner-upkeep and once-per-turn metadata')
 
 
 def boast_runtime_dependencies(program):

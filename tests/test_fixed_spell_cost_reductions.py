@@ -368,12 +368,15 @@ class FixedSpellCostReductionCompilerTests(unittest.TestCase):
                 )
 
     def test_public_cast_cost_closure_excludes_open_metrics(self):
+        promoted = self.compile('Spells you cast cost {1} less to cast for each target.', 601502299)
+        self.assertEqual('exact', promoted.status, promoted.material_residuals)
+        self.assertIn('casting.cost.distinct_target_generic', promoted.faces[0].nodes[0].capability_dependencies)
         excluded = (
             (
                 "This spell costs {X} less to cast, where X is the total power "
                 "of creature cards in your graveyard."
             ),
-            "Spells you cast cost {1} less to cast for each target.",
+            "Spells you cast cost {1} less to cast for each different creature type among its targets.",
             "Spells you cast of the chosen type cost {1} less to cast.",
             (
                 "This spell costs {1} less to cast for each creature type among "

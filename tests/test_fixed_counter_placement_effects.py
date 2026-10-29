@@ -389,6 +389,11 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 self.assertEqual("place_counters", node.effects[0]["op"])
 
     def test_unrepresented_activation_restriction_tails_remain_residual(self):
+        promoted = {
+            "Activate only if this creature entered this turn.",
+            "Activate only as a sorcery and only if you've cast a spell this turn.",
+            "Activate only if an opponent gained life this turn and only once each turn.",
+        }
         variants = (
             "Activate only during any upkeep step.",
             "Activate only once per game.",
@@ -405,6 +410,12 @@ class FixedCounterPlacementCompilerTests(unittest.TestCase):
                 )
                 ir = self.compile(text, type_line="Creature — Human")
                 node = ir.faces[0].nodes[0]
+                if restriction in promoted:
+                    self.assertEqual('exact', ir.status, ir.material_residuals)
+                    self.assertEqual('place_counters', node.effects[0]['op'])
+                    ability, = parse_activated_abilities(card_name='Restriction Fixture', oracle_text=text, keywords=())
+                    self.assertTrue(ability.activation_conditions)
+                    continue
                 self.assertIsNone(node.template_id)
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)

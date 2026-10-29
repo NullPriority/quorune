@@ -5,6 +5,7 @@ from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
+from .discard_result_templates import discard_result_draw_template
 from .hand_entry_templates import fixed_draw_then_hand_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
 from .as_unblocked_templates import temporary_as_unblocked_template
@@ -144,7 +145,7 @@ def _source_context_resolution_template(
     if permission is not None:return permission
     hand_entry=fixed_draw_then_hand_entry_template(text)
     if hand_entry is not None:return hand_entry
-    discard = random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
+    discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)
@@ -161,15 +162,14 @@ def _source_context_resolution_template(
     return linked_exile_return_effect_template(text, card_name=card_name, source_is_permanent=source_is_permanent)
 
 
-def typed_resolution_effect_template(
-    text: str,
-    *,
-    card_name: str,
-    source_is_permanent: bool | None = None,
-    source_card_types: Sequence[str] = (),
-    source_attachment_relation: AttachmentReferenceKind | None = None,
-) -> CompiledEffectTemplate | None:
-    """Lower closed typed resolution-effect families."""
+def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
+    """Retain the precedence of leaves that do not inspect source context."""
+    from .untargeted_untap_templates import fixed_land_untap_choice_template
+    untap = fixed_land_untap_choice_template(text)
+    if untap is not None:return untap
+    from .fixed_top_order_templates import fixed_top_order_template
+    top_order=fixed_top_order_template(text)
+    if top_order is not None:return top_order
     from .temporary_player_rule_templates import temporary_player_rule_template
     cast_restriction=temporary_player_rule_template(text)
     if cast_restriction is not None:return cast_restriction
@@ -180,6 +180,21 @@ def typed_resolution_effect_template(
     manifest = manifest_effect_template(text)
     if manifest is not None:
         return manifest
+    return None
+
+
+def typed_resolution_effect_template(
+    text: str,
+    *,
+    card_name: str,
+    source_is_permanent: bool | None = None,
+    source_card_types: Sequence[str] = (),
+    source_attachment_relation: AttachmentReferenceKind | None = None,
+) -> CompiledEffectTemplate | None:
+    """Lower closed typed resolution-effect families."""
+    independent = _source_independent_resolution_template(text)
+    if independent is not None:
+        return independent
 
     contextual = _source_context_resolution_template(text, card_name=card_name, source_is_permanent=source_is_permanent, source_card_types=source_card_types)
     if contextual is not None:

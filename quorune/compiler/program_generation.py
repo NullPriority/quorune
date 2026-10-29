@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 from ..card_programs.reviewed_overlay import (
     retire_reviewed_programs,
 )
-from ..object_predicate import ObjectQuerySpec
 from ..rules.capabilities import (
     CapabilityRegistry,
     capability_covered_mechanics,
@@ -98,6 +97,8 @@ from ..rules.token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from ..rules.event_player_result_shapes import fixed_mill_node_capabilities,is_closed_fixed_event_player_result_program
+from ..rules.event_player_choice_shapes import is_closed_event_player_sacrifice_program
+from ..rules.champion_capability_shapes import is_closed_champion_program
 from ..rules.impulse_access_capability_shapes import (
     is_closed_fixed_impulse_access_program,
 )
@@ -144,6 +145,7 @@ from .activated_ability_catalog import (
 from .generated_program_identity import (
     generated_ability_id as _generated_ability_id,
     generated_coverage as _generated_coverage,
+    runtime_handler_footprint,
 )
 from .program_composition import (
     is_closed_composed_spell_effect_program,
@@ -153,23 +155,6 @@ from .program_composition import (
 
 _EXILE_MECHANIC = "exile"
 
-
-def runtime_handler_footprint(
-    program: SemanticProgram,
-) -> tuple[str, str, tuple[str, ...]] | None:
-    handler_descriptors = tuple(
-        sorted(
-            _runtime_handler_semantic_descriptor(handler)
-            for handler in program.handlers
-            if handler.get("handler_id")
-            != ACTIVATED_ABILITY_CATALOG_HANDLER_ID
-        )
-    )
-    if not handler_descriptors or any(
-        not value for value in handler_descriptors
-    ):
-        return None
-    return program.active_zone, program.event, handler_descriptors
 
 
 def _distinct_generated_siblings(
@@ -188,7 +173,14 @@ def _generated_runtime_program_is_shadowed(
     candidate: SemanticProgram,
     existing_programs: Iterable[SemanticProgram],
 ) -> bool:
+    # Typed grant fragments reference this exact key on their receiver.
+    # A reviewed source event cannot substitute for that dependency.
+    if candidate.provenance.get("granted_only") is True:
+        return False
     existing = tuple(existing_programs)
+    from ..card_programs.attached_grant_equivalence import reviewed_attached_grant_equivalent
+    if any(reviewed_attached_grant_equivalent(candidate, program) for program in existing):
+        return True
     footprint = runtime_handler_footprint(candidate)
     if footprint is not None and any(
         program.trust_level == "trusted"
@@ -209,68 +201,6 @@ def _generated_runtime_program_is_shadowed(
     )
 
 
-def _runtime_handler_semantic_descriptor(
-    handler: dict[str, Any],
-) -> str:
-    handler_id = str(handler.get("handler_id") or "")
-    if handler_id not in {
-        "continuous.anthem.power_toughness.v1",
-        "continuous.anthem.fixed-query.v2",
-    }:
-        return (
-            stable_json(_canonical_semantic_value(handler))
-            if handler_id
-            else ""
-        )
-
-    condition = dict(handler.get("condition") or {})
-    modifier = dict(handler.get("modifier") or {})
-    if handler_id == "continuous.anthem.power_toughness.v1":
-        predicate = ObjectQuerySpec(
-            zones=("battlefield",),
-            types_all=("creature",),
-            subtypes_all=tuple(
-                condition.get("target_subtypes_all") or ()
-            ),
-        )
-        exclude_source = False
-    else:
-        predicate = ObjectQuerySpec.from_dict(condition.get("predicate"))
-        exclude_source = bool(condition.get("exclude_source", False))
-    return stable_json(
-        {
-            "family": "continuous.anthem.fixed-query",
-            "event": str(handler.get("event") or ""),
-            "target_controller": str(
-                condition.get("target_controller") or ""
-            ),
-            "predicate": predicate.canonical_dict(),
-            "exclude_source": exclude_source,
-            "modifier": modifier,
-        }
-    )
-
-
-_CANONICAL_QUERY_FIELDS = frozenset(
-    ObjectQuerySpec().canonical_dict()
-)
-_LEGACY_QUERY_FIELDS = _CANONICAL_QUERY_FIELDS - {"types_any"}
-
-
-def _canonical_semantic_value(value: Any) -> Any:
-    """Normalize typed query values inside a complete handler descriptor."""
-
-    if isinstance(value, Mapping):
-        fields = frozenset(value)
-        if fields in {_CANONICAL_QUERY_FIELDS, _LEGACY_QUERY_FIELDS}:
-            return ObjectQuerySpec.from_dict(value).canonical_dict()
-        return {
-            str(key): _canonical_semantic_value(item)
-            for key, item in value.items()
-        }
-    if isinstance(value, (list, tuple)):
-        return [_canonical_semantic_value(item) for item in value]
-    return value
 
 
 def rulings_source_hash(db: CardDatabase, record: CardRecord) -> str:
@@ -1276,12 +1206,15 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 
 def _closed_effect_recognizers():
+    from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
+    from ..rules.library_order_shapes import is_closed_fixed_library_order_program
     from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
     from ..rules.counter_target_set_shapes import is_closed_quantified_counter_target_program
     from ..rules.any_number_target_shapes import is_closed_any_number_target_program
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     return (
+        is_closed_fixed_land_untap_choice_program,
         is_closed_all_kind_counter_program,
         is_closed_quantified_counter_target_program,
         is_closed_any_number_target_program,
@@ -1303,6 +1236,8 @@ def _closed_effect_recognizers():
         _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,is_closed_source_transform_program,is_closed_enlist_reflexive_program,is_closed_fixed_resolution_mana_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,is_closed_fixed_event_player_result_program,
+        is_closed_event_player_sacrifice_program,
+        is_closed_champion_program,
         is_closed_fixed_impulse_access_program,
         _is_closed_fixed_library_search_program,
         _is_closed_fixed_type_to_hand_search_program,
@@ -1310,6 +1245,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_library_selection_program,
         _is_closed_fixed_hand_inspection_program,
         _is_closed_fixed_scry_program,
+        is_closed_fixed_library_order_program,
         _is_closed_fixed_surveil_program,
         _is_closed_fixed_token_creation_program,
         is_closed_fixed_prevention_program,

@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 from typing import Sequence
 from .paid_entry_copy_model import PAID_ENTRY_COPY_FIELD, validate_paid_entry_copy_fact
+from .declared_cast_cost_model import DECLARED_CAST_COSTS_FIELD, DeclaredCastCostFacts
 
 from .model import CardInstance
 from .kicker import KICKER_ANNOTATION
@@ -68,8 +69,22 @@ def stack_entry_cast_facts(card: CardInstance, *, include_multikicker_result=Fal
     return {'cast_option': 'kicked' if card.annotations.get(KICKER_ANNOTATION) is True else None,
         **({MULTIKICKER_FIELD: validate_multikicker_fact(card.annotations[MULTIKICKER_FIELD])}
            if include_multikicker_result and card.zone == 'stack' and MULTIKICKER_FIELD in card.annotations else {}),
+        **({'declared_cast_costs': DeclaredCastCostFacts.from_dict(card.annotations[DECLARED_CAST_COSTS_FIELD]).to_dict()}
+           if card.zone == 'stack' and DECLARED_CAST_COSTS_FIELD in card.annotations else {}),
         'paid_entry_copy': validate_paid_entry_copy_fact(value)
         if card.zone == 'stack' and value is not None else None}
+
+
+def mark_declared_cast_costs(card: CardInstance, context) -> None:
+    value = context.get(DECLARED_CAST_COSTS_FIELD)
+    if value is None:return
+    if not isinstance(card, CardInstance) or card.zone != 'stack':
+        raise ZoneObjectStateError('Declared casting facts require a current stack incarnation')
+    facts = DeclaredCastCostFacts.from_dict(value)
+    prior = card.annotations.get(DECLARED_CAST_COSTS_FIELD)
+    if prior is not None and DeclaredCastCostFacts.from_dict(prior) != facts:
+        raise ZoneObjectStateError('Declared casting facts changed before entry')
+    card.annotations[DECLARED_CAST_COSTS_FIELD] = facts.to_dict()
 
 
 def mark_card_kicked(card: CardInstance) -> None:
@@ -305,6 +320,7 @@ def reset_card_after_zone_change(
                 "face_down_method",
                 "prototype_characteristics",
                 FIXED_CAST_LIFECYCLE_STACK_ANNOTATION,
+                DECLARED_CAST_COSTS_FIELD,
             }
         )
     card.annotations = {

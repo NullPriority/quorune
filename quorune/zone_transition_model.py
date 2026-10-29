@@ -106,6 +106,7 @@ class ZoneDepartureSnapshot:
     cast_option: str | None = None
     paid_entry_copy: Mapping[str, Any] | None = None
     multikicker_paid: Mapping[str, Any] | None = None
+    declared_cast_costs: Mapping[str, Any] | None = None
     counters: Mapping[str, int] | None = None
     conditional_returns: tuple[ConditionalExileBinding, ...] = ()
 
@@ -119,6 +120,7 @@ class ZoneDepartureSnapshot:
         source_characteristics: Mapping[str, Mapping[str, Any]],
         paid_entry_copy: Mapping[str, Any] | None = None,
         multikicker_paid: Mapping[str, Any] | None = None,
+        declared_cast_costs: Mapping[str, Any] | None = None,
     ) -> ZoneDepartureSnapshot:
         """Adapt the historical engine facade's event facts at their typed boundary."""
         return cls(
@@ -126,6 +128,7 @@ class ZoneDepartureSnapshot:
             characteristics=characteristics, counters=counters,
             attachments=tuple(attachments), attached_to=attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy,
             multikicker_paid=multikicker_paid,
+            declared_cast_costs=declared_cast_costs,
             trigger_sources=DepartureTriggerSnapshot(
                 sources=tuple(sources), source_zones=dict(source_zones),
                 source_characteristics=dict(source_characteristics),

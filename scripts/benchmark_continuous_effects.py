@@ -26,6 +26,7 @@ from quorune.continuous_effects import (
     evaluate_continuous_effects,
 )
 from quorune.object_predicate import ObjectQuerySpec
+from quorune.model import CardInstance
 
 
 BASELINE = ROOT / "platform" / "continuous-effect-performance-baseline.json"
@@ -56,11 +57,11 @@ def _fixture(players: int, permanents: int, descriptors: int):
             object_id = f"{seat}-{index}"
             oracle_id = f"oracle-{seat}-{index}"
             battlefield.append(object_id)
-            cards[object_id] = SimpleNamespace(
+            cards[object_id] = CardInstance(
                 object_id=object_id,
-                logical_object_id=f"logical-{object_id}",
                 ref=f"P-{seat}-{index}",
                 oracle_id=oracle_id,
+                printed_name='Benchmark source',
                 controller=seat,
                 owner=seat,zone='battlefield',
                 phased_out=False,
@@ -74,7 +75,7 @@ def _fixture(players: int, permanents: int, descriptors: int):
                 ),
             )
         player_rows[seat] = SimpleNamespace(
-            zones={"battlefield": battlefield,"graveyard":[]}
+            zones={"battlefield": battlefield,"graveyard":[],"exile":[]}
         )
 
     class Semantics:

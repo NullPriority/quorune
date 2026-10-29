@@ -19,9 +19,10 @@ from ..continuous_effect_state import (
     ResolutionEffectSource,
     create_resolution_declaration_rule_effect,
 )
-from ..declaration_fragments import DeclarationRestrictionTemplate
+from ..declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
 from ..declaration_rule_effects import ResolutionDeclarationRuleEffect
 from ..object_query import ObjectQueryResult
+from ..characteristic_read_frames import characteristic_read_method
 
 
 TemporaryDeclarationRestrictionKind = Literal[
@@ -71,14 +72,21 @@ class CurrentDeclarationRestriction:
     participant_id: str
     source: Any
     template: DeclarationRestrictionTemplate
+    giver: Any | None = None
 
 
 def temporary_declaration_restriction(
     kind: TemporaryDeclarationRestrictionKind | str | Mapping,
-) -> DeclarationRestrictionTemplate:
-    """Return a closed scalar prohibition or a fixed blocker predicate."""
+) -> DeclarationRestrictionTemplate | DeclarationRequirementTemplate:
+    """Decode one closed prohibition, blocker predicate or all-blocker requirement."""
 
     if isinstance(kind, Mapping):
+        from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND, TemporaryAllBlockerSpec
+        if kind.get('kind') == TEMPORARY_ALL_BLOCKER_KIND:
+            try:
+                return TemporaryAllBlockerSpec.from_dict(kind).to_requirement()
+            except (TypeError, ValueError) as exc:
+                raise TemporaryDeclarationRestrictionError(str(exc)) from exc
         from ..fixed_blocker_restrictions import FixedBlockerRestrictionSpec
         try:
             return FixedBlockerRestrictionSpec.from_dict(kind).to_restriction()
@@ -150,6 +158,7 @@ def commit_temporary_declaration_restriction(
     return effect
 
 
+@characteristic_read_method
 def current_declaration_restrictions(
     host: TemporaryDeclarationRestrictionHost,
     *,
@@ -197,6 +206,8 @@ def current_declaration_restrictions(
             key=lambda effect: (effect.timestamp, effect.effect_id),
         )
         for index, effect in enumerate(resolved):
+            if isinstance(effect.restriction, DeclarationRequirementTemplate):
+                continue
             result.append(
                 CurrentDeclarationRestriction(
                     participant_id=f"{source.ref}:resolved:{index}",
@@ -204,6 +215,10 @@ def current_declaration_restrictions(
                     template=effect.restriction,
                 )
             )
+    from .bound_static_declarations import current_bound_declaration_rules
+    for key,giver,anchor,rule in current_bound_declaration_rules(host,error_type=error_type):
+        if isinstance(rule,DeclarationRestrictionTemplate):
+            result.append(CurrentDeclarationRestriction(key,anchor,rule,giver))
     return tuple(result)
 
 

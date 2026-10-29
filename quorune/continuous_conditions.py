@@ -38,6 +38,9 @@ FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID = (
 FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID = (
     "continuous.ability.fixed_public_state_grant"
 )
+GRAVEYARD_TYPED_GRANT_CAPABILITY_ID = 'continuous.ability.graveyard_typed_grant'
+GRAVEYARD_QUERY_GRANT_HANDLER_ID = 'continuous.ability.graveyard-query-grant.v1'
+GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID = 'continuous.ability.graveyard-public-state-grant.v2'
 FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD = (
     "fixed_public_state_condition"
 )
@@ -47,6 +50,8 @@ FIXED_PUBLIC_STATE_INTERVENING_COVERAGE = (
 
 
 class FixedPublicStateConditionKind(StrEnum):
+    HISTORY_COUNT_AT_LEAST='history_count_at_least'
+    HISTORY_COUNT_AT_MOST='history_count_at_most'
     ALL = 'all'
     ANY = 'any'
     CONTROLLER_TURN = "controller_turn"
@@ -85,6 +90,7 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    SOURCE_RENOWNED = 'source_renowned'
     CONTROLLER_LANDS_ENTERED_THIS_TURN='controller_lands_entered_this_turn'
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
     OPPONENT_OWNS_EXILED_CARD = 'opponent_owns_exiled_card'
@@ -289,6 +295,9 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Commander presence requires one boolean current designation fact')
+    if fact is FixedPublicStateFact.SOURCE_RENOWNED and (
+            schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError('Renowned state requires one current source designation fact')
     if schema_version not in {3, 4}:
         if (schema_version != 7 or fact is not FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON
                 or amount != 1 or type(parameter) is not str or parameter not in 'WUBRG' or len(parameter) != 1):
@@ -332,6 +341,7 @@ class FixedPublicStateConditionSpec:
     fact_parameter: str | None = None
     schema_version: int = 1
     terms: tuple['FixedPublicStateConditionSpec', ...] = ()
+    history_query: Any = None
 
     def leaf_conditions(self):
         return self.terms if self.terms else (self,)
@@ -345,7 +355,19 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError('Boolean conditions require a versioned flat composition of closed leaves')
         object.__setattr__(self,'terms',terms)
 
+    def _validate_history(self):
+        from .public_history_query_model import PublicHistoryQuerySpec
+        if (type(self.schema_version) is not int or self.schema_version!=8
+                or self.kind not in {FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}
+                or not isinstance(self.history_query,PublicHistoryQuerySpec) or type(self.amount) is not int or self.amount<0
+                or any(v is not None for v in (self.counter_name,self.predicate,self.quantity,self.fact,self.fact_parameter)) or self.terms):
+            raise FixedPublicStateConditionError('History conditions require version8, one typed query and a nonnegative threshold')
+
     def __post_init__(self) -> None:
+        if self.schema_version==8 or self.history_query is not None or self.kind in {
+                FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}:
+            self._validate_history()
+            return
         if not isinstance(self.terms,(list,tuple)):
             raise FixedPublicStateConditionError('Boolean condition leaves must be an array')
         object.__setattr__(self,'terms',tuple(self.terms))
@@ -490,6 +512,8 @@ class FixedPublicStateConditionSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version==8:
+            return {'schema_version':8,'kind':self.kind.value,'amount':self.amount,'counter_name':None,'history_query':self.history_query.to_dict()}
         value = {
             "schema_version": self.schema_version,
             "kind": self.kind.value,
@@ -528,6 +552,13 @@ class FixedPublicStateConditionSpec:
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "FixedPublicStateConditionSpec":
+        if isinstance(value,Mapping) and (value.get('schema_version')==8 or 'history_query' in value):
+            from .public_history_query_model import PublicHistoryQuerySpec,public_history_query_dependencies
+            try:
+                public_history_query_dependencies(value)
+                return cls(FixedPublicStateConditionKind(value['kind']),amount=value['amount'],schema_version=value['schema_version'],
+                    history_query=PublicHistoryQuerySpec.from_dict(value['history_query']))
+            except (ValueError,TypeError,KeyError) as exc:raise FixedPublicStateConditionError(str(exc)) from exc
         legacy_fields = {
             "schema_version",
             "kind",
@@ -597,6 +628,9 @@ class FixedPublicStateConditionSpec:
             raise FixedPublicStateConditionError(
                 "Fixed public-state matching requires a typed snapshot"
             )
+        if self.kind in {FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}:
+            return snapshot.condition_quantity is not None and (snapshot.condition_quantity>=self.amount
+                if self.kind is FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST else snapshot.condition_quantity<=self.amount)
         if self.terms:
             if len(snapshot.term_snapshots)!=len(self.terms):
                 raise FixedPublicStateConditionError('Boolean matching requires each leaf snapshot')

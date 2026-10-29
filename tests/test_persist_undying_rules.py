@@ -375,13 +375,24 @@ class PersistUndyingRuntimeTests(unittest.TestCase):
         # Runtime fixtures grant only the keyword under test to the chosen
         # creature body.  Isolating its Oracle line prevents unrelated printed
         # abilities on a high-toughness body from becoming trust prerequisites.
+        from uuid import NAMESPACE_URL, uuid5
+        identity = str(uuid5(NAMESPACE_URL,
+            f'quorune-death-return-fixture:{source.object_id}:{mechanic}:{int(repeated)}'))
         record = replace(
-            record,
+            record, oracle_id=identity, name=f'Generic {mechanic} Runtime Body',
             oracle_text=(
                 f"{mechanic}, {mechanic}" if repeated else mechanic
             ),
             keywords=(mechanic,),
         )
+        if not hasattr(self, '_keyword_records'):
+            self._keyword_records = {}
+            by_oracle_id = self.db.by_oracle_id
+            self.enterContext(patch.object(self.db, 'by_oracle_id', side_effect=lambda value:
+                self._keyword_records[value] if value in self._keyword_records else by_oracle_id(value)))
+        self._keyword_records[identity] = record
+        source.oracle_id = identity
+        source.printed_name = record.name
         for program in tuple(engine.semantics.programs_for_oracle(source.oracle_id)):
             if program.event == "creature.dies.self":
                 engine.semantics.remove(program.key)

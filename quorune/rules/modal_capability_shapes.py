@@ -31,6 +31,8 @@ FIXED_MODAL_WRAPPER_MECHANICS = frozenset(
         "trigger-event-normalized-self-attack",
         "trigger-event-normalized-spell-cast",
         "trigger-event-normalized-zone-change",
+        "trigger-event-normalized-public-action",
+        "trigger-event-spell-cast-fixed-characteristics",
     }
 )
 

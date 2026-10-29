@@ -10,6 +10,8 @@ from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_LKI_CONTEXT,
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
+    CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY,
+    creature_power_damage_multiplier,
 )
 
 
@@ -137,14 +139,23 @@ def fixed_creature_power_damage_node_capabilities(
     }.issubset(mechanics) or len(effects) not in {1, 2}:
         return ()
     effect = effects[-1]
-    if set(effect) != {
+    try:
+        multiplier = creature_power_damage_multiplier(effect)
+    except (TypeError, ValueError):
+        return ()
+    fields = {
         "op",
         "kind",
         "source",
         "target",
         "target_must_be_creature",
         "source_lki",
-    } or effect.get("op") != CREATURE_POWER_DAMAGE_OPERATION:
+    }
+    if multiplier == 2:
+        fields.update({'schema_version', 'power_multiplier'})
+        if effect.get('source') != '$target.0':
+            return ()
+    if set(effect) != fields or effect.get("op") != CREATURE_POWER_DAMAGE_OPERATION:
         return ()
     kind = effect.get("kind")
     must_be_creature = effect.get("target_must_be_creature")
@@ -230,6 +241,8 @@ def fixed_creature_power_damage_node_capabilities(
     }
     if prep_dependency is not None:
         dependencies.add(prep_dependency)
+    if multiplier == 2:
+        dependencies.add(CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY)
     if kind == "bite" and isinstance(target_group, Mapping) and target_group.get(
         "predicate"
     ) == "damageable":

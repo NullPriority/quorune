@@ -227,52 +227,55 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                 node = next(n for n in ir.faces[0].nodes if n.kind == 'static_ability')
                 self.assertEqual(text, node.text)
                 self.assertEqual(1, node.span.line)
-                descriptor = node.handlers[0]
-                self.assertEqual('continuous.declaration.public-state.v1', descriptor['handler_id'])
-                self.assertEqual(6, descriptor['schema_version'])
-                self.assertIsInstance(ability_fragment_from_dict(descriptor['modifier']['add_ability_fragments'][0]), fragment_type)
+                descriptor, bound = node.handlers
+                self.assertEqual('continuous.characteristics.fixed-public-state.v1', descriptor['handler_id'])
+                self.assertEqual(1, descriptor['schema_version'])
+                self.assertEqual(descriptor['source_condition'], bound['fragment']['value']['source_condition'])
+                fragment = ability_fragment_from_dict(bound['fragment'])
+                self.assertEqual('source', fragment.scope)
+                self.assertIsInstance(fragment.rules[0], fragment_type)
                 self.assertIn('combat.declaration.typed_components', node.capability_dependencies)
                 self.assertIn('continuous.characteristics.fixed_public_state', node.capability_dependencies)
 
     def test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors(self):
         from test_qualified_zone_event_queries import query_record
         from quorune.compiler.declaration_nodes import conditional_characteristic_declaration_grant
-        from quorune.semantic_runtime.conditional_continuous import ConditionalDeclarationGrantHandler
-
         text = "As long as you have no cards in hand, this creature gets +2/+0 and can't block."
         compiled = conditional_characteristic_declaration_grant(text, source_name='Generic Query Observer')
         self.assertIsNotNone(compiled)
-        handler = ConditionalDeclarationGrantHandler()
-        descriptor = compiled[1]
-        handler.validate(descriptor)
-        for altered in (
-            text + ' Draw a card.',
-            text.replace('+2/+0', '+X/+0'),
-            text.replace("can't block", "can't block unless you pay 1 life"),
-            text.replace('no cards in hand', 'the chosen card in hand'),
-        ):
+        from quorune.semantic_runtime.ability_fragments import default_ability_fragment_registry
+        continuous = default_continuous_effect_component_registry()
+        fragments = default_ability_fragment_registry()
+        def validate(descriptor):
+            owner = fragments if fragments.describe(descriptor['handler_id']) is not None else continuous
+            owner.validate(descriptor)
+        characteristic, bound = compiled[1]
+        for descriptor in compiled[1]:
+            validate(descriptor)
+            for field, value in (('schema_version', True), ('unknown', True)):
+                with self.assertRaises((SemanticNodeError, ValueError)):
+                    validate({**descriptor, field:value})
+        for altered in (text + ' Draw a card.', text.replace('+2/+0', '+X/+0'),
+                text.replace("can't block", "can't block unless you pay 1 life"),
+                text.replace('no cards in hand', 'the chosen card in hand')):
             self.assertIsNone(conditional_characteristic_declaration_grant(altered, source_name='Generic Query Observer'))
-        for field, value in (('schema_version', True), ('unknown', True)):
-            with self.assertRaises(SemanticNodeError):
-                handler.validate({**descriptor, field:value})
-        changed = copy.deepcopy(descriptor)
-        changed['modifier']['add_ability_fragments'] *= 2
-        with self.assertRaises(SemanticNodeError):
-            handler.validate(changed)
-        changed = copy.deepcopy(descriptor)
-        changed['modifier']['power'] = True
-        with self.assertRaises(SemanticNodeError):
-            handler.validate(changed)
-        changed = copy.deepcopy(descriptor)
-        changed['modifier']['add_ability_fragments'][0]['scope'] = 'all_creatures'
+        changed = copy.deepcopy(bound)
+        changed['fragment']['value']['rules'] = []
         with self.assertRaises((SemanticNodeError, ValueError)):
-            handler.validate(changed)
+            validate(changed)
+        changed = copy.deepcopy(characteristic)
+        changed['modifier']['power'] = True
+        with self.assertRaises((SemanticNodeError, ValueError)):
+            validate(changed)
+        changed = copy.deepcopy(bound)
+        changed['fragment']['value']['scope'] = 'all_creatures'
+        with self.assertRaises((SemanticNodeError, ValueError)):
+            validate(changed)
         raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for capability in ('combat.declaration.typed_components', 'continuous.characteristics.fixed_public_state'):
             altered = copy.deepcopy(raw)
             next(row for row in altered['capabilities'] if row['id']==capability).update(status='blocked', blockers=['independent declaration dependency withdrawal'])
-            registry = CapabilityRegistry(altered)
-            ir = compile_oracle_card(query_record(text), capability_registry=registry, capability_profile='commander_review')
+            ir = compile_oracle_card(query_record(text), capability_registry=CapabilityRegistry(altered), capability_profile='commander_review')
             self.assertNotEqual('exact', ir.status)
 
     def test_conditional_declaration_producer_omission_mutant_is_killed(self):
@@ -432,7 +435,7 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             (
                 "As long as you control another multicolored permanent, "
                 "this creature gets +1/+1 and has flying.",
-                "query_count_at_least",
+                "query_characteristic_threshold",
             ),
             (
                 "As long as you control no untapped lands, this creature "
@@ -499,6 +502,18 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual("exact", ir.status, ir.material_residuals)
                 node = ir.faces[0].nodes[0]
+                if expected_kind == 'query_characteristic_threshold':
+                    from quorune.ability_fragments import ability_fragment_from_dict
+                    self.assertEqual('continuous-self-query-characteristics-v1', node.template_id)
+                    fragment = ability_fragment_from_dict(node.handlers[0]['fragment'])
+                    self.assertEqual(1, fragment.minimum_count)
+                    self.assertTrue(fragment.quantity.exclude_source)
+                    self.assertEqual(2, fragment.quantity.query.minimum_color_count)
+                    self.assertEqual((1,1), (fragment.power,fragment.toughness))
+                    self.assertEqual(('Flying',), fragment.add_abilities)
+                    from quorune.semantic_runtime.ability_fragments import default_ability_fragment_registry
+                    default_ability_fragment_registry().validate(node.handlers[0])
+                    continue
                 self.assertEqual(TEMPLATE_ID, node.template_id)
                 condition = node.handlers[0]["source_condition"]
                 self.assertEqual(expected_kind, condition["kind"])
@@ -1070,6 +1085,11 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
 
     def test_unrepresented_conditions_and_bodies_remain_residual(self):
         base = self.db.lookup("Fresh-Faced Recruit")
+        promoted = replace(base, oracle_id='00000000-0000-4000-8000-000118200999',
+            oracle_text='As long as you control a creature with flying, this creature gets +1/+1.', keywords=())
+        current = compile_card_program(self.db, promoted, capability_registry=self.capabilities,
+            capability_profile='commander_review', trust_level='trusted')
+        self.assertFalse(current.residuals)
         unsupported = (
             "This creature gets +X/+X during your turn.",
             "During your turn, this creature has ward {X}.",
@@ -1085,7 +1105,7 @@ class FixedPublicStateCharacteristicCompilerTests(unittest.TestCase):
             "Artifacts you control have shroud as long as an opponent "
             "controls two or more artifacts.",
             "As long as you control a creature with flying, this creature "
-            "gets +1/+1.",
+            "gets +1/+1 and has flying.",
             "As long as this Equipment has four or more different kinds of "
             "counters on it, equipped creature has double strike.",
         )

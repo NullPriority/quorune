@@ -53,6 +53,11 @@ def source_self_permanent_type(candidate: object) -> str | None:
     return _SOURCE_SELF_PERMANENT_TYPES.get(normalized)
 
 
+def source_self_permanent_pattern() -> str:
+    """Return the compiler regex for the same closed self-label vocabulary."""
+    return '(?:' + '|'.join(re.escape(value) for value in _SOURCE_SELF_PERMANENT_TYPES) + ')'
+
+
 @dataclass(frozen=True, slots=True, init=False)
 class SourceReferenceSpec:
     """Immutable full and bounded-shortened names for one source object."""
@@ -132,4 +137,5 @@ __all__ = [
     "SourceReferenceError",
     "SourceReferenceSpec",
     "source_self_permanent_type",
+    "source_self_permanent_pattern",
 ]

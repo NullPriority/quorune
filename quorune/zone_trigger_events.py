@@ -188,6 +188,7 @@ class ZoneChangeOccurrence:
     current_counters: Mapping[str, int] | None = None
     paid_entry_copy: Mapping[str, Any] | None = None
     multikicker_paid: Mapping[str, Any] | None = None
+    declared_cast_costs: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:
         for field in (
@@ -226,6 +227,7 @@ class ZoneChangeOccurrence:
             )
         object.__setattr__(self, 'paid_entry_copy', _validated_cast_metadata(self))
         object.__setattr__(self, 'multikicker_paid', _validated_multikicker_metadata(self))
+        object.__setattr__(self, 'declared_cast_costs', _validated_declared_cast_cost_metadata(self))
         if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise ZoneTriggerEventError(
                 "Unsupported zone-trigger occurrence schema version"
@@ -322,6 +324,8 @@ class ZoneChangeOccurrence:
             result["cast_option"] = self.cast_option
         if self.paid_entry_copy is not None:
             result['paid_entry_copy'] = thaw_value(self.paid_entry_copy)
+        if self.declared_cast_costs is not None:
+            result['declared_cast_costs'] = thaw_value(self.declared_cast_costs)
         if self.multikicker_paid is not None:
             result['multikicker_paid'] = thaw_value(self.multikicker_paid)
         if self.previous_copy_snapshot is not None:
@@ -335,6 +339,15 @@ class ZoneChangeOccurrence:
         return hashlib.sha256(
             stable_json(self.to_dict()).encode("utf-8")
         ).hexdigest()
+
+
+def _validated_declared_cast_cost_metadata(occurrence):
+    if occurrence.declared_cast_costs is None:return None
+    from .declared_cast_cost_model import DeclaredCastCostFacts
+    if occurrence.origin != 'stack' or occurrence.destination != 'battlefield':
+        raise ZoneTriggerEventError('Declared casting facts require stack-to-battlefield entry')
+    try:return FrozenMap(DeclaredCastCostFacts.from_dict(occurrence.declared_cast_costs).to_dict())
+    except (TypeError, ValueError) as exc:raise ZoneTriggerEventError(str(exc)) from exc
 
 
 def _validated_cast_metadata(occurrence):
@@ -469,6 +482,9 @@ def normalized_zone_trigger_events(
     }
     if occurrence.cast_option is not None:
         common["cast_option"] = occurrence.cast_option
+    if occurrence.declared_cast_costs is not None:
+        from .declared_cast_cost_model import DeclaredCastCostFacts
+        common['declared_cast_cost_instances'] = list(DeclaredCastCostFacts.from_dict(occurrence.declared_cast_costs).chosen_instances())
     if occurrence.multikicker_paid is not None:
         common['multikicker_paid'] = thaw_value(occurrence.multikicker_paid)
     if occurrence.paid_entry_copy is not None:

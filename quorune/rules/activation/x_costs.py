@@ -6,8 +6,8 @@ from ...mana_restrictions import ability_mana_spend_context
 from .pricing import select_ordinary_activation_price
 
 
-def activation_requirements(host, seat, source, ability, response=None):
-    price, value, _modifiers = select_ordinary_activation_price(host, seat, source, ability, response)
+def activation_requirements(host, seat, source, ability, response=None, *, targets=None):
+    price, value, _modifiers = select_ordinary_activation_price(host, seat, source, ability, response, targets=targets)
     return dict(price.requirements), value
 
 

@@ -5,6 +5,7 @@ from .rules.damage_snapshots import source_snapshot,recipient_snapshot
 import hashlib
 from typing import Any, Mapping, Protocol, Sequence
 from .counter_placement_event_model import CounterPlacementOccurrence
+from .model import StackItem
 
 from .counter_state import (
     CounterChange,
@@ -368,6 +369,7 @@ class DamageBatchResult:
     aftermath_events: tuple[PreventionAftermathEvent, ...] = ()
     nested_damage_results: tuple["DamageBatchResult", ...] = ()
     counter_occurrences: tuple[CounterPlacementOccurrence, ...] = ()
+    ring_trigger_items: tuple[StackItem, ...] = ()
 
     @property
     def dealt_amount(self) -> int:
@@ -1266,6 +1268,8 @@ def commit_prepared_damage_batch(
             (final.target, commander_key, final.dealt_amount)
         )
 
+    from .ring_triggers import ring_damage_stack_items
+    ring_trigger_items = ring_damage_stack_items(host, final_events)
     aftermath_prepared, counter_changed = commit_immediate_counter_prevention(host, prepared.aftermath)
     committed = commit_damage_result_plan(host, result_plan)
     try:
@@ -1324,6 +1328,7 @@ def commit_prepared_damage_batch(
         aftermath_events=aftermath.events,
         nested_damage_results=aftermath.nested_damage_results,
         counter_occurrences=(*committed.counter_occurrences,*aftermath.counter_occurrences),
+        ring_trigger_items=ring_trigger_items,
     )
 
 
@@ -1336,6 +1341,7 @@ def _collect_damage_result_triggers(
     trigger_batch: list[Any],
 ) -> None:
     from .counter_placement_events import dispatch_counter_placement_occurrences
+    trigger_batch.extend(result.ring_trigger_items)
     dispatch_counter_placement_occurrences(host,result.counter_occurrences,trigger_batch=trigger_batch)
     dispatch_lifelink_gain_events(
         host,
@@ -1418,6 +1424,10 @@ def _collect_damage_result_triggers(
             )
             if host._semantic_pause_annotation() is not None:
                 break
+    if host._semantic_pause_annotation() is None:
+        from .damage_received_events import dispatch_received_damage_events
+        dispatch_received_damage_events(host, result, sources=trigger_sources,
+            source_zones=trigger_source_zones, trigger_batch=trigger_batch)
     nested_index = 0
     if host._semantic_pause_annotation() is None:
         for aftermath in result.aftermath_events:

@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
+from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
 
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -260,6 +261,7 @@ def continue_semantic_completion(
                 intent,
                 (
                     *DESTRUCTION_INTENT_TYPES,
+                    *CHAMPION_INTENT_TYPES,
                     PlaceCountersOnSetIntent,
                     MoveCountersIntent,
                     LifeChangeIntent,

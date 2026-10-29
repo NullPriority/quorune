@@ -107,7 +107,7 @@ class FixedBasicTypeSettingRuntimeTests(unittest.TestCase):
 
     def test_all_setting_originals_require_complete_sibling_admission(self):
         expected=CLOSED_SETTING|{'Stormtide Leviathan','Swampbenders','Dryad of the Ilysian Grove',"Nylea's Presence",'Prismatic Omen',
-            'Leyline of the Guildpact','Song of the Dryads','Living Lands','Kormus Bell'}
+            'Leyline of the Guildpact','Song of the Dryads','Living Lands','Kormus Bell','Ashaya, Soul of the Wild'}
         names=[r['name'] for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']][:25]
         for name in names:
             with self.subTest(name=name):

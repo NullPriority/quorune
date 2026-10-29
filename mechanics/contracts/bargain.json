@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "bargain",
+  "official_name": "Bargain",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "601.2a",
+    "601.2b",
+    "601.2c",
+    "601.2f",
+    "601.2h",
+    "701.21a",
+    "702.166",
+    "702.166a",
+    "702.166b",
+    "702.166c",
+    "702.166d",
+    "607.1",
+    "400.7",
+    "707.10"
+  ],
+  "glossary_references": [
+    "bargain",
+    "additional cost",
+    "sacrifice"
+  ],
+  "dependencies": [
+    "casting spells",
+    "linked abilities",
+    "replacement effects",
+    "triggered abilities",
+    "copying objects",
+    "zones"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "casting source and spell on stack",
+      "current battlefield sacrifice candidates",
+      "original resulting permanent and entry occurrence"
+    ],
+    "objects": [
+      "one complete printed Bargain instance",
+      "one current controlled artifact/enchantment/token",
+      "immutable source-local declaration choices"
+    ],
+    "events": [
+      "declare optional additional price",
+      "commit ordinary sacrifice",
+      "resolve linked fixed branch",
+      "original entry and triggered result",
+      "spell or permanent copy"
+    ],
+    "state_reads": [
+      "current type, token, control and phase state",
+      "chosen source-local instance",
+      "original immutable entry context",
+      "independently owned result targets"
+    ],
+    "state_writes": [
+      "ordinary cast, zone-state and result owners only"
+    ],
+    "costs": [
+      "sacrifice one controlled artifact OR enchantment OR token",
+      "decline retains ordinary casting",
+      "tapped and summoning-sick objects can pay"
+    ],
+    "timing": [
+      "Bargain is declared under CR702.166b before cost payment",
+      "costs commit or command rolls back",
+      "linked entry result reads original entry facts"
+    ],
+    "targets": [
+      "price is nontargeted",
+      "represented spell branches share their original target",
+      "entry results retain ordinary announced trigger targets"
+    ],
+    "choices": [
+      "ordinary optional cost option and sacrifice field",
+      "ordinary target, mana and other result choices"
+    ],
+    "hidden_information": [
+      "declaration and sacrificed battlefield object are public",
+      "private cast/replacement frames and unrelated hands remain principal-correct"
+    ],
+    "apnap": [
+      "ordinary trigger placement and independent result sequencing"
+    ],
+    "layers": [
+      "price uses current type/control/phase state",
+      "ordinary temporary characteristics and Role effects use existing owners"
+    ],
+    "replacement_effects": [
+      "destination redirection retains sacrifice payment and declared instance",
+      "existing pending cast and replacement journal resume exactly"
+    ],
+    "copy": [
+      "spell copies retain declared additional-cost choices",
+      "ordinary permanent copies do not inherit another objects casting history"
+    ],
+    "control_change": [
+      "price must be controlled by caster",
+      "entry result retains original trigger controller and chosen instance"
+    ],
+    "zone_change": [
+      "stack-to-battlefield retains original declarations",
+      "later departure/reentry clears the old object facts"
+    ],
+    "source_leaves": [
+      "queued entry results retain original occurrence and target context"
+    ]
+  },
+  "variants": [
+    "paid/unpaid original cast",
+    "artifact/enchantment/creature-token prices",
+    "redirected cost and pending replay",
+    "same-target replacement and appended keywords",
+    "spell copy and ordinary permanent copy",
+    "departure/unpaid reentry",
+    "Role and mana results"
+  ],
+  "witness_cards": [
+    {
+      "name": "Thunderous Debut",
+      "oracle_id": "07995092-af6c-43b8-b30b-17e020ead37c"
+    },
+    {
+      "name": "Torch the Tower",
+      "oracle_id": "10d33e95-3e5d-447e-ba4a-acd3c33b4045"
+    },
+    {
+      "name": "Stonesplitter Bolt",
+      "oracle_id": "1322734c-3c3e-4885-a6d2-d6460a16fca2"
+    },
+    {
+      "name": "Troublemaker Ouphe",
+      "oracle_id": "16cdba97-73cf-44ba-9d64-f27009b829f8"
+    },
+    {
+      "name": "Brave the Wilds",
+      "oracle_id": "49d189dd-9ce7-434f-931b-7110cd5255e7"
+    },
+    {
+      "name": "Kellan's Lightblades",
+      "oracle_id": "4b803bf2-025a-4bf6-9d3c-a28d714b4781"
+    },
+    {
+      "name": "Realm-Scorcher Hellkite",
+      "oracle_id": "50ace222-57f1-477f-9e06-155d7b403512"
+    },
+    {
+      "name": "Farsight Ritual",
+      "oracle_id": "7de66ba3-6e97-4e0a-928e-7ce45dee278b"
+    },
+    {
+      "name": "High Fae Negotiator",
+      "oracle_id": "90ecd452-333a-43b0-be08-a61f3779b3bd"
+    },
+    {
+      "name": "Candy Grapple",
+      "oracle_id": "9588a7fd-bbe5-4a81-9a7e-d8e8f6c0537d"
+    },
+    {
+      "name": "Hamlet Glutton",
+      "oracle_id": "aa1b7cdd-0296-418c-ac3b-7ad3c51f1760"
+    },
+    {
+      "name": "Tenacious Tomeseeker",
+      "oracle_id": "b07bf08b-d9ec-429f-be6d-a7afa27c60c4"
+    },
+    {
+      "name": "Archon's Glory",
+      "oracle_id": "bc5631ae-494e-4987-8d17-57674bfbdb9f"
+    },
+    {
+      "name": "Diminisher Witch",
+      "oracle_id": "c2283655-f6b8-4399-ba1f-68a7107f9485"
+    },
+    {
+      "name": "Johann's Stopgap",
+      "oracle_id": "c7b235e1-746e-4467-be54-4e11e2bf6362"
+    },
+    {
+      "name": "Beseech the Mirror",
+      "oracle_id": "cbbe535b-12d6-4e6c-8b26-9220f06a1604"
+    },
+    {
+      "name": "Agatha's Champion",
+      "oracle_id": "debdfab7-454f-4fec-9ee8-aa5b570ea7fb"
+    },
+    {
+      "name": "Back for Seconds",
+      "oracle_id": "ee3d21b9-58b4-480c-bae3-26de50f1a5c6"
+    },
+    {
+      "name": "Rowan's Grim Search",
+      "oracle_id": "f60234e4-9b53-47a5-a21a-82c80b5af072"
+    },
+    {
+      "name": "Ice Out",
+      "oracle_id": "fed3bc35-4269-48f0-9133-a595ce49c2d1"
+    }
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+    "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+    "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+    "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+    "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+    "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+    "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw",
+    "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+    "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+    "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+    "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+    "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+    "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+    "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+    "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+    "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+    "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+  ],
+  "implementation": {
+    "component": "FixedBargainSpec, DeclaredCastCostFacts, schema-five ordinary zone-cost union, linked ordinary condition/entry owners",
+    "version": "linked-bargain-v1",
+    "capability_ids": [
+      "casting.additional_cost.permanent_union",
+      "casting.additional_cost.declared_instance",
+      "casting.additional_cost.bargain"
+    ],
+    "supported_slice": "One printed optional Bargain on a complete normal source, independently closed self-entry results and complete same-target fixed spell branches."
+  },
+  "known_blockers": [
+    "unrepresented conditional announcement targets",
+    "conditional discounts",
+    "other unrepresented linked bodies",
+    "multiple/granted instances and mixed consuming prices",
+    "unrepresented source layouts",
+    "aggregate Bargain remains incomplete"
+  ],
+  "review_status": "reviewed"
+}

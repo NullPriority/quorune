@@ -75,6 +75,7 @@ def _write_pass(
     runner: CommandRunner,
 ) -> tuple[str, ...]:
     executed: list[str] = []
+    checked_transition = False
     for spec in topological_order(specs):
         if selected_ids is not None and spec.id not in selected_ids:
             continue
@@ -89,6 +90,12 @@ def _write_pass(
                 flush=True,
             )
             continue
+        if database is not None and spec.write_with_database is not None and not checked_transition:
+            preflight = (str(Path(sys.executable).resolve()), 'scripts/update_rules_scheduler.py', '--validate-policy')
+            code = runner('pre-corpus-semantic-transition', preflight)
+            if code:
+                raise GeneratedFinalizationError(f'pre-corpus semantic-transition policy failed ({code})')
+            checked_transition = True
         returncode = runner(spec.id, command)
         if returncode:
             raise GeneratedFinalizationError(

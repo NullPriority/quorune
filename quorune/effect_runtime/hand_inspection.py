@@ -88,16 +88,24 @@ def commit_hand_inspection(
 
 def begin_opening_hand_reveal(host,selection):
     """Disclose one selected final-hand card until first-turn start."""
+    return begin_scoped_hand_reveal(host, selection, summary='A card was revealed from the opening hand.')
+
+
+def begin_scoped_hand_reveal(host, selection, *, summary):
     card=validate_entry_hand_reveal(host,selection)
     if card is None:raise GameRuleError('Opening reveal requires its selected hand card')
     prior=tuple(card.revealed_to)
-    commit_selected_hand_reveal(host,selection,source_ref=card.ref,summary='A card was revealed from the opening hand.')
+    commit_selected_hand_reveal(host,selection,source_ref=card.ref,summary=summary)
     card.revealed_to=sorted(set(card.revealed_to).union(host.seats))
     return prior
 
 
 def end_opening_hand_reveal(host,*,object_id,logical_object_id,prior_revealed_to):
     """End only this duration, retaining learned identity and earlier disclosure."""
+    end_scoped_hand_reveal(host, object_id=object_id, logical_object_id=logical_object_id, prior_revealed_to=prior_revealed_to)
+
+
+def end_scoped_hand_reveal(host, *, object_id, logical_object_id, prior_revealed_to):
     card=host.state.cards.get(object_id)
     if card is not None and card.zone=='hand' and card.logical_object_id==logical_object_id:
         card.revealed_to=list(prior_revealed_to)

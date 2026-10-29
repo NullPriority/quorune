@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, replace
 from enum import Enum
+from .trigger_event_vocabulary import FixedCounterTriggerEvent
 import re
 from typing import Any, Callable, Mapping, Sequence
 
@@ -82,12 +83,15 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-source-combat-damage-opponent-trigger-v1",
         "fixed-counter-source-damage-opponent-trigger-v1",
         "fixed-counter-source-dealt-damage-trigger-v1",
+        "fixed-counter-source-received-damage-trigger-v1",
+        "fixed-counter-source-received-combat-damage-trigger-v1",
         "fixed-counter-public-zone-trigger-v1",
         "fixed-counter-public-damage-trigger-v1",
         "fixed-counter-public-attack-trigger-v1",
         "fixed-counter-public-block-trigger-v1",
         "fixed-counter-public-cycle-trigger-v1",
         "fixed-counter-public-face-up-trigger-v1",
+        "fixed-counter-public-designation-trigger-v1",
         "fixed-counter-public-multi-event-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
         "fixed-counter-entry-return-public-zone-trigger-v1",
@@ -133,13 +137,16 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        'player_expend',
         'public_waterbend',
+        'public_ring_temptation', 'public_ring_bearer_choice',
         QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT,
         TAP_STATE_EVENT_VARIANT,
         "source_" + TAP_STATE_EVENT_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
         "controller_attack_batch_at_least_3",
+        "one_or_more_qualified_attack",
         "controller_cycles",
         "one_or_more_controlled_tokens_enter",
         "controlled_token_leaves",
@@ -195,6 +202,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 )
 MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        "enchanted_creature_tap_or_received_damage",
         "independent_dual_event",
         "qualified_zone_event_pair",
         "source_enters_or_attacks",
@@ -225,6 +233,7 @@ _NONCOUNTER_PUBLIC_EVENT_VARIANTS = (_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS
 _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS = frozenset(
     {
         QUALIFIED_DAMAGE_BATCH_VARIANT,
+        "one_or_more_qualified_attack",
         AGGREGATED_ZONE_VARIANT,
         "controller_attack_batch",
         "controller_attack_batch_at_least_2",
@@ -290,8 +299,8 @@ _SUBTYPE_ENTRY_TRIGGER = re.compile(
     r"(?: (?P<relation>you control|an opponent controls|you don't control))? "
     r"enters, (?P<body>.+)$",
 )
-_SOURCE_VEHICLE_ZONE_TRIGGER = re.compile(
-    r"^When this Vehicle (?P<transition>enters|dies), (?P<body>.+)$",
+_SOURCE_ARTIFACT_SUBTYPE_ZONE_TRIGGER = re.compile(
+    r"^When this (?:Vehicle|Spacecraft) (?P<transition>enters|dies), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_GRAVEYARD_TRIGGER = re.compile(
@@ -308,54 +317,6 @@ _SOURCE_DAMAGE_TRIGGER = re.compile(
 _ZONE_SUBJECT_TYPES = frozenset(
     {"artifact", "creature", "enchantment", "land", "permanent"}
 )
-class FixedCounterTriggerEvent(str, Enum):
-    """Closed normalized event families accepted by this compiler slice."""
-
-    STEP_BEGIN = "step.begin"
-    CONTROLLED_LAND_ENTER = "land.enter"
-    CONTROLLER_SPELL_CAST = "spell.cast"
-    SOURCE_ATTACKS = "creature.attacks"
-    CONTROLLER_LIFE_GAIN = "life.gained"
-    CONTROLLER_CARD_DRAW = "card.drawn"
-    CONTROLLER_SECOND_DRAW = "card.second_draw"
-    PERMANENT_ENTER = "permanent.enter"
-    ARTIFACT_ENTER = "artifact.enter"
-    CREATURE_ENTER = "creature.enter"
-    ENCHANTMENT_ENTER = "enchantment.enter"
-    CREATURE_DIES = "creature.dies"
-    PERMANENT_GRAVEYARD = "permanent.graveyard"
-    SOURCE_VEHICLE_ENTER = "permanent.enter.self"
-    SOURCE_VEHICLE_DIES = "creature.dies.self"
-    SOURCE_GRAVEYARD = "permanent.graveyard.self"
-    SOURCE_DEALS_DAMAGE = "damage.dealt.self"
-    SOURCE_DEALT_DAMAGE = "damage.dealt"
-    ARTIFACT_GRAVEYARD = "artifact.graveyard"
-    PUBLIC_DEALS_DAMAGE = "damage.dealt"
-    PUBLIC_ATTACKS = "creature.attacks"
-    CREATURE_BLOCKS = "creature.blocks"
-    CREATURE_BECOMES_BLOCKED = "creature.becomes_blocked"
-    CARD_CYCLED = "card.cycled"
-    SOURCE_CYCLED = "card.cycled.self"
-    CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"
-    CARD_ENTER_GRAVEYARD = 'card.enter_graveyard'
-    CARD_DISCARDED = "card.discarded"
-    TARGET_ANNOUNCED = 'object.became_target'
-    PERMANENT_LEAVE = "permanent.leave"
-    PERMANENT_SACRIFICED = "permanent.sacrificed"
-    SOURCE_SACRIFICED = "permanent.sacrificed.self"
-    PERMANENT_TURNED_FACE_UP = "permanent.turned_face_up"
-    OPPONENT_CARD_DRAW = "card.drawn"
-    SPELL_CAST_OR_COPY = "spell.cast_or_copy"
-    CLASS_LEVEL_CHANGED = "permanent.class_level_changed.self"
-    PERMANENT_TAPPED = "permanent.tap"
-    PERMANENT_UNTAPPED = "permanent.untap"
-    COUNTER_PLACED = 'counter.put'
-    SINGLE_COUNTER_PLACED = 'counter.single_put'
-    CREATURE_EXPLOITS = 'creature.exploits'
-    SOURCE_EXPLOITS = 'creature.exploits.self'
-    PLAYER_SCRIED = 'player.scried'
-    PLAYER_SURVEILLED = 'player.surveilled'
-    PLAYER_WATERBENT = 'player.waterbent'
 
 
 class FixedCounterZoneController(str, Enum):
@@ -605,7 +566,9 @@ class FixedCounterTriggerBinding:
             FixedCounterTriggerEvent.SOURCE_GRAVEYARD:
                 "fixed-counter-source-graveyard-trigger-v1",
             FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE:
-                "fixed-counter-source-dealt-damage-trigger-v1",
+                "fixed-counter-source-received-damage-trigger-v1",
+            FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE:
+                "fixed-counter-source-received-combat-damage-trigger-v1",
         }.get(self.event)
         if source_template is not None:
             return source_template
@@ -682,10 +645,17 @@ class FixedCounterTriggerBinding:
 
     @property
     def explicit_capabilities(self) -> tuple[str, ...]:
+        from ..received_damage_model import RECEIVED_DAMAGE_CAPABILITY
+        receiving = (RECEIVED_DAMAGE_CAPABILITY,) if self.event in {
+            FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE, FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE,
+        } else ()
         from ..characteristic_fragments import characteristic_quantity_capabilities
+        from ..public_history_query_model import public_history_query_dependencies
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
-        return (*self.public_capabilities,*condition_capabilities, *(("trigger.event.spell_cast_creature_target",)
+        ordinal=self.spell_subject.qualified_ordinal_spec if self.spell_subject is not None else None
+        return (*receiving,*self.public_capabilities,*condition_capabilities,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
+            self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
     @property
@@ -755,6 +725,11 @@ class FixedCounterTriggerBinding:
             ),
             FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE: (
                 "trigger-event-normalized-damage",
+                "trigger-event-normalized-received-damage",
+            ),
+            FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE: (
+                "trigger-event-normalized-damage",
+                "trigger-event-normalized-received-damage",
             ),
         }[self.event]
 
@@ -810,12 +785,13 @@ class FixedCounterTriggerBinding:
                     }
                 )
             return {"all": conditions}
-        if self.event is FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE:
-            return {
+        if self.event in {FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE, FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE}:
+            recipient = {
                 "field": "target",
                 "op": "eq",
                 "value": "$source.ref",
             }
+            return {"all": [recipient, {"field": "combat", "op": "eq", "value": True}]} if self.event is FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE else recipient
         if self.event in {
             FixedCounterTriggerEvent.CONTROLLER_LIFE_GAIN,
             FixedCounterTriggerEvent.CONTROLLER_CARD_DRAW,
@@ -987,7 +963,7 @@ def _zone_change_trigger_binding(
 def _source_event_trigger_binding(
     material_line: str,
 ) -> FixedCounterTriggerBinding | None:
-    vehicle = _SOURCE_VEHICLE_ZONE_TRIGGER.fullmatch(material_line)
+    vehicle = _SOURCE_ARTIFACT_SUBTYPE_ZONE_TRIGGER.fullmatch(material_line)
     if vehicle is not None:
         transition = vehicle.group("transition").casefold()
         return FixedCounterTriggerBinding(
@@ -1082,6 +1058,10 @@ def fixed_counter_trigger_binding(
     card_name: str | None = None,
     _source_normalized: bool = False,
 ) -> FixedCounterTriggerBinding | None:
+    normalized = normalized_source_event_line(material_line, source_name=card_name, named_only=True) if not _source_normalized and card_name else None
+    if normalized is not None:
+        source_binding = fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True)
+        if source_binding is not None:return source_binding
     intervening = _PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
         condition = fixed_public_state_condition(
@@ -1190,32 +1170,17 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
-def _event_runtime_coverage(
-    binding: FixedCounterTriggerBinding,
-    *,
-    current_ability: bool,
-) -> tuple[str, ...]:
-    values: list[str] = []
-    if current_ability or binding.variant in {QUALIFIED_ZONE_VARIANT, AGGREGATED_ZONE_VARIANT} or binding.variant in {
-        'your first main phase','your precombat main phase','your second main phase','your postcombat main phase',
-        *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
-        *(_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - COUNTER_EVENT_VARIANTS),
-        "class_level_changed",
-    }:
-        values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)
-    if binding.variant in _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS:
-        values.append("one_or_more_event_batch")
-    if binding.variant in MULTI_EVENT_BINDING_CLOSURE_VARIANTS:
-        values.append("fixed_multi_event_subscription")
-    if binding.public_state_condition is not None:
-        values.extend(
-            (
-                CURRENT_ABILITY_FRAGMENT_COVERAGE,
-                "intervening_condition",
-                FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
-            )
-        )
-    return tuple(dict.fromkeys(values))
+def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool) -> tuple[str, ...]:
+    from .trigger_runtime_coverage import trigger_runtime_coverage
+    return trigger_runtime_coverage(binding, current_ability=current_ability,
+        qualified_zone_variant=QUALIFIED_ZONE_VARIANT,
+        aggregated_zone_variant=AGGREGATED_ZONE_VARIANT,
+        ability_word_public_event_variants=_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
+        public_event_variants=_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+        counter_event_variants=COUNTER_EVENT_VARIANTS,
+        one_or_more_variants=_ONE_OR_MORE_PUBLIC_EVENT_VARIANTS,
+        multi_event_variants=MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
+    )
 
 
 def _binding_effect_template(binding, body, *, card_name, effect_template):

@@ -10,15 +10,15 @@ _LKI_CONTROLLER_KEY = "explore_source_lki_controller"
 _EXPLORE_OPERATION = "explore"
 
 
-def _program_explores_source(program: Any) -> bool:
+def _program_explores_source(program: Any, *, complete: bool = False) -> bool:
+    def contains(effects):
+        return any(isinstance(effect, Mapping) and (
+            effect.get('op') == _EXPLORE_OPERATION and effect.get('card') == '$source'
+            or complete and effect.get('op') in {'offer_optional_effect', 'offer_optional_mana_payment'}
+            and contains(effect.get('effects', ()))) for effect in effects)
     return bool(
         program is not None
-        and any(
-            isinstance(effect, Mapping)
-            and effect.get("op") == _EXPLORE_OPERATION
-            and effect.get("card") == "$source"
-            for effect in program.effects
-        )
+        and contains(program.effects)
     )
 
 
@@ -47,7 +47,8 @@ def _capture_item(
         and source_logical_object_id != card.logical_object_id
     ):
         return False
-    if not _program_explores_source(host.semantics.get(semantic_key)):
+    if not _program_explores_source(host.semantics.get(semantic_key),
+            complete=getattr(host.state, 'explore_action_version', None) == 1):
         return False
     context.setdefault(_LKI_CONTROLLER_KEY, card.controller)
     return True

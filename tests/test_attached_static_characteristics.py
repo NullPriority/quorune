@@ -883,12 +883,17 @@ class AttachedContinuousCompilerTests(unittest.TestCase):
                 self.assertEqual("battlefield", inner_program.active_zone)
 
     def test_compiler_keeps_unsupported_attached_grants_residual(self):
+        promoted = 'Enchanted creature has "{T}: Draw a card." and "{T}: Add {G}."'
+        ir = compile_oracle_card(attached_grant_record(promoted), capability_registry=load_default_capability_registry(),
+            capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.assertEqual(2, len([node for node in ir.faces[0].nodes if node.kind.startswith('granted_')]))
         fixtures = (
             'Enchanted creature has "Exile this creature: You gain 2 life."',
             'Enchanted creature has "Pay {E}: Draw a card."',
             'Enchanted creature has "This creature has flying."',
             'Enchanted creature has "{T}: Tap this Aura."',
-            'Enchanted creature has "{T}: Draw a card." and "{T}: Add {G}."',
+            'Enchanted creature has "{T}: Draw a card." and "{T}: Draw a card with the chosen name."',
         )
         capabilities = load_default_capability_registry()
         for text in fixtures:
@@ -1171,6 +1176,9 @@ class AttachedStaticEngineTests(unittest.TestCase):
             capability_registry=load_default_capability_registry(),
             capability_profile="commander_review",
             promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
         )
         value = CardInstance(
             object_id=f"attachment-assurance:{ref}",
@@ -1628,6 +1636,7 @@ class AttachedStaticEngineTests(unittest.TestCase):
             if not engine.state.stack:
                 break
             self.resolve_top(engine)
+        self.assertEqual(library_before - 1, len(engine.state.players["A"].zones["library"]))
         engine.apply_effect(
             {"op": "draw", "player": "A", "count": 1},
             actor="A",
@@ -1637,7 +1646,7 @@ class AttachedStaticEngineTests(unittest.TestCase):
         self.assertEqual("7", characteristics["power"])
         self.assertEqual("5", characteristics["toughness"])
         self.assertEqual(
-            library_before - 1,
+            library_before - 2,
             len(engine.state.players["A"].zones["library"]),
         )
 

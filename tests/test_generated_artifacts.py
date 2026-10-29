@@ -12,6 +12,7 @@ import unittest
 from unittest import mock
 
 from scripts.finalize_generated import (
+    GeneratedFinalizationError,
     POST_CHECKS,
     check_all,
     check_assembled,
@@ -139,6 +140,21 @@ class SharedCompilerCensusTests(unittest.TestCase):
 
 
 class GeneratedArtifactFinalizationTests(unittest.TestCase):
+    def test_database_finalization_rejects_stale_transition_before_corpus_writer(self):
+        with TemporaryDirectory() as raw:
+            root = Path(raw);database = root / 'cards.sqlite3';database.write_bytes(b'fixture')
+            spec = GeneratorSpec(id='corpus', depends_on=(), outputs=('corpus.txt',), check=('unused.py', '--check'), write=('unused.py', '--derived'),
+                write_with_database=('unused.py', '--write', '--db', '{db}'), write_policy='database')
+            calls = []
+            def runner(identifier, command):
+                calls.append(identifier)
+                if identifier == 'pre-corpus-semantic-transition':return 1
+                (root / 'corpus.txt').write_text('generated\n', encoding='utf-8');return 0
+            with self.assertRaisesRegex(GeneratedFinalizationError, 'semantic.transition'):
+                write_until_stable((spec,), database=database, include_manual=False, max_passes=3, root=root, runner=runner)
+            self.assertEqual(['pre-corpus-semantic-transition'], calls)
+            self.assertFalse((root / 'corpus.txt').exists())
+
     def test_rules_derived_rebuilds_stale_cached_index_metadata(self):
         from scripts import update_rules_derived as writer
         from quorune.rules_corpus import _json_hash
@@ -846,8 +862,12 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
                 write_policy="database",
             )
             commands: list[tuple[str, ...]] = []
+            preflights: list[tuple[str, ...]] = []
 
             def runner(_generator_id: str, command: tuple[str, ...]) -> int:
+                if _generator_id == 'pre-corpus-semantic-transition':
+                    preflights.append(command)
+                    return 0
                 commands.append(command)
                 (root / "corpus.txt").write_text("stable\n", encoding="utf-8")
                 return 0
@@ -866,6 +886,8 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
         self.assertIn(str(database), commands[0])
         self.assertIn("--refresh-derived", commands[1])
         self.assertNotIn(str(database), commands[1])
+        self.assertEqual(1, len(preflights))
+        self.assertIn('--validate-policy', preflights[0])
 
     def test_stabilization_reruns_only_changed_owners_and_descendants(self):
         specs = (
@@ -937,6 +959,7 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
 
             def runner(generator_id: str, _command: tuple[str, ...]) -> int:
                 calls.append(generator_id)
+                if generator_id == 'pre-corpus-semantic-transition':return 0
                 (root / "failed.txt").write_text("stable\n", encoding="utf-8")
                 return 0
 
@@ -954,7 +977,7 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             )
 
         self.assertEqual(2, result["passes"])
-        self.assertEqual(["failed-owner", "failed-owner"], calls)
+        self.assertEqual(['pre-corpus-semantic-transition', "failed-owner", "failed-owner"], calls)
 
     def test_broad_generated_ci_uses_the_canonical_finalizer_only(self):
         workflow_dir = ROOT / ".github" / "workflows"

@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "forecast",
+  "official_name": "Forecast",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.57",
+    "702.57a",
+    "702.57b",
+    "602.2a",
+    "602.2b",
+    "701.20a",
+    "701.20b",
+    "302.6",
+    "400.7"
+  ],
+  "glossary_references": [
+    "forecast",
+    "activated ability",
+    "reveal"
+  ],
+  "dependencies": [
+    "activated abilities",
+    "revealing cards",
+    "turn structure",
+    "zones",
+    "costs"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "original source hand",
+      "ordinary battlefield objects used for selected-tap costs"
+    ],
+    "objects": [
+      "one printed Forecast source incarnation",
+      "existing activated-ability descriptor and source-local usage key",
+      "incarnation-bound disclosure frame"
+    ],
+    "events": [
+      "owner upkeep activation",
+      "canonical reveal as activated",
+      "ordinary ability resolution",
+      "actual hand departure",
+      "first non-upkeep step entry"
+    ],
+    "state_reads": [
+      "source hand ownership and incarnation",
+      "current owner upkeep and per-turn usage",
+      "original disclosure state",
+      "current selected-permanent control/type/color/tap/phase predicates"
+    ],
+    "state_writes": [
+      "canonical activation, hand-reveal, usage, selected-tap, zone and turn owners"
+    ],
+    "costs": [
+      "printed fixed mana or independently represented selected-tap costs",
+      "mandatory source reveal",
+      "Sky Hussar selects two untapped controlled creatures each white OR blue"
+    ],
+    "timing": [
+      "only source owners upkeep",
+      "once each turn for the same source incarnation",
+      "source remains revealed through consecutive upkeep steps, until actual departure or non-upkeep step"
+    ],
+    "targets": [
+      "ordinary advertised and accepted target authority, revalidated at resolution"
+    ],
+    "choices": [
+      "ordinary activated ability, target and selected-cost fields"
+    ],
+    "hidden_information": [
+      "only selected Forecast card is revealed",
+      "other hand cards retain principal projection",
+      "ending current disclosure retains learned identity and earlier visibility"
+    ],
+    "apnap": [
+      "ordinary priority and triggered/ability resolution"
+    ],
+    "layers": [
+      "selected-tap color/type predicates use current characteristics",
+      "independent ordinary spell and ability bodies retain their owners"
+    ],
+    "replacement_effects": [
+      "existing activation payment and ordinary result replacement authority"
+    ],
+    "copy": [
+      "ordinary activated copies do not activate/pay again",
+      "new source incarnations have independent usage and disclosure"
+    ],
+    "control_change": [
+      "source owner governs hand activation",
+      "existing ability controller and source context remain authoritative"
+    ],
+    "zone_change": [
+      "actual hand departure ends this disclosure",
+      "leave/return clears original object usage and reveal frame"
+    ],
+    "source_leaves": [
+      "already activated ordinary results retain their existing source/target rules"
+    ]
+  },
+  "variants": [
+    "fixed-mana Forecast",
+    "colored selected-tap Forecast",
+    "owner-upkeep/once restrictions",
+    "same-upkeep hand departure/reentry",
+    "revealed source and private siblings",
+    "ordinary spell body and activated body",
+    "pending load and exact replay"
+  ],
+  "witness_cards": [
+    {
+      "name": "Writ of Passage",
+      "oracle_id": "1ea7f839-e3b8-4aff-b850-c0a98b06ae14"
+    },
+    {
+      "name": "Sky Hussar",
+      "oracle_id": "21b41dd6-bff7-4e3d-aa28-551a30194225"
+    },
+    {
+      "name": "Spirit en-Dal",
+      "oracle_id": "54730a15-0f03-4064-89dc-24de05117e7c"
+    },
+    {
+      "name": "Plumes of Peace",
+      "oracle_id": "5526dcae-90e8-4102-808d-56c89027898c"
+    },
+    {
+      "name": "Pride of the Clouds",
+      "oracle_id": "7d595158-73a8-4ebf-aac5-0b5193cef9b7"
+    },
+    {
+      "name": "Piercing Rays",
+      "oracle_id": "8960a213-cb72-4d67-bb4e-bcb1f657b944"
+    },
+    {
+      "name": "Govern the Guildless",
+      "oracle_id": "a9a0605d-295a-47e6-9f49-3c82a7ef1e7b"
+    },
+    {
+      "name": "Skyscribing",
+      "oracle_id": "c3416e6c-ec46-410c-ab80-6e8fdb89f42d"
+    },
+    {
+      "name": "Steeling Stance",
+      "oracle_id": "c454d5af-5617-4ddf-a9be-dd7d154b55ad"
+    },
+    {
+      "name": "Paladin of Prahv",
+      "oracle_id": "cd30de8a-87ad-4870-a89f-5745d57ada0a"
+    },
+    {
+      "name": "Proclamation of Rebirth",
+      "oracle_id": "e1e5592c-3605-4069-89d0-b462dec83516"
+    }
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_forecast_descriptor_is_hand_upkeep_once_and_legacy_descriptors_omit_marker",
+    "test_forecast_reveal_frame_is_versioned_and_original_incarnation_bound",
+    "test_forecast_disclosure_retains_knowledge_and_ends_only_outside_upkeep_or_on_departure",
+    "test_forecast_colored_tap_cost_admits_each_white_or_blue_untapped_controlled_creature",
+    "test_forecast_source_span_hand_catalog_and_intrinsic_restrictions_are_closed",
+    "test_forecast_unknown_bodies_and_missing_reveal_do_not_promote_card",
+    "test_forecast_verified_owner_withdrawal_keeps_ordinary_draw_activation",
+    "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+    "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+    "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+    "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+    "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+    "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+  ],
+  "implementation": {
+    "component": "ActivatedAbility Forecast marker, existing usage/upkeep/catalog/commit owners, ForecastRevealFrame and canonical scoped hand reveals",
+    "version": "typed-forecast-v1",
+    "capability_ids": [
+      "activation.forecast.hand",
+      "activation.selected_tap.fixed_color"
+    ],
+    "supported_slice": "Complete represented Forecast source/reveal costs and ordinary bodies, with intrinsic owner-hand/upkeep/once restriction and exact phase/zone disclosure lifetime."
+  },
+  "known_blockers": [
+    "unrepresented companion bodies",
+    "unknown costs or effects",
+    "aggregate Forecast remains incomplete"
+  ],
+  "review_status": "reviewed"
+}

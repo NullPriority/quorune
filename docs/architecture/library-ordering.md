@@ -52,6 +52,31 @@ replay. New clients should use the ordered partition. Runtime code does not
 parse Oracle text, and ordinary top-card reordering remains a separate typed
 operation rather than a second Scry implementation.
 
+## Fixed top ordering and shuffle
+
+`library.order.fixed_controller` owns a fixed private look followed by a complete
+ordering of those cards on top. `FixedTopLibraryOrderSpec` has a closed controller
+and positive-count schema. The new `order_library_top` choice pins both physical
+references and logical incarnations, then requires an exact permutation of the
+unchanged inspected top set. Short libraries use the available cards; an empty
+library completes without a choice. This procedure emits no Scry occurrence.
+
+The handler delegates to the existing private ordering lifecycle and
+`ReorderLibraryTopIntent` mutation owner. Its operation and continuation are
+distinct from historical `look_reorder_top`, whose saved contract is retained.
+Only the resolving controller receives the inspected identities and ordering
+choice. Invalid, duplicate, omitted, foreign or reincarnated references reject
+before mutation, including after a pending choice is saved and loaded.
+
+`library.shuffle.fixed_controller` independently owns an explicit controller
+shuffle through the canonical `ShuffleLibraryIntent`. Ordinary optional-effect
+and ordered-result composition express ordering, optional shuffle and a later
+draw. A declined shuffle keeps the chosen order; applying it shuffles the whole
+library before continuation. Source departure, paid activations and target-loss
+handling retain their existing stack and effect owners. Variable counts,
+another player's library and unrepresented sibling results remain residuals.
+See [ADR 0131](../adr/0131-typed-private-library-ordering.md).
+
 ## Mill result counts
 
 The existing Mill preparation owner consumes a nonnegative resolved integer.
@@ -153,7 +178,7 @@ replacement forms remain explicit compiler boundaries.
 
 The current family excludes simultaneous instructions for multiple players,
 unrepresented dynamic counts, effects that add cards while Scrying,
-fateseal, and other non-Scry library ordering. Fixed Surveil separately excludes
+fateseal, and ordering outside the represented fixed controller form. Fixed Surveil separately excludes
 optional, cost, targeted, repeated, copied, and granted forms;
 additional looked-at cards; linked result consumers; and Surveil-event consumer
 grammar outside the normalized fixed-body observer. In particular, CR 701.22c

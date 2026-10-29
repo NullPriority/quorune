@@ -8,6 +8,12 @@ from typing import Any, Mapping
 from .ability_fragment_primitives import AbilityFragmentError
 
 
+GRANTED_STATIC_COST_EVENT = 'cast.cost.modify'
+GRANTED_STATIC_COST_CAPABILITY = 'continuous.ability.static_cost_grant'
+GRANTED_STATIC_CHARACTERISTIC_EVENT = 'characteristics.evaluate'
+GRANTED_STATIC_CHARACTERISTIC_CAPABILITY = 'continuous.ability.static_characteristic_grant'
+
+
 @dataclass(frozen=True, slots=True)
 class StaticComponentApplicabilitySpec:
     """One closed source-state predicate for a static component scope."""

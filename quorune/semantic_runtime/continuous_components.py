@@ -30,6 +30,7 @@ from ..leveler_bands import (
     LevelerBandsSpec,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..object_query import ObjectQueryResult
 from ..object_query_union import bind_receiver_union_source, validate_receiver_union_template
 from ..counter_names import normalized_counter_name
 from ..creature_subtypes import canonical_creature_subtype
@@ -137,8 +138,17 @@ class ContinuousEffectSourceContext:
     source_counters: FrozenMap = FrozenMap()
     source_designations: FrozenMap = FrozenMap()
     paired_object: ContinuousObjectIdentity | None = None
+    public_type_objects: tuple[ObjectQueryResult, ...] | None = None
+    enchanted_player: str | None = None
+    cipher_encoded_object: ContinuousObjectIdentity | None = None
 
     def __post_init__(self) -> None:
+        if self.enchanted_player is not None and (type(self.enchanted_player) is not str
+                or not self.enchanted_player or self.enchanted_player.strip()!=self.enchanted_player):
+            raise SemanticNodeError('Enchanted-player context requires a canonical player identity')
+        if self.public_type_objects is not None and (not isinstance(self.public_type_objects,tuple)
+                or any(not isinstance(row,ObjectQueryResult) for row in self.public_type_objects)):
+            raise SemanticNodeError('Public type snapshots require an immutable tuple of typed object facts')
         if not self.source_object_id or not self.source_ref:
             raise SemanticNodeError(
                 "A continuous component source identity is required"
@@ -796,14 +806,19 @@ class FixedQueryAbilityGrantHandler:
                     AsUnblockedAssignmentPermission,
                     GrantedActivatedAbilitySpec,
                     GrantedTriggeredAbilitySpec,
+                    StaticComponentSpec,
                 ),
             )
             for fragment in fragments
         ):
             raise SemanticNodeError(
                 "fixed query ability grants require typed declaration, activated, "
-                "or triggered abilities"
+                "triggered abilities or versioned static cost components"
             )
+        if any(isinstance(fragment, StaticComponentSpec) and fragment.schema_version not in {2, 3} for fragment in fragments):
+            raise SemanticNodeError('Static grants require a versioned cost component reference')
+        if any(isinstance(fragment, StaticComponentSpec) and fragment.schema_version == 3 and fragment.grant_timestamp is not None for fragment in fragments):
+            raise SemanticNodeError('A characteristic grant descriptor cannot prebind its effect timestamp')
         return FixedQueryAbilityGrantNode(
             target_controller=condition["target_controller"],
             predicate=predicate,
@@ -1389,80 +1404,6 @@ class ContinuousEffectComponentRegistry(
         return predicate(descriptor) is not False
 
 
-@lru_cache(maxsize=1)
-def default_continuous_effect_component_registry(
-) -> ContinuousEffectComponentRegistry:
-    from .conditional_flash import ConditionalFlashKeywordHandler
-    from .defender_declarations import DefenderDeclarationPermissionHandler
-    from .conditional_color_grants import ConditionalColorGrantHandler
-    from .keyword_prohibitions import OpponentKeywordProhibitionHandler
-    from .basic_type_addition import ScopedBasicTypeAdditionHandler
-    from .basic_type_setting import FixedBasicTypeSettingHandler
-    from .chosen_characteristics import ChosenCharacteristicsHandler
-    from .conditional_chosen_characteristics import ConditionalChosenCharacteristicsHandler
-    from .attached_continuous import AttachedFixedCharacteristicsHandler
-    from .chosen_aura_protection import SourceChosenAuraProtectionHandler
-    from .soulbond import SoulbondPairedGrantHandler
-    from .fixed_characteristic_settings import FixedCharacteristicSettingsHandler, ConditionalCharacteristicSettingsHandler, ConditionalCreatureTypeRemovalHandler
-    from .attached_control import AttachedControlHandler
-    from .quantified_anthems import QuantifiedAnthemHandler
-    from .recipient_anthems import RecipientAnthemHandler
-    from .conditional_continuous import (
-        FixedPublicStateCharacteristicsHandler,
-        FixedPublicStateGrantedAbilityHandler,
-        ConditionalDefenderPermissionHandler,
-        ConditionalAsUnblockedAssignmentHandler,
-        ConditionalBlockCapacityHandler,
-        ConditionalDeclarationGrantHandler,
-        GraveyardStaticCharacteristicsHandler,
-        ConditionalTypedKeywordHandler,
-    )
-
-    registry = ContinuousEffectComponentRegistry(
-        (
-            OpponentKeywordProhibitionHandler(),
-            ChosenCharacteristicsHandler(),
-            ConditionalChosenCharacteristicsHandler(),
-            FixedPowerToughnessAnthemHandler(),
-            FixedQueryPowerToughnessAnthemHandler(),
-            FixedQueryPowerToughnessAnthemHandler(
-                handler_id="continuous.anthem.source-counter-query.v3", schema_version=3,
-            ),
-            AddBasicLandTypeHandler(),
-            ScopedBasicTypeAdditionHandler(),
-            FixedBasicTypeSettingHandler(),
-            FixedQueryAbilityGrantHandler(),
-            FixedQueryKeywordGrantHandler(),
-            FixedQueryCharacteristicGrantHandler(),
-            FixedQueryProtectionGrantHandler(),
-            FixedQueryCharacteristicProtectionGrantHandler(),
-            LevelerBandsHandler(),
-            FixedPublicStateCharacteristicsHandler(),
-            FixedPublicStateGrantedAbilityHandler(),
-            ConditionalColorGrantHandler(),
-            ConditionalFlashKeywordHandler(),
-            FixedQueryPowerToughnessAnthemHandler(
-                handler_id='continuous.anthem.source-counter-total-query.v4', schema_version=4,
-                capability_dependencies=('continuous.power_toughness.fixed_anthem', COUNTER_TOTAL_CAPABILITY)),
-            ConditionalDefenderPermissionHandler(),
-            DefenderDeclarationPermissionHandler(),
-            ConditionalAsUnblockedAssignmentHandler(),
-            ConditionalBlockCapacityHandler(),
-            ConditionalDeclarationGrantHandler(),
-            GraveyardStaticCharacteristicsHandler(),
-            ConditionalTypedKeywordHandler(),
-            AttachedFixedCharacteristicsHandler(),
-            SourceChosenAuraProtectionHandler(),
-            SoulbondPairedGrantHandler(),
-            FixedCharacteristicSettingsHandler(),
-            ConditionalCharacteristicSettingsHandler(),
-            ConditionalCreatureTypeRemovalHandler(),
-            AttachedControlHandler(),
-            QuantifiedAnthemHandler(),
-            RecipientAnthemHandler(),
-        )
-    )
-    registry.require_registered_capabilities(
-        load_default_capability_registry()
-    )
-    return registry.freeze()
+def default_continuous_effect_component_registry():
+    from .continuous_registry import default_continuous_effect_component_registry as registry
+    return registry()

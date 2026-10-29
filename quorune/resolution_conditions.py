@@ -12,6 +12,7 @@ from .continuous_conditions import (
 )
 from .replacement.immutable import FrozenMap
 from .spell_mana_conditions import ManaSpentCondition
+from .declared_cost_conditions import DeclaredCastCostCondition
 
 
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
@@ -143,9 +144,12 @@ def resolution_condition_is_closed(condition: FixedPublicStateConditionSpec) -> 
 
 def validate_resolution_condition_instruction(
     effect: Mapping[str, Any],
-) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition, tuple[Mapping[str, Any], ...]]:
+) -> tuple[FixedPublicStateConditionSpec | KickedCastCondition | ManaSpentCondition | DeclaredCastCostCondition, tuple[Mapping[str, Any], ...]]:
     if not isinstance(effect, Mapping):
         raise ValueError("Resolution condition instructions require an object")
+    if effect.get('schema_version') == 12:
+        from .declared_cost_conditions import validate_declared_cost_instruction
+        return validate_declared_cost_instruction(effect)
     if effect.get('schema_version')==11:
         from .kicked_target_replacement_model import validate_kicked_target_replacement_instruction
         return validate_kicked_target_replacement_instruction(effect)

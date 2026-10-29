@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from ..target_source import stack_targeting_source
+from ..ring_state import materialized_ring_choice_plans
 
 from dataclasses import replace
 from typing import Any, Mapping, Sequence
@@ -13,7 +14,9 @@ from ..connive import connive_discard_characteristic_ids, bind_connive_instructi
 from ..object_query import object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
+from ..semantic_runtime.context import semantic_source_context
 from ..semantic_runtime.hand_visibility import hand_card_is_known_to, public_hand_owners
+from ..rules.discard_results import discard_result_hand_snapshot
 from ..semantic_runtime import (
     IntentPlan,
     prepare_draw_resolution,
@@ -117,7 +120,11 @@ class SemanticChoiceCoordinationMixin:
             rows.append(row)
         return tuple(rows)
 
-    def _semantic_choice_stack_rows(self) -> tuple[ChoiceStackView, ...]:
+    def _semantic_choice_stack_rows(self,effect=None) -> tuple[ChoiceStackView, ...]:
+        from ..rules.event_spell_copy import resolve_event_spell_copy_source
+        source=resolve_event_spell_copy_source(self,effect or {})
+        referenced=source.item() if source is not None else None
+        items=tuple(i for i in self.state.stack if referenced is None or i.ref!=referenced.ref)+((referenced,) if referenced is not None else ())
         return tuple(
             ChoiceStackView(
                 ref=item.ref,
@@ -128,8 +135,9 @@ class SemanticChoiceCoordinationMixin:
                 modes=tuple(item.modes),
                 target_groups=dict(item.context.get("target_groups") or {}),
                 target_snapshots=dict(item.context.get("target_snapshots") or {}),
+                copy_source=source.to_dict() if source is not None and item.ref==referenced.ref else None,
             )
-            for item in self.state.stack
+            for item in items
         )
 
     def _semantic_choice_damage_source_candidates(
@@ -241,10 +249,13 @@ class SemanticChoiceCoordinationMixin:
         target_ref = str(
             effect.get("_target_stack_ref") or effect.get("stack") or ""
         )
+        from ..rules.event_spell_copy import resolve_event_spell_copy_source
+        bound_source=resolve_event_spell_copy_source(self,effect)
         target_item = next(
             (item for item in self.state.stack if item.ref == target_ref),
             None,
         )
+        if bound_source is not None:target_item=bound_source.item()
         if target_item is None:
             return target_schemas, validated_targets
         validation_actor = str(
@@ -256,6 +267,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         raw_schema = effect.get("_target_schema")
+        if bound_source is not None:raw_schema=thaw_value(bound_source.target_schema) if bound_source.target_schema is not None else None
         if not isinstance(raw_schema, Mapping):
             raw_schema = self._stack_target_schema(
                 target_item,
@@ -264,11 +276,15 @@ class SemanticChoiceCoordinationMixin:
         if not isinstance(raw_schema, Mapping) or not target_item.targets:
             return target_schemas, validated_targets
         public_schema: Mapping[str, Any] | None = None
+        from ..target_source import TargetingSource
+        copy_source_ref=None if bound_source is not None else self._stack_source_ref(target_item)
+        acting_copy_source=(TargetingSource.from_characteristics('spell',bound_source.characteristics,controller=validation_actor)
+            if bound_source is not None else stack_targeting_source(self,target_item))
         if operation == "copy_stack_item":
             public_schema = copy_target_public_schema(
                 self, validation_actor, raw_schema, target_item.modes,
                 list(target_item.targets), dict(target_item.context.get("target_groups") or {}),
-                self._stack_source_ref(target_item), acting_source=stack_targeting_source(self,target_item),
+                copy_source_ref, acting_source=acting_copy_source,
             )
         elif available_modes(raw_schema):
             plan = target_plan(
@@ -308,11 +324,11 @@ class SemanticChoiceCoordinationMixin:
         if operation == "copy_stack_item":
             assignment = prepare_copy_targets(
                 self, actor=validation_actor, schema=raw_schema,
-                modes=target_item.modes, source_ref=self._stack_source_ref(target_item),
+                modes=target_item.modes, source_ref=copy_source_ref,
                 original_targets=list(target_item.targets),
                 original_groups=dict(target_item.context.get("target_groups") or {}),
                 original_snapshots=dict(target_item.context.get("target_snapshots") or {}),
-                submitted=submitted, acting_source=stack_targeting_source(self,target_item),
+                submitted=submitted, acting_source=acting_copy_source,
             )
             validated_targets[key] = {
                 "targets": list(assignment.targets), "groups": thaw_value(assignment.groups),
@@ -509,6 +525,7 @@ class SemanticChoiceCoordinationMixin:
         response: Mapping[str, Any] | None = None,
         effect: Mapping[str, Any] | None = None,
         source_ref: str | None = None,
+        stack_item: StackItem | None = None,
     ) -> SnapshotSemanticChoiceQuery:
         """Materialize only actor-visible, immutable choice facts."""
 
@@ -520,7 +537,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         condition_facts = {}
-        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11}:
+        if choice_effect.get("op") == RESOLUTION_CONDITION_OPERATION and choice_effect.get('schema_version') not in {2,4,5,6,7,10,11,12}:
             try:
                 condition, _effects = validate_resolution_condition_instruction(choice_effect)
                 if choice_effect["player"] != actor:
@@ -533,13 +550,21 @@ class SemanticChoiceCoordinationMixin:
         from ..rules.library_search_rules import optional_search_permissions
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
         return SnapshotSemanticChoiceQuery(
+            resolution_source_is_physical_card=(
+                (self.state.cards[stack_item.card_object_id].object_kind == 'card')
+                if stack_item is not None and stack_item.card_object_id in self.state.cards else False),
+            explore_action_version=getattr(self.state, 'explore_action_version', None),
+            resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
+            ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             counter_permissions=collect_counter_permissions(self),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),
             seat_order=tuple(self.seats),
             active_order=tuple(self.active_seats),
+            apnap_order=tuple(self.apnap_order()),
+            discard_hand_inputs=discard_result_hand_snapshot(self, actor, choice_effect),
             object_rows=object_rows,
-            stack_rows=self._semantic_choice_stack_rows(),
+            stack_rows=self._semantic_choice_stack_rows(choice_effect),
             life_by_seat={
                 seat: self.state.players[seat].life for seat in self.seats
             },
@@ -653,6 +678,7 @@ class SemanticChoiceCoordinationMixin:
                 actor,
                 effect=effect,
                 source_ref=source.ref if source is not None else None,
+                stack_item=item,
             ),
             source_logical_object_id=(
                 str(item.context.get("source_logical_object_id") or "")
@@ -813,6 +839,7 @@ class SemanticChoiceCoordinationMixin:
                     seat,
                     response=response,
                     effect=continuation.effect,
+                    stack_item=item,
                     source_ref=(
                         self.state.cards[
                             item.source_object_id

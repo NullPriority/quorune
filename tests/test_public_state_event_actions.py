@@ -269,11 +269,11 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
         wall=self.add(engine,'Wall of Essence',ref='amount-diagnostic-wall')
         thrull=self.add(engine,'Mourning Thrull',ref='amount-diagnostic-thrull')
         other=self.add(engine,'Generic Bound Body',seat='B',ref='amount-diagnostic-other')
-        wall_program=next(p for p in engine.semantics.programs_for_oracle(wall.oracle_id) if p.event=='damage.dealt')
+        wall_program=next(p for p in engine.semantics.programs_for_oracle(wall.oracle_id) if p.event=='combat.damage.received')
         thrull_program=next(p for p in engine.semantics.programs_for_oracle(thrull.oracle_id) if p.event=='damage.dealt.self')
         for combat,target,expected in ((True,wall.ref,True),(False,wall.ref,False),(True,other.ref,False)):
-            context={'card':other.ref,'source':other.ref,'target':target,'combat':combat,'amount':2,'target_kind':'permanent'}
-            self.assertEqual(expected,semantic_event_matches(engine,wall_program,wall,'damage.dealt',context))
+            context={'card':target,'source':other.ref,'target':target,'combat':combat,'amount':2,'target_kind':'permanent'}
+            self.assertEqual(expected,semantic_event_matches(engine,wall_program,wall,'combat.damage.received',context))
         for card,expected in ((thrull.ref,True),(other.ref,False)):
             context={'card':card,'source':card,'target':wall.ref,'combat':False,'amount':1,'target_kind':'permanent'}
             self.assertEqual(expected,semantic_event_matches(engine,thrull_program,thrull,'damage.dealt',context))

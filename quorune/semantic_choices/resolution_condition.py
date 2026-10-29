@@ -35,6 +35,9 @@ class PublicResolutionConditionHandler:
     test_modules: tuple[str, ...] = ("tests.test_resolution_public_conditions",)
 
     def prepare(self, effect: Mapping[str, Any], context: SemanticChoiceContext) -> SemanticChoicePreparation:
+        if effect.get('schema_version') == 12:
+            from .declared_cost_conditions import prepare_declared_cost_condition
+            return prepare_declared_cost_condition(effect, context)
         try:
             condition, effects = validate_resolution_condition_instruction(effect)
         except (ValueError, TypeError, KeyError) as exc:

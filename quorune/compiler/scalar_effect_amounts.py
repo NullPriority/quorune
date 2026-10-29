@@ -20,7 +20,7 @@ from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
 
 _ZONE_EVENTS = {"permanent.enter", "artifact.enter", "creature.enter", "creature.dies",
                 "permanent.leave", "permanent.graveyard", "artifact.graveyard"}
-_AMOUNT_EVENTS = {"life.gained", "damage.dealt", "damage.dealt.self", "combat.damage.player"}
+_AMOUNT_EVENTS = {"life.gained", "damage.dealt", "damage.dealt.self", "combat.damage.player", "damage.received", "combat.damage.received"}
 _HISTORY = {
     "the amount of life you gained this turn": "life_gained",
     "the amount of life you lost this turn": "life_lost",
@@ -48,7 +48,8 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
         source=rf'(?:this (?:artifact|aura|creature|enchantment|equipment|land|permanent|token)|{SourceReferenceSpec(source_name).regex_pattern})'
         direct=bool(re.fullmatch(source,counter['reference'],re.I))
         pronoun=counter['reference'].casefold() in {'it','him','her'}
-        if not direct and not (pronoun and source_event):return None
+        source_subject=bool(re.match(source+r' (?:deals|gets|gains)\b',body,re.I))
+        if not direct and not (pronoun and (source_event or source_subject)):return None
         try:return ScalarEffectAmountSpec(ScalarAmountOrigin.SOURCE,counter_name=normalized_counter_name(counter['counter']),schema_version=2)
         except ValueError:return None
     match = re.fullmatch(r"(?P<reference>.+?) (?P<field>power|toughness|mana value)", value, re.I)
@@ -56,10 +57,15 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
         return None
     reference = match["reference"].casefold()
     field = match["field"].casefold().replace(" ", "_")
+    if reference.replace('’',"'")=="that spell's" and field=='mana_value' and event=='spell.cast':
+        return ScalarEffectAmountSpec(ScalarAmountOrigin.CAST_SPELL_MANA_VALUE,characteristic='mana_value',schema_version=8)
     source = rf"(?:this (?:creature|permanent|artifact|land|enchantment)|{SourceReferenceSpec(source_name).regex_pattern})"
     if re.fullmatch(source + "['’]s", match["reference"], re.I):
         origin = ScalarAmountOrigin.SOURCE
-    elif reference == "its" and re.match(source + r" (?:gets|deals|gains)\b", body, re.I):
+    elif reference == "its" and (
+        re.match(source + r" (?:gets|deals|gains)\b", body, re.I)
+        or source_event and re.match(r"(?:it|him|her) (?:gets|deals|gains)\b", body, re.I)
+    ):
         origin = ScalarAmountOrigin.SOURCE
     elif (reference == "its" or re.fullmatch(r"that (?:creature|permanent|artifact|land)['’]s", reference)) and (
         isinstance(schema, Mapping) and schema.get("zones") == ["battlefield"]
@@ -103,7 +109,7 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         match = re.fullmatch(r"(?P<head>.+?) equal to (?P<twice>twice )?(?P<quantity>.+?)(?P<tail> to .+| until end of turn)?\.?", normalized, re.I)
         if match is None:
             return None
-        body = match["head"] + " X" + (match["tail"] or "") + "."
+        body = match["head"] + " X" + (match["tail"] or "").rstrip('.') + "."
         quantity = match["quantity"].rstrip(".")
         multiplier = 2 if match["twice"] else 1
         body = re.sub(r"\bdraw cards X\b", "Draw X cards", body, flags=re.I)
@@ -111,6 +117,13 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         body = re.sub(r"\b(deals?) damage X\b", r"\1 X damage", body, flags=re.I)
         body = re.sub(r"\b(gain|gains|lose|loses) life X\b", r"\1 X life", body, flags=re.I)
     def canonical_fixed(text):
+        if source_event:
+            from .damage_templates import source_pronoun_damage_effect_template
+            damage = source_pronoun_damage_effect_template(text)
+            if damage is not None:
+                return damage.compiled()
+            from .source_self_effect_templates import normalized_source_result_body
+            text = normalized_source_result_body(text) or text
         result = compile_fixed(text)
         if len(result[1]) == 1 and result[1][0].get("op") == "modify_stats_until_end_of_turn" and result[1][0].get("card") == "$source":
             effect = result[1][0]
@@ -141,6 +154,9 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         return deepcopy(value)
     from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC
     additional=(TARGET_HAND_COUNT_MECHANIC,) if producer.origin is ScalarAmountOrigin.TARGET_HAND_COUNT else ()
+    if producer.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:
+        from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
+        additional=(*additional,CAST_MANA_VALUE_MECHANIC)
     return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
 
 
@@ -149,6 +165,11 @@ def scalar_amount_shape_context(effects, mechanics):
     count = 0
     def project(value, operation, path):
         nonlocal count
+        if isinstance(value,Mapping) and value.get('op')=='offer_optional_effect':
+            children=value.get('effects')
+            if set(value)!={'op','player','effects'} or value.get('player')!='$controller' or not isinstance(children,(list,tuple)) or len(children)!=1 or not isinstance(children[0],Mapping):
+                raise PublicQueryAmountError('Scalar optional results require one closed controller child')
+            return {**value,'effects':type(children)(project(child,str(child.get('op') or ''),()) for child in children)}
         if isinstance(value, Mapping) and value.get("kind") == SCALAR_AMOUNT_KIND:
             if not _result_slot(operation, path):
                 raise PublicQueryAmountError("Scalar amount is outside a result slot")
@@ -170,4 +191,5 @@ def scalar_amount_shape_context(effects, mechanics):
     from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC
     from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC
     from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC
-    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount",TARGET_HAND_COUNT_MECHANIC,MULTIKICKER_AMOUNT_MECHANIC,MANA_COLOR_AMOUNT_MECHANIC}
+    from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
+    return fixed, set(mechanics) - {SCALAR_AMOUNT_MECHANIC, "declared-effect-amount",TARGET_HAND_COUNT_MECHANIC,MULTIKICKER_AMOUNT_MECHANIC,MANA_COLOR_AMOUNT_MECHANIC,CAST_MANA_VALUE_MECHANIC}

@@ -311,7 +311,7 @@ def public_cast_cost_modifier_template(
 
 
 def public_cast_cost_modifier_v2_template(
-    text: str,
+    text: str, *, source_name: str = 'source',
 ) -> PublicCastCostModifierV2Spec | None:
     """Parse the bounded colored and public-value total-cost extension."""
 
@@ -326,6 +326,21 @@ def public_cast_cost_modifier_v2_template(
         "",
         " ".join(text.strip().split()),
     )
+    power = re.fullmatch(r'(?P<subject>.+?) costs? \{X\} less to cast, where X is (?P<metric>.+?)\.?', normalized, re.I)
+    if power is not None:
+        from .public_value_costs import source_power_cost_metric
+        metric = source_power_cost_metric(power['metric'], source_name=source_name)
+        raw_subject = power['subject']
+        bounded = re.fullmatch(r'(?P<base>.+? spells you cast) with mana value (?P<minimum>[1-9][0-9]*) or greater', raw_subject, re.I)
+        if bounded is not None:
+            raw_subject = bounded['base']
+        subject = _subject_spec(raw_subject)
+        if metric is not None and subject is not None:
+            return build(affected_controller=subject[0], predicates_any=subject[1],
+                mana_adjustment=(('GENERIC', -1),), multiplier=metric.to_dict(),
+                minimum_mana_value=int(bounded['minimum']) if bounded else None,
+                cast_origin_zones=subject[2], excluded_cast_origin_zones=subject[3],
+                turn_relation=subject[4], ordinal=subject[5])
     affinity = _AFFINITY_GRANT.fullmatch(normalized)
     if affinity is not None:
         subject = _subject_spec(affinity.group("subject"))

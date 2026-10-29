@@ -89,9 +89,18 @@ class FixedManaModelTests(unittest.TestCase):
     def test_fixed_mana_results_reject_unknown_tails_and_missing_result_capability(self):
         from quorune.rules.capabilities import CapabilityRegistry
         from common import ROOT
+        for text, operations in (
+            ('{T}: Add {G}. This artifact deals 1 damage to target player.', ('mana', 'damage')),
+            ('{T}: Add {G}. This artifact deals 1 damage to you. Draw a card.', ('mana', 'damage', 'draw')),
+        ):
+            ir = compile_oracle_card(record(text), capability_registry=load_default_capability_registry())
+            self.assertEqual('exact', ir.status, ir.material_residuals)
+            self.assertEqual(operations, tuple(effect['op'] for effect in ir.faces[0].nodes[0].effects))
+            # CR 605.1a excludes target and library-moving activations.
+            self.assertEqual('activated_ability', ir.faces[0].nodes[0].kind)
         for text in ('{T}: Add {G}. This artifact deals X damage to you.',
-                     '{T}: Add {G}. This artifact deals 1 damage to target player.',
-                     '{T}: Add {G}. This artifact deals 1 damage to you. Draw a card.',
+                     '{T}: Add {G}. This artifact deals 1 damage to target player with the chosen name.',
+                     '{T}: Add {G}. This artifact deals 1 damage to you. Draw a card with the chosen name.',
                      '{T}, Sacrifice this artifact: Add {G}. This artifact deals 1 damage to you.'):
             self.assertNotEqual('exact',compile_oracle_card(record(text),capability_registry=load_default_capability_registry()).status)
         data=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
@@ -488,6 +497,18 @@ class FixedManaCompilerTests(unittest.TestCase):
                 "{T}: Add {U} or {B}. Activate only if you control an Island or a Swamp.",
                 {"activation.condition.public_query", "mana.activated.fixed_output"},
             ),
+            (
+                "{T}: Add {G}. Activate only if you control a Goblin or an Elf.",
+                {"activation.condition.fixed_public_state", "mana.activated.fixed_output"},
+            ),
+            (
+                "{T}: Add {C}. Activate only if you control three or more artifacts.",
+                {"mana.activated.fixed_output"},
+            ),
+            (
+                "{T}: Add {W}. Activate only during your upkeep and only once each turn.",
+                {"activation.condition.phase_window", "activation.usage.once_per_turn", "mana.activated.fixed_output"},
+            ),
         )
         capabilities = load_default_capability_registry()
         for text, expected in cases:
@@ -506,9 +527,6 @@ class FixedManaCompilerTests(unittest.TestCase):
             "{T}: Add one mana of any color. Spend this mana only to cast spells from exile.",
             "{T}: Add {C}{C}. Spend this mana only to cast spells with mana value 5 or greater.",
             "{T}: Add one mana of any color. Activate only if this land entered this turn or if you control a basic land.",
-            "{T}: Add {G}. Activate only if you control a Goblin or an Elf.",
-            "{T}: Add {C}. Activate only if you control three or more artifacts.",
-            "{T}: Add {W}. Activate only during your upkeep and only once each turn.",
             "{T}: Add {G}. If this mana is spent on a creature spell, it gains haste.",
         ):
             with self.subTest(unsupported=unsupported):

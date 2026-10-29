@@ -1172,6 +1172,10 @@ def _decode_semantic_intent_continuation(
         or (resume_kind == "semantic_intent_completion" and not isinstance(response, Mapping))
         or not isinstance(semantic_intent, Mapping)
         or intent_kind not in {
+            "champion_exile",
+            "champion_return",
+            "cipher_encode",
+            "discard_hand_result",
             "destroy_permanent",
             "destroy_permanent_set",
             "destroy_permanent_targets",

@@ -95,6 +95,8 @@ class ExploreChoiceHandler:
                 request=None,
                 continuation_effect=FrozenMap(effect),
                 preparation_intents=(
+                    *(_explore_counter_intents(explorer, context) if explorer_is_current
+                      and getattr(context.query, 'explore_action_version', None) == 1 else ()),
                     ExploreCompletedIntent(
                         actor=context.actor,
                         player=context.actor,
@@ -180,20 +182,7 @@ class ExploreChoiceHandler:
             ),
             preparation_intents=(
                 reveal,
-                *(
-                    (
-                        PlaceCountersIntent(
-                            actor=context.actor,
-                            object_refs=(explorer.ref,),
-                            counter_name="+1/+1",
-                            amount=1,
-                            reason=context.stack_label,
-                            source_ref=explorer.ref,
-                        ),
-                    )
-                    if explorer_is_current
-                    else ()
-                ),
+                *(_explore_counter_intents(explorer, context) if explorer_is_current else ()),
             ),
         )
 
@@ -246,6 +235,11 @@ class ExploreChoiceHandler:
             )
         )
         return SemanticChoiceCompletion(intents=tuple(intents))
+
+
+def _explore_counter_intents(explorer, context):
+    return (PlaceCountersIntent(actor=context.actor, object_refs=(explorer.ref,),
+        counter_name='+1/+1', amount=1, reason=context.stack_label, source_ref=explorer.ref),)
 
 
 @dataclass(frozen=True, slots=True)

@@ -71,6 +71,7 @@ def _represented_effect(
             seats=query.seats,
             active_seats=query.active_seats,
             apnap_order=query.active_seats,
+            source=getattr(query, 'resolution_source', None),
         )
     except SemanticNodeError as exc:
         raise SemanticChoiceError(str(exc)) from exc

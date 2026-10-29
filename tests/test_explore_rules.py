@@ -81,6 +81,7 @@ def _context(
         semantic_program_id="fixture:explore",
         semantic_program_version=1,
         query=SnapshotSemanticChoiceQuery(
+            explore_action_version=1,
             seat_order=("A", "B"),
             active_order=("A", "B"),
             object_rows=rows,
@@ -163,8 +164,9 @@ class ExploreRuleTests(unittest.TestCase):
             {"op": "explore", "player": "A", "card": "P1"},
             _context(explorer, None),
         )
-        self.assertEqual(1, len(preparation.preparation_intents))
-        completed = preparation.preparation_intents[0]
+        self.assertEqual(2, len(preparation.preparation_intents))
+        self.assertIsInstance(preparation.preparation_intents[0], PlaceCountersIntent)
+        completed = preparation.preparation_intents[1]
         self.assertIsInstance(completed, ExploreCompletedIntent)
         self.assertEqual("empty_library", completed.result)
 

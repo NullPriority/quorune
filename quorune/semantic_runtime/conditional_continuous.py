@@ -20,7 +20,7 @@ from ..continuous_effect_model import (
 )
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..ability_fragments import (
-    GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec, ability_fragment_from_dict,
+    GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec, StaticComponentSpec, ability_fragment_from_dict,
 )
 from ..defender_permission import DefenderAttackPermission, DEFENDER_PERMISSION_CAPABILITY, CONDITIONAL_DEFENDER_PERMISSION_HANDLER
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, CONDITIONAL_AS_UNBLOCKED_HANDLER
@@ -56,6 +56,7 @@ class FixedPublicStateCharacteristicsNode:
 
 def _validate_target(
     value: Any,
+    *, allow_permanent: bool = False,
 ) -> tuple[
     str,
     str | None,
@@ -139,7 +140,7 @@ def _validate_target(
             target_controller is not None
             or value["predicate"] is not None
             or value["exclude_source"]
-            or not subject_types_all
+            or not subject_types_all and not allow_permanent
             or set(subject_types_all) - {"creature", "land"}
         ):
             raise SemanticNodeError(
@@ -206,9 +207,13 @@ def _validate_modifier(
             parsed = ability_fragment_from_dict(raw) if isinstance(raw, Mapping) else None
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
-        expected = (DeclarationRequirementTemplate, DeclarationRestrictionTemplate) if allow_declaration else (BlockCapacitySpec,) if allow_block_capacity else (AsUnblockedAssignmentPermission,) if allow_as_unblocked else (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec)
+        expected = (DeclarationRequirementTemplate, DeclarationRestrictionTemplate) if allow_declaration else (BlockCapacitySpec,) if allow_block_capacity else (AsUnblockedAssignmentPermission,) if allow_as_unblocked else (DefenderAttackPermission,) if allow_defender_permission else (GrantedActivatedAbilitySpec, GrantedTriggeredAbilitySpec, StaticComponentSpec)
         if not isinstance(parsed, expected):
             raise SemanticNodeError("Conditional grants require independently compiled typed abilities")
+        if isinstance(parsed, StaticComponentSpec) and parsed.schema_version not in {2, 3}:
+            raise SemanticNodeError('Conditional static grants require a versioned cost reference')
+        if isinstance(parsed, StaticComponentSpec) and parsed.schema_version == 3 and parsed.grant_timestamp is not None:
+            raise SemanticNodeError('A conditional characteristic grant cannot prebind its effect timestamp')
         if allow_declaration and isinstance(parsed, DeclarationRestrictionTemplate) and parsed.scope not in {'self', 'source_option'}:
             raise SemanticNodeError('Conditional declaration grants require recipient-relative self scope')
         fragments.append(dict(raw))
@@ -313,13 +318,6 @@ class FixedPublicStateCharacteristicsHandler:
             raise SemanticNodeError(f"{self.handler_id} must handle {self.event}")
         source_condition = validate_static_public_state_condition(descriptor['source_condition'])
 
-        (
-            target_kind,
-            target_controller,
-            predicate,
-            exclude_source,
-            subject_types_all,
-        ) = _validate_target(descriptor["target"])
         abilities, power, toughness, fragments = _validate_modifier(
             descriptor["modifier"], allow_granted_ability=self.schema_version == 2,
             allow_defender_permission=self.schema_version == 3,
@@ -328,6 +326,16 @@ class FixedPublicStateCharacteristicsHandler:
             allow_declaration=self.schema_version == 6,
             allow_typed_keywords=self.schema_version == 7,
         )
+        allow_permanent = self.schema_version == 2 and any(
+            isinstance(fragment := ability_fragment_from_dict(value), StaticComponentSpec)
+            and fragment.schema_version == 3 for value in fragments)
+        (
+            target_kind,
+            target_controller,
+            predicate,
+            exclude_source,
+            subject_types_all,
+        ) = _validate_target(descriptor["target"], allow_permanent=allow_permanent)
         return FixedPublicStateCharacteristicsNode(
             source_condition=source_condition,
             target_kind=target_kind,

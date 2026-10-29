@@ -234,9 +234,8 @@ def current_activation_mana_options(
 ) -> tuple[ActivationManaCostOption, ...]:
     if modifiers:
         return _modified_activation_mana_options(host, seat, source, ability, modifiers)
-    reduction = int(
-        getattr(ability, "generic_reduction_per_legendary_creature", 0)
-    ) * max(0, host._legendary_creatures_controlled(seat))
+    coefficient = int(getattr(ability, "generic_reduction_per_legendary_creature", 0))
+    reduction = coefficient * max(0, host._legendary_creatures_controlled(seat)) if coefficient else 0
     options = reduced_activation_mana_options(
         tuple(getattr(ability, "mana_cost_options", ())),
         generic_reduction=reduction,
@@ -252,8 +251,8 @@ def _modified_activation_mana_options(host, seat, source, ability, modifiers):
     from .activation_cost_modifiers import ActivationManaReduction, activation_cost_prices
     from .util import stable_json
 
-    legendary = int(ability.generic_reduction_per_legendary_creature) * max(
-        0, host._legendary_creatures_controlled(seat))
+    coefficient = int(ability.generic_reduction_per_legendary_creature)
+    legendary = coefficient * max(0, host._legendary_creatures_controlled(seat)) if coefficient else 0
     power_up = ()
     if ability.power_up is not None:
         from .power_up import current_power_up_reductions

@@ -1262,8 +1262,8 @@ class FixedQueryKeywordGrantCompilerTests(unittest.TestCase):
         expected = self.compile(record)
         original = fixed_query_keyword_grant_handler
 
-        def scoped_mutant(text: str):
-            compiled = original(text)
+        def scoped_mutant(text: str, **options):
+            compiled = original(text, **options)
             if compiled is None:
                 return None
             template_id, descriptor, capabilities = compiled
