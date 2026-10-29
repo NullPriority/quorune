@@ -92,11 +92,12 @@ class TurnHistoryEvent:
     origin: str | None = None
 
     def __post_init__(self):
-        if self.origin is not None and (type(self.origin) is not str or self.origin not in {'battlefield','hand','library','stack','exile','command','outside'}):
+        if self.origin is not None and (type(self.origin) is not str or self.origin not in {'battlefield','hand','library','graveyard','stack','exile','command','outside'}):
             raise ValueError('Turn-history arrival origin is closed')
-        if self.kind=='card_arrived_graveyard' and (self.origin is None or type(self.object_incarnation) is not str or not self.object_incarnation):
+        if self.kind=='card_arrived_graveyard' and (self.origin is None or self.origin=='graveyard' or type(self.object_incarnation) is not str or not self.object_incarnation):
             raise ValueError('Graveyard arrival needs its exact arrived incarnation and origin')
-        if self.kind!='card_arrived_graveyard' and self.origin is not None:raise ValueError('Only graveyard arrival history has an origin')
+        if self.kind not in {'card_arrived_graveyard','spell_cast'} and self.origin is not None:raise ValueError('Only cast and graveyard arrival history has an origin')
+        if self.kind=='spell_cast' and self.origin in {'battlefield','stack'}:raise ValueError('A cast needs a supported pre-stack origin')
         if self.kind=='card_milled_graveyard' and (type(self.object_incarnation) is not str or not self.object_incarnation):
             raise ValueError('Mill arrival history needs its exact graveyard incarnation')
 
@@ -132,6 +133,8 @@ class TurnHistory:
     departure_history_version: int | None = None
     arrival_history_version: int | None = None
     mill_history_version: int | None = None
+    spell_origin_history_version: int | None = None
+    graveyard_type_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -145,6 +148,9 @@ class TurnHistory:
             raise ValueError("Unsupported departure-history version")
         if self.arrival_history_version is not None and (type(self.arrival_history_version) is not int or self.arrival_history_version!=1):raise ValueError('Unsupported arrival-history version')
         if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
+        for mode in (self.spell_origin_history_version,self.graveyard_type_history_version):
+            if mode is not None and (type(mode) is not int or mode!=1):raise ValueError('Unsupported qualified history version')
+        if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
         ):
@@ -184,6 +190,8 @@ class TurnHistory:
             "events": [event.to_dict() for event in self.events],
             **({"arrival_history_version":1} if self.arrival_history_version is not None else {}),
             **({"mill_history_version":1} if self.mill_history_version is not None else {}),
+            **({"spell_origin_history_version":1} if self.spell_origin_history_version is not None else {}),
+            **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -217,6 +225,8 @@ class TurnHistory:
             departure_history_version=data.get("departure_history_version"),
             arrival_history_version=data.get("arrival_history_version"),
             mill_history_version=data.get("mill_history_version"),
+            spell_origin_history_version=data.get("spell_origin_history_version"),
+            graveyard_type_history_version=data.get("graveyard_type_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

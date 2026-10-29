@@ -1677,6 +1677,14 @@ Missing or stale history is unavailable, including inside Boolean conditions
 and zero-count comparisons. Intervening conditions retain the existing checks
 at occurrence and resolution under the trigger's locked controller.
 
+Qualified history modes also seal a completed cast's original zone and an
+arriving card's graveyard types. Cast-origin conditions count a spell even if
+it is later countered. Descent counts permanent cards arriving from anywhere
+in their owner's graveyard; it excludes tokens and uses the arriving card's
+types rather than a departed permanent's temporary characteristics. Later
+departure does not erase an arrival. These facts reuse the existing turn
+journal and require explicit complete-history modes.
+
 Schema-five public conditions have a separate numeric creature-existence
 predicate. Intervening triggers and resolution instructions read complete
 current effective power or toughness under their locked controller. They

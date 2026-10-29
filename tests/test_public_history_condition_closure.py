@@ -107,7 +107,7 @@ class PublicHistoryConditionCompilerTests(unittest.TestCase):
 
     def test_unrepresented_history_conditions_remain_residual(self):
         for condition in (
-            "you descended this turn", "it was kicked", "you attacked twice this turn",
+            "you descended last turn", "it was kicked", "you attacked twice this turn",
             "no creature died this turn", "an opponent lost X life this turn",
             "a permanent left the battlefield this turn or a spell was warped this turn",
         ):

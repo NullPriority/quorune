@@ -136,6 +136,7 @@
       "test_qualified_attack_batches",
       "test_qualified_attack_subjects",
       "test_qualified_entry_state",
+      "test_qualified_public_history",
       "test_quantified_counter_targets",
       "test_random_discard_activation_costs",
       "test_record_lifecycle_v060",

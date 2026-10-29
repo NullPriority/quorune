@@ -9,14 +9,19 @@ from .fixed_numbers import fixed_number
 _N=r'a|an|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+'
 
 
-def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),excluded_types=(),at_most=False,reduction='count'):
-    query=PublicHistoryQuerySpec(event,relation,types_all,types_any,excluded_types,reduction)
+def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),excluded_types=(),at_most=False,reduction='count',origin=None):
+    version=2 if origin is not None or event=='card_arrived_graveyard' and any((types_all,types_any,excluded_types)) else 1
+    query=PublicHistoryQuerySpec(event,relation,types_all,types_any,excluded_types,reduction,schema_version=version,origin=origin)
     return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST if at_most else FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
         amount=amount,schema_version=8,history_query=query)
 
 
 def fixed_public_history_condition(text):
     text=' '.join(text.strip().rstrip('.').casefold().replace('’',"'").split())
+    if text in {"you haven't cast a spell from your hand this turn",'you have not cast a spell from your hand this turn'}:
+        return _condition('spell_cast',amount=0,at_most=True,origin='hand')
+    if text=='you descended this turn':
+        return _condition('card_arrived_graveyard',types_any=('artifact','battle','creature','enchantment','land','planeswalker'))
     death=re.fullmatch(rf'(?P<n>{_N})(?P<more> or more)? creatures? died(?P<actor> under your control| under an opponent\'s control)? this turn',text)
     if death:
         amount=fixed_number(death['n'])

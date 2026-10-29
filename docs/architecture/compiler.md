@@ -3003,6 +3003,15 @@ event journal and ambiguous conditions remain residual. Boolean composition
 uses the same atomic condition parser, while result instructions must still
 lower independently.
 
+The same owner admits the closed no-spell-from-hand and descended-this-turn
+predicates through history-query schema two. These independently require
+`condition.history.spell_origin` and
+`condition.history.graveyard_card_types`, respectively. The former uses a
+zero hand-origin cast count; the latter uses a permanent-card type union over
+actual graveyard arrivals. The existing intervening-condition owner rechecks
+them on resolution. Unrepresented descent counts and other temporal ranges
+remain residual.
+
 The separate fixed public alternative-cost owner lowers complete-card-admitted
 plain “rather than pay” declarations and fixed ordinary-mana Freerunning,
 Prowl, Spectacle, and Surge. Plain declarations may contain one fixed mana or

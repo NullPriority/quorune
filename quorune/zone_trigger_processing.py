@@ -12,6 +12,7 @@ from .zone_trigger_events import (
     ZoneChangeOccurrence,
     ZoneTransitionKind,
     normalized_zone_trigger_events,
+    sealed_public_characteristic_facts,
 )
 
 
@@ -179,8 +180,9 @@ def record_zone_change_history(
 
     history=getattr(host.state,'turn_history',None)
     if occurrence.destination=='graveyard' and occurrence.origin!='graveyard' and occurrence.card_object and getattr(history,'arrival_history_version',None)==1:
+        types=set(sealed_public_characteristic_facts(occurrence.current_characteristics)['types']) if history.graveyard_type_history_version==1 else set()
         host._record_turn_history('card_arrived_graveyard',actor=occurrence.owner,
-            object_incarnation=occurrence.current_logical_object_id,types=set(),origin=occurrence.origin)
+            object_incarnation=occurrence.current_logical_object_id,types=types,origin=occurrence.origin)
     normalized = tuple(events or normalized_zone_trigger_events(occurrence))
     previous_types = set(
         str(value)

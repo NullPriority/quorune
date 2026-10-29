@@ -9149,6 +9149,22 @@
         "test_resolution_public_conditions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "qualified-public-history",
+      "patterns": [
+        "quorune/public_history_query_model.py",
+        "quorune/compiler/public_history_conditions.py",
+        "tests/test_qualified_public_history.py",
+        "tests/fixtures/qualified-public-history-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_public_history",
+        "test_public_history_queries",
+        "test_public_history_condition_closure",
+        "test_turn_history_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

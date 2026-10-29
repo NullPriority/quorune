@@ -322,6 +322,15 @@ event fields. Departure and graveyard-arrival queries require their existing
 history-mode markers. An absent mode is unavailable rather than a known zero.
 Condition schemas one through seven retain their original serialized shapes.
 
+History-query schema two adds a closed origin selector and permits card-type
+filters on graveyard arrivals. Complete facts require additive
+`turn_history.spell_origin_history_version` and
+`turn_history.graveyard_type_history_version` markers, each one when enabled.
+New games enable them; rollover and reset preserve them. The record manifest
+binds their versions to the initial checkpoint. Historical absence omits cast
+origins and retains empty arrival types, so replay adds no previously absent
+facts. Missing modes cannot establish a qualified zero-history condition.
+
 Upkeep-relative control history is one such additive boundary. New records pin
 its version in both the initial checkpoint and manifest; records without the
 marker remain in the historical no-history mode so later replay does not add

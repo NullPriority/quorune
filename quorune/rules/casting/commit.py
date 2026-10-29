@@ -1196,6 +1196,7 @@ def _dispatch_cast_events(
         actor=proposal.seat,
         object_incarnation=card.logical_object_id,
         types=cast_types,
+        origin=proposal.origin if getattr(host.state.turn_history,'spell_origin_history_version',None)==1 else None,
     )
     context = SpellCastEvent(
         schema_version=7,

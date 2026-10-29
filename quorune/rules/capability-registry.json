@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 549,
+  "registry_version": 550,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -65018,6 +65018,186 @@
       "dependency_fail_closed_rationale": "Verified edited registry/evidence withdrawal blocks the history condition while Flying remains exact; runtime dependency is inferred from the version8 query payload.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Ignoring sealed event actor fails the independent zero-match witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "condition.history.spell_origin",
+      "version": 1,
+      "official_rules": [
+        "601.2i",
+        "603.4",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version2 public history queries filter committed spell origins; no-hand-cast predicates require explicit complete origin history and recheck intervening conditions.",
+        "inputs": [
+          "Closed version2 history query",
+          "Explicit complete origin or graveyard-type history mode"
+        ],
+        "outputs": [
+          "Read-only qualified current-turn count"
+        ],
+        "exclusions": [
+          "Current-object substitutions",
+          "Missing event modes",
+          "Previous turns or arbitrary predicates"
+        ]
+      },
+      "dependencies": [
+        "condition.history.fixed_public_query"
+      ],
+      "implementation_components": [
+        "quorune.public_history_query_model.PublicHistoryQuerySpec",
+        "quorune.public_history_query_model.public_history_query_value",
+        "quorune.rules.casting.commit._dispatch_cast_events"
+      ],
+      "positive_tests": [
+        "test_actual_jem_command_cast_qualifies_private_draw_without_a_hand_cast",
+        "test_actual_own_turn_wrangler_cast_prevents_end_step_trigger",
+        "test_actual_wrangler_foreign_hand_instant_does_not_suppress_queued_token",
+        "test_actual_wrangler_rechecks_after_own_hand_instant_and_preserves_rollback_replay",
+        "test_new_history_modes_bind_manifest_and_absence_keeps_old_checkpoint",
+        "test_qualified_history_filters_sealed_origin_owner_and_arriving_card_types",
+        "test_qualified_history_grammar_and_runtime_capabilities_are_independent",
+        "test_qualified_query_versions_and_history_modes_preserve_legacy_payloads"
+      ],
+      "negative_tests": [
+        "test_actual_jem_command_cast_qualifies_private_draw_without_a_hand_cast",
+        "test_actual_own_turn_wrangler_cast_prevents_end_step_trigger",
+        "test_actual_wrangler_foreign_hand_instant_does_not_suppress_queued_token",
+        "test_actual_wrangler_rechecks_after_own_hand_instant_and_preserves_rollback_replay",
+        "test_new_history_modes_bind_manifest_and_absence_keeps_old_checkpoint",
+        "test_qualified_history_filters_sealed_origin_owner_and_arriving_card_types",
+        "test_qualified_history_grammar_and_runtime_capabilities_are_independent",
+        "test_qualified_query_versions_and_history_modes_preserve_legacy_payloads",
+        "test_runtime_qualified_history_dependencies_cannot_be_omitted",
+        "test_verified_each_qualified_owner_withdrawal_keeps_unqualified_history"
+      ],
+      "interaction_tests": [
+        "test_actual_jem_command_cast_qualifies_private_draw_without_a_hand_cast",
+        "test_actual_own_turn_wrangler_cast_prevents_end_step_trigger",
+        "test_actual_wrangler_foreign_hand_instant_does_not_suppress_queued_token",
+        "test_actual_wrangler_rechecks_after_own_hand_instant_and_preserves_rollback_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_jem_command_cast_qualifies_private_draw_without_a_hand_cast",
+        "test_actual_own_turn_wrangler_cast_prevents_end_step_trigger",
+        "test_actual_wrangler_foreign_hand_instant_does_not_suppress_queued_token",
+        "test_actual_wrangler_rechecks_after_own_hand_instant_and_preserves_rollback_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_jem_command_cast_qualifies_private_draw_without_a_hand_cast"
+      ],
+      "replay_tests": [
+        "test_actual_jem_command_cast_qualifies_private_draw_without_a_hand_cast",
+        "test_actual_own_turn_wrangler_cast_prevents_end_step_trigger",
+        "test_actual_wrangler_foreign_hand_instant_does_not_suppress_queued_token",
+        "test_actual_wrangler_rechecks_after_own_hand_instant_and_preserves_rollback_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited capability/evidence withdrawal rejects each qualified form while unqualified history remains admitted; independent runtime minima are checked.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Independently removing cast-origin or arrived-card type filtering changes a zero-match witness into one; both mutations are rejected.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "condition.history.graveyard_card_types",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "700.11",
+        "111.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version2 public history queries filter card types sealed in the graveyard on actual arrival, using owner rather than previous controller; tokens and nonpermanent cards do not constitute descent.",
+        "inputs": [
+          "Closed version2 history query",
+          "Explicit complete origin or graveyard-type history mode"
+        ],
+        "outputs": [
+          "Read-only qualified current-turn count"
+        ],
+        "exclusions": [
+          "Current-object substitutions",
+          "Missing event modes",
+          "Previous turns or arbitrary predicates"
+        ]
+      },
+      "dependencies": [
+        "condition.history.fixed_public_query"
+      ],
+      "implementation_components": [
+        "quorune.public_history_query_model.PublicHistoryQuerySpec",
+        "quorune.public_history_query_model.public_history_query_value",
+        "quorune.zone_trigger_processing.record_zone_change_history"
+      ],
+      "positive_tests": [
+        "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
+        "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify",
+        "test_arrival_producer_uses_owner_new_zone_types_and_retains_legacy_empty_types",
+        "test_new_history_modes_bind_manifest_and_absence_keeps_old_checkpoint",
+        "test_qualified_history_filters_sealed_origin_owner_and_arriving_card_types",
+        "test_qualified_history_grammar_and_runtime_capabilities_are_independent",
+        "test_qualified_query_versions_and_history_modes_preserve_legacy_payloads"
+      ],
+      "negative_tests": [
+        "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
+        "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify",
+        "test_arrival_producer_uses_owner_new_zone_types_and_retains_legacy_empty_types",
+        "test_new_history_modes_bind_manifest_and_absence_keeps_old_checkpoint",
+        "test_qualified_history_filters_sealed_origin_owner_and_arriving_card_types",
+        "test_qualified_history_grammar_and_runtime_capabilities_are_independent",
+        "test_qualified_query_versions_and_history_modes_preserve_legacy_payloads",
+        "test_runtime_qualified_history_dependencies_cannot_be_omitted",
+        "test_verified_each_qualified_owner_withdrawal_keeps_unqualified_history"
+      ],
+      "interaction_tests": [
+        "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
+        "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify"
+      ],
+      "multiplayer_tests": [
+        "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
+        "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify"
+      ],
+      "privacy_tests": [
+        "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves"
+      ],
+      "replay_tests": [
+        "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
+        "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited capability/evidence withdrawal rejects each qualified form while unqualified history remains admitted; independent runtime minima are checked.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Independently removing cast-origin or arrived-card type filtering changes a zero-match witness into one; both mutations are rejected.",
       "blockers": [],
       "status": "trusted"
     }
