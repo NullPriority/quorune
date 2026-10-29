@@ -124,7 +124,11 @@ class CreatureSubtypeAdditionNativeTests(unittest.TestCase):
         self.assertFalse(bound_declaration_requirements(session.engine,session.state.cards[elf.object_id],error_type=ValueError))
         self.cast(session,'A',removal,[earlier.ref]);self.assertIsNone(self.resolve(session));self.assertEqual((8,6),self.stats(session,elf))
         self.assertTrue(bound_declaration_requirements(session.engine,session.state.cards[elf.object_id],error_type=ValueError))
-        self.cast(session,'B',later);self.assertIsNone(self.resolve(session));self.assertEqual((3,3),self.stats(session,elf))
+        self.cast(session,'B',later);self.assertIsNone(self.resolve(session))
+        # CR 613.8a suppresses both later-only Elf anthems. Graaz's earlier
+        # layer-four effect continues under 613.6; Humility's later 1/1 wins
+        # in layer 7b, then the existing +1/+1 counter gives 2/2.
+        self.assertEqual((2,2),self.stats(session,elf))
         self.assertIn('juggernaut',self.parts(session,elf)[1]);self.assertFalse(bound_declaration_requirements(session.engine,session.state.cards[elf.object_id],error_type=ValueError))
         self.replay(session,load=True)
 

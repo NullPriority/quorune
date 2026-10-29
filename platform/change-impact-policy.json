@@ -10112,7 +10112,8 @@
         "test_conditional_color_grants",
         "test_card_program_trust",
         "test_opponent_keyword_prohibition",
-        "test_receiver_query_unions"
+        "test_receiver_query_unions",
+        "test_creature_subtype_additions"
       ]
     },
     {
