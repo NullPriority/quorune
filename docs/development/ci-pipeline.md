@@ -276,6 +276,12 @@ dependency. Neither the server nor browser invokes it. Its purpose is to keep
 tracked coverage, architecture, protocol, and status artifacts synchronized
 with their authoritative source before Git publishes a commit.
 
+Before the first database-backed writer, the local coordinator runs the existing
+semantic-transition policy validator. A stale compiler/declaration identity
+therefore fails before corpus work starts. Stabilization and scoped recovery
+retain their existing database reuse behavior; the check does not authorize
+skipping final freshness or publication checks.
+
 `platform/generated-artifacts.json` is the canonical ownership and dependency
 manifest for every tracked generated artifact. Its versioned discovery policy
 finds artifacts through generated path prefixes, top-level pinned-rules JSON,
