@@ -475,12 +475,18 @@ class GrantedTriggeredAbilitySpec:
     event: str
     label: str
     schema_version: int = 1
+    cipher_card_ref: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise AbilityFragmentError(
                 "Unsupported granted triggered-ability schema version"
             )
+        if self.schema_version == 1 and self.cipher_card_ref is not None:
+            raise AbilityFragmentError('Version-one granted triggers reserve Cipher identity')
+        if self.schema_version == 2:
+            if type(self.cipher_card_ref) is not str or not self.cipher_card_ref or self.semantic_key != 'builtin:cipher' or self.event != 'damage.dealt.self':
+                raise AbilityFragmentError('Version-two granted triggers require their Cipher identity')
         for field in ("ability_id", "semantic_key", "event", "label"):
             object.__setattr__(
                 self,
@@ -489,13 +495,16 @@ class GrantedTriggeredAbilitySpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "schema_version": self.schema_version,
             "ability_id": self.ability_id,
             "semantic_key": self.semantic_key,
             "event": self.event,
             "label": self.label,
         }
+        if self.schema_version == 2:
+            result['cipher_card_ref'] = self.cipher_card_ref
+        return result
 
     @classmethod
     def from_dict(
@@ -508,7 +517,7 @@ class GrantedTriggeredAbilitySpec:
             "event",
             "label",
         }
-        if not isinstance(value, Mapping) or set(value) != expected:
+        if not isinstance(value, Mapping) or set(value) != expected | ({'cipher_card_ref'} if value.get('schema_version') == 2 else set()):
             raise AbilityFragmentError(
                 "Granted triggered-ability fragments have a closed schema"
             )

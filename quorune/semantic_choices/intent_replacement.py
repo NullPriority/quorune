@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
+from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent,validate_exploit_identity
 from ..semantic_runtime.champion_intent import (
@@ -350,6 +351,7 @@ def _create_token_intent_identity(
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
 
+    if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
     if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
     if isinstance(intent,ExploitSacrificeIntent):return 'exploit_sacrifice',intent.identity()
     if isinstance(intent, CHAMPION_INTENT_TYPES):return champion_intent_identity(intent)
@@ -752,6 +754,9 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind == 'cipher_encode':
+        try:return validate_cipher_intent_identity(value)
+        except (ValueError, TypeError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind in {'champion_exile', 'champion_return'}:
         try:return decode_champion_intent_identity(kind, value)
         except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1207,6 +1212,7 @@ def with_replacement_selections(
         (
             *DESTRUCTION_INTENT_TYPES,
             *CHAMPION_INTENT_TYPES,
+            EncodeCipherIntent,
             PlaceCountersIntent,
             LifeChangeIntent,
             LifeLossBatchIntent,

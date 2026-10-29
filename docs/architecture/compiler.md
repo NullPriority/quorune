@@ -2896,6 +2896,13 @@ characteristic-defining or otherwise dynamic counts, and copy, face, text, or
 type-changing interactions remain residual until a cycle-safe zone-
 characteristic boundary owns them.
 
+`compiler/cipher_nodes.py` appends a typed optional encoding instruction after
+the ordinary spell body and declares its exile-scoped grant. Promotion validates
+that body independently with the final Cipher instruction removed. Unknown
+companions and malformed keyword rows remain residual. The existing semantic
+choice, continuous grant, trigger and one-shot casting owners implement the
+lifecycle; see [ADR 0135](../adr/0135-cipher-linked-grants-and-copy-casting.md).
+
 `compiler/station_context_nodes.py` binds one or two increasing positive Station symbols
 to independently compiled children. Thresholds accumulate; the explicit pinned
 export annotation locates the final fixed power/toughness box. Ambiguous box

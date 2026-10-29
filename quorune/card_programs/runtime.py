@@ -596,6 +596,15 @@ def _annotated_static_component_keys(source: Any) -> tuple[str, ...]:
     )
 
 
+def _cipher_encoded_object(state, source, descriptor):
+    from ..cipher_model import CIPHER_GRANT_HANDLER
+    if descriptor.get('handler_id') != CIPHER_GRANT_HANDLER:
+        return None
+    from ..rules.cipher import current_cipher_encoding
+    link = current_cipher_encoding(state, source)
+    return link.creature if link is not None else None
+
+
 def _continuous_programs_for_source(
     semantics: "SemanticRegistry",
     source: Any,
@@ -604,6 +613,10 @@ def _continuous_programs_for_source(
     maximum_layer: Layer | None = None,
     ability_source_participation: Callable[[Any,str],bool|None] | None = None,
 ) -> tuple["SemanticProgram", ...]:
+    if source.zone == 'exile':
+        from ..cipher_model import CIPHER_GRANT_HANDLER
+        return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
+            active_zone='exile', event='characteristics.evaluate') if any(d.get('handler_id') == CIPHER_GRANT_HANDLER for d in p.handlers))
     if source.zone == 'graveyard':
         from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID, GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
         return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
@@ -806,12 +819,12 @@ def collect_card_program_continuous_effects(
 
     for seat in state.turn_order:
         player = state.players[seat]
-        for object_id in [*player.zones['battlefield'], *player.zones['graveyard']]:
+        for object_id in [*player.zones['battlefield'], *player.zones['graveyard'], *player.zones['exile']]:
             source = state.cards[object_id]
             if metrics is not None and source.zone == 'battlefield':
                 metrics.battlefield_objects_inspected += 1
             if (
-                (source.owner if source.zone == 'graveyard' else source.controller) != seat
+                (source.owner if source.zone in {'graveyard', 'exile'} else source.controller) != seat
                 or source.phased_out
                 or getattr(source, "face_down", False) and granted_characteristic_resolver is None
             ):
@@ -853,6 +866,7 @@ def collect_card_program_continuous_effects(
                         from ..soulbond_state import paired_object_identity
                         paired_object = paired_object_identity(state, source)
                     context = ContinuousEffectSourceContext(
+                        cipher_encoded_object=_cipher_encoded_object(state, source, descriptor),
                         enchanted_player=current_attached_player_seat(source,state.players),
                         source_object_id=source.object_id,
                         source_ref=source.ref,

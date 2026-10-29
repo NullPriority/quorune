@@ -7,6 +7,16 @@ from ..rules.self_return_capability_shapes import fixed_self_return_node_capabil
 
 def effect_program_is_closed(program, *, recognizers, recursive_is_closed, composed_is_closed):
     """Apply the shared promotion policy to a complete effect program."""
+    if 'cipher_spell_resolution' in program.coverage:
+        from dataclasses import replace
+        from ..cipher_model import CIPHER_CAPABILITY, CIPHER_HANDLER
+        if (CIPHER_CAPABILITY not in program.capability_dependencies or not program.effects
+                or program.effects[-1] != {'op': 'encode_cipher'}):
+            return False
+        body = replace(program, effects=list(program.effects[:-1]),
+            handlers=[h for h in program.handlers if h.get('handler_id') != CIPHER_HANDLER],
+            coverage=[value for value in program.coverage if value != 'cipher_spell_resolution'])
+        return bool(body.effects) and recursive_is_closed(body)
     from ..rules.spell_self_exile import MECHANIC as SELF_EXILE_MECHANIC
     from .spell_self_exile import closed_spell_self_exile_program
     from .declared_effect_amounts import closed_additional_cost_x_result

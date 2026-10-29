@@ -318,6 +318,8 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.lifecycle.disturb_fixed_mana",
                 "zone.change.self_graveyard_exile",
                 "casting.lifecycle.fixed_public",
+                "casting.lifecycle.cipher",
+                "continuous.ability.cipher_encoding",
                 "casting.madness.trigger",
                 "casting.megamorph.fixed_mana",
                 "casting.morph.fixed_mana",

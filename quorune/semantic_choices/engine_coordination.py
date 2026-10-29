@@ -549,6 +549,9 @@ class SemanticChoiceCoordinationMixin:
         from ..rules.library_search_rules import optional_search_permissions
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
         return SnapshotSemanticChoiceQuery(
+            resolution_source_is_physical_card=(
+                (self.state.cards[stack_item.card_object_id].object_kind == 'card')
+                if stack_item is not None and stack_item.card_object_id in self.state.cards else False),
             explore_action_version=getattr(self.state, 'explore_action_version', None),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),

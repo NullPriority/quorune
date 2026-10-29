@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "cipher",
+  "official_name": "Cipher",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": [
+    "702.99",
+    "702.99a",
+    "702.99b",
+    "702.99c",
+    "603.3a",
+    "608.2b",
+    "608.2c",
+    "707.12",
+    "400.7",
+    "613.1f"
+  ],
+  "glossary_references": [
+    "cipher",
+    "encoded"
+  ],
+  "dependencies": [
+    "casting spells",
+    "continuous effects",
+    "copying objects",
+    "damage",
+    "linked abilities",
+    "stack",
+    "zones"
+  ],
+  "coverage_status": "tested",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": [
+      "stack",
+      "exile",
+      "battlefield"
+    ],
+    "objects": [
+      "one physical resolved Cipher card",
+      "one original encoded permanent incarnation",
+      "independent noncard copies"
+    ],
+    "events": [
+      "resolve ordinary spell body",
+      "choose optional encoding",
+      "combat player damage",
+      "resolve granted copy-cast trigger",
+      "zone departure"
+    ],
+    "state_reads": [
+      "physical versus copy identity",
+      "current controlled creature candidates",
+      "exile/battlefield incarnation link",
+      "current effective ability presence",
+      "locked damage-trigger controller"
+    ],
+    "state_writes": [
+      "canonical stack-to-exile move and typed link",
+      "ordinary copy creation and casting",
+      "link termination after committed departure"
+    ],
+    "costs": [
+      "original spell ordinary costs",
+      "copies waive mana cost but retain all applicable mandatory additional costs"
+    ],
+    "timing": [
+      "encoding follows ordinary successful spell resolution",
+      "copy casting occurs only during the resolving granted trigger"
+    ],
+    "targets": [
+      "encoding is nontargeted",
+      "each copy chooses fresh legal spell targets"
+    ],
+    "choices": [
+      "optional controlled-creature encoding",
+      "optional one-shot copy cast through the existing selection owner"
+    ],
+    "hidden_information": [
+      "links and choices are public",
+      "ordinary spell body private choices retain principal projection"
+    ],
+    "apnap": [
+      "ordinary granted-trigger stacking and independent companion choices"
+    ],
+    "layers": [
+      "the exiled card grants an ordinary trigger in layer6",
+      "ability removal and restoration retain normal timestamp ordering"
+    ],
+    "replacement_effects": [
+      "encoding uses the canonical replacement-aware zone transaction"
+    ],
+    "copy": [
+      "noncard copies resolve ordinary bodies and cannot encode themselves",
+      "current targets and paid costs are not copied from the encoded original"
+    ],
+    "control_change": [
+      "link persists; damage-time creature controller controls its trigger"
+    ],
+    "zone_change": [
+      "link ends when either original incarnation leaves its relevant zone; a returning object does not inherit it"
+    ],
+    "source_leaves": [
+      "a queued trigger retains its encoded-card reference and controller; the card must still be the same exiled incarnation"
+    ]
+  },
+  "variants": [
+    "created token receiver",
+    "multiple encoded cards",
+    "control change and noncreature interval",
+    "ability removal/restoration",
+    "decline",
+    "all-targets-illegal resolution",
+    "pending save/load and replay"
+  ],
+  "witness_cards": [
+    {
+      "name": "Paranoid Delusions",
+      "oracle_id": "129cec2c-fc1b-4ce6-98f2-2123e4dbd1ae"
+    },
+    {
+      "name": "Stolen Identity",
+      "oracle_id": "30b533a3-afc3-4500-a8f0-54e84301988f"
+    },
+    {
+      "name": "Writ of Return",
+      "oracle_id": "47735ef2-fc4c-4634-83ab-715b1e86da0c"
+    },
+    {
+      "name": "Last Thoughts",
+      "oracle_id": "649d983a-e861-4893-8ae8-fb0a22cfad0a"
+    },
+    {
+      "name": "Voidwalk",
+      "oracle_id": "6706ebe4-4f96-4788-a934-f9b9aac5746f"
+    },
+    {
+      "name": "Midnight Recovery",
+      "oracle_id": "7904025c-7120-4362-abe9-a9f5fb64447f"
+    },
+    {
+      "name": "Call of the Nightwing",
+      "oracle_id": "919d21ad-3d1e-4f80-8005-64e3f8bf64d1"
+    },
+    {
+      "name": "Hands of Binding",
+      "oracle_id": "9bc82078-2f3e-44ee-906d-707f3430d414"
+    },
+    {
+      "name": "Undercity Plague",
+      "oracle_id": "aa997e63-be19-4b1a-8972-eebc8a720ded"
+    },
+    {
+      "name": "Mental Vapors",
+      "oracle_id": "e0151f37-790b-47f4-9928-cd8f32f68e4c"
+    },
+    {
+      "name": "Shadow Slice",
+      "oracle_id": "f4d2eca4-4645-4044-b75f-442cd726cedf"
+    }
+  ],
+  "rulings": [],
+  "test_ids": [
+    "test_cipher_encoding_and_granted_fragment_roundtrip_preserve_both_incarnations",
+    "test_cipher_encoding_offers_current_controlled_creatures_and_skips_copies",
+    "test_cipher_candidate_control_predicate_mutant_is_killed",
+    "test_cipher_link_reconciliation_is_incarnation_bound_and_preserves_queued_reference",
+    "test_cipher_intent_replacement_codec_and_version_two_dependency_are_structural",
+    "test_cipher_unknown_keyword_shapes_and_unsupported_companions_remain_residual",
+    "test_cipher_verified_owner_withdrawal_blocks_whole_source_and_keeps_plain_draw",
+    "test_cipher_appends_encoding_after_body_and_declares_exile_grant",
+    "test_actual_last_thoughts_without_creatures_draws_then_uses_ordinary_graveyard_destination",
+    "test_actual_last_thoughts_encodes_after_draw_and_combat_copy_does_not_encode",
+    "test_actual_last_thoughts_declined_encoding_and_copy_cast_keep_original_lifecycle",
+    "test_actual_cipher_control_change_locks_damage_trigger_controller_after_creature_departure",
+    "test_actual_cipher_ability_removal_suppresses_grant_then_restores_it_and_declined_copy_is_cleaned",
+    "test_actual_nightwing_token_can_receive_encoding_and_copy_creates_an_unencoded_token",
+    "test_actual_two_encodings_create_distinct_damage_triggers_and_declines_preserve_both_cards",
+    "test_actual_cipher_all_targets_illegal_never_reaches_encoding",
+    "test_actual_cipher_link_survives_vehicle_noncreature_interval_and_recrew",
+    "test_actual_exiled_cipher_card_departure_removes_grant_before_damage",
+    "test_actual_delusions_and_shadow_slice_original_and_combat_copy_use_new_player_target",
+    "test_actual_mental_vapors_private_discards_belong_to_each_fresh_target",
+    "test_actual_undercity_plague_orders_life_discard_sacrifice_before_encoding_and_copies",
+    "test_actual_writ_and_midnight_recoveries_resolve_before_encoding_and_again_from_copy",
+    "test_actual_voidwalk_delayed_return_and_copy_blink_keep_original_encoding",
+    "test_actual_hands_of_binding_original_and_copy_tap_distinct_opponents",
+    "test_actual_stolen_identity_original_and_cipher_copy_create_distinct_artifact_copies"
+  ],
+  "implementation": {
+    "component": "CipherEncoding, registered encoding choice/intent, canonical zone owner, exile continuous grant, ordinary granted-trigger discovery and existing one-shot copy-cast owner",
+    "version": "typed-cipher-v1",
+    "capability_ids": [
+      "casting.lifecycle.cipher"
+    ],
+    "supported_slice": "Canonical Cipher keyword after an independently closed instant/sorcery body, physical-card encoding and ordinary copied spell targets/costs."
+  },
+  "known_blockers": [
+    "unrepresented companion spell bodies",
+    "unowned target or additional-cost variants",
+    "arbitrary text-changing or granted Cipher keyword layouts",
+    "aggregate Cipher support remains incomplete"
+  ],
+  "review_status": "reviewed"
+}

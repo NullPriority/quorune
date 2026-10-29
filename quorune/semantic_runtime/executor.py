@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..city_blessing_model import AscendIntent
+from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
@@ -379,6 +380,7 @@ def prepare_draw_resolution(
 PermanentObjectIntent = (
     PairSoulbondIntent | GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
+    | EncodeCipherIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
@@ -389,6 +391,7 @@ PermanentObjectIntent = (
     | ReturnGraveyardCardToOwnerHandIntent
 )
 PERMANENT_OBJECT_INTENT_TYPES = (
+    EncodeCipherIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
     GainControlIntent, GainControlSetIntent,
@@ -408,6 +411,9 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, EncodeCipherIntent):
+        from ..rules.cipher import encode_cipher
+        return 'cipher', encode_cipher(sink, intent)
     if isinstance(intent, CHAMPION_INTENT_TYPES):
         return execute_champion_intent(sink, intent)
     if isinstance(intent, PairSoulbondIntent):

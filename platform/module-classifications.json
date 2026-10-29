@@ -1492,6 +1492,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/cipher_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/city_blessing_model.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -2862,6 +2874,21 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/compiler/cipher_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/compiler/class_context_nodes.py",
@@ -13629,6 +13656,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/cipher.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/city_blessing.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -16746,6 +16787,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_choices/cipher.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_choices",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_choices/commander_learn.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_choices",
@@ -17871,6 +17927,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/cipher.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/city_blessing.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -18112,6 +18183,21 @@
     },
     {
       "file": "quorune/semantic_runtime/continuous_components.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/semantic_runtime/continuous_registry.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
       "allowed_dependency_layers": [
@@ -21571,5 +21657,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "ec9c87fbe5429fa4d802a54c7b199b465a1efaa1595079316c6cd7bcad0c582f"
+  "fingerprint": "ef656a3af152c04bd2b7dc37f2397a934bd1c63f9150e153aef0abeaf7117280"
 }

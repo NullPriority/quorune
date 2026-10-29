@@ -49,6 +49,7 @@ from .exploit import ExploitChoiceHandler
 from .soulbond import SoulbondPairChoiceHandler
 from .ring import RingTemptationChoiceHandler
 from .champion import ChampionExileChoiceHandler, ChampionReturnChoiceHandler
+from .cipher import CipherEncodingChoiceHandler
 
 
 @lru_cache(maxsize=1)
@@ -95,6 +96,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             SoulbondPairChoiceHandler(),
             RingTemptationChoiceHandler(),
             ChampionExileChoiceHandler(),
+            CipherEncodingChoiceHandler(),
             ChampionReturnChoiceHandler(),
         )
     ).freeze()

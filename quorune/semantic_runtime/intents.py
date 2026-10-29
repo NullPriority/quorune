@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..city_blessing_model import AscendIntent
+from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..random_discard import RandomDiscardIntent
@@ -1594,6 +1595,7 @@ SemanticIntent: TypeAlias = (
     | BeginRingTemptationIntent
     | CompleteRingBearerIntent
     | ChampionExileIntent
+    | EncodeCipherIntent
     | ReturnLinkedAbilityExileIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent

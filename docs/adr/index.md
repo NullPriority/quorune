@@ -149,3 +149,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0132 — untargeted land untap choices](0132-untargeted-land-untap-choices.md)
 - [ADR 0133 — committed damage received occurrences](0133-committed-damage-received-occurrences.md)
 - [ADR 0134 — versioned Explore action semantics](0134-versioned-explore-action-semantics.md)
+- [ADR 0135 — Cipher linked grants and copy casting](0135-cipher-linked-grants-and-copy-casting.md)

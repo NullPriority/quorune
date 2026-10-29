@@ -541,6 +541,12 @@ smallest typed node/query/intent surface, register one stable handler, add
 success and malformed-input rollback tests, and remove every parallel dispatch
 path. Registration does not itself raise the trust level of any CardProgram.
 
+See [ADR 0135](../adr/0135-cipher-linked-grants-and-copy-casting.md) for Cipher's
+physical-card encoding choice, linked exile grant and existing copy-cast path.
+Its immutable choice facts distinguish a physical resolving card from a
+noncard copy. The encoding intent delegates movement to the canonical zone
+owner; continuous evaluation reads the typed link without mutation.
+
 See [ADR 0006](../adr/0006-typed-semantic-handler-boundary.md),
 [ADR 0009](../adr/0009-typed-tap-state-mutation-owner.md), and
 [ADR 0014](../adr/0014-typed-semantic-choice-and-effect-ownership.md),

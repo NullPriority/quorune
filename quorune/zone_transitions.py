@@ -289,6 +289,8 @@ class ZoneTransitionOwner:
             zone_timestamp=zone_timestamp,
             reveal_to=tuple(reveal_to or ()),
         )
+        from .rules.cipher import reconcile_cipher_links
+        reconcile_cipher_links(self.host)
         self._journal_move(
             plan,
             departure,

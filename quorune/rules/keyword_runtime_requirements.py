@@ -66,6 +66,10 @@ def _fragment_descriptor_requirements(value):
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
+        if value.get('kind') == 'granted_triggered' and value.get('value', {}).get('schema_version') == 2:
+            from ..cipher_model import CIPHER_CAPABILITY
+            ability_fragment_from_dict(value)
+            own.add(CIPHER_CAPABILITY)
         return {*own, *(cap for child in value.values() for cap in _fragment_descriptor_requirements(child))}
     if isinstance(value, (list, tuple)):
         return {cap for child in value for cap in _fragment_descriptor_requirements(child)}
@@ -73,7 +77,10 @@ def _fragment_descriptor_requirements(value):
 
 
 def keyword_runtime_dependencies(program):
+    from ..cipher_model import CIPHER_CAPABILITY
     required = set(attached_keyword_runtime_dependencies(program))
+    if any(effect.get('op') == 'encode_cipher' for effect in program.effects):
+        required.add(CIPHER_CAPABILITY)
     if 'fixed_keyword_event_grant' in program.coverage:
         required.add('continuous.ability.fixed_keyword_event_grant')
     if 'banding' in program.coverage:

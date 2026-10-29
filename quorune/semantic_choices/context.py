@@ -190,8 +190,11 @@ class SnapshotSemanticChoiceQuery:
     ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
     resolution_source: SemanticSourceContext | None = None
     explore_action_version: int | None = None
+    resolution_source_is_physical_card: bool | None = None
 
     def __post_init__(self) -> None:
+        if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:
+            raise ValueError('Physical resolving-card facts must be boolean or absent')
         explore_action_version(self.explore_action_version)
         if self.resolution_source is not None and not isinstance(self.resolution_source, SemanticSourceContext):
             raise ValueError('Choice resolution source requires an immutable typed snapshot')

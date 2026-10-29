@@ -10,6 +10,16 @@ concern: "game-record"
 
 # Game Record v3
 
+Cipher records retain a version-one typed `cipher_encoding` link on the
+physical exiled card, including both original incarnations. A committed encoded
+object departure ends the link for future grants. Existing pending triggers
+retain their own encoded-card reference and damage-time controller. Version-two
+granted-trigger fragments add `cipher_card_ref`; version-one fragment fields
+remain unchanged. Encoding and one-shot copy-cast continuations validate actor,
+offered object identity and current casting options. Runtime trigger derivation
+does not mutate the semantic registry. See
+[ADR 0135](../adr/0135-cipher-linked-grants-and-copy-casting.md).
+
 Game Record v3 is the authoritative persistence, replay, and audit directory for
 one game. It separates canonical state and accepted inputs from delivery state
 and derived review. The schemas under `schemas/game-record-v3-*.schema.json`

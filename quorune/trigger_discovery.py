@@ -975,7 +975,13 @@ def _event_programs_for_source(
     ):
         if granted.event.removesuffix(".self") != event:
             continue
-        program = host.semantics.get(granted.semantic_key)
+        if granted.cipher_card_ref is not None:
+            from .rules.cipher import cipher_granted_program
+            program = cipher_granted_program(host, source, granted)
+            if program is None:
+                continue
+        else:
+            program = host.semantics.get(granted.semantic_key)
         if program is None:
             raise GameRuleError(
                 "A typed granted trigger references an unknown "
@@ -1030,6 +1036,8 @@ def _semantic_trigger_context(
             else {}
         ),
     }
+    if 'cipher_grant' in program.provenance:
+        stack_context['cipher_grant'] = copy.deepcopy(program.provenance['cipher_grant'])
     from .rules.state_triggers import state_trigger_context
     stack_context.update(state_trigger_context(source,program))
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
@@ -1296,6 +1304,13 @@ def _granted_prowess_trigger_items(host, source, event, context, *, active_zone,
     return tuple(result)
 
 
+def _trigger_program_is_current_trusted(host, program):
+    if 'cipher_grant' in program.provenance:
+        from .rules.cipher import cipher_program_is_current_trusted
+        return cipher_program_is_current_trusted(host, program)
+    return host.semantic_program_is_current_trusted(program)
+
+
 def _program_trigger_ability_is_present(program, characteristics):
     if ('identity_pinned_champion' in program.coverage
             and 'champion' not in {str(keyword).casefold() for keyword in characteristics.get('keywords', ())}):
@@ -1386,7 +1401,7 @@ def dispatch_semantic_event(
                 continue
             if (
                 host.state.config.semantic_policy == "trusted_only"
-                and not host.semantic_program_is_current_trusted(program)
+                and not _trigger_program_is_current_trusted(host, program)
             ):
                 host._pause_for_unsupported_semantic(
                     program=program,

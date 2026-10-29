@@ -1174,6 +1174,7 @@ def _decode_semantic_intent_continuation(
         or intent_kind not in {
             "champion_exile",
             "champion_return",
+            "cipher_encode",
             "destroy_permanent",
             "destroy_permanent_set",
             "destroy_permanent_targets",

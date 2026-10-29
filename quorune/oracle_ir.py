@@ -86,6 +86,7 @@ from .compiler.fractional_player_templates import fixed_player_result_template
 from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
+from .compiler import cipher_nodes as cipher_context_owner
 from .compiler.leveler_context_nodes import (
     leveler_compilation_rows as _leveler_compilation_rows,
     leveler_face_ir as _leveler_face_ir,
@@ -172,7 +173,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v663"
+ORACLE_COMPILER_VERSION = "oracle-ir-v664"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1157,7 +1158,7 @@ def _compile_face(
     contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
     from .compiler import station_context_nodes as station_context_owner
-    material_rows, station_context = station_context_owner.station_source_context(record, material_rows)
+    material_rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, material_rows)
     from .compiler.bestow_nodes import face_has_fixed_bestow
     bestow_grant_context=source_attachment_relation is None and face_has_fixed_bestow(material_rows)
     class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=material_rows)
@@ -1174,7 +1175,7 @@ def _compile_face(
             capability_profile=capability_profile, residuals=residuals,
         )
         if typed_face is not None:
-            return typed_face
+            return cipher_context_owner.apply_cipher_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
     modal_blocks = fixed_nonrepeating_modal_context_blocks(
         material_rows=material_rows, face_id=face_id, oracle_text=oracle_text, card_name=face_name or record.name, type_line=type_line, keywords=keywords,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
@@ -1365,7 +1366,7 @@ def _compile_face(
     resolved_nodes = station_context_owner.apply_station_context(context=station_context, oracle_id=record.oracle_id,
         face_id=face_id, oracle_text=oracle_text, material_rows=material_rows, nodes=resolved_nodes,
         residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
-    return _leveler_face_ir(
+    return cipher_context_owner.finish_contextual_face(cipher_context,
         leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
         keywords, resolved_nodes, residuals, capability_registry, capability_profile,
     )
