@@ -400,22 +400,71 @@ class CharacteristicEvaluationHostMixin:
     ) -> tuple[ContinuousEffect, ...]:
         """Collect typed effects needed by current or prospective layer 6."""
 
-        return (*ring_legendary_effects(current_ring_rule_views(self)), *collect_card_program_continuous_effects(
-            self.state,
-            self.semantics,
-            self.semantic_program_is_current_trusted,
-            maximum_layer=Layer.ABILITY,
-            static_component_presence_only=True,
-            public_object_resolver=partial(
-                self._public_object_query_result,
-                _enforce_static_component_applicability=False,
-            ),
-            quantity_resolver=partial(
-                query_characteristic_count,
-                self,
-                _enforce_static_component_applicability=False,
-            ),
-        ))
+        return memoized_characteristic_read(self,('eligible-static-candidates',),self._read_eligible_static_candidates)
+
+    def _read_eligible_static_candidates(self):
+        effects,participants=self._static_component_candidate_plan()
+        result=[]
+        for effect in effects:
+            producer=participants.get(effect.effect_id)
+            source=self.state.cards.get(producer[0]) if producer is not None else None
+            if effect.layer==Layer.ABILITY and source is not None:
+                if self._static_component_presence_at_ability_start(source,producer[1]) is False:continue
+            result.append(effect)
+        return tuple(result)
+
+    def _static_component_candidate_plan(self):
+        return memoized_characteristic_read(self,('static-candidate-plan',),self._read_static_component_candidate_plan)
+
+    def _read_static_component_candidate_plan(self):
+        def collect(presence_only,sources):
+            return collect_card_program_continuous_effects(self.state,self.semantics,self.semantic_program_is_current_trusted,
+                maximum_layer=Layer.ABILITY,static_component_presence_only=presence_only,
+                public_object_resolver=partial(self._public_object_query_result,_enforce_static_component_applicability=False),
+                quantity_resolver=partial(query_characteristic_count,self,_enforce_static_component_applicability=False),
+                generated_effect_sources=sources)
+        sources={}
+        effects=(*ring_legendary_effects(current_ring_rule_views(self)),*collect(True,sources))
+        removals={'remove_all_abilities','remove_ability_fragment','remove_ability','prohibit_ability','set_basic_land_types'}
+        if any(operation.op in removals for effect in (*effects,*(e for e in self.state.continuous_effects or () if isinstance(e,ContinuousEffect)))
+                for operation in effect.operations):
+            sources={}
+            effects=(*ring_legendary_effects(current_ring_rule_views(self)),*collect(False,sources))
+        return effects,sources
+
+    def _static_component_presence_at_ability_start(self,source,program_key):
+        return memoized_characteristic_read(self,('static-ability-start',source.object_id,source.logical_object_id,program_key),
+            lambda:self._read_static_component_presence_at_ability_start(source,program_key),identity=source)
+
+    def _read_static_component_presence_at_ability_start(self,source,program_key):
+        """Apply the canonical effect prefix before a printed layer-6 source starts."""
+        from .continuous_effects import order_continuous_effects
+        candidates,participants=self._static_component_candidate_plan()
+        own={effect.effect_id for effect in candidates if participants.get(effect.effect_id)==(source.object_id,program_key)}
+        if not own or min(effect.layer for effect in candidates if effect.effect_id in own)!=Layer.ABILITY:
+            return None
+        if source.zone!='battlefield':return True
+        resolved={effect.effect_id:effect for card in self.state.cards.values() if card.zone=='battlefield'
+            for effect in active_resolution_effects(self.state,card)}
+        from .continuous_effect_model import ContinuousEffectDuration
+        present=tuple(effect for effect in (*resolved.values(),*candidates)
+            if effect.duration is not ContinuousEffectDuration.WHILE_SOURCE_PRESENT or effect.source_present)
+        if not any(effect.effect_id in own for effect in present):return False
+        ordered,_cycles=order_continuous_effects(present)
+        prefix=[]
+        for effect in ordered:
+            if effect.effect_id in own:break
+            producer=participants.get(effect.effect_id)
+            if effect.layer==Layer.ABILITY and producer is not None:
+                other=self.state.cards.get(producer[0])
+                if other is not None and self._static_component_presence_at_ability_start(other,producer[1]) is False:
+                    continue
+            prefix.append(effect)
+        base=self._compiled_base_characteristics(source,self.card_record(source),error_type=GameRuleError)
+        effective=self._apply_layered_characteristic_annotations(source,base,runtime_effects=tuple(prefix),
+            maximum_layer=Layer.ABILITY,_enforce_static_component_applicability=False)
+        return program_key in static_component_keys(effective.get('ability_fragments',()),
+            source_designations=current_source_designations(self.state,source))
 
     def _prospective_static_component_keys(
         self,
@@ -684,6 +733,8 @@ class CharacteristicEvaluationHostMixin:
                         else None
                     ),
                     early_static_component_resolver=self._static_component_keys_at_layer,
+                    ability_source_participation=(self._static_component_presence_at_ability_start
+                        if static_component_key_map is not None else None),
                     granted_characteristic_resolver=(
                         (lambda source: self._granted_characteristic_occurrences(source,
                             static_component_fragments, static_component_key_map))

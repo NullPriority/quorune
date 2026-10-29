@@ -591,6 +591,7 @@ def _continuous_programs_for_source(
     static_component_resolver: Callable[[Any], Sequence[str]] | None,
     early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     maximum_layer: Layer | None = None,
+    ability_source_participation: Callable[[Any,str],bool|None] | None = None,
 ) -> tuple["SemanticProgram", ...]:
     if source.zone == 'graveyard':
         from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID, GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
@@ -606,6 +607,11 @@ def _continuous_programs_for_source(
             layer = min((registry.source_component_layer(descriptor) for descriptor in program.handlers),
                 default=Layer.ABILITY)
             if layer >= Layer.ABILITY:
+                if ability_source_participation is not None and (maximum_layer is None or maximum_layer>=Layer.ABILITY):
+                    present=ability_source_participation(source,program.key)
+                    if present is not None:
+                        programs.pop(program.key,None)
+                        if present:programs[program.key]=program
                 continue
             if maximum_layer is not None and maximum_layer <= layer:
                 programs.pop(program.key, None)
@@ -766,6 +772,8 @@ def collect_card_program_continuous_effects(
     early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     static_component_presence_only: bool = False,
     granted_characteristic_resolver: Callable[[Any], Sequence[tuple[str, int]]] | None = None,
+    ability_source_participation: Callable[[Any,str],bool|None] | None = None,
+    generated_effect_sources: dict[str,tuple[str,str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
     registered_handler_ids = frozenset(
@@ -801,7 +809,8 @@ def collect_card_program_continuous_effects(
                 from ..continuous_conditions import OwnerRelativeConditionSource
                 source = OwnerRelativeConditionSource(source)
             programs = () if getattr(source, 'face_down', False) else _continuous_programs_for_source(
-                semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer
+                semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer,
+                ability_source_participation,
             )
             if metrics is not None:
                 metrics.card_program_lookups += 1
@@ -870,6 +879,8 @@ def collect_card_program_continuous_effects(
                             if effect.layer <= maximum_layer
                         )
                     effects.extend(lowered)
+                    if generated_effect_sources is not None:
+                        generated_effect_sources.update({effect.effect_id:(source.object_id,program.key) for effect in lowered})
                     if grant_timestamp is not None:
                         grant_order.update({effect.effect_id:(grant_timestamp, occurrence, program.key) for effect in lowered})
                     if metrics is not None:

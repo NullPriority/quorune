@@ -601,6 +601,23 @@ the typed source, pair and selected incarnation through the existing semantic
 replacement continuation. The returning permanent's prospective controller
 chooses its entry replacement order; a pause resumes that movement once.
 
+Printed static programs that begin in layer six read source participation
+before their first effect in the canonical dependency and timestamp order.
+Later ability removal cannot erase an effect that already started. Earlier
+removal prevents that source from starting; the same filtered candidates feed
+the final component snapshot. Programs beginning in earlier layers retain
+their earlier-layer participation rule, and later-only effects use the current
+ability snapshot. Candidate plans and completed participation reads share one
+pure read frame and end before mutation. Ability-removal boards collect the
+additional layer-six effects needed for ordering; the conservative presence
+filter remains available elsewhere. See
+[ADR 0125](../adr/0125-layer-six-source-participation.md).
+
+Removing a represented power/toughness definition restores the printed star
+field's undefined numeric value before later modifiers. Fixed numeric offsets
+remain, while early layer-five query views keep their existing undefined
+boundary. Counters still apply after the characteristic-defining layer.
+
 Continuous characteristics are a shared rules responsibility rather than a
 client reconstruction. `continuous_effect_state.py` owns the authoritative
 resolution-effect journal and expiration; `characteristic_evaluation.py`

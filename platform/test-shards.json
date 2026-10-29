@@ -87,6 +87,7 @@
       "test_champion_native",
       "test_characteristic_read_frames",
       "test_combat_damage_rules",
+      "test_composite_quoted_grants",
       "test_conditional_chosen_characteristics",
       "test_conditional_color_grants",
       "test_conditional_receiver_unions",

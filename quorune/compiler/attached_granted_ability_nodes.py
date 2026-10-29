@@ -80,6 +80,9 @@ def attached_granted_program_ability_id(
     )
     if token_match is not None:
         token_slot = f":token:{token_match.group('slot')}"
+    quote_match = re.search(r':quoted-ability:(?P<slot>[1-9][0-9]*)(?::granted)?$',str(node_id or ''))
+    if quote_match is not None:
+        token_slot = f":quote:{quote_match.group('slot')}"
     if kind in {
         GRANTED_ACTIVATED_ABILITY_KIND,
         GRANTED_MANA_ABILITY_KIND,
@@ -315,6 +318,7 @@ def _compile_granted_ability_pair(
         oracle_id=record.oracle_id,
         face_id=face_id,
         source_line=span.line,
+        node_id=node_id if ':quoted-ability:' in node_id else None,
         card_name="Granted creature",
         keywords=(),
         allow_static_cost=True,
@@ -635,11 +639,24 @@ def compile_keyword_or_attached_grant_nodes(
         True, ("creature",), None
     )
     compile_inner = _ordinary_granted_inner(compile_inner, trigger_node)
+    return _compile_quoted_grant_forms(record=record,face_id=face_id,node_id=node_id,line=line,
+        material_line=material_line,span=span,source_name=source_name,printed_card_types=printed_card_types,
+        source_attachment_relation=source_attachment_relation,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals,
+        compile_inner=compile_inner,trigger_node=trigger_node,keyword_node_compiler=keyword_node_compiler,
+        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for)
+
+
+def _compile_quoted_grant_forms(*,record,face_id,node_id,line,material_line,span,source_name,
+        printed_card_types,source_attachment_relation,trusted_mechanics,capability_registry,
+        capability_profile,residuals,compile_inner,trigger_node,keyword_node_compiler,
+        effect_template,trigger_effect_template,material_line_for):
+    """Route complete quoted children after ordinary keywords and source costs."""
     from .entry_copy_ability_nodes import entry_copy_ability_nodes
     copied = entry_copy_ability_nodes(record=record,face_id=face_id,node_id=node_id,line=line,
         material_line=material_line,span=span,source_name=source_name,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,compile_inner=compile_inner,
-        effect_template=granted_effect,trigger_effect_template=granted_trigger_effect,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
+        effect_template=effect_template,trigger_effect_template=trigger_effect_template,material_line_for=material_line_for,keyword_node_compiler=keyword_node_compiler)
     if copied is not None:return copied
     from .temporary_quoted_ability_nodes import temporary_quoted_ability_nodes
     temporary = temporary_quoted_ability_nodes(record=record, face_id=face_id,
@@ -647,10 +664,17 @@ def compile_keyword_or_attached_grant_nodes(
         source_name=source_name, printed_card_types=printed_card_types,
         trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals, compile_inner=compile_inner,
-        effect_template=granted_effect, trigger_effect_template=granted_trigger_effect,
+        effect_template=effect_template, trigger_effect_template=trigger_effect_template,
         trigger_node=trigger_node, material_line_for=material_line_for)
     if temporary is not None:
         return temporary
+    from .composite_grant_nodes import composite_granted_ability_nodes
+    composite=composite_granted_ability_nodes(record=record,face_id=face_id,node_id=node_id,
+        line=line,material_line=material_line,span=span,source_name=source_name,
+        trusted_mechanics=trusted_mechanics,capability_registry=capability_registry,
+        capability_profile=capability_profile,residuals=residuals,compile_inner=compile_inner,
+        effect_template=effect_template,trigger_effect_template=trigger_effect_template,material_line_for=material_line_for)
+    if composite is not None:return composite
     quoted = conditional_quoted_ability_text(material_line, source_name=source_name)
     if quoted is not None and (not _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) or granted_characteristic_reference_is_closed(quoted)):
         conditional = _compile_granted_ability_pair(
@@ -663,8 +687,8 @@ def compile_keyword_or_attached_grant_nodes(
             dependency_reason="conditional typed grant requires outer and inner capability closure",
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
-            compile_inner=compile_inner, effect_template=granted_effect,
-            trigger_effect_template=granted_trigger_effect, material_line_for=material_line_for,
+            compile_inner=compile_inner, effect_template=effect_template,
+            trigger_effect_template=trigger_effect_template, material_line_for=material_line_for,
         )
         if conditional is not None:
             return conditional
@@ -675,8 +699,8 @@ def compile_keyword_or_attached_grant_nodes(
         capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
         compile_inner=compile_inner,
-        effect_template=granted_effect,
-        trigger_effect_template=granted_trigger_effect,
+        effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template,
         material_line_for=material_line_for,
     )
     if fixed_query_grant is not None:
@@ -689,8 +713,8 @@ def compile_keyword_or_attached_grant_nodes(
         capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
         compile_inner=compile_inner,
-        effect_template=granted_effect,
-        trigger_effect_template=granted_trigger_effect,
+        effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template,
         material_line_for=material_line_for,
     )
 

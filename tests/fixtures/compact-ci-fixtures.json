@@ -70,6 +70,7 @@
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/commander-learn-cards.json",
     "tests/fixtures/complex-activation-mana-cards.json",
+    "tests/fixtures/composite-quoted-grant-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/compound-activation-restriction-cards.json",
     "tests/fixtures/compound-damage-recipient-cards.json",

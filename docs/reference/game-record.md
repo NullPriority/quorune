@@ -320,6 +320,19 @@ Principal projections expose only the current public counterpart reference as
 `paired_with` on battlefield objects; internal pair and incarnation identities
 remain authoritative record data.
 
+Composite quoted children use stable `:quote:<slot>` suffixes within the
+ordinary granted ability identity. Each child keeps its own semantic key and
+activation cost; the parent stores a closed characteristic modifier and the
+existing attachment or public-query target. Single-quote identities retain
+their historical form. Version-two basic-type addition payloads add an explicit
+schema version for the controller's nontoken-creature scope; version-one
+land-only payloads retain their exact fields.
+
+Layer-six source participation is derived from the current canonical effect
+order. Its candidate-source metadata and read-frame caches are not GameState,
+checkpoint or projection fields. Replay recomputes them from the same source,
+timestamps, modifiers and semantic programs.
+
 The version-four public-state fact codec also admits `source_renowned`, with a
 fixed threshold of one and no parameter. Evaluation reads the existing
 noncopiable renowned designation rather than counter count. The condition adds

@@ -1108,10 +1108,26 @@ controller relation applies to every branch, matching an object once. â€œOtherâ€
 excludes the source; Caves remain land recipients rather than an invented
 creature type.
 
-Multiple quotes, other quoted static or declaration prose, named or external source
+The composite production admits two through four independently closed quotes
+for an attachment or public query. It also admits represented all-ability
+removal with one or more replacement quotes, and exact land-subtype removal
+without changing card types or supertypes. Children use distinct quoted-slot
+identities while ordinary single-quote identities retain their existing form.
+Every child closes before the parent is emitted. The shared characteristic
+emitter removes abilities before adding replacements within one layer-six
+effect. Unrepresented settings, conditions and recipient queries invalidated
+by an unowned type change remain residual.
+
+Other quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
 material residuals. Granted fixed source-counter removal costs also remain
 residual until the granted-ability fragment schema can carry that typed cost.
+
+Basic-type addition also has an explicit version-two scope for the current
+controller's nontoken creatures. It adds the land card type and the specified
+basic subtype in layer four, retaining other types. The existing intrinsic
+mana owner supplies the subtype's ability before layer-six removal or grants.
+Version-one land-only scopes retain their historical payloads and operations.
 
 `compiler/granted_static_costs.py` also composes one fixed source-target opponent
 spell tax with a represented permanent attachment, public-query or public-state

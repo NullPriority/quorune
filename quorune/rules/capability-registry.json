@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 534,
+  "registry_version": 536,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -63568,6 +63568,167 @@
       "dependency_fail_closed_rationale": "Verified registry/evidence withdrawals remove source-zone, typed-grant or inner mana authority with unrelated Monarch positive control. Runtime binding requires the registered source-zone handlers.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Substituting a stale controller for the graveyard owner is killed by actual Portal recipient membership.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.fixed_composite_grant",
+      "version": 1,
+      "official_rules": [
+        "113.2c",
+        "305.6",
+        "613.1d",
+        "613.1f",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One current attachment or battlefield query receives up to4 independently closed quoted abilities with distinct child identities. Coupled all-ability removal precedes additions within the same layer6 effect. Exact optional pinned land subtype removal uses layer4 while preserving card types and supertypes.",
+        "inputs": [
+          "Complete composite clause and independent trusted children",
+          "Current attachment/public query",
+          "Exact removal operation and distinct child slots"
+        ],
+        "outputs": [
+          "One canonical multi-layer characteristic plan",
+          "Each child preserves its cost, source and capability closure",
+          "Ordinary current activation, source lifetime, rollback and replay"
+        ],
+        "exclusions": [
+          "Unrepresented characteristic settings and source conditions",
+          "Query subjects invalidated by unowned type changes",
+          "Unsupported quoted children and external giver references"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.card_programs.runtime._continuous_programs_for_source",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._static_component_presence_at_ability_start",
+        "quorune.compiler.attached_granted_ability_nodes.attached_granted_program_ability_id",
+        "quorune.compiler.composite_grant_nodes.composite_granted_ability_nodes",
+        "quorune.semantic_runtime.composite_grants.CompositeAbilityGrantHandler",
+        "quorune.semantic_runtime.fixed_characteristic_effects.fixed_characteristic_effects"
+      ],
+      "positive_tests": [
+        "test_actual_blight_draws_preserves_basic_supertype_and_keeps_two_distinct_costs",
+        "test_actual_toxicrene_replaces_intrinsic_mana_and_restores_it_after_departure",
+        "test_complete_children_have_distinct_consistent_identities_and_atomic_layer_plans"
+      ],
+      "negative_tests": [
+        "test_actual_blight_draws_preserves_basic_supertype_and_keeps_two_distinct_costs",
+        "test_actual_toxicrene_replaces_intrinsic_mana_and_restores_it_after_departure",
+        "test_runtime_composite_owner_cannot_be_omitted",
+        "test_unknown_child_tails_and_unrepresented_settings_keep_the_whole_clause_residual",
+        "test_verified_composite_and_inner_owner_withdrawal_fail_closed_with_unrelated_control"
+      ],
+      "interaction_tests": [
+        "test_actual_blight_draws_preserves_basic_supertype_and_keeps_two_distinct_costs",
+        "test_actual_toxicrene_replaces_intrinsic_mana_and_restores_it_after_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_blight_draws_preserves_basic_supertype_and_keeps_two_distinct_costs",
+        "test_actual_toxicrene_replaces_intrinsic_mana_and_restores_it_after_departure"
+      ],
+      "privacy_tests": [
+        "test_actual_toxicrene_replaces_intrinsic_mana_and_restores_it_after_departure"
+      ],
+      "replay_tests": [
+        "test_actual_blight_draws_preserves_basic_supertype_and_keeps_two_distinct_costs",
+        "test_actual_toxicrene_replaces_intrinsic_mana_and_restores_it_after_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified registry/evidence withdrawals remove composite, characteristic or inner mana authority. An unrelated Monarch withdrawal preserves lowering. Registered handler metadata independently requires composite authority at runtime.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting actual all-ability removal leaves a printed intrinsic mana ability and is killed by original Toxicrene.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.basic_land_type.creature_addition",
+      "version": 1,
+      "official_rules": [
+        "205.1b",
+        "305.6",
+        "613.1d",
+        "613.1f",
+        "613.6",
+        "613.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version2 basic-type addition makes the current controller's nontoken creatures lands with specified basic land subtypes in addition to their types. The existing layer4 owner emits card-type and subtype additions; later ability removal cannot retroactively end the earlier layer.",
+        "inputs": [
+          "Version2 immutable scope and canonical basic subtypes",
+          "Current source controller and nontoken creature query"
+        ],
+        "outputs": [
+          "Land card-type and basic subtype addition in layer4",
+          "Ordinary intrinsic mana before layer6 changes",
+          "Current token/controller contrasts and canonical replay"
+        ],
+        "exclusions": [
+          "Other recipient predicates",
+          "Nonbasic subtype replacement",
+          "Type removal and unknown dynamic conditions"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.basic_type_addition_model.BasicTypeAdditionSpec",
+        "quorune.semantic_runtime.basic_type_addition.ScopedBasicTypeAdditionHandler",
+        "quorune.compiler.basic_type_addition_templates.scoped_basic_type_addition_handler"
+      ],
+      "positive_tests": [
+        "test_actual_ashaya_type_layer_continues_after_toxicrene_removes_its_abilities",
+        "test_versioned_creature_land_addition_preserves_old_scope_and_requires_its_owner"
+      ],
+      "negative_tests": [
+        "test_actual_ashaya_type_layer_continues_after_toxicrene_removes_its_abilities",
+        "test_runtime_composite_owner_cannot_be_omitted",
+        "test_verified_composite_and_inner_owner_withdrawal_fail_closed_with_unrelated_control",
+        "test_versioned_creature_land_addition_preserves_old_scope_and_requires_its_owner"
+      ],
+      "interaction_tests": [
+        "test_actual_ashaya_type_layer_continues_after_toxicrene_removes_its_abilities"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ashaya_type_layer_continues_after_toxicrene_removes_its_abilities"
+      ],
+      "privacy_tests": [
+        "test_actual_ashaya_type_layer_continues_after_toxicrene_removes_its_abilities"
+      ],
+      "replay_tests": [
+        "test_actual_ashaya_type_layer_continues_after_toxicrene_removes_its_abilities"
+      ],
+      "required_evidence": [
+        "interaction",
+        "multiplayer",
+        "negative",
+        "positive",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited registry/evidence withdraws the creature addition owner. Runtime binding infers version2 ownership independently of declarations.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting actual Land card-type addition is killed by the original Ashaya/Toxicrene interaction.",
       "blockers": [],
       "status": "trusted"
     }

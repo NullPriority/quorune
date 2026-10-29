@@ -7,6 +7,12 @@ from ..basic_type_addition_model import BASIC_TYPE_ADDITION_CAPABILITY,BASIC_TYP
 
 def scoped_basic_type_addition_handler(text):
     material=' '.join(text.strip().split())
+    creature=re.fullmatch(r'Nontoken creatures you control are (?P<type>Plains|Island|Swamp|Mountain|Forest) lands in addition to their other types\.?',material,re.I)
+    if creature is not None:
+        spec=BasicTypeAdditionSpec('controller_nontoken_creatures',(creature['type'].casefold(),),2)
+        return ('scoped-creature-basic-land-addition-v2',{'handler_id':BASIC_TYPE_ADDITION_HANDLER,
+            'schema_version':1,'event':'characteristics.evaluate','addition':spec.to_dict()},
+            (BASIC_TYPE_ADDITION_CAPABILITY,spec.capability_id))
     match=re.fullmatch(r'(?P<subject>All lands|Lands you control|Enchanted land) '
         r'(?P<verb>are|is) (?P<types>.+?) in addition to (?P<pronoun>their|its) other (?:land )?types\.?',material,re.I)
     if match is None:return None

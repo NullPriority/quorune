@@ -39,6 +39,9 @@ def _fragment_descriptor_requirements(value):
             from ..continuous_conditions import FixedPublicStateConditionSpec
             FixedPublicStateConditionSpec.from_dict(value)
             own.add('permanent.designation.renowned')
+        if value.get('handler_id') == 'continuous.basic_land_type.fixed-addition.v1':
+            from ..basic_type_addition_model import BasicTypeAdditionSpec
+            own.add(BasicTypeAdditionSpec.from_dict(value['addition']).capability_id)
         if value.get('kind') in {'declaration_cost','declaration_requirement','declaration_restriction'}:
             from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
             # Decode the actual persisted fragment; annotations cannot replace

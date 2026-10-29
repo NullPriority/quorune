@@ -8854,6 +8854,34 @@
         "test_fixed_query_quoted_ability_grants",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "composite-quoted-grants",
+      "patterns": [
+        "quorune/basic_type_addition_model.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/characteristic_evaluation.py",
+        "quorune/characteristic_evaluation_host.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/basic_type_addition_templates.py",
+        "quorune/compiler/composite_grant_nodes.py",
+        "quorune/semantic_runtime/basic_type_addition.py",
+        "quorune/semantic_runtime/composite_grants.py",
+        "tests/fixtures/composite-quoted-grant-cards.json",
+        "tests/test_composite_quoted_grants.py"
+      ],
+      "test_modules": [
+        "test_attached_static_characteristics",
+        "test_card_program_trust",
+        "test_characteristic_read_frames",
+        "test_composite_quoted_grants",
+        "test_fixed_query_quoted_ability_grants",
+        "test_query_power_toughness_definitions",
+        "test_restricted_mana_grants",
+        "test_scoped_basic_type_addition",
+        "test_source_zone_ability_grants",
+        "test_static_characteristic_settings"
+      ]
     }
   ],
   "symbol_rules": [

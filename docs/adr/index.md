@@ -139,3 +139,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0122 — paid-mana resolution and target information](0122-paid-mana-resolution-and-target-information.md)
 - [ADR 0123 — combat-bound blocking requirements](0123-combat-bound-blocking-requirements.md)
 - [ADR 0124 — resolved declaration requirements](0124-resolved-declaration-requirements.md)
+- [ADR 0125 — layer-six source participation](0125-layer-six-source-participation.md)
