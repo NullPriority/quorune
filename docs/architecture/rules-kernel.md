@@ -836,6 +836,16 @@ boundary. The existing component registry owns that descriptor query; no
 second layer or component registry is introduced. Conditional animation,
 chosen or variable P/T, unsupported subtypes and unowned result siblings
 remain outside this production.
+
+Qualified creature-subtype additions preserve all earlier creature types and
+other subtype families, card types, colors, supertypes and counters. A single
+effect beginning with that layer-four addition continues into its later base
+stat setting after source ability loss in layer six. Timestamp order still
+governs competing base settings. A combined layer-six keyword/stat effect can
+similarly continue once started, while a later-only stat anthem requires its
+source ability to remain present. Separate giver-owned combat rules end when
+their source ability is removed.
+
 Player-attached fixed characteristics bind the current reciprocal player
 attachment to a live creature query. The Aura controller stays independent.
 The closed scope optionally excludes legendary creatures and reuses the

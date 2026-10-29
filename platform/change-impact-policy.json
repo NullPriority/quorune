@@ -8994,6 +8994,22 @@
         "test_attached_static_characteristics",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "qualified-creature-subtype-additions",
+      "patterns": [
+        "quorune/compiler/fixed_characteristic_settings.py",
+        "tests/test_creature_subtype_additions.py",
+        "tests/fixtures/creature-subtype-addition-cards.json"
+      ],
+      "test_modules": [
+        "test_creature_subtype_additions",
+        "test_static_characteristic_settings",
+        "test_composite_quoted_grants",
+        "test_changeling_characteristics",
+        "test_attached_static_characteristics",
+        "test_fixed_source_characteristic_effects"
+      ]
     }
   ],
   "symbol_rules": [

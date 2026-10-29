@@ -95,6 +95,7 @@
       "test_conditional_receiver_unions",
       "test_counter_doubling",
       "test_counter_placement_events",
+      "test_creature_subtype_additions",
       "test_distinct_target_costs",
       "test_draw_step_rules",
       "test_enchanted_player_statics",

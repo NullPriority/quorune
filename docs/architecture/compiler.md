@@ -3439,6 +3439,13 @@ Known zero, empty and short pools are legal; random cards are not targets or
 player choices. Extra graveyard ordering, different destinations and
 independently unsupported siblings remain residual.
 
+Fixed subtype additions accept the qualified
+`in addition to its/their other creature types` suffix when the
+definition is one fixed canonical creature subtype. This emits the existing
+layer-four subtype addition. The qualification does not admit card types,
+land types, color adjectives, chosen types or unknown subtype bodies. Explicit
+color and base-stat clauses retain their separate existing operations.
+
 Global fixed characteristic sets accept canonical creature-subtype plurals with
 optional `All` and `Other`. The shared battlefield query carries no controller
 restriction and excludes only the source when `Other` is printed. Both fixed

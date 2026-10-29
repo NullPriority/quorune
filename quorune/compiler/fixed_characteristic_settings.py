@@ -77,10 +77,15 @@ def _setting_part(modifier, part):
     abilities = re.fullmatch(r"has (.+)", part, re.I)
     if abilities:
         return _grant_attached_abilities(modifier, abilities[1])
-    definition = re.fullmatch(r"is (.+?)(?: in addition to (?:its|their) other (?:(colors and )?types|colors))?", part, re.I)
+    definition = re.fullmatch(r"is (?P<value>.+?)(?P<addition> in addition to (?:its|their) other (?P<family>(?:colors and )?types|colors|creature types))?", part, re.I)
     if definition:
-        addition = bool(re.search(r" in addition to ", part, re.I))
-        value = definition[1]
+        addition = definition['addition'] is not None
+        value = definition['value']
+        if definition['family'] is not None and definition['family'].casefold()=='creature types':
+            subtype=canonical_creature_subtype_surface(re.sub(r'^(?:a|an)\s+','',value,flags=re.I))
+            if subtype is None:return False
+            modifier['type_operations'].append({'op':'add_types','field':'subtypes','values':[subtype.title()]})
+            return True
         if value.casefold()=='all colors':
             if addition:return False
             modifier['color_operations'].append({'op':'set_colors','values':['W','U','B','R','G']});return True
@@ -135,7 +140,7 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
             except (TypeError, ValueError):
                 return None
             text = re.sub(r'^it\b', 'This permanent', text, flags=re.I)
-    if re.search(r'"|\b(?:chosen|named|equal|each equal|every|land types|creature types|until|as long|if|during|goaded)\b', text, re.I):
+    if re.search(r'"|\b(?:chosen|named|equal|each equal|every|land types|until|as long|if|during|goaded)\b', text, re.I):
         return None
     text = re.sub(r'\s+\([^()]*\)\.?$', '', text.strip()).removesuffix(".")
     match = re.fullmatch(r"(?P<subject>.+?) (?P<body>is .+|are .+|has base .+|have base .+|loses .+|lose .+|gets .+|get .+)", text, re.I)
