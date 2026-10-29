@@ -9395,6 +9395,23 @@
         "test_escaped_entry_counters",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "modal-event-wrapper-composition",
+      "patterns": [
+        "quorune/rules/modal_capability_shapes.py",
+        "quorune/rules/modal_node_capabilities.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_modal_event_compositions.py",
+        "tests/fixtures/modal-event-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_modal_event_compositions",
+        "test_fixed_nonrepeating_modal_programs",
+        "test_fixed_choose_one_modal_spells",
+        "test_shared_modal_target_resolution",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

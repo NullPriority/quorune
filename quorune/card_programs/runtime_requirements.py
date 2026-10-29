@@ -90,6 +90,7 @@ def _event_query_runtime_requirements(program):
     from ..cast_event_amounts import cast_mana_value_runtime_dependencies
     from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
     from ..rules.casting.spell_mana_payments import expend_runtime_dependencies
+    from ..rules.modal_node_capabilities import modal_event_runtime_dependencies
     required,blockers=set(),set()
     from ..rules.event_subscriptions import FixedEventSubscriptionSet
     try:
@@ -111,6 +112,7 @@ def _event_query_runtime_requirements(program):
         (cast_mana_value_runtime_dependencies,program,'cast_spell_mana_value'),
         (event_spell_copy_runtime_dependencies,program,'event_spell_copy'),
         (expend_runtime_dependencies,program,'expend'),
+        (modal_event_runtime_dependencies,program,'modal_event'),
     ):
         try:required.update(resolver(value))
         except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')

@@ -243,6 +243,7 @@
     "tests/fixtures/mixed-permanent-target-cards.json",
     "tests/fixtures/mixed-stack-counter-cards.json",
     "tests/fixtures/modal-activation-admission-cards.json",
+    "tests/fixtures/modal-event-composition-cards.json",
     "tests/fixtures/modal-token-program-cards.json",
     "tests/fixtures/multikicker-entry-counter-cards.json",
     "tests/fixtures/multikicker-result-cards.json",

@@ -127,6 +127,7 @@
       "test_kicked_damage_replacements",
       "test_linked_ability_exile_state",
       "test_mill_rules",
+      "test_modal_event_compositions",
       "test_modal_token_programs",
       "test_modular_rules",
       "test_monarch_rules",

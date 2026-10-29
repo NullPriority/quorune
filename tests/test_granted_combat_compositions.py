@@ -64,4 +64,3 @@ class GrantedCombatCompositionNativeTests(fixtures.InheritedNativeFixture, unitt
         self.attack(session,[(session.state.cards[source.object_id],'B')]);self.until(session,lambda s:s.state.pending_decision is not None and s.state.pending_decision.kind=='combat.blockers')
         before=authoritative_state_hash(session.state);self.assertFalse(session.act('pilot:B',{'action_id':'block','blocks':{blockers[0].ref:source.ref}}).ok);self.assertEqual(before,authoritative_state_hash(session.state))
         result=session.act('pilot:B',{'action_id':'block','blocks':{b.ref:source.ref for b in blockers}});self.assertTrue(result.ok,result.summary);self.assertEqual(1,session.state.cards[source.object_id].counters.get('+1/+1'));self.replay(session,load=True)
-

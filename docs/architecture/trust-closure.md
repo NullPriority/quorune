@@ -58,6 +58,9 @@ Typed event-subscription sets require the multi-event capability at runtime,
 including their represented spell-cast and entry producer requirements.
 The binder derives these minima from the descriptor even when a coverage
 marker or declared dependency was removed.
+Current modal tap/block and spell-cast descriptors also retain their primitive
+event requirements independently from coverage. Their mode schemas continue to
+bind every child owner; removing an event label cannot hide a missing producer.
 An ordered result inside a fixed payment is validated in its child scope
 through the existing payment and component shapes. The single outer payment
 instruction does not turn that result into a bare one-effect ordered program;

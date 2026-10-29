@@ -2024,6 +2024,12 @@ cross-mode-target, unsupported-wrapper, and untyped-branch forms remain
 source-spanned residuals. See ADR 0071 for the preserved strict compatibility
 shape and ADR 0082 for the expanded owner.
 
+Known normalized public-action and spell-cast-characteristic wrappers compose
+around those same independently closed branches. The event owner remains
+required, and modes and selected targets are committed during trigger
+placement before priority. A source leaving afterward does not change the
+chosen mode. Unknown wrappers and unowned siblings retain their residuals.
+
 Runtime ownership follows each modal branch's own instruction scope. An ordered
 draw-and-entry branch validates its two-to-eight effects independently of the
 outer modal ability, whose effect list may be empty. The typed mode schema also

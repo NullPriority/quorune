@@ -49,4 +49,3 @@ class DeathLocusCompositionNativeTests(fixtures.InheritedNativeFixture, unittest
         for principal,bundle in (('pilot:C',{'C':2}),('pilot:B',{'C':1})):
             before=authoritative_state_hash(session.state);result=session.act(principal,{'action_id':offered['id'],'mana_output':bundle,'pay':'auto'});self.assertFalse(result.ok);self.assertEqual(before,authoritative_state_hash(session.state))
         result=session.act('pilot:B',{'action_id':offered['id'],'mana_output':{'C':2},'pay':'auto'});self.assertTrue(result.ok,result.summary);self.assertEqual(2,session.state.players['B'].mana_pool['C']);self.assertTrue(session.state.cards[source.object_id].tapped);self.replay(session,load=True)
-

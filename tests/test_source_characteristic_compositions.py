@@ -95,4 +95,3 @@ class SourceCharacteristicCompositionNativeTests(fixtures.InheritedNativeFixture
         before=authoritative_state_hash(session.state);self.assertFalse(session.act('pilot:A',{'action_id':offered['id'],'targets':[target.ref],'pay':'auto'}).ok);self.assertEqual(before,authoritative_state_hash(session.state))
         for seat in 'ABC':self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+seat,full=True)))
         self.replay(session,load=True)
-
