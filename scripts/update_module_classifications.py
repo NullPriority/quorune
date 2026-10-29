@@ -79,6 +79,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/copy_value_types.py",
         "quorune/devour.py",
         "quorune/granted_activation_model.py",
+        "quorune/mana_restriction_model.py",
         "quorune/preparation_model.py",
         "quorune/targeted_spell_costs.py",
         "quorune/waterbend.py",

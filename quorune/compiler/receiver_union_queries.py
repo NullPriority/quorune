@@ -16,6 +16,8 @@ def _leaf(text: str, *, creatures: bool = False) -> ObjectQuerySpec | None:
     other = text.startswith('other ')
     word = text.removeprefix('other ')
     options = {'zones': ('battlefield',), 'exclude_ref': '$source' if other else None}
+    if word in {'land', 'lands'} and not creatures:
+        return ObjectQuerySpec(**options, types_all=('land',))
     if word in _COLORS and creatures:
         return ObjectQuerySpec(**options, types_all=('creature',), colors_all=(_COLORS[word],))
     if word == 'snow' and creatures:
@@ -31,6 +33,7 @@ def _leaf(text: str, *, creatures: bool = False) -> ObjectQuerySpec | None:
 def fixed_receiver_union_subject(subject: str) -> tuple[str, ObjectQuerySpec, bool] | None:
     """Parse a flat union with shared or explicitly repeated controller scope."""
     text = ' '.join(subject.casefold().split())
+    text = text.removeprefix('each ')
     if ' and ' not in text or ', ' in text or ' or ' in text:
         return None
     global_other = text.startswith('other ')

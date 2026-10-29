@@ -129,6 +129,7 @@
       "test_random_discard_activation_costs",
       "test_record_lifecycle_v060",
       "test_resolution_mana_choices",
+      "test_restricted_mana_grants",
       "test_ring_emblem_effects",
       "test_ring_emblem_triggers",
       "test_ring_native_actions",

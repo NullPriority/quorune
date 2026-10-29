@@ -320,6 +320,14 @@ Principal projections expose only the current public counterpart reference as
 `paired_with` on battlefield objects; internal pair and incarnation identities
 remain authoritative record data.
 
+Granted activated-ability fragments retain their historical version-one,
+version-two and Crew version-three payloads. Version four uses the version-two
+field set with a closed canonical fixed-output mana spending restriction;
+it admits no Crew threshold or additional spending result. The stored
+restriction survives grant removal through the ordinary produced-mana
+provenance records. Unknown fields, malformed restriction encodings and
+unsupported versions reject during decoding.
+
 Resolution-created declaration rules retain their legacy locked-object payload
 when they apply to explicit target or source incarnations. Live creature-group
 rules use an additive `schema_version: 2` payload with `live_query` and an empty

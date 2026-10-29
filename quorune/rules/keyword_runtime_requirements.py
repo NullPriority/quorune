@@ -49,6 +49,10 @@ def _fragment_descriptor_requirements(value):
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
+        if value.get('kind') == 'granted_activated':
+            fragment = ability_fragment_from_dict(value)
+            owner = getattr(fragment, 'capability_id', None)
+            if owner is not None: own.add(owner)
         return {*own, *(cap for child in value.values() for cap in _fragment_descriptor_requirements(child))}
     if isinstance(value, (list, tuple)):
         return {cap for child in value for cap in _fragment_descriptor_requirements(child)}
@@ -62,6 +66,16 @@ def keyword_runtime_dependencies(program):
     if 'banding' in program.coverage:
         required.add('combat.banding')
     required.update(_fragment_descriptor_requirements((program.handlers, program.effects)))
+    if program.provenance.get('granted_only') and program.ability_id.startswith('ability:granted:'):
+        from ..semantic_runtime.activated_abilities import activated_abilities_from_descriptors
+        from ..granted_activation_model import RESTRICTED_MANA_GRANT_CAPABILITY
+        from ..fixed_mana_abilities import FIXED_MANA_HANDLER_ID, FixedActivatedManaAbilitySpec
+        restrictions = [ability.mana_spend_restriction
+            for ability in activated_abilities_from_descriptors(program.handlers)]
+        restrictions.extend(FixedActivatedManaAbilitySpec.from_dict(descriptor['ability']).spend_restriction
+            for descriptor in program.handlers if descriptor.get('handler_id') == FIXED_MANA_HANDLER_ID)
+        if any(restriction not in {None, 'nonartifact_spell_prohibited'} for restriction in restrictions):
+            required.add(RESTRICTED_MANA_GRANT_CAPABILITY)
     if program.provenance.get('granted_only') and any(
             value.get('handler_id') == 'modification.cast-cost.targeted-fixed.v1' for value in program.handlers):
         from ..static_component_scope import GRANTED_STATIC_COST_CAPABILITY

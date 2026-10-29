@@ -514,6 +514,13 @@ def _extended_public_battlefield_query(
     if qualified is None:
         return None
     text, relation, exclude_source, keyword_fields, state_fields = qualified
+    from ..basic_land_types import LAND_SUBTYPES
+    land_subtype = text.casefold()
+    if land_subtype not in LAND_SUBTYPES and land_subtype.endswith('s'):
+        land_subtype = land_subtype[:-1]
+    if land_subtype in LAND_SUBTYPES:
+        return relation, ObjectQuerySpec(zones=('battlefield',),types_all=('land',),
+            subtypes_all=(land_subtype,),**keyword_fields,**state_fields),exclude_source
     parsed = _public_query_characteristic_fields(text)
     if parsed is None:
         return None

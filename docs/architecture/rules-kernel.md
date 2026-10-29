@@ -195,6 +195,16 @@ sacrifice and loyalty costs commit before resolution; a countered spell adds
 no mana. Typed spending restrictions enter the canonical provenance lots and
 use the same public spell-type predicates for advertised and accepted payment.
 
+Granted fixed-output mana abilities use the receiving object's current
+controller, ability presence and activation costs. Their typed spending
+restriction enters the same provenance lots as printed mana abilities.
+Removing the giver or its ability ends future grants without changing units
+already produced. The ordinary activation, automatic payment and spending
+owners enforce the same restriction; the grant adds no separate mana path.
+`mana_restriction_model.py` owns immutable canonical restriction encoding and
+validation. `mana_restrictions.py` retains spending-context construction and
+evaluation, re-exporting the established codec functions for existing callers.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining

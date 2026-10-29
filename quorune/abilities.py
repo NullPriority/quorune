@@ -1386,6 +1386,8 @@ def _mana_restriction_quality(
     kind: str,
     value: str,
 ) -> tuple[str, str, tuple[str, ...]] | None:
+    if kind == 'spell' and value.strip() == 'instant and sorcery':
+        return 'spell', 'types_any', ('instant', 'sorcery')
     terms = _mana_restriction_terms(value)
     if not terms:
         return None

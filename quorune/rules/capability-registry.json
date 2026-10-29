@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 532,
+  "registry_version": 533,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -63405,6 +63405,85 @@
       "dependency_fail_closed_rationale": "Rebuilt and verified registry/evidence withdrawals remove the new requirement, declaration or duration owner. An unrelated Monarch withdrawal preserves lowering. Runtime binding independently requires rule and duration owners.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting resolved requirements is killed by actual Alluring Scent after source departure and recipient ability removal.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.restricted_mana_grant",
+      "version": 1,
+      "official_rules": [
+        "106.6",
+        "113.2c",
+        "605.3b",
+        "611.3a",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A version4 granted activated fragment carries an independently closed fixed-output mana ability and canonical spending restriction. Current recipient ownership, cost and ability presence use existing activation and mana owners. Produced units retain their restriction independently of the giver.",
+        "inputs": [
+          "Closed version4 grant and independent trusted child",
+          "Current effective recipient fragments",
+          "Canonical fixed mana output and spending predicate"
+        ],
+        "outputs": [
+          "Recipient-owned mana activation and automatic source eligibility",
+          "Canonical restricted units and ordinary life/tap costs",
+          "Shared spending legality, rollback and exact replay"
+        ],
+        "exclusions": [
+          "Additional results such as making a spell uncounterable",
+          "Unknown spending contexts",
+          "Variable quantities and unrepresented source-zone restrictions"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.granted_activation_model.GrantedActivatedAbilitySpec",
+        "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
+        "quorune.rules.keyword_runtime_requirements.keyword_runtime_dependencies",
+        "quorune.rules.activation.query._typed_granted_abilities"
+      ],
+      "positive_tests": [
+        "test_actual_galazeth_retains_restricted_units_after_source_departure",
+        "test_complete_restricted_grants_and_live_land_subtype_union_queries",
+        "test_versioned_restrictions_preserve_legacy_payloads_and_reject_extra_results"
+      ],
+      "negative_tests": [
+        "test_actual_galazeth_retains_restricted_units_after_source_departure",
+        "test_complete_restricted_grants_and_live_land_subtype_union_queries",
+        "test_runtime_restricted_grant_owner_cannot_be_omitted",
+        "test_verified_restriction_and_inner_mana_owner_withdrawal_fail_closed",
+        "test_versioned_restrictions_preserve_legacy_payloads_and_reject_extra_results"
+      ],
+      "interaction_tests": [
+        "test_actual_galazeth_retains_restricted_units_after_source_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_galazeth_retains_restricted_units_after_source_departure"
+      ],
+      "privacy_tests": [
+        "test_actual_galazeth_retains_restricted_units_after_source_departure"
+      ],
+      "replay_tests": [
+        "test_actual_galazeth_retains_restricted_units_after_source_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified registry/evidence withdrawals remove the grant, restricted mana or outer query authority; an unrelated Monarch withdrawal preserves lowering. Runtime binding independently requires the new fragment capability.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Removing the actual recipient activation restriction permits forbidden spending and is killed by original Galazeth.",
       "blockers": [],
       "status": "trusted"
     }

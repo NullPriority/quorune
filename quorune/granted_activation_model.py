@@ -9,6 +9,7 @@ from .replacement.immutable import FrozenMap, thaw_value
 
 
 _MANA_KEYS = frozenset({"W", "U", "B", "R", "G", "C", "GENERIC"})
+RESTRICTED_MANA_GRANT_CAPABILITY = 'continuous.ability.restricted_mana_grant'
 
 
 def _mana_pairs(
@@ -59,7 +60,7 @@ class GrantedActivatedAbilitySpec:
     crew_threshold: int | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4}:
             raise AbilityFragmentError(
                 "Unsupported granted activated-ability schema version"
             )
@@ -122,7 +123,12 @@ class GrantedActivatedAbilitySpec:
                 )
             normalized_choices.append(FrozenMap(choice))
         object.__setattr__(self, "choices", tuple(normalized_choices))
-        if self.mana_spend_restriction not in {
+        from .mana_restriction_model import valid_mana_spend_restriction
+        if self.schema_version == 4:
+            if (not valid_mana_spend_restriction(self.mana_spend_restriction)
+                    or self.mana_spend_restriction in {None, 'nonartifact_spell_prohibited', 'legendary_spell_uncounterable'}):
+                raise AbilityFragmentError('Version-four grants need a closed spending restriction without additional results')
+        elif self.mana_spend_restriction not in {
             None,
             "nonartifact_spell_prohibited",
         }:
@@ -164,6 +170,10 @@ class GrantedActivatedAbilitySpec:
         object.__setattr__(self, "fixed_mana_outputs", normalized_outputs)
 
     @property
+    def capability_id(self) -> str | None:
+        return RESTRICTED_MANA_GRANT_CAPABILITY if self.schema_version == 4 else None
+
+    @property
     def mana_bundle(self) -> dict[str, int]:
         return dict(self.mana)
 
@@ -182,7 +192,7 @@ class GrantedActivatedAbilitySpec:
                 dict(output) for output in self.fixed_mana_outputs
             ],
         }
-        if self.schema_version in {2,3}:
+        if self.schema_version in {2,3,4}:
             result.update(
                 {
                     "untap_source": self.untap_source,
@@ -226,6 +236,7 @@ class GrantedActivatedAbilitySpec:
             or (value.get("schema_version") == 1 and set(value) != expected)
             or (value.get("schema_version") == 2 and set(value) != extended)
             or (value.get("schema_version") == 3 and set(value) != crew_extended)
+            or (value.get("schema_version") == 4 and set(value) != extended)
         ):
             raise AbilityFragmentError(
                 "Granted activated-ability fragments have a closed schema"
@@ -241,7 +252,7 @@ class GrantedActivatedAbilitySpec:
             raise AbilityFragmentError(
                 "Granted activated-ability fixed outputs must be an array of objects"
             )
-        if value["schema_version"] in {2,3} and not isinstance(
+        if value["schema_version"] in {2,3,4} and not isinstance(
             value["choices"], list
         ):
             raise AbilityFragmentError(

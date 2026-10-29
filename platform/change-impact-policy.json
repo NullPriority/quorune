@@ -8815,6 +8815,27 @@
         "test_conditional_query_declarations",
         "test_temporary_declaration_restriction_effects"
       ]
+    },
+    {
+      "id": "restricted-mana-grants",
+      "patterns": [
+        "quorune/abilities.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/compiler/public_state_queries.py",
+        "quorune/compiler/receiver_union_queries.py",
+        "quorune/granted_activation_model.py",
+        "quorune/rules/keyword_runtime_requirements.py",
+        "tests/fixtures/restricted-mana-grant-cards.json",
+        "tests/test_restricted_mana_grants.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_characteristic_query_unions",
+        "test_fixed_mana_abilities",
+        "test_fixed_query_quoted_ability_grants",
+        "test_receiver_query_unions",
+        "test_restricted_mana_grants"
+      ]
     }
   ],
   "symbol_rules": [

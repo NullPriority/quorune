@@ -1080,6 +1080,22 @@ or subtype without requiring a P/T modifier. The fragment
 preserves only activation costs already committed by the canonical activation
 transaction, including fixed mana, tap or untap, source sacrifice, life
 payment, selected public objects, and the represented restricted-mana profile.
+Version-four granted activation fragments retain any independently represented
+fixed-output spending predicate that has no additional result. Legacy fragment
+versions keep their exact admission and payloads. The outer grant and hidden
+child independently require the restricted-grant capability. The receiving
+object supplies activation identity, controller and costs; produced units keep
+their canonical spending restriction after the giver leaves. The finite
+restriction grammar treats “instant and sorcery spells” as the same two spell
+types as “an instant or sorcery spell”. Additional results, unknown restrictions
+and unsupported output quantities remain residual.
+
+Live quoted grants also admit pinned land subtype recipients and flat
+land-or-creature-subtype unions through the existing public query owner. The
+controller relation applies to every branch, matching an object once. “Other”
+excludes the source; Caves remain land recipients rather than an invented
+creature type.
+
 Multiple quotes, other quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
 material residuals. Granted fixed source-counter removal costs also remain

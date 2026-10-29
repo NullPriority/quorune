@@ -12,6 +12,8 @@ from ..ability_fragments import (
     ability_fragment_to_dict,
 )
 from ..fixed_mana_abilities import compile_fixed_activated_mana_ability
+from ..mana_restrictions import valid_mana_spend_restriction
+from ..granted_activation_model import RESTRICTED_MANA_GRANT_CAPABILITY
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
 from .continuous_templates import (
@@ -111,8 +113,9 @@ def _closed_granted_activation(ability: ActivatedAbility) -> bool:
         and not ability.library_search_types
         and not ability.activation_conditions
         and ability.dynamic_mana_output is None
-        and ability.mana_spend_restriction
-        in {None, "nonartifact_spell_prohibited"}
+        and (ability.mana_spend_restriction is None or (
+            valid_mana_spend_restriction(ability.mana_spend_restriction)
+            and ability.mana_spend_restriction != 'legendary_spell_uncounterable'))
     )
 
 
@@ -182,6 +185,7 @@ def attached_granted_ability_plan(
             or ability.choices
             or ability.mana_spend_restriction is not None
         )
+        restricted_grant = ability.mana_spend_restriction not in {None, 'nonartifact_spell_prohibited'}
         fragment = ability_fragment_to_dict(
             GrantedActivatedAbilitySpec(
                 ability_id=ability_id,
@@ -204,7 +208,7 @@ def attached_granted_ability_plan(
                 choices=tuple(choice.to_dict() for choice in ability.choices),
                 mana_spend_restriction=ability.mana_spend_restriction,
                 crew_threshold=ability.crew_threshold,
-                schema_version=3 if ability.crew_threshold is not None else 2 if extended_cost else 1,
+                schema_version=4 if restricted_grant else 3 if ability.crew_threshold is not None else 2 if extended_cost else 1,
             )
         )
         return AttachedGrantedAbilityPlan(
@@ -212,6 +216,7 @@ def attached_granted_ability_plan(
             ability_id=ability_id,
             semantic_key=semantic_key,
             fragment=fragment,
+            capability_dependencies=(RESTRICTED_MANA_GRANT_CAPABILITY,) if restricted_grant else (),
         )
     if node.kind != "triggered_ability" or not node.event:
         return None
