@@ -1463,14 +1463,14 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             (
                 "Whenever this creature is dealt damage, you gain 1 life.",
                 "Creature — Beast",
-                "damage.dealt",
-                "fixed-typed-effect-source-dealt-damage-trigger-v1",
+                "damage.received",
+                "fixed-typed-effect-source-received-damage-trigger-v1",
                 {
                     "field": "target",
                     "op": "eq",
                     "value": "$source.ref",
                 },
-                "trigger.event.normalized_damage",
+                "trigger.event.normalized_received_damage",
             ),
         )
         for (

@@ -147,3 +147,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0130 — casting source placement before costs](0130-casting-source-placement-before-costs.md)
 - [ADR 0131 — typed private library ordering](0131-typed-private-library-ordering.md)
 - [ADR 0132 — untargeted land untap choices](0132-untargeted-land-untap-choices.md)
+- [ADR 0133 — committed damage received occurrences](0133-committed-damage-received-occurrences.md)

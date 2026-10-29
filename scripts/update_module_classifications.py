@@ -74,6 +74,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/cast_source_placement_model.py",
         "quorune/library_order_model.py",
         "quorune/untargeted_untap_model.py",
+        "quorune/received_damage_model.py",
         "quorune/target_count_cost_model.py",
         "quorune/mana_symbol_counts.py",
         "quorune/public_zone_condition_model.py",
@@ -348,6 +349,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/creature_subtypes.py",
         "quorune/cumulative_upkeep.py",
         "quorune/damage.py",
+        "quorune/damage_received_events.py",
         "quorune/damage_turn_history.py",
         "quorune/creature_power_damage.py",
         "quorune/damage_prevention.py",
@@ -892,6 +894,8 @@ def _owner(relative: str, layer: str) -> str:
         return "regeneration"
     if relative in {
         "quorune/damage.py",
+        "quorune/damage_received_events.py",
+        "quorune/received_damage_model.py",
         "quorune/creature_power_damage.py",
         "quorune/damage_prevention.py",
         "quorune/damage_prevention_aftermath.py",

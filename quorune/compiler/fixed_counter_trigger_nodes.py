@@ -82,6 +82,8 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-source-combat-damage-opponent-trigger-v1",
         "fixed-counter-source-damage-opponent-trigger-v1",
         "fixed-counter-source-dealt-damage-trigger-v1",
+        "fixed-counter-source-received-damage-trigger-v1",
+        "fixed-counter-source-received-combat-damage-trigger-v1",
         "fixed-counter-public-zone-trigger-v1",
         "fixed-counter-public-damage-trigger-v1",
         "fixed-counter-public-attack-trigger-v1",
@@ -333,7 +335,8 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_VEHICLE_DIES = "creature.dies.self"
     SOURCE_GRAVEYARD = "permanent.graveyard.self"
     SOURCE_DEALS_DAMAGE = "damage.dealt.self"
-    SOURCE_DEALT_DAMAGE = "damage.dealt"
+    SOURCE_DEALT_DAMAGE = "damage.received"
+    SOURCE_RECEIVED_COMBAT_DAMAGE = "combat.damage.received"
     ARTIFACT_GRAVEYARD = "artifact.graveyard"
     PUBLIC_DEALS_DAMAGE = "damage.dealt"
     PUBLIC_ATTACKS = "creature.attacks"
@@ -611,7 +614,9 @@ class FixedCounterTriggerBinding:
             FixedCounterTriggerEvent.SOURCE_GRAVEYARD:
                 "fixed-counter-source-graveyard-trigger-v1",
             FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE:
-                "fixed-counter-source-dealt-damage-trigger-v1",
+                "fixed-counter-source-received-damage-trigger-v1",
+            FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE:
+                "fixed-counter-source-received-combat-damage-trigger-v1",
         }.get(self.event)
         if source_template is not None:
             return source_template
@@ -688,12 +693,16 @@ class FixedCounterTriggerBinding:
 
     @property
     def explicit_capabilities(self) -> tuple[str, ...]:
+        from ..received_damage_model import RECEIVED_DAMAGE_CAPABILITY
+        receiving = (RECEIVED_DAMAGE_CAPABILITY,) if self.event in {
+            FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE, FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE,
+        } else ()
         from ..characteristic_fragments import characteristic_quantity_capabilities
         from ..public_history_query_model import public_history_query_dependencies
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
         ordinal=self.spell_subject.qualified_ordinal_spec if self.spell_subject is not None else None
-        return (*self.public_capabilities,*condition_capabilities,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
+        return (*receiving,*self.public_capabilities,*condition_capabilities,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
@@ -764,6 +773,11 @@ class FixedCounterTriggerBinding:
             ),
             FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE: (
                 "trigger-event-normalized-damage",
+                "trigger-event-normalized-received-damage",
+            ),
+            FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE: (
+                "trigger-event-normalized-damage",
+                "trigger-event-normalized-received-damage",
             ),
         }[self.event]
 
@@ -819,12 +833,13 @@ class FixedCounterTriggerBinding:
                     }
                 )
             return {"all": conditions}
-        if self.event is FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE:
-            return {
+        if self.event in {FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE, FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE}:
+            recipient = {
                 "field": "target",
                 "op": "eq",
                 "value": "$source.ref",
             }
+            return {"all": [recipient, {"field": "combat", "op": "eq", "value": True}]} if self.event is FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE else recipient
         if self.event in {
             FixedCounterTriggerEvent.CONTROLLER_LIFE_GAIN,
             FixedCounterTriggerEvent.CONTROLLER_CARD_DRAW,
@@ -1199,32 +1214,17 @@ def _nested_operations(value: Any) -> set[str]:
     return result
 
 
-def _event_runtime_coverage(
-    binding: FixedCounterTriggerBinding,
-    *,
-    current_ability: bool,
-) -> tuple[str, ...]:
-    values: list[str] = []
-    if current_ability or binding.variant in {QUALIFIED_ZONE_VARIANT, AGGREGATED_ZONE_VARIANT} or binding.variant in {
-        'your first main phase','your precombat main phase','your second main phase','your postcombat main phase',
-        *_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
-        *(_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS - COUNTER_EVENT_VARIANTS),
-        "class_level_changed",
-    }:
-        values.append(CURRENT_ABILITY_FRAGMENT_COVERAGE)
-    if binding.variant in _ONE_OR_MORE_PUBLIC_EVENT_VARIANTS:
-        values.append("one_or_more_event_batch")
-    if binding.variant in MULTI_EVENT_BINDING_CLOSURE_VARIANTS:
-        values.append("fixed_multi_event_subscription")
-    if binding.public_state_condition is not None:
-        values.extend(
-            (
-                CURRENT_ABILITY_FRAGMENT_COVERAGE,
-                "intervening_condition",
-                FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
-            )
-        )
-    return tuple(dict.fromkeys(values))
+def _event_runtime_coverage(binding: FixedCounterTriggerBinding, *, current_ability: bool) -> tuple[str, ...]:
+    from .trigger_runtime_coverage import trigger_runtime_coverage
+    return trigger_runtime_coverage(binding, current_ability=current_ability,
+        qualified_zone_variant=QUALIFIED_ZONE_VARIANT,
+        aggregated_zone_variant=AGGREGATED_ZONE_VARIANT,
+        ability_word_public_event_variants=_ABILITY_WORD_PUBLIC_EVENT_VARIANTS,
+        public_event_variants=_ALL_PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS,
+        counter_event_variants=COUNTER_EVENT_VARIANTS,
+        one_or_more_variants=_ONE_OR_MORE_PUBLIC_EVENT_VARIANTS,
+        multi_event_variants=MULTI_EVENT_BINDING_CLOSURE_VARIANTS,
+    )
 
 
 def _binding_effect_template(binding, body, *, card_name, effect_template):

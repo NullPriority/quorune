@@ -93,11 +93,11 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
         self.assertEqual('exact',ir.status)
         node=next(n for n in ir.faces[0].nodes if n.kind=='triggered_ability')
         for target in ('observer','friendly','opponent'):
-            context={'card':'unrelated-damage-source','target':target,'combat':False,'target_kind':'permanent'}
+            context={'card':target,'target':target,'combat':False,'target_kind':'permanent'}
             expected=target=='observer'
             for event,condition,zone in ((child.event.value,child.event_condition,child.active_zone),(node.event,node.event_condition,node.active_zone)):
                 self.assertEqual(expected,semantic_event_matches(host,SimpleNamespace(event=event,event_condition=condition,active_zone=zone),
-                    source,'damage.dealt',context))
+                    source,'damage.received',context))
 
     def test_independent_damage_child_keeps_source_identity_in_event_and_predicate(self):
         from test_bound_effect_programs import record

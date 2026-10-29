@@ -591,6 +591,10 @@ source hashes, residuals, and capability closure into the canonical artifact.
 The complete effect-program promotion policy delegates to
 `compiler/nonleaf_effect_closure.py`; the lowering facade retains its existing
 entry point and recognizer ownership.
+`compiler/trigger_runtime_coverage.py` derives current-ability, aggregation,
+multi-event and intervening-condition metadata from the generated binding.
+The node producer passes the existing canonical variant vocabularies, retaining
+the same coverage policy and extension boundaries.
 `compiler/generated_program_identity.py` owns generated ability identities and
 canonical runtime-handler footprints. Complete typed query normalization keeps
 equivalent reviewed handlers comparable without discarding their predicates;
@@ -635,6 +639,14 @@ the resulting Clue retains its ordinary paid, counterable draw ability.
 Controller-gated activated shuffle uses current permanent colors, including a
 colorless land with a colored basic-land mana ability. These compositions retain
 their leaf owners and pending replay rather than separate card executors.
+
+Receiving-damage bindings use the grouped committed recipient transport,
+including fixed counter bodies and independently typed scalar amounts. Their
+subscriptions name `damage.received` or `combat.damage.received` and declare the
+fine receiving owner; runtime requirements infer it from the event even when
+coverage is absent. Outgoing damage bindings retain the dealer stream. The
+[damage contract](damage.md) owns simultaneous grouping, actual prevention
+results, lethal-source timing and historical packet subscription compatibility.
 
 `compiler/spell_self_exile.py` recognizes a terminal source-self exile clause
 only at the end of an ordinary single-face spell's complete source. Its body

@@ -199,6 +199,22 @@ transactions and combat-damage steps remain separate, fully prevented results
 create none, and the ordinary trigger owner retains APNAP placement and trigger
 multiplier behavior.
 
+Receiving abilities consume a distinct immutable recipient occurrence, rather
+than one trigger per dealer packet. `damage_received_events.py` groups positive
+committed results by the recipient's physical and logical incarnation within
+one transaction, in canonical recipient order. `damage.received` exposes the
+actual received total; `combat.damage.received` separately exposes the positive
+combat portion. Zero and fully prevented packets produce neither occurrence.
+The same recipient in a later transaction or damage step remains a new event.
+
+New compiler subscriptions require the receiving-event capability independently
+of coverage. Lethal damage still queues receiving abilities before state-based
+departure; their source, targets and current/LKI handling remain ordinary
+trigger and damage-source contracts. No mutation owner, dealer identity or
+persistent grouping state is replaced. Saved `damage.dealt` subscriptions keep
+their packet behavior. See
+[ADR 0133](../adr/0133-committed-damage-received-occurrences.md).
+
 ## Replay, privacy, and extension
 
 Event IDs derive from stable damage-step, source-incarnation, recipient, and

@@ -303,7 +303,6 @@ class AggregatedZoneTriggerRuntimeTests(unittest.TestCase):
                 self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
                     profile='commander_review')['strict_capability_ready'])
                 for body in [*squirrels, human]:body.acquired_control_turn_count = -1
-                for n in range(10):self.add(engine, 'Generic Bound Plains', ref='keeper-land-' + str(n))
                 self.add(engine, 'Swamp', ref='acorn-black-mana')
                 self.add(engine, 'Generic Damage Green Source', ref='acorn-green-mana')
                 self.ready(session, sources[0], {'G': 3, 'C': 6});self.checkpoint(session)

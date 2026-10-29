@@ -7709,6 +7709,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/trigger_runtime_coverage.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/turn_cast_grants.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8600,6 +8615,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/damage_received_events.py",
+      "layer": "rules",
+      "owning_subsystem": "damage",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/damage_results.py",
@@ -11391,6 +11420,18 @@
       "file": "quorune/read_ahead.py",
       "layer": "domain",
       "owning_subsystem": "keyword_abilities",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/received_damage_model.py",
+      "layer": "domain",
+      "owning_subsystem": "damage",
       "allowed_dependency_layers": [
         "domain"
       ],
@@ -15198,6 +15239,20 @@
     },
     {
       "file": "quorune/rules/reanimation_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/received_damage_events.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -21362,5 +21417,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "963b367c0be3b1bc9564ef0235347afee308eaa6e685652a456a0a5cf3ece76b"
+  "fingerprint": "9fe840a05ff93bcee28e61609179703e8764d2d9447214248690aeca75dcef4b"
 }

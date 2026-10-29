@@ -94,6 +94,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.fixed_resolution_mana_shapes import fixed_resolution_mana_runtime_dependencies
     from ..rules.special_node_shapes import special_result_trigger_runtime_dependencies
     from ..rules.state_triggers import state_trigger_runtime_dependencies
+    from ..rules.received_damage_events import received_damage_runtime_dependencies
     required,blockers=set(),set()
     from ..rules.event_subscriptions import FixedEventSubscriptionSet
     try:
@@ -119,6 +120,7 @@ def _event_query_runtime_requirements(program):
         (fixed_resolution_mana_runtime_dependencies,program,'fixed_resolution_mana'),
         (special_result_trigger_runtime_dependencies,program,'special_result_trigger'),
         (state_trigger_runtime_dependencies,program,'state_trigger'),
+        (received_damage_runtime_dependencies,program,'received_damage'),
     ):
         try:required.update(resolver(value))
         except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')

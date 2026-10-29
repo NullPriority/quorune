@@ -1424,6 +1424,10 @@ def _collect_damage_result_triggers(
             )
             if host._semantic_pause_annotation() is not None:
                 break
+    if host._semantic_pause_annotation() is None:
+        from .damage_received_events import dispatch_received_damage_events
+        dispatch_received_damage_events(host, result, sources=trigger_sources,
+            source_zones=trigger_source_zones, trigger_batch=trigger_batch)
     nested_index = 0
     if host._semantic_pause_annotation() is None:
         for aftermath in result.aftermath_events:

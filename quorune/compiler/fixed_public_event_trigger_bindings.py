@@ -1087,13 +1087,14 @@ def _source_any_damage_spec(material_line, *, card_name):
     match=re.fullmatch(r'Whenever (?P<source>.+?) (?P<verb>deals|is dealt) (?P<combat>combat )?damage, (?P<body>.+)',material_line,re.I)
     if match is None or not _source_subject(match['source'],card_name=card_name):return None
     receiving=match['verb'].casefold()=='is dealt'
-    if receiving and not match['combat']:return None
     condition=_all_conditions(
         {'field':'target','op':'eq','value':'$source.ref'} if receiving else None,
         {'field':'combat','op':'eq','value':True} if match['combat'] else None)
-    return _spec('damage.dealt' if receiving else 'damage.dealt.self',
-        'source_received_combat_damage' if receiving else 'source_any_combat_damage' if match['combat'] else 'source_any_damage',
-        match['body'],'fixed-counter-public-damage-trigger-v1','trigger-event-normalized-damage',condition=condition)
+    from ..received_damage_model import RECEIVED_DAMAGE_EVENT, RECEIVED_COMBAT_DAMAGE_EVENT, RECEIVED_DAMAGE_MECHANIC
+    template = ('fixed-counter-source-received-combat-damage-trigger-v1' if match['combat'] else 'fixed-counter-source-received-damage-trigger-v1') if receiving else 'fixed-counter-public-damage-trigger-v1'
+    return _spec((RECEIVED_COMBAT_DAMAGE_EVENT if match['combat'] else RECEIVED_DAMAGE_EVENT) if receiving else 'damage.dealt.self',
+        ('source_received_combat_damage' if match['combat'] else 'source_dealt_damage') if receiving else 'source_any_combat_damage' if match['combat'] else 'source_any_damage',
+        match['body'],template,RECEIVED_DAMAGE_MECHANIC if receiving else 'trigger-event-normalized-damage',condition=condition)
 
 
 def fixed_public_event_binding_spec(
