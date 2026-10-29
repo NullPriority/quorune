@@ -1119,6 +1119,21 @@ subscriptions to the historical source-only `permanent.becomes_monstrous` and
 occurrence and corresponding designation owner directly from subscriptions,
 independently of removable coverage annotations.
 
+Exact source-bound `it explores` results delegate to the existing single
+Explore leaf. Named source heads first use the same closed self-event binding
+as the corresponding `this creature` head, including represented shortened
+names. A global creature event's pronoun remains separate from the observer's
+source. Repeated or unrepresented linked instructions retain their residuals.
+Literal self labels retain their existing typed binding priority, including
+Vehicle result paths; their source normalization remains an exact fallback.
+
+The Explore leaf keeps `$source` and `$source.controller`: its choice owner
+uses the original logical identity and current or last-known controller even
+after departure. A returned incarnation cannot receive the earlier counter.
+Current games carry the versioned action mode described in
+[ADR 0134](../adr/0134-versioned-explore-action-semantics.md); the compiler adds
+no separate counter executor or token/builtin schema.
+
 Qualified “one or more” player-damage triggers compile native source type,
 subtype, color and supertype predicates alongside controller, source-zone and
 combat restrictions. Bare subtype subjects retain their permanent domain.

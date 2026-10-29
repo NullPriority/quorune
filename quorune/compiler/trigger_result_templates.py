@@ -61,6 +61,9 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
     if mill is not None:return mill
     if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked', 'source_dealt_damage', 'source_received_combat_damage'}:
+        from .explore_templates import single_explore_effect_template
+        explored = single_explore_effect_template(body, allow_source_pronoun=True)
+        if explored is not None:return explored.compiled(), False
         from .damage_templates import source_pronoun_damage_effect_template
         damage=source_pronoun_damage_effect_template(body)
         if damage is not None:return damage.compiled(),False

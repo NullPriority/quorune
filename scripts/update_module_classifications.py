@@ -76,6 +76,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/untargeted_untap_model.py",
         "quorune/received_damage_model.py",
         "quorune/designation_event_model.py",
+        "quorune/explore_action_model.py",
         "quorune/target_count_cost_model.py",
         "quorune/mana_symbol_counts.py",
         "quorune/public_zone_condition_model.py",

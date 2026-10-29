@@ -22,6 +22,14 @@ absence retains the earlier transition order and remains absent on serialization
 Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
 See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
 
+New checkpoints also carry `explore_action_version: 1` in matching format
+provenance. Empty-library Explore attempts a counter on the retained current
+explorer before completion through the ordinary replacement owner. Historical
+absence keeps the former empty result and serializes without the marker.
+Manifest/checkpoint disagreement and unsupported versions reject before replay.
+Existing Explore instructions and Map builtins retain their schemas. See
+[ADR 0134](../adr/0134-versioned-explore-action-semantics.md).
+
 ## Directory contract
 
 | File | Contract |

@@ -9,6 +9,7 @@ from ..drawing.restrictions import DrawPermission
 from ..object_query import ObjectQueryResult
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
 from ..semantic_runtime.context import SemanticSourceContext
+from ..explore_action_model import explore_action_version
 
 ChoiceObjectView = ObjectQueryResult
 
@@ -110,6 +111,9 @@ class SemanticChoiceQuery(
     @property
     def resolution_source(self) -> SemanticSourceContext | None: ...
 
+    @property
+    def explore_action_version(self) -> int | None: ...
+
     def player_life(self, seat: str) -> int: ...
 
     def player_counter(self, seat: str, counter: str) -> int: ...
@@ -185,8 +189,10 @@ class SnapshotSemanticChoiceQuery:
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
     ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
     resolution_source: SemanticSourceContext | None = None
+    explore_action_version: int | None = None
 
     def __post_init__(self) -> None:
+        explore_action_version(self.explore_action_version)
         if self.resolution_source is not None and not isinstance(self.resolution_source, SemanticSourceContext):
             raise ValueError('Choice resolution source requires an immutable typed snapshot')
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):

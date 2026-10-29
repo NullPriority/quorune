@@ -31,9 +31,12 @@ def named_source_union_candidate(text: str) -> bool:
     return _NAMED_SOURCE_UNION_PREFIX.match(text) is not None
 
 
-def normalized_source_event_line(text: str, *, source_name: str) -> str | None:
+def normalized_source_event_line(text: str, *, source_name: str, named_only: bool = False) -> str | None:
     """Normalize only an independently closed self-action event subject."""
-    if _SOURCE_EVENT.fullmatch(text) is None:
+    event = _SOURCE_EVENT.fullmatch(text)
+    if event is None:
+        return None
+    if named_only and not SourceReferenceSpec(source_name).matches(event['subject']):
         return None
     source = re.fullmatch(
         rf"(?P<prefix>(?:When|Whenever) )(?P<subject>{SourceReferenceSpec(source_name).regex_pattern}"

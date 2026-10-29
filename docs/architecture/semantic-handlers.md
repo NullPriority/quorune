@@ -56,6 +56,16 @@ Private candidate ordering is deterministic across checkpoint serialization.
 Variable counts, simultaneous connivers, Connive replacements and unrepresented
 listeners or reflexive results remain residuals.
 
+Explore uses one retained permanent and its current or last-known controller.
+In the current action mode, an empty library still prepares the ordinary
+replacement-aware counter before completion. Stale, phased or returned
+incarnations do not receive it. The same owner handles compiled instructions
+and Map builtins, including suspension and exact resumption of counter
+replacement. Historical absence of the mode retains the earlier empty result.
+Source departure capture follows independently owned optional-effect and
+payment wrappers in the current mode. See
+[the action-mode decision](../adr/0134-versioned-explore-action-semantics.md).
+
 The existing optional-effect choice also represents fixed controller draw
 followed by “If you do, discard” instructions. Decline performs neither action.
 Acceptance resumes the draw and then the mandatory private discard through

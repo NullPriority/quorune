@@ -9731,6 +9731,37 @@
         "test_fixed_counter_event_triggers",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-explore-composition-and-action-mode",
+      "patterns": [
+        "quorune/explore_action_model.py",
+        "quorune/model.py",
+        "quorune/semantic_choices/context.py",
+        "quorune/semantic_choices/engine_coordination.py",
+        "quorune/semantic_choices/library_and_hand.py",
+        "quorune/semantic_runtime/explore.py",
+        "quorune/record_state_provenance.py",
+        "schemas/game-record-v3-manifest.schema.json",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "tests/source_explore_fixture.py",
+        "tests/fixtures/source-explore-cards.json",
+        "tests/test_source_explore_composition.py",
+        "tests/test_source_explore_native.py",
+        "tests/test_explore_mode_native.py"
+      ],
+      "test_modules": [
+        "test_source_explore_composition",
+        "test_source_explore_native",
+        "test_explore_mode_native",
+        "test_explore_compiler",
+        "test_explore_rules",
+        "test_fixed_counter_event_triggers",
+        "test_game_record_v3",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

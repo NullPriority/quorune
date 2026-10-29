@@ -9831,6 +9831,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/explore_action_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/external_entry_counter_model.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -21503,5 +21515,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "1abb25ee0541a9852480c60ec947b21bd5cc4b2c4c146bc3827c72bc67f53ce6"
+  "fingerprint": "d7399a1a4d24b986a49cf126954b80bc78e15582cf156e0c706fde40997a3f5c"
 }

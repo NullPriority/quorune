@@ -32,6 +32,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
         **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
+        **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
     }
 
 
@@ -64,6 +65,10 @@ def validate_state_versions(
     if type(tap_version) is not int or tap_version not in {0, 1} or tap_version != (state.tap_state_event_version or 0):
         raise ValueError("Tap-state event provenance does not match the initial checkpoint")
     from .cast_source_placement_model import cast_source_placement_version
+    from .explore_action_model import explore_action_version
+    explore = format_value.get('explore_action_version', 0)
+    if type(explore) is not int or explore not in {0, 1} or explore != (explore_action_version(getattr(state, 'explore_action_version', None)) or 0):
+        raise ValueError('Explore action provenance does not match the initial checkpoint')
     placement=format_value.get('cast_source_placement_version',0)
     if type(placement) is not int or placement not in {0,1} or placement!=(cast_source_placement_version(getattr(state,'cast_source_placement_version',None)) or 0):
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')

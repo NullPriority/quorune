@@ -1058,6 +1058,10 @@ def fixed_counter_trigger_binding(
     card_name: str | None = None,
     _source_normalized: bool = False,
 ) -> FixedCounterTriggerBinding | None:
+    normalized = normalized_source_event_line(material_line, source_name=card_name, named_only=True) if not _source_normalized and card_name else None
+    if normalized is not None:
+        source_binding = fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True)
+        if source_binding is not None:return source_binding
     intervening = _PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
         condition = fixed_public_state_condition(
