@@ -246,6 +246,7 @@ def fixed_power_toughness_anthem_handler(
 
 def fixed_query_keyword_grant_handler(
     oracle_line: str,
+    *, allow_disjoint_negative: bool = False,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower one closed live-set combat-keyword grant.
 
@@ -265,7 +266,7 @@ def fixed_query_keyword_grant_handler(
     if match is None:
         return None
     parsed = fixed_characteristic_battlefield_query_subject(
-        match.group("subject")
+        match.group("subject"),allow_negative_keyword=allow_disjoint_negative
     )
     if parsed is None:
         return None
@@ -279,15 +280,21 @@ def fixed_query_keyword_grant_handler(
     ):
         return None
     abilities, fragments = granted
+    negative=bool(predicate.keywords_none)
+    if negative and (len(predicate.keywords_none)!=1 or fragments
+            or set(predicate.keywords_none).intersection(a.casefold() for a in abilities)):
+        return None
     capabilities = {
         "continuous.ability.fixed_query_keyword_grant",
         *_attached_ability_capabilities(abilities),
         *(('state_query.commander.designation',) if predicate.commander is True else ()),
+        *(('continuous.ability.disjoint_negative_keyword_grant',) if negative else ()),
     }
     return (
         "continuous-fixed-query-keyword-grant-v2",
         {
-            "handler_id": ('continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
+            "handler_id": ('continuous.ability.disjoint-negative-keyword-grant.v1' if negative else
+                           'continuous.ability.fixed-query-protection-grant.v2' if 'Protection' in abilities
                            else "continuous.ability.fixed-query-keyword-grant.v1"),
             "schema_version": 2 if 'Protection' in abilities else 1,
             "event": "characteristics.evaluate",

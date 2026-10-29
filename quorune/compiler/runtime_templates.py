@@ -435,7 +435,7 @@ def _continuous_static_runtime_template(
             ),
         )
     keyword_grant = (
-        None if source_is_class else fixed_query_keyword_grant_handler(text)
+        None if source_is_class else fixed_query_keyword_grant_handler(text,allow_disjoint_negative=True)
     )
     if keyword_grant is not None:
         return StaticRuntimeTemplate(

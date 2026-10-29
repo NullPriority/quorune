@@ -9010,6 +9010,26 @@
         "test_attached_static_characteristics",
         "test_fixed_source_characteristic_effects"
       ]
+    },
+    {
+      "id": "disjoint-negative-keyword-grants",
+      "patterns": [
+        "quorune/compiler/continuous_templates.py",
+        "quorune/semantic_runtime/negative_keyword_grants.py",
+        "quorune/continuous_effects.py",
+        "quorune/rules/keyword_runtime_requirements.py",
+        "tests/test_disjoint_negative_keyword_grants.py",
+        "tests/fixtures/disjoint-negative-keyword-cards.json",
+        "quorune/compiler/runtime_templates.py"
+      ],
+      "test_modules": [
+        "test_disjoint_negative_keyword_grants",
+        "test_continuous_effect_components",
+        "test_fixed_query_keyword_grants",
+        "test_characteristic_read_frames",
+        "test_creature_subtype_additions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

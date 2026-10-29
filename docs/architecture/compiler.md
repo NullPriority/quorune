@@ -3452,6 +3452,14 @@ restriction and excludes only the source when `Other` is printed. Both fixed
 stats and keyword grants consume that same predicate. Unknown nouns, open union
 clauses and Class level context retain their existing fail-closed boundaries.
 
+Direct ordinary keyword grants may opt into one absent-keyword predicate when
+all granted keywords differ from the tested keyword. A distinct handler and
+capability own that admission. Self-changing predicates and typed Ward,
+Protection or trigger fragments remain outside it. Existing composite and
+conditional callers retain their prior helper boundary until they explicitly
+admit the new shape. Pure negative-keyword stat modifiers keep their existing
+layer-seven owner.
+
 Commander-creature characteristic sets use the version-six designation field
 in the existing object query. The field reads the authoritative physical-card
 designation and current creature type; it is not a subtype or copiable value.

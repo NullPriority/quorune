@@ -157,9 +157,9 @@ def _ability_presence_dependency_ids(
 ) -> frozenset[str]:
     """Order one ability-qualified component after same-layer ability changes."""
 
-    if not effect.applies.keywords_all:
+    if not (effect.applies.keywords_all or effect.applies.keywords_none):
         return frozenset()
-    required = {value.casefold() for value in effect.applies.keywords_all}
+    required = {value.casefold() for value in (*effect.applies.keywords_all,*effect.applies.keywords_none)}
 
     def changes_required_ability(candidate: ContinuousEffect) -> bool:
         return any(

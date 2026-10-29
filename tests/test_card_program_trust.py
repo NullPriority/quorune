@@ -345,6 +345,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.graveyard_conditional_grant",
                 "continuous.characteristics.fixed_public_setting",
                 "continuous.characteristics.enchanted_player_query",
+                "continuous.ability.disjoint_negative_keyword_grant",
                 "continuous.control.attached_source",
                 "continuous.ability.fixed_public_state_grant",
                 "continuous.ability.conditional_flash",

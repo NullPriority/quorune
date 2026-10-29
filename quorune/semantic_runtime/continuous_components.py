@@ -1407,6 +1407,7 @@ class ContinuousEffectComponentRegistry(
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .conditional_flash import ConditionalFlashKeywordHandler
+    from .negative_keyword_grants import DisjointNegativeKeywordGrantHandler
     from .enchanted_player_characteristics import EnchantedPlayerCharacteristicsHandler
     from .defender_declarations import DefenderDeclarationPermissionHandler
     from .conditional_color_grants import ConditionalColorGrantHandler
@@ -1478,6 +1479,7 @@ def default_continuous_effect_component_registry(
             SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
             EnchantedPlayerCharacteristicsHandler(),
+            DisjointNegativeKeywordGrantHandler(),
             ConditionalCharacteristicSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),

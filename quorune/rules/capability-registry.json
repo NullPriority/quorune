@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 542,
+  "registry_version": 543,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -64373,6 +64373,99 @@
       "dependency_fail_closed_rationale": "Evidence-verified new rule, declaration, query and conditional designation owners withdraw independently with unrelated Monarch control; runtime binding rejects omitted rule authority.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the current giver fragment kills the bounded original Herald witness; actual v623 before-repair evidence accepted an illegal block after receiver blanking.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.disjoint_negative_keyword_grant",
+      "version": 1,
+      "official_rules": [
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "613.7",
+        "613.8"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One current absent-keyword predicate selects ordinary disjoint layer6 keyword additions. The existing ability-qualified dependency owner orders independent changes to the tested keyword before the query. Self-changing predicates and typed trigger/protection/ward fragments remain excluded.",
+        "inputs": [
+          "Closed public battlefield query",
+          "One tested ordinary keyword absence",
+          "Disjoint ordinary keyword additions",
+          "Existing current giver presence and layer6 dependencies"
+        ],
+        "outputs": [
+          "Shared layered keyword values and block legality",
+          "Current membership after independent Flying gain or ability loss",
+          "Atomic command rejection, privacy and replay"
+        ],
+        "exclusions": [
+          "Grants changing the tested absent keyword",
+          "Typed triggered/protection/ward fragment grants",
+          "Unknown, chosen or hidden selectors"
+        ]
+      },
+      "dependencies": [
+        "continuous.ability.fixed_query_keyword_grant"
+      ],
+      "implementation_components": [
+        "quorune.compiler.continuous_templates.fixed_query_keyword_grant_handler",
+        "quorune.semantic_runtime.negative_keyword_grants.DisjointNegativeKeywordGrantHandler",
+        "quorune.continuous_effects._ability_presence_dependency_ids"
+      ],
+      "positive_tests": [
+        "test_absence_dependency_orders_later_addition_and_removal_before_query",
+        "test_absence_descriptor_rejects_wrong_identity_ordinary_presence_and_interfering_addition",
+        "test_actual_chaosphere_grants_ground_reach_and_shared_block_actions_keep_flyers_off_ground",
+        "test_actual_earlier_and_later_humility_changes_tested_keyword_before_static_reach_grant",
+        "test_actual_later_flight_precedes_absence_query_then_removal_restores_reach",
+        "test_complete_disjoint_absence_grants_preserve_source_spans_and_reject_self_changes"
+      ],
+      "negative_tests": [
+        "test_absence_dependency_orders_later_addition_and_removal_before_query",
+        "test_absence_descriptor_rejects_wrong_identity_ordinary_presence_and_interfering_addition",
+        "test_actual_chaosphere_grants_ground_reach_and_shared_block_actions_keep_flyers_off_ground",
+        "test_actual_earlier_and_later_humility_changes_tested_keyword_before_static_reach_grant",
+        "test_actual_later_flight_precedes_absence_query_then_removal_restores_reach",
+        "test_complete_disjoint_absence_grants_preserve_source_spans_and_reject_self_changes",
+        "test_runtime_absence_owner_cannot_be_omitted",
+        "test_verified_absence_and_query_owner_withdrawals_keep_unrelated_positive_support"
+      ],
+      "interaction_tests": [
+        "test_actual_chaosphere_grants_ground_reach_and_shared_block_actions_keep_flyers_off_ground",
+        "test_actual_earlier_and_later_humility_changes_tested_keyword_before_static_reach_grant",
+        "test_actual_later_flight_precedes_absence_query_then_removal_restores_reach"
+      ],
+      "multiplayer_tests": [
+        "test_actual_chaosphere_grants_ground_reach_and_shared_block_actions_keep_flyers_off_ground",
+        "test_actual_earlier_and_later_humility_changes_tested_keyword_before_static_reach_grant",
+        "test_actual_later_flight_precedes_absence_query_then_removal_restores_reach"
+      ],
+      "privacy_tests": [
+        "test_actual_chaosphere_grants_ground_reach_and_shared_block_actions_keep_flyers_off_ground"
+      ],
+      "replay_tests": [
+        "test_actual_chaosphere_grants_ground_reach_and_shared_block_actions_keep_flyers_off_ground",
+        "test_actual_earlier_and_later_humility_changes_tested_keyword_before_static_reach_grant",
+        "test_actual_later_flight_precedes_absence_query_then_removal_restores_reach"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Evidence-verified new absence, ordinary query and Reach owner withdrawal rejects admission with unrelated Monarch control; runtime inference independently requires the new descriptor owner.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting tested-keyword dependency ordering kills the focused late-Flying witness; actual earlier/later Humility and Flight source removal exercise current native results.",
       "blockers": [],
       "status": "trusted"
     }

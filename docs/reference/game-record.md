@@ -429,6 +429,12 @@ Newly generated battlefield triggers serialize the existing current-component
 coverage marker. Previously serialized unmarked programs retain their explicit
 coverage and the ordinary runtime-trust admission contract.
 
+Disjoint absent-keyword grants use a distinct version-one runtime descriptor
+with the existing object-query and keyword-list shapes. Its capability is
+required independently during binding. Earlier keyword-grant descriptors keep
+their identity and decoding behavior, and the new admission adds no GameState
+field or journal.
+
 Bound static declaration rules use a version-one typed fragment containing a
 closed relative receiver selector, public giver condition and intrinsic rule
 children. Giver and receiver references are derived from current state during

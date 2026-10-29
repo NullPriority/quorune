@@ -18581,6 +18581,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/negative_keyword_grants.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/nodes.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -20838,5 +20853,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "7ef38c68ab98601431d492c0f9b829a88070a8c8363fdbadd839608ebf259cae"
+  "fingerprint": "4faff0408431eb688118007104b8cfdf1ce7b691f13107a483856a7b54241ec8"
 }

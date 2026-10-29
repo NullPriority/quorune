@@ -39,6 +39,10 @@ def _fragment_descriptor_requirements(value):
             from ..continuous_conditions import FixedPublicStateConditionSpec
             FixedPublicStateConditionSpec.from_dict(value)
             own.add('permanent.designation.renowned')
+        if value.get('handler_id')=='continuous.ability.disjoint-negative-keyword-grant.v1':
+            from ..semantic_runtime.negative_keyword_grants import DisjointNegativeKeywordGrantHandler,NEGATIVE_KEYWORD_GRANT_CAPABILITY
+            DisjointNegativeKeywordGrantHandler().validate(value)
+            own.add(NEGATIVE_KEYWORD_GRANT_CAPABILITY)
         if value.get('handler_id') == 'continuous.basic_land_type.fixed-addition.v1':
             from ..basic_type_addition_model import BasicTypeAdditionSpec
             own.add(BasicTypeAdditionSpec.from_dict(value['addition']).capability_id)

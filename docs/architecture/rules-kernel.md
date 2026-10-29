@@ -861,6 +861,14 @@ their existing authority. Bare and compound attached declaration restrictions
 and source-owned activation prohibitions use the same giver-presence boundary.
 Granted keywords retain their ordinary removable-ability behavior.
 
+Layer-six keyword qualifications depend on independent effects that change a
+tested keyword's presence or absence. The shared dependency owner orders those
+changes before evaluating the query; ordinary dependency cycles retain their
+timestamp fallback. Disjoint absent-keyword grants add ordinary keywords
+through the existing grant owner and retain current giver eligibility. A later
+Flying grant removes an object from a no-Flying selector; ability removal can
+make it eligible before the Reach grant applies.
+
 Bound static declaration rules project current giver-owned instructions onto
 real receiver anchors for the existing attack and block owners. Giver identity
 and receiver anchor stay distinct; counters, current characteristics, control,
