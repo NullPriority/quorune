@@ -10027,6 +10027,28 @@
         "test_prepared_creature_power_damage_compiler",
         "test_prepared_creature_power_damage_native"
       ]
+    },
+    {
+      "id": "source-counter-pronoun-amount-bindings",
+      "patterns": [
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "tests/test_source_counter_pronoun*.py",
+        "tests/source_counter_pronoun_fixture.py",
+        "tests/fixtures/source-counter-pronoun-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_cumulative_upkeep_counter_placement",
+        "test_oracle_ir",
+        "test_scalar_effect_amounts",
+        "test_source_counter_amounts",
+        "test_source_counter_pronoun_compiler",
+        "test_source_counter_pronoun_native",
+        "test_source_damage_scalars",
+        "test_sunburst_rules"
+      ]
     }
   ],
   "symbol_rules": [

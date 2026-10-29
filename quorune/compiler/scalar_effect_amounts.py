@@ -48,7 +48,8 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
         source=rf'(?:this (?:artifact|aura|creature|enchantment|equipment|land|permanent|token)|{SourceReferenceSpec(source_name).regex_pattern})'
         direct=bool(re.fullmatch(source,counter['reference'],re.I))
         pronoun=counter['reference'].casefold() in {'it','him','her'}
-        if not direct and not (pronoun and source_event):return None
+        source_subject=bool(re.match(source+r' (?:deals|gets|gains)\b',body,re.I))
+        if not direct and not (pronoun and (source_event or source_subject)):return None
         try:return ScalarEffectAmountSpec(ScalarAmountOrigin.SOURCE,counter_name=normalized_counter_name(counter['counter']),schema_version=2)
         except ValueError:return None
     match = re.fullmatch(r"(?P<reference>.+?) (?P<field>power|toughness|mana value)", value, re.I)

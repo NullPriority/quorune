@@ -530,6 +530,15 @@ has a target. An explicit target-led result keeps its target characteristic.
 These roles are selected before result-slot lowering; equal source and target
 values cannot establish their equivalence.
 
+Source-led counter quantities such as “this artifact deals damage equal to
+the number of charge counters on it” retain that same source binding. The
+activated-ability compiler can also normalize the complete “it deals damage
+equal to” result after establishing its activating source. This normalization
+preserves the original Oracle span and existing source-counter amount codec;
+it does not bind a target-led or unowned event pronoun. Current counts and
+immediate departure counts remain the existing scalar owner's responsibility,
+so sacrifice costs and later returned incarnations need no alternate evaluator.
+
 Scheduled each-player and each-opponent upkeep or draw-step triggers preserve the trigger
 source's controller separately from the active player. Fixed nontargeted
 draw, life, mill, and damage results preserve each clause's original subject.

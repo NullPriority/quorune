@@ -656,7 +656,10 @@ def _compiled_activated_effect(
     return (
         compiled.compiled()
         if compiled is not None
-        else effect_template(text, card_name=card_name)
+        else effect_template(
+            re.sub(r'^It deals (?=damage equal to )', 'This permanent deals ', text, flags=re.I),
+            card_name=card_name,
+        )
     )
 
 

@@ -377,6 +377,7 @@
     "tests/fixtures/source-block-pair-cards.json",
     "tests/fixtures/source-counter-amounts.json",
     "tests/fixtures/source-counter-anthem-cards.json",
+    "tests/fixtures/source-counter-pronoun-cards.json",
     "tests/fixtures/source-damage-death-cards.json",
     "tests/fixtures/source-damage-scalar-cards.json",
     "tests/fixtures/source-explore-cards.json",
