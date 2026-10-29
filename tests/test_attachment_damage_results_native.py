@@ -93,6 +93,8 @@ class AttachmentDamageResultNativeTests(fixtures.AttachmentDamageFixture, unitte
         body.acquired_control_turn_count = -1
         attacker = self.add(s.engine, 'Grizzly Bears', seat='B')
         attacker.acquired_control_turn_count = -1
+        comparison_attacker = self.add(s.engine, 'Grizzly Bears', ref='jitte-block-query-attacker')
+        comparison_blocker = self.add(s.engine, 'Grizzly Bears', seat='B', ref='jitte-unaffected-blocker')
         self.assert_closed(s, equipment)
         self.ready(s, {'C': 2})
         self.cast_for(s, 'A', equipment, reserve={'C': 1})
@@ -128,5 +130,19 @@ class AttachmentDamageResultNativeTests(fixtures.AttachmentDamageFixture, unitte
         self.assertTrue(r.ok, r.summary)
         self.assertEqual(0, s.state.cards[equipment.object_id].counters.get('charge', 0))
         self.settle(s)
+        from quorune.declaration_rule_effects import ResolutionDeclarationRuleEffect
+        effects = [effect for effect in s.state.continuous_effects
+            if isinstance(effect, ResolutionDeclarationRuleEffect)]
+        effect, = effects
+        self.assertEqual((('block',), 'self', 'prohibit'),
+            (effect.restriction.declarations, effect.restriction.scope, effect.restriction.mode))
+        self.assertEqual([(attacker.object_id, s.state.cards[attacker.object_id].logical_object_id)],
+            [(locked.object_id, locked.logical_object_id) for locked in effect.locked_objects])
+        self.assertEqual((False, 'declaration_restriction:intrinsic-block-prohibition-v1'),
+            s.engine._can_block(s.state.cards[comparison_attacker.object_id], s.state.cards[attacker.object_id]))
+        self.assertEqual((True, None), s.engine._can_block(
+            s.state.cards[comparison_attacker.object_id], s.state.cards[comparison_blocker.object_id]))
+        self.assertEqual('graveyard', s.state.cards[body.object_id].zone)
+        self.assertIsNone(s.state.cards[equipment.object_id].attached_to)
         self.private(s)
         self.replay(s, load=True)

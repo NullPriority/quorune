@@ -10131,6 +10131,24 @@
         "test_card_program_v2",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-context-composition-interaction-witnesses",
+      "patterns": [
+        "platform/reusable-piece-interaction-evidence.json"
+      ],
+      "test_modules": [
+        "test_attachment_damage_results_native",
+        "test_composite_quoted_grants",
+        "test_discard_result_native",
+        "test_enchanted_player_statics",
+        "test_granted_keyword_events",
+        "test_granted_static_characteristics",
+        "test_high_risk_interaction_assurance",
+        "test_public_compositions",
+        "test_shared_creature_type_quantities",
+        "test_type_replacement_grants"
+      ]
     }
   ],
   "symbol_rules": [

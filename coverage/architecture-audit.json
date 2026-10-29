@@ -18628,11 +18628,11 @@
       "applicable_high_risk_pairs": 563,
       "applicable_piece_pairs": 148174,
       "available": true,
-      "covered_high_risk_pairs": 543,
-      "covered_piece_pairs": 1786,
+      "covered_high_risk_pairs": 563,
+      "covered_piece_pairs": 1806,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "c2fab539502843898ab964f5f71f5156a5143db4efbcbee8629899f10e5e3bce",
-      "uncovered_high_risk_pairs": 20
+      "source_fingerprint": "a30438c3b5b0e79b85a1c2e7b4fabe2dc66a0330db632c3311fb96f8f3753dac",
+      "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
     "missing_dedicated_owners": [],
@@ -48891,13 +48891,14 @@
         ],
         "oversized_symbol_count": 0,
         "oversized_symbols": [],
-        "primary_test_count": 93,
+        "primary_test_count": 94,
         "primary_tests": [
           "test_ability_word_event_triggers",
           "test_all_blocker_requirements",
           "test_as_unblocked_assignment",
           "test_attached_occurrences",
           "test_attached_static_characteristics",
+          "test_attachment_damage_results_native",
           "test_basic_land_type_mana",
           "test_block_capacity",
           "test_capability_implementation_mutations",
@@ -54267,7 +54268,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "75b46184f63488f71a5e0b0c93310bd5e2f9f61fcb9161ad79a71b7e157966b6",
+      "fingerprint": "3dde744186eeac90eedf557765e9c666dbf2733bdc6ec57f2786c7a4c35a3fe6",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -55125,8 +55126,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 10146,
-      "discovered_total": 13455,
+      "conventional_ast_cases": 10148,
+      "discovered_total": 13457,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 316,

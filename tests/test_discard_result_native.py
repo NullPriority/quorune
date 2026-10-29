@@ -17,7 +17,9 @@ class DiscardResultNativeTests(fixtures.CipherFixture, unittest.TestCase):
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
         path = Path(cls.temporary.name) / 'discard-results.sqlite3'
-        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json', ROOT / 'tests/fixtures/discard-result-cards.json'], path)
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/discard-result-cards.json',
+            ROOT / 'tests/fixtures/public-negative-supertype-cards.json'], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('Discard results', [DeckEntry('Isamaru, Hound of Konda', 1, 'commander'), DeckEntry('Generic Bound Plains', 30)], ['Isamaru, Hound of Konda'])
@@ -197,3 +199,47 @@ class DiscardResultNativeTests(fixtures.CipherFixture, unittest.TestCase):
         self.assertEqual([1, 3, 0, 2], [len(s.state.players[p].zones['hand']) for p in 'ABCD'])
         self.private(s)
         self.replay(s, load=True)
+
+    def test_actual_incendiary_nonbasic_target_gates_the_untargeted_discard_mode(self):
+        # CR 608.2b: losing every selected target prevents both chosen modes.
+        for departed in (False, True):
+            with self.subTest(departed=departed):
+                s = self.session(701090561 + int(departed))
+                self.hands(s, {'A': 1, 'B': 3, 'C': 0, 'D': 2})
+                source = self.add(s.engine, 'Incendiary Command', zone='hand')
+                land = self.add(s.engine, 'Tree of Tales', seat='B')
+                basic = self.add(s.engine, 'Island', seat='C')
+                self.assert_closed(s, source)
+                self.prepare(s, mana={'C': 3, 'R': 2})
+                self.checkpoint(s)
+                offered = next(a for a in s.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                    if a.get('card') == source.ref and a['id'].startswith('cast:'))
+                command = {'action_id': offered['id'], 'modes': ['mode_3', 'mode_4'],
+                    'targets': [land.ref], 'pay': 'auto'}
+                before = authoritative_state_hash(s.state)
+                self.assertFalse(s.act('pilot:D', command).ok)
+                self.assertEqual(before, authoritative_state_hash(s.state))
+                self.assertFalse(s.act('pilot:A', {**command, 'targets': [basic.ref]}).ok)
+                self.assertEqual(before, authoritative_state_hash(s.state))
+                accepted = s.act('pilot:A', command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                original = {seat: tuple(s.state.players[seat].zones['hand']) for seat in 'ABCD'}
+                s = self.replay(s, load=True)
+                if departed:
+                    self.priority(s, 'B')
+                    accepted = s.act('pilot:B', {'action_id': 'concede', 'choices': {'confirm_concede': True}})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertNotEqual('battlefield', s.state.cards[land.object_id].zone)
+                self.settle(s)
+                self.assertEqual('graveyard', s.state.cards[source.object_id].zone)
+                if departed:
+                    self.assertEqual({seat: original[seat] for seat in 'ACD'},
+                        {seat: tuple(s.state.players[seat].zones['hand']) for seat in 'ACD'})
+                else:
+                    self.assertEqual('graveyard', s.state.cards[land.object_id].zone)
+                    self.assertEqual([1, 3, 0, 2], [len(s.state.players[seat].zones['hand']) for seat in 'ABCD'])
+                    self.assertTrue(all(s.state.cards[oid].zone == 'graveyard'
+                        for cards in original.values() for oid in cards))
+                self.assertEqual('battlefield', s.state.cards[basic.object_id].zone)
+                self.private(s)
+                self.replay(s, load=True)

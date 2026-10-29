@@ -80,6 +80,16 @@ discard with unresolved prevention, replacement, Saga or choice siblings have
 separate whole-CardProgram admission witnesses. Those declarations establish
 fail-closed rejection; they do not claim the unresolved siblings are playable.
 
+Composite, type-replacing, keyword-event and recipient-relative Aura and Equip
+grants name their actual cast, attachment, receiver and removal witnesses.
+Player-attached characteristic scopes retain separate evidence. A charge-paid
+temporary block restriction also checks the locked receiver after the equipped
+creature departs. Modal whole-hand discard composes with a nonbasic-permanent
+target only while that target remains legal; losing every target prevents the
+untargeted discard mode as well. Public-set movement has a cross-card target
+response witness, while incomplete face, replacement and copy siblings retain
+their whole-program admission rejection.
+
 Typed Aura restrictions and defender-permission grants have an original-card
 cast, illegal-target, actual-removal and replay witness. Player Shroud also
 composes with source-maintenance payment and canonical sacrifice redirection:
