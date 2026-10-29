@@ -20,11 +20,13 @@ def typed_attacker_requirements(
     """Return current intrinsic attack requirements for one legal attacker."""
 
     result: list[DeclarationRequirement] = []
-    for index, requirement in enumerate(
+    from .rules.bound_static_declarations import bound_declaration_requirements
+    intrinsic=tuple(enumerate(
         declaration_requirement_specs(
             host._effective_ability_fragments(attacker, error_type=error_type)
         )
-    ):
+    ))
+    for index, requirement in (*intrinsic,*bound_declaration_requirements(host,attacker,error_type=error_type)):
         if requirement.kind != "attack_each_combat":
             continue
         result.append(
@@ -81,9 +83,9 @@ def typed_blocker_requirements(
             blocker,
             error_type=error_type,
         )
-        for index, requirement in enumerate(
-            declaration_requirement_specs(fragments)
-        ):
+        from .rules.bound_static_declarations import bound_declaration_requirements
+        for index, requirement in (*enumerate(declaration_requirement_specs(fragments)),
+                *bound_declaration_requirements(host,blocker,error_type=error_type)):
             if requirement.kind == "block_each_combat":
                 result.append(
                     DeclarationRequirement(

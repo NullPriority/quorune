@@ -44,7 +44,10 @@ class EnchantedPlayerStaticCompilerTests(unittest.TestCase):
             self.assertEqual(1,len(owned));self.assertEqual('attached',owned[0]['value']['scope'])
             self.assertFalse(any(h.get('modifier',{}).get('add_ability_fragments') for h in handlers))
         condition,body=fixed_public_state_parts("During your turn, enchanted creature can't block.",source_name='Fixture')
-        self.assertIsNone(conditional_query_declaration_grant(condition,body,source_name='Fixture'))
+        result=conditional_query_declaration_grant(condition,body,source_name='Fixture')
+        self.assertIsNotNone(result)
+        spec=ability_fragment_from_dict(result[1]['fragment'])
+        self.assertEqual('attached',spec.scope);self.assertEqual(condition,spec.source_condition)
 
     def test_complete_static_scopes_preserve_spans_and_independent_owners(self):
         registry=load_default_capability_registry()

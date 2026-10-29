@@ -429,6 +429,13 @@ Newly generated battlefield triggers serialize the existing current-component
 coverage marker. Previously serialized unmarked programs retain their explicit
 coverage and the ordinary runtime-trust admission contract.
 
+Bound static declaration rules use a version-one typed fragment containing a
+closed relative receiver selector, public giver condition and intrinsic rule
+children. Giver and receiver references are derived from current state during
+declaration queries. They add no GameState field or resolution journal. The
+older characteristic-grant and conditional schema-six descriptors keep their
+serialized forms and ordinary historical admission behavior.
+
 Tap-state events use an additive `tap_state_event_version` marker. New games
 pin its version in checkpoint and record format. Absence preserves historical
 untap-step event contexts and does not emit the expanded tap-state vocabulary.

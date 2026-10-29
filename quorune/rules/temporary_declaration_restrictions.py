@@ -22,6 +22,7 @@ from ..continuous_effect_state import (
 from ..declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
 from ..declaration_rule_effects import ResolutionDeclarationRuleEffect
 from ..object_query import ObjectQueryResult
+from ..characteristic_read_frames import characteristic_read_method
 
 
 TemporaryDeclarationRestrictionKind = Literal[
@@ -71,6 +72,7 @@ class CurrentDeclarationRestriction:
     participant_id: str
     source: Any
     template: DeclarationRestrictionTemplate
+    giver: Any | None = None
 
 
 def temporary_declaration_restriction(
@@ -156,6 +158,7 @@ def commit_temporary_declaration_restriction(
     return effect
 
 
+@characteristic_read_method
 def current_declaration_restrictions(
     host: TemporaryDeclarationRestrictionHost,
     *,
@@ -212,6 +215,10 @@ def current_declaration_restrictions(
                     template=effect.restriction,
                 )
             )
+    from .bound_static_declarations import current_bound_declaration_rules
+    for key,giver,anchor,rule in current_bound_declaration_rules(host,error_type=error_type):
+        if isinstance(rule,DeclarationRestrictionTemplate):
+            result.append(CurrentDeclarationRestriction(key,anchor,rule,giver))
     return tuple(result)
 
 

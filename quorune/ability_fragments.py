@@ -456,6 +456,7 @@ class ProtectionSpec:
 from .granted_activation_model import GrantedActivatedAbilitySpec
 from .untap_restraint_model import AttachedUntapRestraintSpec
 from .enchanted_player_model import EnchantedPlayerAttackRequirementSpec
+from .bound_declaration_model import BoundStaticDeclarationRulesSpec
 
 
 def _nonempty_string(value: Any, *, field: str) -> str:
@@ -758,6 +759,7 @@ StaticAbilityFragment: TypeAlias = (
     | GrantedActivatedAbilitySpec
     | AttachedUntapRestraintSpec
     | EnchantedPlayerAttackRequirementSpec
+    | BoundStaticDeclarationRulesSpec
     | GrantedTriggeredAbilitySpec
     | CombatKeywordTriggerSpec
     | DamageKeywordTriggerSpec
@@ -809,6 +811,8 @@ def ability_fragment_to_dict(
         kind = 'attached_untap_restraint'
     elif isinstance(fragment, EnchantedPlayerAttackRequirementSpec):
         kind = 'enchanted_player_attack_requirement'
+    elif isinstance(fragment, BoundStaticDeclarationRulesSpec):
+        kind = 'bound_static_declaration_rules'
     elif isinstance(fragment, GrantedTriggeredAbilitySpec):
         kind = "granted_triggered"
     elif isinstance(fragment, CombatKeywordTriggerSpec):
@@ -905,6 +909,8 @@ def ability_fragment_from_dict(
         return AttachedUntapRestraintSpec.from_dict(value['value'])
     if value['kind']=='enchanted_player_attack_requirement':
         return EnchantedPlayerAttackRequirementSpec.from_dict(value['value'])
+    if value['kind']=='bound_static_declaration_rules':
+        return BoundStaticDeclarationRulesSpec.from_dict(value['value'])
     if value["kind"] == "granted_triggered":
         return GrantedTriggeredAbilitySpec.from_dict(value["value"])
     if value["kind"] == "combat_keyword_trigger":
@@ -1025,6 +1031,7 @@ def canonical_ability_fragments(
                 GrantedActivatedAbilitySpec,
                 AttachedUntapRestraintSpec,
                 EnchantedPlayerAttackRequirementSpec,
+                BoundStaticDeclarationRulesSpec,
                 GrantedTriggeredAbilitySpec,
                 CombatKeywordTriggerSpec,
                 DamageKeywordTriggerSpec,
@@ -1437,6 +1444,7 @@ __all__ = [
     "GrantedActivatedAbilitySpec",
     "AttachedUntapRestraintSpec",
     "EnchantedPlayerAttackRequirementSpec",
+    "BoundStaticDeclarationRulesSpec",
     "GrantedTriggeredAbilitySpec",
     "PartnerWithSpec",
     "ActivationProhibitionSpec",

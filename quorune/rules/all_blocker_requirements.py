@@ -19,6 +19,8 @@ def _condition_matches(host, source, requirement):
 
 def current_attacker_block_requirements(host, attacker, *, error_type):
     result = []
+    from .bound_static_declarations import bound_declaration_requirements
+    result.extend(bound_declaration_requirements(host,attacker,error_type=error_type))
     for index, requirement in enumerate(declaration_requirement_specs(
             host._effective_ability_fragments(attacker,error_type=error_type))):
         if requirement.scope == 'self' and _condition_matches(host,attacker,requirement):

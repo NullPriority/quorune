@@ -851,6 +851,16 @@ their existing authority. Bare and compound attached declaration restrictions
 and source-owned activation prohibitions use the same giver-presence boundary.
 Granted keywords retain their ordinary removable-ability behavior.
 
+Bound static declaration rules project current giver-owned instructions onto
+real receiver anchors for the existing attack and block owners. Giver identity
+and receiver anchor stay distinct; counters, current characteristics, control,
+phasing and public giver conditions determine membership at declaration time.
+Receiver ability loss does not erase these rules. The query is a pure read and
+shares completed characteristic results only within that read. Existing
+maximum-satisfaction, optional costs and defender choice remain authoritative.
+Later membership changes do not remove blockers from an already completed
+declaration.
+
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.

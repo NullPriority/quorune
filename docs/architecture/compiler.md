@@ -1361,6 +1361,15 @@ layer-six ability presence, so removal suppresses ordinary enter and look-back
 death triggers through the shared trigger owner. Runtime does not add that
 marker to previously serialized programs.
 
+Direct queried declaration instructions lower to a giver-owned bound-rule
+fragment. Mixed sentences keep their characteristic modifiers and actual
+keyword grants in separate descriptors. Conditional forms bind the original
+public condition to the giver and reuse the shared pronoun binder for attached
+subjects. The fragment carries an immutable source, attachment or public query
+and independently closed receiver-relative rules. Unsupported scope or body
+references remain residual. Historical grant descriptors retain their exact
+decode and execution contract.
+
 Fixed additional and unlimited blocking permissions lower to typed layer-6
 capacity fragments for source, attachment and closed public-query recipients.
 Fixed public-state conditions use the existing snapshot owner. Printed

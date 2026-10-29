@@ -561,17 +561,18 @@ def _append_attached_declaration_fragments(
         )
         for fragment in source_fragment_inputs
     )
-    target_fragments = tuple(
-        fragment
-        for fragment in fragments
-        if fragment not in source_fragment_inputs
-    )
-    modifier["add_ability_fragments"].extend(
-        ability_fragment_to_dict(fragment) for fragment in target_fragments
-    )
+    target_fragments=tuple(fragment for fragment in fragments if fragment not in source_fragment_inputs)
+    bound=None
+    if target_fragments:
+        from .bound_declaration_rules import bound_rule_handler
+        from ..object_predicate import ObjectQuerySpec
+        bound=bound_rule_handler(scope='attached',query=ObjectQuerySpec(zones=('battlefield',),
+            types_all=tuple(handler['condition']['types_all'])),rules=target_fragments)
+        if bound is None:return None
     handler["modifier"] = modifier
     handlers: tuple[Mapping[str, Any], ...] = (
         handler,
+        *((bound[1],) if bound is not None else ()),
         *(
             {
                 "handler_id": DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID,
@@ -583,13 +584,14 @@ def _append_attached_declaration_fragments(
         ),
     )
     return (
-        "continuous-attached-characteristics-declaration-grant-v1",
+        "static-attached-characteristics-bound-rules-v1",
         handlers if len(handlers) > 1 else handler,
         tuple(
             sorted(
                 {
                     *raw_capabilities,
                     DECLARATION_COMPONENT_CAPABILITY_ID,
+                    *(bound[2] if bound is not None else ()),
                 }
             )
         ),
@@ -611,9 +613,6 @@ def _direct_declaration_grant(
         for fragment in fragments
     ):
         return None
-    fragment_values = [
-        ability_fragment_to_dict(fragment) for fragment in fragments
-    ]
     if relation == "attached":
         owned=fixed_declaration_fragment_sequence(text,card_name=source_name)
         if owned and all(isinstance(f,DeclarationRestrictionTemplate) and f.scope in {'attached','attached_option'} for f in owned):
@@ -622,54 +621,15 @@ def _direct_declaration_grant(
             return ('static-attached-declaration-rule-v1',handlers,
                 tuple(sorted({DECLARATION_COMPONENT_CAPABILITY_ID,
                     *((PUBLIC_STATE_DECLARATION_CAPABILITY_ID,) if any(f.condition is not None for f in owned) else ())})))
-        modifier = _attached_modifier()
-        modifier["add_ability_fragments"].extend(fragment_values)
-        return (
-            "continuous-attached-declaration-grant-v1",
-            {
-                "handler_id": "continuous.attached.fixed-characteristics.v1",
-                "schema_version": 1,
-                "event": "characteristics.evaluate",
-                "condition": {
-                    "relation": "source_attached_object",
-                    "types_all": ["creature"],
-                },
-                "modifier": modifier,
-            },
-            tuple(
-                sorted(
-                    {
-                        "continuous.attached.fixed_characteristics",
-                        DECLARATION_COMPONENT_CAPABILITY_ID,
-                    }
-                )
-            ),
-        )
+        from .bound_declaration_rules import bound_rule_handler
+        from ..object_predicate import ObjectQuerySpec
+        return bound_rule_handler(scope='attached',query=ObjectQuerySpec(zones=('battlefield',),types_all=('creature',)),rules=fragments)
     parsed = fixed_characteristic_battlefield_query_subject(subject)
     assert parsed is not None
     target_controller, predicate, exclude_source = parsed
-    return (
-        "continuous-fixed-query-declaration-grant-v1",
-        {
-            "handler_id": "continuous.ability.fixed-query-grant.v1",
-            "schema_version": 1,
-            "event": "characteristics.evaluate",
-            "condition": {
-                "target_controller": target_controller,
-                "predicate": predicate.to_dict(),
-                "exclude_source": exclude_source,
-            },
-            "modifier": {"add_ability_fragments": fragment_values},
-        },
-        tuple(
-            sorted(
-                {
-                    "continuous.ability.fixed_query_grant",
-                    DECLARATION_COMPONENT_CAPABILITY_ID,
-                }
-            )
-        ),
-    )
+    from .bound_declaration_rules import bound_rule_handler
+    return bound_rule_handler(scope='fixed_query',query=predicate,rules=fragments,
+        controller=target_controller,exclude_source=exclude_source)
 
 
 def _attached_characteristic_declaration_grant(
@@ -775,33 +735,10 @@ def _query_keyword_declaration_grant(
             "exclude_source": parsed[2],
         }:
             continue
-        return (
-            "continuous-fixed-query-keywords-declaration-grant-v1",
-            {
-                "handler_id": "continuous.ability.fixed-query-grant.v1",
-                "schema_version": 1,
-                "event": "characteristics.evaluate",
-                "condition": dict(keywords[1]["condition"]),
-                "modifier": {
-                    "add_abilities": list(
-                        keywords[1]["modifier"]["add_abilities"]
-                    ),
-                    "add_ability_fragments": [
-                        ability_fragment_to_dict(fragment)
-                        for fragment in fragments
-                    ],
-                },
-            },
-            tuple(
-                sorted(
-                    {
-                        *keywords[2],
-                        "continuous.ability.fixed_query_grant",
-                        DECLARATION_COMPONENT_CAPABILITY_ID,
-                    }
-                )
-            ),
-        )
+        from .bound_declaration_rules import bound_rule_handler
+        rule=bound_rule_handler(scope='fixed_query',query=parsed[1],rules=fragments,controller=parsed[0],exclude_source=parsed[2])
+        if rule is None:continue
+        return ('static-query-keywords-bound-rules-v1',(keywords[1],rule[1]),tuple(sorted({*keywords[2],*rule[2]})))
     return None
 
 

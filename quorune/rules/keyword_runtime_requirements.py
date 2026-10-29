@@ -56,6 +56,8 @@ def _fragment_descriptor_requirements(value):
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
+        if value.get('kind')=='bound_static_declaration_rules':
+            own.update(ability_fragment_from_dict(value).required_capabilities())
         if value.get('kind') in {'granted_activated','attached_untap_restraint','enchanted_player_attack_requirement','activation_prohibition'}:
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)

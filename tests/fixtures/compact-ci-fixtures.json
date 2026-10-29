@@ -52,6 +52,7 @@
     "tests/fixtures/binding-aware-event-payments.json",
     "tests/fixtures/block-capacity-cards.json",
     "tests/fixtures/boast-restriction-cards.json",
+    "tests/fixtures/bound-static-declaration-cards.json",
     "tests/fixtures/browser-lifecycle-cards.json",
     "tests/fixtures/browser-modal-choice-cards.json",
     "tests/fixtures/browser-ordered-scry-cards.json",

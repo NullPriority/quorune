@@ -42,6 +42,7 @@ from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIG
 from ..umbra_armor_model import UmbraArmorSpec, UMBRA_ARMOR_FRAGMENT_CAPABILITY, UMBRA_ARMOR_HANDLER
 from ..untap_restraint_model import AttachedUntapRestraintSpec,UNTAP_RESTRAINT_CAPABILITY,UNTAP_RESTRAINT_HANDLER
 from ..enchanted_player_model import EnchantedPlayerAttackRequirementSpec,ENCHANTED_PLAYER_ATTACK_CAPABILITY,ENCHANTED_PLAYER_ATTACK_HANDLER
+from ..bound_declaration_model import BoundStaticDeclarationRulesSpec,BOUND_DECLARATION_CAPABILITY,BOUND_DECLARATION_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -471,6 +472,18 @@ class EnchantedPlayerAttackRequirementHandler(DeclarationRequirementAbilityFragm
 
     def validate(self,descriptor):
         return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=EnchantedPlayerAttackRequirementSpec)
+
+
+@dataclass(frozen=True,slots=True)
+class BoundStaticDeclarationRulesHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id:str=BOUND_DECLARATION_HANDLER
+    family:str='ability.static.bound_declaration_rules'
+    event:str='characteristics.evaluate'
+    rule_references:tuple[str,...]=('611.1','611.3a','611.3b','508.1d','509.1b','509.1c')
+    capability_dependencies:tuple[str,...]=(BOUND_DECLARATION_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=BoundStaticDeclarationRulesSpec)
 
 
 @dataclass(frozen=True,slots=True)
@@ -1438,6 +1451,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DeclarationRequirementAbilityFragmentHandler(),
             AttachedUntapRestraintHandler(),
             EnchantedPlayerAttackRequirementHandler(),
+            BoundStaticDeclarationRulesHandler(),
             AttachedActivationRuleHandler(),
             DeclarationRequirementComponentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),

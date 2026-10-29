@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 540,
+  "registry_version": 541,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -64235,6 +64235,120 @@
       "dependency_fail_closed_rationale": "Evidence-verified owner and modifier/declaration dependency withdrawal fail closed with unrelated Monarch control; runtime omission rejects the corresponding descriptor.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Wrong Aura-controller binding and omitted giver requirement mutants are killed by bounded original-source witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.declaration.bound_static_rules",
+      "version": 1,
+      "official_rules": [
+        "611.1",
+        "611.3a",
+        "611.3b",
+        "613.1f",
+        "508.1d",
+        "509.1b",
+        "509.1c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current giver-owned static declaration rules bind independently closed intrinsic rules to actual source, attached or public-query receiver anchors. Receiver ability loss does not remove the rule; giver presence, current query membership and giver-owned public conditions govern applicability. Characteristic modifiers and true keyword grants keep separate owners.",
+        "inputs": [
+          "Current source ability presence",
+          "Immutable public receiver query and relative authority",
+          "Current receiver anchor and typed intrinsic rules",
+          "Optional giver public-state condition"
+        ],
+        "outputs": [
+          "Shared current declaration restrictions and requirements",
+          "Existing optional costs, defender choice and maximum satisfaction",
+          "Atomic command rejection, principal privacy and exact replay"
+        ],
+        "exclusions": [
+          "Unknown query or relative rule scope",
+          "Client-bound identities or hidden-state queries",
+          "Unrepresented conditions and arbitrary callbacks"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "implementation_components": [
+        "quorune.bound_declaration_model.BoundStaticDeclarationRulesSpec",
+        "quorune.compiler.bound_declaration_rules.bound_rule_handler",
+        "quorune.semantic_runtime.ability_fragments.BoundStaticDeclarationRulesHandler",
+        "quorune.rules.bound_static_declarations.current_bound_declaration_rules",
+        "quorune.rules.temporary_declaration_restrictions.current_declaration_restrictions",
+        "quorune.declaration_requirement_runtime.typed_attacker_requirements"
+      ],
+      "positive_tests": [
+        "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
+        "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
+        "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
+        "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink",
+        "test_closed_codec_reserves_authority_and_relative_receiver_rule_scopes",
+        "test_current_binding_reacts_to_control_phasing_giver_presence_and_fails_omission_mutant",
+        "test_direct_mixed_conditional_and_attached_rules_have_giver_owned_fragments"
+      ],
+      "negative_tests": [
+        "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
+        "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
+        "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
+        "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink",
+        "test_closed_codec_reserves_authority_and_relative_receiver_rule_scopes",
+        "test_current_binding_reacts_to_control_phasing_giver_presence_and_fails_omission_mutant",
+        "test_direct_mixed_conditional_and_attached_rules_have_giver_owned_fragments",
+        "test_runtime_bound_rule_and_dynamic_query_owners_cannot_be_omitted",
+        "test_verified_rule_query_and_condition_owners_withdraw_without_hiding_unrelated_support"
+      ],
+      "interaction_tests": [
+        "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
+        "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
+        "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
+        "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink"
+      ],
+      "multiplayer_tests": [
+        "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
+        "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
+        "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
+        "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink"
+      ],
+      "privacy_tests": [
+        "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed"
+      ],
+      "replay_tests": [
+        "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
+        "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
+        "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
+        "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Evidence-verified new rule, declaration, query and conditional designation owners withdraw independently with unrelated Monarch control; runtime binding rejects omitted rule authority.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the current giver fragment kills the bounded original Herald witness; actual v623 before-repair evidence accepted an illegal block after receiver blanking.",
       "blockers": [],
       "status": "trusted"
     }

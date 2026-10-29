@@ -1201,6 +1201,19 @@ def _fixed_additive_modifier_body(body: str) -> str:
     return body
 
 
+def bind_conditional_subject(body,source_condition,*,attached_permanent_subject=False):
+    """Bind a leading pronoun through its already parsed public condition."""
+    if not re.match(r'^it\b',body,re.I):return body
+    attached=next((leaf for leaf in source_condition.leaf_conditions()
+        if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
+    if attached is None:subject='This creature'
+    else:
+        assert attached.predicate is not None
+        subject=('Enchanted land' if 'land' in attached.predicate.types_all else
+            'Enchanted permanent' if attached_permanent_subject and 'creature' not in attached.predicate.types_all else 'Enchanted creature')
+    return re.sub(r'^it\b',subject,body,count=1,flags=re.I)
+
+
 def _conditional_target(
     body: str,
     *,
@@ -1309,30 +1322,7 @@ def fixed_public_state_characteristics_handler(
     if parsed is None:
         return None
     source_condition, body = parsed
-    if re.match(r"^it\b", body, re.IGNORECASE):
-        attached=next((leaf for leaf in source_condition.leaf_conditions() if leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY),None)
-        if attached is not None:
-            assert attached.predicate is not None
-            attached_subject = (
-                "Enchanted land"
-                if "land" in attached.predicate.types_all
-                else 'Enchanted permanent' if attached_permanent_subject and 'creature' not in attached.predicate.types_all else "Enchanted creature"
-            )
-            body = re.sub(
-                r"^it\b",
-                attached_subject,
-                body,
-                count=1,
-                flags=re.IGNORECASE,
-            )
-        else:
-            body = re.sub(
-                r"^it\b",
-                "This creature",
-                body,
-                count=1,
-                flags=re.IGNORECASE,
-            )
+    body=bind_conditional_subject(body,source_condition,attached_permanent_subject=attached_permanent_subject)
     compiled = _conditional_target(body, source_name=source_name)
     if compiled is None:
         return None

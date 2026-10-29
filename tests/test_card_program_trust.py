@@ -251,6 +251,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.declaration_requirement",
                 "ability.static.attached_untap_restraint",
                 "ability.static.enchanted_player_attack_requirement",
+                "ability.static.bound_declaration_rules",
                 "ability.static.attached_activation_rule",
                 "ability.static.declaration_restriction",
                 "ability.static.declaration_restriction_component",

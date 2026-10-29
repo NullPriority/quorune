@@ -16,6 +16,8 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.semantic_runtime.conditional_continuous import ConditionalDeclarationGrantHandler
+from quorune.semantic_runtime.ability_fragments import BoundStaticDeclarationRulesHandler
+from quorune.ability_fragments import ability_fragment_to_dict
 from quorune.semantic_runtime.context import SemanticNodeError
 from scripts.build_test_database import build_fixture_database
 from test_granted_skulk import record
@@ -25,7 +27,7 @@ import test_fixed_tap_payments as tap_actions
 import test_self_public_zone_casting as zone_actions
 
 
-OWNER = 'continuous.declaration.conditional_query_grant'
+OWNER = 'combat.declaration.bound_static_rules'
 CITY_TEXT = "As long as you have the city's blessing, Detectives you control can't be blocked."
 
 
@@ -41,17 +43,10 @@ class ConditionalQueryDeclarationCompilerTests(unittest.TestCase):
                 compiled = fixed_static_declaration_grant_handler(text, source_name='Query witness')
                 self.assertIsNotNone(compiled)
                 descriptor = compiled[1]
-                ConditionalDeclarationGrantHandler().validate(descriptor)
-                self.assertEqual('continuous.declaration.public-state.v1', descriptor['handler_id'])
-                self.assertEqual(6, descriptor['schema_version'])
-                self.assertEqual('fixed_query', descriptor['target']['kind'])
-                self.assertEqual('source_controller', descriptor['target']['target_controller'])
-                self.assertEqual(subtype, descriptor['target']['predicate']['subtypes_all'])
-                self.assertEqual(exclude, descriptor['target']['exclude_source'])
-                modifier = descriptor['modifier']
-                self.assertEqual([], modifier['add_abilities'])
-                self.assertEqual((0, 0), (modifier['power'], modifier['toughness']))
-                self.assertEqual(1, len(modifier['add_ability_fragments']))
+                spec=BoundStaticDeclarationRulesHandler().validate(descriptor)
+                self.assertEqual('fixed_query',spec.scope);self.assertEqual('source_controller',spec.controller)
+                self.assertEqual(subtype,list(spec.query.subtypes_all));self.assertEqual(exclude,spec.exclude_source)
+                self.assertEqual(1,len(spec.rules));self.assertIsNotNone(spec.source_condition)
                 ir = compile_oracle_card(record(text), capability_registry=registry, capability_profile='commander_review')
                 self.assertEqual('exact', ir.status, ir.material_residuals)
                 self.assertIn(OWNER, ir.faces[0].nodes[0].capability_dependencies)
@@ -70,25 +65,36 @@ class ConditionalQueryDeclarationCompilerTests(unittest.TestCase):
                 self.assertNotEqual('exact', ir.status)
 
     def test_query_declaration_dependencies_and_descriptor_validation_fail_closed(self):
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
         raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         for capability in (OWNER, 'combat.declaration.typed_components',
                            'continuous.characteristics.fixed_public_state', 'player.designation.citys_blessing'):
             changed = deepcopy(raw)
             next(row for row in changed['capabilities'] if row['id'] == capability).update(
                 status='blocked', blockers=['conditional query dependency withdrawn'])
-            ir = compile_oracle_card(record(CITY_TEXT), capability_registry=CapabilityRegistry(changed),
+            registry=CapabilityRegistry(changed);index=build_index(registry_value=changed,declaration_source=declarations,discovered_test_ids=known)
+            registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
+            ir = compile_oracle_card(record(CITY_TEXT), capability_registry=registry,
                                     capability_profile='commander_review')
             self.assertNotEqual('exact', ir.status)
+            self.assertEqual('exact',compile_oracle_card(record('Flying'),capability_registry=registry).status)
         descriptor = fixed_static_declaration_grant_handler(CITY_TEXT, source_name='Query witness')[1]
-        for field, value in (('add_ability_fragments', []), ('power', True)):
+        for field, value in (('rules', []), ('schema_version', True)):
             changed = deepcopy(descriptor)
-            changed['modifier'][field] = value
-            with self.assertRaises(SemanticNodeError):
-                ConditionalDeclarationGrantHandler().validate(changed)
+            changed['fragment']['value'][field] = value
+            with self.assertRaises(ValueError):BoundStaticDeclarationRulesHandler().validate(changed)
         changed = deepcopy(descriptor)
-        changed['target']['predicate']['controller'] = 'A'
-        with self.assertRaises(SemanticNodeError):
-            ConditionalDeclarationGrantHandler().validate(changed)
+        changed['fragment']['value']['query']['controller'] = 'A'
+        with self.assertRaises(ValueError):BoundStaticDeclarationRulesHandler().validate(changed)
+        spec=BoundStaticDeclarationRulesHandler().validate(descriptor)
+        legacy={'handler_id':'continuous.declaration.public-state.v1','schema_version':6,'event':'characteristics.evaluate',
+            'source_condition':spec.source_condition.to_dict(),'target':{'kind':'fixed_query','target_controller':spec.controller,
+            'predicate':spec.query.to_dict(),'exclude_source':spec.exclude_source,'types_all':[]},
+            'modifier':{'add_abilities':[],'power':0,'toughness':0,'add_ability_fragments':[ability_fragment_to_dict(spec.rules[0])]}}
+        ConditionalDeclarationGrantHandler().validate(legacy)
 
 
 class ConditionalQueryDeclarationRuntimeTests(unittest.TestCase):
