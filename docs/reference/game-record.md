@@ -711,3 +711,16 @@ copies retain declarations through ordinary copy context and copy templates;
 ordinary permanent copies do not copy another object's casting history.
 Departure and reentry clear the previous object's facts under the existing
 zone-state owner. No checkpoint or game-state mode is added.
+
+Activated descriptors may include the optional true `forecast` marker. Older
+descriptors omit it. The marker requires hand-zone, owner-upkeep and
+once-per-turn metadata and delegates reveal/payment to existing owners.
+`forecast_reveal_v1` is an incarnation-bound source annotation containing the
+original subject, owner, turn and prior disclosure. Actual hand departure and
+non-upkeep step entry end that scope; learned identity remains. A later hand
+incarnation cannot inherit the old reveal or usage.
+
+Selected-tap schema two retains the existing field set and adds a closed color
+alternative predicate. Its internal plan seals the ability source zone and
+logical identity independently of the selected battlefield objects. Schema-one
+costs and earlier battlefield source defaults retain their prior meaning.

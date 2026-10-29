@@ -198,6 +198,7 @@
     "tests/fixtures/fixed-untap-participation-cards.json",
     "tests/fixtures/flashback-cards.json",
     "tests/fixtures/flavor-named-trigger-cards.json",
+    "tests/fixtures/forecast-cards.json",
     "tests/fixtures/fractional-player-result-cards.json",
     "tests/fixtures/fuse-cards.json",
     "tests/fixtures/gain-and-get-cards.json",

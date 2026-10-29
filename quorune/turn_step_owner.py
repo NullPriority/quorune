@@ -307,6 +307,8 @@ class TurnStepOwner:
 
         self.state.phase = phase
         self.state.step = step
+        from .forecast import synchronize_forecast_reveals
+        synchronize_forecast_reveals(self._host)
         self.state.priority_player = None
         self.state.priority_passes = []
         self._host._log(

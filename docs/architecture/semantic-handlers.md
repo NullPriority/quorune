@@ -221,6 +221,25 @@ introduced. Conditional announcement targets, discounts and other unrepresented
 linked bodies remain residual. See
 [ADR 0137](../adr/0137-linked-optional-casting-declarations.md).
 
+Forecast is an optional marker in the existing activated-ability descriptor.
+It requires a hand source, owner-upkeep condition and once-per-turn usage limit;
+older descriptors omit the marker. Ordinary activation legality and payment
+remain authoritative. The source reveal delegates to the canonical scoped hand
+reveal owner. A typed frame retains the original hand incarnation and prior
+disclosure state until actual hand departure or entry into a non-upkeep step.
+Consecutive upkeep steps retain the disclosure. Ending it preserves learned
+identity and independent public-hand permissions. A later hand incarnation
+gets independent usage and reveal state.
+
+Selected-tap schema two adds fixed ordinary color alternatives to the existing
+controlled untapped permanent query. Its plan retains the ability source's
+allowed zone and logical identity; Forecast can use an owned hand source while
+the selected payment objects remain battlefield permanents. Battlefield source
+checks remain the default for earlier callers. Creature summoning sickness
+does not restrict a cost written as a selected-object tap. No new activation
+interpreter or game-state mode is introduced. See
+[ADR 0138](../adr/0138-forecast-hand-source-disclosure.md).
+
 Enlist's optional declaration taps and linked reflexive program use the
 existing tap, scalar, APNAP and continuous-effect owners. The trigger context
 pins the original attacker and donor, preserves paid taps across pending

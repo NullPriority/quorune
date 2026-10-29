@@ -10161,6 +10161,32 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/forecast.py",
+      "layer": "rules",
+      "owning_subsystem": "legacy_rules",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/forecast_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/fractional_quantity_model.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -21945,5 +21971,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "38b07464e95b3c2cdd77892c266f6bbe838722e81f24708ef43733aa2dd8008a"
+  "fingerprint": "43ccf14abd1037bedfe01d46058645f02a145282b2fc296bebb67b3b84c83a6b"
 }

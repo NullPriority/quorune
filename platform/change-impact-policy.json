@@ -9968,6 +9968,47 @@
         "test_suspend_rules",
         "test_zone_trigger_events"
       ]
+    },
+    {
+      "id": "forecast-hand-activation-source-reveal-and-colored-tap",
+      "patterns": [
+        "quorune/forecast.py",
+        "quorune/forecast_model.py",
+        "quorune/ability_line_normalization.py",
+        "quorune/compiler/activated_tap_costs.py",
+        "tests/test_forecast*.py",
+        "tests/forecast_fixture.py",
+        "tests/fixtures/forecast-cards.json",
+        "mechanics/contracts/forecast.json"
+      ],
+      "test_modules": [
+        "test_bargain_compiler",
+        "test_bargain_model",
+        "test_bargain_native",
+        "test_bargain_results",
+        "test_bestow_rules",
+        "test_card_program_trust",
+        "test_cast_creature_targets",
+        "test_casualty_compiler",
+        "test_casualty_native",
+        "test_casualty_results",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_conspire",
+        "test_fixed_replicate",
+        "test_fixed_sacrifice_additional_costs",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_zone_change_additional_costs",
+        "test_forecast_compiler",
+        "test_forecast_model",
+        "test_forecast_native",
+        "test_forecast_results",
+        "test_kicker_rules",
+        "test_public_state_mana_actions",
+        "test_resolution_public_conditions",
+        "test_storm_rules",
+        "test_suspend_rules",
+        "test_zone_trigger_events"
+      ]
     }
   ],
   "symbol_rules": [

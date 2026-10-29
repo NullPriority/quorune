@@ -19,6 +19,7 @@ from ..zone_trigger_events import cost_transition_kind
 
 
 FIXED_TAP_ACTIVATION_COST_KIND = "tap"
+COLORED_TAP_ACTIVATION_CAPABILITY = 'activation.selected_tap.fixed_color'
 _FIXED_TAP_FIELDS = frozenset(
     {"schema_version", "kind", "count", "zone", "another", "predicate"}
 )
@@ -107,7 +108,7 @@ class FixedTapActivationCost:
     zone: str = "battlefield"
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
             raise FixedTapActivationCostError(
                 "Fixed tap activation-cost schema version is unsupported"
             )
@@ -137,11 +138,15 @@ class FixedTapActivationCost:
             raise FixedTapActivationCostError(
                 "Fixed tap activation costs require a permanent card type"
             )
+        colors = self.predicate.colors_any if self.schema_version == 2 else ()
+        if self.schema_version == 2 and (not colors or not set(colors) <= {'W','U','B','R','G'}):
+            raise FixedTapActivationCostError('Colored tap costs require explicit ordinary color alternatives')
         expected = ObjectQuerySpec(
             zones=("battlefield",),
             controller="$actor",
             types_all=type_axis,
             subtypes_all=subtype_axis,
+            colors_any=colors,
             tapped=False,
             known_to_actor=True,
             exclude_ref="$source" if self.another else None,
@@ -209,8 +214,10 @@ class FixedTapCostPlan:
     source_logical_object_id: str
     cost: FixedTapActivationCost
     selected: tuple[FixedTapCostCandidate, ...]
+    source_zone: str = 'battlefield'
 
     def __post_init__(self) -> None:
+        if self.source_zone not in {'battlefield','hand'}:raise FixedTapActivationCostError('Tap-cost source zone is unrepresented')
         if not all(
             type(value) is str and value
             for value in (
@@ -332,6 +339,7 @@ def prepare_fixed_tap_cost(
     source: Any,
     choice: Any,
     response: Mapping[str, Any],
+    source_zone: str = 'battlefield',
 ) -> FixedTapCostPlan:
     """Validate a complete fixed tap selection before authoritative mutation."""
 
@@ -341,8 +349,8 @@ def prepare_fixed_tap_cost(
             "Activation does not carry a fixed tap cost"
         )
     if (
-        source.zone != "battlefield"
-        or source.controller != seat
+        source_zone not in {'battlefield','hand'} or source.zone != source_zone
+        or (source.controller if source_zone == 'battlefield' else source.owner) != seat
         or source.phased_out
     ):
         raise FixedTapActivationCostError(
@@ -366,6 +374,7 @@ def prepare_fixed_tap_cost(
         source_logical_object_id=source.logical_object_id,
         cost=cost,
         selected=tuple(candidate for candidate in selected if candidate is not None),
+        source_zone=source_zone,
     )
 
 
@@ -379,8 +388,8 @@ def commit_fixed_tap_cost(
     source = host.state.cards.get(plan.source_object_id)
     if (
         source is None
-        or source.zone != "battlefield"
-        or source.controller != plan.seat
+        or source.zone != plan.source_zone
+        or (source.controller if plan.source_zone == 'battlefield' else source.owner) != plan.seat
         or source.phased_out
         or source.logical_object_id != plan.source_logical_object_id
     ):
@@ -397,7 +406,7 @@ def commit_fixed_tap_cost(
         raise FixedTapActivationCostError(
             "A selected tap-cost object changed before commitment"
         )
-    if tap_source and (source.tapped or any(candidate.object_id==source.object_id for candidate in plan.selected)):
+    if tap_source and (plan.source_zone != 'battlefield' or source.tapped or any(candidate.object_id==source.object_id for candidate in plan.selected)):
         raise FixedTapActivationCostError("Source tap and selected tap costs require distinct untapped objects")
     if tap_source:
         set_permanent_tapped(host,source.ref,actor=plan.seat,tapped=True,reason="activated ability cost",log=False,semantic_events=False)
@@ -439,6 +448,7 @@ def pay_fixed_tap_cost(
     choice: Any,
     response: Mapping[str, Any],
     tap_source: bool = False,
+    source_zone: str = 'battlefield',
 ) -> list[str]:
     return commit_fixed_tap_cost(
         host,
@@ -448,6 +458,7 @@ def pay_fixed_tap_cost(
             source=source,
             choice=choice,
             response=response,
+            source_zone=source_zone,
         ),
         tap_source=tap_source,
     )

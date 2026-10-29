@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 590,
+  "registry_version": 592,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -1533,6 +1533,115 @@
       "dependency_fail_closed_rationale": "The bounded base Exhaust activation limit has no capability dependencies; each represented effect and cost independently declares its own closure.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused activation-usage and compiler mutations prove that omitting the typed limit, bypassing the usage owner, or allowing mana undo after use survives neither exact availability nor replay assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.forecast.hand",
+      "version": 1,
+      "official_rules": [
+        "702.57",
+        "702.57a",
+        "702.57b",
+        "602.2a",
+        "602.2b",
+        "302.6",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Forecast owner-hand activation during owner upkeep once per turn; canonical temporary source reveal retained until actual hand departure or a non-upkeep step, with existing activated catalog and usage owners.",
+        "inputs": [
+          "Complete source-spanned activated ability",
+          "Typed hand/upkeep/usage metadata",
+          "Current source hand incarnation and controlled selected costs"
+        ],
+        "outputs": [
+          "Legally offered Forecast ability",
+          "Temporary source reveal with retained knowledge",
+          "Existing ordinary activated result"
+        ],
+        "exclusions": [
+          "Unknown cost or result variants",
+          "Unrepresented companion card bodies",
+          "Malformed source/usage/reveal metadata"
+        ]
+      },
+      "dependencies": [
+        "activation.usage.once_per_turn",
+        "activation.condition.phase_window"
+      ],
+      "implementation_components": [
+        "quorune.forecast_model.ForecastRevealFrame",
+        "quorune.boast.validate_forecast_ability",
+        "quorune.forecast.begin_forecast_reveal",
+        "quorune.forecast.end_forecast_reveal",
+        "quorune.forecast.synchronize_forecast_reveals",
+        "quorune.abilities.parse_activated_abilities",
+        "quorune.effect_runtime.hand_inspection.begin_scoped_hand_reveal"
+      ],
+      "positive_tests": [
+        "test_forecast_descriptor_is_hand_upkeep_once_and_legacy_descriptors_omit_marker",
+        "test_forecast_reveal_frame_is_versioned_and_original_incarnation_bound",
+        "test_forecast_disclosure_retains_knowledge_and_ends_only_outside_upkeep_or_on_departure",
+        "test_forecast_colored_tap_cost_admits_each_white_or_blue_untapped_controlled_creature",
+        "test_forecast_source_span_hand_catalog_and_intrinsic_restrictions_are_closed",
+        "test_forecast_unknown_bodies_and_missing_reveal_do_not_promote_card",
+        "test_forecast_verified_owner_withdrawal_keeps_ordinary_draw_activation",
+        "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+        "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+        "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+        "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+        "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+        "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+      ],
+      "negative_tests": [
+        "test_forecast_descriptor_is_hand_upkeep_once_and_legacy_descriptors_omit_marker",
+        "test_forecast_reveal_frame_is_versioned_and_original_incarnation_bound",
+        "test_forecast_disclosure_retains_knowledge_and_ends_only_outside_upkeep_or_on_departure",
+        "test_forecast_colored_tap_cost_admits_each_white_or_blue_untapped_controlled_creature",
+        "test_forecast_source_span_hand_catalog_and_intrinsic_restrictions_are_closed",
+        "test_forecast_unknown_bodies_and_missing_reveal_do_not_promote_card",
+        "test_forecast_verified_owner_withdrawal_keeps_ordinary_draw_activation"
+      ],
+      "interaction_tests": [
+        "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+        "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+        "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+        "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+        "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+        "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+      ],
+      "multiplayer_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+        "test_actual_white_and_red_boast_originals_create_complete_tokens",
+        "test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage"
+      ],
+      "privacy_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay"
+      ],
+      "replay_tests": [
+        "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+        "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+        "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+        "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+        "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+        "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn Forecast, upkeep or once-per-turn authority rejects the source while ordinary draw activation remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Requiring both colors instead of either loses independently legal white-only/blue-only subjects and fails the candidate boundary.",
       "blockers": [],
       "status": "trusted"
     },
@@ -3294,6 +3403,110 @@
       "dependency_fail_closed_rationale": "test_selected_tap_cost_dependencies_fail_closed blocks the fine-grained cost capability and proves the exact source-spanned activation remains material rather than falling back to legacy choice payment.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "test_selected_tap_cost_compiler_mutant_is_killed removes the typed tap-cost lowering and the exact source-spanned compiler witness rejects the survivor.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.selected_tap.fixed_color",
+      "version": 1,
+      "official_rules": [
+        "702.57",
+        "702.57a",
+        "702.57b",
+        "602.2a",
+        "602.2b",
+        "302.6",
+        "400.7"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Schema-two selected-tap predicate adds current ordinary color alternatives to one fixed controlled untapped permanent type/subtype selection; existing selected-tap payment remains authoritative.",
+        "inputs": [
+          "Complete source-spanned activated ability",
+          "Typed hand/upkeep/usage metadata",
+          "Current source hand incarnation and controlled selected costs"
+        ],
+        "outputs": [
+          "Legally offered Forecast ability",
+          "Temporary source reveal with retained knowledge",
+          "Existing ordinary activated result"
+        ],
+        "exclusions": [
+          "Unknown cost or result variants",
+          "Unrepresented companion card bodies",
+          "Malformed source/usage/reveal metadata"
+        ]
+      },
+      "dependencies": [
+        "activation.selected_tap.fixed"
+      ],
+      "implementation_components": [
+        "quorune.rules.activation_costs.FixedTapActivationCost",
+        "quorune.compiler.activated_tap_costs.fixed_tap_activation_cost_choice",
+        "quorune.rules.activation_costs.fixed_tap_cost_candidates"
+      ],
+      "positive_tests": [
+        "test_forecast_descriptor_is_hand_upkeep_once_and_legacy_descriptors_omit_marker",
+        "test_forecast_reveal_frame_is_versioned_and_original_incarnation_bound",
+        "test_forecast_disclosure_retains_knowledge_and_ends_only_outside_upkeep_or_on_departure",
+        "test_forecast_colored_tap_cost_admits_each_white_or_blue_untapped_controlled_creature",
+        "test_forecast_source_span_hand_catalog_and_intrinsic_restrictions_are_closed",
+        "test_forecast_unknown_bodies_and_missing_reveal_do_not_promote_card",
+        "test_forecast_verified_owner_withdrawal_keeps_ordinary_draw_activation",
+        "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+        "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+        "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+        "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+        "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+        "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+      ],
+      "negative_tests": [
+        "test_forecast_descriptor_is_hand_upkeep_once_and_legacy_descriptors_omit_marker",
+        "test_forecast_reveal_frame_is_versioned_and_original_incarnation_bound",
+        "test_forecast_disclosure_retains_knowledge_and_ends_only_outside_upkeep_or_on_departure",
+        "test_forecast_colored_tap_cost_admits_each_white_or_blue_untapped_controlled_creature",
+        "test_forecast_source_span_hand_catalog_and_intrinsic_restrictions_are_closed",
+        "test_forecast_unknown_bodies_and_missing_reveal_do_not_promote_card",
+        "test_forecast_verified_owner_withdrawal_keeps_ordinary_draw_activation"
+      ],
+      "interaction_tests": [
+        "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+        "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+        "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+        "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+        "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+        "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+      ],
+      "multiplayer_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay",
+        "test_actual_white_and_red_boast_originals_create_complete_tokens",
+        "test_native_countered_boast_still_consumes_its_paid_once_per_turn_usage"
+      ],
+      "privacy_tests": [
+        "test_actual_tapped_attacker_boasts_once_and_resolves_full_life_transfer_with_private_replay"
+      ],
+      "replay_tests": [
+        "test_actual_skyscribing_forecast_is_owner_upkeep_once_and_disclosure_ends_at_draw",
+        "test_actual_steeling_stance_leaves_revealed_hand_and_new_upkeep_incarnation_can_forecast_again",
+        "test_actual_spirit_forecast_grants_temporary_shadow_and_normal_source_keeps_intrinsic_shadow",
+        "test_actual_plumes_and_piercing_forecast_tap_and_normal_spell_bodies_keep_distinct_predicates",
+        "test_actual_pride_forecast_bird_and_normal_creature_count_other_flyers_from_both_controllers",
+        "test_actual_sky_hussar_taps_two_current_white_or_blue_creatures_then_normal_entry_untaps_only_own"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn Forecast, upkeep or once-per-turn authority rejects the source while ordinary draw activation remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Requiring both colors instead of either loses independently legal white-only/blue-only subjects and fails the candidate boundary.",
       "blockers": [],
       "status": "trusted"
     },

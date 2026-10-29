@@ -4373,3 +4373,12 @@ composition receives the same declaration context as ordinary entry results.
 Each child remains independently capability-bound. Unknown conditional targets,
 discounts and other sibling bodies keep the whole card residual. See the
 [Bargain contract](../../mechanics/contracts/bargain.json).
+
+Forecast normalization retains its source reveal clause for presentation while
+lowering the intrinsic hand-zone, owner-upkeep and once-per-turn metadata into
+the existing activated catalog. Missing source reveals and unknown costs or
+bodies remain residual. Fixed selected-tap color qualifiers use an explicit
+schema-two predicate with ordinary color alternatives; the hand-source marker
+does not relax the selected battlefield objects' predicate. Both the Forecast
+and colored-tap owners are structural runtime minima. See the
+[Forecast contract](../../mechanics/contracts/forecast.json).

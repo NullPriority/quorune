@@ -536,6 +536,9 @@ class ZoneTransitionOwner:
         reveal_to: tuple[str, ...],
     ) -> None:
         card = plan.card
+        if departure.origin == 'hand' and plan.destination != 'hand':
+            from .forecast import end_forecast_reveal
+            end_forecast_reveal(self.host, card)
         if plan.prepared_life_payment is not None:
             try:
                 commit_life_payment(
