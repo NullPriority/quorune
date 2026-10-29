@@ -9762,6 +9762,22 @@
         "test_game_record_v3",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "named-source-combat-result-composition",
+      "patterns": [
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "tests/test_named_source_results.py",
+        "tests/fixtures/named-source-result-cards.json"
+      ],
+      "test_modules": [
+        "test_named_source_results",
+        "test_fixed_counter_event_triggers",
+        "test_scalar_effect_amounts",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 576,
+  "registry_version": 577,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -18836,7 +18836,7 @@
     },
     {
       "id": "combat.damage.participation.strike_steps",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "510.4",
         "702.4",
@@ -18882,35 +18882,41 @@
         "quorune.combat.assigns_in_damage_step"
       ],
       "positive_tests": [
-        "test_first_strike_creates_the_initial_combat_damage_step",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
         "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
+        "test_first_strike_creates_the_initial_combat_damage_step"
       ],
       "negative_tests": [
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_second_step_uses_the_first_step_snapshot_and_current_double_strike"
       ],
       "interaction_tests": [
-        "test_double_strike_trample_recomputes_after_blocker_leaves",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
         "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
+        "test_double_strike_trample_recomputes_after_blocker_leaves"
       ],
       "multiplayer_tests": [
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
         "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity"
       ],
       "privacy_tests": [
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
         "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity"
       ],
       "replay_tests": [
-        "test_double_strike_creates_two_real_damage_steps_and_replays",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
         "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
+        "test_double_strike_creates_two_real_damage_steps_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -27137,7 +27143,7 @@
     },
     {
       "id": "continuous.resolution.fixed_source_characteristics_until_end_of_turn",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "205.1a",
         "205.1b",
@@ -27199,97 +27205,103 @@
         "quorune.compiler.trigger_result_templates.binding_effect_template"
       ],
       "positive_tests": [
-        "test_source_characteristics_compile_across_shared_contexts",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
-        "test_source_owner_zero_quantity_is_a_valid_no_op",
         "test_current_trusted_zero_source_quantity_pays_and_replays_without_effect",
         "test_fixed_animation_and_base_setting_share_context_and_target_owners",
-        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
-        "test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
-        "test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
         "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
-        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
-        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
-        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
-        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
-        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
-        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves",
+        "test_source_characteristics_compile_across_shared_contexts",
+        "test_source_owner_zero_quantity_is_a_valid_no_op",
+        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
+        "test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay"
       ],
       "negative_tests": [
-        "test_source_characteristic_grammar_keeps_open_forms_residual",
-        "test_malformed_source_characteristics_roll_back_atomically",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_fixed_animation_near_misses_remain_material",
         "test_fixed_animation_versioned_schema_rejects_nonboolean_and_open_fields",
-        "test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves"
+        "test_malformed_source_characteristics_roll_back_atomically",
+        "test_self_action_characteristics_reuse_closed_keyword_and_scalar_leaves",
+        "test_source_characteristic_grammar_keeps_open_forms_residual"
       ],
       "interaction_tests": [
-        "test_source_effects_follow_incarnation_control_and_cleanup_boundaries",
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_animation_updates_dynamic_counts_and_detaches_equipment",
-        "test_fixed_animation_layer_operations_preserve_rule_distinctions",
-        "test_fixed_animation_group_locks_controller_and_incarnation_membership",
         "test_compiled_animation_absent_and_explicit_subtypes_have_distinct_results",
-        "test_unspecified_animation_removes_lost_noncreature_subtypes_only",
-        "test_type_subtraction_matches_canonical_query_case",
-        "test_trusted_unspecified_set_locks_membership_control_and_incarnations",
-        "test_trusted_unspecified_animation_rejects_stale_reentered_target",
+        "test_explicit_zero_source_modifier_preserves_state",
+        "test_fixed_animation_group_locks_controller_and_incarnation_membership",
+        "test_fixed_animation_layer_operations_preserve_rule_distinctions",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
         "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
-        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
-        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
-        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
-        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
-        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
-        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
-        "test_explicit_zero_source_modifier_preserves_state"
+        "test_source_effects_follow_incarnation_control_and_cleanup_boundaries",
+        "test_trusted_unspecified_animation_rejects_stale_reentered_target",
+        "test_trusted_unspecified_set_locks_membership_control_and_incarnations",
+        "test_type_subtraction_matches_canonical_query_case",
+        "test_unspecified_animation_removes_lost_noncreature_subtypes_only"
       ],
       "multiplayer_tests": [
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
-        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
         "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
-        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
-        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
-        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
-        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
-        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
-        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay"
       ],
       "privacy_tests": [
-        "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
-        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
-        "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
-        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
-        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
-        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
         "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
         "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
+        "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
+        "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
+        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay"
       ],
       "replay_tests": [
+        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
+        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
+        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
+        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
+        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
+        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword",
+        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
+        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_artifact_animation_uses_one_multilayer_timestamp_and_replays",
-        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
-        "test_trusted_frog_cast_revalidates_target_and_replays_full_result",
-        "test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
-        "test_trusted_unspecified_set_locks_membership_control_and_incarnations",
         "test_original_rioters_attack_uses_resolution_power_and_ignores_returned_incarnation",
         "test_original_root_spider_block_adds_first_strike_to_only_source_and_replays",
-        "test_actual_six_source_costs_precede_resolution_choices_and_keep_private_loaded_replay",
-        "test_actual_control_response_keeps_original_choice_actor_and_current_source_recipient",
-        "test_actual_bounce_and_blink_never_transfer_choice_to_a_different_incarnation",
-        "test_actual_argivian_prefix_applies_once_per_activation_and_both_effects_expire",
-        "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
-        "test_actual_assassin_chosen_lifelink_and_deathtouch_both_change_fight_consequences",
-        "test_actual_veteran_tap_cost_and_chosen_first_strike_kill_blocker_before_normal_damage",
-        "test_actual_lunar_sunburst_entry_produces_the_counter_paid_for_its_chosen_keyword"
+        "test_trusted_frog_cast_revalidates_target_and_replays_full_result",
+        "test_trusted_land_animation_offer_payment_multilayer_result_and_replay",
+        "test_trusted_unspecified_animation_preserves_elf_query_counters_and_replay",
+        "test_trusted_unspecified_set_locks_membership_control_and_incarnations"
       ],
       "required_evidence": [
         "positive",
@@ -30823,7 +30835,7 @@
     },
     {
       "id": "counter.producer.fixed_event_trigger",
-      "version": 10,
+      "version": 11,
       "official_rules": [
         "115.1",
         "603.2",
@@ -30892,6 +30904,7 @@
       ],
       "positive_tests": [
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_closed_cast_and_source_attack_bindings_compile_exactly",
         "test_closed_event_bindings_compile_exact_counter_effect_bodies",
         "test_four_strict_ability_word_bindings_compile_through_shared_owner",
@@ -30906,6 +30919,7 @@
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_adjacent_event_and_effect_variants_remain_material",
         "test_aggregate_limited_and_malformed_action_grammar_remains_residual",
         "test_fixed_counter_event_trigger_dependencies_and_compiler_mutation_fail_closed",
@@ -30918,46 +30932,50 @@
         "test_subtype_entry_counter_trigger_dependencies_fail_closed"
       ],
       "interaction_tests": [
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
+        "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
+        "test_any_death_trigger_observes_opponents_and_its_own_lki",
+        "test_battalion_uses_sealed_three_attacker_transition",
         "test_cast_counter_trigger_uses_normalized_event",
-        "test_source_attack_counter_trigger_uses_replacement_owner",
+        "test_creature_death_counter_trigger_uses_lki_subject_filters",
+        "test_draw_counter_triggers_use_public_normalized_events",
         "test_land_entry_counter_trigger_uses_normalized_event",
+        "test_life_gain_counter_trigger_uses_replacement_resolved_amount",
+        "test_multiple_scheduled_counter_triggers_use_one_apnap_batch",
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
+        "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
+        "test_scheduled_counter_trigger_suspends_for_quantity_replacement",
+        "test_source_attack_counter_trigger_uses_replacement_owner",
         "test_source_named_artifact_entry_player_counter_trigger_compiles_exactly",
         "test_subtype_entry_trigger_filters_and_uses_replacement_owner",
-        "test_zone_entry_counter_triggers_apply_typed_subject_relations",
-        "test_creature_death_counter_trigger_uses_lki_subject_filters",
-        "test_any_death_trigger_observes_opponents_and_its_own_lki",
-        "test_draw_counter_triggers_use_public_normalized_events",
-        "test_life_gain_counter_trigger_uses_replacement_resolved_amount",
-        "test_scheduled_counter_trigger_suspends_for_quantity_replacement",
-        "test_multiple_scheduled_counter_triggers_use_one_apnap_batch",
         "test_targeted_cast_triggers_heroic_and_magecraft_in_one_batch",
-        "test_battalion_uses_sealed_three_attacker_transition",
-        "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
-        "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
-        "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
-        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_zone_entry_counter_triggers_apply_typed_subject_relations"
       ],
       "multiplayer_tests": [
-        "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
-        "test_opponent_death_counter_trigger_uses_previous_controller",
-        "test_death_counter_replacement_is_private_and_replays_exactly",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_death_counter_replacement_is_private_and_replays_exactly",
+        "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
+        "test_opponent_death_counter_trigger_uses_previous_controller"
       ],
       "privacy_tests": [
-        "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_death_counter_replacement_is_private_and_replays_exactly",
-        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
+        "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice"
       ],
       "replay_tests": [
-        "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
-        "test_death_counter_replacement_is_private_and_replays_exactly",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
-        "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
+        "test_death_counter_replacement_is_private_and_replays_exactly",
+        "test_four_player_counter_trigger_choice_is_private_and_replays_exactly",
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending"
+        "test_pending_sacrifice_trigger_does_not_modify_blinked_source"
       ],
       "required_evidence": [
         "positive",
@@ -57038,7 +57056,7 @@
     },
     {
       "id": "trigger.effect.fixed_event",
-      "version": 22,
+      "version": 23,
       "official_rules": [
         "115.1",
         "120.4",
@@ -57169,6 +57187,7 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_bound_optional_event_quantity_and_source_copy_keep_owned_children",
         "test_closed_cast_and_source_attack_bindings_compile_exactly",
         "test_controller_draw_step_additional_draw_retains_event_and_recipient",
@@ -57256,6 +57275,7 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_additional_draw_step_missing_authority_stays_residual",
         "test_adjacent_event_and_body_grammar_remain_material",
         "test_bound_optional_event_quantity_and_source_copy_keep_owned_children",
@@ -57345,6 +57365,7 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attachment_damage_and_death_bindings_use_current_and_lki_relations",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
@@ -57444,6 +57465,7 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_cast_characteristics_use_one_sealed_stack_snapshot",
@@ -57518,6 +57540,7 @@
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
@@ -57592,6 +57615,7 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
@@ -58410,7 +58434,7 @@
     },
     {
       "id": "trigger.event.normalized_damage",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "120.4",
         "603.2",
@@ -58464,6 +58488,7 @@
         "test_actual_ripjaw_multiple_blockers_create_one_receiving_trigger_and_one_private_draw",
         "test_actual_vanguard_combat_explores_land_nonland_and_empty_library",
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
         "test_explore_mode_checkpoint_absence_and_record_provenance_never_silently_upgrade",
         "test_fixed_source_zone_and_damage_bindings_compile_exactly",
@@ -58490,6 +58515,7 @@
         "test_actual_ripjaw_multiple_blockers_create_one_receiving_trigger_and_one_private_draw",
         "test_actual_vanguard_combat_explores_land_nonland_and_empty_library",
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
         "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
         "test_explore_mode_checkpoint_absence_and_record_provenance_never_silently_upgrade",
@@ -58516,6 +58542,7 @@
         "test_actual_ripjaw_multiple_blockers_create_one_receiving_trigger_and_one_private_draw",
         "test_actual_vanguard_combat_explores_land_nonland_and_empty_library",
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_damage_and_death_bindings_use_current_and_lki_relations",
         "test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
@@ -58539,6 +58566,7 @@
         "test_actual_ripjaw_multiple_blockers_create_one_receiving_trigger_and_one_private_draw",
         "test_actual_vanguard_combat_explores_land_nonland_and_empty_library",
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
         "test_explore_mode_checkpoint_absence_and_record_provenance_never_silently_upgrade",
@@ -58559,6 +58587,7 @@
         "test_actual_ripjaw_multiple_blockers_create_one_receiving_trigger_and_one_private_draw",
         "test_actual_vanguard_combat_explores_land_nonland_and_empty_library",
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
         "test_explore_mode_checkpoint_absence_and_record_provenance_never_silently_upgrade",
         "test_legacy_receiving_packet_subscription_retains_original_two_packet_replay",
@@ -58577,6 +58606,7 @@
         "test_actual_ripjaw_multiple_blockers_create_one_receiving_trigger_and_one_private_draw",
         "test_actual_vanguard_combat_explores_land_nonland_and_empty_library",
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_combat_damage_batch_scope_preserves_temporal_apnap_and_replay",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
         "test_explore_mode_checkpoint_absence_and_record_provenance_never_silently_upgrade",
@@ -59516,7 +59546,7 @@
     },
     {
       "id": "trigger.event.normalized_spell_cast",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "601.2i",
         "603.2",
@@ -59567,6 +59597,7 @@
       "positive_tests": [
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_noncreature_spell_creates_one_prowess_trigger",
         "test_spell_cast_and_copy_receipts_are_strict_and_round_trip",
         "test_spell_cast_event_is_strict_canonical_and_round_trips",
@@ -59578,6 +59609,7 @@
       "negative_tests": [
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_creature_and_opponent_spells_do_not_trigger_prowess",
         "test_runtime_event_mode_and_child_requirements_survive_removed_coverage",
         "test_spell_cast_event_rejects_malformed_context_without_mutation",
@@ -59586,6 +59618,7 @@
       "interaction_tests": [
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_cast_characteristics_use_one_sealed_stack_snapshot",
         "test_cast_relations_and_type_predicates_share_committed_event",
         "test_main_phase_cast_trigger_optionally_returns_source",
@@ -59596,11 +59629,13 @@
       "multiplayer_tests": [
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_four_player_prowess_batch_is_public_and_apnap_ordered",
         "test_spell_cast_predicates_share_v4_event_and_stack_source",
         "test_targeted_cast_projection_save_load_and_exact_replay"
       ],
       "privacy_tests": [
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_four_player_prowess_batch_is_public_and_apnap_ordered",
         "test_spell_cast_predicates_share_v4_event_and_stack_source",
         "test_targeted_cast_projection_save_load_and_exact_replay"
@@ -59608,6 +59643,7 @@
       "replay_tests": [
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_prowess_trigger_and_resolution_replay_exactly",
         "test_targeted_cast_projection_save_load_and_exact_replay"
       ],
@@ -61507,7 +61543,7 @@
     },
     {
       "id": "trigger.keyword.firebending.fixed",
-      "version": 2,
+      "version": 3,
       "official_rules": [
         "702.189",
         "603"
@@ -61547,27 +61583,33 @@
       ],
       "positive_tests": [
         "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_keyword_event_effect_contract_matrix_and_exclusions",
         "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners"
       ],
       "negative_tests": [
         "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_keyword_event_effect_contract_matrix_and_exclusions",
         "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners"
       ],
       "interaction_tests": [
         "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_keyword_event_effect_runtime_boundaries"
       ],
       "multiplayer_tests": [
         "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_keyword_event_effect_multiplayer_projection_and_replay"
       ],
       "privacy_tests": [
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_keyword_event_effect_multiplayer_projection_and_replay"
       ],
       "replay_tests": [
         "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
+        "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_keyword_event_effect_multiplayer_projection_and_replay"
       ],
       "required_evidence": [

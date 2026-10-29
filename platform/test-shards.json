@@ -52,6 +52,7 @@
       "test_modal_activation_admission",
       "test_multikicker_entry_counters",
       "test_multiplayer_rules",
+      "test_named_source_results",
       "test_optional_draw_discard_sequences",
       "test_oracle_ir",
       "test_paid_mana_resolution",
