@@ -1343,6 +1343,8 @@ def fixed_public_state_characteristics_handler(
         is FixedPublicStateConditionKind.CONTROLLER_IS_MONARCH
         else ('variant.speed.player',) if source_condition.kind is FixedPublicStateConditionKind.CONTROLLER_MAX_SPEED else ()
     )
+    if any(leaf.fact is not None and leaf.fact.value == 'source_renowned' for leaf in source_condition.leaf_conditions()):
+        condition_capabilities = (*condition_capabilities,'permanent.designation.renowned')
     return (
         "continuous-fixed-public-state-characteristics-v1",
         {

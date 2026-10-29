@@ -38,6 +38,9 @@ FIXED_PUBLIC_STATE_GRANTED_ABILITY_HANDLER_ID = (
 FIXED_PUBLIC_STATE_GRANTED_ABILITY_CAPABILITY_ID = (
     "continuous.ability.fixed_public_state_grant"
 )
+GRAVEYARD_TYPED_GRANT_CAPABILITY_ID = 'continuous.ability.graveyard_typed_grant'
+GRAVEYARD_QUERY_GRANT_HANDLER_ID = 'continuous.ability.graveyard-query-grant.v1'
+GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID = 'continuous.ability.graveyard-public-state-grant.v2'
 FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD = (
     "fixed_public_state_condition"
 )
@@ -85,6 +88,7 @@ class FixedPublicStateConditionKind(StrEnum):
 
 
 class FixedPublicStateFact(StrEnum):
+    SOURCE_RENOWNED = 'source_renowned'
     CONTROLLER_LANDS_ENTERED_THIS_TURN='controller_lands_entered_this_turn'
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
     OPPONENT_OWNS_EXILED_CARD = 'opponent_owns_exiled_card'
@@ -289,6 +293,9 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.CONTROLLER_CONTROLS_OWN_COMMANDER and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Commander presence requires one boolean current designation fact')
+    if fact is FixedPublicStateFact.SOURCE_RENOWNED and (
+            schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError('Renowned state requires one current source designation fact')
     if schema_version not in {3, 4}:
         if (schema_version != 7 or fact is not FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON
                 or amount != 1 or type(parameter) is not str or parameter not in 'WUBRG' or len(parameter) != 1):

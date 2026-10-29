@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 533,
+  "registry_version": 534,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -63484,6 +63484,90 @@
       "dependency_fail_closed_rationale": "Verified registry/evidence withdrawals remove the grant, restricted mana or outer query authority; an unrelated Monarch withdrawal preserves lowering. Runtime binding independently requires the new fragment capability.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Removing the actual recipient activation restriction permits forbidden spending and is killed by original Galazeth.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.graveyard_typed_grant",
+      "version": 1,
+      "official_rules": [
+        "109.5",
+        "113.6b",
+        "400.7",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "An explicitly graveyard-active source grants independently compiled abilities to its current owner-relative battlefield query. An optional independently closed public condition uses the same owner snapshot. Source movement stops future grants; produced mana and resolved abilities retain canonical lifetime.",
+        "inputs": [
+          "Explicit graveyard source program",
+          "Closed live battlefield recipient query",
+          "Independent typed ability child",
+          "Optional public-state condition"
+        ],
+        "outputs": [
+          "Owner-relative current recipient abilities",
+          "Existing activation and mana ownership",
+          "Independent source-zone trust minima, rollback and replay"
+        ],
+        "exclusions": [
+          "Other source zones",
+          "Unknown conditions and inner bodies",
+          "Unsupported nested static characteristic grants"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.semantic_runtime.graveyard_grants.GraveyardQueryAbilityGrantHandler",
+        "quorune.semantic_runtime.graveyard_grants.GraveyardConditionalAbilityGrantHandler",
+        "quorune.compiler.conditional_granted_ability_templates.graveyard_quoted_source_parts",
+        "quorune.card_programs.runtime._continuous_programs_for_source"
+      ],
+      "positive_tests": [
+        "test_actual_portal_uses_graveyard_owner_and_loses_future_grants_after_reclaim",
+        "test_conditional_graveyard_grant_rechecks_owner_state_after_a_real_land_bounce",
+        "test_source_zone_and_renowned_fact_are_closed_and_independently_lowered"
+      ],
+      "negative_tests": [
+        "test_actual_portal_uses_graveyard_owner_and_loses_future_grants_after_reclaim",
+        "test_conditional_graveyard_grant_rechecks_owner_state_after_a_real_land_bounce",
+        "test_runtime_parent_and_renowned_condition_minima_cannot_be_omitted",
+        "test_source_zone_and_renowned_fact_are_closed_and_independently_lowered",
+        "test_verified_outer_inner_and_designation_owners_withdraw_independently"
+      ],
+      "interaction_tests": [
+        "test_actual_portal_uses_graveyard_owner_and_loses_future_grants_after_reclaim",
+        "test_conditional_graveyard_grant_rechecks_owner_state_after_a_real_land_bounce"
+      ],
+      "multiplayer_tests": [
+        "test_actual_portal_uses_graveyard_owner_and_loses_future_grants_after_reclaim",
+        "test_conditional_graveyard_grant_rechecks_owner_state_after_a_real_land_bounce"
+      ],
+      "privacy_tests": [
+        "test_actual_portal_uses_graveyard_owner_and_loses_future_grants_after_reclaim"
+      ],
+      "replay_tests": [
+        "test_actual_portal_uses_graveyard_owner_and_loses_future_grants_after_reclaim",
+        "test_conditional_graveyard_grant_rechecks_owner_state_after_a_real_land_bounce"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified registry/evidence withdrawals remove source-zone, typed-grant or inner mana authority with unrelated Monarch positive control. Runtime binding requires the registered source-zone handlers.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Substituting a stale controller for the graveyard owner is killed by actual Portal recipient membership.",
       "blockers": [],
       "status": "trusted"
     }

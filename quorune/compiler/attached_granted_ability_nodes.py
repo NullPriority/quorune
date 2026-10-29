@@ -331,6 +331,7 @@ def _compile_granted_ability_pair(
     )
     if compiled is None:
         return None
+    from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
     outer = runtime_handler_node(
         node_id=node_id,
         line=line,
@@ -338,6 +339,8 @@ def _compile_granted_ability_pair(
         compiled=compiled,
         kind="static_ability",
         event="characteristics.evaluate",
+        active_zone='graveyard' if compiled[1].get('handler_id') in {
+            GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID} else 'battlefield',
         runtime_coverage=(runtime_coverage,),
         dependency_reason=dependency_reason,
         capability_registry=capability_registry,

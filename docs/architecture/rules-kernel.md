@@ -205,6 +205,14 @@ owners enforce the same restriction; the grant adds no separate mana path.
 validation. `mana_restrictions.py` retains spending-context construction and
 evaluation, re-exporting the established codec functions for existing callers.
 
+Explicit graveyard typed grants use the source card's owner for both current
+public conditions and recipient scope. Their separately compiled child
+abilities belong to current battlefield recipients. Source movement ends future
+grants through the same continuous collector without reversing mana already
+produced. The source-renowned condition reads the canonical designation;
+counter removal does not clear it, ability removal suppresses the consuming
+ability, and a new battlefield incarnation resets the designation.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining

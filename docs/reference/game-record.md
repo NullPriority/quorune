@@ -320,6 +320,13 @@ Principal projections expose only the current public counterpart reference as
 `paired_with` on battlefield objects; internal pair and incarnation identities
 remain authoritative record data.
 
+The version-four public-state fact codec also admits `source_renowned`, with a
+fixed threshold of one and no parameter. Evaluation reads the existing
+noncopiable renowned designation rather than counter count. The condition adds
+no new per-card state or replay mutation. Explicit graveyard typed-grant
+programs retain their source zone and independently registered handler identity;
+their granted child retains its battlefield activity and recipient identity.
+
 Granted activated-ability fragments retain their historical version-one,
 version-two and Crew version-three payloads. Version four uses the version-two
 field set with a closed canonical fixed-output mana spending restriction;

@@ -137,6 +137,7 @@
       "test_ring_temptation_model",
       "test_ring_temptation_state",
       "test_shared_creature_type_quantities",
+      "test_source_zone_ability_grants",
       "test_static_attached_control",
       "test_static_characteristic_settings",
       "test_support_counter_placement",

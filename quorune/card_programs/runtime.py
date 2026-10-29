@@ -156,6 +156,8 @@ class _FixedPublicStateSnapshotResolver:
             return int(any(card.zone == 'battlefield' and not card.phased_out
                 and card.is_commander and card.owner == source.controller and card.controller == source.controller
                 for card in self.state.cards.values()))
+        if fact is FixedPublicStateFact.SOURCE_RENOWNED:
+            return int(source.zone == 'battlefield' and not source.phased_out and source.renowned)
         if fact in {
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES,
             FixedPublicStateFact.CONTROLLER_GRAVEYARD_DISTINCT_MANA_VALUES,
@@ -591,9 +593,11 @@ def _continuous_programs_for_source(
     maximum_layer: Layer | None = None,
 ) -> tuple["SemanticProgram", ...]:
     if source.zone == 'graveyard':
+        from ..continuous_conditions import GRAVEYARD_QUERY_GRANT_HANDLER_ID, GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID
         return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
             active_zone='graveyard', event='characteristics.evaluate') if any(
-            d.get('handler_id') == 'continuous.characteristics.graveyard-public-state.v1' for d in p.handlers))
+            d.get('handler_id') in {'continuous.characteristics.graveyard-public-state.v1',
+                GRAVEYARD_QUERY_GRANT_HANDLER_ID,GRAVEYARD_CONDITIONAL_GRANT_HANDLER_ID} for d in p.handlers))
     if static_component_resolver is not None:
         programs = {program.key: program for program in _applicable_static_programs(
             semantics, source, static_component_resolver(source))}
@@ -675,6 +679,7 @@ def _component_public_state_snapshot(
         CONDITIONAL_DEFENDER_PERMISSION_HANDLER, CONDITIONAL_AS_UNBLOCKED_HANDLER,
         'continuous.block-capacity.public-state.v1', 'continuous.declaration.public-state.v1',
         'continuous.characteristics.graveyard-public-state.v1',
+        'continuous.ability.graveyard-public-state-grant.v2',
         'continuous.characteristics.public-state-keywords.v1',
         'continuous.characteristics.conditional-chosen-designation.v1',
         'continuous.ability.conditional-flash.v1',

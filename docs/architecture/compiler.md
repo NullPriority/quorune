@@ -932,8 +932,20 @@ the current public condition, and grant to the current battlefield query.
 Graveyard arrival retains its zone timestamp; enabling the condition later does
 not retimestamp the grant. Moving the source out of the graveyard ends it.
 Nonbasic lands with the named basic land subtype satisfy land conditions.
-Hidden conditions, quoted procedures, fixed stat changes and unrepresented
+The legacy keyword handler retains its schema. Separate typed-grant handlers
+admit one independently closed quoted ability, with an optional represented
+public-state condition. Their recipients stay on the battlefield while the
+giver stays in its explicit graveyard zone; the recipient supplies activation
+source and controller. Mixed fixed keywords remain separate modifier results.
+Hidden conditions, other source zones, fixed stat changes and unrepresented
 siblings remain outside this graveyard grant contract.
+
+The `source_renowned` public fact reads the canonical renowned designation.
+Its fixed boolean threshold and absent parameter use the existing version-four
+public-fact codec and independently require the designation capability. A
+counter is not a proxy for this state: removing all counters does not end it,
+while a new battlefield incarnation starts without it. Ordinary ability
+removal still governs the conditional ability that consumes the fact.
 
 Qualified “one or more” player-damage triggers compile native source type,
 subtype, color and supertype predicates alongside controller, source-zone and

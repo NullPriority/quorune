@@ -1297,6 +1297,10 @@ def _object_public_state_condition(
     source_name: str,
 ) -> FixedPublicStateConditionSpec | None:
     subject = _condition_source_subject_pattern(source_name)
+    if re.fullmatch(rf"(?:it['’]s|{subject} is) renowned",normalized,re.I):
+        from ..continuous_conditions import FixedPublicStateFact
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,
+            amount=1,fact=FixedPublicStateFact.SOURCE_RENOWNED,schema_version=4)
     source_state = re.fullmatch(
         rf"(?:it['’]s|{subject} is) (?P<state>attacking|blocking|enchanted|"
         r"equipped|modified|monstrous|tapped|untapped)",

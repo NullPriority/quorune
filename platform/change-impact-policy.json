@@ -8836,6 +8836,24 @@
         "test_receiver_query_unions",
         "test_restricted_mana_grants"
       ]
+    },
+    {
+      "id": "source-zone-typed-grants",
+      "patterns": [
+        "quorune/semantic_runtime/graveyard_grants.py",
+        "quorune/compiler/conditional_granted_ability_templates.py",
+        "quorune/continuous_conditions.py",
+        "tests/test_source_zone_ability_grants.py",
+        "tests/fixtures/source-zone-ability-grant-cards.json"
+      ],
+      "test_modules": [
+        "test_source_zone_ability_grants",
+        "test_public_state_condition_compiler",
+        "test_static_characteristic_settings",
+        "test_renown_rules",
+        "test_fixed_query_quoted_ability_grants",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

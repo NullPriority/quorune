@@ -35,6 +35,10 @@ def _fragment_descriptor_requirements(value):
         keyword_arrays = (value.get(field, ()) for field in ('keywords', 'add_abilities', 'remove_abilities'))
         own = {'combat.banding'} if any(isinstance(words, (list, tuple)) and 'Banding' in words
             for words in keyword_arrays) else set()
+        if value.get('kind') == 'public_fact_at_least' and value.get('fact') == 'source_renowned':
+            from ..continuous_conditions import FixedPublicStateConditionSpec
+            FixedPublicStateConditionSpec.from_dict(value)
+            own.add('permanent.designation.renowned')
         if value.get('kind') in {'declaration_cost','declaration_requirement','declaration_restriction'}:
             from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
             # Decode the actual persisted fragment; annotations cannot replace

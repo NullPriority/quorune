@@ -18110,6 +18110,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/graveyard_grants.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/hand_visibility.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -20643,5 +20658,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "fdc6e1ce24b6d1b1e9b574c3b89802681d575a9d60fca8ced39c9c9623bcb255"
+  "fingerprint": "be9fa99d58078905579e6d8bf99df27b9a710bc7e18172fa6e56479499e1dca3"
 }
