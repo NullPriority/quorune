@@ -20,7 +20,7 @@ from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORDS,
 )
 from ..object_predicate import ObjectQuerySpec
-from ..rules.source_references import SourceReferenceSpec
+from ..rules.source_references import SourceReferenceSpec, source_self_permanent_pattern
 from .creature_subtypes import canonical_creature_subtype
 from .collection_quantity_templates import collection_quantity, fixed_quantity_arithmetic, additive_quantity, public_card_quantity
 
@@ -63,7 +63,7 @@ _CONDITION_NUMBER_WORDS = {
 
 def _self_subject_pattern(source_name: str) -> str:
     source = SourceReferenceSpec(source_name).regex_pattern
-    return rf"(?:This creature|This permanent|This token|{source})"
+    return rf"(?:{source_self_permanent_pattern()}|This token|{source})"
 
 
 def _singular_creature_subtype(plural: str) -> str | None:

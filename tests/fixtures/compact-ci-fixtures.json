@@ -376,6 +376,7 @@
     "tests/fixtures/source-explore-cards.json",
     "tests/fixtures/source-fixed-protection-cards.json",
     "tests/fixtures/source-keyword-choice-cards.json",
+    "tests/fixtures/source-label-characteristic-cards.json",
     "tests/fixtures/source-maintenance-cards.json",
     "tests/fixtures/source-pronoun-results.json",
     "tests/fixtures/source-protection-choice-cards.json",

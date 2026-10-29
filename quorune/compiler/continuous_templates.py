@@ -384,8 +384,9 @@ def fixed_query_characteristic_grant_handler(
 
 
 def _self_subject_pattern(source_name: str) -> str:
+    from ..rules.source_references import source_self_permanent_pattern
     source = SourceReferenceSpec(source_name).regex_pattern
-    return rf"(?:This creature|This permanent|This token|{source})"
+    return rf"(?:{source_self_permanent_pattern()}|This token|{source})"
 
 
 def conditional_self_keyword_handler(

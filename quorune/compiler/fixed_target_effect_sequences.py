@@ -10,7 +10,7 @@ from ..keyword_counters import keyword_counter_mechanic
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..landwalk import BASIC_LANDWALK_TYPES
 from ..zone_object_keyword_model import ZONE_OBJECT_KEYWORDS
-from ..rules.source_references import SourceReferenceSpec
+from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type, source_self_permanent_pattern
 from .creature_subtypes import canonical_creature_subtype
 from .counter_placement_templates import (
     existing_target_counter_placement_effect_template,
@@ -299,6 +299,14 @@ def fixed_source_characteristics_effect_template(
         sorted(value.casefold() for value in source_card_types)
     )
     normalized = _TRAILING_REMINDER.sub("", text.strip()).strip()
+    self_stats = re.fullmatch(rf'(?P<subject>{source_self_permanent_pattern()}) gets '
+        r'(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) until end of turn\.?', normalized, re.I)
+    if self_stats is not None:
+        power, toughness = int(self_stats['power']), int(self_stats['toughness'])
+        if not (power or toughness):
+            return None
+        return FixedSourceCharacteristicsTemplate(source_kind=source_self_permanent_type(self_stats['subject']),
+            power=power, toughness=toughness)
     named = re.fullmatch(
         rf"{SourceReferenceSpec(source_name).regex_pattern} (?P<body>.+)",
         normalized, re.IGNORECASE,

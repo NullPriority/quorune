@@ -9853,6 +9853,24 @@
         "test_card_program_trust",
         "test_public_quantity_mana"
       ]
+    },
+    {
+      "id": "canonical-self-label-characteristics",
+      "patterns": [
+        "quorune/rules/source_references.py",
+        "quorune/compiler/fixed_target_effect_sequences.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/compiler/continuous_templates.py",
+        "tests/test_source_label*.py",
+        "tests/fixtures/source-label-characteristic-cards.json"
+      ],
+      "test_modules": [
+        "test_source_label_characteristics",
+        "test_source_label_native",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_source_characteristic_compositions"
+      ]
     }
   ],
   "symbol_rules": [

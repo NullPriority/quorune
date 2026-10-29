@@ -2910,6 +2910,11 @@ new incarnations retain neither old counters nor derived animation.
 Source labels such as this Spacecraft share the canonical artifact-subtype
 self-entry/death binding. Existing Station activation, target, cost, APNAP,
 private-choice and result owners perform the actual transitions.
+Fixed stat-only source results and live self-characteristic queries use the
+same closed CR 201.5 label vocabulary. Resolution results retain the activating
+incarnation; live queries read current public quantities through their existing
+owner. Labels identify the source rather than a target or a requirement to keep
+the printed subtype. Unknown labels and incomplete clauses remain residual.
 Activated children parse the validated striation body through the ordinary
 activation parser and pinned catalog. The original complete row and span remain
 provenance; the threshold prefix never becomes an activation cost. Both catalog
