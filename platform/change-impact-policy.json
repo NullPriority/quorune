@@ -9412,6 +9412,31 @@
         "test_shared_modal_target_resolution",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-mana-component-composition",
+      "patterns": [
+        "quorune/compiler/public_quantity_mana_nodes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/rules/fixed_resolution_mana_shapes.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/mana_composition_fixture.py",
+        "tests/test_resolution_mana_compositions.py",
+        "tests/test_library_moving_mana_activations.py",
+        "tests/fixtures/mana-component-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_resolution_mana_compositions",
+        "test_library_moving_mana_activations",
+        "test_fixed_resolution_mana",
+        "test_public_quantity_mana",
+        "test_fixed_keyword_event_effects",
+        "test_granted_keyword_events",
+        "test_closed_effect_programs",
+        "test_fixed_optional_effect_choices",
+        "test_saga_counter_progression",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

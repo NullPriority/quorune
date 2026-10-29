@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 564,
+  "registry_version": 565,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -24307,7 +24307,7 @@
     },
     {
       "id": "mana.production.public_quantity",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "106.1",
         "106.4",
@@ -24352,33 +24352,39 @@
       ],
       "implementation_components": [
         "quorune.compiler.public_quantity_mana.public_quantity_mana_template",
-        "quorune.public_quantity_mana_model.PublicQuantityManaOutput",
-        "quorune.public_quantity_mana_abilities.compile_public_quantity_activated_mana_ability",
-        "quorune.semantic_runtime.public_quantity_mana.PublicQuantityActivatedManaHandler",
-        "quorune.public_quantity_mana_runtime.public_quantity_mana_amount",
-        "quorune.public_quantity_mana_runtime.select_public_quantity_mana",
+        "quorune.compiler.public_quantity_mana_nodes.public_quantity_activated_mana_node",
         "quorune.mana_activation.complete_mana_activation",
+        "quorune.public_quantity_mana_abilities.compile_public_quantity_activated_mana_ability",
+        "quorune.public_quantity_mana_model.PublicQuantityManaOutput",
+        "quorune.public_quantity_mana_runtime.public_quantity_mana_amount",
         "quorune.public_quantity_mana_runtime.public_quantity_mana_choice_schema",
+        "quorune.public_quantity_mana_runtime.select_public_quantity_mana",
         "quorune.rules.activation.counter_costs.plan_source_counter_removal_cost",
-        "quorune.rules.activation.counter_costs.preview_source_counter_removal_cost"
+        "quorune.rules.activation.counter_costs.preview_source_counter_removal_cost",
+        "quorune.semantic_runtime.public_quantity_mana.PublicQuantityActivatedManaHandler"
       ],
       "positive_tests": [
         "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
         "test_projected_postcost_allocation_agrees_with_browser_and_command",
         "test_quantity_mana_compiler_and_codec_close_existing_producers",
-        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
+        "test_quantity_mana_controller_query_is_offered_accepted_and_replayed",
+        "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners"
       ],
       "negative_tests": [
         "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values",
         "test_quantity_mana_grammar_cost_and_codec_boundaries",
-        "test_quantity_mana_invalid_allocation_rolls_back"
+        "test_quantity_mana_invalid_allocation_rolls_back",
+        "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners"
       ],
       "interaction_tests": [
         "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
@@ -24387,6 +24393,7 @@
       ],
       "multiplayer_tests": [
         "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
       ],
@@ -24395,6 +24402,7 @@
       ],
       "replay_tests": [
         "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
@@ -27366,7 +27374,7 @@
     },
     {
       "id": "resolution.effect_program.closed_components",
-      "version": 6,
+      "version": 7,
       "official_rules": [
         "608.2b",
         "608.2c",
@@ -27419,13 +27427,18 @@
       ],
       "positive_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
         "test_closed_program_compiles_across_contexts_and_component_shapes",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
         "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
+        "test_fixed_mana_components_compose_with_owned_ordered_and_optional_results",
         "test_independent_multisentence_selection_keeps_complete_component_and_printed_order",
         "test_independent_query_results_share_ordered_program_owner",
         "test_measured_corpus_lower_bound_is_capability_closed",
@@ -27439,12 +27452,17 @@
         "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
       ],
       "negative_tests": [
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
         "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
         "test_conditional_linked_and_ambiguous_sequences_remain_residual",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
         "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
+        "test_fixed_mana_components_compose_with_owned_ordered_and_optional_results",
         "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
         "test_multisentence_component_omission_and_dependency_withdrawal_fail_closed",
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
@@ -27460,8 +27478,12 @@
       ],
       "interaction_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_mind_unbound_counter_is_counted_by_later_draw",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
@@ -27476,7 +27498,11 @@
       ],
       "multiplayer_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
@@ -27488,6 +27514,7 @@
       ],
       "privacy_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
@@ -27500,7 +27527,11 @@
       ],
       "replay_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -27641,7 +27672,7 @@
     },
     {
       "id": "resolution.effect_sequence.fixed_clauses",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "608.2b",
         "608.2c",
@@ -27687,25 +27718,30 @@
         "CommanderEngine._continue_resolution"
       ],
       "positive_tests": [
-        "test_two_closed_sentences_compile_across_spell_trigger_and_activation",
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
         "test_actual_corpus_family_is_capability_closed",
-        "test_life_follows_shielded_destruction_and_replays"
+        "test_life_follows_shielded_destruction_and_replays",
+        "test_two_closed_sentences_compile_across_spell_trigger_and_activation"
       ],
       "negative_tests": [
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
         "test_sequence_parser_and_shape_fail_closed",
         "test_stale_target_fizzles_entire_sequence_without_life_change"
       ],
       "interaction_tests": [
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
         "test_life_follows_shielded_destruction_and_replays",
         "test_private_scry_follows_token_creation_in_four_players"
       ],
       "multiplayer_tests": [
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
         "test_private_scry_follows_token_creation_in_four_players"
       ],
       "privacy_tests": [
         "test_private_scry_follows_token_creation_in_four_players"
       ],
       "replay_tests": [
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
         "test_life_follows_shielded_destruction_and_replays",
         "test_private_scry_follows_token_creation_in_four_players"
       ],
@@ -37168,7 +37204,7 @@
     },
     {
       "id": "effect.choice.optional_fixed",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "109.5",
         "608.2c",
@@ -37217,19 +37253,21 @@
         "quorune.semantic_choices.optional_effect._represented_effect"
       ],
       "positive_tests": [
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_fixed_optional_draw_discard_compiles_original_order",
         "test_main_phase_cast_trigger_optionally_returns_source",
         "test_optional_choice_apply_and_decline_resume_exact_effect",
         "test_optional_clause_preserves_mandatory_sequence_sibling",
         "test_optional_have_clause_preserves_target_and_source_result",
+        "test_optional_source_self_result_keeps_target_timing_and_complete_span",
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
-        "test_spell_trigger_and_activation_share_optional_effect_lowering",
-        "test_optional_source_self_result_keeps_target_timing_and_complete_span",
-        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+        "test_spell_trigger_and_activation_share_optional_effect_lowering"
       ],
       "negative_tests": [
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_linked_dynamic_random_and_other_player_variants_stay_residual",
         "test_optional_effect_exclusions_remain_material",
         "test_optional_effect_shape_and_handler_mutants_fail_closed",
@@ -37237,31 +37275,33 @@
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
-        "test_unestablished_or_new_object_pronouns_are_not_rebound_to_source",
-        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+        "test_unestablished_or_new_object_pronouns_are_not_rebound_to_source"
       ],
       "interaction_tests": [
         "test_accepting_prevented_draw_still_discards_after_real_prior_draw",
         "test_actual_academy_decline_consumes_limit_without_draw_or_discard",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_main_phase_cast_trigger_optionally_returns_source",
         "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+        "test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
+        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
         "test_original_rig_selects_a_flying_target_before_apply_or_decline",
-        "test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
-        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
         "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
       ],
       "multiplayer_tests": [
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+        "test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
+        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
-        "test_original_rig_selects_a_flying_target_before_apply_or_decline",
-        "test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
-        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure"
+        "test_original_rig_selects_a_flying_target_before_apply_or_decline"
       ],
       "privacy_tests": [
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
@@ -37273,13 +37313,14 @@
       ],
       "replay_tests": [
         "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_optional_effect_choice_is_controller_scoped_atomic_private_and_replays",
+        "test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
+        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure",
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
         "test_original_optional_have_source_damage_preserves_recipient_set_and_replays",
         "test_original_optional_have_target_blink_prevents_new_incarnation_substitution",
-        "test_original_rig_selects_a_flying_target_before_apply_or_decline",
-        "test_original_arsonist_optional_death_damage_keeps_lki_and_trigger_controller",
-        "test_original_clash_grants_to_entering_recipients_and_pending_trigger_survives_grant_departure"
+        "test_original_rig_selects_a_flying_target_before_apply_or_decline"
       ],
       "required_evidence": [
         "positive",
@@ -38966,7 +39007,7 @@
     },
     {
       "id": "trigger.keyword.firebending.fixed",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "702.189",
         "603"
@@ -39001,24 +39042,32 @@
         "quorune.effect_runtime.state_and_permissions._apply_mana",
         "quorune.mana_provenance.clear_step_mana",
         "quorune.mana_provenance.spend_mana",
+        "quorune.rules.fixed_resolution_mana_shapes.fixed_resolution_mana_runtime_dependencies",
         "quorune.trigger_discovery.dispatch_semantic_event"
       ],
       "positive_tests": [
-        "test_keyword_event_effect_contract_matrix_and_exclusions"
+        "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
+        "test_keyword_event_effect_contract_matrix_and_exclusions",
+        "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners"
       ],
       "negative_tests": [
-        "test_keyword_event_effect_contract_matrix_and_exclusions"
+        "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
+        "test_keyword_event_effect_contract_matrix_and_exclusions",
+        "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners"
       ],
       "interaction_tests": [
+        "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
         "test_keyword_event_effect_runtime_boundaries"
       ],
       "multiplayer_tests": [
+        "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
         "test_keyword_event_effect_multiplayer_projection_and_replay"
       ],
       "privacy_tests": [
         "test_keyword_event_effect_multiplayer_projection_and_replay"
       ],
       "replay_tests": [
+        "test_actual_firebending_retains_only_its_mana_and_requires_its_keyword_owner",
         "test_keyword_event_effect_multiplayer_projection_and_replay"
       ],
       "required_evidence": [
@@ -41733,7 +41782,7 @@
     },
     {
       "id": "mana.production.fixed_resolution",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "106.1",
         "106.3",
@@ -41756,7 +41805,8 @@
         "inputs": [
           "complete fixed symbol-bundle grammar",
           "resolving controller",
-          "independently compiled trigger and additional costs"
+          "independently compiled trigger and additional costs",
+          "Known fixed-symbol output as an independently closed ordered or optional component; library-moving activations retain ordinary stack timing under pinned605.1a"
         ],
         "outputs": [
           "canonical colored or colorless mana after resolution",
@@ -41772,51 +41822,88 @@
       "dependencies": [],
       "implementation_components": [
         "quorune.compiler.fixed_resolution_mana.fixed_resolution_mana_effect_template",
+        "quorune.effect_runtime.state_and_permissions._apply_mana",
+        "quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities",
         "quorune.rules.fixed_resolution_mana_shapes.fixed_resolution_mana_capabilities",
-        "quorune.effect_runtime.state_and_permissions._apply_mana"
+        "quorune.rules.fixed_resolution_mana_shapes.fixed_resolution_mana_runtime_dependencies"
       ],
       "positive_tests": [
-        "test_fixed_symbol_bundles_are_closed_separate_outputs",
-        "test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
-        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_channel_suns_adds_all_five_colors_and_replays",
         "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
-        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_entry_mana_uses_stack_and_survives_source_departure",
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_actual_revolt_entry_checks_departure_history",
-        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays"
+        "test_fixed_mana_components_compose_with_owned_ordered_and_optional_results",
+        "test_fixed_symbol_bundles_are_closed_separate_outputs",
+        "test_restricted_bundle_allows_each_spell_type_but_no_ability_payment"
       ],
       "negative_tests": [
-        "test_dynamic_restricted_and_malformed_mana_remain_closed",
-        "test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
-        "test_actual_revolt_entry_checks_departure_history"
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
+        "test_actual_revolt_entry_checks_departure_history",
+        "test_dynamic_restricted_and_malformed_mana_remain_closed",
+        "test_fixed_mana_components_compose_with_owned_ordered_and_optional_results",
+        "test_restricted_bundle_allows_each_spell_type_but_no_ability_payment",
+        "test_runtime_fixed_mana_component_owner_is_inferred_without_annotations",
+        "test_verified_mana_owner_withdrawal_rejects_composition_and_keeps_ordinary_draw"
       ],
       "interaction_tests": [
-        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_channel_suns_adds_all_five_colors_and_replays",
         "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
-        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_entry_mana_uses_stack_and_survives_source_departure",
-        "test_actual_revolt_entry_checks_departure_history",
-        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays"
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
+        "test_actual_revolt_entry_checks_departure_history"
       ],
       "multiplayer_tests": [
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
-        "test_actual_entry_mana_uses_stack_and_survives_source_departure"
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
+        "test_actual_entry_mana_uses_stack_and_survives_source_departure",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers"
       ],
       "privacy_tests": [
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_entry_mana_uses_stack_and_survives_source_departure"
       ],
       "replay_tests": [
-        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_arni_chapter_two_no_target_resolves_but_lost_target_counters_all_results",
+        "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_channel_suns_adds_all_five_colors_and_replays",
         "test_actual_culling_sacrifice_is_paid_but_countered_spell_produces_no_mana",
-        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_dark_ritual_uses_stack_and_adds_exact_black_bundle_then_replays",
+        "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
+        "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_entry_mana_uses_stack_and_survives_source_departure",
-        "test_actual_revolt_entry_checks_departure_history",
-        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays"
+        "test_actual_geosurge_restricted_mana_rejects_instant_and_pays_creature",
+        "test_actual_loyalty_mana_uses_stack_and_counter_cost_then_replays",
+        "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
+        "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
+        "test_actual_revolt_entry_checks_departure_history"
       ],
       "required_evidence": [
         "positive",
@@ -41829,7 +41916,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Omitting fixed resolution mana capability blocks exact effect admission.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting the registered mana effect fails an actual Dark Ritual cast and final pool.",
+      "implementation_mutation_rationale": "Omitting the registered mana effect fails an actual Dark Ritual cast and final pool. Removing the fixed bundle component or descriptor-owned runtime inference is killed by exact composition and stripped-owner witnesses.",
       "blockers": [],
       "status": "trusted"
     },
@@ -49312,7 +49399,7 @@
     },
     {
       "id": "quantity_expression.public_counter_total",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "122.1",
         "122.1a",
@@ -49348,32 +49435,39 @@
       },
       "dependencies": [],
       "implementation_components": [
+        "quorune.compiler.public_quantity_mana_nodes.public_quantity_activated_mana_node",
+        "quorune.compiler.source_counter_anthems.source_counter_anthem_handler",
         "quorune.counter_snapshot.permanent_counter_total",
+        "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.object_predicate.PermanentStatePredicateSpec",
         "quorune.object_predicate.object_query_capabilities",
         "quorune.public_quantity_reductions.reduce_public_quantity",
-        "quorune.dynamic_characteristics.query_characteristic_count",
-        "quorune.compiler.source_counter_anthems.source_counter_anthem_handler",
         "quorune.semantic_runtime.continuous_components.FixedQueryPowerToughnessAnthemHandler"
       ],
       "positive_tests": [
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_all_counter_reduction_sums_individual_counters_over_matched_rows",
         "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
         "test_original_backstreet_total_preserves_controller_type_and_individual_count",
         "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry",
+        "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners",
         "test_total_source_anthem_is_explicit_and_keeps_named_counter_descriptor"
       ],
       "negative_tests": [
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_capability_withdrawal_preserves_any_counter_and_total_residuals",
         "test_executable_counter_query_and_total_reject_missing_capability_dependencies",
-        "test_original_backstreet_total_preserves_controller_type_and_individual_count"
+        "test_original_backstreet_total_preserves_controller_type_and_individual_count",
+        "test_retained_combat_mana_and_public_counter_total_keep_their_existing_owners"
       ],
       "interaction_tests": [
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
         "test_original_backstreet_total_preserves_controller_type_and_individual_count",
         "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"
       ],
       "multiplayer_tests": [
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
         "test_original_backstreet_total_preserves_controller_type_and_individual_count",
         "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"
@@ -49384,6 +49478,7 @@
         "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"
       ],
       "replay_tests": [
+        "test_actual_nardole_counts_all_counter_kinds_and_preserves_noncreature_restriction",
         "test_original_backstreet_bruiser_counts_two_counters_on_one_controlled_creature",
         "test_original_backstreet_total_preserves_controller_type_and_individual_count",
         "test_original_kyler_counts_all_individual_source_counters_and_actual_human_entry"

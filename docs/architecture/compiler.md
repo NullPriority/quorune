@@ -348,6 +348,16 @@ without enumerating every possible vector. The payload carries an independent
 runtime capability minimum and binds the resolving controller and source.
 Ordered result composition resumes the remaining instructions once after the
 choice. Genuine mana abilities retain their immediate activation owner.
+The fixed-symbol resolver is also a closed component for ordered and optional
+results. Its exact mana leaf remains capability-bound at runtime even when
+producer annotations are removed. Under the pinned CR 605.1a, a library-moving
+activation is not a mana ability; a fixed mana bundle followed by a draw uses
+the ordinary activated-ability stack and cannot fund another action through
+automatic mana payment before it resolves.
+Firebending's duration-bearing red output retains its separate keyword owner;
+it does not use the ordinary fixed-bundle capability. Public-quantity activated
+mana declares the existing query producer dependencies, including the total
+of every counter kind on its source.
 Variable or restricted color choices, unknown conditional replacements, linked
 effects and unsupported spending clauses remain residuals.
 
