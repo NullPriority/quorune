@@ -9702,6 +9702,35 @@
         "test_recipient_result_composition",
         "test_scalar_effect_amounts"
       ]
+    },
+    {
+      "id": "normalized-public-permanent-designations",
+      "patterns": [
+        "quorune/designation_event_model.py",
+        "quorune/permanent_designations.py",
+        "quorune/compiler/trigger_event_vocabulary.py",
+        "quorune/compiler/designation_event_bindings.py",
+        "quorune/compiler/fixed_public_multi_event_bindings.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/public_event_closure_variants.py",
+        "quorune/rules/designation_events.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/designation_event_fixture.py",
+        "tests/fixtures/designation-event-cards.json",
+        "tests/test_designation_event_bindings.py",
+        "tests/test_monstrous_event_native.py",
+        "tests/test_renowned_event_native.py"
+      ],
+      "test_modules": [
+        "test_designation_event_bindings",
+        "test_monstrous_event_native",
+        "test_renowned_event_native",
+        "test_self_counter_keyword_actions",
+        "test_renown_rules",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

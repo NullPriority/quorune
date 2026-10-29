@@ -144,10 +144,10 @@ def _event_pair(
         "enters or becomes monstrous": (
             (
                 FixedEventSubscription("permanent.enter", source),
-                FixedEventSubscription("permanent.becomes_monstrous", source),
+                FixedEventSubscription("permanent.designated_monstrous", source),
             ),
             "trigger-event-normalized-zone-change",
-            ("permanent.designation.monstrous",),
+            ("permanent.designation.monstrous", "trigger.event.normalized_permanent_designation"),
         ),
     }
     try:

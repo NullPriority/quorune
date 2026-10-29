@@ -1102,6 +1102,9 @@ def fixed_public_event_binding_spec(
     *,
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
+    from .designation_event_bindings import designation_event_binding_spec
+    designation = designation_event_binding_spec(material_line, card_name=card_name)
+    if designation is not None:return designation
     from .received_damage_bindings import received_permanent_binding_spec
     received = received_permanent_binding_spec(material_line)
     if received is not None:return received

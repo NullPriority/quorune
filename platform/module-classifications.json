@@ -3644,6 +3644,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/designation_event_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/destruction_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -7694,6 +7709,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/trigger_event_vocabulary.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/trigger_limit_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -8941,6 +8971,18 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "authoritative"
+    },
+    {
+      "file": "quorune/designation_event_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
     },
     {
       "file": "quorune/designation_prevention.py",
@@ -13911,6 +13953,20 @@
     },
     {
       "file": "quorune/rules/delayed_draw_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/designation_events.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -21447,5 +21503,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "f812a3a8e17428cb28ff9104384c4776b9cfac6841d2b07e50a1fc000b596b03"
+  "fingerprint": "1abb25ee0541a9852480c60ec947b21bd5cc4b2c4c146bc3827c72bc67f53ce6"
 }

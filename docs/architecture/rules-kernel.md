@@ -248,6 +248,17 @@ produced. The source-renowned condition reads the canonical designation;
 counter removal does not clear it, ability removal suppresses the consuming
 ability, and a new battlefield incarnation resets the designation.
 
+The permanent designation owner publishes one normalized public occurrence only
+when a retained permanent actually becomes monstrous or renowned. Its immutable
+facts contain physical and logical identity, controller, current effective types
+and subtypes, and the monstrous value when applicable. Ordinary observer
+discovery can therefore see another qualifying creature become renowned.
+Already-designated, phased or stale requests produce no occurrence. The marker
+and its value remain noncopiable; token copies do not inherit them or counters.
+Historical source-only designation events retain their original payload and
+discovery scope alongside the separate normalized stream, so retained programs
+keep their saved subscription meaning and replay behavior.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining

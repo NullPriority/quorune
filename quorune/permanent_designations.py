@@ -18,6 +18,10 @@ class PermanentDesignationError(ValueError):
 class PermanentDesignationHost(Protocol):
     state: Any
 
+    def _effective_card_data(self, card: Any) -> Mapping[str, Any]: ...
+
+    def _type_parts(self, type_line: str) -> tuple[set[str], set[str], set[str]]: ...
+
     def _log(
         self,
         actor: str | None,
@@ -299,6 +303,7 @@ def become_monstrous(
         details,
         sources=(card,),
     )
+    _publish_public_designation(host, card, 'monstrous', value=request.value)
     return MonstrousDesignationResult(
         object_ref=card.ref,
         logical_object_id=card.logical_object_id,
@@ -362,11 +367,22 @@ def become_renowned(
         details,
         sources=(card,),
     )
+    _publish_public_designation(host, card, 'renowned')
     return RenownedDesignationResult(
         object_ref=card.ref,
         logical_object_id=card.logical_object_id,
         changed=True,
     )
+
+
+def _publish_public_designation(host, card, designation, *, value=None):
+    from .designation_event_model import PermanentDesignationOccurrence
+    types, subtypes, _ = host._type_parts(str(host._effective_card_data(card).get('type_line') or ''))
+    occurrence = PermanentDesignationOccurrence(card.object_id, card.ref, card.logical_object_id,
+        card.controller, tuple(sorted(types)), tuple(sorted(subtypes)), designation, value)
+    # Preserve the historical source-only streams and their payloads above.
+    # Fresh subscriptions consume this separately normalized public occurrence.
+    host._dispatch_semantic_event(occurrence.event, occurrence.context())
 
 
 __all__ = [

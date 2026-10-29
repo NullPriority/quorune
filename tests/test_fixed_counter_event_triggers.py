@@ -3237,7 +3237,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             (
                 "When this creature enters or becomes monstrous, draw a card.",
                 "Creature — Kraken",
-                ("permanent.enter", "permanent.becomes_monstrous"),
+                ("permanent.enter", "permanent.designated_monstrous"),
             ),
             (
                 "Whenever enchanted creature attacks or blocks, you gain 1 life.",

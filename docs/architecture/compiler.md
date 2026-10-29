@@ -1102,6 +1102,23 @@ counter is not a proxy for this state: removing all counters does not end it,
 while a new battlefield incarnation starts without it. Ordinary ability
 removal still governs the conditional ability that consumes the fact.
 
+Permanent designation triggers use the closed event vocabulary in
+`compiler/trigger_event_vocabulary.py`; the node generator retains its existing
+import path for consumers. Exact self heads for becoming monstrous or renowned
+subscribe to the corresponding normalized public event with source identity.
+Creature-renowned observers additionally require the committed effective type
+and printed controller relation. The entry-or-monstrous pair keeps a separate
+condition on each typed subscription. Ordinary result and current-ability owners
+remain required; unknown costs, X-dependent targets and unrepresented result
+siblings retain their residuals.
+
+Fresh designation subscriptions use `permanent.designated_monstrous` and
+`permanent.designated_renowned`. They do not rewrite retained serialized
+subscriptions to the historical source-only `permanent.becomes_monstrous` and
+`permanent.becomes_renowned` streams. Runtime requirements infer the normalized
+occurrence and corresponding designation owner directly from subscriptions,
+independently of removable coverage annotations.
+
 Qualified “one or more” player-damage triggers compile native source type,
 subtype, color and supertype predicates alongside controller, source-zone and
 combat restrictions. Bare subtype subjects retain their permanent domain.
