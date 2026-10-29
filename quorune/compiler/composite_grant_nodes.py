@@ -6,11 +6,33 @@ from copy import deepcopy
 import re
 from ..basic_land_types import LAND_SUBTYPES
 from ..object_predicate import ObjectQuerySpec
-from ..semantic_runtime.composite_grants import COMPOSITE_GRANT_HANDLER,COMPOSITE_GRANT_CAPABILITY
+from ..semantic_runtime.composite_grants import (COMPOSITE_GRANT_HANDLER,COMPOSITE_GRANT_CAPABILITY,
+    TYPE_REPLACEMENT_GRANT_HANDLER,TYPE_REPLACEMENT_GRANT_CAPABILITY)
 from .continuous_templates import _attached_modifier
 from .oracle_source_text import without_ability_word_label
 from .public_state_queries import fixed_characteristic_battlefield_query_subject
 from .static_runtime_nodes import runtime_handler_node
+
+
+def _type_replacement_shell(text):
+    text=without_ability_word_label(' '.join(text.strip().split()))
+    if text is None:return None
+    match=re.fullmatch(r'Enchanted permanent is (?:a|an) (?P<colorless>colorless )?'
+        r'(?:(?P<subtype>[A-Za-z][A-Za-z\'-]*) )?(?P<kind>land|artifact|enchantment)'
+        r'(?P<body> with .+)? and (?:it )?loses all other (?P<loss>card types and abilities|abilities|card types)\.?',text,re.I)
+    if match is None:return None
+    kind=match['kind'].casefold();subtype=(match['subtype'] or '').casefold()
+    from ..type_subtype_vocabulary import CARD_TYPE_SUBTYPES
+    if subtype and (kind=='land' or subtype not in CARD_TYPE_SUBTYPES[kind]):return None
+    body=(match['body'] or '').removeprefix(' with ').rstrip(', ')
+    if body and re.fullmatch(r'"[^"]+"(?:\s*(?:,\s*(?:and\s+)?|and\s+)"[^"]+"){0,3}',body,re.I) is None:return None
+    children=tuple(quote.rstrip('.,') for quote in re.findall(r'"([^"]+)"',body))
+    modifier=_attached_modifier();modifier['remove_all_abilities']='abilities' in match['loss'].casefold()
+    modifier['type_operations']=[{'op':'set_types','field':'card_types','values':[kind.title()]}]
+    if subtype:modifier['type_operations'].append({'op':'set_types','field':'subtypes','values':[subtype.title()]})
+    if match['colorless']:modifier['color_operations']=[{'op':'remove_all_colors'}]
+    target={'kind':'attached','controller':None,'exclude_source':False,'predicate':ObjectQuerySpec(zones=('battlefield',)).to_dict()}
+    return target,modifier,children
 
 
 def _composite_shell(text):
@@ -45,7 +67,8 @@ def _composite_shell(text):
 
 
 def composite_granted_ability_nodes(**values):
-    shell=_composite_shell(values['material_line'])
+    shell=_type_replacement_shell(values['material_line']);replacement=shell is not None
+    if shell is None:shell=_composite_shell(values['material_line'])
     if shell is None:return None
     target,modifier,children=shell
     from .attached_granted_ability_nodes import (
@@ -53,9 +76,12 @@ def composite_granted_ability_nodes(**values):
     )
     from .granted_characteristic_nodes import granted_characteristic_reference_is_closed
     fragments=[];nodes=[];required={COMPOSITE_GRANT_CAPABILITY,'continuous.characteristics.fixed_public_setting','continuous.ability.fixed_query_grant'}
-    template='continuous-composite-typed-grant-v1'
+    handler_id=TYPE_REPLACEMENT_GRANT_HANDLER if replacement else COMPOSITE_GRANT_HANDLER
+    version=2 if replacement else 1
+    if replacement:required.add(TYPE_REPLACEMENT_GRANT_CAPABILITY)
+    template='continuous-type-replacement-grant-v2' if replacement else 'continuous-composite-typed-grant-v1'
     def compiled(fragment,dependencies):
-        return template,{'handler_id':COMPOSITE_GRANT_HANDLER,'schema_version':1,'event':'characteristics.evaluate',
+        return template,{'handler_id':handler_id,'schema_version':version,'event':'characteristics.evaluate',
             'target':target,'modifier':{**deepcopy(modifier),'add_ability_fragments':[dict(fragment)]}},tuple(sorted(required|set(dependencies)))
     for slot,quote in enumerate(children,1):
         if (_EXTERNAL_ATTACHMENT_REFERENCE.search(quote) and not granted_characteristic_reference_is_closed(quote)
@@ -67,10 +93,10 @@ def composite_granted_ability_nodes(**values):
             dependency_reason='Composite grants require every independently closed child and their coupled characteristic owner',residuals=[])
         if pair is None or pair[0].residual_ids:return None
         fragments.append(pair[0].handlers[0]['modifier']['add_ability_fragments'][0]);nodes.append(pair[1]);required.update(pair[0].capability_dependencies)
-    descriptor={'handler_id':COMPOSITE_GRANT_HANDLER,'schema_version':1,'event':'characteristics.evaluate',
+    descriptor={'handler_id':handler_id,'schema_version':version,'event':'characteristics.evaluate',
         'target':target,'modifier':{**modifier,'add_ability_fragments':fragments}}
-    from ..semantic_runtime.composite_grants import CompositeAbilityGrantHandler
-    try:CompositeAbilityGrantHandler().validate(descriptor)
+    from ..semantic_runtime.composite_grants import CompositeAbilityGrantHandler,FixedTypeReplacementGrantHandler
+    try:(FixedTypeReplacementGrantHandler() if replacement else CompositeAbilityGrantHandler()).validate(descriptor)
     except (TypeError,ValueError):return None
     outer=runtime_handler_node(node_id=values['node_id'],line=values['line'],span=values['span'],
         compiled=(template,descriptor,tuple(sorted(required))),kind='static_ability',event='characteristics.evaluate',

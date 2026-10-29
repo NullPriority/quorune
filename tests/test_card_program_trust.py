@@ -337,6 +337,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.characteristics.graveyard_public_state",
                 "continuous.ability.graveyard_query_grant",
                 "continuous.ability.fixed_composite_grant",
+                "continuous.characteristics.fixed_type_replacement",
                 "continuous.ability.graveyard_conditional_grant",
                 "continuous.characteristics.fixed_public_setting",
                 "continuous.control.attached_source",

@@ -476,6 +476,10 @@ def _apply_operation(
         values = _as_words(value)
         current = getattr(state, target)
         if op == "set_types":
+            if target=='card_types':
+                from .type_subtype_vocabulary import correlated_subtypes
+                values.update(kind for kind in current if kind.casefold() in {'instant','sorcery'})
+                state.subtypes=correlated_subtypes(state.subtypes,values)
             setattr(state, target, values)
         elif op == "add_types":
             current.update(values)

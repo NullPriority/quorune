@@ -328,6 +328,13 @@ their historical form. Version-two basic-type addition payloads add an explicit
 schema version for the controller's nontoken-creature scope; version-one
 land-only payloads retain their exact fields.
 
+A distinct version-two type-replacement handler stores the existing closed
+type/color/ability modifier for a single attachment. It uses standard type
+operations and independently bound quoted child identities, with no new
+GameState field. Version-one composite handlers keep their prior identity and
+schema. Correlated subtype cleanup derives from the pinned type vocabulary;
+subtypes and supertypes remain separate characteristics.
+
 Layer-six source participation is derived from the current canonical effect
 order. Its candidate-source metadata and read-frame caches are not GameState,
 checkpoint or projection fields. Replay recomputes them from the same source,

@@ -146,6 +146,7 @@
       "test_targeted_activation_costs",
       "test_trigger_processing_owner",
       "test_turn_structure_rules",
+      "test_type_replacement_grants",
       "test_typed_ability_fragments",
       "test_variable_library_counts"
     ],

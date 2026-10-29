@@ -8882,6 +8882,27 @@
         "test_source_zone_ability_grants",
         "test_static_characteristic_settings"
       ]
+    },
+    {
+      "id": "fixed-type-replacement-grants",
+      "patterns": [
+        "quorune/type_subtype_vocabulary.py",
+        "quorune/compiler/composite_grant_nodes.py",
+        "quorune/semantic_runtime/composite_grants.py",
+        "quorune/continuous_effects.py",
+        "quorune/object_query.py",
+        "tests/test_type_replacement_grants.py",
+        "tests/fixtures/type-replacement-grant-cards.json"
+      ],
+      "test_modules": [
+        "test_type_replacement_grants",
+        "test_composite_quoted_grants",
+        "test_attached_static_characteristics",
+        "test_static_characteristic_settings",
+        "test_continuous_effect_components",
+        "test_card_program_trust",
+        "test_query_power_toughness_definitions"
+      ]
     }
   ],
   "symbol_rules": [

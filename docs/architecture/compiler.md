@@ -1118,6 +1118,16 @@ emitter removes abilities before adding replacements within one layer-six
 effect. Unrepresented settings, conditions and recipient queries invalidated
 by an unowned type change remain residual.
 
+A separate version-two attachment handler composes fixed replacement of card
+types with an optional artifact or enchantment subtype, a colorless result,
+ability removal and closed quoted children. Land replacement preserves current
+land subtypes when none are specified; setting a Food, Treasure or Clue subtype
+replaces the artifact subtype set. Supertypes, counters, token status, name,
+mana cost and mana value stay independent. A plain type-only result retains
+abilities. The modifier follows one attachment incarnation through layers four,
+five and six. Chosen or dynamic types, basic-land subtype setting and filtered
+recipient sets remain outside this production.
+
 Other quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
 material residuals. Granted fixed source-counter removal costs also remain

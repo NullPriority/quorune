@@ -601,6 +601,15 @@ the typed source, pair and selected incarnation through the existing semantic
 replacement continuation. The returning permanent's prospective controller
 chooses its entry replacement order; a pause resumes that movement once.
 
+Replacing card types prunes subtypes that no remaining type supports, using
+the pinned correlated subtype sets. Creature and Kindred share their set;
+supertypes and counters are separate. The existing type operation retains the
+instant/sorcery exception. A battlefield noncreature has no exact power or
+toughness, even when its card has printed stats; supported numeric references
+use zero. Type-replacing Aura modifiers bind one attachment across the shared
+layer plan, and state-based actions detach Equipment or illegal Auras. A
+granted ability already activated survives the recipient and giver leaving.
+
 Printed static programs that begin in layer six read source participation
 before their first effect in the canonical dependency and timestamp order.
 Later ability removal cannot erase an effect that already started. Earlier

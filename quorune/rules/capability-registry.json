@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 536,
+  "registry_version": 537,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -63729,6 +63729,112 @@
       "dependency_fail_closed_rationale": "Verified edited registry/evidence withdraws the creature addition owner. Runtime binding infers version2 ownership independently of declarations.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting actual Land card-type addition is killed by the original Ashaya/Toxicrene interaction.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.characteristics.fixed_type_replacement",
+      "version": 1,
+      "official_rules": [
+        "205.1a",
+        "205.1b",
+        "205.3g",
+        "205.3h",
+        "208.3",
+        "305.6",
+        "613.1d",
+        "613.1e",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version2 fixed attached replacement sets one represented noncreature permanent card type, removes only uncorrelated subtypes, optionally sets a canonical nonland subtype/colorless result, and preserves or replaces abilities with independently closed quoted children. Supertypes, counters, controller, name and token status stay independent.",
+        "inputs": [
+          "Current attachment incarnation",
+          "Explicit closed type/color/ability operations",
+          "Pinned correlated subtype vocabulary and optional independent children"
+        ],
+        "outputs": [
+          "Shared layer4/5/6 plan and ordinary state-based stabilization",
+          "Recipient-controller activation and source-independent stacked results",
+          "Numeric noncreature boundary, rollback, privacy and replay"
+        ],
+        "exclusions": [
+          "Dynamic or chosen types",
+          "Basic land subtype setting through this replacement production",
+          "Filtered recipient queries invalidated by type replacement",
+          "Unknown settings and inner bodies"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.semantic_runtime.composite_grants.FixedTypeReplacementGrantHandler",
+        "quorune.compiler.composite_grant_nodes._type_replacement_shell",
+        "quorune.type_subtype_vocabulary.correlated_subtypes",
+        "quorune.continuous_effects._apply_operation"
+      ],
+      "positive_tests": [
+        "test_actual_containment_sacrifices_nontoken_treasure_for_its_controller_and_keeps_colors",
+        "test_actual_deep_retains_split_second_then_a_tapped_nontoken_clue_draws_for_its_controller",
+        "test_actual_moon_preserves_land_types_and_supertypes_detaches_equipment_and_restores_on_departure",
+        "test_actual_stars_keeps_printed_mana_and_color_without_creature_stats",
+        "test_actual_sugar_cost_and_stacked_life_gain_survive_source_and_aura_departure",
+        "test_complete_replacement_quotes_and_plain_type_change_use_explicit_new_handler",
+        "test_type_replacement_cleanup_retains_only_correlated_subtypes_and_independent_supertypes"
+      ],
+      "negative_tests": [
+        "test_actual_containment_sacrifices_nontoken_treasure_for_its_controller_and_keeps_colors",
+        "test_actual_deep_retains_split_second_then_a_tapped_nontoken_clue_draws_for_its_controller",
+        "test_actual_moon_preserves_land_types_and_supertypes_detaches_equipment_and_restores_on_departure",
+        "test_actual_stars_keeps_printed_mana_and_color_without_creature_stats",
+        "test_actual_sugar_cost_and_stacked_life_gain_survive_source_and_aura_departure",
+        "test_complete_replacement_quotes_and_plain_type_change_use_explicit_new_handler",
+        "test_runtime_type_replacement_owner_cannot_be_omitted",
+        "test_type_replacement_cleanup_retains_only_correlated_subtypes_and_independent_supertypes",
+        "test_verified_replacement_and_child_owners_withdraw_with_unrelated_positive_control"
+      ],
+      "interaction_tests": [
+        "test_actual_containment_sacrifices_nontoken_treasure_for_its_controller_and_keeps_colors",
+        "test_actual_deep_retains_split_second_then_a_tapped_nontoken_clue_draws_for_its_controller",
+        "test_actual_moon_preserves_land_types_and_supertypes_detaches_equipment_and_restores_on_departure",
+        "test_actual_stars_keeps_printed_mana_and_color_without_creature_stats",
+        "test_actual_sugar_cost_and_stacked_life_gain_survive_source_and_aura_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_containment_sacrifices_nontoken_treasure_for_its_controller_and_keeps_colors",
+        "test_actual_deep_retains_split_second_then_a_tapped_nontoken_clue_draws_for_its_controller",
+        "test_actual_moon_preserves_land_types_and_supertypes_detaches_equipment_and_restores_on_departure",
+        "test_actual_stars_keeps_printed_mana_and_color_without_creature_stats",
+        "test_actual_sugar_cost_and_stacked_life_gain_survive_source_and_aura_departure"
+      ],
+      "privacy_tests": [
+        "test_actual_deep_retains_split_second_then_a_tapped_nontoken_clue_draws_for_its_controller",
+        "test_actual_moon_preserves_land_types_and_supertypes_detaches_equipment_and_restores_on_departure"
+      ],
+      "replay_tests": [
+        "test_actual_containment_sacrifices_nontoken_treasure_for_its_controller_and_keeps_colors",
+        "test_actual_deep_retains_split_second_then_a_tapped_nontoken_clue_draws_for_its_controller",
+        "test_actual_moon_preserves_land_types_and_supertypes_detaches_equipment_and_restores_on_departure",
+        "test_actual_stars_keeps_printed_mana_and_color_without_creature_stats",
+        "test_actual_sugar_cost_and_stacked_life_gain_survive_source_and_aura_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified registry/evidence withdrawal removes replacement, composite or inner mana authority with unrelated Monarch positive control. Runtime binding requires the registered version2 owner.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting correlated subtype cleanup is killed by the original Moon creature-to-land witness.",
       "blockers": [],
       "status": "trusted"
     }

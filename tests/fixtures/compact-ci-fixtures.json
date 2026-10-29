@@ -390,6 +390,7 @@
     "tests/fixtures/turn-cast-grant-cards.json",
     "tests/fixtures/turn-cast-rider-cards.json",
     "tests/fixtures/turn-count-self-cost-cards.json",
+    "tests/fixtures/type-replacement-grant-cards.json",
     "tests/fixtures/typecycling-cards.json",
     "tests/fixtures/typed-grant-carrier-cards.json",
     "tests/fixtures/typed-land-entry-cards.json",

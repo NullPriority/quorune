@@ -20206,6 +20206,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/type_subtype_vocabulary.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/umbra_armor.py",
       "layer": "rules",
       "owning_subsystem": "destruction",
@@ -20688,5 +20700,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "22bbd647e81ee31e83a3f95eca484840e94e704bc23f1d3e9b2477c77cc90a2d"
+  "fingerprint": "9b800fd99f02dc82b3eb80698a3d9c845a2f5028ab9466c8fe5e76d006b1baa4"
 }
