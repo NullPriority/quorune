@@ -2,7 +2,7 @@
 title: "Oracle compiler architecture"
 status: "current"
 authoritative_source: "quorune/oracle_ir.py, quorune/compiler, and quorune/card_programs"
-verified: "2026-09-29"
+verified: "2026-10-28"
 audience: "compiler and rules contributors"
 maintenance: "hand-maintained"
 ---
@@ -4382,3 +4382,12 @@ schema-two predicate with ordinary color alternatives; the hand-source marker
 does not relax the selected battlefield objects' predicate. Both the Forecast
 and colored-tap owners are structural runtime minima. See the
 [Forecast contract](../../mechanics/contracts/forecast.json).
+
+Fixed preparation followed by creature-power damage composes independently
+closed temporary characteristics or +1/+1 counter placement with the existing
+one-way damage instruction. The preparation's canonical target predicate must
+equal the announced damage source's predicate. Both targets are announced
+together, and the pronoun binds only that same controlled creature. A separate
+composition capability and whole-program shape check cover the ordered result;
+unknown antecedents, conditional preparation and variable amounts remain
+residual. The [damage transaction](damage.md) owns execution and attribution.

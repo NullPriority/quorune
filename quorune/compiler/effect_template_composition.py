@@ -121,6 +121,12 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .prepared_creature_power_damage import prepared_creature_power_damage_template
+    prepared_damage = prepared_creature_power_damage_template(
+        text, source_name=source_name, compile_atomic=compile_atomic,
+    )
+    if prepared_damage is not None:
+        return prepared_damage
     from .quantified_counter_targets import quantified_counter_target_template
     counters=quantified_counter_target_template(text)
     if counters is not None:return counters

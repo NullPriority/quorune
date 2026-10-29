@@ -44,6 +44,7 @@ from .attachment_action_capability_shapes import (
 )
 from .counter_capability_shapes import fixed_counter_placement_group_node_capabilities
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_covered_mechanics, fixed_creature_power_damage_node_capabilities
+from .prepared_creature_power_damage_shapes import PREPARED_POWER_DAMAGE_CAPABILITY, PREPARED_POWER_DAMAGE_MECHANIC
 from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from .crew_capability_shapes import ordinary_crew_node_capabilities
 from .station_capability_shapes import ordinary_station_node_capabilities
@@ -1295,6 +1296,7 @@ def capability_dependencies_for_node(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
+        PREPARED_POWER_DAMAGE_CAPABILITY: PREPARED_POWER_DAMAGE_MECHANIC,
         'library.order.fixed_controller':'fixed-controller-top-order',
         'permanent.untap.fixed_land_choice':'fixed-untargeted-land-untap',
         'library.shuffle.fixed_controller':'fixed-controller-shuffle',

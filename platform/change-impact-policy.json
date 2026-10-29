@@ -10009,6 +10009,24 @@
         "test_suspend_rules",
         "test_zone_trigger_events"
       ]
+    },
+    {
+      "id": "prepared-creature-power-damage-composition",
+      "patterns": [
+        "quorune/compiler/prepared_creature_power_damage.py",
+        "quorune/rules/prepared_creature_power_damage_shapes.py",
+        "tests/test_prepared_creature_power_damage*.py",
+        "tests/prepared_power_damage_fixture.py",
+        "tests/fixtures/prepared-power-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_card_program_v2",
+        "test_fixed_creature_power_damage",
+        "test_oracle_ir",
+        "test_prepared_creature_power_damage_compiler",
+        "test_prepared_creature_power_damage_native"
+      ]
     }
   ],
   "symbol_rules": [

@@ -2,7 +2,7 @@
 title: "Damage transaction"
 status: "current"
 authoritative_source: "quorune/rules/stack_damage_sources.py, quorune/damage.py, quorune/damage_values.py, quorune/damage_results.py, quorune/turn_history.py, quorune/counter_placement.py, quorune/counter_removal.py, quorune/life_state.py, quorune/fixed_damage_set*, quorune/rules/damage_capability_shapes.py, and quorune/combat_damage_*"
-verified: "2026-10-16"
+verified: "2026-10-28"
 audience: "rules, semantics, replay, and architecture contributors"
 maintenance: "hand-maintained"
 ---
@@ -70,6 +70,16 @@ value cannot replace a later departure value, and a returned incarnation cannot
 replace the original source. A represented battlefield noncreature has no
 power and contributes numeric zero under CR 208.3 and 107.2. Fight still requires
 both current creatures; it never substitutes a departed participant's power.
+
+Prepared one-way damage uses ordinary fixed characteristic or counter effects
+before reading the targeted creature's current effective power. Counter
+replacement and prohibition therefore affect the later amount. Both target
+roles retain independent resolution revalidation: a legal source still receives
+its preparation if only the recipient becomes illegal, while an illegal source
+cannot supply damage through last-known information. The creature remains the
+damage source, including its lifelink and deathtouch; a trample grant does not
+redirect excess noncombat damage to a player. These compositions add no second
+damage or mutation owner.
 
 ```mermaid
 flowchart LR

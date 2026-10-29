@@ -19,6 +19,7 @@ from .source_fixed_protection_shapes import source_fixed_protection_capabilities
 from .attachment_action_capability_shapes import fixed_attachment_action_node_capabilities
 from .counter_capability_shapes import fixed_counter_placement_group_node_capabilities
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_node_capabilities
+from .prepared_creature_power_damage_shapes import prepared_creature_power_damage_capabilities
 from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from .graveyard_card_targets import targeted_own_graveyard_return_node_capabilities
 from .public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities, fixed_public_zone_move_set_node_capabilities, public_graveyard_card_exile_node_capabilities
@@ -113,6 +114,7 @@ def effect_node_capabilities(
         fixed_target_effect_sequence_node_capabilities,
         fixed_source_effect_sequence_node_capabilities,
         fixed_creature_power_damage_node_capabilities,
+        prepared_creature_power_damage_capabilities,
         fixed_damage_node_capabilities,
         mass_destruction_node_capabilities,
         fixed_next_turn_draw_node_capabilities,

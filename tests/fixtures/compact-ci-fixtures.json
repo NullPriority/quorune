@@ -291,6 +291,7 @@
     "tests/fixtures/predefined-role-cards.json",
     "tests/fixtures/predefined-token-view-cards.json",
     "tests/fixtures/preparation-cards.json",
+    "tests/fixtures/prepared-power-damage-cards.json",
     "tests/fixtures/prevention-composition-cards.json",
     "tests/fixtures/priced-mana-source-cards.json",
     "tests/fixtures/protection-list-cards.json",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 592,
+  "registry_version": 593,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -36329,6 +36329,118 @@
       "dependency_fail_closed_rationale": "The strict node shape requires the exact compiler-owned operation and target plan, while the capability closure requires target revalidation and canonical public damage results; blocking any dependency keeps the node residual.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused shape and runtime mutation witnesses alter the Fight simultaneity, current-creature requirement, source incarnation, target domain, or canonical damage batch and are rejected by exact state and journal assertions. Omitting immediate-departure refresh repeats the supported Spikeshot source creation value instead of its changed power, controller and lifelink; the native witness detects it.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "damage.creature_power.prepared_sequence",
+      "version": 1,
+      "official_rules": [
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "120.3",
+        "122.1a",
+        "611.2a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Fixed statistics, keywords or +1/+1 counters on one controlled creature, then that same announced creature deals current power as one-way damage to a separately announced recipient.",
+        "inputs": [
+          "Source-spanned complete two-clause instruction",
+          "Two canonical target groups",
+          "Existing fixed preparation and creature-power damage descriptors"
+        ],
+        "outputs": [
+          "Ordered ordinary preparation and damage effects",
+          "Shared target revalidation and canonical damage attribution"
+        ],
+        "exclusions": [
+          "Conditional or X preparation",
+          "Twice power or toughness damage",
+          "Ambiguous antecedents",
+          "Unrepresented optional targets or companion abilities"
+        ]
+      },
+      "dependencies": [
+        "damage.creature_power.fixed_interaction",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.prepared_creature_power_damage.prepared_creature_power_damage_template",
+        "quorune.rules.prepared_creature_power_damage_shapes.prepared_creature_power_damage_capabilities"
+      ],
+      "positive_tests": [
+        "test_prepared_damage_compiler_preserves_source_and_recipient_roles",
+        "test_prepared_damage_ambiguous_and_unrepresented_variants_remain_residual",
+        "test_prepared_damage_descriptor_mutations_reject_changed_binding_and_results",
+        "test_prepared_damage_verified_capability_withdrawal_retains_plain_bite",
+        "test_actual_fixed_stat_prepared_bites_read_boosted_power_without_return_damage",
+        "test_actual_counter_prepared_bites_keep_counter_and_use_replaced_or_prohibited_result",
+        "test_actual_keyword_preparation_keeps_trample_noncombat_and_expires",
+        "test_actual_prepared_damage_uses_creature_lifelink_deathtouch_and_prevention",
+        "test_actual_prepared_damage_preserves_partial_target_legality_and_incarnations",
+        "test_actual_hunters_mark_blue_planeswalker_discount_and_counterproof_body",
+        "test_actual_colossal_collision_bite_and_independent_basic_landcycling"
+      ],
+      "negative_tests": [
+        "test_prepared_damage_compiler_preserves_source_and_recipient_roles",
+        "test_prepared_damage_ambiguous_and_unrepresented_variants_remain_residual",
+        "test_prepared_damage_descriptor_mutations_reject_changed_binding_and_results",
+        "test_prepared_damage_verified_capability_withdrawal_retains_plain_bite"
+      ],
+      "interaction_tests": [
+        "test_actual_fixed_stat_prepared_bites_read_boosted_power_without_return_damage",
+        "test_actual_counter_prepared_bites_keep_counter_and_use_replaced_or_prohibited_result",
+        "test_actual_keyword_preparation_keeps_trample_noncombat_and_expires",
+        "test_actual_prepared_damage_uses_creature_lifelink_deathtouch_and_prevention",
+        "test_actual_prepared_damage_preserves_partial_target_legality_and_incarnations",
+        "test_actual_hunters_mark_blue_planeswalker_discount_and_counterproof_body",
+        "test_actual_colossal_collision_bite_and_independent_basic_landcycling"
+      ],
+      "multiplayer_tests": [
+        "test_actual_fixed_stat_prepared_bites_read_boosted_power_without_return_damage",
+        "test_actual_counter_prepared_bites_keep_counter_and_use_replaced_or_prohibited_result",
+        "test_actual_keyword_preparation_keeps_trample_noncombat_and_expires",
+        "test_actual_prepared_damage_uses_creature_lifelink_deathtouch_and_prevention",
+        "test_actual_prepared_damage_preserves_partial_target_legality_and_incarnations",
+        "test_actual_hunters_mark_blue_planeswalker_discount_and_counterproof_body",
+        "test_actual_colossal_collision_bite_and_independent_basic_landcycling"
+      ],
+      "privacy_tests": [
+        "test_actual_fixed_stat_prepared_bites_read_boosted_power_without_return_damage",
+        "test_actual_counter_prepared_bites_keep_counter_and_use_replaced_or_prohibited_result",
+        "test_actual_keyword_preparation_keeps_trample_noncombat_and_expires",
+        "test_actual_prepared_damage_uses_creature_lifelink_deathtouch_and_prevention",
+        "test_actual_prepared_damage_preserves_partial_target_legality_and_incarnations",
+        "test_actual_hunters_mark_blue_planeswalker_discount_and_counterproof_body",
+        "test_actual_colossal_collision_bite_and_independent_basic_landcycling"
+      ],
+      "replay_tests": [
+        "test_actual_fixed_stat_prepared_bites_read_boosted_power_without_return_damage",
+        "test_actual_counter_prepared_bites_keep_counter_and_use_replaced_or_prohibited_result",
+        "test_actual_keyword_preparation_keeps_trample_noncombat_and_expires",
+        "test_actual_prepared_damage_uses_creature_lifelink_deathtouch_and_prevention",
+        "test_actual_prepared_damage_preserves_partial_target_legality_and_incarnations",
+        "test_actual_hunters_mark_blue_planeswalker_discount_and_counterproof_body",
+        "test_actual_colossal_collision_bite_and_independent_basic_landcycling"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn composition authority with verified rebuilt evidence rejects preparation while ordinary direct bite remains admitted.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Mutated source/recipient binding, damage kind, unknown keyword, source LKI and source cardinality fail the independent descriptor boundary.",
       "blockers": [],
       "status": "trusted"
     },

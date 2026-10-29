@@ -6064,6 +6064,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/prepared_creature_power_damage.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/compiler/prevention_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -15480,6 +15495,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/prepared_creature_power_damage_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/prevention_component_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -21971,5 +22000,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "43ccf14abd1037bedfe01d46058645f02a145282b2fc296bebb67b3b84c83a6b"
+  "fingerprint": "c482ff312cef5a05420ce713f61c09ef283c31c437a07ca68e38329b065bbe53"
 }
