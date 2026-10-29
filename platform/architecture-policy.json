@@ -494,7 +494,8 @@
       "quorune/rules/self_cost_turn_counts.py": "typed read-only counted creature deaths, opponent casts and caster draws; consumes canonical history and draw-count ownership without mutation",
       "quorune/rules/self_cost_public_counters.py": "Read existing canonical public counter snapshots for one source spell cost before its payment locks.",
       "quorune/cost_payments.py": "read-only payment configuration and immutable source planning, delegating activation and mana-provenance mutation to existing canonical owners",
-      "quorune/rules/casting/spell_mana_payments.py": "Read the bounded paid-mana journal and delegate committed recording and payment-time occurrence collection to canonical history and trigger owners."
+      "quorune/rules/casting/spell_mana_payments.py": "Read the bounded paid-mana journal and delegate committed recording and payment-time occurrence collection to canonical history and trigger owners.",
+      "quorune/static_component_participation.py": "pure source-prefix participation and immutable same-layer dependency ordering over authoritative public state"
     },
     "model_definition": "quorune/model.py"
   },

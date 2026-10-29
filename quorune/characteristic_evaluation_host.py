@@ -438,34 +438,8 @@ class CharacteristicEvaluationHostMixin:
             lambda:self._read_static_component_presence_at_ability_start(source,program_key),identity=source)
 
     def _read_static_component_presence_at_ability_start(self,source,program_key):
-        """Apply the canonical effect prefix before a printed layer-6 source starts."""
-        from .continuous_effects import order_continuous_effects
-        candidates,participants=self._static_component_candidate_plan()
-        own={effect.effect_id for effect in candidates if participants.get(effect.effect_id)==(source.object_id,program_key)}
-        if not own or min(effect.layer for effect in candidates if effect.effect_id in own)!=Layer.ABILITY:
-            return None
-        if source.zone!='battlefield':return True
-        resolved={effect.effect_id:effect for card in self.state.cards.values() if card.zone=='battlefield'
-            for effect in active_resolution_effects(self.state,card)}
-        from .continuous_effect_model import ContinuousEffectDuration
-        present=tuple(effect for effect in (*resolved.values(),*candidates)
-            if effect.duration is not ContinuousEffectDuration.WHILE_SOURCE_PRESENT or effect.source_present)
-        if not any(effect.effect_id in own for effect in present):return False
-        ordered,_cycles=order_continuous_effects(present)
-        prefix=[]
-        for effect in ordered:
-            if effect.effect_id in own:break
-            producer=participants.get(effect.effect_id)
-            if effect.layer==Layer.ABILITY and producer is not None:
-                other=self.state.cards.get(producer[0])
-                if other is not None and self._static_component_presence_at_ability_start(other,producer[1]) is False:
-                    continue
-            prefix.append(effect)
-        base=self._compiled_base_characteristics(source,self.card_record(source),error_type=GameRuleError)
-        effective=self._apply_layered_characteristic_annotations(source,base,runtime_effects=tuple(prefix),
-            maximum_layer=Layer.ABILITY,_enforce_static_component_applicability=False)
-        return program_key in static_component_keys(effective.get('ability_fragments',()),
-            source_designations=current_source_designations(self.state,source))
+        from .static_component_participation import static_component_presence_at_ability_start
+        return static_component_presence_at_ability_start(self,source,program_key)
 
     def _prospective_static_component_keys(
         self,

@@ -289,13 +289,14 @@ def shadowed_reviewed_program_keys(
     from .empty_permanent_equivalence import shadowed_reviewed_empty_permanent_keys
     from .trigger_view_equivalence import shadowed_reviewed_trigger_view_keys
     from .activation_view_equivalence import shadowed_reviewed_activation_view_keys
+    from .attached_grant_equivalence import shadowed_reviewed_attached_grant_keys
     return shadowed_reviewed_multi_event_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_counted_search_keys(
         record, generated, reviewed,
     ) | shadowed_reviewed_event_return_keys(record, generated, reviewed) | shadowed_reviewed_subtype_anthem_keys(
         record, generated, reviewed,
-    ) | shadowed_reviewed_zero_price_keys(record, generated, reviewed) | shadowed_reviewed_fixed_search_keys(
+    ) | shadowed_reviewed_attached_grant_keys(record, generated, reviewed) | shadowed_reviewed_zero_price_keys(record, generated, reviewed) | shadowed_reviewed_fixed_search_keys(
         record,generated,reviewed) | shadowed_reviewed_upkeep_type_count_keys(record,generated,reviewed) | shadowed_reviewed_kicker_target_keys(record,generated,reviewed) | shadowed_reviewed_modal_catalog_keys(record,generated,reviewed) | shadowed_reviewed_resolution_mana_keys(record,generated,reviewed) | shadowed_reviewed_additional_token_keys(record,generated,reviewed) | shadowed_reviewed_empty_permanent_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile,oracle_ir=oracle_ir) | shadowed_reviewed_trigger_view_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile) | shadowed_reviewed_activation_view_keys(record,generated,reviewed,capability_registry=capability_registry,capability_profile=capability_profile)
 
 

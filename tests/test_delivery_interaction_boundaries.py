@@ -156,7 +156,10 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         self.assertEqual('battlefield',s.state.cards[source.object_id].zone)
         self.assertIn('creature',s.engine._type_parts(s.engine._effective_card_data(source)['type_line'])[0])
         offers=self.actions(s)
-        activation=next(row for row in offers if row['id'].startswith('activate:'+source.ref+':'))
+        ability, = s.engine._activated_abilities(source)
+        self.assertIsNone(ability.builtin_semantic_key)
+        activation_id=f'activate:{source.ref}:{ability.ability_id}'
+        self.assertFalse(any(row['id']==activation_id for row in offers))
         self.assertTrue(any(row.get('kind')=='cast' and row.get('card')==control.ref for row in offers))
 
         self.cast(s,control,{'C':1,'G':1})
@@ -175,28 +178,18 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
         self.assertFalse(self.binding(s,source)['strict_capability_ready'])
         self.private_replay(s,private)
 
-        command={'action_id':activation['id'],'pay':'manual','payment':{'C':8}}
-        self.reject(s,command,principal='pilot:D')
-        result=s.act('pilot:A',command)
-        self.assertTrue(result.ok,result.summary)
-        item=s.state.stack[-1]
-        program=s.engine.semantics.get(item.semantic_key)
-        self.assertFalse(s.engine.semantic_program_is_current_trusted(program))
+        # The source catalogue discovers this printed price but has no
+        # executable token body. Reject before payment or stack mutation.
+        command={'action_id':activation_id,'pay':'manual','payment':{'C':8}}
         card_ids=set(s.state.cards)
         mana=dict(s.state.players['A'].mana_pool)
-        for _ in range(8):
-            if s.state.pending_decision is None:
-                break
-            self.assertEqual('priority',s.state.pending_decision.kind)
-            result=s.act(s.pending_principals()[0],{'action_id':'pass'})
-            self.assertTrue(result.ok,result.summary)
-        self.assertIsNone(s.state.pending_decision)
-        self.assertEqual([item.ref],[entry.ref for entry in s.state.stack])
+        self.reject(s,command,principal='pilot:D')
+        self.reject(s,command)
+        self.assertFalse(s.state.stack)
         self.assertEqual(card_ids,set(s.state.cards))
         self.assertEqual(mana,s.state.players['A'].mana_pool)
-        pause=next(row for row in reversed(s.state.annotations) if row.get('kind')=='semantic_unsupported')
-        self.assertEqual((item.ref,'trusted_only'),(pause['stack'],pause['semantic_policy']))
         self.assertFalse(self.binding(s,source)['strict_capability_ready'])
         s=self.replay(s,load=True)
-        self.assertEqual([item.ref],[entry.ref for entry in s.state.stack])
-        self.reject(s,{'action_id':'choose','choice':'G'})
+        self.assertFalse(s.state.stack)
+        self.assertFalse(any(row['id']==activation_id for row in self.actions(s)))
+        self.private_replay(s,private)

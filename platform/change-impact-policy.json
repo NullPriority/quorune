@@ -7982,7 +7982,8 @@
         "test_public_state_quantity_actions",
         "test_query_power_toughness_definitions",
         "test_recipient_modifiers",
-        "test_shared_characteristic_queries"
+        "test_shared_characteristic_queries",
+        "test_high_risk_interaction_assurance"
       ]
     },
     {
@@ -9240,7 +9241,8 @@
         "test_activation_public_state",
         "test_public_activation_conditions",
         "test_public_state_condition_runtime",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_high_risk_interaction_assurance"
       ]
     },
     {
@@ -9306,7 +9308,8 @@
       "test_modules": [
         "test_qualified_characteristic_quantities",
         "test_typed_dynamic_characteristics",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_shared_characteristic_queries"
       ]
     },
     {
@@ -10094,6 +10097,39 @@
         "test_query_power_toughness_definitions",
         "test_card_program_trust",
         "test_oracle_ir"
+      ]
+    },
+    {
+      "id": "static-source-participation-dependencies",
+      "patterns": [
+        "quorune/static_component_participation.py",
+        "quorune/characteristic_evaluation_host.py"
+      ],
+      "test_modules": [
+        "test_composite_quoted_grants",
+        "test_conditional_recipients",
+        "test_qualified_hexproof",
+        "test_conditional_color_grants",
+        "test_card_program_trust",
+        "test_opponent_keyword_prohibition",
+        "test_receiver_query_unions"
+      ]
+    },
+    {
+      "id": "source-bound-attached-grant-registration",
+      "patterns": [
+        "quorune/card_programs/attached_grant_equivalence.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "quorune/compiler/program_generation.py",
+        "tests/test_composite_quoted_grants.py",
+        "tests/test_exact_zimone_closure.py"
+      ],
+      "test_modules": [
+        "test_composite_quoted_grants",
+        "test_exact_zimone_closure",
+        "test_fixed_query_quoted_ability_grants",
+        "test_card_program_v2",
+        "test_card_program_trust"
       ]
     }
   ],

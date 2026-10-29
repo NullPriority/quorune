@@ -35,8 +35,13 @@ class SharedCharacteristicQueryCompilerTests(unittest.TestCase):
                     self.assertEqual(len(expected),len(value.query.any_of))
                 self.assertEqual(expected,observed)
                 self.assertEqual(other, value.exclude_source)
-        for text in ('creatures you control with flying', 'creatures you control without flying',
-                'creatures you control with power 4 or greater', 'chosen creatures you control', 'creature'):
+        for text, field in (('creatures you control with flying', 'keywords_all'),
+                            ('creatures you control without flying', 'keywords_none')):
+            value = query_characteristic_quantity(text, source_name='Generic')
+            self.assertIsNotNone(value)
+            self.assertEqual(6, value.schema_version)
+            self.assertEqual(('flying',), getattr(value.query, field))
+        for text in ('creatures you control with power 4 or greater', 'chosen creatures you control', 'creature'):
             self.assertIsNone(query_characteristic_quantity(text, source_name='Generic'))
 
 

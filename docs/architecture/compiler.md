@@ -1382,6 +1382,16 @@ instances, and a pending ability retains its receiver source and trigger
 controller after the grant ends. Multiple fixed event keywords in one grant
 line and independently unsupported shells or parameters remain residual.
 
+Registration preserves each granted-only child's exact semantic key alongside
+reviewed source programs. The typed receiver fragment resolves that dependency
+directly. Source-pinned pure attached providers retire when their complete
+trusted child graph matches, preserving costs, targets, conditions and effects.
+The narrow legacy self-untap body upgrades to the typed original receiver
+incarnation. Different child behavior, incomplete trust or source drift retains
+the reviewed provider. This shared precedence applies to CardProgram assembly
+and session registration. Reviewed standalone event precedence continues
+through the existing source-program shadow policy.
+
 `compiler/temporary_quoted_ability_nodes.py` lowers one explicit quoted
 activated or triggered ability on a direct creature target or closed public battlefield set until
 end of turn. The independently compiled child uses the recipient as its source

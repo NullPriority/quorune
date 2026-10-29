@@ -156,6 +156,24 @@ class MixedPermanentTargetRuntimeTests(unittest.TestCase):
                 if other!=seat:self.assertNotIn(s.state.cards[oid].ref,json.dumps(s.packet('pilot:'+other,full=True)))
         return drawn
 
+    def crew_vehicle(self, s, vehicle, pilot, *, seat='A'):
+        self.priority(s, seat)
+        vehicle = s.state.cards[vehicle.object_id]
+        pilot = s.state.cards[pilot.object_id]
+        ability, = [ability for ability in s.engine._activated_abilities(vehicle)
+            if ability.crew_threshold is not None]
+        action_id = f'activate:{vehicle.ref}:{ability.ability_id}'
+        self.assertTrue(any(row['id'] == action_id for row in
+            s.packet('pilot:' + seat, full=True)['decision']['ctx']['legal']['actions']))
+        command = {'action_id': action_id, 'cost_cards': [pilot.ref], 'pay': 'auto'}
+        self.reject(s, command, seat='D')
+        accepted = s.act('pilot:' + seat, command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertTrue(s.state.cards[pilot.object_id].tapped)
+        self.assertIsNone(self.settle(s))
+        self.assertIn('creature', s.engine._type_parts(s.engine._effective_card_data(
+            s.state.cards[vehicle.object_id])['type_line'])[0])
+
     def test_paid_destruction_and_exile_originals_keep_each_branch_and_reject_plain_artifacts(self):
         cases=(('Daring Demolition','Sky Skiff',{'C':2,'B':2},'graveyard'),
             ('Spin Out','Geist of the Moors',{'C':1,'B':2},'graveyard'),
@@ -261,6 +279,7 @@ class MixedPermanentTargetRuntimeTests(unittest.TestCase):
             with self.subTest(name=name):
                 s,source,private=self.fixture(595160+i,name)
                 target=self.add(s.engine,'Sky Skiff');wrong=self.add(s.engine,'Sol Ring')
+                pilot=self.add(s.engine,'Generic Bound Body',ref='union-grant-crew-pilot')
                 self.prepare(s,mana=payment);self.checkpoint(s)
                 self.pay_cast(s,source,payment=payment)
                 decision=self.resolve(s);self.assertEqual('semantic.target',decision.kind)
@@ -268,9 +287,11 @@ class MixedPermanentTargetRuntimeTests(unittest.TestCase):
                 if name=='Fang Guardian':self.reject(s,{'action_id':'choose','targets':[source.ref]})
                 s=self.resume(s);self.assertIsNone(self.settle(s,target=target.ref))
                 card=s.state.cards[target.object_id]
+                self.assertEqual((0,0),tuple(s.engine._numeric_stat(card.object_id,key) for key in ('power','toughness')))
                 if name=='Lotusguard Disciple':
                     self.assertTrue({'lifelink','indestructible'}<=s.engine._combat_keywords(card))
                 else:
+                    self.crew_vehicle(s,target,pilot)
                     expected=(4,3) if i==1 else (4,5)
                     self.assertEqual(expected,tuple(s.engine._numeric_stat(card.object_id,key) for key in ('power','toughness')))
                 self.assertEqual('battlefield',s.state.cards[source.object_id].zone)
@@ -326,6 +347,7 @@ class MixedPermanentTargetRuntimeTests(unittest.TestCase):
     def test_actual_cycling_trigger_targets_opposing_vehicle_before_private_draw(self):
         s,source,private=self.fixture(595200,"Howler's Heavy")
         target=self.add(s.engine,'Sky Skiff',seat='B')
+        pilot=self.add(s.engine,'Generic Bound Body',seat='B',ref='cycling-vehicle-crew-pilot')
         self.prepare(s,mana={'C':1,'U':1});self.checkpoint(s)
         row=next(r for r in self.actions(s) if r['id'].startswith('activate:'+source.ref+':') and 'draw' in json.dumps(r).casefold())
         command=dict(action_id=row['id'],pay='manual',payment={'C':1,'U':1})
@@ -335,6 +357,8 @@ class MixedPermanentTargetRuntimeTests(unittest.TestCase):
         before=set(s.state.players['A'].zones['hand'])
         s=self.resume(s);self.assertIsNone(self.settle(s,target=target.ref))
         card=s.state.cards[target.object_id]
+        self.assertEqual((0,0),tuple(s.engine._numeric_stat(card.object_id,key) for key in ('power','toughness')))
+        self.crew_vehicle(s,target,pilot,seat='B')
         self.assertEqual((-1,3),tuple(s.engine._numeric_stat(card.object_id,key) for key in ('power','toughness')))
         self.assertEqual(1,len(self.private_draws(s,before)))
         self.assertEqual('battlefield',card.zone)

@@ -6,11 +6,14 @@ verified: "2026-10-26"
 audience: "rules, compiler, replay and architecture contributors"
 maintenance: "hand-maintained"
 adr_id: "0125"
-decision_status: "accepted"
+decision_status: "superseded"
 date: "2026-10-26"
 ---
 
 # ADR 0125: layer-six source participation
+
+Superseded by [ADR 0139](0139-static-source-removal-dependencies.md), which
+makes source-removal dependencies explicit before evaluating the ordered prefix.
 
 ## Context
 

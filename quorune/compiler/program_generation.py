@@ -173,7 +173,14 @@ def _generated_runtime_program_is_shadowed(
     candidate: SemanticProgram,
     existing_programs: Iterable[SemanticProgram],
 ) -> bool:
+    # Typed grant fragments reference this exact key on their receiver.
+    # A reviewed source event cannot substitute for that dependency.
+    if candidate.provenance.get("granted_only") is True:
+        return False
     existing = tuple(existing_programs)
+    from ..card_programs.attached_grant_equivalence import reviewed_attached_grant_equivalent
+    if any(reviewed_attached_grant_equivalent(candidate, program) for program in existing):
+        return True
     footprint = runtime_handler_footprint(candidate)
     if footprint is not None and any(
         program.trust_level == "trusted"

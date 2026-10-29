@@ -204,7 +204,7 @@ class AbilityKindCostModifierTests(unittest.TestCase):
         import quorune.rules.activation.ability_kinds as kinds
         original=kinds.activation_matches_cost_scope
         def no_cycling(host,source,ability,scope):return False if scope=='cycling' else original(host,source,ability,scope)
-        cases=(('quorune.compiler.runtime_templates.static_activation_cost_modifier_handler',lambda *a:None,
+        cases=(('quorune.compiler.activation_cost_modifier_templates.static_activation_cost_modifier_handler',lambda *a:None,
                 'test_complete_fluctuator_registers_before_actual_cycling'),
             ('quorune.rules.activation.cost_modifiers.activation_matches_cost_scope',no_cycling,
                 'test_actual_fluctuator_makes_generic_cycling_zero_but_preserves_discard_and_private_draw'),

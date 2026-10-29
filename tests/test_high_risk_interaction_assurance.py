@@ -74,6 +74,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         assert_high_risk_boundary_pairs(self, FIXED_SET_DAMAGE_AND_REPLACEMENT_ORDERING_PAIRS, database=self.db)
 
     def test_event_recipient_promotions_preserve_original_residual_admission_boundaries(self):
+        from dataclasses import replace
         from high_risk_interaction_support import _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
@@ -82,41 +83,58 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         from quorune.rules.capabilities import load_default_capability_registry
         from quorune.semantics import SemanticRegistry
 
-        expected = {
-            'Merfolk Windrobber': (
-                'capability.zone.mill.event_recipient',
-                'residual.target_or_choice.conditional-effect',
-            ),
-        }
         registry = load_default_capability_registry()
-        promoted = self.db.lookup('Securitron Squadron')
-        promoted_ir = compile_oracle_card(promoted, capability_registry=registry, capability_profile='commander_review')
-        self.assertEqual('exact', promoted_ir.status, promoted_ir.material_residuals)
-        promoted_program = compile_best_available_card_program(self.db, promoted, semantic_registry=SemanticRegistry(),
-            capability_registry=registry, capability_profile='commander_review')
-        self.assertTrue(bind_card_program_runtime(promoted_program, capability_registry=registry,
-            profile='commander_review')['strict_capability_ready'])
-        for name, pieces in expected.items():
-            with self.subTest(name=name):
+        for name in ('Securitron Squadron', 'Merfolk Windrobber',
+                     'Stoneforge Masterwork', 'Madblind Mountain', 'Stella Lee, Wild Card'):
+            with self.subTest(promoted=name):
                 card = self.db.lookup(name)
                 ir = compile_oracle_card(card, capability_registry=registry,
                                          capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                self.assertFalse(ir.material_residuals)
                 program = compile_best_available_card_program(
                     self.db, card, semantic_registry=SemanticRegistry(),
                     capability_registry=registry, capability_profile='commander_review',
                 )
-                row = analyze_card_unlocks(ir, program=program, program_error=None,
-                                          capabilities=registry, profile='commander_review')
-                self.assertLessEqual(set(pieces), _observed_piece_ids(row))
-                self.assertTrue(ir.material_residuals)
-                self.assertEqual('residual', row['card_program_status'])
-                self.assertIsNone(row['hard_construction_failure'])
                 binding = bind_card_program_runtime(
                     program, capability_registry=registry, profile='commander_review',
                 )
-                self.assertFalse(binding['strict_capability_ready'])
-                self.assertFalse(binding['compatible_ready'])
-                self.assertIn('trust_basis:unresolved', binding['blockers'])
+                self.assertTrue(binding['strict_capability_ready'], binding)
+                self.assertTrue(binding['compatible_ready'], binding)
+                self.assertFalse(binding['blockers'])
+
+        # A chosen-name activation condition is still outside the represented
+        # public-state contract; the fixed graveyard count above is supported.
+        original = self.db.lookup('Merfolk Windrobber')
+        boundary = replace(
+            original, oracle_id='00000000-0000-4000-8000-999999999901',
+            name='Generic Event Mill Chosen Name Condition Boundary Fixture',
+            oracle_text=original.oracle_text.replace(
+                'an opponent has eight or more cards in their graveyard',
+                'an opponent owns a card with the chosen name in their graveyard',
+            ),
+        )
+        ir = compile_oracle_card(boundary, capability_registry=registry,
+                                 capability_profile='commander_review')
+        program = compile_best_available_card_program(
+            self.db, boundary, semantic_registry=SemanticRegistry(),
+            capability_registry=registry, capability_profile='commander_review',
+        )
+        row = analyze_card_unlocks(ir, program=program, program_error=None,
+                                  capabilities=registry, profile='commander_review')
+        self.assertLessEqual({
+            'capability.zone.mill.event_recipient',
+            'residual.target_or_choice.conditional-effect',
+        }, _observed_piece_ids(row))
+        self.assertTrue(ir.material_residuals)
+        self.assertEqual('residual', row['card_program_status'])
+        self.assertIsNone(row['hard_construction_failure'])
+        binding = bind_card_program_runtime(
+            program, capability_registry=registry, profile='commander_review',
+        )
+        self.assertFalse(binding['strict_capability_ready'])
+        self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved', binding['blockers'])
 
     def test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries(self):
         from high_risk_interaction_support import _observed_piece_ids

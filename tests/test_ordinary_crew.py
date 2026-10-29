@@ -650,16 +650,20 @@ class OrdinaryCrewRuntimeTests(unittest.TestCase):
             controller="A",
             log=False,
         )
-        engine.create_token(
+        undefined_ref = engine.create_token(
             "A",
-            name="Unresolved Crew Pilot",
+            name="Undefined Crew Pilot",
             characteristics={
                 "type_line": "Token Creature — Pilot",
                 "power": "*",
                 "toughness": "4",
             },
             reason="ordinary Crew unresolved-power fixture",
-        )
+        )[0]
+        self.assertEqual(0, next(row.power for row in crew_candidates(engine, "A", source)
+            if row.object_ref == undefined_ref))
+        engine.create_token("A", name="Unresolved Crew Pilot", characteristics={
+            "type_line": "Token Creature — Pilot", "power": "unrepresented", "toughness": "4"})
 
         with self.assertRaisesRegex(CrewAbilityError, "power is unresolved"):
             crew_candidates(engine, "A", source)

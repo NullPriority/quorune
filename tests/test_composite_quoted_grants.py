@@ -28,6 +28,102 @@ MULTI='Enchanted creature has "{T}: This creature deals 1 damage to any target" 
 
 
 class CompositeQuotedGrantCompilerTests(unittest.TestCase):
+    def test_referenced_granted_triggers_register_beside_reviewed_source_events(self):
+        from quorune.oracle_ir import generated_programs, register_generated_programs
+        from quorune.semantics import SemanticProgram, SemanticRegistry
+        from quorune.compiler import program_generation as generation
+
+        record = replace(query_record(
+            'Equipped creature has "{1}, {T}: This creature deals 1 damage to any target" '
+            'and "Whenever a creature dies, untap this creature."\n'
+            'Whenever a creature dies, draw a card.\nEquip {1}'
+        ), type_line='Artifact — Equipment')
+        database = SimpleNamespace(rulings=lambda _record: ())
+        capabilities = load_default_capability_registry()
+        candidates = generated_programs(database, record, trust_level='trusted',
+            capability_registry=capabilities, capability_profile='commander_review')
+        registry = SemanticRegistry(include_builtin_packs=False)
+        reviewed = SemanticProgram(
+            key='fixture:reviewed-source-death', label='Reviewed source observer',
+            oracle_id=record.oracle_id, ability_id='trigger:fixture:reviewed-source',
+            active_zone='battlefield', event='creature.dies',
+            effects=[{'op': 'draw', 'player': '$controller', 'count': 2, 'private': True}],
+            trust_level='trusted',
+            provenance={**candidates[0].provenance, 'authored_by': 'fixture-reviewed',
+                'review_status': 'fixture-characterized'},
+            tests=['test_referenced_granted_triggers_register_beside_reviewed_source_events'],
+        )
+        registry.put(reviewed)
+        children = [program for program in candidates if program.provenance.get('granted_only') is True]
+        self.assertEqual(2, len(children))
+        standalone, = [program for program in candidates
+            if program.event == 'creature.dies' and not program.provenance.get('granted_only')]
+        register_generated_programs(database, registry, (record,),
+            capability_registry=capabilities, capability_profile='commander_review',
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True)
+        for child in children:
+            with self.subTest(child=child.ability_id):
+                registered = registry.get(child.key)
+                self.assertIsNotNone(registered, 'A current grant must resolve its exact child key')
+                self.assertEqual('trusted', registered.trust_level)
+                self.assertEqual(child.effects, registered.effects)
+        self.assertIsNotNone(registry.get(reviewed.key))
+        self.assertIsNone(registry.get(standalone.key), 'Reviewed standalone event precedence remains')
+        trigger, = [child for child in children if child.event == 'creature.dies']
+        for marker in (False, 'true', 1):
+            malformed = replace(trigger, provenance={**trigger.provenance, 'granted_only': marker})
+            self.assertTrue(generation._generated_runtime_program_is_shadowed(malformed, (reviewed,)))
+
+    def test_pure_attached_provider_retirement_checks_complete_child_behavior(self):
+        from common import DB_PATH
+        from quorune.oracle_ir import generated_programs, register_generated_programs
+        from quorune.semantics import SemanticRegistry
+        from quorune.card_programs.attached_grant_equivalence import shadowed_reviewed_attached_grant_keys
+
+        database = CardDatabase(DB_PATH)
+        try:
+            record = database.lookup('Thornbite Staff')
+            capabilities = load_default_capability_registry()
+            registry = SemanticRegistry()
+            reviewed = tuple(registry.programs_for_oracle(record.oracle_id))
+            old_parent, = [program for program in reviewed if any(
+                handler.get('handler_id') == 'continuous.attached.fixed-characteristics.v1'
+                for handler in program.handlers)]
+            candidates = generated_programs(database, record, trust_level='trusted',
+                capability_registry=capabilities, capability_profile='commander_review')
+            self.assertEqual({old_parent.key}, shadowed_reviewed_attached_grant_keys(record, candidates, reviewed))
+            old_trigger, = [program for program in reviewed
+                if program.event == 'creature.dies' and program.provenance.get('granted_only')]
+            changed = tuple(replace(program, effects=[{'op': 'draw', 'player': '$controller', 'count': 1}])
+                if program.key == old_trigger.key else program for program in reviewed)
+            self.assertFalse(shadowed_reviewed_attached_grant_keys(record, candidates, changed))
+            current_trigger, = [program for program in candidates
+                if program.event == 'creature.dies' and program.provenance.get('granted_only')]
+            partial = [replace(program, trust_level='provisional') if program.key == current_trigger.key
+                else program for program in candidates]
+            self.assertFalse(shadowed_reviewed_attached_grant_keys(record, partial, reviewed))
+            drift = tuple(replace(program, provenance={**program.provenance, 'source_oracle_hash': '0' * 64})
+                if program.key == old_parent.key else program for program in reviewed)
+            self.assertFalse(shadowed_reviewed_attached_grant_keys(record, candidates, drift))
+            partial_registry = SemanticRegistry()
+            register_generated_programs(database, partial_registry, (record,), capability_registry=capabilities,
+                capability_profile='commander_review', promote_exact_runtime_handlers=True)
+            self.assertIsNotNone(partial_registry.get(old_parent.key))
+            current_parent, = [program for program in candidates if any(
+                handler.get('handler_id') == 'continuous.characteristics.composite-grant.v1'
+                for handler in program.handlers)]
+            self.assertIsNone(partial_registry.get(current_parent.key))
+            register_generated_programs(database, registry, (record,), capability_registry=capabilities,
+                capability_profile='commander_review', promote_exact_runtime_handlers=True,
+                promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+                promote_exact_capability_declarations=True)
+            self.assertIsNone(registry.get(old_parent.key))
+            self.assertTrue(all(registry.get(program.key) is not None for program in candidates
+                if program.provenance.get('granted_only')))
+        finally:
+            database.close()
+
     def test_descriptor_is_closed_and_emits_removal_before_replacement_at_one_timestamp(self):
         from quorune.semantic_runtime.composite_grants import CompositeAbilityGrantHandler
         from quorune.continuous_effect_model import ContinuousObjectIdentity,Layer
@@ -250,10 +346,10 @@ class CompositeQuotedGrantNativeTests(unittest.TestCase):
                 self.prepare(session,actor='B');self.checkpoint(session)
                 abilities=session.engine._activated_abilities(session.state.cards[land.object_id])
                 self.assertEqual(1,len(abilities))
-                self.assertEqual(earlier,abilities[0].ability_id=='intrinsic_island')
+                self.assertEqual('intrinsic_island',abilities[0].ability_id)
                 self.assertFalse(session.engine._activated_abilities(session.state.cards[toxic.object_id]))
                 action=next(r for r in session.packet('pilot:B',full=True)['decision']['ctx']['legal']['actions'] if r['id'].startswith('activate:'+land.ref+':'))
-                color='U' if earlier else 'R'
+                color='U'
                 result=session.act('pilot:B',{'action_id':action['id'],'mana_output':{color:1}});self.assertTrue(result.ok,result.summary)
 
     def test_actual_global_keyword_source_respects_participation_before_its_removal(self):
@@ -266,7 +362,7 @@ class CompositeQuotedGrantNativeTests(unittest.TestCase):
                 if not earlier:self.add(session.engine,'Winged Sliver')
                 sliver=self.add(session.engine,'Generic Composite Sliver',seat='B')
                 self.prepare(session);self.checkpoint(session)
-                self.assertEqual(earlier,'flying' in session.engine._combat_keywords(session.state.cards[sliver.object_id]))
+                self.assertNotIn('flying',session.engine._combat_keywords(session.state.cards[sliver.object_id]))
 
     def test_actual_quiver_distinct_children_use_receiver_damage_and_independent_target_rules(self):
         session=self.session(613617010)

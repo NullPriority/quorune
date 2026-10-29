@@ -1125,12 +1125,17 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
         engine = session.engine
         record = replace(
             self.db.lookup("Boon Reflection"),
+            oracle_id="00000000-0000-4000-8000-000172003200",
             name="Generic End Step Query",
             oracle_text=(
                 "At the beginning of your end step, you lose 2 life for each "
                 "card in your hand."
             ),
         )
+        from unittest.mock import patch
+        by_oracle_id = self.db.by_oracle_id
+        self.enterContext(patch.object(self.db, 'by_oracle_id', side_effect=lambda identity:
+            record if identity == record.oracle_id else by_oracle_id(identity)))
         result = register_generated_programs(
             self.db,
             engine.semantics,

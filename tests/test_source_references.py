@@ -204,7 +204,7 @@ class SourceReferenceCompilerTests(unittest.TestCase):
         cases = (
             ("War Machine, James Rhodes", "Whenever War Machine attacks, tap up to one target creature.", "creature.attacks", "$source.ref"),
             ("Jareth, Leonine Titan", "Whenever Jareth blocks, draw a card.", "creature.blocks", "$source.ref"),
-            ("Gregor, Shrewd Magistrate", "Whenever Gregor deals combat damage to a player, draw a card.", "damage.dealt", "$source.ref"),
+            ("Gregor, Shrewd Magistrate", "Whenever Gregor deals combat damage to a player, draw a card.", "damage.dealt.self", None),
             ("Zegana, Utopian Speaker", "When Zegana enters, if you control another creature with a +1/+1 counter on it, draw a card.", "permanent.enter.self", None),
         )
         for name, text, event, identity in cases:

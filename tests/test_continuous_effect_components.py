@@ -331,7 +331,7 @@ class ContinuousEffectComponentTests(unittest.TestCase):
         ]
         with self.assertRaisesRegex(
             SemanticNodeError,
-            "declaration, activated, or triggered",
+            "versioned cost component reference",
         ):
             handler.validate(unsupported_fragment)
 

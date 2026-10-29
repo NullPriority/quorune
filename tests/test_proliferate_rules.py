@@ -251,10 +251,11 @@ class ProliferateEngineTests(unittest.TestCase):
             engine, owner="B", name="Sol Ring", ref="generated-target"
         )
         target.counters["charge"] = 1
-        record = replace(
-            generated_proliferate_trigger_record(),
-            oracle_id=self.database.lookup("Sol Ring").oracle_id,
-        )
+        record = generated_proliferate_trigger_record()
+        from unittest.mock import patch
+        by_oracle_id = self.database.by_oracle_id
+        self.enterContext(patch.object(self.database, 'by_oracle_id', side_effect=lambda identity:
+            record if identity == record.oracle_id else by_oracle_id(identity)))
         generated = next(
             program
             for program in generated_programs(

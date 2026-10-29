@@ -275,6 +275,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
             "quorune/selection/",
         )
     ) or relative in {
+        "quorune/static_component_participation.py",
         "quorune/activation_mana_cost.py",
         "quorune/target_controller_information.py",
         "quorune/designation_prevention.py",
@@ -807,6 +808,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/public_zone_quantities.py",
         "quorune/devotion.py",
         "quorune/characteristic_evaluation_host.py",
+        "quorune/static_component_participation.py",
         "quorune/public_quantity_reductions.py",
         "quorune/recipient_modifier_model.py",
         "quorune/mana_symbol_counts.py",
@@ -1086,6 +1088,7 @@ def build_classifications() -> dict[str, Any]:
                             "ability_fragments.py",
                             "characteristic_fragments.py",
                             "characteristic_evaluation_host.py",
+                            "static_component_participation.py",
                             "aura/",
                             "engine.py",
                             "enchant_spec.py",

@@ -153,3 +153,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0136 — power-qualified Casualty costs](0136-power-qualified-casualty-costs.md)
 - [ADR 0137 — linked optional casting declarations](0137-linked-optional-casting-declarations.md)
 - [ADR 0138 — Forecast hand-source disclosure](0138-forecast-hand-source-disclosure.md)
+- [ADR 0139 — static source removal dependencies](0139-static-source-removal-dependencies.md)

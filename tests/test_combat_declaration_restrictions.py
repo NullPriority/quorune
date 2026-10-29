@@ -2304,7 +2304,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 "All creatures attack each combat if able.",
                 {
                     "combat.declaration.typed_components",
-                    "continuous.ability.fixed_query_grant",
+                    "combat.declaration.bound_static_rules",
                 },
             ),
             (
@@ -2322,7 +2322,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 {
                     "combat.damage.participation.strike_steps",
                     "combat.declaration.typed_components",
-                    "continuous.ability.fixed_query_grant",
+                    "combat.declaration.bound_static_rules",
                     "continuous.ability.fixed_query_keyword_grant",
                 },
             ),

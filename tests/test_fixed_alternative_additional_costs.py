@@ -577,6 +577,8 @@ class FixedAlternativeAdditionalCostRuntimeTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual("replacement.order", engine.state.pending_decision.kind)
+        spell = engine.state.cards[spell.object_id]
+        paid = engine.state.cards[paid.object_id]
         self.assertEqual("hand", paid.zone)
         self.assertEqual("hand", spell.zone)
         self.assertFalse(engine.state.stack)

@@ -662,9 +662,14 @@ use zero. Type-replacing Aura modifiers bind one attachment across the shared
 layer plan, and state-based actions detach Equipment or illegal Auras. A
 granted ability already activated survives the recipient and giver leaving.
 
-Printed static programs that begin in layer six read source participation
+`static_component_participation.py` owns the pure source-prefix query and
+source-removal dependency binding. Printed static programs that begin in layer six read source participation
 before their first effect in the canonical dependency and timestamp order.
-Later ability removal cannot erase an effect that already started. Earlier
+Same-layer removal that changes a printed effect's existence establishes a
+dependency before timestamps are considered. Removal predicates see completed
+earlier-layer types, including Creature lands. One shared dependency graph
+preserves timestamp fallback for loops. Later independent removal cannot erase
+an effect that already started. Earlier
 removal prevents that source from starting; the same filtered candidates feed
 the final component snapshot. Programs beginning in earlier layers retain
 their earlier-layer participation rule, and later-only effects use the current
@@ -672,7 +677,7 @@ ability snapshot. Candidate plans and completed participation reads share one
 pure read frame and end before mutation. Ability-removal boards collect the
 additional layer-six effects needed for ordering; the conservative presence
 filter remains available elsewhere. See
-[ADR 0125](../adr/0125-layer-six-source-participation.md).
+[ADR 0139](../adr/0139-static-source-removal-dependencies.md).
 
 Removing a represented power/toughness definition restores the printed star
 field's undefined numeric value before later modifiers. Fixed numeric offsets

@@ -7648,7 +7648,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v672-source-context-composition",
-      "compiler_version": "oracle-ir-v672",
+      "compiler_version": "oracle-ir-v674",
       "bundle_id": "bundle:source-context-composition",
       "candidate_ids": [
         "compiler:source-context-composition"

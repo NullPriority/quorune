@@ -58,7 +58,8 @@ class LandConditionQuantityCompilerTests(unittest.TestCase):
                     text.replace('+1/+1','+X/+X')):
             self.assertNotEqual('exact',compile_oracle_card(record(bad,'Creature'),
                 capability_registry=load_default_capability_registry()).status)
-        with patch('quorune.compiler.public_condition_surfaces.fixed_condition_subject_extension',return_value=None):
+        with patch('quorune.compiler.public_condition_surfaces.fixed_condition_subject_extension',return_value=None), \
+             patch('quorune.compiler.public_state_queries.fixed_characteristic_battlefield_query_subject',return_value=None):
             self.assertNotEqual('exact',compile_oracle_card(record(text,'Creature'),
                 capability_registry=load_default_capability_registry()).status)
 

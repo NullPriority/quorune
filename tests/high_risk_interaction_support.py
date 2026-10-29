@@ -250,8 +250,7 @@ _WITNESSES = {
         "Generic Attached Declaration Damage Prevention Boundary Fixture",
         "Enchantment — Aura",
         "Enchant creature\n"
-        "Enchanted creature can't be blocked by creatures with power 3 or "
-        "greater.\n"
+        "Enchanted creature gets +1/+1.\n"
         "Sacrifice this Aura: The next time a source of your choice with "
         "mana value greater than the number of creatures you control would "
         "deal damage to enchanted creature this turn, prevent that damage.",
@@ -272,10 +271,10 @@ _WITNESSES = {
         ("Gift", "Equip"),
     ),
     "stoneforge-masterwork": _Witness(
-        "Stoneforge Masterwork",
+        "Generic Equip Chosen Name Continuous Boundary Fixture",
         "Artifact — Equipment",
         "Equipped creature gets +1/+1 for each other creature you control "
-        "that shares a creature type with it.\nEquip {2}",
+        "with the chosen name.\nEquip {2}",
         "{1}",
         ("Equip",),
     ),
@@ -283,7 +282,7 @@ _WITNESSES = {
         "Generic Restricted Equip Continuous Boundary Fixture",
         "Artifact \N{EM DASH} Equipment",
         "Equipped creature gets +1/+1 for each other creature you control "
-        "that shares a creature type with it.\n"
+        "with the chosen name.\n"
         "Equip Human {3}",
         "{4}",
         ("Equip",),
@@ -623,11 +622,11 @@ _WITNESSES = {
         "{2}{U}",
     ),
     "madblind-mountain": _Witness(
-        "Madblind Mountain",
+        "Generic Tapped Entry Chosen Name Condition Boundary Fixture",
         "Land — Mountain",
         "This land enters tapped.\n"
-        "{R}, {T}: Shuffle your library. Activate only if you control two or "
-        "more red permanents.",
+        "{R}, {T}: Shuffle your library. Activate only if you control a "
+        "permanent with the chosen name.",
     ),
     "bretagard-stronghold": _Witness(
         "Bretagard Stronghold",
@@ -891,14 +890,14 @@ _WITNESSES = {
         loyalty="4",
     ),
     "stella-lee-wild-card": _Witness(
-        "Stella Lee, Wild Card",
+        "Generic Impulse Chosen Name Activation Boundary Fixture",
         "Legendary Creature — Human Rogue",
         "Whenever you cast your second spell each turn, exile the top card "
         "of your library. Until the end of your next turn, you may play that "
         "card.\n"
         "{T}: Copy target instant or sorcery spell you control. You may "
-        "choose new targets for the copy. Activate only if you've cast three "
-        "or more spells this turn.",
+        "choose new targets for the copy. Activate only if you control a "
+        "permanent with the chosen name.",
         "{1}{U}{R}",
         power="2",
         toughness="4",

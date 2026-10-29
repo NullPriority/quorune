@@ -210,8 +210,8 @@ class IntrinsicManaAbilityLossRuntimeTests(unittest.TestCase):
         import quorune.continuous_effects as owner
         original=owner._apply_ability_operation
         revived=[]
-        def reintroduced(state,operation):
-            result=original(state,operation)
+        def reintroduced(state,operation,**options):
+            result=original(state,operation,**options)
             if operation.op=='remove_all_abilities':
                 revived.append(state.name)
                 state.activated_abilities.extend(owner.intrinsic_land_mana_abilities(state.card_types,

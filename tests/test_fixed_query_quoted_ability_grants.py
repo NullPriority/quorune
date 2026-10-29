@@ -213,9 +213,14 @@ class FixedQueryQuotedAbilityGrantCompilerTests(unittest.TestCase):
         )
 
     def test_group_quote_grammar_and_inner_behavior_fail_closed(self):
+        promoted = 'Creatures you control have "{T}: Draw a card." and "{T}: Add {G}."'
+        ir = compile_oracle_card(fixture_record(promoted, suffix=100099), capability_registry=load_default_capability_registry(),
+            capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.assertEqual(2, len([node for node in ir.faces[0].nodes if node.kind.startswith('granted_')]))
         fixtures = (
             'Creatures you control have "This creature has flying."',
-            'Creatures you control have "{T}: Draw a card." and "{T}: Add {G}."',
+            'Creatures you control have "{T}: Draw a card." and "{T}: Draw a card with the chosen name."',
             'Creatures you control have "{T}: Tap this Aura."',
             'Creatures you control have "Exile this creature: Draw a card."',
             'Creatures you control have "Pay {E}: Draw a card."',

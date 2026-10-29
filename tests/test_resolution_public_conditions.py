@@ -418,7 +418,7 @@ class IndependentDualSourceEventRuntimeTests(unittest.TestCase):
         for _ in range(80):
             engine=session.engine;decision=engine.state.pending_decision
             if not engine.state.stack and (engine.state.phase=='postcombat_main' or engine.state.step=='end_combat'):return session
-            if pending_reload and not reloaded and any(item.context.get('event')=='damage.dealt' for item in engine.state.stack):
+            if pending_reload and not reloaded and any(item.context.get('event') in {'damage.dealt','damage.dealt.self','damage.received'} for item in engine.state.stack):
                 session=self.replay(session,load=True);reloaded=True;continue
             self.assertIsNotNone(decision)
             if decision.kind=='priority':response={'action_id':'pass'}
@@ -490,7 +490,7 @@ class IndependentDualSourceEventRuntimeTests(unittest.TestCase):
                 accepted=session.act('pilot:B',{'action_id':'block','blocks':{second.ref:first.ref}})
             else:accepted=session.act(session.pending_principals()[0],{'action_id':'pass'})
             self.assertTrue(accepted.ok,accepted.summary)
-            if len(engine.state.stack)==2 and all(item.context.get('event')=='damage.dealt' for item in engine.state.stack):break
+            if len(engine.state.stack)==2 and all(item.context.get('event')=='damage.received' for item in engine.state.stack):break
         self.assertEqual(['A','B'],[item.controller for item in engine.state.stack])
         self.assertEqual([first.object_id,second.object_id],[item.source_object_id for item in engine.state.stack])
         resumed=self.replay(session,load=True);resumed=self.finish_combat(resumed);engine=resumed.engine

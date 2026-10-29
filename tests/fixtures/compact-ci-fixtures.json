@@ -146,6 +146,7 @@
     "tests/fixtures/event-player-sacrifice-cards.json",
     "tests/fixtures/event-player-subject-cards.json",
     "tests/fixtures/event-spell-copy-cards.json",
+    "tests/fixtures/evolve-cards.json",
     "tests/fixtures/exert-cards.json",
     "tests/fixtures/expanded-basic-type-setting-cards.json",
     "tests/fixtures/expend-cards.json",
@@ -285,6 +286,7 @@
     "tests/fixtures/paired-typecycling-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
+    "tests/fixtures/persist-undying-cards.json",
     "tests/fixtures/persistent-hand-visibility-cards.json",
     "tests/fixtures/player-speed-cards.json",
     "tests/fixtures/player-target-protection-cards.json",
@@ -460,17 +462,6 @@
   ],
   "dynamic_requirements": [
     {
-      "source": "tests/test_high_risk_interaction_assurance.py",
-      "symbol": "HighRiskInteractionAssuranceTests.test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
-      "card_names": [],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/source-reference-closure-cards.json"
-      ],
-      "rationale": "The bounded dictionary iterates complete pinned Zabaz, Nemata and Kytheon/Gideon records from the named source-reference fixture to prove residual runtime admission remains blocked."
-    },
-    {
       "source": "tests/test_attached_static_characteristics.py",
       "symbol": "AttachedContinuousCompilerTests.test_measured_attached_characteristic_cohort_is_capability_closed",
       "card_names": [],
@@ -491,6 +482,43 @@
         "tests/fixtures/closed-effect-program-cards.json"
       ],
       "rationale": "The exact 53-card measured cohort is iterated by name from the dedicated pinned fixture."
+    },
+    {
+      "source": "tests/test_copy_objects.py",
+      "symbol": "EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/entry-copy-cards.json"
+      ],
+      "rationale": "The fixed four-original selector loop delegates its current card name through the existing assert_original_closed helper before controlled dependency-removal compiler checks. The canonical entry-copy fixture owns those original records."
+    },
+    {
+      "source": "tests/test_cumulative_upkeep_counter_placement.py",
+      "symbol": "CumulativeUpkeepRuntimeTests.queue_life_upkeep",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/fixed-life-cumulative-upkeep-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The per-test life-upkeep reader returns directly constructed synthetic keyword-body records and delegates other Oracle IDs to these finite focused inputs; the same reader remains active for pending replay and load."
+    },
+    {
+      "source": "tests/test_evolve_counter_placement.py",
+      "symbol": "EvolveRuntimeTests.register_evolve",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/evolve-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The repeated-Evolve reader returns its explicitly constructed double-keyword record and delegates remaining source/deck IDs to the finite focused fixture inputs."
     },
     {
       "source": "tests/test_fixed_library_selection.py",
@@ -532,60 +560,6 @@
       "rationale": "The exact 50-card measured cohort is iterated by name from the dedicated pinned fixture."
     },
     {
-      "source": "tests/test_surveil_rules.py",
-      "symbol": "FixedSurveilRuntimeTests.register",
-      "card_names": [
-        "Dauthi Voidwalker"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [],
-      "rationale": "The helper accepts explicit replacement-source witness names; this module calls it only for Dauthi Voidwalker."
-    },
-    {
-      "source": "tests/test_high_risk_interaction_assurance.py",
-      "symbol": "HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
-      "card_names": [
-        "Grim Reminder",
-        "Orcish Healer",
-        "Shadow Guildmage"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [
-        "tests/fixtures/new-support-residual-boundaries.json"
-      ],
-      "rationale": "The exact bounded original-card dictionary exercises whole-program rejection of residual regeneration, targeting and separate-damage siblings."
-    },
-    {
-      "source": "tests/test_fixed_query_keyword_grants.py",
-      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
-      "card_names": [
-        "Bitterblossom",
-        "Naturalize",
-        "Scion of Oona",
-        "Willow Faerie"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [],
-      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
-    },
-    {
-      "source": "tests/test_fixed_query_keyword_grants.py",
-      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
-      "card_names": [
-        "Bitterblossom",
-        "Control Magic",
-        "Scion of Oona",
-        "Unsummon"
-      ],
-      "oracle_ids": [],
-      "deck_files": [],
-      "fixture_files": [],
-      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
-    },
-    {
       "source": "tests/test_fixed_query_keyword_grants.py",
       "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_cactusfolk_numeric_group_locks_current_power_and_replays",
       "card_names": [
@@ -612,6 +586,45 @@
       "rationale": "Actual resolution numeric/bare-subtype gameplay witnesses iterate these precise registered fixture identities."
     },
     {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_kindred_scope_tracks_control_phasing_departure_and_reentry",
+      "card_names": [
+        "Bitterblossom",
+        "Control Magic",
+        "Scion of Oona",
+        "Unsummon"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
+    },
+    {
+      "source": "tests/test_fixed_query_keyword_grants.py",
+      "symbol": "FixedQueryKeywordGrantRuntimeTests.test_original_scion_shroud_rejects_kindred_target_and_accepts_foreign_control",
+      "card_names": [
+        "Bitterblossom",
+        "Naturalize",
+        "Scion of Oona",
+        "Willow Faerie"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The test strictly binds these original-card records through a bounded tuple before executing actual targeting or lifecycle commands."
+    },
+    {
+      "source": "tests/test_high_risk_interaction_assurance.py",
+      "symbol": "HighRiskInteractionAssuranceTests.test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
+      "card_names": [],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/source-reference-closure-cards.json"
+      ],
+      "rationale": "The bounded dictionary iterates complete pinned Zabaz, Nemata and Kytheon/Gideon records from the named source-reference fixture to prove residual runtime admission remains blocked."
+    },
+    {
       "source": "tests/test_high_risk_interaction_assurance.py",
       "symbol": "HighRiskInteractionAssuranceTests.test_original_batched_scope_expansions_keep_unrepresented_compositions_untrusted",
       "card_names": [
@@ -629,17 +642,18 @@
     },
     {
       "source": "tests/test_high_risk_interaction_assurance.py",
-      "symbol": "HighRiskInteractionAssuranceTests.test_event_recipient_promotions_preserve_original_residual_admission_boundaries",
+      "symbol": "HighRiskInteractionAssuranceTests.test_original_regeneration_and_source_move_residual_siblings_reject_whole_runtime_admission",
       "card_names": [
-        "Merfolk Windrobber",
-        "Securitron Squadron"
+        "Grim Reminder",
+        "Orcish Healer",
+        "Shadow Guildmage"
       ],
       "oracle_ids": [],
       "deck_files": [],
       "fixture_files": [
-        "tests/fixtures/batched-support-assurance-cards.json"
+        "tests/fixtures/new-support-residual-boundaries.json"
       ],
-      "rationale": "The bounded original-card dictionary checks whole-program rejection of the unsupported Squad replacement and graveyard-conditioned activation beside newly supported event-recipient counter and mill leaves."
+      "rationale": "The exact bounded original-card dictionary exercises whole-program rejection of residual regeneration, targeting and separate-damage siblings."
     },
     {
       "source": "tests/test_high_risk_interaction_assurance.py",
@@ -656,15 +670,55 @@
       "rationale": "The bounded original-card dictionary verifies remaining transformed Saga replacement siblings reject complete runtime admission beside fixed control and public-quantity mana leaves."
     },
     {
-      "source": "tests/test_copy_objects.py",
-      "symbol": "EntryCopySelectorContractTests.test_qualified_copy_originals_bind_and_dependencies_fail_closed",
+      "source": "tests/test_persist_undying_rules.py",
+      "symbol": "PersistUndyingRuntimeTests.register_keyword",
       "card_names": [],
       "oracle_ids": [],
       "deck_files": [],
       "fixture_files": [
-        "tests/fixtures/entry-copy-cards.json"
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/persist-undying-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
       ],
-      "rationale": "The fixed four-original selector loop delegates its current card name through the existing assert_original_closed helper before controlled dependency-removal compiler checks. The canonical entry-copy fixture owns those original records."
+      "rationale": "The per-test reader maps deterministic synthetic keyword-body identities to directly constructed records and delegates other IDs to the exact-list, counter and death-return fixtures; the same reader survives pending replay/load."
+    },
+    {
+      "source": "tests/test_proliferate_rules.py",
+      "symbol": "ProliferateEngineTests.test_generated_proliferate_trigger_runs_without_name_dispatch",
+      "card_names": [
+        "Sol Ring"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The test reader returns the explicit synthetic proliferate source and delegates canonical target/deck IDs to the exact-list database; no arbitrary external Oracle data is read."
+    },
+    {
+      "source": "tests/test_public_query_effect_amounts.py",
+      "symbol": "PublicQueryEffectAmountRuntimeTests.test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
+      "card_names": [
+        "Boon Reflection"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [
+        "tests/fixtures/counter-replacement-cards.json",
+        "tests/fixtures/scryfall-exact-lists.json"
+      ],
+      "rationale": "The test reader returns its directly constructed synthetic end-step record and delegates remaining IDs to the canonical deck/counter fixture database; the synthetic identity is not a compact-database card."
+    },
+    {
+      "source": "tests/test_surveil_rules.py",
+      "symbol": "FixedSurveilRuntimeTests.register",
+      "card_names": [
+        "Dauthi Voidwalker"
+      ],
+      "oracle_ids": [],
+      "deck_files": [],
+      "fixture_files": [],
+      "rationale": "The helper accepts explicit replacement-source witness names; this module calls it only for Dauthi Voidwalker."
     },
     {
       "source": "tests/test_undaunted.py",

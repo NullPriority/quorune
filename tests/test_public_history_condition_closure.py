@@ -124,9 +124,13 @@ class PublicHistoryConditionCompilerTests(unittest.TestCase):
 
     def test_history_condition_parser_mutant_is_killed(self):
         from unittest.mock import patch
-        with patch("quorune.compiler.public_state_fact_queries._fixed_history_fact",return_value=None):
+        expected = fixed_public_state_condition("you attacked this turn", source_name="Generic")
+        self.assertEqual('controller_attacked_this_turn', expected.to_dict()['fact'])
+        different = fixed_public_state_condition("you have no cards in hand", source_name="Generic")
+        self.assertIsNotNone(different)
+        with patch("quorune.compiler.public_state_fact_queries._fixed_history_fact", return_value=different):
             with self.assertRaises(AssertionError):
-                self.assertIsNotNone(fixed_public_state_condition("you attacked this turn",source_name="Generic"))
+                self.assertEqual(expected, fixed_public_state_condition("you attacked this turn", source_name="Generic"))
 
 
 class PublicHistoryConditionRuntimeContractTests(unittest.TestCase):

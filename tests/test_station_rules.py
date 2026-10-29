@@ -603,7 +603,12 @@ class StationRuntimeTests(unittest.TestCase):
             name="Wedgelight Rammer",
             ref="A-station-unresolved",
         )
-        self.creature(engine, "A", "Unresolved Worker", "*")
+        undefined = self.creature(engine, "A", "Undefined Worker", "*")
+        # CR 107.2/208.5 give an undefined printed star its numeric zero.
+        candidates = station_candidates(engine, "A", source)
+        self.assertEqual(0, next(row.activation_power for row in candidates
+            if row.object_id == undefined.object_id))
+        self.creature(engine, "A", "Unresolved Worker", "unrepresented")
         before = authoritative_state_hash(engine.state)
         with self.assertRaisesRegex(StationAbilityError, "unresolved"):
             station_candidates(engine, "A", source)

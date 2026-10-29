@@ -939,10 +939,10 @@ class ExactZimoneClosureTests(unittest.TestCase):
             if "deals 1 damage to any target"
             in ability.effect_text.casefold()
         )
-        self.assertEqual(
-            "dae4815e-9025-4993-ab46-52a3f1a7219e:granted:damage",
-            granted.builtin_semantic_key,
-        )
+        granted_program = engine.semantics.get(granted.builtin_semantic_key)
+        self.assertIsNotNone(granted_program)
+        self.assertTrue(engine.semantic_program_is_current_trusted(granted_program))
+        self.assertEqual("activate", granted_program.event)
         shaman.acquired_control_turn_count = -1
         before_life = engine.state.players["A"].life
         engine.state.players["B"].mana_pool["C"] = 2
@@ -969,10 +969,12 @@ class ExactZimoneClosureTests(unittest.TestCase):
             semantic_events=True,
         )
         self.assertFalse(engine._stabilize())
-        self.assertEqual(
-            "dae4815e-9025-4993-ab46-52a3f1a7219e:granted:untap",
-            engine.state.stack[-1].semantic_key,
-        )
+        untap_program = engine.semantics.get(engine.state.stack[-1].semantic_key)
+        self.assertIsNotNone(untap_program)
+        self.assertTrue(engine.semantic_program_is_current_trusted(untap_program))
+        self.assertEqual('creature.dies', untap_program.event)
+        self.assertIs(untap_program.provenance.get('granted_only'), True)
+        self.assertEqual('B', engine.state.stack[-1].controller)
         self.assertEqual(
             shaman.object_id,
             engine.state.stack[-1].source_object_id,

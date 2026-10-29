@@ -32,7 +32,7 @@ from test_granted_skulk import record
 
 FIXTURE = ROOT/'tests/fixtures/escaped-entry-counter-cards.json'
 CLOSED = ('Phoenix of Ash','Ox of Agonas','Underworld Charger','Woe Strider',
-    'Underworld Rage-Hound','Voracious Typhon','Loathsome Chimera')
+    'Underworld Rage-Hound','Voracious Typhon','Loathsome Chimera','Chainweb Aracnir')
 
 
 class EscapedEntryCounterCompilerTests(unittest.TestCase):

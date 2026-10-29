@@ -258,15 +258,15 @@ class FixedOptionalEffectCompilerTests(unittest.TestCase):
             (
                 "At the beginning of your upkeep, you may draw a card.",
                 "Creature — Fixture",
-                "offer_draw",
-                None,
+                OPTIONAL_EFFECT_OPERATION,
+                "draw",
             ),
             (
                 "Whenever this creature deals combat damage to a player, you may "
                 "draw a card.",
                 "Creature — Fixture",
-                "offer_draw",
-                None,
+                OPTIONAL_EFFECT_OPERATION,
+                "draw",
             ),
             (
                 "You may put a +1/+1 counter on target creature.",

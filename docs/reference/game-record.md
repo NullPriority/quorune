@@ -166,7 +166,10 @@ frame and retain their serialized form.
 
 Fixed random spell prices use the closed `random_discard` additional-cost
 descriptor with schema one and count one. Suspended payments reuse the private
-`_random_discard_cost_refs` response field and server payment identity. The
+`_random_discard_cost_refs` response field and server payment identity. New
+source-placement records bind selection to that payment and the stable source
+object, so stack placement and rollback retries cannot reroll it. Historical
+records retain their original incarnation-based randomization key. The
 continuation accepts one distinct current payment reference, excluding the
 casting spell, for a hand-to-graveyard discard event. It still validates the
 affected object, event identity and original source cost before resuming. The
