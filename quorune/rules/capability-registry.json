@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 550,
+  "registry_version": 552,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -65200,6 +65200,190 @@
       "implementation_mutation_rationale": "Independently removing cast-origin or arrived-card type filtering changes a zero-match witness into one; both mutations are rejected.",
       "blockers": [],
       "status": "trusted"
+    },
+    {
+      "id": "trigger.event.qualified_spell_ordinal",
+      "version": 1,
+      "official_rules": [
+        "400.7",
+        "601.2i",
+        "603.2",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Qualified spell ordinals count each caster matching committed history prefix through the exact cast incarnation. Earlier casts before observer entry count; later response casts do not change the occurrence ordinal. Existing unqualified caster_spell_number facts retain their owner.",
+        "inputs": [
+          "Closed per-caster spell history query",
+          "Exact committed cast identity and sealed card types",
+          "Positive matching ordinal one through ten"
+        ],
+        "outputs": [
+          "Read-only immutable occurrence ordinal",
+          "Shared exact caster/type/origin trigger binding"
+        ],
+        "exclusions": [
+          "Unrecorded historical color/subtype/X/target/mana-value predicates",
+          "Missing/stale history or missing/ambiguous cast occurrence",
+          "Counting observation opportunities or stack copies that were not cast"
+        ]
+      },
+      "dependencies": [
+        "condition.history.fixed_public_query",
+        "trigger.event.normalized_spell_cast"
+      ],
+      "implementation_components": [
+        "quorune.spell_history_ordinal_model.QualifiedSpellOrdinalSpec",
+        "quorune.compiler.spell_cast_predicates.FixedSpellCastSubject",
+        "quorune.compiler.spell_cast_predicates.fixed_spell_cast_binding_spec",
+        "quorune.rules.spell_history_ordinals.qualified_spell_cast_number"
+      ],
+      "positive_tests": [
+        "test_actual_psemilla_earlier_countered_enchantment_before_source_entry_consumes_first",
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_tuvasa_counts_matching_cast_not_all_spells_and_queued_draw_survives_responses",
+        "test_actual_valeria_noncreature_ordinal_excludes_artifact_creature_and_counts_free_spell",
+        "test_closed_ordinal_codec_and_existing_unqualified_spell_predicates",
+        "test_ordinal_is_matching_prefix_per_caster_not_whole_turn_or_current_objects",
+        "test_origin_filter_uses_recorded_cast_zones_and_prefix_before_later_casts",
+        "test_qualified_grammar_composes_with_results_and_verifies_withdrawal"
+      ],
+      "negative_tests": [
+        "test_actual_psemilla_earlier_countered_enchantment_before_source_entry_consumes_first",
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_tuvasa_counts_matching_cast_not_all_spells_and_queued_draw_survives_responses",
+        "test_actual_valeria_noncreature_ordinal_excludes_artifact_creature_and_counts_free_spell",
+        "test_closed_ordinal_codec_and_existing_unqualified_spell_predicates",
+        "test_missing_stale_ambiguous_and_unsealed_history_is_unavailable",
+        "test_ordinal_is_matching_prefix_per_caster_not_whole_turn_or_current_objects",
+        "test_origin_filter_uses_recorded_cast_zones_and_prefix_before_later_casts",
+        "test_qualified_grammar_composes_with_results_and_verifies_withdrawal",
+        "test_runtime_qualified_ordinal_dependency_is_inferred_without_declaration"
+      ],
+      "interaction_tests": [
+        "test_actual_psemilla_earlier_countered_enchantment_before_source_entry_consumes_first",
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_tuvasa_counts_matching_cast_not_all_spells_and_queued_draw_survives_responses",
+        "test_actual_valeria_noncreature_ordinal_excludes_artifact_creature_and_counts_free_spell"
+      ],
+      "multiplayer_tests": [
+        "test_actual_psemilla_earlier_countered_enchantment_before_source_entry_consumes_first",
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_tuvasa_counts_matching_cast_not_all_spells_and_queued_draw_survives_responses",
+        "test_actual_valeria_noncreature_ordinal_excludes_artifact_creature_and_counts_free_spell"
+      ],
+      "privacy_tests": [
+        "test_actual_tuvasa_counts_matching_cast_not_all_spells_and_queued_draw_survives_responses"
+      ],
+      "replay_tests": [
+        "test_actual_psemilla_earlier_countered_enchantment_before_source_entry_consumes_first",
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_tuvasa_counts_matching_cast_not_all_spells_and_queued_draw_survives_responses",
+        "test_actual_valeria_noncreature_ordinal_excludes_artifact_creature_and_counts_free_spell"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited registry/evidence withdrawal rejects qualified ordinals while ordinary first-spell triggers remain admitted; runtime minima infer the ordinal dependency independently.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing the exact matching prefix ordinal with either the whole-turn matching total or unfiltered caster number fails the independent first-matching-cast witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.event_player.fixed_damage",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "120.3a",
+        "603.3",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One fixed untargeted source-damage instruction addressed to the existing normalized event-player role. Source and sealed recipient remain distinct; canonical damage handles consequences, prevention and source information.",
+        "inputs": [
+          "Existing closed normalized event-player subject binding",
+          "Explicit ability source",
+          "Fixed positive integer damage amount"
+        ],
+        "outputs": [
+          "Existing canonical damage instruction with a sealed event-player recipient"
+        ],
+        "exclusions": [
+          "Client-selected recipient",
+          "Variable/unrepresented damage amounts",
+          "Ambiguous event-player antecedents",
+          "Unowned creature-controller current/LKI reads"
+        ]
+      },
+      "dependencies": [
+        "resolution.event_player.fixed_result",
+        "damage.amount.positive",
+        "damage.result.player_life",
+        "damage.source.stack_current_or_lki"
+      ],
+      "implementation_components": [
+        "quorune.compiler.event_player_results.fixed_event_player_damage_result",
+        "quorune.rules.event_player_result_shapes.fixed_event_player_result_node_capabilities",
+        "quorune.rules.event_player_result_shapes.event_player_damage_runtime_dependencies"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited registry/evidence withdrawal rejects fixed event-player damage while existing event-player life loss remains admitted; runtime minima infer the dependency after both capability and marker are removed.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Replacing the sealed occurrence recipient with the trigger controller fails the independent source/recipient witness.",
+      "blockers": [],
+      "status": "trusted",
+      "positive_tests": [
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws",
+        "test_result_keeps_source_and_event_player_without_a_target_choice",
+        "test_verified_damage_withdrawal_keeps_existing_event_player_life_result"
+      ],
+      "negative_tests": [
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws",
+        "test_malformed_damage_shapes_reject_wrong_source_amount_and_recipient",
+        "test_runtime_bound_damage_dependency_is_inferred_without_capability_or_marker",
+        "test_verified_damage_withdrawal_keeps_existing_event_player_life_result"
+      ],
+      "interaction_tests": [
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
+      ],
+      "multiplayer_tests": [
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
+      ],
+      "privacy_tests": [
+        "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
+      ],
+      "replay_tests": [
+        "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
+        "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
+      ]
     }
   ]
 }

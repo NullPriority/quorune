@@ -15386,6 +15386,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/spell_history_ordinals.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/spell_self_exile.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -19800,6 +19814,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/spell_history_ordinal_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/spell_history_transform.py",
       "layer": "rules",
       "owning_subsystem": "day_night_and_transform",
@@ -21036,5 +21062,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "66fa2b22d9dd396b1314d5c523f10388f97bce49426e99611287e1d3cf0300eb"
+  "fingerprint": "2964169e6c13b8a9f58e342f58448f32c9311ef16b3049ecd0515faa896491a8"
 }

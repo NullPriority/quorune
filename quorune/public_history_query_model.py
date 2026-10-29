@@ -66,7 +66,8 @@ class PublicHistoryQuerySpec:
             *((GRAVEYARD_TYPE_HISTORY_CAPABILITY,) if self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types)) else ()))
 
 
-def public_history_query_value(state,controller,spec):
+def matching_public_history_events(state,controller,spec):
+    """Return sealed matching occurrences, or unavailable history."""
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
     if spec.event=='permanent_left' and history.departure_history_version!=1:return None
@@ -85,10 +86,20 @@ def public_history_query_value(state,controller,spec):
             if event.origin!=spec.origin:continue
         types=set(event.types)
         if not set(spec.types_all)<=types or spec.types_any and types.isdisjoint(spec.types_any) or not types.isdisjoint(spec.excluded_types):continue
-        matched.append((seat,event.amount))
-    if spec.reduction=='count':return len(matched)
-    if spec.reduction=='sum_amount':return sum(amount for _,amount in matched)
-    return max((sum(amount for current,amount in matched if current==seat) for seat in allowed),default=0)
+        matched.append(event)
+    return tuple(matched)
+
+
+def public_history_query_value(state,controller,spec):
+    events=matching_public_history_events(state,controller,spec)
+    if events is None:return None
+    if spec.reduction=='count':return len(events)
+    if spec.reduction=='sum_amount':return sum(event.amount for event in events)
+    totals={}
+    for event in events:
+        seat=event.target if spec.event in {'player_gained_life','player_lost_life'} else event.actor
+        totals[seat]=totals.get(seat,0)+event.amount
+    return max(totals.values(),default=0)
 
 
 def public_history_query_dependencies(value):

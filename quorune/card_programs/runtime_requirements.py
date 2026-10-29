@@ -83,13 +83,17 @@ def _cost_metric_runtime_requirements(handlers):
 def _event_query_runtime_requirements(program):
     """Infer the query dependencies of normalized attack and history events."""
     from ..public_history_query_model import public_history_query_dependencies
+    from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
+    from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies
     required,blockers=set(),set()
     for resolver,value,label in (
         (public_history_query_dependencies,program.event_condition,'public_history'),
+        (qualified_spell_ordinal_dependencies,program.event_condition,'qualified_spell_ordinal'),
         (qualified_attack_runtime_dependencies,program,'qualified_attack'),
         (qualified_attack_batch_runtime_dependencies,program,'qualified_attack_batch'),
+        (event_player_damage_runtime_dependencies,program,'event_player_damage'),
     ):
         try:required.update(resolver(value))
         except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')

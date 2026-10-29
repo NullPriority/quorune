@@ -389,6 +389,11 @@ def _semantic_condition_actual(
     if not field:
         raise GameRuleError("Semantic event condition requires a field")
     from .attack_batch_model import ATTACK_BATCH_CONDITION
+    from .spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_FIELD
+    if field==QUALIFIED_SPELL_ORDINAL_FIELD:
+        from .rules.spell_history_ordinals import qualified_spell_cast_number
+        try:return qualified_spell_cast_number(host.state,condition,context)
+        except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     if field == ATTACK_BATCH_CONDITION:
         from .rules.attack_batches import qualified_attack_match_count
         try:return qualified_attack_match_count(source,condition,context)

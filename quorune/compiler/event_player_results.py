@@ -10,6 +10,8 @@ from .event_result_value_templates import event_result_instruction
 
 EVENT_PLAYER_RESULT_CAPABILITY='resolution.event_player.fixed_result'
 EVENT_PLAYER_RESULT_MECHANIC='fixed-event-player-result'
+EVENT_PLAYER_DAMAGE_CAPABILITY='resolution.event_player.fixed_damage'
+EVENT_PLAYER_DAMAGE_MECHANIC='fixed-event-player-damage'
 
 
 def _damage_guarantees_player(condition):
@@ -76,3 +78,17 @@ def fixed_event_player_result(binding,body,*,effect_template,card_name):
     if any(value is None for value in lowered) or not any(value[0]['player']!='$controller' for value in lowered):return None
     return ('fixed-event-player-result-v1',tuple(value[0] for value in lowered),None,
         tuple(dict.fromkeys((*[mechanic for value in lowered for mechanic in value[1]],EVENT_PLAYER_RESULT_MECHANIC)))),False
+
+
+def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
+    match=re.fullmatch(r"(?P<prefix>.+? deals [1-9][0-9]* damage to )(?P<subject>that player|defending player|that creature['’]s controller)\.?",body,re.I)
+    if match is None:return None
+    player=_event_player(binding,match['subject'].casefold())
+    if player is None:return None
+    compiled=effect_template(match['prefix']+'you.',card_name=card_name)
+    if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
+    effect=compiled[1][0]
+    if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
+            or effect.get('target')!='$controller' or type(effect.get('amount')) is not int or effect['amount']<=0):return None
+    return ('fixed-event-player-damage-v1',({**effect,'target':player},),None,
+        tuple(dict.fromkeys((*compiled[3],EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC)))),False

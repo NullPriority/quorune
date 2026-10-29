@@ -8,7 +8,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
         from ..public_history_query_model import public_history_query_dependencies
+        from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies,QUALIFIED_SPELL_ORDINAL_FIELD
         history=public_history_query_dependencies(value) if 'history_query' in value or value.get('kind') in {'history_count_at_least','history_count_at_most'} else ()
+        if value.get('field')==QUALIFIED_SPELL_ORDINAL_FIELD:history=(*history,*qualified_spell_ordinal_dependencies(value))
         if history:
             return tuple(sorted({*history,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         from ..rules.modal_node_capabilities import modal_schema_runtime_dependencies

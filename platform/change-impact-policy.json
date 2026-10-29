@@ -9165,6 +9165,41 @@
         "test_turn_history_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "qualified-spell-ordinals",
+      "patterns": [
+        "quorune/spell_history_ordinal_model.py",
+        "quorune/rules/spell_history_ordinals.py",
+        "quorune/compiler/spell_cast_predicates.py",
+        "quorune/public_history_query_model.py",
+        "tests/test_qualified_spell_ordinals.py",
+        "tests/fixtures/qualified-spell-ordinal-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_spell_ordinals",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_counter_player_cast_triggers",
+        "test_public_history_queries",
+        "test_qualified_public_history",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "event-player-fixed-damage",
+      "patterns": [
+        "quorune/compiler/event_player_results.py",
+        "quorune/rules/event_player_result_shapes.py",
+        "tests/test_event_player_fixed_damage.py",
+        "tests/fixtures/event-player-fixed-damage-cards.json"
+      ],
+      "test_modules": [
+        "test_event_player_fixed_damage",
+        "test_qualified_spell_ordinals",
+        "test_half_event_player_results",
+        "test_public_state_event_actions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

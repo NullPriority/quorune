@@ -2,13 +2,16 @@ from __future__ import annotations
 
 """Capability closure for fixed untargeted event-addressed draw/life leaves."""
 
-from ..compiler.event_player_results import EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_RESULT_MECHANIC
+from ..compiler.event_player_results import (EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_RESULT_MECHANIC,
+    EVENT_PLAYER_DAMAGE_CAPABILITY,EVENT_PLAYER_DAMAGE_MECHANIC)
 from .mill_capability_shapes import fixed_mill_node_capabilities,mill_covered_mechanics
 from ..event_player_result_values import event_result_value_capabilities
 from ..fractional_quantity_model import HALF_LIFE_CAPABILITY,HALF_LIFE_MECHANIC
 
 
 def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic_ids):
+    if EVENT_PLAYER_DAMAGE_MECHANIC in set(mechanic_ids):
+        return fixed_event_player_damage_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if EVENT_PLAYER_RESULT_MECHANIC not in set(mechanic_ids) or target_schema is not None or not 1<=len(effects)<=2:return ()
     if not any(effect.get('player')!='$controller' for effect in effects):return ()
     layouts={'draw':('count',{'op','player','count','private'},'zone.draw.library_to_hand'),
@@ -27,14 +30,45 @@ def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic
 
 
 def fixed_event_player_result_covered_mechanics(supplied):
-    return ({EVENT_PLAYER_RESULT_MECHANIC} if EVENT_PLAYER_RESULT_CAPABILITY in supplied else set()) | mill_covered_mechanics(supplied)
+    return ({EVENT_PLAYER_RESULT_MECHANIC} if EVENT_PLAYER_RESULT_CAPABILITY in supplied else set()) | mill_covered_mechanics(supplied) | (
+        {EVENT_PLAYER_DAMAGE_MECHANIC} if EVENT_PLAYER_DAMAGE_CAPABILITY in supplied else set())
 
 
 def is_closed_fixed_event_player_result_program(program):
     required=fixed_event_player_result_node_capabilities(effects=program.effects,
         target_schema=program.target_schema,mechanic_ids=program.coverage)
     if not required or not set(required).issubset(program.capability_dependencies):return False
-    return all(_event_player_reference_is_closed(program,effect['player']) for effect in program.effects)
+    return all(_event_player_reference_is_closed(program,effect['target'] if effect.get('op')=='damage' else effect['player']) for effect in program.effects)
+
+
+def fixed_event_player_damage_node_capabilities(*,effects,target_schema,mechanic_ids):
+    if not {EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC}<=set(mechanic_ids) or target_schema is not None or len(effects)!=1:return ()
+    effect=effects[0]
+    if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
+            or effect.get('target') not in {'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
+            or type(effect.get('amount')) is not int or effect['amount']<=0):return ()
+    from .damage_capability_shapes import fixed_damage_node_capabilities
+    damage=fixed_damage_node_capabilities(effects=({**effect,'target':'$controller'},),target_schema=None,mechanic_ids={'cr-120-damage'})
+    return (EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_DAMAGE_CAPABILITY,*damage) if damage else ()
+
+
+def event_player_damage_runtime_dependencies(program):
+    from collections.abc import Mapping
+    required=set();has_marker=EVENT_PLAYER_DAMAGE_MECHANIC in program.coverage
+    def visit(node):
+        if isinstance(node,Mapping):
+            if (node.get('op')=='damage' and node.get('source')=='$source' and type(node.get('amount')) is int
+                    and _event_player_reference_is_closed(program,node.get('target')) and node.get('target')!='$controller'):
+                caps=fixed_event_player_damage_node_capabilities(effects=(node,),target_schema=None,
+                    mechanic_ids={EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC})
+                if not caps:raise ValueError('Malformed fixed event-player damage instruction')
+                required.update(caps)
+            for child in node.values():visit(child)
+        elif isinstance(node,(list,tuple)):
+            for child in node:visit(child)
+    visit(program.effects)
+    if has_marker and not required:raise ValueError('Fixed event-player damage marker lacks a closed bound instruction')
+    return tuple(sorted(required))
 
 
 def _event_player_reference_is_closed(program,player):

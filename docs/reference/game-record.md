@@ -331,6 +331,20 @@ binds their versions to the initial checkpoint. Historical absence omits cast
 origins and retains empty arrival types, so replay adds no previously absent
 facts. Missing modes cannot establish a qualified zero-history condition.
 
+The version-one `qualified_spell_cast_number` event condition stores one
+closed spell-history query and a fixed positive equality threshold. It locates
+the exact committed cast incarnation in the existing current-turn journal and
+uses only the matching prefix through that occurrence. Later casts therefore
+preserve the queued event's ordinal during replay and any intervening-if
+recheck. It adds no fields to historical cast events or checkpoints. Earlier
+unqualified spell-number conditions keep their serialized form.
+
+Fixed event-player damage reuses the existing damage instruction and sealed
+context player references. Its distinct capability identifies the closed
+source/recipient binding; it adds no checkpoint fields or projected target
+choice. Pending frames retain their original event player after source
+departure and through save/load.
+
 Upkeep-relative control history is one such additive boundary. New records pin
 its version in both the initial checkpoint and manifest; records without the
 marker remain in the historical no-history mode so later replay does not add

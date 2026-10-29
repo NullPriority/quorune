@@ -1905,6 +1905,16 @@ replacement coordinator. Targets, up-to or aggregate sets, hidden or opponent
 subjects, variable or optional returns, compound bodies, and dynamic, chosen,
 linked, or unsupported event predicates remain source-spanned residuals.
 
+`compiler/event_player_results.py` also lowers one fixed source-damage
+instruction addressed to an established occurrence-player subject. The same
+binder selects the caster, drawing player, defending player or supported
+departed-object controller. The explicit ability source remains the damage
+source, while the sealed player reference becomes its untargeted recipient.
+`resolution.event_player.fixed_damage` requires the existing player-result and
+damage owners. Unrepresented amounts and ambiguous subject/event pairs remain
+residual. Runtime inference checks the instruction independently of its
+capability declaration and compiler coverage marker.
+
 `compiler/affected_player_sacrifice_templates.py` owns one mandatory fixed
 affected-player sacrifice leaf shared by spell, triggered, activated, and
 fixed Choose one modal contexts. Target-player, target-opponent, each-player,
@@ -3011,6 +3021,17 @@ zero hand-origin cast count; the latter uses a permanent-card type union over
 actual graveyard arrivals. The existing intervening-condition owner rechecks
 them on resolution. Unrepresented descent counts and other temporal ranges
 remain residual.
+
+Qualified first-through-fourth spell triggers extend the existing
+`FixedSpellCastSubject` owner with a typed matching-history ordinal. Card-type
+and represented origin filters select each caster's committed casts; only
+matching spells consume that ordinal. The exact cast incarnation bounds the
+history prefix, so later response casts do not change an already queued
+trigger. These forms require `trigger.event.qualified_spell_ordinal` and the
+shared history query dependencies. Existing unqualified ordinals keep their
+sealed `caster_spell_number` path, including ordinary third/fourth spell
+wording. Historical color, subtype, X-cost, target and mana-value qualifiers
+without complete journal facts remain residual.
 
 The separate fixed public alternative-cost owner lowers complete-card-admitted
 plain “rather than pay” declarations and fixed ordinary-mana Freerunning,

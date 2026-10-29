@@ -8,6 +8,7 @@ import re
 from typing import Any, Callable, Mapping, Sequence
 
 from ..ability_fragments import ability_fragment_to_dict
+from ..declaration_fragments import DeclarationRestrictionTemplate,DeclarationRequirementTemplate
 from ..characteristic_evaluation import type_parts
 from ..fixed_token_production import TYPED_TOKEN_ABILITY_MECHANIC_ID
 from ..rules.capabilities import (
@@ -411,6 +412,8 @@ def _token_fragments_and_children(
                 for fragment in static_fragments
             )
             direct_mechanics.extend(inner.mechanics)
+            if any(isinstance(fragment,(DeclarationRestrictionTemplate,DeclarationRequirementTemplate)) for fragment in static_fragments):
+                direct_mechanics.append('fixed-token-declaration-fragment')
             continue
         plan = attached_granted_ability_plan(
             node=inner,

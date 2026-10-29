@@ -1685,6 +1685,15 @@ types rather than a departed permanent's temporary characteristics. Later
 departure does not erase an arrival. These facts reuse the existing turn
 journal and require explicit complete-history modes.
 
+Qualified spell ordinals share that read-only history selector. The exact
+committed cast must appear once with the same caster and sealed card types;
+its position within matching casts determines the ordinal. Earlier matching
+casts count even before the observer entered, and countering a spell does not
+erase its cast. A later response does not change the prefix through the
+original occurrence. Missing history or an absent or ambiguous occurrence is
+unavailable. Current object characteristics and observation counts cannot
+replace these facts.
+
 Schema-five public conditions have a separate numeric creature-existence
 predicate. Intervening triggers and resolution instructions read complete
 current effective power or toughness under their locked controller. They

@@ -44,6 +44,13 @@ keywords such as lifelink; the resolving ability keeps its own controller.
 Current facts are read at the individual damage instruction after any paid
 prefix. Once a damage proposal is sealed, replacement-choice resumption retains
 that proposal's source facts.
+
+Closed event-player damage instructions retain that source contract while
+addressing the sealed occurrence player. A draw or cast participant is not
+replaced with the trigger controller. The instruction creates no target
+choice and enters the same damage transaction, including prevention and life
+consequences. Source departure preserves the queued instruction's normal
+source-information handling.
 Single-recipient, opponent-set and fixed affected-set damage feed the same
 validated snapshot into the canonical transaction. A source-excluding affected
 set excludes the original incarnation, so a returned creature is another object.

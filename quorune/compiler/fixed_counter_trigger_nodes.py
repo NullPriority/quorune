@@ -690,7 +690,8 @@ class FixedCounterTriggerBinding:
         from ..public_history_query_model import public_history_query_dependencies
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
-        return (*self.public_capabilities,*condition_capabilities,*public_history_query_dependencies(
+        ordinal=self.spell_subject.qualified_ordinal_spec if self.spell_subject is not None else None
+        return (*self.public_capabilities,*condition_capabilities,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
