@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 562,
+  "registry_version": 563,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -14553,7 +14553,7 @@
     },
     {
       "id": "counter.producer.dynamic_self_entry",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "107.3m",
         "122.6",
@@ -14624,8 +14624,10 @@
         "quorune.compiler.receiver_union_queries.characteristic_quantity_union"
       ],
       "positive_tests": [
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_originals_close_only_when_all_siblings_are_supported",
         "test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
         "test_dynamic_amount_model_covers_each_closed_public_fact",
         "test_dynamic_entry_ignores_origin_only_ability_removal",
         "test_dynamic_entry_spell_copy_preserves_x_without_cast_provenance",
@@ -14635,19 +14637,20 @@
         "test_dynamic_x_and_query_amounts_use_frozen_preentry_state",
         "test_escaped_counter_grammar_and_boundaries_are_source_spanned",
         "test_history_entry_grammar_has_exact_value_sources_and_spans",
-        "test_permanent_spell_characteristic_change_carries_through_entry",
-        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
         "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
-        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima",
+        "test_permanent_spell_characteristic_change_carries_through_entry",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
-        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
-        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"
       ],
       "negative_tests": [
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
         "test_adjacent_unknown_history_and_open_quantities_remain_residual",
+        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
         "test_dynamic_entry_obeys_prospective_battlefield_ability_removal",
         "test_dynamic_entry_removed_current_ability_is_inapplicable",
         "test_dynamic_self_entry_counter_exclusions_fail_closed",
@@ -14656,17 +14659,17 @@
         "test_escaped_fact_distinguishes_actual_method_origin_and_spell_copies",
         "test_missing_departure_history_mutant_is_killed_by_actual_revolt_cast",
         "test_new_history_amounts_reject_missing_or_stale_journal_before_entry",
-        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
         "test_originals_admit_with_independent_entry_and_nested_quantity_minima",
-        "test_closed_source_pronouns_values_and_old_hidden_query_boundary",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
-        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_shared_query_producer_mutation_and_unknown_terms_fail_closed",
         "test_simultaneous_luxknight_entries_count_only_the_pre_batch_battlefield",
         "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
       ],
       "interaction_tests": [
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_history_entry_quantity_replacement_adds_once_and_replays",
         "test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
         "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
@@ -14683,23 +14686,24 @@
         "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
         "test_original_avatar_and_sentinels_use_other_current_counter_creatures",
         "test_permanent_spell_characteristic_change_carries_through_entry",
-        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
-        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
-        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
         "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
-        "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters"
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "multiplayer_tests": [
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
         "test_actual_typhon_escape_pays_costs_and_enters_with_three_counters",
         "test_controller_death_amount_uses_committed_death_not_replaced_departure",
         "test_dynamic_entry_replacement_choice_is_private_and_replays",
         "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
         "test_original_avatar_and_sentinels_use_other_current_counter_creatures",
+        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
         "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
         "test_real_realm_put_from_hand_counts_its_pre_entry_card",
-        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
-        "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
         "test_simultaneous_luxknight_entries_count_only_the_pre_batch_battlefield"
       ],
       "privacy_tests": [
@@ -14714,6 +14718,7 @@
         "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters"
       ],
       "replay_tests": [
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_history_entry_quantity_replacement_adds_once_and_replays",
         "test_actual_normal_cast_and_blink_do_not_receive_escape_counters",
         "test_actual_revolt_cast_uses_prior_departure_controller_and_replays",
@@ -14722,11 +14727,11 @@
         "test_dynamic_entry_replacement_choice_is_private_and_replays",
         "test_history_entry_competing_replacements_pending_save_load_preserves_frozen_amount",
         "test_original_avatar_and_sentinels_use_other_current_counter_creatures",
-        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
-        "test_real_realm_put_from_hand_counts_its_pre_entry_card",
-        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
         "test_real_bertha_her_entry_uses_announced_x_and_paid_tap_sibling",
-        "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters"
+        "test_real_inferno_sums_graveyard_mana_value_and_keeps_snapshot",
+        "test_real_luxknight_entry_reads_pending_battlefield_once_and_retains_counters",
+        "test_real_realm_cast_response_freezes_entry_count_then_pays_search_counter",
+        "test_real_realm_put_from_hand_counts_its_pre_entry_card"
       ],
       "required_evidence": [
         "positive",
@@ -16988,7 +16993,7 @@
     },
     {
       "id": "continuous.ability.fixed_query_keyword_grant",
-      "version": 17,
+      "version": 18,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -17055,6 +17060,7 @@
         "quorune.semantic_runtime.conditional_continuous.ConditionalTypedKeywordHandler"
       ],
       "positive_tests": [
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
@@ -17087,6 +17093,7 @@
         "test_werewolf_plural_union_is_typed_and_deduplicates_recipient_query"
       ],
       "negative_tests": [
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
@@ -17114,6 +17121,7 @@
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
         "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
@@ -17143,6 +17151,7 @@
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
         "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_counter_multicolor_and_token_queries_use_live_public_state_and_replay",
@@ -17173,6 +17182,7 @@
         "test_actual_atlantis_cast_grants_foreign_merfolk_and_source_exclusion_with_replay",
         "test_actual_cryptothrall_cast_grants_current_other_artifacts_and_replays",
         "test_actual_elvish_champion_cast_affects_other_controllers_and_current_landwalk_blocks",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_nonlegendary_anthem_keeps_legendary_branch_and_tracks_control_and_source_departure",
         "test_actual_sun_quan_cast_grants_self_and_rejects_flying_reach_as_horsemanship",
@@ -17208,7 +17218,7 @@
     },
     {
       "id": "continuous.characteristics.fixed_public_state",
-      "version": 23,
+      "version": 24,
       "official_rules": [
         "604.1",
         "611.3a",
@@ -17315,8 +17325,10 @@
         "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
         "test_actual_otherwise_auras_cover_typed_branches_and_counter_composition",
@@ -17333,6 +17345,7 @@
         "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
         "test_closed_public_state_grammar_compiles_capability_closed",
         "test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
+        "test_compiler_produced_conditional_union_is_accepted_by_its_registered_owner",
         "test_conditional_spell_cost_keeps_public_condition_and_existing_modifier",
         "test_conditional_stats_and_declaration_result_preserve_one_live_condition",
         "test_conditional_typed_keywords_keep_their_fragments_and_condition",
@@ -17354,33 +17367,34 @@
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_originals_have_complete_admission_and_original_source_spans",
         "test_public_condition_closure_compiles_typed_queries_and_facts",
         "test_public_fact_conditions_recompute_and_replay",
         "test_public_fact_descriptors_preserve_thresholds_subtypes_and_axes",
         "test_public_fact_thresholds_use_canonical_producers_and_consumers",
         "test_public_object_state_and_query_conditions_compile_closed",
         "test_public_state_conditions_recompute_layer_six_and_seven_results",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_self_graveyard_permission_preserves_general_public_condition",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_seven_original_otherwise_stat_auras_bind_as_complete_programs",
         "test_shared_public_set_query_fans_into_layers_and_resolution",
         "test_source_spans_unsupported_neighbors_and_surface_omissions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
         "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
-        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
-        "test_originals_have_complete_admission_and_original_source_spans",
-        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
-        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
-        "test_compiler_produced_conditional_union_is_accepted_by_its_registered_owner",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
       ],
       "negative_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
         "test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_key_untap_revokes_stale_offer_before_acceptance",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
@@ -17396,8 +17410,11 @@
         "test_color_count_fact_round_trip_parameters_and_legacy_versions_are_strict",
         "test_colorless_nontoken_and_nonbasic_queries_preserve_every_qualifier",
         "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
+        "test_conditional_receiver_union_authorities_fail_closed_with_verified_indices",
         "test_conditional_spell_cost_schema_and_dependencies_fail_closed",
         "test_conditional_typed_keyword_schema_dependencies_and_omission_fail_closed",
+        "test_conditional_union_keeps_reserved_scope_and_template_references_closed",
+        "test_conditional_union_requires_its_implicit_runtime_query_authority",
         "test_counted_graveyard_qualities_normalize_capture_whitespace_and_card_types",
         "test_current_graveyard_card_queries_are_card_only_and_legacy_decoding_stays_exact",
         "test_desert_token_can_satisfy_battlefield_branch_but_is_not_a_graveyard_card",
@@ -17411,26 +17428,23 @@
         "test_original_omenreader_live_reduction_tracks_actual_tap_cast_and_bounce_with_replay",
         "test_original_pristine_angel_cast_and_live_protection_follow_actual_tap_untap_and_replay",
         "test_original_prowler_graveyard_permission_tracks_owner_condition_and_actual_cast_with_replay",
+        "test_originals_have_complete_admission_and_original_source_spans",
         "test_otherwise_composition_keeps_recipient_scope_and_rejects_unknown_branches",
         "test_pre_history_characteristic_sealing_mutant_is_killed",
         "test_public_state_descriptors_fail_closed_without_effects",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
         "test_self_graveyard_public_permission_schema_and_unknown_scope_fail_closed",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_shared_public_query_dependency_fails_closed_across_consumers",
         "test_source_spans_unsupported_neighbors_and_surface_omissions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
         "test_union_and_zone_permission_authorities_cannot_be_withdrawn",
         "test_union_surface_reuses_closed_typed_count_and_preserves_unknown_rejection",
         "test_unrepresented_conditions_and_bodies_remain_residual",
         "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
-        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions",
-        "test_originals_have_complete_admission_and_original_source_spans",
-        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
-        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
-        "test_conditional_union_keeps_reserved_scope_and_template_references_closed",
-        "test_conditional_receiver_union_authorities_fail_closed_with_verified_indices",
-        "test_conditional_union_requires_its_implicit_runtime_query_authority"
+        "test_whole_source_span_nearest_unsupported_terms_and_producer_omissions"
       ],
       "interaction_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -17439,8 +17453,10 @@
         "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_key_untap_revokes_stale_offer_before_acceptance",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
@@ -17474,15 +17490,15 @@
         "test_public_condition_queries_follow_authoritative_history_and_control",
         "test_public_fact_conditions_recompute_and_replay",
         "test_public_state_conditions_recompute_layer_six_and_seven_results",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_subtype_attack_threshold_counts_distinct_event_time_objects",
         "test_turn_gated_attachment_and_anthem_compose",
-        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
-        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "multiplayer_tests": [
         "test_actual_aggressor_uses_another_current_colorless_creature_for_native_haste_attack",
@@ -17490,7 +17506,9 @@
         "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_camel_and_naga_graveyard_desert_grant_fixed_keywords_once",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
         "test_actual_rescue_reads_aura_entry_turn_and_expires_before_native_shock",
@@ -17511,12 +17529,12 @@
         "test_public_condition_queries_follow_authoritative_history_and_control",
         "test_public_fact_conditions_recompute_and_replay",
         "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_speaker_counts_kindred_merfolk_and_self_as_island_in_distinct_branches",
         "test_turn_gated_attachment_and_anthem_compose",
-        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
-        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "privacy_tests": [
         "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
@@ -17543,8 +17561,10 @@
         "test_actual_beasts_excludes_white_tokens_and_own_permanents_after_native_bounce",
         "test_actual_borrowed_vehicle_and_icy_tap_enable_full_graveyard_cast",
         "test_actual_desert_lifelink_damage_and_native_graveyard_exile_preserve_draw_privacy_and_replay",
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_actual_goham_regenerates_when_color_tie_makes_marked_damage_lethal",
         "test_actual_halam_cast_and_bounce_tracks_all_seats_and_tied_color_counts",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_key_untap_revokes_stale_offer_before_acceptance",
         "test_actual_lesson_conditions_use_own_public_graveyard_and_native_exile_with_private_draw",
         "test_actual_other_entry_conditions_ignore_self_and_retain_departed_entry_through_reload",
@@ -17575,13 +17595,13 @@
         "test_public_condition_queries_follow_authoritative_history_and_control",
         "test_public_fact_conditions_recompute_and_replay",
         "test_real_control_change_awards_current_controller_and_allows_multiple_persistent_holders",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
+        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
+        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_serpent_combines_independent_lesson_timing_with_conjunctive_card_exclusions",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
-        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold",
-        "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
-        "test_real_swarmweaver_condition_overlap_control_and_graveyard_changes"
+        "test_untapped_foreign_phased_and_other_zone_objects_do_not_meet_threshold"
       ],
       "required_evidence": [
         "positive",
@@ -18164,7 +18184,7 @@
     },
     {
       "id": "quantity_expression.scalar_effect_amount",
-      "version": 9,
+      "version": 10,
       "official_rules": [
         "107.1b",
         "107.2",
@@ -18187,7 +18207,8 @@
           "explicit source, singleton direct target, normalized zone-event object, committed event amount, or public-history origin",
           "same logical incarnation and expected public zone",
           "existing fixed result and target shapes",
-          "mandatory mill equal-to or explicit-X wording retaining the locked result subject"
+          "mandatory mill equal-to or explicit-X wording retaining the locked result subject",
+          "A bound source-self event with a source-led result pronoun keeps its possessive characteristic source before target fallback; explicit target-led results retain their target."
         ],
         "outputs": [
           "resolution-time current information or immediate departure LKI",
@@ -18204,36 +18225,43 @@
       },
       "dependencies": [],
       "implementation_components": [
-        "quorune.scalar_effect_amount_model.ScalarEffectAmountSpec",
-        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount",
-        "quorune.scalar_effect_amounts.pin_scalar_characteristic_departures",
-        "quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template",
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies",
+        "quorune.compiler.scalar_effect_amounts._characteristic",
         "quorune.compiler.scalar_effect_amounts.scalar_amount_shape_context",
-        "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
+        "quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template",
+        "quorune.scalar_effect_amount_model.ScalarEffectAmountSpec",
+        "quorune.scalar_effect_amounts.pin_scalar_characteristic_departures",
+        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount",
+        "quorune.semantic_runtime.values.resolve_semantic_value"
       ],
       "positive_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_coalhauler_uses_one_committed_amount_for_every_player",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_drake_counter_result_places_the_committed_damage_amount",
         "test_actual_drake_counter_trigger_does_not_follow_a_blinked_incarnation",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
         "test_actual_lethal_mogg_damage_uses_departed_source_and_exact_committed_amount",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_noise_marine_counts_its_cascaded_cast_and_never_the_free_mana_price",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_actual_prevented_damage_creates_no_source_damage_trigger",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_pyremaw_places_counter_before_power_damage_and_uses_departure_lki",
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
@@ -18250,16 +18278,23 @@
         "test_source_counter_amounts_preserve_typed_identity_and_span",
         "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
         "test_source_damage_event_amount_keeps_subscription_identity_and_amount",
-        "test_source_event_scalar_keeps_source_amount_and_target_roles_separate"
+        "test_source_event_scalar_keeps_source_amount_and_target_roles_separate",
+        "test_source_led_scalar_pronoun_never_reads_the_result_target"
       ],
       "negative_tests": [
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_coalhauler_uses_one_committed_amount_for_every_player",
         "test_actual_drake_counter_result_places_the_committed_damage_amount",
         "test_actual_drake_counter_trigger_does_not_follow_a_blinked_incarnation",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_lethal_mogg_damage_uses_departed_source_and_exact_committed_amount",
+        "test_actual_noise_marine_counts_its_cascaded_cast_and_never_the_free_mana_price",
         "test_actual_prevented_damage_creates_no_source_damage_trigger",
+        "test_actual_pyremaw_places_counter_before_power_damage_and_uses_departure_lki",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
         "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
         "test_damage_amount_subscription_diagnostic_excludes_noncombat_incoming_and_foreign_sources",
@@ -18277,6 +18312,7 @@
         "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
         "test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
         "test_source_event_scalar_keeps_source_amount_and_target_roles_separate",
+        "test_source_led_scalar_pronoun_never_reads_the_result_target",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
         "test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins",
         "test_verified_owner_withdrawals_reject_combined_group_results",
@@ -18285,6 +18321,7 @@
       "interaction_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_coalhauler_uses_one_committed_amount_for_every_player",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
@@ -18292,6 +18329,7 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_drake_counter_result_places_the_committed_damage_amount",
         "test_actual_drake_counter_trigger_does_not_follow_a_blinked_incarnation",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
@@ -18300,13 +18338,17 @@
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_live_counter_changes_are_read_at_resolution_then_blink_uses_lki",
         "test_actual_maga_entry_and_pending_target_read_replaced_current_count",
+        "test_actual_noise_marine_counts_its_cascaded_cast_and_never_the_free_mana_price",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_actual_prevented_damage_creates_no_source_damage_trigger",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_pyremaw_places_counter_before_power_damage_and_uses_departure_lki",
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
@@ -18324,6 +18366,7 @@
       "multiplayer_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_coalhauler_uses_one_committed_amount_for_every_player",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
@@ -18331,19 +18374,24 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_drake_counter_result_places_the_committed_damage_amount",
         "test_actual_drake_counter_trigger_does_not_follow_a_blinked_incarnation",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
         "test_actual_lethal_mogg_damage_uses_departed_source_and_exact_committed_amount",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_noise_marine_counts_its_cascaded_cast_and_never_the_free_mana_price",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_actual_prevented_damage_creates_no_source_damage_trigger",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_pyremaw_places_counter_before_power_damage_and_uses_departure_lki",
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
@@ -18359,6 +18407,7 @@
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
         "test_actual_death_draw_uses_predeparture_counters_and_replays",
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
@@ -18382,6 +18431,7 @@
       "replay_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
+        "test_actual_chainweb_escape_counters_precede_entry_damage_and_survive_source_bounce",
         "test_actual_coalhauler_uses_one_committed_amount_for_every_player",
         "test_actual_contortion_copy_retains_payments_under_new_controller_and_original_fizzles",
         "test_actual_contortion_zero_or_two_payments_draws_after_the_target_controller_pays",
@@ -18389,20 +18439,25 @@
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
         "test_actual_drake_counter_result_places_the_committed_damage_amount",
         "test_actual_drake_counter_trigger_does_not_follow_a_blinked_incarnation",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
         "test_actual_infuse_copy_zero_still_grants_trample_and_paid_counters_use_replacement",
         "test_actual_kaleidoscorch_normal_and_flashback_payments_use_two_and_five_colors",
         "test_actual_lethal_mogg_damage_uses_departed_source_and_exact_committed_amount",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_noise_marine_counts_its_cascaded_cast_and_never_the_free_mana_price",
         "test_actual_painful_truths_uses_distinct_paid_colors_and_tax_without_overpay",
         "test_actual_paired_attack_locks_one_mill_count_before_any_opponents_graveyard_changes",
         "test_actual_prevented_damage_creates_no_source_damage_trigger",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_pyremaw_places_counter_before_power_damage_and_uses_departure_lki",
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
         "test_actual_sacrifice_cost_preserves_original_counter_count",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
@@ -18428,7 +18483,7 @@
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "No unconditional result owner exists for the primitive; emitted nodes retain every target, characteristic, event, history and actual result dependency. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
+      "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary. Restoring target precedence for a bound source-led possessive is killed by distinct source and target origin assertions; actual unequal-power native cases independently verify current and departure reads.",
       "blockers": [],
       "status": "trusted"
     },
@@ -18714,7 +18769,7 @@
     },
     {
       "id": "quantity_expression.public_query_effect_amount",
-      "version": 16,
+      "version": 17,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -18784,6 +18839,10 @@
         "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
       ],
       "positive_tests": [
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_compiler_lowers_public_query_amounts_across_contexts",
         "test_compiler_lowers_query_scaled_characteristics_across_contexts",
@@ -18793,48 +18852,50 @@
         "test_existing_public_quantity_spell_shapes_are_promotable",
         "test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
         "test_existing_query_source_self_activation_is_trusted_and_replays",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_number_of_tokens_complete_value_keeps_definition_and_quantity_authority",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
         "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
         "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
-        "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
-        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
-        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
         "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
-        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier",
+        "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result"
       ],
       "negative_tests": [
+        "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_counted_token_definition_retains_trailing_keywords",
+        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_library_amount_result_capabilities_cannot_be_omitted",
         "test_number_of_tokens_complete_value_rejects_unknown_quantity_definition_and_missing_producer",
+        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
         "test_public_quantity_registration_rejects_malformed_and_missing_dependencies",
         "test_public_query_amount_grammar_and_schema_fail_closed",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier",
         "test_source_scalar_adaptation_consumes_all_fixed_components",
         "test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
-        "test_zero_public_count_creates_no_choice_or_scry_surveil_event",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
-        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
-        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
         "test_verified_owner_withdrawals_reject_combined_group_results",
-        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
-        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
-        "test_original_complete_admission_preserves_both_halves_and_live_locked_quantity",
-        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
-        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
+        "test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "interaction_tests": [
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
@@ -18848,28 +18909,26 @@
         "test_query_amounts_trigger_uses_normalized_event_and_apnap_owner",
         "test_query_amounts_use_current_layer_five_state_and_locked_controller",
         "test_query_scaled_characteristics_use_resolution_state_and_cleanup",
+        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier",
         "test_real_variable_scry_and_surveil_private_partition_pending_reload_and_replay",
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
-        "test_zero_query_amount_and_stale_target_use_existing_target_owner",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
-        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
+        "test_zero_query_amount_and_stale_target_use_existing_target_owner"
       ],
       "multiplayer_tests": [
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_master_waves_value_tokens_double_enter_with_anthem_and_die_after_bounce_replays",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
-        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier",
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "privacy_tests": [
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
@@ -18885,6 +18944,10 @@
         "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
       ],
       "replay_tests": [
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
         "test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
@@ -18893,12 +18956,9 @@
         "test_original_ugins_insight_uses_greatest_mana_value_then_draws_and_replays",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
         "test_query_amount_four_player_projection_save_load_and_replay",
-        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_real_attack_reads_soldiers_after_response_and_creates_only_one_artifact_batch",
-        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier"
+        "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier",
+        "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -18917,7 +18977,7 @@
     },
     {
       "id": "continuous.characteristics.query_power_toughness_definition",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -18975,20 +19035,24 @@
         "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query"
       ],
       "positive_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_definitions_preserve_complete_nested_public_arithmetic",
+        "test_originals_have_complete_normal_binding_and_exact_capability_minima",
         "test_query_definitions_apply_in_every_zone_and_preserve_undefined_field",
         "test_query_power_toughness_definition_grammar_compiles_closed_fragments",
-        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary",
-        "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
-        "test_originals_have_complete_normal_binding_and_exact_capability_minima"
+        "test_shared_characteristic_queries_preserve_union_exclusion_and_late_layer_boundary"
       ],
       "negative_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_hand_arithmetic_reads_only_cardinality_and_counter_arithmetic_remains_closed",
         "test_query_power_toughness_definition_descriptors_fail_closed",
@@ -18998,46 +19062,53 @@
         "test_verified_each_owner_withdrawal_blocks_only_dependent_compositions"
       ],
       "interaction_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
+        "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
         "test_query_definition_ability_removal_sibling_withholds_runtime_admission",
         "test_query_definition_copy_and_control_change_use_current_source",
         "test_query_definition_counts_layer_five_types_and_orders_in_layer_seven_a",
-        "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
-        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
-        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes"
       ],
       "multiplayer_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
         "test_query_definition_copy_and_control_change_use_current_source",
         "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
         "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss"
       ],
       "privacy_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_query_definition_hand_count_projects_without_hidden_identity",
-        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
-        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
+        "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes"
       ],
       "replay_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
         "test_query_definition_save_load_and_replay_exactly",
-        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss",
+        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes",
         "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
-        "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure"
+        "test_real_paid_maraxus_counts_dual_types_once_and_rechecks_tap_and_ability_loss"
       ],
       "required_evidence": [
         "positive",
@@ -19418,7 +19489,7 @@
     },
     {
       "id": "continuous.attached.fixed_characteristics",
-      "version": 18,
+      "version": 19,
       "official_rules": [
         "301.5",
         "303.4",
@@ -19516,6 +19587,7 @@
         "test_ability_and_type_without_stats_keeps_the_independent_exact_child",
         "test_actual_clawing_torment_grants_upkeep_loss_to_noncreature_controller",
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
@@ -19524,6 +19596,7 @@
         "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
         "test_actual_sea_legs_tracks_type_change_and_source_removal",
         "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
         "test_all_existing_grant_scopes_declare_the_live_skulk_owner",
         "test_animate_dead_and_bestow_modifiers_use_generic_attached_handler",
@@ -19562,7 +19635,9 @@
       "negative_tests": [
         "test_ability_and_type_without_stats_keeps_the_independent_exact_child",
         "test_actual_clawing_torment_grants_upkeep_loss_to_noncreature_controller",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_relic_bane_grants_upkeep_loss_to_artifact_controller_after_aura_departure",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_canonically_verified_grant_and_keyword_withdrawals_keep_originals_residual",
         "test_compiler_keeps_unsupported_attached_grants_residual",
         "test_compiler_rejects_conditional_and_unrepresented_text",
@@ -19597,6 +19672,7 @@
       "interaction_tests": [
         "test_actual_clawing_torment_grants_upkeep_loss_to_noncreature_controller",
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
@@ -19606,6 +19682,7 @@
         "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
         "test_actual_sea_legs_tracks_type_change_and_source_removal",
         "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
         "test_attached_characteristics_and_requirement_end_with_attachment",
         "test_attached_fixed_ward_uses_current_fragment",
@@ -19640,12 +19717,14 @@
       "multiplayer_tests": [
         "test_actual_clawing_torment_grants_upkeep_loss_to_noncreature_controller",
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
         "test_actual_relic_bane_grants_upkeep_loss_to_artifact_controller_after_aura_departure",
         "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
         "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_attack_grants_gain_life_and_offer_only_attacking_untap_targets",
         "test_indestructibility_accepts_land_and_creature_but_zero_toughness_still_dies",
         "test_multiple_sources_apply_independently_in_four_player_game",
@@ -19664,6 +19743,7 @@
       "privacy_tests": [
         "test_actual_clawing_torment_grants_upkeep_loss_to_noncreature_controller",
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
@@ -19686,6 +19766,7 @@
       "replay_tests": [
         "test_actual_clawing_torment_grants_upkeep_loss_to_noncreature_controller",
         "test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_granted_skulk_blocks_use_holder_current_power_not_grant_controller",
         "test_actual_hardlight_keeps_entry_exile_and_ward_on_its_noncreature_artifact",
         "test_actual_indestructibility_keeps_destroyed_artifact_and_exile_remains_legal",
@@ -19695,6 +19776,7 @@
         "test_actual_relic_ward_protects_noncreature_artifact_but_keeps_mana_ability",
         "test_actual_sea_legs_tracks_type_change_and_source_removal",
         "test_actual_serra_boon_uses_foreign_recipient_color_and_frog_causes_stabilization",
+        "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_tahngarth_rage_updates_at_attack_and_keeps_damage_and_replay_exact",
         "test_attack_grants_gain_life_and_offer_only_attacking_untap_targets",
         "test_granted_prowess_response_bounce_invalidates_old_recipient_and_replays",
@@ -22737,7 +22819,7 @@
     },
     {
       "id": "combat.block.menace",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "509.1c",
         "702.111",
@@ -22781,28 +22863,33 @@
         "CommanderEngine._complete_blockers"
       ],
       "positive_tests": [
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_current_attacking_creature_has_one_redundant_restriction",
         "test_menace_requires_zero_or_two_blockers_and_projects_the_minimum"
       ],
       "negative_tests": [
-        "test_nonattacker_noncreature_and_nonmenace_have_no_restriction",
-        "test_malformed_current_characteristics_and_identity_fail_closed"
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
+        "test_malformed_current_characteristics_and_identity_fail_closed",
+        "test_nonattacker_noncreature_and_nonmenace_have_no_restriction"
       ],
       "interaction_tests": [
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_effective_menace_gain_and_loss_change_the_shared_restriction",
         "test_menace_can_make_a_block_requirement_impossible",
-        "test_two_blockers_satisfy_menace_and_the_block_requirement",
-        "test_menace_counter_feeds_offer_and_command_block_legality"
+        "test_menace_counter_feeds_offer_and_command_block_legality",
+        "test_two_blockers_satisfy_menace_and_the_block_requirement"
       ],
       "multiplayer_tests": [
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
         "test_four_player_menace_is_seat_scoped_and_replays"
       ],
       "privacy_tests": [
         "test_four_player_menace_is_seat_scoped_and_replays"
       ],
       "replay_tests": [
-        "test_menace_requires_zero_or_two_blockers_and_projects_the_minimum",
-        "test_four_player_menace_is_seat_scoped_and_replays"
+        "test_actual_glory_chaser_gains_renown_then_requires_two_blockers_in_later_combat",
+        "test_four_player_menace_is_seat_scoped_and_replays",
+        "test_menace_requires_zero_or_two_blockers_and_projects_the_minimum"
       ],
       "required_evidence": [
         "positive",
@@ -24220,7 +24307,7 @@
     },
     {
       "id": "mana.production.public_quantity",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "106.1",
         "106.4",
@@ -24276,6 +24363,7 @@
         "quorune.rules.activation.counter_costs.preview_source_counter_removal_cost"
       ],
       "positive_tests": [
+        "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
         "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
@@ -24284,11 +24372,13 @@
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
       ],
       "negative_tests": [
+        "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
         "test_projected_dynamic_allocation_rejects_same_malformed_browser_and_server_values",
         "test_quantity_mana_grammar_cost_and_codec_boundaries",
         "test_quantity_mana_invalid_allocation_rolls_back"
       ],
       "interaction_tests": [
+        "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
         "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
@@ -24296,6 +24386,7 @@
         "test_quantity_mana_source_cost_uses_postcost_and_predeparture_values"
       ],
       "multiplayer_tests": [
+        "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
       ],
@@ -24303,6 +24394,7 @@
         "test_quantity_mana_controller_query_is_offered_accepted_and_replayed"
       ],
       "replay_tests": [
+        "test_actual_cloudpost_enters_tapped_and_pays_current_global_locus_quantity_for_its_controller",
         "test_counter_price_zero_output_is_read_only_offered_and_paid_once",
         "test_original_baldurs_gate_excludes_itself_from_offered_and_paid_mana",
         "test_projected_lotus_form_accepts_legal_dynamic_allocation_in_real_browser_validator",
@@ -57368,7 +57460,7 @@
     },
     {
       "id": "activation.usage.once_per_object",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "109.5",
         "400.7",
@@ -57430,41 +57522,47 @@
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
-        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_complete_conjunction_preserves_all_fields_and_refuses_partial_unknown_or_duplicate_clauses",
         "test_once_per_object_is_distinct_from_turn_and_legacy_usage_fields",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change",
+        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
         "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
-        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
-        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry"
       ],
       "negative_tests": [
-        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_complete_conjunction_preserves_all_fields_and_refuses_partial_unknown_or_duplicate_clauses",
         "test_once_per_object_is_distinct_from_turn_and_legacy_usage_fields",
-        "test_verified_withdrawals_and_fresh_composition_usage_omissions_fail_closed",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change",
+        "test_ten_originals_have_complete_registration_and_independent_new_runtime_minima",
         "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
         "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
-        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+        "test_verified_withdrawals_and_fresh_composition_usage_omissions_fail_closed"
       ],
       "interaction_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change",
         "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
-        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
-        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry"
       ],
       "multiplayer_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change",
         "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
-        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
-        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry"
       ],
       "privacy_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change",
         "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
-        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
-        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry"
       ],
       "replay_tests": [
+        "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
+        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change",
         "test_thought_shucker_commits_one_use_and_bounce_returns_a_fresh_allowance",
-        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry",
-        "test_once_usage_is_not_spent_by_threshold_rejection_and_survives_turn_and_control_change"
+        "test_trenches_once_limit_keeps_target_scope_and_linked_return_across_reentry"
       ]
     },
     {
@@ -64495,7 +64593,7 @@
     },
     {
       "id": "combat.declaration.bound_static_rules",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "611.1",
         "611.3a",
@@ -64544,9 +64642,11 @@
       "positive_tests": [
         "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
         "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
         "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
         "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink",
         "test_closed_codec_reserves_authority_and_relative_receiver_rule_scopes",
         "test_current_binding_reacts_to_control_phasing_giver_presence_and_fails_omission_mutant",
@@ -64555,9 +64655,11 @@
       "negative_tests": [
         "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
         "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
         "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
         "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink",
         "test_closed_codec_reserves_authority_and_relative_receiver_rule_scopes",
         "test_current_binding_reacts_to_control_phasing_giver_presence_and_fails_omission_mutant",
@@ -64568,28 +64670,35 @@
       "interaction_tests": [
         "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
         "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
         "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
         "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink"
       ],
       "multiplayer_tests": [
         "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
         "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
         "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
         "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink"
       ],
       "privacy_tests": [
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed"
       ],
       "replay_tests": [
         "test_actual_avatar_keeps_attack_requirement_after_receiver_loses_granted_double_strike",
         "test_actual_counter_membership_changes_and_later_unblockability_does_not_erase_declared_blockers",
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_detective_uses_current_giver_city_blessing_after_ascend_and_receiver_blanking",
         "test_actual_grand_melee_requires_able_attack_and_block_after_blocker_ability_loss",
         "test_actual_herald_rejects_block_after_receiver_blanking_while_true_flying_grant_is_removed",
+        "test_actual_ichor_threshold_keeps_new_block_illegal_but_preserves_an_existing_block",
         "test_actual_steel_retains_conditional_rule_and_stat_bonuses_but_receiver_loses_lifelink"
       ],
       "required_evidence": [
@@ -65529,7 +65638,7 @@
     },
     {
       "id": "resolution.event_player.fixed_damage",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "113.7a",
         "120.3a",
@@ -65584,12 +65693,14 @@
       "blockers": [],
       "status": "trusted",
       "positive_tests": [
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws",
         "test_result_keeps_source_and_event_player_without_a_target_choice",
         "test_verified_damage_withdrawal_keeps_existing_event_player_life_result"
       ],
       "negative_tests": [
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws",
         "test_malformed_damage_shapes_reject_wrong_source_amount_and_recipient",
@@ -65597,17 +65708,21 @@
         "test_verified_damage_withdrawal_keeps_existing_event_player_life_result"
       ],
       "interaction_tests": [
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ],
       "multiplayer_tests": [
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ],
       "privacy_tests": [
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ],
       "replay_tests": [
+        "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ]

@@ -61,7 +61,10 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
     source = rf"(?:this (?:creature|permanent|artifact|land|enchantment)|{SourceReferenceSpec(source_name).regex_pattern})"
     if re.fullmatch(source + "['’]s", match["reference"], re.I):
         origin = ScalarAmountOrigin.SOURCE
-    elif reference == "its" and re.match(source + r" (?:gets|deals|gains)\b", body, re.I):
+    elif reference == "its" and (
+        re.match(source + r" (?:gets|deals|gains)\b", body, re.I)
+        or source_event and re.match(r"(?:it|him|her) (?:gets|deals|gains)\b", body, re.I)
+    ):
         origin = ScalarAmountOrigin.SOURCE
     elif (reference == "its" or re.fullmatch(r"that (?:creature|permanent|artifact|land)['’]s", reference)) and (
         isinstance(schema, Mapping) and schema.get("zones") == ["battlefield"]

@@ -483,6 +483,11 @@ existing owners. Newly created token references, targeted anaphora, union-event
 subjects, and unrepresented complete bodies are not rebound to the source.
 Effects on the source itself carry the existing logical-object reference;
 damage source references retain their ordinary last known source information.
+When that bound result begins with a source pronoun, a possessive scalar such
+as “its power” retains that same source even if the damage instruction also
+has a target. An explicit target-led result keeps its target characteristic.
+These roles are selected before result-slot lowering; equal source and target
+values cannot establish their equivalence.
 
 Scheduled each-player and each-opponent upkeep or draw-step triggers preserve the trigger
 source's controller separately from the active player. Fixed nontargeted

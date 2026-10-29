@@ -9373,6 +9373,28 @@
         "test_fixed_sacrifice_additional_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "inherited-source-target-role-compositions",
+      "patterns": [
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/test_source_characteristic_compositions.py",
+        "tests/test_granted_combat_compositions.py",
+        "tests/test_death_locus_compositions.py",
+        "tests/inherited_composition_fixture.py",
+        "tests/fixtures/inherited-rule-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_source_characteristic_compositions",
+        "test_granted_combat_compositions",
+        "test_death_locus_compositions",
+        "test_source_damage_scalars",
+        "test_cast_spell_mana_values",
+        "test_scalar_effect_amounts",
+        "test_fixed_creature_power_damage",
+        "test_escaped_entry_counters",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
