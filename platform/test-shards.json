@@ -188,6 +188,8 @@
       "test_turn_structure_rules",
       "test_type_replacement_grants",
       "test_typed_ability_fragments",
+      "test_untargeted_untap",
+      "test_untargeted_untap_native",
       "test_variable_library_counts"
     ],
     "functional-03": [

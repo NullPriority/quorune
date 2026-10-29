@@ -146,3 +146,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0129 — public-state trigger observation](0129-public-state-trigger-observation.md)
 - [ADR 0130 — casting source placement before costs](0130-casting-source-placement-before-costs.md)
 - [ADR 0131 — typed private library ordering](0131-typed-private-library-ordering.md)
+- [ADR 0132 — untargeted land untap choices](0132-untargeted-land-untap-choices.md)

@@ -7,7 +7,7 @@ import re
 from typing import Any, Mapping
 
 from .affected_player_discard_templates import (
-    fixed_controller_discard_effect_template,
+    standalone_controller_discard_effect_template,
 )
 from .draw_templates import fixed_draw_effect_template
 from .life_templates import fixed_life_effect_template
@@ -52,9 +52,9 @@ def fixed_controller_effect_clause(
         ):
             return effects[0], mechanics
         return None
-    discard = fixed_controller_discard_effect_template(text)
+    discard = standalone_controller_discard_effect_template(text)
     if discard is not None:
-        _template, effects, target_schema, mechanics = discard.compiled()
+        _template, effects, target_schema, mechanics = discard
         if target_schema is None and len(effects) == 1:
             return effects[0], mechanics
         return None

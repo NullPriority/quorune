@@ -163,6 +163,9 @@ def _source_context_resolution_template(
 
 def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate | None:
     """Retain the precedence of leaves that do not inspect source context."""
+    from .untargeted_untap_templates import fixed_land_untap_choice_template
+    untap = fixed_land_untap_choice_template(text)
+    if untap is not None:return untap
     from .fixed_top_order_templates import fixed_top_order_template
     top_order=fixed_top_order_template(text)
     if top_order is not None:return top_order

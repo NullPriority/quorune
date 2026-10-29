@@ -430,6 +430,7 @@
     "tests/fixtures/union-receiver-cards.json",
     "tests/fixtures/unpreventable-damage-cards.json",
     "tests/fixtures/untap-selection-limit-cards.json",
+    "tests/fixtures/untargeted-untap-cards.json",
     "tests/fixtures/vanishing-cards.json",
     "tests/fixtures/variable-library-count-cards.json",
     "tests/fixtures/waterbend-cards.json",

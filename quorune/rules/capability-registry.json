@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 569,
+  "registry_version": 570,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -170,6 +170,12 @@
       "mechanic_id": "fixed-public-state-trigger",
       "capabilities": [
         "trigger.state.fixed_public_condition"
+      ]
+    },
+    {
+      "mechanic_id": "fixed-untargeted-land-untap",
+      "capabilities": [
+        "permanent.untap.fixed_land_choice"
       ]
     },
     {
@@ -15246,7 +15252,7 @@
     },
     {
       "id": "choice.affected_player.fixed_controller_discard",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "101.4",
         "109.5",
@@ -15296,24 +15302,41 @@
         "quorune.rules.affected_player_discard_capability_shapes.is_closed_fixed_bound_discard_program"
       ],
       "positive_tests": [
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+        "test_controller_discard_carrier_survives_flattening_without_widening_legacy_leaf",
+        "test_optional_draw_discard_retains_new_leaf_owner_and_legacy_shape",
         "test_standalone_controller_discard_uses_private_affected_player_choice"
       ],
       "negative_tests": [
-        "test_context_discard_scope_and_shape_boundaries_fail_closed"
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
+        "test_context_discard_scope_and_shape_boundaries_fail_closed",
+        "test_controller_discard_carrier_survives_flattening_without_widening_legacy_leaf",
+        "test_controller_discard_owner_withdrawal_closes_whole_ordered_program",
+        "test_optional_draw_discard_retains_new_leaf_owner_and_legacy_shape"
       ],
       "interaction_tests": [
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_context_discard_runtime_is_private_principal_correct_and_replays",
         "test_controller_discard_uses_short_hand_and_skips_empty_hand"
       ],
       "multiplayer_tests": [
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_context_discard_runtime_is_private_principal_correct_and_replays",
         "test_controller_discard_uses_short_hand_and_skips_empty_hand"
       ],
       "privacy_tests": [
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_context_discard_runtime_is_private_principal_correct_and_replays",
         "test_controller_discard_uses_short_hand_and_skips_empty_hand"
       ],
       "replay_tests": [
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_context_discard_runtime_is_private_principal_correct_and_replays",
         "test_controller_discard_uses_short_hand_and_skips_empty_hand"
       ],
@@ -37388,7 +37411,7 @@
     },
     {
       "id": "effect.choice.optional_fixed",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "109.5",
         "608.2c",
@@ -37437,6 +37460,7 @@
         "quorune.semantic_choices.optional_effect._represented_effect"
       ],
       "positive_tests": [
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
@@ -37444,6 +37468,7 @@
         "test_main_phase_cast_trigger_optionally_returns_source",
         "test_optional_choice_apply_and_decline_resume_exact_effect",
         "test_optional_clause_preserves_mandatory_sequence_sibling",
+        "test_optional_draw_discard_retains_new_leaf_owner_and_legacy_shape",
         "test_optional_have_clause_preserves_target_and_source_result",
         "test_optional_source_self_result_keeps_target_timing_and_complete_span",
         "test_original_optional_have_modifier_targets_before_resolution_and_replays",
@@ -37453,10 +37478,12 @@
         "test_spell_trigger_and_activation_share_optional_effect_lowering"
       ],
       "negative_tests": [
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
         "test_linked_dynamic_random_and_other_player_variants_stay_residual",
+        "test_optional_draw_discard_retains_new_leaf_owner_and_legacy_shape",
         "test_optional_effect_exclusions_remain_material",
         "test_optional_effect_shape_and_handler_mutants_fail_closed",
         "test_optional_have_omission_dependency_and_open_result_fail_closed",
@@ -37469,6 +37496,7 @@
       "interaction_tests": [
         "test_accepting_prevented_draw_still_discards_after_real_prior_draw",
         "test_actual_academy_decline_consumes_limit_without_draw_or_discard",
+        "test_actual_koi_acceptance_draws_before_private_discard_and_saves_replays",
         "test_actual_mirri_optional_upkeep_decline_does_not_look_and_apply_orders_three",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_radha_optional_attack_mana_waits_for_choice_and_expires_before_blockers",
@@ -45049,6 +45077,130 @@
       "status": "trusted"
     },
     {
+      "id": "permanent.untap.fixed_land_choice",
+      "version": 1,
+      "official_rules": [
+        "115.1a",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2f",
+        "701.26b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A resolving controller chooses zero through a fixed maximum distinct current lands, without targeting, then attempts one simultaneous untap through the existing batch owner.",
+        "inputs": [
+          "Exact controller, maximum and any/controller land scope",
+          "Current public land rows and pinned logical incarnations"
+        ],
+        "outputs": [
+          "Principal-correct public choice",
+          "Existing SetPermanentsTappedIntent with ordinary stun and restraint semantics",
+          "Once-only ordered continuation and exact replay"
+        ],
+        "exclusions": [
+          "Variable amounts",
+          "Targeted wording",
+          "Other permanent predicates",
+          "Unrepresented conditional or coupled results"
+        ]
+      },
+      "dependencies": [
+        "permanent.untap.effect"
+      ],
+      "implementation_components": [
+        "quorune.untargeted_untap_model.FixedLandUntapChoiceSpec",
+        "quorune.semantic_choices.untargeted_untap.FixedLandUntapChoiceHandler",
+        "quorune.rules.untargeted_untap_shapes.untargeted_untap_payload_dependencies"
+      ],
+      "positive_tests": [
+        "test_actual_drake_chooses_opponent_hexproof_land_after_source_bounce",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_empty_and_zero_or_unchanged_land_choices",
+        "test_actual_palinchron_seven_distinct_lands_then_paid_return",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
+        "test_actual_simultaneous_untap_keeps_stun_and_step_restraint_owners",
+        "test_closed_schema_and_current_controller_scope",
+        "test_empty_choice_and_changed_land_or_controller_fail_closed",
+        "test_fixed_spell_entry_activated_and_ordered_bodies_preserve_non_targets",
+        "test_normal_provisional_registration_promotes_exact_leaf",
+        "test_untargeted_land_choice_candidates_have_canonical_replay_order",
+        "test_zero_subset_and_distinct_current_incarnations"
+      ],
+      "negative_tests": [
+        "test_actual_drake_chooses_opponent_hexproof_land_after_source_bounce",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_empty_and_zero_or_unchanged_land_choices",
+        "test_actual_palinchron_seven_distinct_lands_then_paid_return",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
+        "test_actual_simultaneous_untap_keeps_stun_and_step_restraint_owners",
+        "test_closed_schema_and_current_controller_scope",
+        "test_empty_choice_and_changed_land_or_controller_fail_closed",
+        "test_fixed_spell_entry_activated_and_ordered_bodies_preserve_non_targets",
+        "test_runtime_untargeted_choice_owner_is_inferred_without_coverage",
+        "test_untargeted_land_choice_candidates_have_canonical_replay_order",
+        "test_verified_owner_withdrawal_keeps_ordinary_target_untap",
+        "test_zero_subset_and_distinct_current_incarnations"
+      ],
+      "interaction_tests": [
+        "test_actual_drake_chooses_opponent_hexproof_land_after_source_bounce",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_empty_and_zero_or_unchanged_land_choices",
+        "test_actual_palinchron_seven_distinct_lands_then_paid_return",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
+        "test_actual_simultaneous_untap_keeps_stun_and_step_restraint_owners"
+      ],
+      "multiplayer_tests": [
+        "test_actual_drake_chooses_opponent_hexproof_land_after_source_bounce",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_empty_and_zero_or_unchanged_land_choices",
+        "test_actual_palinchron_seven_distinct_lands_then_paid_return",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
+        "test_actual_simultaneous_untap_keeps_stun_and_step_restraint_owners"
+      ],
+      "privacy_tests": [
+        "test_actual_drake_chooses_opponent_hexproof_land_after_source_bounce",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_empty_and_zero_or_unchanged_land_choices",
+        "test_actual_palinchron_seven_distinct_lands_then_paid_return",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
+        "test_actual_simultaneous_untap_keeps_stun_and_step_restraint_owners"
+      ],
+      "replay_tests": [
+        "test_actual_drake_chooses_opponent_hexproof_land_after_source_bounce",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
+        "test_actual_empty_and_zero_or_unchanged_land_choices",
+        "test_actual_palinchron_seven_distinct_lands_then_paid_return",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
+        "test_actual_simultaneous_untap_keeps_stun_and_step_restraint_owners"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Rebuild and verify evidence after withdrawing the fine choice owner or underlying untap owner; the bounded choice rejects and ordinary draw remains independently supported.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the producer or current logical-incarnation validation is killed by compiler and choice witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "player.designation.citys_blessing",
       "version": 1,
       "official_rules": [
@@ -49450,7 +49602,7 @@
     },
     {
       "id": "resolution.effect_program.closed_components",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "608.2b",
         "608.2c",
@@ -49505,12 +49657,15 @@
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_discombobulate_lost_counter_target_prevents_the_order",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
         "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
         "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
         "test_closed_program_compiles_across_contexts_and_component_shapes",
@@ -49518,6 +49673,7 @@
         "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
         "test_fixed_controller_order_composes_in_spell_event_optional_and_counter_results",
         "test_fixed_mana_components_compose_with_owned_ordered_and_optional_results",
+        "test_fixed_spell_entry_activated_and_ordered_bodies_preserve_non_targets",
         "test_independent_multisentence_selection_keeps_complete_component_and_printed_order",
         "test_independent_query_results_share_ordered_program_owner",
         "test_measured_corpus_lower_bound_is_capability_closed",
@@ -49526,6 +49682,7 @@
         "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_paid_ordered_body_binds_the_nested_sequence_and_rejects_malformed_children",
+        "test_plain_comma_untap_sequence_requires_complete_typed_siblings",
         "test_private_scry_suspends_draw_and_life_then_replays",
         "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
         "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
@@ -49533,10 +49690,13 @@
       "negative_tests": [
         "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_discombobulate_lost_counter_target_prevents_the_order",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
         "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
         "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_both_originals_have_normal_strict_admission_and_independent_mode_scope_minima",
         "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
@@ -49545,6 +49705,7 @@
         "test_current_catalog_equivalence_is_source_cost_body_bound_and_never_mutates_snapshots",
         "test_fixed_controller_order_composes_in_spell_event_optional_and_counter_results",
         "test_fixed_mana_components_compose_with_owned_ordered_and_optional_results",
+        "test_fixed_spell_entry_activated_and_ordered_bodies_preserve_non_targets",
         "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
         "test_multisentence_component_omission_and_dependency_withdrawal_fail_closed",
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
@@ -49554,6 +49715,7 @@
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_paid_ordered_body_binds_the_nested_sequence_and_rejects_malformed_children",
         "test_parser_shape_and_compiler_fail_closed",
+        "test_plain_comma_untap_sequence_requires_complete_typed_siblings",
         "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
         "test_stale_target_fizzles_every_three_component_effect",
         "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
@@ -49562,6 +49724,7 @@
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_discombobulate_lost_counter_target_prevents_the_order",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
         "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
         "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
@@ -49569,6 +49732,8 @@
         "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
         "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_actual_union_counts_hand_after_its_draw_and_replays",
@@ -49584,12 +49749,15 @@
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_discombobulate_lost_counter_target_prevents_the_order",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
         "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
         "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
         "test_actual_rotwidow_created_token_contributes_to_later_opponent_loss",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -49601,10 +49769,13 @@
       "privacy_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_discombobulate_lost_counter_target_prevents_the_order",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
         "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_actual_union_counts_hand_after_its_draw_and_replays",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
@@ -49617,12 +49788,15 @@
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
         "test_actual_discombobulate_lost_counter_target_prevents_the_order",
+        "test_actual_draw_discard_and_untap_obey_both_printed_orders",
         "test_actual_egg_activation_is_counterable_and_is_not_an_automatic_mana_source",
         "test_actual_eggs_pay_sacrifice_then_add_both_colors_and_private_draw_on_resolution",
         "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_novelist_treasure_trigger_waits_on_stack_and_keeps_red_after_source_departure",
         "test_actual_ponder_omen_and_entry_order_then_optional_shuffle_then_one_private_draw",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
+        "test_actual_rewind_and_snap_keep_real_target_loss_over_the_entire_effect",
+        "test_actual_rewind_uncounterable_spell_still_reaches_untap",
         "test_actual_sludge_retains_paid_entry_and_declined_departure_results",
         "test_countered_modal_activation_keeps_paid_costs_and_executes_no_other_mode",
         "test_original_augury_resumes_into_current_proliferate_choice_once",

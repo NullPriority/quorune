@@ -310,6 +310,7 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    'choose_untap_lands',
     'order_library_top','shuffle_controller_library',
     'create_token_then_counters',
     'prohibit_casting_until_end_of_turn',

@@ -7,6 +7,7 @@ from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 """Capability closure for generic two-clause effect sequences."""
 
 from typing import Any, Iterable, Mapping, Sequence
+from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .library_order_shapes import fixed_library_order_capabilities
 
 from .affected_player_sacrifice_capability_shapes import (
@@ -16,6 +17,7 @@ from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
 from ..random_discard import random_discard_node_capabilities
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
+    fixed_controller_discard_node_capabilities,
 )
 from .counter_capability_shapes import (
     fixed_counter_placement_group_node_capabilities,
@@ -118,6 +120,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_land_untap_choice_capabilities,
     fixed_library_order_capabilities,
     fixed_stack_spell_copy_node_capabilities,
     created_token_counter_node_capabilities,
@@ -148,6 +151,7 @@ _COMPONENT_RESOLVERS = (
     fixed_owner_zone_move_node_capabilities,
     linked_exile_return_node_capabilities,
     all_counter_removal_node_capabilities,
+    fixed_controller_discard_node_capabilities,
     fixed_affected_player_discard_node_capabilities,
     fixed_affected_player_sacrifice_node_capabilities,
     fixed_counter_placement_batch_node_capabilities,
@@ -363,8 +367,10 @@ def fixed_optional_effect_node_capabilities(
         return tuple(sorted({FIXED_OPTIONAL_EFFECT_CAPABILITY, *linked}))
     from .optional_draw_discard import optional_draw_discard_is_closed
     if target_schema is None and optional_draw_discard_is_closed(nested,player='$controller'):
+        from ..compiler.affected_player_discard_templates import FIXED_CONTROLLER_DISCARD_MECHANIC
+        discard = fixed_controller_discard_node_capabilities(effects=(nested[1],),target_schema=None,mechanic_ids=mechanics) if FIXED_CONTROLLER_DISCARD_MECHANIC in mechanics else fixed_affected_player_discard_node_capabilities(effects=(nested[1],),target_schema=None,mechanic_ids=mechanics,allow_controller=True)
         components=(closed_effect_component_capabilities((nested[0],),target_schema=None,mechanics=mechanics-{FIXED_OPTIONAL_EFFECT_MECHANIC}),
-            fixed_affected_player_discard_node_capabilities(effects=(nested[1],),target_schema=None,mechanic_ids=mechanics,allow_controller=True))
+            discard)
         return tuple(sorted({FIXED_OPTIONAL_EFFECT_CAPABILITY,*(cap for caps in components for cap in caps)})) if all(components) else ()
     if (
         not isinstance(nested, (list, tuple))

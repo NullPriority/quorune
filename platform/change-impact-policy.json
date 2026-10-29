@@ -9549,6 +9549,41 @@
         "test_card_program_trust",
         "test_continuous_compiler_hardening"
       ]
+    },
+    {
+      "id": "fixed-untargeted-land-untap",
+      "patterns": [
+        "quorune/compiler/closed_effect_programs.py",
+        "quorune/compiler/fixed_controller_effect_sequences.py",
+        "quorune/rules/fixed_controller_effect_shapes.py",
+        "quorune/untargeted_untap_model.py",
+        "quorune/compiler/untargeted_untap_templates.py",
+        "quorune/rules/untargeted_untap_shapes.py",
+        "quorune/semantic_choices/untargeted_untap.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/compiler/program_generation.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/rules/effect_node_capabilities.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/rules/capabilities.py",
+        "quorune/semantic_choices/defaults.py",
+        "tests/test_untargeted_untap.py",
+        "tests/test_untargeted_untap_native.py",
+        "tests/untargeted_untap_fixture.py",
+        "tests/fixtures/untargeted-untap-cards.json"
+      ],
+      "test_modules": [
+        "test_untargeted_untap",
+        "test_untargeted_untap_native",
+        "test_targeted_tap_state_effect_clauses",
+        "test_fixed_homogeneous_target_sets",
+        "test_fixed_optional_effect_choices",
+        "test_closed_effect_programs",
+        "test_card_program_trust",
+        "test_fixed_controller_effect_sequences",
+        "test_optional_draw_discard_sequences"
+      ]
     }
   ],
   "symbol_rules": [

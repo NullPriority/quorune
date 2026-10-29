@@ -3,6 +3,7 @@ from __future__ import annotations
 """Canonical dispatch to independently owned typed effect capability shapes."""
 
 from typing import Any,Mapping,Sequence
+from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .library_order_shapes import fixed_library_order_capabilities
 from .control_capability_shapes import fixed_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
@@ -76,6 +77,7 @@ def effect_node_capabilities(
     except AttachmentReferenceError:
         return set()
     for resolver in (
+        fixed_land_untap_choice_capabilities,
         fixed_library_order_capabilities,
         fixed_prevention_component_capabilities,
         created_token_counter_node_capabilities,

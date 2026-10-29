@@ -173,6 +173,17 @@ permissions cause one untap attempt. An own-step-only prohibition does not
 block that additional untap. General prohibitions and stun replacement still
 apply, and resulting triggers wait for upkeep and ordinary APNAP placement.
 
+Fixed untargeted land untap instructions use a controller-issued public choice
+at resolution. The new continuation pins current physical and logical land
+identities, orders eligible references canonically across replay loads,
+accepts zero through its fixed maximum without duplicates, and
+revalidates current type, phasing and the printed controller scope. Unqualified
+wording includes other players' lands and bypasses targeting restrictions.
+`SetPermanentsTappedIntent` commits the chosen set through the existing batch
+owner before normalized occurrences are dispatched. Stun replacement and untap
+permissions remain ordinary tap-state rules. No eligible lands requires no
+choice. See [ADR 0132](../adr/0132-untargeted-land-untap-choices.md).
+
 Attached untap restraints remain abilities of their current giver. The step
 planner and direct untap owner read the same typed current attachment rule.
 A controller-step restraint permits ordinary untap effects outside that step;

@@ -608,6 +608,24 @@ instruction. Integration tests assert the promoted effect order and player
 selector; leaf tests retain their narrower grammar boundaries. The whole-hand
 impact rule includes those existing consumer expectations.
 
+Fixed untargeted land untap instructions compile through
+`compiler/untargeted_untap_templates.py` with no target schema. The resolving
+controller chooses a bounded distinct current land set; an explicit printed
+controller qualifier narrows that scope. The executable descriptor independently
+requires its choice and ordinary untap owners. Targeted wording, variable
+quantities and other predicates retain separate grammar boundaries.
+
+A controller draw/discard pair retains the standalone discard declaration when
+flattened into a larger ordered program or enclosed by an optional draw/discard
+wrapper. Both owners propagate that declaration's dependency. Unsigned historical pair shapes keep
+their existing proof; the isolated legacy affected-player leaf remains narrower.
+The canonical balanced top-level partitioner also recognizes comma-separated
+action lists with an optional later “then” or “and.” Every complete clause must
+have a typed proof, so partial predicates, unknown siblings and unrepresented
+conditional or linked results do not become executable. The
+[rules-kernel contract](rules-kernel.md) owns the public choice and shared
+simultaneous tap-state mutation.
+
 `compiler/spell_self_exile.py` recognizes a terminal source-self exile clause
 only at the end of an ordinary single-face spell's complete source. Its body
 must compile independently with unchanged targets and prices. The resulting
