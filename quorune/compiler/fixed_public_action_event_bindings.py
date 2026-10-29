@@ -50,7 +50,8 @@ _PUBLIC_GRAVEYARD_DEPARTURE_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _CONTROLLED_TOKEN_ENTRY_TRIGGER = re.compile(
-    r"^Whenever one or more tokens you control enter, (?P<body>.+)$",
+    r"^Whenever (?P<quantity>a token|one or more tokens) you control "
+    r"(?P<verb>enters|enter), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _CONTROLLED_TOKEN_LEAVE_TRIGGER = re.compile(
@@ -340,9 +341,12 @@ def _public_token_zone_spec(
 ) -> FixedPublicEventBindingSpec | None:
     token_entry = _CONTROLLED_TOKEN_ENTRY_TRIGGER.fullmatch(material_line)
     if token_entry is not None:
+        singular = token_entry.group("quantity").casefold() == "a token"
+        if token_entry.group("verb").casefold() != ("enters" if singular else "enter"):
+            return None
         return _spec(
             "permanent.enter",
-            "one_or_more_controlled_tokens_enter",
+            "controlled_token_enters" if singular else "one_or_more_controlled_tokens_enter",
             token_entry.group("body"),
             "fixed-counter-public-zone-trigger-v1",
             "trigger-event-normalized-zone-change",

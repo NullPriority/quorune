@@ -3980,6 +3980,12 @@ one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
 and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
 sacrifice, source-token damage, chosen and modified forms remain residual.
+Controlled token entry keeps singular and one-or-more subjects distinct. Both
+read the same committed token and controller facts, including noncreature
+tokens. Only the one-or-more descriptor coalesces entries within a simultaneous
+batch. Singular entry gives each token its own ordinary trigger and target
+announcement. Unrepresented result gates and per-token batch quantities remain
+residual.
 Singular source-qualified damage subjects reuse the sealed type, subtype union,
 supertype, and color predicates of the batch owner. Each qualifying source and
 player recipient yields its own trigger; the one-or-more descriptor alone

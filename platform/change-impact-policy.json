@@ -9797,6 +9797,22 @@
         "test_event_player_sacrifices",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "singular-controlled-token-entry",
+      "patterns": [
+        "quorune/compiler/fixed_public_action_event_bindings.py",
+        "quorune/compiler/public_event_closure_variants.py",
+        "tests/test_singular_token_entry*.py",
+        "tests/fixtures/singular-token-entry-cards.json"
+      ],
+      "test_modules": [
+        "test_singular_token_entry",
+        "test_singular_token_entry_native",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_casting_payment_keywords"
+      ]
     }
   ],
   "symbol_rules": [

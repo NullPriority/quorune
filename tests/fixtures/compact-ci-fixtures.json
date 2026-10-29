@@ -365,6 +365,7 @@
     "tests/fixtures/self-zone-discard-cast-cards.json",
     "tests/fixtures/shared-characteristic-query-cards.json",
     "tests/fixtures/shared-creature-type-cards.json",
+    "tests/fixtures/singular-token-entry-cards.json",
     "tests/fixtures/soulbond-cards.json",
     "tests/fixtures/source-attack-alone-cards.json",
     "tests/fixtures/source-block-pair-cards.json",
