@@ -366,6 +366,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'created-token-counter-followup':('token.creation.post_creation_counter',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     'whole-hand-discard': ('zone.discard.whole_hand',),
+    'whole-hand-discard-result': ('zone.discard.whole_hand_result',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS
@@ -520,6 +521,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-controller-shuffle',
         'fixed-public-state-trigger',
         'created-token-counter-followup',
+        'whole-hand-discard-result',
         'temporary-cast-prohibition',
         'temporary-library-search-prohibition',
         'random-own-graveyard-return',

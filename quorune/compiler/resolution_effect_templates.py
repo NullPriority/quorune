@@ -5,6 +5,7 @@ from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
+from .discard_result_templates import discard_result_draw_template
 from .hand_entry_templates import fixed_draw_then_hand_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
 from .as_unblocked_templates import temporary_as_unblocked_template
@@ -144,7 +145,7 @@ def _source_context_resolution_template(
     if permission is not None:return permission
     hand_entry=fixed_draw_then_hand_entry_template(text)
     if hand_entry is not None:return hand_entry
-    discard = random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
+    discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:
         return discard
     mana = fixed_resolution_mana_effect_template(text) or public_quantity_mana_effect_template(text, source_name=card_name)

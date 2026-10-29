@@ -118,6 +118,7 @@
     "tests/fixtures/designation-prevention-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",
     "tests/fixtures/devour-cards.json",
+    "tests/fixtures/discard-result-cards.json",
     "tests/fixtures/disjoint-negative-keyword-cards.json",
     "tests/fixtures/distinct-target-cost-cards.json",
     "tests/fixtures/draw-rules-cards.json",

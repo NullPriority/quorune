@@ -1878,6 +1878,13 @@
     {
       "id": "whole-hand-discard-contract",
       "patterns": [
+        "quorune/discard_result_model.py",
+        "quorune/compiler/discard_result_templates.py",
+        "quorune/rules/discard_result*.py",
+        "quorune/semantic_choices/discard_results.py",
+        "tests/test_discard_results.py",
+        "tests/test_discard_result_native.py",
+        "tests/fixtures/discard-result-cards.json",
         "quorune/whole_hand_discard*.py",
         "quorune/compiler/whole_hand_discard_templates.py",
         "quorune/semantic_runtime/whole_hand_discard.py",
@@ -1889,6 +1896,8 @@
         "tests/fixtures/whole-hand-discard-cards.json"
       ],
       "test_modules": [
+        "test_discard_results",
+        "test_discard_result_native",
         "test_whole_hand_discard",
         "test_fixed_affected_player_discards",
         "test_fixed_controller_effect_sequences",

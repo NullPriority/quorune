@@ -203,6 +203,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/mana_spending_model.py",
         "quorune/scalar_effect_amount_model.py",
         "quorune/whole_hand_discard_model.py",
+        "quorune/discard_result_model.py",
         "quorune/read_ahead.py",
         "quorune/replacement/immutable.py",
         "quorune/riot.py",

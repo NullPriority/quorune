@@ -37,7 +37,7 @@ class WholeHandDiscardCompilerTests(unittest.TestCase):
         self.assertIsNone(whole_hand_discard_effect_template('You may discard your hand.'))
         for text in ('Each player on your team discards their hand.',
                      'Discard any number of cards from your hand.',
-                     'Each player discards their hand, then draws that many cards.',
+                     'Each player discards their nonland cards, then draws that many cards.',
                      'Discard your hand, then draw two cards. You win the game.'):
             ir=compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=load_default_capability_registry())
             self.assertNotEqual('exact',ir.status,text)
@@ -48,8 +48,14 @@ class WholeHandDiscardCompilerTests(unittest.TestCase):
         for change in ({'actor':'B'},{'players':['B','C']},{'players':True},{'extra':0}):
             with self.assertRaises(ValueError):WholeHandDiscardHandler().lower({**base,**change},context)
         data=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
-        data['capabilities']=[r for r in data['capabilities'] if r['id']!='zone.discard.whole_hand']
-        ir=compile_oracle_card(replace(query_record('Discard your hand.'),type_line='Sorcery'),capability_registry=CapabilityRegistry(data))
+        next(r for r in data['capabilities'] if r['id']=='zone.discard.whole_hand').update(status='blocked',blockers=['Whole-hand authority withdrawn'])
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
+        registry=CapabilityRegistry(data)
+        index=build_index(registry_value=data,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
+        ir=compile_oracle_card(replace(query_record('Discard your hand.'),type_line='Sorcery'),capability_registry=registry)
         self.assertNotEqual('exact',ir.status)
 
     def test_whole_hand_owner_unknown_membership_is_not_known_empty(self):

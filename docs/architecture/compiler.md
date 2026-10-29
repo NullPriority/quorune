@@ -4343,3 +4343,12 @@ keyword/CDA owner and declares that exact dependency. Unknown conditions,
 unadmitted children and generic token-origin inference remain outside the
 production. Prospective token objects participate in intrinsic entry-copy
 preparation without becoming committed battlefield choices prematurely.
+
+Complete whole-hand discard-and-draw clauses lower to a versioned result-bound
+instruction. Its closed quantity vocabulary is each affected player's own
+committed discard count or the greatest affected count, optionally plus one.
+The existing whole-hand transaction and ordinary draw pipeline own execution.
+Filtered hands, unbound event players and unknown linked tails remain residual;
+recognition does not close an unsupported companion body. See the
+[semantic handler contract](semantic-handlers.md) for replacement and privacy
+boundaries.

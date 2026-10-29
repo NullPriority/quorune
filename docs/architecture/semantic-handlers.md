@@ -347,6 +347,18 @@ Replacement continuations seal private membership, including logical object
 identity, and reject a changed hand before resuming. This snapshot is not
 published to another principal.
 
+Linked whole-hand discard and draw instructions use a separate typed result
+from that same discard owner. Authoritative hand membership is materialized
+without adding opponents' cards to the actor-visible object query. The result
+counts only new committed discard occurrences of those sealed incarnations,
+including redirected destinations. `IntentResultPlayerDraws` binds either each
+player's own count or the greatest affected count, with an explicit optional
+plus one, to ordinary draw instructions in APNAP order. Empty hands contribute
+zero. Casting-cost discards and earlier turn-history events cannot enter the
+result. Replacement suspension retains the intent identity; conditional return
+suspension retains the already bound draws through the existing completed-choice
+continuation. No new game-state cache or mutation owner is introduced.
+
 Mandatory “sacrifice a permanent” instructions for the resolving controller
 reuse the same `choose_cards_apnap` owner as fixed player-targeted sacrifices.
 The controller chooses only current eligible permanents they control, including
@@ -374,8 +386,10 @@ independent controller quantities read the public collection or current-turn
 history after the discard. The scalar history vocabulary includes cards
 discarded this turn from the existing normalized journal, including redirected
 discards. Optional wrappers keep their existing controller choice. Team-wide
-choices, filtered entire hands, greatest-discarded-this-way counts, and
-unrepresented linked tails remain residual.
+choices, filtered entire hands and unrepresented linked tails remain residual.
+Only complete represented discard-and-draw bodies gain the committed-count
+binding; token, characteristic-dependent and selected-subset results require
+their own contracts.
 
 Departure relevance is determined from object identity, expected incarnation,
 and public zone before a pending characteristic is evaluated. Empty departure

@@ -8,6 +8,8 @@ from .exploit_intent import ExploitSacrificeIntent
 from .life_execution import LIFE_INTENT_TYPES,execute_life_intent
 from .control_intents import GainControlIntent, GainControlSetIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
+from ..discard_result_model import DiscardWholeHandsResultIntent
+from ..rules.discard_results import execute_discard_result
 from .whole_hand_discard import execute_whole_hand_discard
 from ..random_discard import RandomDiscardIntent
 from .random_discard import execute_random_discard
@@ -617,8 +619,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -647,6 +649,7 @@ def _execute_player_intent(
             target_player=intent.target_player,source_id=intent.source_id)
     if isinstance(intent, DiscardWholeHandsIntent):
         return intent.actor, execute_whole_hand_discard(sink, intent)
+    if isinstance(intent, DiscardWholeHandsResultIntent):return intent.actor, execute_discard_result(sink, intent)
     if isinstance(intent, BecomeMonarchIntent):
         return intent.player, sink.become_monarch(
             intent.player,

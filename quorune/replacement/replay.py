@@ -1175,6 +1175,7 @@ def _decode_semantic_intent_continuation(
             "champion_exile",
             "champion_return",
             "cipher_encode",
+            "discard_hand_result",
             "destroy_permanent",
             "destroy_permanent_set",
             "destroy_permanent_targets",

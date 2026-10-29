@@ -191,8 +191,12 @@ class SnapshotSemanticChoiceQuery:
     resolution_source: SemanticSourceContext | None = None
     explore_action_version: int | None = None
     resolution_source_is_physical_card: bool | None = None
+    apnap_order: tuple[str, ...] = ()
+    discard_hand_inputs: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if self.discard_hand_inputs is not None and not isinstance(self.discard_hand_inputs, FrozenMap):
+            object.__setattr__(self, 'discard_hand_inputs', FrozenMap(self.discard_hand_inputs))
         if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:
             raise ValueError('Physical resolving-card facts must be boolean or absent')
         explore_action_version(self.explore_action_version)

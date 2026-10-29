@@ -677,3 +677,11 @@ designation and emit that same version-three fixed-color value. No additional
 designation or private-choice state is introduced. Pending entry reload
 reissues the entering Aura controller's capability; return and a later entry
 retain ordinary new-incarnation semantics and a fresh choice.
+
+Whole-hand result preparations use the closed `discard_hand_result` replacement
+intent kind. It retains affected players and private hand member identities so
+resumption rejects a changed incarnation or membership. These identities stay
+inside the authoritative continuation. Once the discard commits, any suspended
+conditional return retains the bound ordinary draw instructions through the
+existing completed-choice codec. The result introduces no state or checkpoint
+field; earlier whole-hand instructions retain their original representation.

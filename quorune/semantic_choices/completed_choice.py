@@ -70,6 +70,9 @@ def encode_remaining_completion(continuation, actor, response, completion, next_
 
 
 def encode_preparation_after_commit(continuation,actor,preparation,intents,results):
+    if preparation.auto_continue is not None and preparation.auto_continue.player_draws_from_result is not None:
+        if preparation.auto_continue.player_draws_from_result.intent_index not in results:
+            raise SemanticChoiceError('Discard preparation requires its committed per-player result')
     if preparation.auto_continue is not None and preparation.auto_continue.amount_from_result is not None:
         binding=preparation.auto_continue.amount_from_result
         if binding.intent_index not in results:

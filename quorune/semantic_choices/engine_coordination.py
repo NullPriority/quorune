@@ -16,6 +16,7 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
 from ..semantic_runtime.context import semantic_source_context
 from ..semantic_runtime.hand_visibility import hand_card_is_known_to, public_hand_owners
+from ..rules.discard_results import discard_result_hand_snapshot
 from ..semantic_runtime import (
     IntentPlan,
     prepare_draw_resolution,
@@ -560,6 +561,8 @@ class SemanticChoiceCoordinationMixin:
             rules_profile=self.state.config.effective_profile(len(self.seats)),
             seat_order=tuple(self.seats),
             active_order=tuple(self.active_seats),
+            apnap_order=tuple(self.apnap_order()),
+            discard_hand_inputs=discard_result_hand_snapshot(self, actor, choice_effect),
             object_rows=object_rows,
             stack_rows=self._semantic_choice_stack_rows(choice_effect),
             life_by_seat={

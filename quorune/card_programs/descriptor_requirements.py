@@ -7,6 +7,10 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..discard_result_model import DISCARD_RESULT_OPERATION, DISCARD_RESULT_CAPABILITY, validate_discard_draw
+        if value.get('op') == DISCARD_RESULT_OPERATION:
+            validate_discard_draw(value)
+            return (DISCARD_RESULT_CAPABILITY,)
         from ..rules.untargeted_untap_shapes import untargeted_untap_payload_dependencies
         untap = untargeted_untap_payload_dependencies(value)
         if untap:return untap

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 584,
+  "registry_version": 585,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -66199,6 +66199,127 @@
       "dependency_fail_closed_rationale": "The instruction is rejected without the whole-hand and canonical zone/typed discard capabilities.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the batch violates actual Wheel of Fortune original-hand movement assertions.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "zone.discard.whole_hand_result",
+      "version": 1,
+      "official_rules": [
+        "701.9a",
+        "701.9c",
+        "608.2c",
+        "608.2e",
+        "121.2",
+        "121.2c",
+        "614.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Sealed whole-hand discard results bind each affected player to their own or greatest committed count, then ordinary APNAP draws.",
+        "inputs": [
+          "Complete source-spanned discard/draw instruction",
+          "APNAP players and sealed hand incarnations",
+          "Canonical committed discard journal"
+        ],
+        "outputs": [
+          "Typed per-player committed discard counts",
+          "Ordinary draw instructions, including explicit plus one"
+        ],
+        "exclusions": [
+          "Filtered and chosen subsets",
+          "Unrepresented linked tails",
+          "Unknown reductions or offsets",
+          "Unbound event players"
+        ]
+      },
+      "dependencies": [
+        "zone.discard.whole_hand",
+        "zone.draw.library_to_hand"
+      ],
+      "implementation_components": [
+        "quorune.discard_result_model.DiscardWholeHandsResultIntent",
+        "quorune.discard_result_model.PlayerDiscardCounts",
+        "quorune.discard_result_model.IntentResultPlayerDraws",
+        "quorune.rules.discard_results.execute_discard_result",
+        "quorune.semantic_choices.discard_results.DiscardResultDrawHandler",
+        "quorune.compiler.discard_result_templates.discard_result_draw_template"
+      ],
+      "positive_tests": [
+        "test_discard_result_counts_bind_own_and_greatest_with_empty_and_plus_one",
+        "test_discard_result_identity_seals_private_members_and_rejects_malformed_data",
+        "test_discard_result_owner_uses_only_new_committed_selected_incarnations",
+        "test_discard_result_compiler_owns_complete_linked_counts_and_source_spans",
+        "test_discard_result_compiler_rejects_filtered_unknown_and_unbound_counts",
+        "test_discard_result_verified_owner_withdrawal_keeps_unrelated_draw",
+        "test_actual_windfall_uses_greatest_committed_discard_and_apnap_draw_order",
+        "test_actual_tolarian_winds_counts_current_hand_excluding_spell_and_empty_hand",
+        "test_actual_windfall_redirected_discard_pending_privacy_rollback_and_replay",
+        "test_actual_whispering_madness_draws_before_encoding_and_repeats_combat_copy",
+        "test_actual_retrace_and_flashback_keep_casting_discards_out_of_resolution_count",
+        "test_actual_soratami_return_cost_and_archivist_tap_cost_precede_discard_counts",
+        "test_actual_incendiary_command_orders_damage_then_each_players_own_discard_draw"
+      ],
+      "negative_tests": [
+        "test_discard_result_counts_bind_own_and_greatest_with_empty_and_plus_one",
+        "test_discard_result_identity_seals_private_members_and_rejects_malformed_data",
+        "test_discard_result_owner_uses_only_new_committed_selected_incarnations",
+        "test_discard_result_compiler_owns_complete_linked_counts_and_source_spans",
+        "test_discard_result_compiler_rejects_filtered_unknown_and_unbound_counts",
+        "test_discard_result_verified_owner_withdrawal_keeps_unrelated_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_windfall_uses_greatest_committed_discard_and_apnap_draw_order",
+        "test_actual_tolarian_winds_counts_current_hand_excluding_spell_and_empty_hand",
+        "test_actual_windfall_redirected_discard_pending_privacy_rollback_and_replay",
+        "test_actual_whispering_madness_draws_before_encoding_and_repeats_combat_copy",
+        "test_actual_retrace_and_flashback_keep_casting_discards_out_of_resolution_count",
+        "test_actual_soratami_return_cost_and_archivist_tap_cost_precede_discard_counts",
+        "test_actual_incendiary_command_orders_damage_then_each_players_own_discard_draw"
+      ],
+      "multiplayer_tests": [
+        "test_actual_windfall_uses_greatest_committed_discard_and_apnap_draw_order",
+        "test_actual_tolarian_winds_counts_current_hand_excluding_spell_and_empty_hand",
+        "test_actual_windfall_redirected_discard_pending_privacy_rollback_and_replay",
+        "test_actual_whispering_madness_draws_before_encoding_and_repeats_combat_copy",
+        "test_actual_retrace_and_flashback_keep_casting_discards_out_of_resolution_count",
+        "test_actual_soratami_return_cost_and_archivist_tap_cost_precede_discard_counts",
+        "test_actual_incendiary_command_orders_damage_then_each_players_own_discard_draw"
+      ],
+      "privacy_tests": [
+        "test_actual_windfall_uses_greatest_committed_discard_and_apnap_draw_order",
+        "test_actual_tolarian_winds_counts_current_hand_excluding_spell_and_empty_hand",
+        "test_actual_windfall_redirected_discard_pending_privacy_rollback_and_replay",
+        "test_actual_whispering_madness_draws_before_encoding_and_repeats_combat_copy",
+        "test_actual_retrace_and_flashback_keep_casting_discards_out_of_resolution_count",
+        "test_actual_soratami_return_cost_and_archivist_tap_cost_precede_discard_counts",
+        "test_actual_incendiary_command_orders_damage_then_each_players_own_discard_draw"
+      ],
+      "replay_tests": [
+        "test_actual_windfall_uses_greatest_committed_discard_and_apnap_draw_order",
+        "test_actual_tolarian_winds_counts_current_hand_excluding_spell_and_empty_hand",
+        "test_actual_windfall_redirected_discard_pending_privacy_rollback_and_replay",
+        "test_actual_whispering_madness_draws_before_encoding_and_repeats_combat_copy",
+        "test_actual_retrace_and_flashback_keep_casting_discards_out_of_resolution_count",
+        "test_actual_soratami_return_cost_and_archivist_tap_cost_precede_discard_counts",
+        "test_actual_incendiary_command_orders_damage_then_each_players_own_discard_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawn discard-result authority keeps the whole card residual; an ordinary unrelated draw remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "A guessed hand-size result fails the committed-occurrence witness, including no movement and unrelated prior events.",
       "blockers": [],
       "status": "trusted"
     },

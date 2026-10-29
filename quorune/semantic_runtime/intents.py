@@ -3,6 +3,7 @@ from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
+from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
@@ -1634,6 +1635,7 @@ SemanticIntent: TypeAlias = (
     | ProliferateIntent
     | DomainEffectIntent
     | DiscardWholeHandsIntent
+    | DiscardWholeHandsResultIntent
     | RandomDiscardIntent
     | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent
