@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from ..target_source import stack_targeting_source
+from ..ring_state import materialized_ring_choice_plans
 
 from dataclasses import replace
 from typing import Any, Mapping, Sequence
@@ -533,6 +534,7 @@ class SemanticChoiceCoordinationMixin:
         from ..rules.library_search_rules import optional_search_permissions
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
         return SnapshotSemanticChoiceQuery(
+            ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             counter_permissions=collect_counter_permissions(self),
             library_search_allowed_by_seat=optional_search_permissions(self,actor,choice_effect),
             rules_profile=self.state.config.effective_profile(len(self.seats)),

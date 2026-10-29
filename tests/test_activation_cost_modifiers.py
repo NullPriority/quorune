@@ -31,6 +31,48 @@ import test_announced_activation_x as actions
 
 
 class ActivationCostModifierModelTests(unittest.TestCase):
+    def test_complex_prices_query_legendary_creatures_only_for_a_real_discount(self):
+        from types import SimpleNamespace
+        from quorune.abilities import parse_activated_abilities
+        from quorune.compiler.activation_mana_costs import fixed_complex_activation_mana_cost
+        from quorune.activation_mana_cost import current_activation_mana_options
+        ability,=parse_activated_abilities(card_name='Price scope witness',
+            oracle_text='{2}{U/P}: You gain 1 life.',keywords=())
+        ability=fixed_complex_activation_mana_cost(ability)
+        self.assertTrue(ability.mana_cost_options)
+        def unrelated(seat):self.fail('Unused legendary-creature quantity reached an alternative mana price')
+        host=SimpleNamespace(_legendary_creatures_controlled=unrelated)
+        ordinary=current_activation_mana_options(host,'B',ability)
+        taxed=current_activation_mana_options(host,'B',ability,modifiers=(self.spec(1),))
+        self.assertEqual({2},{option.requirements['GENERIC'] for option in ordinary})
+        self.assertEqual({3},{option.requirements['GENERIC'] for option in taxed})
+        self.assertEqual({0,2},{option.life_payment for option in taxed})
+        calls=[];host._legendary_creatures_controlled=lambda seat:calls.append(seat) or 2
+        reduced=replace(ability,generic_reduction_per_legendary_creature=1)
+        self.assertEqual({0},{option.requirements['GENERIC'] for option in current_activation_mana_options(host,'B',reduced)})
+        self.assertEqual({1},{option.requirements['GENERIC'] for option in current_activation_mana_options(host,'B',reduced,modifiers=(self.spec(1),))})
+        self.assertEqual(['B','B'],calls)
+
+    def test_zero_legendary_coefficient_does_not_read_an_unrelated_battlefield_quantity(self):
+        from types import SimpleNamespace
+        from quorune.rules.activation.pricing import _ordinary_prices
+        def unrelated(seat):
+            self.fail('An ordinary activation must not depend on an unused legendary-creature query')
+        host=SimpleNamespace(_legendary_creatures_controlled=unrelated)
+        ability=SimpleNamespace(mana={'GENERIC':5,'U':1},announced_x_symbols=None,
+            generic_reduction_per_legendary_creature=0)
+        prices,_,_=_ordinary_prices(host,'B',None,ability,())
+        self.assertEqual((5,1),tuple(prices[0].requirements[key] for key in ('GENERIC','U')))
+        ability.mana={}
+        prices,_,_=_ordinary_prices(host,'B',None,ability,(self.spec(2),))
+        self.assertEqual(2,prices[0].requirements['GENERIC'])
+        calls=[]
+        host._legendary_creatures_controlled=lambda seat:calls.append(seat) or 2
+        ability.mana={'GENERIC':5,'U':1};ability.generic_reduction_per_legendary_creature=2
+        prices,_,_=_ordinary_prices(host,'B',None,ability,())
+        self.assertEqual((1,1),tuple(prices[0].requirements[key] for key in ('GENERIC','U')))
+        self.assertEqual(['B'],calls)
+
     def spec(self, amount, *, minimum=0):
         return FixedActivationCostModifierSpec(amount, minimum_mana=minimum, subject_relation='any')
 

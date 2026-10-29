@@ -30,6 +30,7 @@ from ..leveler_bands import (
     LevelerBandsSpec,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..object_query import ObjectQueryResult
 from ..object_query_union import bind_receiver_union_source, validate_receiver_union_template
 from ..counter_names import normalized_counter_name
 from ..creature_subtypes import canonical_creature_subtype
@@ -137,8 +138,12 @@ class ContinuousEffectSourceContext:
     source_counters: FrozenMap = FrozenMap()
     source_designations: FrozenMap = FrozenMap()
     paired_object: ContinuousObjectIdentity | None = None
+    public_type_objects: tuple[ObjectQueryResult, ...] | None = None
 
     def __post_init__(self) -> None:
+        if self.public_type_objects is not None and (not isinstance(self.public_type_objects,tuple)
+                or any(not isinstance(row,ObjectQueryResult) for row in self.public_type_objects)):
+            raise SemanticNodeError('Public type snapshots require an immutable tuple of typed object facts')
         if not self.source_object_id or not self.source_ref:
             raise SemanticNodeError(
                 "A continuous component source identity is required"
@@ -796,14 +801,19 @@ class FixedQueryAbilityGrantHandler:
                     AsUnblockedAssignmentPermission,
                     GrantedActivatedAbilitySpec,
                     GrantedTriggeredAbilitySpec,
+                    StaticComponentSpec,
                 ),
             )
             for fragment in fragments
         ):
             raise SemanticNodeError(
                 "fixed query ability grants require typed declaration, activated, "
-                "or triggered abilities"
+                "triggered abilities or versioned static cost components"
             )
+        if any(isinstance(fragment, StaticComponentSpec) and fragment.schema_version not in {2, 3} for fragment in fragments):
+            raise SemanticNodeError('Static grants require a versioned cost component reference')
+        if any(isinstance(fragment, StaticComponentSpec) and fragment.schema_version == 3 and fragment.grant_timestamp is not None for fragment in fragments):
+            raise SemanticNodeError('A characteristic grant descriptor cannot prebind its effect timestamp')
         return FixedQueryAbilityGrantNode(
             target_controller=condition["target_controller"],
             predicate=predicate,
@@ -1407,6 +1417,7 @@ def default_continuous_effect_component_registry(
     from .attached_control import AttachedControlHandler
     from .quantified_anthems import QuantifiedAnthemHandler
     from .recipient_anthems import RecipientAnthemHandler
+    from .shared_type_anthems import SharedTypeAnthemHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
@@ -1460,6 +1471,7 @@ def default_continuous_effect_component_registry(
             AttachedControlHandler(),
             QuantifiedAnthemHandler(),
             RecipientAnthemHandler(),
+            SharedTypeAnthemHandler(),
         )
     )
     registry.require_registered_capabilities(

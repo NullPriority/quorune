@@ -8,6 +8,10 @@ def activation_matches_cost_scope(host,source,ability,scope):
     if scope=='all':return True
     if scope=='nonmana':return not ability.mana_ability
     if scope=='equip':return ability.builtin_semantic_key=='builtin:equip'
+    if scope=='boast':
+        from ...boast import validate_boast_ability
+        validate_boast_ability(ability)
+        return ability.boast
     if scope!='cycling':raise ValueError('Unsupported activation cost ability selector')
     program=host.semantics.get(host._semantic_key_for_ability(source,ability))
     if program is None or not host.semantic_program_is_current_trusted(program):return False

@@ -16,6 +16,12 @@ from .ir_model import SourceSpan
 
 def multi_keyword_nodes(**values: Any):
     compile_sibling = values.pop('compile_single_keyword', None)
+    if 'champion' in values['mechanics']:
+        from .champion_nodes import champion_keyword_nodes
+        champion = champion_keyword_nodes(**{key: values[key] for key in (
+            'record', 'face_id', 'node_id', 'line', 'material_line', 'span',
+            'capability_registry', 'capability_profile', 'residuals')})
+        return champion if champion is not None else ()
     from .soulbond_nodes import soulbond_node_group
     bonded = soulbond_node_group(compile_sibling=compile_sibling, **values)
     if bonded is not None:return bonded

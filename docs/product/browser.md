@@ -59,6 +59,11 @@ Mode checkboxes maintain the server-issued printed order regardless of click
 order. Adding or removing a mode preserves targets for every still-selected
 mode and drops only groups that are no longer legal.
 
+Target-dependent prices update from the server's quotes for the selected
+objects, players and modes. Distinct-target prices count a repeated selection
+once. An unavailable target combination or a value of X above its quoted
+maximum cannot be submitted as a payable choice.
+
 The ordered Scry form labels every looked-at card from the seat-private
 projection. It separates top and bottom groups, states which end of each list
 is nearest the top or bottom of the library, and provides card-specific native

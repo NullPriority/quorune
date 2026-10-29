@@ -35,6 +35,7 @@ _REJECTION_REASONS = frozenset(
         "attacker_has_horsemanship",
         "attacker_has_intimidate",
         "attacker_has_skulk",
+        "external_greater_power_restriction",
         "blocker_has_shadow",
         "attacker_has_flying",
         "blocker_has_self_counter_prohibition",

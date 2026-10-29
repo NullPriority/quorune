@@ -506,6 +506,16 @@ def _apply_sacrifice_if_present(
     reason: str,
 ) -> Any:
     op = operation
+    if 'object_identity' in effect or 'current_controller_sacrifices' in effect:
+        from ..ring_model import RingObjectIdentity
+        from ..ring_delays import resolve_ring_blocker_sacrifice
+        try:
+            identity = RingObjectIdentity.from_dict(effect.get('object_identity'))
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if effect.get('card') != identity.object_ref or effect.get('current_controller_sacrifices') is not True:
+            raise GameRuleError('Identity-bound sacrifice requires its exact reference and controller mode')
+        return resolve_ring_blocker_sacrifice(host, blocker=identity, reason=reason)
     value = effect.get("card")
     if not value:
         return None

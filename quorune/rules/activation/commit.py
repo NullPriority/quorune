@@ -183,7 +183,7 @@ def _revalidate_activation(
             snapshot=details.get('static_activation_price') or {}
             response={'x':details.get('announced_x')}
             if snapshot:response['cost_reduction_order']=snapshot['order']
-            expected, value = activation_requirements(host,proposal.seat,source,ability,response)
+            expected, value = activation_requirements(host,proposal.seat,source,ability,response,targets=proposal.targets)
             if ability.waterbend is not None:
                 payment=details.get('waterbend_payment') or {}
                 expected['GENERIC']-=len(payment.get('objects',()))
@@ -206,6 +206,7 @@ def _revalidate_activation(
                 source,
                 ability,
                 proposed.option_id,
+                targets=proposal.targets,
             )
         except ValueError as exc:
             raise ActivationProposalError(

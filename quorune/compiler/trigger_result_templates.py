@@ -35,6 +35,10 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     from .event_player_results import fixed_event_player_result
     player_result=fixed_event_player_result(binding,body,effect_template=effect_template,card_name=card_name)
     if player_result is not None:return player_result
+    from .event_player_choice_templates import fixed_event_player_sacrifice_result
+    player_choice = fixed_event_player_sacrifice_result(binding, body,
+        effect_template=effect_template, card_name=card_name)
+    if player_choice is not None:return player_choice
     from .mill_templates import event_recipient_mill_result
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
     if mill is not None:return mill

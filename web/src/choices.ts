@@ -111,16 +111,28 @@ function selectedTargetPrice(field: ChoiceField, values: ChoiceValues): ChoiceFi
   const selectedTargets = Object.values(record(values[stringValue(field.name)]))
     .flatMap((refs) => list(refs).map(String));
   const targets = new Set(selectedTargets);
-  const components = list(costs.clauses).map(record)
-    .filter((clause) => list(clause.any_target_refs).some((ref) => targets.has(String(ref))))
-    .map((clause) => String(clause.component_id)).sort();
+  const adjustments = list(costs.clauses).map(record).flatMap((clause) => {
+    const eligible = new Set(list(clause.any_target_refs).map(String));
+    const matched = [...targets].filter((ref) => eligible.has(ref)).length;
+    const count = clause.counted_targets === "all" ? targets.size
+      : clause.counted_targets === "creatures" ? matched : Number(matched > 0);
+    return count ? [{ component_id: String(clause.component_id), generic: Number(clause.generic ?? 0) * count }] : [];
+  }).sort((left, right) => left.component_id.localeCompare(right.component_id));
+  const components = adjustments.map((value) => value.component_id).sort();
   const modes = list(values.modes).map(String).sort();
   const same = (left: string[], right: string[]) => left.length === right.length
     && left.every((value, index) => value === right[index]);
   const price = list(costs.prices).map(record).find((row) =>
     (row.target_count === undefined || Number(row.target_count) === selectedTargets.length)
     && same(list(row.components).map(String).sort(), components)
-    && same(list(row.modes).map(String).sort(), modes));
+    && same(list(row.modes).map(String).sort(), modes)
+    && (row.generic_adjustments === undefined || (() => {
+      const expected = list(row.generic_adjustments).map(record)
+        .sort((left, right) => String(left.component_id).localeCompare(String(right.component_id)));
+      return expected.length === adjustments.length && expected.every((value, index) =>
+        String(value.component_id) === adjustments[index].component_id
+        && Number(value.generic) === adjustments[index].generic);
+    })()));
   if (price?.maximum_x !== undefined && Number(values.x ?? 0) > Number(price.maximum_x)) return null;
   return price ?? null;
 }

@@ -45,6 +45,8 @@ from .hand_inspection import HAND_INSPECTION_CHOICE_HANDLERS
 from .connive import FixedConniveChoiceHandler
 from .exploit import ExploitChoiceHandler
 from .soulbond import SoulbondPairChoiceHandler
+from .ring import RingTemptationChoiceHandler
+from .champion import ChampionExileChoiceHandler, ChampionReturnChoiceHandler
 
 
 @lru_cache(maxsize=1)
@@ -87,5 +89,8 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             FixedConniveChoiceHandler(),
             ExploitChoiceHandler(),
             SoulbondPairChoiceHandler(),
+            RingTemptationChoiceHandler(),
+            ChampionExileChoiceHandler(),
+            ChampionReturnChoiceHandler(),
         )
     ).freeze()

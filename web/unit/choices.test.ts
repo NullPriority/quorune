@@ -94,6 +94,28 @@ test("Target-dependent casting prices display the server row once per source and
     { targets: { target_0: ["COMMANDER_A"] } });
 });
 
+test("Distinct-target prices use signed counts and retain repeated target identity", () => {
+  const field = { name: "targets", control: "targets", schema: { groups: [
+    { id: "one", min: 1, max: 1 }, { id: "two", min: 1, max: 1 }] },
+    target_costs: { kind: "generic_adjustment_per_distinct_target", clauses: [
+      { component_id: "hinata", generic: -1, counted_targets: "all", any_target_refs: [] }], prices: [
+      { modes: [], components: ["hinata"], generic_adjustments: [{ component_id: "hinata", generic: -1 }], label: "Pay {1}{G}{W}" },
+      { modes: [], components: ["hinata"], generic_adjustments: [{ component_id: "hinata", generic: -2 }], label: "Pay {G}{W}" }] } };
+  assert.equal(selectedTargetCostLabel(field, { targets: { one: ["A"], two: ["A"] } }), "Pay {1}{G}{W}");
+  assert.equal(selectedTargetCostLabel(field, { targets: { one: ["A"], two: ["B"] } }), "Pay {G}{W}");
+});
+
+test("Creature target prices ignore noncreatures and do not borrow another count's X maximum", () => {
+  const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target", min: 0, max: 4 }] },
+    target_costs: { clauses: [
+      { component_id: "thaumaturge", generic: -1, counted_targets: "creatures", any_target_refs: ["CREATURE", "OTHER"] }], prices: [
+      { modes: [], components: ["thaumaturge"], generic_adjustments: [{ component_id: "thaumaturge", generic: -1 }], label: "One creature", maximum_x: 2 },
+      { modes: [], components: ["thaumaturge"], generic_adjustments: [{ component_id: "thaumaturge", generic: -2 }], label: "Two creatures", maximum_x: 4 }] } };
+  assert.equal(selectedTargetCostLabel(field, { x: 2, targets: { target: ["CREATURE", "ARTIFACT"] } }), "One creature");
+  assert.match(selectedTargetCostLabel(field, { x: 3, targets: { target: ["CREATURE", "ARTIFACT"] } }) ?? "", /No payable/);
+  assert.equal(selectedTargetCostLabel(field, { x: 3, targets: { target: ["CREATURE", "OTHER"] } }), "Two creatures");
+});
+
 test("Opening hand actions allow one eligible card or finishing without exposing a continuation", () => {
   const opening = form([{ name: "refs", label: "Opening-hand card", control: "refs", distinct: true,
     minimum: 0, maximum: 1, options: [{ value: "A01", label: "First opener" },

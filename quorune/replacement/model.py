@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .immutable import FrozenMap, ImmutableValueError, thaw_value
 from .operations import (
+    SetField,
     ReplacementOperation,
     ReplacementOperationError,
     lower_operation,
@@ -15,6 +16,22 @@ from .operations import (
 
 class ReplacementEffectError(ValueError):
     pass
+
+
+def _validate_shared_entry_occurrence(effect, operations, decline_operations):
+    if effect.occurrence_id is None:
+        return
+    if (type(effect.occurrence_id) is not str or not effect.occurrence_id
+            or effect.event_kind != 'zone.change'
+            or (effect.replacement_class is not ReplacementClass.ENTERS_COPY
+                and effect.replacement_class is not ReplacementClass.OTHER)):
+        raise ReplacementEffectError('Shared replacement occurrence requires an entry identity')
+    if effect.replacement_class is ReplacementClass.OTHER and (
+            len(operations) != 1 or not isinstance(operations[0], SetField)
+            or operations[0].field != 'tapped' or type(operations[0].value) is not bool
+            or effect.conditions.get('destination') != {'eq': 'battlefield'}
+            or effect.optional or decline_operations):
+        raise ReplacementEffectError('Shared ordinary entry occurrence requires mandatory tap state')
 
 
 def _translate_error(exc: Exception) -> ReplacementEffectError:
@@ -406,8 +423,6 @@ class ReplacementEffect:
     occurrence_id: str | None = None
 
     def __post_init__(self) -> None:
-        if self.occurrence_id is not None and (type(self.occurrence_id) is not str or not self.occurrence_id or self.event_kind!='zone.change' or self.replacement_class is not ReplacementClass.ENTERS_COPY):
-            raise ReplacementEffectError('Shared replacement occurrence requires an entering-copy identity')
         if not self.effect_id or not self.source_id:
             raise ReplacementEffectError(
                 "Replacement effects require stable IDs"
@@ -451,6 +466,7 @@ class ReplacementEffect:
             raise ReplacementEffectError(
                 "Replacement effects require operations"
             )
+        _validate_shared_entry_occurrence(self, lowered, lowered_decline)
         if self.application_group_id is not None and (
             len(lowered) != 1
             or operation_to_dict(lowered[0]) != {"op": "prevent"}

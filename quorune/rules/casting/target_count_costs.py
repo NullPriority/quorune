@@ -56,6 +56,10 @@ def validate_target_count_cost_commit(host,card,option,targets):
 
 def counted_target_tax_assignments(host,seat,card,schema,sources,count):
     """One witness per tax signature/count/ref, without enumerating subsets."""
+    from .distinct_target_costs import has_distinct_target_modifiers, distinct_target_tax_assignments
+    if has_distinct_target_modifiers(sources):
+        yield from distinct_target_tax_assignments(host,seat,card,schema,sources,count)
+        return
     from ...targets import target_plan
     from ...target_source import spell_targeting_source
     from ...selection.target_validation import validate_grouped_target_assignment

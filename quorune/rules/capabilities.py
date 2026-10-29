@@ -185,6 +185,9 @@ from ..compiler.delayed_draw_templates import (
     FIXED_NEXT_TURN_DRAW_MECHANIC,
 )
 from ..compiler.monarch_templates import MONARCH_MECHANIC
+from ..ring_model import RING_MECHANIC, RING_TEMPTATION_CAPABILITY
+from ..champion_model import CHAMPION_MECHANIC, CHAMPION_CAPABILITY
+from ..compiler.event_player_choice_templates import EVENT_PLAYER_CHOICE_CAPABILITY, EVENT_PLAYER_CHOICE_MECHANIC
 from ..compiler.self_return_templates import FIXED_SELF_RETURN_MECHANIC
 from ..compiler.impulse_access_templates import (
     IMPULSE_ACCESS_CAPABILITY_ID,
@@ -552,6 +555,9 @@ _SHAPE_GATED_MECHANICS = frozenset(
         _CREW_MECHANIC,
         _STATION_MECHANIC,
         MONARCH_MECHANIC,
+        RING_MECHANIC,
+        CHAMPION_MECHANIC,
+        EVENT_PLAYER_CHOICE_MECHANIC,
         FIXED_SELF_RETURN_MECHANIC,
     }
 )
@@ -1294,6 +1300,9 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
             FIXED_LIBRARY_SELECTION_MECHANIC
         ),
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
+        RING_TEMPTATION_CAPABILITY: RING_MECHANIC,
+        CHAMPION_CAPABILITY: CHAMPION_MECHANIC,
+        EVENT_PLAYER_CHOICE_CAPABILITY: EVENT_PLAYER_CHOICE_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",
         "continuous.resolution.source_keyword_choice": "temporary-source-keyword-choice",

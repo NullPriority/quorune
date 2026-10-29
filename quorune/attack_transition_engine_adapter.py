@@ -288,6 +288,8 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                 )
             )
         semantic_trigger_refs: list[str] = []
+        from .ring_triggers import ring_attack_stack_items
+        stack_items.extend(ring_attack_stack_items(engine, event))
         participants = {
             participant.object_id: participant
             for participant in event.participants

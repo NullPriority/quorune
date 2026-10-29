@@ -98,6 +98,8 @@ from ..rules.token_creation_capability_shapes import (
     fixed_token_creation_node_capabilities,
 )
 from ..rules.event_player_result_shapes import fixed_mill_node_capabilities,is_closed_fixed_event_player_result_program
+from ..rules.event_player_choice_shapes import is_closed_event_player_sacrifice_program
+from ..rules.champion_capability_shapes import is_closed_champion_program
 from ..rules.impulse_access_capability_shapes import (
     is_closed_fixed_impulse_access_program,
 )
@@ -1303,6 +1305,8 @@ def _closed_effect_recognizers():
         _is_closed_fixed_damage_program, _is_closed_fixed_next_turn_draw_program,is_closed_source_transform_program,is_closed_enlist_reflexive_program,is_closed_fixed_resolution_mana_program,
         _is_closed_fixed_draw_program,
         _is_closed_fixed_mill_program,is_closed_fixed_event_player_result_program,
+        is_closed_event_player_sacrifice_program,
+        is_closed_champion_program,
         is_closed_fixed_impulse_access_program,
         _is_closed_fixed_library_search_program,
         _is_closed_fixed_type_to_hand_search_program,

@@ -447,6 +447,19 @@ class DeclarationRestrictionAbilityFragmentHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class DeclarationRequirementComponentHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id: str = 'ability.static.declaration-requirement-component.v1'
+    event: str = 'characteristics.evaluate'
+    capability_dependencies: tuple[str, ...] = ('combat.requirement.bound_static_all_blockers',)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> DeclarationRequirementTemplate:
+        fragment = super(DeclarationRequirementComponentHandler, self).validate(descriptor)
+        if fragment.schema_version != 2:
+            raise SemanticNodeError('Bound requirement components need a version-two fragment')
+        return fragment
+
+
+@dataclass(frozen=True, slots=True)
 class DeclarationRestrictionComponentHandler:
     """Carry a source-anchored restriction beside a layer-6 component."""
 
@@ -1382,6 +1395,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ToughnessAssignmentFragmentHandler(),
             UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
+            DeclarationRequirementComponentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),
             ConditionalKeywordAbilityFragmentHandler(),

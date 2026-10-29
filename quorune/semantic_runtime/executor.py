@@ -17,6 +17,8 @@ from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
 from .stack_execution import STACK_INTENT_TYPES, execute_stack_intent
+from .ring_execution import RING_INTENT_TYPES, execute_ring_intent
+from .champion_execution import CHAMPION_INTENT_TYPES, execute_champion_intent
 
 from dataclasses import dataclass
 from typing import Any, Mapping, Protocol
@@ -59,6 +61,8 @@ from .intents import (
     CopyControlledTokensIntent,
     CopyStackItemIntent,
     CreateTokenIntent,
+    ChampionExileIntent,
+    ReturnLinkedAbilityExileIntent,
     CreateRegenerationShieldIntent,
     DealFixedDamageSetIntent,
     DomainEffectIntent,
@@ -374,6 +378,7 @@ def prepare_draw_resolution(
 
 PermanentObjectIntent = (
     PairSoulbondIntent | GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
+    | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
@@ -384,6 +389,7 @@ PermanentObjectIntent = (
     | ReturnGraveyardCardToOwnerHandIntent
 )
 PERMANENT_OBJECT_INTENT_TYPES = (
+    *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
     GainControlIntent, GainControlSetIntent,
     CreateRegenerationShieldIntent,
@@ -402,6 +408,8 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, CHAMPION_INTENT_TYPES):
+        return execute_champion_intent(sink, intent)
     if isinstance(intent, PairSoulbondIntent):
         from ..soulbond_state import commit_soulbond_pair
         pair = commit_soulbond_pair(sink, pair_id=intent.pair_id,
@@ -744,6 +752,9 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         )
     results: list[tuple[str, object]] = []
     for intent in plan.intents:
+        if isinstance(intent, RING_INTENT_TYPES):
+            results.append(execute_ring_intent(sink, intent))
+            continue
         if isinstance(intent,AscendIntent):
             from ..rules.city_blessing import award_citys_blessing
             results.append((intent.player,award_citys_blessing(sink,intent.player,reason=intent.reason)))

@@ -134,6 +134,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         'public_waterbend',
+        'public_ring_temptation', 'public_ring_bearer_choice',
         QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT,
         TAP_STATE_EVENT_VARIANT,
         "source_" + TAP_STATE_EVENT_VARIANT,
@@ -356,6 +357,7 @@ class FixedCounterTriggerEvent(str, Enum):
     PLAYER_SCRIED = 'player.scried'
     PLAYER_SURVEILLED = 'player.surveilled'
     PLAYER_WATERBENT = 'player.waterbent'
+    PLAYER_RING_TEMPTED = 'player.ring_tempted'
 
 
 class FixedCounterZoneController(str, Enum):

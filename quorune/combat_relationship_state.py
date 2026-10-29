@@ -226,17 +226,17 @@ def commit_block_declaration(
             or blocker.phased_out
         ):
             continue
-        existing = combat.blockers.setdefault(
-            assignment.attacker_object_id, []
-        )
+        existing = combat.blockers.get(assignment.attacker_object_id, ())
         if assignment.blocker_object_id in existing:
             raise CombatRelationshipStateError(
                 "A blocker relationship is already committed"
             )
-        existing.append(assignment.blocker_object_id)
+        committed.append(assignment)
+    for assignment in committed:
+        blocker = cards[assignment.blocker_object_id]
+        combat.blockers.setdefault(assignment.attacker_object_id, []).append(assignment.blocker_object_id)
         if blocker.blocking is None:
             blocker.blocking = assignment.attacker_object_id
-        committed.append(assignment)
     return tuple(committed)
 
 

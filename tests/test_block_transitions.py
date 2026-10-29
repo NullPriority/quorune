@@ -165,6 +165,29 @@ class BlockTransitionModelTests(unittest.TestCase):
             )
         )
 
+    def test_put_blocking_preserves_attacker_events_without_blocker_bushido(self):
+        self.attacker = _participant('A1', 'A',
+            _spec(CombatKeywordTriggerKind.FLANKING),
+            _spec(CombatKeywordTriggerKind.BUSHIDO, 2),
+            _spec(CombatKeywordTriggerKind.RAMPAGE, 3))
+        first = derive_block_keyword_trigger_occurrences(self.event(), put_blocking=True)
+        self.assertEqual(
+            {(CombatKeywordTriggerKind.FLANKING, 'A1'),
+             (CombatKeywordTriggerKind.BUSHIDO, 'A1'),
+             (CombatKeywordTriggerKind.RAMPAGE, 'A1')},
+            {(value.kind, value.source.reference) for value in first})
+        self.assertEqual(3, len(first))
+        later = derive_block_keyword_trigger_occurrences(self.event(), put_blocking=True,
+            already_blocked=frozenset({self.attacker.object_id}))
+        self.assertEqual([(CombatKeywordTriggerKind.FLANKING, 'A1')],
+                         [(value.kind, value.source.reference) for value in later])
+
+    def test_block_origin_rejects_ambiguous_or_untyped_facts(self):
+        for facts in ({'put_blocking': 1}, {'already_blocked': {self.attacker.object_id}},
+                      {'already_blocked': frozenset({None})}):
+            with self.subTest(facts=facts), self.assertRaises(BlockTransitionError):
+                derive_block_keyword_trigger_occurrences(self.event(), **facts)
+
     def test_bushido_triggers_once_for_blocks_or_becomes_blocked_per_instance(self):
         occurrences = derive_block_keyword_trigger_occurrences(self.event())
         bushido = tuple(
@@ -414,6 +437,19 @@ class BlockTransitionCommitAndResolutionTests(unittest.TestCase):
                 ),
             )
 
+        self.assertEqual({}, combat.blockers)
+        self.assertIsNone(blocker.blocking)
+
+    def test_late_invalid_assignment_rejects_before_any_relationship_write(self):
+        attacker = self.card('A1', 'A')
+        blocker = self.card('B1', 'B')
+        combat = CombatState(attackers={attacker.object_id: 'B'})
+        with self.assertRaises(CombatRelationshipStateError):
+            commit_block_declaration(
+                combat, {attacker.object_id: attacker, blocker.object_id: blocker},
+                controller='B', assignments=(
+                    BlockDeclarationAssignment(blocker.object_id, attacker.object_id),
+                    BlockDeclarationAssignment(blocker.object_id, 'missing-attacker')))
         self.assertEqual({}, combat.blockers)
         self.assertIsNone(blocker.blocking)
 

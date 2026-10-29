@@ -21,7 +21,7 @@ from .block_capacity_rule_model import ResolvedBlockCapacityRule
 from .temporary_cast_rule_model import ResolvedCastRestriction
 from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
-from .declaration_fragments import DeclarationRestrictionTemplate
+from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
 from .object_predicate import ObjectQuerySpec
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
 from .keyword_prohibition import prepare_resolution_keyword_exclusions
@@ -417,7 +417,7 @@ def create_resolution_declaration_rule_effect(
     *,
     source: ResolutionEffectSource,
     targets: Sequence[Any],
-    restriction: DeclarationRestrictionTemplate,
+    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate,
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),

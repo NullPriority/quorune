@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "the-ring-tempts-you",
+  "official_name": "The Ring Tempts You",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["701.54", "701.54a", "701.54b", "701.54c", "701.54d", "701.54e", "114.3", "509.3d", "509.4", "603.7b", "603.7c", "603.7e"],
+  "glossary_references": [],
+  "dependencies": ["triggered-abilities", "continuous-effects", "combat-damage-step", "object-identity", "control-change", "multiplayer", "projection", "replay"],
+  "coverage_status": "partial",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["battlefield", "command", "stack", "hand", "library", "graveyard"],
+    "objects": ["one owned Ring emblem per player", "one exact-incarnation Ring-bearer designation", "captured inherent ability and delayed trigger sources"],
+    "events": ["one completed temptation with distinct chosen and retained bearer roles", "declared bearer attack", "each new blocking creature including put-blocking", "actual bearer combat damage to a player", "the next end-of-combat step"],
+    "state_reads": ["current controlled phased-in creature facts", "unbounded lifetime temptation count", "emblem ability level capped at four", "object incarnation and control continuity", "current powers for blocking", "captured emblem and blocker identities", "current blocker controller at sacrifice resolution"],
+    "state_writes": ["closed public emblem annotation", "selected creature continuity initialization", "ordinary pending APNAP triggers", "canonical draw, discard, life loss and sacrifice results"],
+    "costs": ["the keyword action itself has no cost", "observer payment clauses use the existing fixed optional cost owner"],
+    "timing": ["emblem progress precedes the required creature choice", "an impossible choice still completes the temptation", "choosing an existing bearer is still a choice", "inherent triggers lock occurrence facts and controller", "a skipped end-of-combat step does not expire the waiting sacrifice trigger"],
+    "targets": ["the bearer choice is untargeted", "an enclosing spell with all targets illegal does not execute the temptation"],
+    "choices": ["choose exactly one current controlled creature when available", "creature ownership is independent from its controller", "the attack trigger uses the resolving controller's private discard choice"],
+    "hidden_information": ["emblem progress and bearer choice are public", "draw and discard choices retain principal-scoped hidden information"],
+    "apnap": ["inherent and observer abilities enter the existing shared pending trigger batches"],
+    "layers": ["the emblem supplies legendary in layer four through a live source-bearer relation", "the greater-power restriction is external to the bearer's own abilities"],
+    "replacement_effects": ["draw, damage and sacrifice delegate to the existing canonical owners and their represented replacements"],
+    "copy": ["the designation is not a copiable characteristic", "copied inherent abilities retain their original emblem source and bind you or opponents to the copy controller"],
+    "control_change": ["control discontinuity ends the designation even if the creature returns to its former controller", "phasing, untapping and ceasing to be a creature preserve designation", "the delayed sacrifice uses the blocker's current controller"],
+    "zone_change": ["a returned creature is a new incarnation and does not regain its earlier designation", "the delayed sacrifice never follows a returned blocker incarnation"],
+    "source_leaves": ["captured emblem source information survives pending ability and delay serialization"]
+  },
+  "variants": ["mandatory controller temptation", "no available creature", "same bearer chosen again", "borrowed creature choice", "all four emblem abilities", "copied ability controller", "put-blocking", "skipped end of combat", "source last-known information", "temptation versus actual choice observer"],
+  "witness_cards": [
+    {"name": "Birthday Escape", "oracle_id": "4f958678-2a32-4a30-8fe7-47df9ada6b2f"},
+    {"name": "Claim the Precious", "oracle_id": "8b0a0991-2327-45ea-b47f-c31db367fa1d"},
+    {"name": "Call of the Ring", "oracle_id": "9fcb920c-b8d7-4a79-a335-f63050182cca"}
+  ],
+  "rulings": ["The pinned Call of the Ring rulings distinguish an impossible temptation from an actual bearer choice.", "Rechoosing the current bearer satisfies choice observers.", "The pinned Flash Foliage rulings distinguish put-blocking from declaring a blocker and retain becomes-blocked-by-creature triggers."],
+  "test_ids": [
+    "test_birthday_escape_public_borrowed_choice_private_draw_and_pending_replay",
+    "test_birthday_escape_without_creatures_still_completes_one_temptation",
+    "test_claim_the_precious_resolves_destruction_before_impossible_ring_choice",
+    "test_claim_all_targets_illegal_does_not_tempt",
+    "test_native_attack_loot_and_combat_loss_keep_private_draw_and_all_opponents",
+    "test_native_blocker_delay_survives_pending_load_and_uses_current_controller",
+    "test_call_observes_actual_rechoice_for_its_controller_and_optional_payment",
+    "test_call_does_not_observe_an_impossible_choice",
+    "test_ring_power_restriction_agrees_in_offered_and_accepted_blocks",
+    "test_put_blocking_bypasses_declaration_restrictions_and_emits_each_new_relation",
+    "test_skipped_end_combat_and_source_lki_do_not_erase_waiting_delay",
+    "test_ring_choice_flag_mutant_is_killed"
+  ],
+  "implementation": {
+    "component": "quorune.ring_model, ring_state, ring_effects, ring_triggers, ring_delays, typed Ring choice/intents and source-spanned compiler productions",
+    "version": "ring-v1"
+  },
+  "known_blockers": ["Ring-bearer and lifetime-temptation conditions embedded in broader Oracle result grammar are not generally compiled.", "Modified action instructions and player-qualified observer forms outside the closed controller productions remain residual."],
+  "review_status": "draft"
+}

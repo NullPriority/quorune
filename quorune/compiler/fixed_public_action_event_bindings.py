@@ -750,6 +750,7 @@ def fixed_public_action_event_binding_spec(
     del card_name
     return (
         _public_attack_spec(material_line)
+        or _public_ring_spec(material_line)
         or _public_waterbend_spec(material_line)
         or _public_library_action_spec(material_line)
         or _public_damage_spec(material_line)
@@ -764,6 +765,23 @@ def _public_waterbend_spec(material_line):
     from ..waterbend import WATERBEND_CAPABILITY,WATERBEND_EVENT
     return _spec(WATERBEND_EVENT,'public_waterbend',match['body'],'fixed-waterbend-trigger-v1',
         'trigger-event-normalized-public-action',condition=_actor_condition(match['actor'],field='player'),capabilities=(WATERBEND_CAPABILITY,))
+
+
+def _public_ring_spec(material_line):
+    from ..ring_model import RING_TEMPTED_EVENT, RING_TEMPTATION_CAPABILITY
+    for phrase, variant, chosen in (
+        ('the Ring tempts you', 'public_ring_temptation', False),
+        ('you choose a creature as your Ring-bearer', 'public_ring_bearer_choice', True),
+    ):
+        match = re.fullmatch(r'Whenever ' + re.escape(phrase) + r', (?P<body>.+)', material_line, re.I)
+        if match is None:
+            continue
+        return _spec(RING_TEMPTED_EVENT, variant, match['body'],
+            'fixed-ring-action-trigger-v1', 'trigger-event-normalized-public-action',
+            condition=_all_conditions(_actor_condition('you', field='player'),
+                {'field': 'creature_chosen', 'op': 'eq', 'value': True} if chosen else None),
+            capabilities=(RING_TEMPTATION_CAPABILITY,))
+    return None
 
 
 def _public_library_action_spec(material_line: str) -> FixedPublicEventBindingSpec | None:

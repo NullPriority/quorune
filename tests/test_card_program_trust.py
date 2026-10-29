@@ -350,6 +350,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.fixed_query_power_toughness_anthem",
                 "continuous.quantified_query_power_toughness_anthem",
                 "continuous.recipient_quantity_power_toughness_anthem",
+                "continuous.recipient_shared_type_power_toughness_anthem",
                 "continuous.fixed_power_toughness_anthem",
                 "continuous.basic_land_type.add_all_lands",
                 "continuous.basic_land_type.fixed_addition",

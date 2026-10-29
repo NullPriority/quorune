@@ -41,6 +41,7 @@ class CastReductionMetricKind(str, Enum):
     TURN_FACT = "turn_fact"
     TURN_VALUE = "turn_value"
     SOURCE_COUNTER_COUNT = "source_counter_count"
+    SOURCE_POWER = "source_power"
     PARTY_SIZE = "party_size"
     PERMANENT_COLOR_COUNT = "permanent_color_count"
     DISTINCT_NAME_COUNT = "distinct_name_count"
@@ -171,6 +172,14 @@ class CastReductionMetric:
     aggregate: PublicCharacteristicAggregateSpec | None = None
 
     def _validate_extended_shape(self) -> bool:
+        if self.kind is CastReductionMetricKind.SOURCE_POWER:
+            if (type(self.schema_version) is not int or self.schema_version != 4
+                    or not isinstance(self.queries, tuple) or self.queries
+                    or self.minimum is not None or self.maximum is not None
+                    or self.require_all is not False or self.color is not None or self.turn_fact is not None
+                    or self.counter_name is not None or self.aggregate is not None):
+                raise SelfCastReductionError('Source power requires only its version4 scalar kind')
+            return True
         if self.kind is CastReductionMetricKind.PUBLIC_COUNTER_TOTAL:
             if (type(self.schema_version) is not int or self.schema_version != 2
                     or not isinstance(self.queries, tuple) or self.queries
@@ -752,6 +761,22 @@ def _party_size(host: SelfCastReductionHost, seat: str) -> int:
     return max(mask.bit_count() for mask in assignments)
 
 
+def _source_cost_multiplier(host, metric, source):
+    if metric.kind is CastReductionMetricKind.SOURCE_COUNTER_COUNT:
+        if source is None or metric.counter_name is None:
+            raise SelfCastReductionError('Source-counter reduction lacks its current source')
+        return max(0, int(source.counters.get(metric.counter_name, 0)))
+    from .object_query import exact_numeric_characteristic
+    if source is None or source.zone != 'battlefield' or source.phased_out:
+        raise SelfCastReductionError('Source power requires a current battlefield provider')
+    data = host._effective_card_data(source)
+    types, _subtypes, _supertypes = host._type_parts(str(data.get('type_line') or ''))
+    value = exact_numeric_characteristic(source, data, 'power') if 'creature' in types else 0
+    if type(value) is not int:
+        raise SelfCastReductionError('Current source power is unavailable')
+    return max(0, value)
+
+
 def cast_reduction_multiplier(
     host: SelfCastReductionHost,
     seat: str,
@@ -763,6 +788,8 @@ def cast_reduction_multiplier(
 
     if metric.kind is CastReductionMetricKind.PUBLIC_COUNTER_TOTAL:
         return public_player_permanent_counter_total(host)
+    if metric.kind in {CastReductionMetricKind.SOURCE_POWER, CastReductionMetricKind.SOURCE_COUNTER_COUNT}:
+        return _source_cost_multiplier(host, metric, source)
     if metric.kind is CastReductionMetricKind.OPPONENT_COUNT:
         return sum(other != seat and player.in_game for other, player in host.state.players.items())
     if metric.kind is CastReductionMetricKind.PUBLIC_AGGREGATE:
@@ -792,12 +819,6 @@ def cast_reduction_multiplier(
     if metric.kind is CastReductionMetricKind.TURN_VALUE:
         assert metric.turn_fact is not None
         return _turn_value(host, seat, metric.turn_fact)
-    if metric.kind is CastReductionMetricKind.SOURCE_COUNTER_COUNT:
-        if source is None or metric.counter_name is None:
-            raise SelfCastReductionError(
-                "Source-counter reduction lacks its current source"
-            )
-        return max(0, int(source.counters.get(metric.counter_name, 0)))
     if metric.kind is CastReductionMetricKind.PARTY_SIZE:
         return _party_size(host, seat)
     if metric.kind is CastReductionMetricKind.PERMANENT_COLOR_COUNT:

@@ -1293,6 +1293,7 @@ def fixed_public_state_characteristics_handler(
     oracle_line: str,
     *,
     source_name: str,
+    attached_permanent_subject: bool = False,
 ) -> tuple[str, Mapping[str, Any], tuple[str, ...]] | None:
     """Lower fixed characteristics gated by closed public state or queries.
 
@@ -1315,7 +1316,7 @@ def fixed_public_state_characteristics_handler(
             attached_subject = (
                 "Enchanted land"
                 if "land" in attached.predicate.types_all
-                else "Enchanted creature"
+                else 'Enchanted permanent' if attached_permanent_subject and 'creature' not in attached.predicate.types_all else "Enchanted creature"
             )
             body = re.sub(
                 r"^it\b",

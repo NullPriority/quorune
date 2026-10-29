@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Resolution effects that grant typed combat declaration restrictions."""
+"""Resolution-created typed combat declaration rules."""
 
 from typing import Any, Mapping
 from dataclasses import replace
@@ -46,6 +46,17 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
         )
     if sum(key in effect for key in ("card", "cards", "set")) != 1:
         raise GameRuleError("Declaration rule requires exactly one recipient mode")
+    from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND, TemporaryAllBlockerSpec
+    requirement = isinstance(effect.get('restriction'), Mapping) and effect['restriction'].get('kind') == TEMPORARY_ALL_BLOCKER_KIND
+    if requirement:
+        try:
+            TemporaryAllBlockerSpec.from_dict(effect['restriction'])
+        except (TypeError, ValueError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if 'card' not in effect:
+            raise GameRuleError('Resolved all-blocker requirements need one locked subject')
+        if effect['card'] is None:
+            return []
     from ..source_block_pair_model import SOURCE_BLOCK_PAIR_KIND
     if isinstance(effect.get('restriction'), Mapping) and effect['restriction'].get('kind') == SOURCE_BLOCK_PAIR_KIND:
         from ..rules.source_block_pairs import apply_source_block_pair

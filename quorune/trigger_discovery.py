@@ -1107,7 +1107,7 @@ def _semantic_trigger_context(
     return stack_context
 
 
-def _trigger_multiplier_copies(
+def trigger_multiplier_copies(
     host: TriggerDiscoveryHost,
     *,
     item: StackItem,
@@ -1273,11 +1273,14 @@ def _granted_prowess_trigger_items(host, source, event, context, *, active_zone,
             },
         )
         result.append(item)
-        result.extend(_trigger_multiplier_copies(host, item=item, source=source, event=event, context=context))
+        result.extend(trigger_multiplier_copies(host, item=item, source=source, event=event, context=context))
     return tuple(result)
 
 
 def _program_trigger_ability_is_present(program, characteristics):
+    if ('identity_pinned_champion' in program.coverage
+            and 'champion' not in {str(keyword).casefold() for keyword in characteristics.get('keywords', ())}):
+        return False
     if ('identity_pinned_soulbond_pairing' in program.coverage
             and 'soulbond' not in {str(keyword).casefold() for keyword in characteristics.get('keywords', ())}):
         return False
@@ -1306,7 +1309,7 @@ def dispatch_semantic_event(
         if evoke_item is not None:
             triggered.append(evoke_item)
             triggered.extend(
-                _trigger_multiplier_copies(
+                trigger_multiplier_copies(
                     host,
                     item=evoke_item,
                     source=source,
@@ -1333,7 +1336,7 @@ def dispatch_semantic_event(
         if blitz_item is not None:
             triggered.append(blitz_item)
             triggered.extend(
-                _trigger_multiplier_copies(
+                trigger_multiplier_copies(
                     host,
                     item=blitz_item,
                     source=source,
@@ -1418,7 +1421,7 @@ def dispatch_semantic_event(
             triggered.append(item)
             if program.trigger_limit is None:
                 triggered.extend(
-                    _trigger_multiplier_copies(
+                    trigger_multiplier_copies(
                         host,
                         item=item,
                         source=source,
@@ -1445,4 +1448,5 @@ __all__ = [
     "semantic_event_matches",
     "semantic_event_value",
     "trigger_multiplier_participations",
+    "trigger_multiplier_copies",
 ]

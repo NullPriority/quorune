@@ -76,3 +76,11 @@ def static_activation_cost_modifier_handler(text):
     descriptor = {'handler_id': ACTIVATION_GENERIC_COST_HANDLER, 'schema_version': 1,
         'event': ACTIVATION_GENERIC_COST_EVENT, 'modifier': spec.to_dict()}
     return 'fixed-public-activation-cost-modifier-v1', descriptor, ACTIVATION_GENERIC_COST_CAPABILITY
+
+
+def activation_cost_modifier_handler(text, *, source_name):
+    from .targeted_activation_costs import targeted_activation_cost_template
+    from .public_quantity_activation_costs import public_quantity_activation_cost_template
+    return (targeted_activation_cost_template(text, source_name=source_name)
+        or public_quantity_activation_cost_template(text, source_name=source_name)
+        or static_activation_cost_modifier_handler(text))

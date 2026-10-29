@@ -25,6 +25,7 @@ from ..rules.source_fixed_protection_shapes import source_fixed_protection_runti
 from ..rules.self_cost_turn_counts import self_cost_turn_count_dependencies
 from ..rules.self_cost_public_counters import self_cost_public_counter_dependencies
 from ..rules.self_cost_numeric_counts import self_cost_numeric_count_dependencies
+from ..rules.public_value_costs import public_value_cost_dependencies
 from ..rules.reconfigure import reconfigure_runtime_dependencies
 from ..rules.paid_color_entry import paid_color_entry_runtime_dependencies
 from ..rules.paid_mana_resolution import paid_mana_resolution_dependencies
@@ -64,6 +65,21 @@ def nonmana_equip_runtime_dependencies(program):
     return ()
 
 
+def _cost_metric_runtime_requirements(handlers):
+    required, blockers = set(), set()
+    for resolver, label in (
+        (public_value_cost_dependencies, 'runtime_public_value_cost'),
+        (self_cost_numeric_count_dependencies, 'runtime_self_cost_numeric_count'),
+        (self_cost_public_counter_dependencies, 'runtime_self_cost_public_counters'),
+        (self_cost_turn_count_dependencies, 'runtime_self_cost_turn_count'),
+    ):
+        try:
+            required.update(resolver(handlers))
+        except (TypeError, ValueError) as exc:
+            blockers.add(f'{label}:invalid:{exc}')
+    return required, blockers
+
+
 def program_dynamic_runtime_requirements(program):
     from ..rules.fuse_shapes import fuse_runtime_requirements
     try:
@@ -89,6 +105,9 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_source_block_pair:invalid:{exc}')
     try:required.update(fixed_blocker_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_fixed_blocker:invalid:{exc}')
+    from ..rules.temporary_all_blockers import temporary_all_blocker_runtime_dependencies
+    try:required.update(temporary_all_blocker_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_all_blocker:invalid:{exc}')
     from ..rules.occurrence_object_results import occurrence_object_runtime_dependencies
     try:required.update(occurrence_object_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_occurrence_object:invalid:{exc}')
@@ -131,18 +150,9 @@ def program_dynamic_runtime_requirements(program):
         required.update(reconfigure_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_reconfigure:invalid:{exc}')
-    try:
-        required.update(self_cost_numeric_count_dependencies(program.handlers))
-    except (TypeError,ValueError) as exc:
-        blockers.add(f'runtime_self_cost_numeric_count:invalid:{exc}')
-    try:
-        required.update(self_cost_public_counter_dependencies(program.handlers))
-    except (TypeError,ValueError) as exc:
-        blockers.add(f'runtime_self_cost_public_counters:invalid:{exc}')
-    try:
-        required.update(self_cost_turn_count_dependencies(program.handlers))
-    except (TypeError,ValueError) as exc:
-        blockers.add(f'runtime_self_cost_turn_count:invalid:{exc}')
+    cost_required, cost_blockers = _cost_metric_runtime_requirements(program.handlers)
+    required.update(cost_required)
+    blockers.update(cost_blockers)
     try:
         required.update(source_fixed_protection_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:

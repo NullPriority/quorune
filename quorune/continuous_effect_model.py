@@ -84,6 +84,7 @@ class ContinuousEffectRelation(str, Enum):
     SOURCE_OBJECT = "source_object"
     SOURCE_ATTACHED_TO_OBJECT = "source_attached_to_object"
     SOURCE_PAIRED_WITH_OBJECT = "source_paired_with_object"
+    SOURCE_RING_BEARER_OBJECT = "source_ring_bearer_object"
 
 
 _OPERATION_LAYERS = {

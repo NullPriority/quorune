@@ -858,19 +858,20 @@ def static_fixed_spell_cost_reduction_handler(
     """Lower one public fixed-generic modifier through the shared schema."""
 
     from .optional_life_costs import optional_life_color_reduction_template
-    unconditional = optional_life_color_reduction_template(text) or _unconditional_spell_cost_reduction_handler(text)
+    unconditional = optional_life_color_reduction_template(text) or _unconditional_spell_cost_reduction_handler(text, source_name=source_name)
     if unconditional is not None:
         return unconditional
     from .public_state_queries import fixed_public_state_parts
     parts = fixed_public_state_parts(text, source_name=source_name)
     if parts is not None:
         condition, body = parts
-        compiled = _unconditional_spell_cost_reduction_handler(body)
+        compiled = _unconditional_spell_cost_reduction_handler(body, source_name=source_name)
         if compiled is None:
             return None
         descriptor = {**compiled[1], 'handler_id':'modification.cast-cost.public-state.v1',
             'schema_version':4, 'source_condition':condition.to_dict()}
-        capabilities = {FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID, 'continuous.characteristics.fixed_public_state'}
+        child_dependencies = (compiled[2],) if isinstance(compiled[2], str) else compiled[2]
+        capabilities = {FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID, 'continuous.characteristics.fixed_public_state', *child_dependencies}
         if condition.kind.value == 'controller_is_monarch':
             capabilities.add('variant.monarch.designate')
         elif condition.kind.value == 'controller_max_speed':
@@ -879,7 +880,7 @@ def static_fixed_spell_cost_reduction_handler(
     return None
 
 
-def _unconditional_spell_cost_reduction_handler(text: str) -> CastCostModifierTemplate | None:
+def _unconditional_spell_cost_reduction_handler(text: str, *, source_name: str = 'source') -> CastCostModifierTemplate | None:
     # Import lazily because the public grammar reuses fixed_spell_predicate.
     from .public_cast_cost_modifiers import (
         public_cast_cost_modifier_template,
@@ -891,10 +892,12 @@ def _unconditional_spell_cost_reduction_handler(text: str) -> CastCostModifierTe
         modifier = PublicCastCostModifierV2Spec.from_fixed_modifier(modifier)
         descriptor_version = 3
     else:
-        modifier = public_cast_cost_modifier_v2_template(text)
+        modifier = public_cast_cost_modifier_v2_template(text, source_name=source_name)
         descriptor_version = 3
         if modifier is None:
             return None
+    from ..rules.public_value_costs import public_value_cost_dependencies
+    dependencies = public_value_cost_dependencies(modifier.to_dict())
     return (
         "public-fixed-spell-cost-modifier-v1",
         {
@@ -903,7 +906,7 @@ def _unconditional_spell_cost_reduction_handler(text: str) -> CastCostModifierTe
             "event": FIXED_SPELL_COST_REDUCTION_EVENT,
             "modifier": modifier.to_dict(),
         },
-        FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID,
+        ((FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID, *dependencies) if dependencies else FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID),
     )
 
 

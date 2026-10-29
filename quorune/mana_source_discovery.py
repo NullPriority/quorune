@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping, Protocol, Sequence
 
 from .abilities import ActivatedAbility
+from .characteristic_read_frames import characteristic_read_method
 from .haste import summoning_sickness_prohibits_tap_or_untap_cost
 from .mana import ManaMode, ManaSource
 from .mana_ability_runtime import (
@@ -111,6 +112,7 @@ def mana_plan_abilities(host: Any, seat: str, card: Any, *, card_types=None) -> 
     return tuple(result)
 
 
+@characteristic_read_method
 def available_mana_sources(
     host: ManaSourceDiscoveryHost,
     seat: str,

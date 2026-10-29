@@ -9,7 +9,7 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .activation_restriction_templates import (
     static_activation_restriction_handler,
 )
-from .activation_cost_modifier_templates import static_activation_cost_modifier_handler
+from .activation_cost_modifier_templates import activation_cost_modifier_handler
 from .targeted_spell_costs import self_target_reduction_template
 from .action_permission_templates import static_action_permission_handler,opening_hand_battlefield_permission_handler
 from .opening_hand_reveal_templates import opening_hand_reveal_permission_handler
@@ -245,7 +245,7 @@ def _source_permanent_participation_template(
             runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
     activation_rule = (static_activation_restriction_handler(text)
-        or static_activation_cost_modifier_handler(text))
+        or activation_cost_modifier_handler(text, source_name=source_name or ''))
     if activation_rule is not None:
         return StaticRuntimeTemplate(
             compiled=activation_rule,
@@ -348,7 +348,8 @@ def _static_declaration_runtime_template(
     *,
     source_name: str | None,
 ) -> StaticRuntimeTemplate | None:
-    declaration_grant = fixed_static_declaration_grant_handler(
+    from .all_blocker_requirements import static_all_blocker_requirement_handler
+    declaration_grant = static_all_blocker_requirement_handler(text,source_name=source_name or 'source') or fixed_static_declaration_grant_handler(
         text,
         source_name=source_name or "source",
     )

@@ -3,6 +3,7 @@ from __future__ import annotations
 """Static modifiers whose scalar is evaluated separately for each recipient."""
 
 from dataclasses import dataclass
+from collections.abc import Mapping
 from ..recipient_modifier_model import RECIPIENT_MODIFIER_CAPABILITY,RECIPIENT_MODIFIER_OPERATION,validate_recipient_modifier
 from ..continuous_effect_model import ContinuousEffect,ContinuousOperation,ContinuousEffectOrigin,Layer
 from .component_registry import exact_fields
@@ -26,6 +27,8 @@ class RecipientAnthemHandler:
         exact_fields(descriptor,{'handler_id','schema_version','event','condition','modifier'},field='recipient anthem')
         if descriptor['handler_id']!=self.handler_id or type(descriptor['schema_version']) is not int or descriptor['schema_version']!=1 or descriptor['event']!=self.event:
             raise SemanticNodeError('Recipient anthem identity is malformed')
+        if not isinstance(descriptor['modifier'],Mapping) or descriptor['modifier'].get('schema_version')!=1:
+            raise SemanticNodeError('Local recipient anthems require their version-one modifier')
         try:validate_recipient_modifier(descriptor['modifier'])
         except (TypeError,ValueError) as exc:raise SemanticNodeError(str(exc)) from exc
         modifier=descriptor['modifier']

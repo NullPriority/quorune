@@ -46,6 +46,8 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
+    if relative == 'quorune/characteristic_read_frames.py':
+        return 'rules'
     if relative.startswith("server/") or relative == "simctl.py":
         return "transport"
     if relative in {
@@ -67,6 +69,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/kicked_target_model.py",
         "quorune/kicked_target_replacement_model.py",
         "quorune/recipient_modifier_model.py",
+        "quorune/shared_creature_type_model.py",
         "quorune/target_count_cost_model.py",
         "quorune/mana_symbol_counts.py",
         "quorune/public_zone_condition_model.py",
@@ -100,6 +103,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/declaration_fragments.py",
         "quorune/fixed_blocker_restrictions.py",
         "quorune/source_block_pair_model.py",
+        "quorune/temporary_all_blocker_model.py",
         "quorune/blocking_requirement_model.py",
         "quorune/banding_model.py",
         "quorune/public_replacement_model.py",
@@ -116,6 +120,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/block_capacity_model.py",
         "quorune/landwalk_permission_model.py",
         "quorune/external_entry_state_model.py",
+        "quorune/qualified_entry_state_model.py",
+        "quorune/target_cost_subject.py",
+        "quorune/entry_type_scopes.py",
         "quorune/external_entry_counter_model.py",
         "quorune/landwalk_vocabulary.py",
         "quorune/qualified_hexproof.py",
@@ -148,6 +155,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/continuous_effect_model.py",
         "quorune/source_continuity.py",
         "quorune/soulbond_model.py",
+        "quorune/ring_model.py",
         "quorune/creature_subtypes.py",
         "quorune/creature_power_damage_model.py",
         "quorune/enchant_spec.py",
@@ -392,6 +400,10 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/multikicker_result_amounts.py",
         "quorune/mana_spent_amounts.py",
         "quorune/linked_exile_return_model.py",
+        "quorune/champion_model.py",
+        "quorune/champion_state.py",
+        "quorune/linked_ability_exile_model.py",
+        "quorune/linked_ability_exile_state.py",
         "quorune/public_tap_state_sets.py",
         "quorune/public_alternative_costs.py",
         "quorune/permanent_designations.py",
@@ -466,6 +478,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative == 'quorune/characteristic_read_frames.py':return 'card_characteristics'
+    if relative == 'quorune/rules/granted_characteristic_shapes.py':return 'continuous_effects'
     if relative == 'quorune/damage_prevention_permission.py':return 'damage'
     if relative=="quorune/designation_prevention.py":return "damage"
     if relative=="quorune/attached_prevention_model.py":return "damage"
@@ -501,6 +515,7 @@ def _owner(relative: str, layer: str) -> str:
                     "quorune/rules/self_cost_turn_counts.py",
                     "quorune/rules/self_cost_public_counters.py",
                     "quorune/rules/self_cost_numeric_counts.py",
+                    "quorune/rules/public_value_costs.py",
                     "quorune/rules/self_graveyard_discard.py",
                     "quorune/rules/waterbend_payments.py"}:
         return "casting_activation_and_costs"
@@ -598,7 +613,8 @@ def _owner(relative: str, layer: str) -> str:
         return "casting_flashback"
     if relative in {"quorune/defender_permission.py", "quorune/rules/defender_permission_effect.py", "quorune/as_unblocked.py", "quorune/as_unblocked_rule.py", "quorune/rules/as_unblocked_effect.py", "quorune/toughness_assignment.py", "quorune/toughness_assignment_model.py", "quorune/toughness_assignment_rule.py", "quorune/rules/toughness_assignment_effect.py"}:
         return "combat_declaration"
-    if relative in {'quorune/blocking_requirement_model.py','quorune/rules/blocking_requirements.py','quorune/rules/provoke_shapes.py'}:
+    if relative in {'quorune/blocking_requirement_model.py','quorune/rules/blocking_requirements.py','quorune/rules/provoke_shapes.py',
+            'quorune/temporary_all_blocker_model.py','quorune/rules/all_blocker_requirements.py','quorune/rules/temporary_all_blockers.py'}:
         return 'combat_declaration'
     if relative in {"quorune/power_up.py", "quorune/power_up_model.py"}:
         return "activated_abilities"
@@ -756,6 +772,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/public_quantity_reductions.py",
         "quorune/recipient_modifier_model.py",
         "quorune/mana_symbol_counts.py",
+        "quorune/shared_creature_type_model.py",
         "quorune/continuous_stat_operations.py",
         "quorune/public_characteristic_aggregates.py",
         "quorune/live_battlefield_quantities.py",
@@ -887,9 +904,11 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/linked_exile_return.py",
         "quorune/conditional_exile_model.py",
         "quorune/conditional_exile_return.py",
+        "quorune/linked_ability_exile_model.py",
+        "quorune/linked_ability_exile_state.py",
     }:
         return "zones_and_object_identity"
-    if relative in {"quorune/permanent_designations.py", "quorune/soulbond_model.py", "quorune/soulbond_state.py"}:
+    if relative in {"quorune/permanent_designations.py", "quorune/champion_model.py", "quorune/champion_state.py", "quorune/soulbond_model.py", "quorune/soulbond_state.py", "quorune/ring_model.py", "quorune/ring_state.py", "quorune/ring_effects.py", "quorune/ring_triggers.py", "quorune/ring_delays.py"}:
         return "permanent_designations"
     if relative in {
         "quorune/zone_object_state.py",
@@ -1129,6 +1148,15 @@ def build_classifications() -> dict[str, Any]:
                             "quorune/untap_selection.py",
                             "quorune/zone_devour.py",
                             "quorune/soulbond_model.py",
+                            "quorune/ring_model.py",
+                            "quorune/ring_state.py",
+                            "quorune/ring_effects.py",
+                            "quorune/ring_triggers.py",
+                            "quorune/ring_delays.py",
+                            "quorune/champion_model.py",
+                            "quorune/champion_state.py",
+                            "quorune/linked_ability_exile_model.py",
+                            "quorune/linked_ability_exile_state.py",
                             "quorune/soulbond_state.py",
                             "spell_history_transform.py",
                         )

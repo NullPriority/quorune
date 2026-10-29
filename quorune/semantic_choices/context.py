@@ -3,7 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Mapping, Protocol
 
-from ..replacement.immutable import FrozenMap
+from ..replacement.immutable import FrozenMap, thaw_value
+from ..ring_model import RingBearerChoicePlan, RingStateError
 from ..drawing.restrictions import DrawPermission
 from ..object_query import ObjectQueryResult
 from ..counter_permission import ALLOW_ALL_COUNTERS, CounterPermissionSnapshot, CounterPlacementFact
@@ -143,6 +144,8 @@ class SemanticChoiceQuery(
     @property
     def turn_sequence(self) -> int: ...
 
+    def ring_choice_plan(self, player: str) -> RingBearerChoicePlan: ...
+
 
 @dataclass(frozen=True, slots=True)
 class SnapshotSemanticChoiceQuery:
@@ -174,6 +177,7 @@ class SnapshotSemanticChoiceQuery:
     rules_profile: str = ''
     library_search_allowed_by_seat: FrozenMap = field(default_factory=FrozenMap)
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
+    ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
 
     def __post_init__(self) -> None:
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):
@@ -191,6 +195,7 @@ class SnapshotSemanticChoiceQuery:
             "draw_permissions_by_seat",
             "resolution_condition_facts",
             "library_search_allowed_by_seat",
+            "ring_choice_plans",
         ):
             value = getattr(self, field_name)
             if not isinstance(value, FrozenMap):
@@ -219,6 +224,16 @@ class SnapshotSemanticChoiceQuery:
     @property
     def active_seats(self) -> tuple[str, ...]:
         return self.active_order
+
+    def ring_choice_plan(self, player: str) -> RingBearerChoicePlan:
+        from .model import SemanticChoiceError
+        try:
+            plan = RingBearerChoicePlan.from_dict(thaw_value(self.ring_choice_plans[player]))
+        except (KeyError, RingStateError) as exc:
+            raise SemanticChoiceError('Prepared Ring choice facts are unavailable') from exc
+        if plan.state.player != player:
+            raise SemanticChoiceError('Ring choice player binding changed')
+        return plan
 
     def objects(
         self,

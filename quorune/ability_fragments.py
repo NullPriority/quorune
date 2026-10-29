@@ -52,6 +52,8 @@ from .creature_subtypes import canonical_creature_subtype
 from .replacement.immutable import FrozenMap, thaw_value
 from .trigger_participation import TriggerMultiplierSpec, WardSpec
 from .static_component_scope import (
+    GRANTED_STATIC_COST_EVENT, GRANTED_STATIC_COST_CAPABILITY,
+    GRANTED_STATIC_CHARACTERISTIC_EVENT, GRANTED_STATIC_CHARACTERISTIC_CAPABILITY,
     StaticComponentApplicabilitySpec,
     StaticComponentScopeSpec,
 )
@@ -686,12 +688,21 @@ class StaticComponentSpec:
 
     semantic_key: str
     schema_version: int = 1
+    event: str | None = None
+    grant_timestamp: int | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2, 3):
             raise AbilityFragmentError(
                 "Unsupported static-component fragment schema version"
             )
+        if (self.schema_version == 1 and self.event is not None
+                or self.schema_version == 2 and self.event != GRANTED_STATIC_COST_EVENT
+                or self.schema_version == 3 and self.event != GRANTED_STATIC_CHARACTERISTIC_EVENT):
+            raise AbilityFragmentError('Granted static component requires its closed cost event')
+        if (self.schema_version != 3 and self.grant_timestamp is not None
+                or self.grant_timestamp is not None and (type(self.grant_timestamp) is not int or self.grant_timestamp < 0)):
+            raise AbilityFragmentError('Only version3 characteristic grants carry a nonnegative grant timestamp')
         if (
             type(self.semantic_key) is not str
             or not self.semantic_key.strip()
@@ -702,14 +713,28 @@ class StaticComponentSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        value = {
             "schema_version": self.schema_version,
             "semantic_key": self.semantic_key,
         }
+        if self.schema_version in {2, 3}:
+            value['event'] = self.event
+        if self.schema_version == 3:
+            value['grant_timestamp'] = self.grant_timestamp
+        return value
+
+    @property
+    def capability_id(self):
+        return (GRANTED_STATIC_COST_CAPABILITY if self.schema_version == 2 else
+            GRANTED_STATIC_CHARACTERISTIC_CAPABILITY if self.schema_version == 3 else None)
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "StaticComponentSpec":
         expected = {"schema_version", "semantic_key"}
+        if isinstance(value, Mapping) and value.get('schema_version') in {2, 3}:
+            expected.add('event')
+        if isinstance(value, Mapping) and value.get('schema_version') == 3:
+            expected.add('grant_timestamp')
         if not isinstance(value, Mapping) or set(value) != expected:
             raise AbilityFragmentError(
                 "Static-component fragments have a closed schema"

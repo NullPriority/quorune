@@ -11,6 +11,8 @@ from .domain_intent import DomainEffectIntent
 from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
 from .counter_movement_intent import MoveCountersIntent
 from .connive_intent import ConniveCompletedIntent
+from .ring_intent import BeginRingTemptationIntent, CompleteRingBearerIntent
+from .champion_intent import ChampionExileIntent, ReturnLinkedAbilityExileIntent
 from .energy_payment import PayEnergyIntent
 from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
 
@@ -1587,6 +1589,10 @@ SemanticIntent: TypeAlias = (
     | PairSoulbondIntent
     | RecordChoiceIntent
     | ConniveCompletedIntent
+    | BeginRingTemptationIntent
+    | CompleteRingBearerIntent
+    | ChampionExileIntent
+    | ReturnLinkedAbilityExileIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
     | MadnessChoiceIntent

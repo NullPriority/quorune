@@ -52,8 +52,10 @@ def _event_player_reference_is_closed(program,player):
 
 def _occurrence_player_reference_is_closed(event,condition,coverage,player):
     if player=='$context.player':return event in {'spell.cast','card.drawn','player.scried','player.surveilled'}
-    if player=='$context.previous_controller':return event in {'card.discarded','creature.dies'}
+    if player=='$context.previous_controller':return event in {'card.discarded','creature.dies','creature.dies.self'}
     if player=='$context.controller':return event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}
     from ..compiler.event_player_results import _damage_guarantees_player
     if player=='$context.target':return event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(condition)
-    return player=='$context.defending_player' and event=='creature.attacks' and 'trigger-event-normalized-public-action' in coverage and 'one_or_more_event_batch' not in coverage
+    return (player=='$context.defending_player' and event=='creature.attacks'
+        and bool({'trigger-event-normalized-public-action','trigger-event-normalized-self-attack'} & set(coverage))
+        and 'one_or_more_event_batch' not in coverage)

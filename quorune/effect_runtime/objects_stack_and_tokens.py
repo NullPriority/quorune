@@ -306,16 +306,38 @@ def _apply_delayed_trigger(
     op = operation
     source = effect.get("source")
     source_id = None
-    if source:
+    binding = None
+    if 'source_binding' in effect:
+        from ..target_source import TargetingSourceBinding
+        try:
+            binding = TargetingSourceBinding.from_dict(effect['source_binding'])
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        if source is not None and source != binding.object_ref:
+            raise GameRuleError('Delayed source reference conflicts with its captured binding')
+        source_id = binding.object_id
+    elif source:
         source_id = host._resolve_object(actor, str(source)).object_id
+    template = copy.deepcopy(dict(effect.get('stack') or {}))
+    if binding is not None:
+        from ..target_source import TARGETING_SOURCE_CONTEXT
+        context = dict(template.get('context') or {})
+        if (context.get('source_logical_object_id', binding.logical_object_id) != binding.logical_object_id
+                or context.get(TARGETING_SOURCE_CONTEXT, binding.to_dict()) != binding.to_dict()):
+            raise GameRuleError('Delayed template conflicts with its captured source')
+        context.update({TARGETING_SOURCE_CONTEXT:binding.to_dict(),
+                        'source_logical_object_id':binding.logical_object_id})
+        template['context'] = context
     return schedule_delayed_trigger(
         host,
         controller=str(effect.get("controller") or actor),
         label=str(effect["label"]),
         event_kind=str(effect.get("event") or "step.begin"),
         condition=dict(effect.get("condition") or {}),
-        stack_template=dict(effect.get("stack") or {}),
+        stack_template=template,
         source_object_id=source_id,
+        source_logical_object_id=binding.logical_object_id if binding is not None else None,
+        referred_object_ids=tuple(effect.get('referred_object_ids') or ()),
         once=bool(effect.get("once", True)),
         expires_turn_sequence=effect.get("expires_turn_sequence"),
     ).ref

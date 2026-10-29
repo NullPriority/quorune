@@ -734,6 +734,9 @@ class BlockKeywordTriggerOccurrence:
 
 def derive_block_keyword_trigger_occurrences(
     event: BlockTransitionEvent,
+    *,
+    put_blocking: bool = False,
+    already_blocked: frozenset[str] = frozenset(),
 ) -> tuple[BlockKeywordTriggerOccurrence, ...]:
     """Derive CR 702.25/702.45 occurrences from one sealed transition."""
 
@@ -741,6 +744,10 @@ def derive_block_keyword_trigger_occurrences(
         raise BlockTransitionError(
             "Block keyword triggers require a typed transition event"
         )
+    if type(put_blocking) is not bool or not isinstance(already_blocked, frozenset) or any(
+        type(value) is not str or not value for value in already_blocked
+    ):
+        raise BlockTransitionError('Block origin and prior blocked identities must be exact facts')
     participants = {value.object_id: value for value in event.participants}
     drafts: list[
         tuple[
@@ -756,8 +763,10 @@ def derive_block_keyword_trigger_occurrences(
     for assignment in event.assignments:
         attacker = participants[assignment.attacker_object_id]
         blocker = participants[assignment.blocker_object_id]
-        blocked_attackers.add(attacker.object_id)
-        blocking_creatures.add(blocker.object_id)
+        if attacker.object_id not in already_blocked:
+            blocked_attackers.add(attacker.object_id)
+        if not put_blocking:
+            blocking_creatures.add(blocker.object_id)
         blocker_has_flanking = any(
             spec.kind is CombatKeywordTriggerKind.FLANKING
             for spec in blocker.trigger_specs
@@ -783,7 +792,8 @@ def derive_block_keyword_trigger_occurrences(
             drafts.append((spec.kind, source, source, spec.amount, index))
 
     from .rampage import rampage_occurrence_drafts
-    drafts.extend(rampage_occurrence_drafts(event))
+    drafts.extend(value for value in rampage_occurrence_drafts(event)
+                  if value[1].object_id not in already_blocked)
     drafts.sort(
         key=lambda value: (
             value[1].reference,

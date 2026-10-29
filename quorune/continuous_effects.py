@@ -1,7 +1,7 @@
 from __future__ import annotations
 from .qualified_hexproof import keyword_is_removed,keyword_type_terms
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any, Iterable, Mapping, Sequence
 
 from .continuous_effect_model import (
@@ -344,6 +344,7 @@ def _apply_face_down(
 def _apply_ability_operation(
     state: CharacteristicState,
     operation: ContinuousOperation,
+    *, effect_timestamp: int | None = None,
 ) -> bool:
     op = operation.op
     value = operation.value
@@ -371,6 +372,10 @@ def _apply_ability_operation(
             )
     elif op == "add_ability_fragment":
         fragment = ability_fragment_from_dict(value)
+        if isinstance(fragment, StaticComponentSpec) and fragment.schema_version == 3:
+            if effect_timestamp is None:
+                raise ContinuousEffectError('A granted characteristic requires its owning continuous effect timestamp')
+            fragment = replace(fragment, grant_timestamp=effect_timestamp)
         state.ability_fragments = list(
             canonical_ability_fragments(
                 (*state.ability_fragments, fragment)
@@ -408,6 +413,7 @@ def _apply_operation(
     state: CharacteristicState,
     operation: ContinuousOperation,
     context: Mapping[str, Any],
+    *, effect_timestamp: int | None = None,
 ) -> None:
     op = operation.op
     value = operation.value
@@ -494,7 +500,7 @@ def _apply_operation(
     if op == "remove_all_colors":
         state.colors.clear()
         return
-    if _apply_ability_operation(state, operation):
+    if _apply_ability_operation(state, operation, effect_timestamp=effect_timestamp):
         return
     from .continuous_stat_operations import apply_stat_operation
     if apply_stat_operation(state,operation,context):return
@@ -551,6 +557,7 @@ def evaluate_continuous_effects(
             ContinuousEffectRelation.SOURCE_OBJECT,
             ContinuousEffectRelation.SOURCE_ATTACHED_TO_OBJECT,
             ContinuousEffectRelation.SOURCE_PAIRED_WITH_OBJECT,
+            ContinuousEffectRelation.SOURCE_RING_BEARER_OBJECT,
         }:
             object_id = str(context.get("object_id") or "")
             logical_object_id = str(
@@ -590,7 +597,7 @@ def evaluate_continuous_effects(
                 str(operation.value).casefold(),
             ) in effect.denied_keyword_grants:
                 continue
-            _apply_operation(base, operation, context)
+            _apply_operation(base, operation, context, effect_timestamp=effect.timestamp)
         if effect.layer == Layer.COPY and effect.sublayer == "1a":
             base.copiable_values = base.snapshot()
         applied.append(effect.effect_id)

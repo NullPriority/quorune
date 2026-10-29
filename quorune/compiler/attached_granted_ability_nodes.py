@@ -28,6 +28,8 @@ from .public_query_effect_amounts import (
     _source_characteristic_amount_base,
 )
 from .granted_program_bounds import granted_effect_values_are_closed
+from .granted_static_costs import compile_static_cost_or_ordinary_inner
+from .granted_characteristic_nodes import granted_characteristic_reference_is_closed
 from .ir_model import OracleNode, OracleResidual, SourceSpan
 from .static_runtime_nodes import runtime_handler_node
 
@@ -35,11 +37,13 @@ from .static_runtime_nodes import runtime_handler_node
 GRANTED_ACTIVATED_ABILITY_KIND = "granted_activated_ability"
 GRANTED_MANA_ABILITY_KIND = "granted_mana_ability"
 GRANTED_TRIGGERED_ABILITY_KIND = "granted_triggered_ability"
+GRANTED_STATIC_ABILITY_KIND = 'granted_static_ability'
 GRANTED_ABILITY_KINDS = frozenset(
     {
         GRANTED_ACTIVATED_ABILITY_KIND,
         GRANTED_MANA_ABILITY_KIND,
         GRANTED_TRIGGERED_ABILITY_KIND,
+        GRANTED_STATIC_ABILITY_KIND,
     }
 )
 _EXTERNAL_ATTACHMENT_REFERENCE = re.compile(
@@ -57,6 +61,7 @@ class AttachedGrantedAbilityPlan:
     ability_id: str
     semantic_key: str
     fragment: Mapping[str, Any]
+    capability_dependencies: tuple[str, ...] = ()
 
 
 def attached_granted_program_ability_id(
@@ -80,6 +85,8 @@ def attached_granted_program_ability_id(
         return f"ability:granted:{face_id}:n{line}{token_slot}"
     if kind == GRANTED_TRIGGERED_ABILITY_KIND:
         return f"trigger:{face_id}:n{line}:granted{token_slot}"
+    if kind == GRANTED_STATIC_ABILITY_KIND:
+        return f'static:granted:{face_id}:n{line}{token_slot}'
     return None
 
 
@@ -120,6 +127,7 @@ def attached_granted_ability_plan(
     keywords: Sequence[str],
     node_id: str | None = None,
     display_text: str | None = None,
+    allow_static_cost: bool = False,
 ) -> AttachedGrantedAbilityPlan | None:
     """Build one closed typed grant from an independently exact inner node."""
 
@@ -129,6 +137,14 @@ def attached_granted_ability_plan(
         or not granted_effect_values_are_closed(node.effects)
     ):
         return None
+    if allow_static_cost and node.event == 'cast.cost.modify':
+        from .granted_static_costs import static_cost_granted_plan
+        return static_cost_granted_plan(node=node, oracle_id=oracle_id, face_id=face_id,
+            source_line=source_line, node_id=node_id)
+    if allow_static_cost and node.event == 'characteristics.evaluate':
+        from .granted_characteristic_nodes import characteristic_granted_plan
+        return characteristic_granted_plan(node=node, oracle_id=oracle_id, face_id=face_id,
+            source_line=source_line, node_id=node_id)
     if node.kind in {"activated_ability", "mana_ability"}:
         abilities = parse_activated_abilities(
             card_name=card_name,
@@ -251,7 +267,7 @@ def _compile_granted_ability_pair(
     """Compile one accepted grant shell and one independent inner ability."""
 
     inner_residuals: list[OracleResidual] = []
-    inner = compile_inner(
+    inner = compile_static_cost_or_ordinary_inner(compile_inner,
         node_id=f"{node_id}:granted",
         line=quoted,
         material_line=material_line_for(quoted),
@@ -296,8 +312,13 @@ def _compile_granted_ability_pair(
         source_line=span.line,
         card_name="Granted creature",
         keywords=(),
+        allow_static_cost=True,
     )
     if plan is None:
+        return None
+    from .granted_static_costs import bind_granted_plan_dependencies
+    inner = bind_granted_plan_dependencies(inner, plan, capability_registry, capability_profile)
+    if inner is None:
         return None
     compiled = compile_shell(
         plan.fragment,
@@ -361,7 +382,7 @@ def compile_attached_granted_ability_nodes(
         material_line,
         source_name=source_name,
     )
-    if quoted is None or _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+    if quoted is None or (_EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) and not granted_characteristic_reference_is_closed(quoted)):
         return None
     normalized_name = source_name.casefold().strip()
     if normalized_name and normalized_name in quoted.casefold():
@@ -418,8 +439,16 @@ def compile_fixed_query_granted_ability_nodes(
 ) -> tuple[OracleNode, OracleNode] | None:
     """Compile a typed quoted ability granted to one closed live query."""
 
+    from .granted_keyword_event_nodes import compile_granted_keyword_event_nodes
+    keyword_grant = compile_granted_keyword_event_nodes(record=record, face_id=face_id,
+        node_id=node_id, line=line, material_line=material_line, span=span, source_name=source_name,
+        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry,
+        capability_profile=capability_profile, residuals=residuals, effect_template=effect_template,
+        trigger_effect_template=trigger_effect_template, material_line_for=material_line_for)
+    if keyword_grant is not None:
+        return keyword_grant
     quoted = fixed_query_quoted_ability_text(material_line)
-    if quoted is None or _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+    if quoted is None or (_EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) and not granted_characteristic_reference_is_closed(quoted)):
         return None
     normalized_name = source_name.casefold().strip()
     if normalized_name and normalized_name in quoted.casefold():
@@ -615,7 +644,7 @@ def compile_keyword_or_attached_grant_nodes(
     if temporary is not None:
         return temporary
     quoted = conditional_quoted_ability_text(material_line, source_name=source_name)
-    if quoted is not None and not _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted):
+    if quoted is not None and (not _EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) or granted_characteristic_reference_is_closed(quoted)):
         conditional = _compile_granted_ability_pair(
             record=record, face_id=face_id, node_id=node_id, line=line,
             material_line=material_line, span=span, quoted=quoted,
@@ -664,6 +693,7 @@ __all__ = [
     "GRANTED_ACTIVATED_ABILITY_KIND",
     "GRANTED_MANA_ABILITY_KIND",
     "GRANTED_TRIGGERED_ABILITY_KIND",
+    "GRANTED_STATIC_ABILITY_KIND",
     "attached_granted_ability_plan",
     "attached_granted_program_ability_id",
     "compile_attached_granted_ability_nodes",

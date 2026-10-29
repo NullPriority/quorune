@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .characteristic_read_frames import characteristic_read_method
 
 from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
@@ -6417,18 +6418,22 @@ class CommanderEngine(
             players=self.state.players,
         )
 
+    @characteristic_read_method
     def _legend_groups(self) -> list[tuple[str, str, list[str]]]:
         groups: dict[tuple[str, str], list[str]] = {}
         for seat in self.active_seats:
             for object_id in self.state.players[seat].zones["battlefield"]:
                 card = self.state.cards[object_id]
-                if card.controller != seat:
+                if card.controller != seat or card.phased_out:
                     continue
                 data = self._effective_card_data(card)
                 type_line = str(data.get("type_line") or "")
                 if "legendary" not in type_line.casefold():
                     continue
-                key = (seat, str(data.get("name") or card.printed_name))
+                name = str(data.get("name") or "")
+                if not name:
+                    continue
+                key = (seat, name)
                 groups.setdefault(key, []).append(object_id)
         return [(seat, name, ids) for (seat, name), ids in groups.items() if len(ids) > 1]
 
@@ -6443,14 +6448,7 @@ class CommanderEngine(
                 battle = self.state.cards[object_id]
                 if battle.zone != "battlefield" or battle.phased_out:
                     continue
-                card_types, subtypes, _ = self._type_parts(
-                    str(
-                        self._effective_card_data(battle).get(
-                            "type_line"
-                        )
-                        or ""
-                    )
-                )
+                card_types, subtypes, _ = self._effective_type_parts(battle)
                 if "battle" not in card_types:
                     continue
                 if not subtypes:

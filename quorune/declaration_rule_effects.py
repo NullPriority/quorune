@@ -11,7 +11,7 @@ from .continuous_effect_model import (
     ContinuousEffectError,
     ContinuousObjectIdentity,
 )
-from .declaration_fragments import DeclarationRestrictionTemplate
+from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
 from .replacement.immutable import immutable_fingerprint
 from .object_predicate import ObjectQuerySpec
 from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
@@ -55,7 +55,7 @@ class ResolutionDeclarationRuleEffect:
     effect_id: str
     source_id: str
     timestamp: int
-    restriction: DeclarationRestrictionTemplate
+    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate
     locked_objects: tuple[ContinuousObjectIdentity, ...]
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
@@ -75,11 +75,18 @@ class ResolutionDeclarationRuleEffect:
             raise ContinuousEffectError(
                 "Declaration-rule effect timestamps must be nonnegative integers"
             )
-        if not isinstance(self.restriction, DeclarationRestrictionTemplate):
+        requirement = isinstance(self.restriction, DeclarationRequirementTemplate)
+        if requirement and (
+            self.restriction.schema_version != 1
+            or self.restriction.kind != 'all_able_blockers'
+            or self.live_query is not None
+        ):
+            raise ContinuousEffectError('Resolved requirements need one locked all-able-blocker subject')
+        if not requirement and not isinstance(self.restriction, DeclarationRestrictionTemplate):
             raise ContinuousEffectError(
-                "Declaration-rule effects require a typed restriction"
+                "Declaration-rule effects require a typed restriction or requirement"
             )
-        if (
+        if not requirement and (
             self.restriction.mode != "prohibit"
             or self.restriction.scope not in {"self", "source_option"}
         ):
@@ -117,6 +124,8 @@ class ResolutionDeclarationRuleEffect:
                 "Declaration-rule locked identities must be unique typed values"
             )
         object.__setattr__(self, "locked_objects", locked)
+        if requirement and len(locked) != 1:
+            raise ContinuousEffectError('Resolved requirements lock exactly one battlefield incarnation')
         if self.live_query is not None and (
             locked or not declaration_group_query_is_closed(self.live_query, resolved=True)
         ):
@@ -128,12 +137,15 @@ class ResolutionDeclarationRuleEffect:
             "effect_id": self.effect_id,
             "source_id": self.source_id,
             "timestamp": self.timestamp,
-            "restriction": self.restriction.to_dict(),
             "duration": self.duration.value,
             "locked_objects": [
                 identity.to_dict() for identity in self.locked_objects
             ],
         }
+        if isinstance(self.restriction, DeclarationRequirementTemplate):
+            value.update(schema_version=3, requirement=self.restriction.to_dict())
+        else:
+            value['restriction'] = self.restriction.to_dict()
         if self.live_query is not None:
             value.update(schema_version=2, live_query=self.live_query.to_dict())
         return value
@@ -153,7 +165,8 @@ class ResolutionDeclarationRuleEffect:
             "locked_objects",
         }
         live = isinstance(value, Mapping) and set(value) == expected | {"schema_version", "live_query"}
-        if not isinstance(value, Mapping) or (set(value) != expected and not live):
+        requirement = isinstance(value, Mapping) and set(value) == (expected - {'restriction'}) | {'schema_version', 'requirement'}
+        if not isinstance(value, Mapping) or (set(value) != expected and not live and not requirement):
             raise ContinuousEffectError(
                 "Declaration-rule effect fields are missing or unknown"
             )
@@ -163,7 +176,10 @@ class ResolutionDeclarationRuleEffect:
             )
         if live and (type(value["schema_version"]) is not int or value["schema_version"] != 2 or not isinstance(value["live_query"], Mapping)):
             raise ContinuousEffectError("Live declaration-rule schema version and query are malformed")
-        if not isinstance(value["restriction"], Mapping) or not isinstance(
+        if requirement and (type(value['schema_version']) is not int or value['schema_version'] != 3):
+            raise ContinuousEffectError('Resolved requirement schema version is malformed')
+        payload = value['requirement'] if requirement else value['restriction']
+        if not isinstance(payload, Mapping) or not isinstance(
             value["locked_objects"], list
         ):
             raise ContinuousEffectError(
@@ -174,9 +190,7 @@ class ResolutionDeclarationRuleEffect:
                 effect_id=value["effect_id"],
                 source_id=value["source_id"],
                 timestamp=value["timestamp"],
-                restriction=DeclarationRestrictionTemplate.from_dict(
-                    value["restriction"]
-                ),
+                restriction=(DeclarationRequirementTemplate if requirement else DeclarationRestrictionTemplate).from_dict(payload),
                 duration=ContinuousEffectDuration(value["duration"]),
                 locked_objects=tuple(
                     ContinuousObjectIdentity.from_dict(identity)

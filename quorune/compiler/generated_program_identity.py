@@ -35,7 +35,7 @@ def generated_ability_id(
         slot = str(node_id or '').rsplit(':role-static:', 1)
         if len(slot) == 2 and slot[1].isdigit():
             return f'static:{face_id}:n{line}:role:{slot[1]}'
-        return None
+        return attached_granted_program_ability_id(kind=kind, face_id=face_id, line=line, node_id=node_id)
     granted = attached_granted_program_ability_id(
         kind=kind,
         face_id=face_id,
@@ -59,6 +59,8 @@ def generated_ability_id(
     if kind == "triggered_ability":
         base = f"trigger:{face_id}:n{line}"
         parts = str(node_id or "").split(":")
+        if len(parts)>=2 and parts[-2]=='champion' and parts[-1] in {'enter','leave'}:
+            return f'{base}:champion:{parts[-1]}'
         if (len(parts) >= 3 and parts[-3] == 'soulbond' and parts[-2].isdigit()
                 and parts[-1] in {'self', 'other'}):
             return f'{base}:soulbond:{parts[-2]}:{parts[-1]}'

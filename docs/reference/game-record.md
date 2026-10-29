@@ -116,6 +116,14 @@ The binding is internal; it does not add projected choice authority. Older
 frames without it remain structurally readable under the existing execution
 provenance contract.
 
+Count-sensitive casting options use version three of the targeted-cost fact.
+It retains the positive generic total, generic reduction total and each applied
+source's identity, controller, component identity and signed adjustment. The
+amounts are locked from the validated selected targets before payment. Versions
+one and two retain their exact historical fields and serialization. Public
+price rows for count-sensitive choices include signed generic adjustments so
+the projected form can distinguish different counts from the same sources.
+
 Fixed additional tap prices record `fixed_additional_tap_payment` in the
 selected casting option. Its closed version-one frame contains the compiled
 price and each selected physical object, logical incarnation and reference.
@@ -320,6 +328,14 @@ public predicate; save/load preserves empty groups so later entrants can match.
 The decoder accepts the legacy shape and the exact version-two shape, rejecting
 unknown fields, malformed queries, or mixed live and locked recipients. Both
 shapes expire through the same continuous-effect cleanup owner.
+
+A resolved all-able-blocker requirement uses the additive exact
+`schema_version: 3` shape. Its `requirement` field replaces `restriction` and
+contains the historical self-scoped typed requirement payload. It locks exactly
+one battlefield incarnation and has no `live_query`. Unknown fields, mixed
+restriction and requirement payloads, other requirement kinds and malformed
+versions reject. It shares the same until-end-of-turn duration, cleanup,
+rollback and replay owner as the older forms.
 
 An optional source untap uses a version-one owned continuation inside the
 pending decision. It retains the physical turn and step, immutable participation

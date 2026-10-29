@@ -125,9 +125,16 @@ def activation_availability(
         host._crew_candidates(seat, card)
     ) < crew_threshold:
         return "unpayable", "insufficient_crew_power"
+    return _activation_mana_availability(host, seat, card, ability)
+
+
+def _activation_mana_availability(host, seat, card, ability):
     if ability.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
-        requirements,_=activation_requirements(host,seat,card,ability)
+        try:
+            requirements,_=activation_requirements(host,seat,card,ability)
+        except ValueError:
+            return 'unavailable', 'mandatory_target_unavailable'
         if activation_waterbend_plan(host,seat,card,ability,requirements,{},hint=True) is None:return 'unpayable','waterbend_unpayable'
         return 'payable',None
     if ability.mana_cost_options:
@@ -136,7 +143,10 @@ def activation_availability(
         if not payable:
             return "unpayable", "complex_mana_cost_unpayable"
     else:
-        requirements,_ = activation_requirements(host,seat,card,ability)
+        try:
+            requirements,_ = activation_requirements(host,seat,card,ability)
+        except ValueError:
+            return 'unavailable', 'mandatory_target_unavailable'
         excluded = {card.object_id} if ability.tap_source else set()
         spend_context = ability_mana_spend_context(
             str(host._effective_card_data(card).get("type_line") or "")

@@ -138,3 +138,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0121 — spell payment counts and entry conditions](0121-spell-payment-counts-and-entry-conditions.md)
 - [ADR 0122 — paid-mana resolution and target information](0122-paid-mana-resolution-and-target-information.md)
 - [ADR 0123 — combat-bound blocking requirements](0123-combat-bound-blocking-requirements.md)
+- [ADR 0124 — resolved declaration requirements](0124-resolved-declaration-requirements.md)

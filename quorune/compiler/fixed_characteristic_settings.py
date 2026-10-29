@@ -101,6 +101,9 @@ def _setting_part(modifier, part):
 
 
 def fixed_characteristic_setting_handler(text: str, *, source_name: str | None = None):
+    from .shared_type_quantities import shared_type_quantity_handler
+    shared=shared_type_quantity_handler(text)
+    if shared is not None:return shared
     from .recipient_modifiers import recipient_modifier_handler
     recipient=recipient_modifier_handler(text)
     if recipient is not None:return recipient

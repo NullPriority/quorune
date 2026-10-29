@@ -104,6 +104,7 @@ from .compiler.modal_templates import (
     fixed_nonrepeating_modal_template,
 )
 from .compiler.monarch_templates import fixed_monarch_effect_template
+from .compiler.ring_templates import fixed_ring_temptation_template
 from .compiler.keyword_nodes import (
     bloodthirst_keyword_node,
     closed_special_keyword_node,
@@ -171,7 +172,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v598"
+ORACLE_COMPILER_VERSION = "oracle-ir-v613"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -263,6 +264,9 @@ def _effect_template(
     monarch = fixed_monarch_effect_template(normalized)
     if monarch is not None:
         return monarch.compiled()
+    ring = fixed_ring_temptation_template(normalized)
+    if ring is not None:
+        return ring.compiled()
     delayed_draw = fixed_next_turn_upkeep_draw_effect_template(normalized)
     if delayed_draw is not None:
         return delayed_draw.compiled()

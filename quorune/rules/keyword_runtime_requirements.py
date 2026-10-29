@@ -39,8 +39,16 @@ def _fragment_descriptor_requirements(value):
             from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
             # Decode the actual persisted fragment; annotations cannot replace
             # the capability required by a nested executable declaration rule.
-            ability_fragment_from_dict(value)
+            fragment = ability_fragment_from_dict(value)
             own.add(DECLARATION_COMPONENT_CAPABILITY_ID)
+            owner = getattr(fragment, 'capability_id', None)
+            if owner is not None: own.add(owner)
+            if value.get('kind') == 'declaration_requirement' and fragment.condition is not None:
+                own.add('continuous.characteristics.fixed_public_state')
+        if value.get('kind') == 'static_component':
+            fragment = ability_fragment_from_dict(value)
+            owner = getattr(fragment, 'capability_id', None)
+            if owner is not None: own.add(owner)
         return {*own, *(cap for child in value.values() for cap in _fragment_descriptor_requirements(child))}
     if isinstance(value, (list, tuple)):
         return {cap for child in value for cap in _fragment_descriptor_requirements(child)}
@@ -49,7 +57,20 @@ def _fragment_descriptor_requirements(value):
 
 def keyword_runtime_dependencies(program):
     required = set(attached_keyword_runtime_dependencies(program))
+    if 'fixed_keyword_event_grant' in program.coverage:
+        required.add('continuous.ability.fixed_keyword_event_grant')
     if 'banding' in program.coverage:
         required.add('combat.banding')
     required.update(_fragment_descriptor_requirements((program.handlers, program.effects)))
+    if program.provenance.get('granted_only') and any(
+            value.get('handler_id') == 'modification.cast-cost.targeted-fixed.v1' for value in program.handlers):
+        from ..static_component_scope import GRANTED_STATIC_COST_CAPABILITY
+        required.add(GRANTED_STATIC_COST_CAPABILITY)
+    if (program.provenance.get('granted_only') and program.event == 'characteristics.evaluate'
+            and program.ability_id.startswith('static:granted:')):
+        from ..rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed
+        from ..static_component_scope import GRANTED_STATIC_CHARACTERISTIC_CAPABILITY
+        if not granted_characteristic_handlers_are_closed(program.handlers):
+            raise ValueError('Granted static characteristic child has an unrepresented shape')
+        required.add(GRANTED_STATIC_CHARACTERISTIC_CAPABILITY)
     return tuple(sorted(required))

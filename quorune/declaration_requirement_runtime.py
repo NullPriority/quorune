@@ -108,13 +108,8 @@ def typed_attacker_block_requirements(
     error_type: type[Exception],
 ) -> list[DeclarationRequirement]:
     result: list[DeclarationRequirement] = []
-    fragments = host._effective_ability_fragments(
-        attacker,
-        error_type=error_type,
-    )
-    for index, requirement in enumerate(
-        declaration_requirement_specs(fragments)
-    ):
+    from .rules.all_blocker_requirements import current_attacker_block_requirements
+    for index, requirement in current_attacker_block_requirements(host,attacker,error_type=error_type):
         if requirement.kind == "must_be_blocked":
             result.append(
                 DeclarationRequirement(

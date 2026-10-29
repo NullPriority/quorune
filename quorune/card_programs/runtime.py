@@ -651,7 +651,8 @@ def _component_public_state_snapshot(
     """Keep early-layer settings separate from characteristic query conditions."""
     handler_id = descriptor.get('handler_id')
     from ..semantic_runtime.quantified_anthems import QUANTIFIED_ANTHEM_HANDLER
-    if handler_id==QUANTIFIED_ANTHEM_HANDLER and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
+    from ..semantic_runtime.shared_type_anthems import SHARED_TYPE_ANTHEM_HANDLER
+    if handler_id in {QUANTIFIED_ANTHEM_HANDLER,SHARED_TYPE_ANTHEM_HANDLER} and maximum_layer is not None and maximum_layer<Layer.POWER_TOUGHNESS:
         return True,None
     if handler_id == 'continuous.characteristics.conditional-creature-type-removal.v1':
         from ..semantic_runtime.fixed_characteristic_settings import ConditionalCreatureTypeRemovalHandler
@@ -698,6 +699,53 @@ def _descriptor_characteristic_quantity(source,descriptor,*,quantity_resolver,ma
     return None
 
 
+def _descriptor_public_type_objects(source,descriptor,*,state,resolver):
+    from ..semantic_runtime.shared_type_anthems import SHARED_TYPE_ANTHEM_HANDLER
+    if descriptor.get('handler_id')!=SHARED_TYPE_ANTHEM_HANDLER:
+        return None
+    if descriptor.get('relation')=='source_attached_to_object' and not getattr(source,'attached_to',None):
+        return None
+    if resolver.public_object_resolver is None:
+        raise SemanticNodeError('Shared-type effects require a cycle-safe public object resolver')
+    objects=(card for card in state.cards.values() if card.zone=='battlefield' and not card.phased_out)
+    return tuple(resolver._public_object(card) for card in sorted(objects,key=lambda card:card.object_id))
+
+
+def _continuous_program_instances(semantics, source, programs, granted_resolver):
+    if granted_resolver is None:
+        return tuple((program, None, None) for program in programs)
+    from ..rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed
+    result = [(program, None, None) for program in programs
+        if not (program.provenance.get('granted_only') and program.ability_id.startswith('static:granted:')
+            and program.event == 'characteristics.evaluate')]
+    for ordinal, (key, timestamp) in enumerate(granted_resolver(source)):
+        program = semantics.get(key)
+        if (program is None or program.provenance.get('granted_only') is not True
+                or program.active_zone != 'battlefield' or program.event != 'characteristics.evaluate'
+                or not program.ability_id.startswith('static:granted:') or program.effects
+                or not granted_characteristic_handlers_are_closed(program.handlers)):
+            raise SemanticNodeError('Current granted characteristic references an unknown or different static child')
+        result.append((program, timestamp, ordinal))
+    return tuple(result)
+
+
+def _granted_characteristic_timestamp_order(effects, grant_order):
+    groups = {}
+    for effect in effects:
+        groups.setdefault((effect.source_id, effect.layer, effect.sublayer, effect.timestamp), []).append(effect)
+    replacements = {}
+    for group in groups.values():
+        if not any(effect.effect_id in grant_order for effect in group):
+            continue
+        ordered = sorted(group, key=lambda effect: (effect.effect_id in grant_order,
+            grant_order.get(effect.effect_id, (0, 0, '')), effect.effect_id))
+        for previous, effect in zip(ordered, ordered[1:]):
+            if effect.effect_id in grant_order:
+                replacements[effect.effect_id] = replace(effect,
+                    depends_on=tuple(sorted({*effect.depends_on, previous.effect_id})))
+    return tuple(replacements.get(effect.effect_id, effect) for effect in effects)
+
+
 def collect_card_program_continuous_effects(
     state: ContinuousRuntimeState,
     semantics: "SemanticRegistry",
@@ -712,6 +760,7 @@ def collect_card_program_continuous_effects(
     static_component_resolver: Callable[[Any], Sequence[str]] | None = None,
     early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     static_component_presence_only: bool = False,
+    granted_characteristic_resolver: Callable[[Any], Sequence[tuple[str, int]]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     registry = default_continuous_effect_component_registry()
     registered_handler_ids = frozenset(
@@ -720,6 +769,7 @@ def collect_card_program_continuous_effects(
     if metrics is not None:
         metrics.collection_calls += 1
     effects: list[ContinuousEffect] = []
+    grant_order = {}
     public_state_resolver = _FixedPublicStateSnapshotResolver(
         state=state,
         public_object_resolver=public_object_resolver,
@@ -739,18 +789,19 @@ def collect_card_program_continuous_effects(
             if (
                 (source.owner if source.zone == 'graveyard' else source.controller) != seat
                 or source.phased_out
-                or getattr(source, "face_down", False)
+                or getattr(source, "face_down", False) and granted_characteristic_resolver is None
             ):
                 continue
             if source.zone == 'graveyard':
                 from ..continuous_conditions import OwnerRelativeConditionSource
                 source = OwnerRelativeConditionSource(source)
-            programs = _continuous_programs_for_source(
+            programs = () if getattr(source, 'face_down', False) else _continuous_programs_for_source(
                 semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer
             )
             if metrics is not None:
                 metrics.card_program_lookups += 1
-            for program in programs:
+            for program, grant_timestamp, occurrence in _continuous_program_instances(
+                    semantics, source, programs, granted_characteristic_resolver):
                 if not program_is_trusted(program):
                     continue
                 for descriptor_index, descriptor in enumerate(
@@ -781,10 +832,10 @@ def collect_card_program_continuous_effects(
                         source_ref=source.ref,
                         source_controller=source.controller,
                         source_timestamp=max(
-                            0, int(source.zone_timestamp)
+                            0, int(source.zone_timestamp), grant_timestamp if grant_timestamp is not None else 0
                         ),
                         component_id=(
-                            f"{program.key}:{descriptor_index}"
+                            f"{program.key}:{descriptor_index}" + (f':grant:{occurrence}' if occurrence is not None else '')
                         ),
                         source_logical_object_id=source.logical_object_id,
                         source_counters=FrozenMap(
@@ -798,6 +849,8 @@ def collect_card_program_continuous_effects(
                         public_state=public_state,
                         resolved_quantity=resolved_quantity,
                         paired_object=paired_object,
+                        public_type_objects=_descriptor_public_type_objects(source,descriptor,state=state,
+                                                                           resolver=public_state_resolver),
                         attached_object=(
                             attached_object_identity(state.cards, source)
                             if getattr(source, "attached_to", None)
@@ -812,11 +865,13 @@ def collect_card_program_continuous_effects(
                             if effect.layer <= maximum_layer
                         )
                     effects.extend(lowered)
+                    if grant_timestamp is not None:
+                        grant_order.update({effect.effect_id:(grant_timestamp, occurrence, program.key) for effect in lowered})
                     if metrics is not None:
                         metrics.effects_produced += len(lowered)
     return tuple(
         sorted(
-            effects,
+            _granted_characteristic_timestamp_order(effects, grant_order),
             key=lambda effect: (
                 int(effect.layer),
                 effect.sublayer,

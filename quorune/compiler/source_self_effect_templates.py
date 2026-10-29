@@ -55,6 +55,10 @@ def source_self_contextual_effect_template(
 ) -> tuple[Any, ...] | None:
     """Delegate one source-bound body to its closed typed leaf owner."""
 
+    from .event_player_choice_templates import source_death_player_sacrifice_result
+    sacrifice = source_death_player_sacrifice_result(text, event_phrase=event_phrase)
+    if sacrifice is not None:return sacrifice
+
     counter_payment = _source_self_counter_payment(text,card_name=card_name,compile_effect=compile_effect)
     if counter_payment is not None:
         return counter_payment

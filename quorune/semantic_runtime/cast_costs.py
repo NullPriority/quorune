@@ -51,7 +51,7 @@ from .disturb import FixedManaDisturbHandler
 from .replicate import FixedManaReplicateHandler
 from .conspire import FixedConspireHandler
 from .targeted_spell_costs import TargetedSpellCostHandler
-from .activation_costs import FixedActivationCostModifierHandler
+from .activation_costs import FixedActivationCostModifierHandler, TargetedActivationCostModifierHandler, PublicQuantityActivationCostModifierHandler
 from ..activation_cost_modifiers import FixedActivationCostModifierSpec
 
 
@@ -577,6 +577,8 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedManaReplicateHandler(),
             FixedConspireHandler(),
             FixedActivationCostModifierHandler(),
+            TargetedActivationCostModifierHandler(),
+            PublicQuantityActivationCostModifierHandler(),
             GlobalAlternativeCostHandler(),
             FixedManaPerTargetCostHandler(),
             OptionalLifeColorReductionHandler(),

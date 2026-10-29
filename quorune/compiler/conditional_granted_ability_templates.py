@@ -106,6 +106,8 @@ def _conditional_quoted_ability_shell(
     quoted = oracle_line[start + 1:end].strip()
     if not quoted or "\n" in quoted:
         return None
+    from .granted_characteristic_nodes import granted_characteristic_reference_is_closed
+    static_characteristic = granted_characteristic_reference_is_closed(quoted)
     for sentinel in _ATTACHED_QUOTED_ABILITY_SENTINELS:
         if sentinel.casefold() in oracle_line.casefold():
             continue
@@ -117,7 +119,7 @@ def _conditional_quoted_ability_shell(
             synthetic, flags=re.IGNORECASE,
         )
         compiled = fixed_public_state_characteristics_handler(
-            synthetic, source_name=source_name,
+            synthetic, source_name=source_name, attached_permanent_subject=static_characteristic,
         )
         if compiled is None:
             from .conditional_color_grants import conditional_color_grant_shell

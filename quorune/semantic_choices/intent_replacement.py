@@ -2,6 +2,10 @@ from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
 from ..semantic_runtime.exploit_intent import ExploitSacrificeIntent,validate_exploit_identity
+from ..semantic_runtime.champion_intent import (
+    CHAMPION_INTENT_TYPES, ChampionExileIntent, ReturnLinkedAbilityExileIntent,
+    champion_intent_identity, decode_champion_intent_identity,
+)
 
 from dataclasses import replace
 from typing import Any, Mapping, Sequence
@@ -348,6 +352,7 @@ def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
 
     if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
     if isinstance(intent,ExploitSacrificeIntent):return 'exploit_sacrifice',intent.identity()
+    if isinstance(intent, CHAMPION_INTENT_TYPES):return champion_intent_identity(intent)
     if isinstance(intent, DESTRUCTION_INTENT_TYPES):
         return destruction_intent_identity(intent)
 
@@ -747,6 +752,9 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind in {'champion_exile', 'champion_return'}:
+        try:return decode_champion_intent_identity(kind, value)
+        except (TypeError, ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind=='exploit_sacrifice':
         try:return validate_exploit_identity(value)
         except ValueError as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1191,11 +1199,14 @@ def with_replacement_selections(
     | LibrarySelectionIntent
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
+    | ChampionExileIntent
+    | ReturnLinkedAbilityExileIntent
 ):
     if not isinstance(
         intent,
         (
             *DESTRUCTION_INTENT_TYPES,
+            *CHAMPION_INTENT_TYPES,
             PlaceCountersIntent,
             LifeChangeIntent,
             LifeLossBatchIntent,

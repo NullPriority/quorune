@@ -353,6 +353,7 @@ def build_activation_proposal(
                 source,
                 ability,
                 response.get("cost_option"),
+                targets=tuple(targets),
             )
         except ValueError as exc:
             raise ActivationProposalError(
@@ -363,14 +364,14 @@ def build_activation_proposal(
         requirements = dict(mana_option.requirements)
     else:
         from .x_costs import activation_requirements, validate_activation_x_payment
-        requirements, announced_x = activation_requirements(host, request.actor, source, ability, response)
+        requirements, announced_x = activation_requirements(host, request.actor, source, ability, response, targets=tuple(targets))
         if announced_x is not None:
             try: validate_activation_x_payment(host,request.actor,source,ability,requirements)
             except ValueError as exc: raise ActivationProposalError(str(exc),status='unpayable',reason='activation_x_unpayable') from exc
     waterbend_details={}
     if not ability.mana_cost_options:
         from .pricing import activation_price_details
-        waterbend_details.update(activation_price_details(host,request.actor,source,ability,response))
+        waterbend_details.update(activation_price_details(host,request.actor,source,ability,response,targets=tuple(targets)))
     if ability.waterbend is not None:
         from ..waterbend_payments import activation_waterbend_plan
         try:payment=activation_waterbend_plan(host,request.actor,source,ability,requirements,response,hint=False)
@@ -600,8 +601,8 @@ def build_activation_offer(
     fetch_types = selected.library_search_types
     if fetch_types:
         hint["search_types"] = list(fetch_types)
-    from .offer_payload import activation_offer_payload
-    payload=activation_offer_payload(source,selected,hint)
+    from .pricing import activation_priced_offer_payload
+    payload, public_schema = activation_priced_offer_payload(host,seat,source,selected,hint,public_schema)
     if selected.mana_cost_options:
         payload["cost_options"] = [
             {
