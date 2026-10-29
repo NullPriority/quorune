@@ -1126,6 +1126,17 @@ for example `--estimate test_new_family=42.5`; once CI observes it, later
 rebalances use the artifact value. Validate the resulting exact partition and
 review the predicted makespans before committing it.
 
+For initial placement of newly added modules, use measured focused estimates
+and the existing owners' observed loads to distribute the new work across
+functional shards. Keep every primary assignment already present in the base
+revision fixed. Preserve semantic overlays, test and fixture contents, launch
+order, workers and matrices. Record timing provenance and incomplete
+observations; an elapsed envelope covering several modules is a conservative
+estimate rather than a measured CI duration for each module. Leave modules
+without a complete focused estimate at their current owner until timing evidence
+is available. Validate the complete partition and its additive policy delta;
+the next complete public pipeline determines the actual scheduling improvement.
+
 Nightly uses the same manifest order, interleaved Ubuntu then Windows per
 shard, with `max-parallel: 6`. Its other browser, property, mutation, corpus,
 and security jobs can consume nine runners, so the measured peak is 15 and five
