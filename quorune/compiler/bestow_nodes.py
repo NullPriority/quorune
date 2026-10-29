@@ -15,6 +15,12 @@ from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 BESTOW_TEMPLATE_ID = "fixed-mana-bestow-alternate-cost-v1"
 
 
+def face_has_fixed_bestow(material_rows):
+    """Read a face-local, independently parsed Aura mode before routing grants."""
+    return any(compile_fixed_mana_bestow(material_line=material,oracle_line=line,line_index=span.line-1) is not None
+        for line,material,span in material_rows)
+
+
 def fixed_mana_bestow_keyword_node(
     *, node_id: str, line: str, material_line: str, span: SourceSpan,
     mechanics: tuple[str, ...], capability_registry: CapabilityRegistry | None,

@@ -82,6 +82,7 @@
       "test_backup_rules",
       "test_banding",
       "test_batch_interaction_recovery",
+      "test_bestow_typed_grants",
       "test_bound_static_declarations",
       "test_capability_implementation_mutations",
       "test_champion_choices",

@@ -9030,6 +9030,23 @@
         "test_creature_subtype_additions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "bestow-face-typed-grant-context",
+      "patterns": [
+        "quorune/compiler/bestow_nodes.py",
+        "quorune/oracle_ir.py",
+        "tests/test_bestow_typed_grants.py",
+        "tests/fixtures/bestow-typed-grant-cards.json"
+      ],
+      "test_modules": [
+        "test_bestow_typed_grants",
+        "test_bestow_rules",
+        "test_attached_static_characteristics",
+        "test_fixed_query_quoted_ability_grants",
+        "test_source_zone_ability_grants",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -2403,13 +2403,20 @@ local definition performs no state-dependent count; subtype consumers read the
 ordinary effective type line instead of a Changeling-specific branch.
 
 `compiler/bestow_nodes.py` owns one ordinary fixed-mana Bestow production. It
-emits a complete-card-required all-zone descriptor rather than a cost-only
+also provides face-local read-ahead through that same validated grammar for
+explicit quoted enchanted-creature grants. This permits a printed creature
+with a represented Bestow Aura mode to use the existing attachment grant
+compiler. A keyword annotation, variable cost or text mention cannot authorize
+that context. Oracle line order does not change the result. Printed attachment
+context and unrelated creature-mode effects retain their existing binding.
+
+The production emits a complete-card-required all-zone descriptor rather than a cost-only
 spell program. The casting owner turns that descriptor into a server-authored
 alternate cost with Aura cast characteristics, one public creature target, and
 the existing `bestow_prepare` resolution effect. This preserves the ordinary
 permanent destination, resolves after target loss as a creature, and delegates
 attachment and attached modifiers to their existing owners. Variable and
-nonordinary costs, partial cards, unsupported attached results, copies, grants,
+nonordinary costs, partial cards, unsupported attached results, copies, granted Bestow abilities,
 text changes, multiface cards, tokens, phasing-in unattached, and wider cast
 permissions or prohibitions that distinguish creature from Aura spells remain
 source-spanned residuals or explicit trust exclusions.

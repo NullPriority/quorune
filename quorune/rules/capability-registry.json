@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 543,
+  "registry_version": 544,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -35671,7 +35671,7 @@
     },
     {
       "id": "casting.bestow.fixed_mana",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "601.2b",
         "601.2f",
@@ -35690,7 +35690,7 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Compile one ordinary fixed-mana Bestow ability into a creature-targeted Aura spell alternative that resolves as a creature if its target becomes illegal.",
+        "summary": "Compile one ordinary fixed-mana Bestow ability into a creature-targeted Aura spell alternative that resolves as a creature if its target becomes illegal. A face-local independently parsed fixed ordinary-mana Bestow production authorizes explicit quoted enchanted-creature grants through the existing attachment compiler context. Printed creature mode, unrelated source references and unsupported combined triggers retain their prior boundaries.",
         "inputs": [
           "one physical normal-layout creature card",
           "one source-spanned ordinary fixed-mana Bestow line",
@@ -35729,29 +35729,54 @@
         "quorune.selection.targeting",
         "quorune.effect_runtime.zones_and_attachments._apply_bestow_prepare",
         "quorune.characteristic_evaluation.evaluate_card_characteristics",
-        "quorune.zone_object_state.reset_card_after_zone_change"
+        "quorune.zone_object_state.reset_card_after_zone_change",
+        "quorune.compiler.bestow_nodes.face_has_fixed_bestow"
       ],
       "positive_tests": [
+        "test_actual_bestow_target_loss_resolves_as_creature_without_granting_to_departed_receiver",
+        "test_actual_bestowed_grant_is_controlled_by_receiver_and_unattachment_restores_creature",
+        "test_actual_normal_creature_mode_has_only_its_own_targeted_sacrifice",
+        "test_actual_queued_receiver_trigger_survives_aura_source_sacrificing_to_its_own_target_trigger",
+        "test_bestow_cast_attaches_and_applies_static_modifier",
         "test_fixed_mana_bestow_compiles_capability_closed",
-        "test_bestow_cast_attaches_and_applies_static_modifier"
+        "test_validated_face_mode_read_ahead_admits_quote_independent_of_line_order"
       ],
       "negative_tests": [
+        "test_actual_bestow_target_loss_resolves_as_creature_without_granting_to_departed_receiver",
+        "test_actual_bestowed_grant_is_controlled_by_receiver_and_unattachment_restores_creature",
+        "test_actual_normal_creature_mode_has_only_its_own_targeted_sacrifice",
+        "test_actual_queued_receiver_trigger_survives_aura_source_sacrificing_to_its_own_target_trigger",
         "test_bestow_descriptor_rejects_unbound_or_malformed_source_data",
+        "test_partial_bestow_card_withholds_alternate_cost",
+        "test_validated_face_mode_read_ahead_admits_quote_independent_of_line_order",
         "test_variable_bestow_remains_source_spanned_residual",
-        "test_partial_bestow_card_withholds_alternate_cost"
+        "test_verified_parent_mode_withdrawal_blocks_complete_card_and_keeps_unrelated_keyword"
       ],
       "interaction_tests": [
+        "test_actual_bestow_target_loss_resolves_as_creature_without_granting_to_departed_receiver",
+        "test_actual_bestowed_grant_is_controlled_by_receiver_and_unattachment_restores_creature",
+        "test_actual_normal_creature_mode_has_only_its_own_targeted_sacrifice",
+        "test_actual_queued_receiver_trigger_survives_aura_source_sacrificing_to_its_own_target_trigger",
         "test_bestow_cost_modifiers_use_aura_spell_characteristics",
         "test_bestow_target_loss_resolves_as_creature",
         "test_unattached_bestowed_aura_reverts_to_creature"
       ],
       "multiplayer_tests": [
+        "test_actual_bestow_target_loss_resolves_as_creature_without_granting_to_departed_receiver",
+        "test_actual_bestowed_grant_is_controlled_by_receiver_and_unattachment_restores_creature",
+        "test_actual_normal_creature_mode_has_only_its_own_targeted_sacrifice",
+        "test_actual_queued_receiver_trigger_survives_aura_source_sacrificing_to_its_own_target_trigger",
         "test_bestow_cast_attaches_and_applies_static_modifier"
       ],
       "privacy_tests": [
+        "test_actual_bestowed_grant_is_controlled_by_receiver_and_unattachment_restores_creature",
         "test_bestow_replay_and_projection_are_identity_safe"
       ],
       "replay_tests": [
+        "test_actual_bestow_target_loss_resolves_as_creature_without_granting_to_departed_receiver",
+        "test_actual_bestowed_grant_is_controlled_by_receiver_and_unattachment_restores_creature",
+        "test_actual_normal_creature_mode_has_only_its_own_targeted_sacrifice",
+        "test_actual_queued_receiver_trigger_survives_aura_source_sacrificing_to_its_own_target_trigger",
         "test_bestow_replay_and_projection_are_identity_safe"
       ],
       "required_evidence": [

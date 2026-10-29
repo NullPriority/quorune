@@ -49,6 +49,7 @@
     "tests/fixtures/batched-support-assurance-cards.json",
     "tests/fixtures/battlefield-target-reduction-cards.json",
     "tests/fixtures/bestow-cards.json",
+    "tests/fixtures/bestow-typed-grant-cards.json",
     "tests/fixtures/binding-aware-event-payments.json",
     "tests/fixtures/block-capacity-cards.json",
     "tests/fixtures/boast-restriction-cards.json",
