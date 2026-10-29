@@ -266,6 +266,13 @@ allows new targets; otherwise all target choices are retained. Closed creature
 subtype qualifiers reuse the committed creature-type predicate together with
 one to three canonical subtype alternatives. Unknown qualifiers and result
 siblings retain their residuals.
+The exact stack-spell-copy resolver is also an independently closed result
+component. An optional fixed payment can guard an event-bound spell copy while
+retaining the existing cast occurrence, current or departure information,
+copiable choices and later target selection. Payment is offered as the trigger
+resolves; declining creates no copy. The same runtime dependency inference
+walks inside the payment wrapper, and a resolving permanent spell copy becomes
+a token through ordinary spell resolution.
 
 `compiler/casting_keyword_nodes.py` owns the ordered dispatch of closed
 casting-cost keyword productions. It retains the existing lowering order and

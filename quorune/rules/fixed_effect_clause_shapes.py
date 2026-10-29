@@ -28,6 +28,7 @@ from .counter_removal_capabilities import (
 )
 from .fixed_controller_effect_shapes import fixed_life_node_capabilities
 from .fixed_resolution_mana_shapes import fixed_resolution_mana_choice_capabilities, fixed_resolution_mana_capabilities
+from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
 from .created_token_counter_shapes import created_token_counter_node_capabilities
 from .linked_exile_return_shapes import linked_exile_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
@@ -116,6 +117,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    fixed_stack_spell_copy_node_capabilities,
     created_token_counter_node_capabilities,
     fixed_resolution_mana_choice_capabilities,
     fixed_resolution_mana_capabilities,

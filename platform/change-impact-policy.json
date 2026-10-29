@@ -9437,6 +9437,22 @@
         "test_saga_counter_progression",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "paid-event-spell-copy-composition",
+      "patterns": [
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/rules/stack_spell_copy_shapes.py",
+        "tests/test_paid_event_spell_copy.py",
+        "tests/fixtures/paid-event-copy-cards.json"
+      ],
+      "test_modules": [
+        "test_paid_event_spell_copy",
+        "test_event_spell_copy",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_player_speed",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 565,
+  "registry_version": 566,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -37339,7 +37339,7 @@
     },
     {
       "id": "effect.choice.optional_fixed_mana_payment",
-      "version": 7,
+      "version": 8,
       "official_rules": [
         "109.5",
         "118.12",
@@ -37363,7 +37363,8 @@
           "one positive fixed ordinary mana, energy or life cost, one or two unqualified discards, one qualified discard or one controlled sacrifice",
           "independently exact typed consequence owners",
           "locked resolving controller, bound source or event-object results and current selected zone incarnations",
-          "body-owned targets chosen at normal placement"
+          "body-owned targets chosen at normal placement",
+          "An independently closed cast-event spell copy inside the existing optional fixed mana payment result"
         ],
         "outputs": [
           "controller-scoped pay-or-decline or optional current-object choice",
@@ -37382,67 +37383,93 @@
       },
       "dependencies": [],
       "implementation_components": [
-        "quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate",
-        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
-        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
-        "quorune.rules.fixed_effect_clause_shapes.fixed_optional_mana_payment_node_capabilities",
-        "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities",
-        "quorune.semantic_choices.payments.FixedEffectOptionalPaymentHandler",
-        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_effect_payment",
-        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_effect_payment",
-        "quorune.semantic_choices.counter_coordination.continue_semantic_completion",
-        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent",
-        "quorune.semantic_runtime.intents.PayManaCostIntent",
-        "quorune.semantic_runtime.intents.PayLifeIntent",
-        "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent",
         "CommanderEngine._continue_resolution",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
+        "quorune.compiler.optional_payment_templates.FixedOptionalManaPaymentTemplate",
         "quorune.compiler.optional_payment_templates.binding_aware_optional_mana_payment_template",
         "quorune.compiler.trigger_result_templates.binding_effect_template",
-        "quorune.semantic_choices.optional_effect._represented_effect"
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities",
+        "quorune.rules.fixed_effect_clause_shapes.fixed_optional_mana_payment_node_capabilities",
+        "quorune.rules.fixed_effect_payment_shapes.fixed_effect_payment_node_capabilities",
+        "quorune.semantic_choices.counter_coordination.continue_semantic_completion",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_effect_payment",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_effect_payment",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent",
+        "quorune.semantic_choices.optional_effect._represented_effect",
+        "quorune.semantic_choices.payments.FixedEffectOptionalPaymentHandler",
+        "quorune.semantic_runtime.intents.MoveObjectsSimultaneouslyIntent",
+        "quorune.semantic_runtime.intents.PayLifeIntent",
+        "quorune.semantic_runtime.intents.PayManaCostIntent"
       ],
       "positive_tests": [
-        "test_fixed_payment_composes_across_normalized_trigger_families",
-        "test_lifecrafters_bestiary_is_an_exact_real_card_witness",
-        "test_pay_decline_unpayable_and_stale_affordability_are_atomic",
-        "test_fixed_resolution_payments_share_cost_result_and_carrier_owners",
-        "test_two_card_payment_published_form_and_command_cardinalities_agree",
-        "test_fixed_payment_preserves_bound_source_result_incarnation",
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_fixed_payment_can_wrap_sealed_entering_object_copy_recipe",
+        "test_fixed_payment_composes_across_normalized_trigger_families",
+        "test_fixed_payment_preserves_bound_source_result_incarnation",
         "test_fixed_payment_target_copy_retains_typed_origin_and_closure",
-        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+        "test_fixed_resolution_payments_share_cost_result_and_carrier_owners",
+        "test_lifecrafters_bestiary_is_an_exact_real_card_witness",
+        "test_paid_copy_component_retains_exact_source_cost_and_target_boundaries",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+        "test_pay_decline_unpayable_and_stale_affordability_are_atomic",
+        "test_two_card_payment_published_form_and_command_cardinalities_agree"
       ],
       "negative_tests": [
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_bound_payment_nested_variable_and_reflexive_forms_remain_residual",
         "test_compiler_shape_and_handler_mutants_fail_closed",
         "test_fixed_resolution_payment_rejects_partial_nested_and_linked_grammar",
         "test_nonfixed_nested_and_nonexact_forms_remain_residual",
         "test_original_cricket_unaffordable_payment_rejects_without_result",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
+        "test_paid_copy_component_retains_exact_source_cost_and_target_boundaries",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
+        "test_paid_runtime_copy_owner_is_inferred_without_annotations",
         "test_runtime_wrapper_rejects_wrong_actor_extra_fields_and_nesting",
-        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+        "test_verified_copy_or_payment_withdrawal_keeps_unrelated_draw"
       ],
       "interaction_tests": [
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
         "test_original_mirrorworks_copies_departed_entering_object_information",
         "test_original_rhino_blink_cannot_receive_old_counter_and_insufficient_payment_rejects",
         "test_paid_attack_result_does_not_affect_reentered_source",
+        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes",
         "test_payment_replacement_choice_resumes_once_after_save_load_and_replays",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope",
-        "test_paid_legacy_search_reuses_closed_leaf_validation_and_rejects_open_shapes"
+        "test_trusted_life_activation_and_declined_prefix_preserve_cost_scope"
       ],
       "multiplayer_tests": [
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_original_cricket_payment_is_private_affordable_and_replays",
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
         "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"
       ],
       "privacy_tests": [
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_original_cricket_payment_is_private_affordable_and_replays",
         "test_real_card_payment_is_private_commits_before_draw_and_replays",
-        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay",
-        "test_original_cricket_payment_is_private_affordable_and_replays"
+        "test_trusted_discard_spell_uses_real_cast_private_payment_and_pre_action_replay"
       ],
       "replay_tests": [
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_original_cricket_payment_is_private_affordable_and_replays",
         "test_original_eddytrail_hawk_selects_target_before_energy_choice",
         "test_original_mirrorworks_paid_entry_creates_exact_copy_and_replays",
@@ -66125,7 +66152,7 @@
     },
     {
       "id": "stack.copy.cast_event_spell",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "707.2",
         "707.10",
@@ -66146,7 +66173,8 @@
         "inputs": [
           "Normalized cast occurrence and exact spell incarnation",
           "Current or departure-pinned copiable spell information",
-          "Authenticated trigger controller and retained target incarnations"
+          "Authenticated trigger controller and retained target incarnations",
+          "An independently closed cast-event spell copy inside the existing optional fixed mana payment result"
         ],
         "outputs": [
           "One independent spell copy without a new cast or new mana payment",
@@ -66164,15 +66192,16 @@
         "target.revalidate_resolution"
       ],
       "implementation_components": [
-        "quorune.event_spell_copy_model.EventSpellCopySource",
         "quorune.compiler.fixed_stack_spell_copy.cast_event_spell_copy_template",
+        "quorune.engine.CommanderEngine._copy_stack_item",
+        "quorune.event_spell_copy_model.EventSpellCopySource",
         "quorune.rules.event_spell_copy.capture_event_spell_copy_source",
+        "quorune.rules.event_spell_copy.event_spell_copy_runtime_dependencies",
         "quorune.rules.event_spell_copy.pin_event_spell_copy_departure",
         "quorune.rules.event_spell_copy.resolve_event_spell_copy_source",
-        "quorune.rules.event_spell_copy.event_spell_copy_runtime_dependencies",
-        "quorune.semantic_choices.stack_targets.StackTargetChoiceHandler",
+        "quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities",
         "quorune.selection.copy_targets.prepare_copy_targets",
-        "quorune.engine.CommanderEngine._copy_stack_item"
+        "quorune.semantic_choices.stack_targets.StackTargetChoiceHandler"
       ],
       "positive_tests": [
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
@@ -66181,10 +66210,15 @@
         "test_actual_countered_x_spell_is_copied_and_retargeted_after_observer_destruction",
         "test_actual_creature_spell_copy_uses_core_permanent_resolution_and_becomes_token",
         "test_actual_double_vision_untargeted_copy_draws_twice_without_casting_the_copy",
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_actual_self_cast_copy_survives_countering_the_original_and_keeps_equipment_actions",
         "test_closed_source_codec_preserves_copiable_choices_without_execution_progress",
         "test_departure_pin_preserves_immutable_waiting_occurrence_and_unrelated_batch_payload",
         "test_live_then_departure_information_tracks_retargeting_without_current_card_substitution",
+        "test_paid_copy_component_retains_exact_source_cost_and_target_boundaries",
         "test_qualified_cast_copy_forms_and_verified_withdrawal_preserve_targeted_copy",
         "test_reference_capture_is_inferred_from_the_instruction_without_a_coverage_marker",
         "test_subtype_creature_cast_predicate_requires_both_type_and_one_closed_subtype"
@@ -66193,10 +66227,17 @@
         "test_absent_unpinned_or_replaced_sources_fail_closed_and_legacy_effect_is_unchanged",
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
         "test_actual_countered_x_spell_is_copied_and_retargeted_after_observer_destruction",
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_closed_source_codec_preserves_copiable_choices_without_execution_progress",
+        "test_paid_copy_component_retains_exact_source_cost_and_target_boundaries",
+        "test_paid_runtime_copy_owner_is_inferred_without_annotations",
         "test_qualified_cast_copy_forms_and_verified_withdrawal_preserve_targeted_copy",
         "test_reference_capture_is_inferred_from_the_instruction_without_a_coverage_marker",
-        "test_runtime_event_copy_dependency_is_inferred_without_declaration"
+        "test_runtime_event_copy_dependency_is_inferred_without_declaration",
+        "test_verified_copy_or_payment_withdrawal_keeps_unrelated_draw"
       ],
       "interaction_tests": [
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
@@ -66205,6 +66246,10 @@
         "test_actual_countered_x_spell_is_copied_and_retargeted_after_observer_destruction",
         "test_actual_creature_spell_copy_uses_core_permanent_resolution_and_becomes_token",
         "test_actual_double_vision_untargeted_copy_draws_twice_without_casting_the_copy",
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_actual_self_cast_copy_survives_countering_the_original_and_keeps_equipment_actions",
         "test_departure_pin_preserves_immutable_waiting_occurrence_and_unrelated_batch_payload"
       ],
@@ -66215,10 +66260,15 @@
         "test_actual_countered_x_spell_is_copied_and_retargeted_after_observer_destruction",
         "test_actual_creature_spell_copy_uses_core_permanent_resolution_and_becomes_token",
         "test_actual_double_vision_untargeted_copy_draws_twice_without_casting_the_copy",
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_actual_self_cast_copy_survives_countering_the_original_and_keeps_equipment_actions"
       ],
       "privacy_tests": [
-        "test_actual_double_vision_untargeted_copy_draws_twice_without_casting_the_copy"
+        "test_actual_double_vision_untargeted_copy_draws_twice_without_casting_the_copy",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw"
       ],
       "replay_tests": [
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
@@ -66227,6 +66277,10 @@
         "test_actual_countered_x_spell_is_copied_and_retargeted_after_observer_destruction",
         "test_actual_creature_spell_copy_uses_core_permanent_resolution_and_becomes_token",
         "test_actual_double_vision_untargeted_copy_draws_twice_without_casting_the_copy",
+        "test_actual_mendicant_requires_max_speed_and_resolves_one_artifact_spell_copy",
+        "test_actual_mirari_copies_countered_x_spell_after_source_destruction_and_retargets",
+        "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
+        "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_actual_self_cast_copy_survives_countering_the_original_and_keeps_equipment_actions"
       ],
       "required_evidence": [

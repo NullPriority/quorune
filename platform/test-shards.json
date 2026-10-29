@@ -133,6 +133,7 @@
       "test_modular_rules",
       "test_monarch_rules",
       "test_object_identity",
+      "test_paid_event_spell_copy",
       "test_persist_undying_rules",
       "test_public_compositions",
       "test_public_event_counter_sets",
