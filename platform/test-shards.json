@@ -74,7 +74,8 @@
       "test_storm_rules",
       "test_tap_controller_information",
       "test_unleash_rules",
-      "test_untap_selection_limits"
+      "test_untap_selection_limits",
+      "test_worldwagon_composition"
     ],
     "functional-02": [
       "test_ability_source_counter_targets",

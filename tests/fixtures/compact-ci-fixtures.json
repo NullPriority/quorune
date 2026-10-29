@@ -446,7 +446,8 @@
     "tests/fixtures/vanishing-cards.json",
     "tests/fixtures/variable-library-count-cards.json",
     "tests/fixtures/waterbend-cards.json",
-    "tests/fixtures/whole-hand-discard-cards.json"
+    "tests/fixtures/whole-hand-discard-cards.json",
+    "tests/fixtures/worldwagon-cards.json"
   ],
   "dynamic_requirements": [
     {

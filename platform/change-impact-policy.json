@@ -9871,6 +9871,20 @@
         "test_card_program_trust",
         "test_source_characteristic_compositions"
       ]
+    },
+    {
+      "id": "worldwagon-original-composition",
+      "patterns": [
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/rules/source_references.py",
+        "tests/test_worldwagon_composition.py",
+        "tests/fixtures/worldwagon-cards.json"
+      ],
+      "test_modules": [
+        "test_worldwagon_composition",
+        "test_source_label_characteristics",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 582,
+  "registry_version": 583,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -25537,7 +25537,7 @@
     },
     {
       "id": "continuous.characteristics.query_power_toughness_definition",
-      "version": 8,
+      "version": 9,
       "official_rules": [
         "109.2",
         "109.2a",
@@ -25601,6 +25601,8 @@
         "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_closed_quantity_grammar_preserves_union_domains_and_old_descriptors",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_definitions_preserve_complete_nested_public_arithmetic",
@@ -25613,6 +25615,8 @@
         "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
         "test_hand_arithmetic_reads_only_cardinality_and_counter_arithmetic_remains_closed",
         "test_query_power_toughness_definition_descriptors_fail_closed",
@@ -25628,6 +25632,8 @@
         "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
         "test_overlapping_public_objects_are_counted_once_under_the_shared_controller",
         "test_query_definition_ability_removal_sibling_withholds_runtime_admission",
@@ -25642,6 +25648,8 @@
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
         "test_query_definition_copy_and_control_change_use_current_source",
         "test_real_paid_katilda_counts_enchantment_spirit_once_and_current_controller",
@@ -25652,6 +25660,8 @@
         "test_actual_magnivore_counts_all_players_sorceries_and_ignores_instants",
         "test_actual_masumaro_tracks_private_draws_current_controller_and_new_zone",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_query_definition_hand_count_projects_without_hidden_identity",
         "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
         "test_real_paid_axe_equip_uses_equipment_controller_after_recipient_control_changes"
@@ -25663,6 +25673,8 @@
         "test_actual_mwonvuli_uses_nested_counter_arithmetic_before_later_modifiers",
         "test_actual_nonbasic_count_distinguishes_land_types_and_keeps_cda_in_hand_after_real_responses",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_original_keldon_warlord_excludes_walls_and_opponents_at_current_layer",
         "test_query_definition_save_load_and_replay_exactly",
         "test_real_disturb_aura_keeps_union_keywords_protection_and_exile_after_departure",
@@ -40944,7 +40956,7 @@
     },
     {
       "id": "library.search.fixed_to_battlefield",
-      "version": 1,
+      "version": 2,
       "official_rules": [
         "109.2a",
         "400.7",
@@ -41005,30 +41017,42 @@
         "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library"
       ],
       "positive_tests": [
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_fixed_search_compiles_across_spell_trigger_activation_and_modal_contexts",
-        "test_multi_tapped_land_search_compiles_as_one_closed_batch",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+        "test_multi_tapped_land_search_compiles_as_one_closed_batch"
       ],
       "negative_tests": [
-        "test_named_linked_attachment_compound_and_open_searches_remain_residual",
-        "test_fixed_search_shape_and_dependencies_fail_closed"
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
+        "test_fixed_search_shape_and_dependencies_fail_closed",
+        "test_named_linked_attachment_compound_and_open_searches_remain_residual"
       ],
       "interaction_tests": [
-        "test_multi_land_search_commits_one_tapped_simultaneous_batch",
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+        "test_multi_land_search_commits_one_tapped_simultaneous_batch"
       ],
       "multiplayer_tests": [
-        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays"
       ],
       "privacy_tests": [
-        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays"
       ],
       "replay_tests": [
-        "test_generated_search_uses_effective_hidden_characteristics_and_replays",
-        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands"
+        "test_actual_khalni_cost_precedes_private_search_and_the_sacrificed_source_cannot_observe_lands",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
+        "test_generated_search_uses_effective_hidden_characteristics_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -57368,7 +57392,7 @@
     },
     {
       "id": "trigger.effect.fixed_event",
-      "version": 25,
+      "version": 26,
       "official_rules": [
         "115.1",
         "120.4",
@@ -57510,6 +57534,8 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attached_damage_owner_withdrawal_blocks_support_and_preserves_unrelated_draw",
@@ -57615,6 +57641,8 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_additional_draw_step_missing_authority_stays_residual",
@@ -57725,6 +57753,8 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
@@ -57837,6 +57867,8 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
@@ -57925,6 +57957,8 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
@@ -58011,6 +58045,8 @@
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_actual_zuko_noncreature_cast_firebending_and_first_strike_damage_keep_source_identity",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
@@ -59335,7 +59371,7 @@
     },
     {
       "id": "trigger.event.normalized_public_action",
-      "version": 13,
+      "version": 14,
       "official_rules": [
         "116.2b",
         "508.1",
@@ -59449,6 +59485,8 @@
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
         "test_actual_voltaic_whip_draws_for_recipient_controller_after_provider_departure",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_battalion_uses_sealed_three_attacker_transition",
         "test_call_observes_actual_rechoice_for_its_controller_and_optional_payment",
@@ -59505,6 +59543,8 @@
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
         "test_actual_voltaic_whip_draws_for_recipient_controller_after_provider_departure",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_adjacent_event_and_body_grammar_remain_material",
         "test_call_does_not_observe_an_impossible_choice",
         "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
@@ -59568,6 +59608,8 @@
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
         "test_actual_voltaic_whip_draws_for_recipient_controller_after_provider_departure",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_battalion_uses_sealed_three_attacker_transition",
@@ -59626,6 +59668,8 @@
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
         "test_actual_voltaic_whip_draws_for_recipient_controller_after_provider_departure",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_call_observes_actual_rechoice_for_its_controller_and_optional_payment",
@@ -59669,6 +59713,8 @@
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
         "test_actual_voltaic_whip_draws_for_recipient_controller_after_provider_departure",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_current_empty_explore_counters_only_current_incarnation_and_legacy_mode_completes_without_it",
@@ -59720,6 +59766,8 @@
         "test_actual_vanguard_uses_current_or_departure_controller_and_never_counters_returned_incarnation",
         "test_actual_voltaic_whip_draws_for_recipient_controller_after_provider_departure",
         "test_actual_wildfire_designation_damage_uses_departed_source_and_only_opponents_and_their_creatures",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_call_observes_actual_rechoice_for_its_controller_and_optional_payment",
@@ -60218,7 +60266,7 @@
     },
     {
       "id": "trigger.event.normalized_zone_change",
-      "version": 13,
+      "version": 14,
       "official_rules": [
         "603.2",
         "603.6",
@@ -60291,6 +60339,8 @@
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_countered_physical_spell_derives_exact_normalized_events",
         "test_derives_exact_enter_and_death_events",
         "test_generated_trigger_component_obeys_current_presence_and_unmarked_program_contract_is_explicit",
@@ -60322,6 +60372,8 @@
         "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
         "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_aggregate_limited_and_malformed_action_grammar_remains_residual",
         "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
         "test_counter_transition_kind_is_closed_and_typed",
@@ -60357,6 +60409,8 @@
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
         "test_attachment_damage_and_death_bindings_use_current_and_lki_relations",
         "test_closed_zone_event_predicates_use_lki_and_batching",
@@ -60395,6 +60449,8 @@
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
         "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
         "test_normalized_batch_predicates_share_damage_zone_and_token_owners",
@@ -60418,6 +60474,8 @@
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
@@ -60442,6 +60500,8 @@
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_actual_worldwagon_declined_entry_search_keeps_library_and_shuffle_count",
+        "test_actual_worldwagon_entry_and_attack_search_update_live_power_before_damage",
         "test_compiled_counter_targets_exact_stack_domains_and_replays",
         "test_fixed_life_self_enter_trigger_replays_exactly",
         "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
