@@ -2162,6 +2162,18 @@ whole-card admission boundary. Multiple, and/or, variable,
 copied, granted, kicked-trigger, spell-rider, dynamic, and open entry families
 remain source-spanned residuals.
 
+Activation-condition schema two embeds an existing immutable fixed public-state
+predicate. The complete suffix parser preserves legacy condition encodings
+first, then delegates supported new predicates to the shared public-state
+grammar with the actual source name. Source power, source counters, individual
+opponent poison and current-turn history therefore share their existing query
+owners. Both ordinary effects and fixed mana output require
+`activation.condition.fixed_public_state`; unsupported tails remain material.
+Fixed mana also accepts the previously owned typed activation conditions
+through that same legality owner, retaining their original payloads and
+capabilities. It does not maintain a separate list of supported predicate
+kinds.
+
 `compiler/activated_mana_nodes.py` also owns four exact source-self zone-move
 effects: graveyard to owner hand, graveyard to battlefield tapped or untapped, and a
 battlefield Aura to owner hand. The typed descriptor replaces the parser's

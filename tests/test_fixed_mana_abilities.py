@@ -488,6 +488,18 @@ class FixedManaCompilerTests(unittest.TestCase):
                 "{T}: Add {U} or {B}. Activate only if you control an Island or a Swamp.",
                 {"activation.condition.public_query", "mana.activated.fixed_output"},
             ),
+            (
+                "{T}: Add {G}. Activate only if you control a Goblin or an Elf.",
+                {"activation.condition.fixed_public_state", "mana.activated.fixed_output"},
+            ),
+            (
+                "{T}: Add {C}. Activate only if you control three or more artifacts.",
+                {"mana.activated.fixed_output"},
+            ),
+            (
+                "{T}: Add {W}. Activate only during your upkeep and only once each turn.",
+                {"activation.condition.phase_window", "activation.usage.once_per_turn", "mana.activated.fixed_output"},
+            ),
         )
         capabilities = load_default_capability_registry()
         for text, expected in cases:
@@ -506,9 +518,6 @@ class FixedManaCompilerTests(unittest.TestCase):
             "{T}: Add one mana of any color. Spend this mana only to cast spells from exile.",
             "{T}: Add {C}{C}. Spend this mana only to cast spells with mana value 5 or greater.",
             "{T}: Add one mana of any color. Activate only if this land entered this turn or if you control a basic land.",
-            "{T}: Add {G}. Activate only if you control a Goblin or an Elf.",
-            "{T}: Add {C}. Activate only if you control three or more artifacts.",
-            "{T}: Add {W}. Activate only during your upkeep and only once each turn.",
             "{T}: Add {G}. If this mana is spent on a creature spell, it gains haste.",
         ):
             with self.subTest(unsupported=unsupported):

@@ -1201,12 +1201,12 @@ def _normalized_ability_line(raw_line: str) -> tuple[str,str | None]:
     return normalized_ability_line(raw_line)
 
 
-def _activation_conditions(effect_text: str) -> tuple[ActivationCondition, ...]:
+def _activation_conditions(effect_text: str, *, source_name=None) -> tuple[ActivationCondition, ...]:
     lower = " ".join(effect_text.casefold().split())
     marker = "activate only "
     if marker in lower:
         restriction = lower.rsplit(marker, 1)[1]
-        represented = activation_restriction_spec(restriction)
+        represented = activation_restriction_spec(restriction,source_name=source_name)
         if represented is not None:
             return represented.conditions
         if ' and only ' in restriction:return (ActivationCondition(ActivationConditionKind.UNSUPPORTED),)
@@ -1506,8 +1506,8 @@ def _parse_activated_line(
     builtin_semantic_key, target_schema = _builtin_effect_descriptor(effect_text)
     if (keyword_override or keyword_prefix or "").casefold() == "equip":
         builtin_semantic_key, target_schema = _equip_effect_descriptor()
-    activation_limit,conditions,boast=keyword_activation_restrictions(prefix,effect_lower,_activation_conditions(effect_text))
-    restriction=activation_restriction_from_effect(effect_text)
+    activation_limit,conditions,boast=keyword_activation_restrictions(prefix,effect_lower,_activation_conditions(effect_text,source_name=card_name),source_name=card_name)
+    restriction=activation_restriction_from_effect(effect_text,source_name=card_name)
     return (
         ActivatedAbility(
             ability_id=f"ab{line_index + 1}",

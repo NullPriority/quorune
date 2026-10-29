@@ -219,18 +219,25 @@ class PublicActivationConditionCompilerTests(unittest.TestCase):
                 self.assertTrue(program.trust_closure["strict_capability_ready"])
 
     def test_public_activation_condition_grammar_and_schema_fail_closed(self):
+        promoted=(
+            'Activate only if this artifact entered this turn.',
+            'Activate only if an opponent gained life this turn.',
+            'Activate only if you control your commander.',
+            'Activate only if you control an artifact or enchantment.',
+        )
+        for index,restriction in enumerate(promoted):
+            oracle=compile_oracle_card(condition_record('{1}: Draw a card. '+restriction,suffix=173_001_900+index),
+                capability_registry=self.registry,capability_profile='commander_review')
+            self.assertEqual('exact',oracle.status,(restriction,oracle.material_residuals))
+            self.assertIn('activation.condition.fixed_public_state',oracle.faces[0].nodes[0].capability_dependencies)
         excluded = (
             "Activate only during any upkeep step.",
             "Activate only during the declare blockers step.",
             "Activate only during an opponent's upkeep.",
-            "Activate only if this artifact entered this turn.",
-            "Activate only if an opponent gained life this turn.",
             "Activate only if you control an attacking modified creature.",
             "Activate only if you control three creatures with different powers.",
-            "Activate only if you control your commander.",
             "Activate only if an opponent has seven cards in their graveyard.",
             "Activate only if you control a creature named Grizzly Bears.",
-            "Activate only if you control an artifact or enchantment.",
             "Activate only if you control a creature and have no cards in hand.",
         )
         for index, restriction in enumerate(excluded):

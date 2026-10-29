@@ -520,7 +520,7 @@ _ACTIVATION_RESTRICTION_PREFIX = re.compile(
     r"^(?P<effect>.+?)\s+activate only ",
     re.IGNORECASE,
 )
-def _activated_effect_material(ability: ActivatedAbility) -> str:
+def _activated_effect_material(ability: ActivatedAbility, *, source_name=None) -> str:
     """Remove only a complete restriction already present in typed metadata."""
 
     material = ability.effect_text.strip()
@@ -528,7 +528,7 @@ def _activated_effect_material(ability: ActivatedAbility) -> str:
     if prefix is None:
         return material
     represented = activation_restriction_spec(
-        material[prefix.end() :]
+        material[prefix.end() :],source_name=source_name
     )
     if represented is None:
         return material
@@ -718,7 +718,7 @@ def activated_oracle_node(
     )
     if color_set_mana is not None:
         return color_set_mana
-    effect_material = _activated_effect_material(ability)
+    effect_material = _activated_effect_material(ability,source_name=card_name)
     self_zone_move = compile_self_zone_move(ability)
     handlers: tuple[Mapping[str, Any], ...] = ()
     if self_zone_move is not None:

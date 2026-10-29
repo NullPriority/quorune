@@ -13,6 +13,8 @@ def activation_restriction_runtime_dependencies(program):
     required=set(boast_runtime_dependencies(program))
     if is_structural_activated_ability_catalog_program(program):return tuple(sorted(required))
     for ability in activated_abilities_from_descriptors(program.handlers):
+        from .public_state_conditions import activation_public_state_dependencies
+        required.update(activation_public_state_dependencies(ability.activation_conditions))
         if ability.activation_limit is ActivationLimit.ONCE_PER_OBJECT:required.add(ACTIVATION_ONCE_PER_OBJECT_CAPABILITY)
         if any(condition.kind in {ActivationConditionKind.CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN,
                 ActivationConditionKind.OPPONENT_LOST_LIFE_THIS_TURN} for condition in ability.activation_conditions):

@@ -112,6 +112,9 @@ def _typed_condition_status(
     source: Any | None,
 ) -> tuple[str, str | None]:
     kind = condition.kind
+    if kind is ActivationConditionKind.FIXED_PUBLIC_STATE:
+        from .public_state_conditions import activation_public_state_status
+        return activation_public_state_status(host,seat,source,condition)
     if kind in {ActivationConditionKind.CONTROLLER_CAST_INSTANT_SORCERY_THIS_TURN,ActivationConditionKind.OPPONENT_LOST_LIFE_THIS_TURN}:
         from .turn_event_conditions import activation_turn_event_status
         return activation_turn_event_status(host,seat,kind)

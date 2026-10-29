@@ -229,12 +229,13 @@ class CharacteristicEvaluationHostMixin:
         card: CardInstance,
         *,
         _enforce_static_component_applicability: bool = True,
+        _maximum_layer: Layer | None = Layer.COLOR,
     ) -> ObjectQueryResult:
-        """Project one permanent through the shared cycle-safe layer-5 edge."""
+        """Project public facts; default to the cycle-safe layer-5 boundary."""
 
         effective = self._effective_card_data(
             card,
-            maximum_layer=Layer.COLOR,
+            maximum_layer=_maximum_layer,
             _enforce_static_component_applicability=(
                 _enforce_static_component_applicability
             ),

@@ -43,8 +43,9 @@ def query_characteristic_count(
     quantity: CharacteristicQuantitySpec,
     *,
     _enforce_static_component_applicability: bool = True,
+    _maximum_layer: Layer | None = Layer.COLOR,
 ) -> int:
-    """Resolve one closed public quantity through layer 5 only."""
+    """Resolve a public quantity, using layer 5 unless a full view is requested."""
     if quantity.schema_version==5:
         from .public_zone_quantities import current_public_zone_quantity
         return current_public_zone_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)
@@ -54,7 +55,7 @@ def query_characteristic_count(
         return current_modifier_quantity(host,source,quantity,enforce_applicability=_enforce_static_component_applicability)
     if quantity.schema_version == 3:
         return sum(query_characteristic_count(host, source, term,
-                   _enforce_static_component_applicability=_enforce_static_component_applicability)
+                   _enforce_static_component_applicability=_enforce_static_component_applicability,_maximum_layer=_maximum_layer)
                    for term in quantity.terms) * quantity.multiplier + quantity.offset
     if quantity.scope is CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT:
         return current_opponent_count(host.state,source.controller) * quantity.multiplier + quantity.offset
@@ -129,7 +130,7 @@ def query_characteristic_count(
             continue
         effective = host._effective_card_data(
             candidate,
-            maximum_layer=Layer.TEXT if quantity.reduction is CharacteristicQuantityReduction.DEVOTION else Layer.COLOR,
+            maximum_layer=Layer.TEXT if quantity.reduction is CharacteristicQuantityReduction.DEVOTION else _maximum_layer,
             _enforce_static_component_applicability=(
                 _enforce_static_component_applicability
             ),

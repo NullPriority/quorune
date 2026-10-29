@@ -471,12 +471,12 @@ def _restricted_modes_are_closed(
     return valid_mana_spend_restriction(restriction)
 
 
-def _without_activation_restriction(ability: Any, effect_text: str) -> str | None:
+def _without_activation_restriction(ability: Any, effect_text: str, *, source_name='') -> str | None:
     marker = " Activate only "
     if marker not in effect_text:
         return effect_text
     base, tail = effect_text.rsplit(marker, 1)
-    restriction = activation_restriction_spec(tail)
+    restriction = activation_restriction_spec(tail,source_name=source_name)
     if (
         restriction is None
         or restriction.sorcery_speed != bool(ability.sorcery_speed)
@@ -520,16 +520,7 @@ def _supported_activation_constraints(ability: Any) -> bool:
     conditions = tuple(ability.activation_conditions)
     if not conditions:
         return True
-    if len(conditions) != 1:
-        return False
-    condition = conditions[0]
-    query = condition.query
-    return bool(
-        condition.kind is ActivationConditionKind.PUBLIC_QUERY_COUNT
-        and query is not None
-        and query.types_all == ("land",)
-        and query.subtypes_any
-    )
+    return all(condition.kind is not ActivationConditionKind.UNSUPPORTED for condition in conditions)
 
 
 def compile_fixed_activated_mana_ability(
@@ -545,7 +536,7 @@ def compile_fixed_activated_mana_ability(
         # separate rules owner and must not be promoted by this family.
         return None
     effect_text = " ".join(str(ability.effect_text).split())
-    effect_text = _without_activation_restriction(ability, effect_text)
+    effect_text = _without_activation_restriction(ability, effect_text,source_name=source_name)
     if effect_text is None:
         return None
     restriction = ability.mana_spend_restriction

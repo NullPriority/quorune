@@ -10,10 +10,10 @@ from .activation_restriction_composition import activation_restriction_from_effe
 BOAST_CAPABILITY='activation.boast.fixed_restrictions'
 
 
-def keyword_activation_restrictions(prefix,effect_lower,conditions):
+def keyword_activation_restrictions(prefix,effect_lower,conditions,*,source_name=None):
     limit=(ActivationLimit.EXHAUST_ONCE if prefix=='exhaust' else ActivationLimit.ONCE_PER_TURN
         if prefix=='boast' or 'only once each turn' in effect_lower else None)
-    represented=activation_restriction_from_effect(effect_lower)
+    represented=activation_restriction_from_effect(effect_lower,source_name=source_name)
     if represented is not None and prefix not in {'exhaust','boast'}:limit=represented.activation_limit
     if prefix!='boast':return limit,conditions,False
     condition=ActivationCondition(ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN)

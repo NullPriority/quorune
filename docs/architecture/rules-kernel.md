@@ -775,6 +775,15 @@ sacrificing a qualifying land, exiling graveyard cards or removing the source
 as a cost does not make a paid ability recheck those activation instructions
 at resolution. A rejected command never consumes the allowance. Ordinary
 once-per-object state is separate from Exhaust and once-per-turn state.
+`rules/activation/public_state_conditions.py` delegates version-two predicates
+to shared public-state evaluation at offer and acceptance, before payment. It
+requests complete current object and quantity views for legality, including
+layer-6 keywords and layer-7 numeric values; existing static readers retain
+their cycle-safe layer-5 defaults. Required unavailable object facts remain
+unresolved. Counter removal, source departure or another condition change after
+legal payment does not cancel the queued result. Conditional fixed mana and
+automatic payment consume the same predicate verdict.
+
 `rules/activation/turn_event_conditions.py` reads canonical current-turn cast
 and life-loss events. A countered spell was still cast; an ordinary copy was
 not. Non-damage life loss qualifies, while life gain, own loss and prevented

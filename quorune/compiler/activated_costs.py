@@ -21,6 +21,8 @@ def activated_ability_cost_capabilities(
     """Return the reviewed capability owners for one typed activation cost."""
 
     additional: list[str] = []
+    from ..rules.activation.public_state_conditions import activation_public_state_dependencies
+    additional.extend(activation_public_state_dependencies(ability.activation_conditions))
     if ability.builtin_semantic_key == 'builtin:equip' and (
         ability.life_payment or ability.energy_payment or ability.choices
         or ability.source_counter_removal_cost is not None

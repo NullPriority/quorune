@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 553,
+  "registry_version": 554,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -65490,6 +65490,109 @@
       "dependency_fail_closed_rationale": "Verified edited registry/evidence withdrawal blocks cast-value scalars while existing source-characteristic scalars remain exact; runtime minima infer the reader after capability and compiler marker removal.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Substituting actual paid mana3 or current graveyard value1 for the independently expected committed value4 fails the exact scalar witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.condition.fixed_public_state",
+      "version": 1,
+      "official_rules": [
+        "602.1b",
+        "602.2b",
+        "602.5b",
+        "602.5d",
+        "608.2h"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version2 activation conditions delegate already owned immutable fixed public-state predicates to shared evaluation before payment. Complete current source facts and live actor-relative public conditions govern both offers and accepted proposals; payment does not create an intervening-if recheck.",
+        "inputs": [
+          "Current source controlled by the activation principal",
+          "Closed version2 activation condition containing an existing fixed public-state spec",
+          "Complete current public object/quantity/history facts"
+        ],
+        "outputs": [
+          "Shared payable/unavailable/unresolved activation verdict before costs"
+        ],
+        "exclusions": [
+          "Unowned Oracle predicates or trailing instructions",
+          "Missing public facts",
+          "Treating an activation restriction as resolution-time intervening-if",
+          "Unsupported noncontroller activation authority"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.activation_condition_model.ActivationCondition",
+        "quorune.activation_condition_model.activation_restriction_spec",
+        "quorune.rules.activation.public_state_conditions.activation_public_state_status",
+        "quorune.rules.activation.public_state_conditions.activation_public_state_dependencies",
+        "quorune.rules.activation.conditions.activation_condition_status"
+      ],
+      "positive_tests": [
+        "test_actual_flywheel_conditional_mana_is_shared_with_automatic_payment_after_crew",
+        "test_actual_scrounger_history_counts_foreign_token_death_and_excludes_exile",
+        "test_actual_shrine_counter_restriction_is_not_rechecked_after_accepted_activation",
+        "test_actual_sphere_uses_one_opponent_poison_threshold_and_closed_mana_output",
+        "test_actual_trainee_offers_and_commands_follow_power_but_queued_result_survives_departure",
+        "test_named_source_and_complete_suffix_composition_reuse_shared_grammar",
+        "test_new_condition_codec_round_trips_and_preserves_legacy_payloads",
+        "test_opponent_poison_is_not_sum_or_own_poison_and_history_is_current",
+        "test_source_predicate_uses_complete_current_value_and_missing_is_unresolved"
+      ],
+      "negative_tests": [
+        "test_actual_flywheel_conditional_mana_is_shared_with_automatic_payment_after_crew",
+        "test_actual_scrounger_history_counts_foreign_token_death_and_excludes_exile",
+        "test_actual_shrine_counter_restriction_is_not_rechecked_after_accepted_activation",
+        "test_actual_sphere_uses_one_opponent_poison_threshold_and_closed_mana_output",
+        "test_actual_trainee_offers_and_commands_follow_power_but_queued_result_survives_departure",
+        "test_named_source_and_complete_suffix_composition_reuse_shared_grammar",
+        "test_new_condition_codec_round_trips_and_preserves_legacy_payloads",
+        "test_opponent_poison_is_not_sum_or_own_poison_and_history_is_current",
+        "test_runtime_shared_activation_dependency_is_inferred_without_declaration",
+        "test_source_predicate_uses_complete_current_value_and_missing_is_unresolved",
+        "test_verified_shared_activation_withdrawal_keeps_existing_basic_mana"
+      ],
+      "interaction_tests": [
+        "test_actual_flywheel_conditional_mana_is_shared_with_automatic_payment_after_crew",
+        "test_actual_scrounger_history_counts_foreign_token_death_and_excludes_exile",
+        "test_actual_shrine_counter_restriction_is_not_rechecked_after_accepted_activation",
+        "test_actual_sphere_uses_one_opponent_poison_threshold_and_closed_mana_output",
+        "test_actual_trainee_offers_and_commands_follow_power_but_queued_result_survives_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_flywheel_conditional_mana_is_shared_with_automatic_payment_after_crew",
+        "test_actual_scrounger_history_counts_foreign_token_death_and_excludes_exile",
+        "test_actual_shrine_counter_restriction_is_not_rechecked_after_accepted_activation",
+        "test_actual_sphere_uses_one_opponent_poison_threshold_and_closed_mana_output",
+        "test_actual_trainee_offers_and_commands_follow_power_but_queued_result_survives_departure"
+      ],
+      "privacy_tests": [
+        "test_actual_trainee_offers_and_commands_follow_power_but_queued_result_survives_departure"
+      ],
+      "replay_tests": [
+        "test_actual_flywheel_conditional_mana_is_shared_with_automatic_payment_after_crew",
+        "test_actual_scrounger_history_counts_foreign_token_death_and_excludes_exile",
+        "test_actual_shrine_counter_restriction_is_not_rechecked_after_accepted_activation",
+        "test_actual_sphere_uses_one_opponent_poison_threshold_and_closed_mana_output",
+        "test_actual_trainee_offers_and_commands_follow_power_but_queued_result_survives_departure"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified edited registry/evidence withdrawal blocks shared public-state restricted activations while basic mana remains admitted; descriptor-owned runtime minima infer the requirement independently.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Bypassing a current source power predicate incorrectly makes a below-threshold source payable; the independent unavailable witness rejects the mutation.",
       "blockers": [],
       "status": "trusted"
     }

@@ -533,6 +533,10 @@ def fixed_public_state_condition_matches(
     leaves=condition.leaf_conditions();snapshots=snapshot.term_snapshots if condition.terms else (snapshot,)
     if require_available and any(leaf.kind in quantity_kinds and child.condition_quantity is None for leaf,child in zip(leaves,snapshots)):
         raise FixedPublicStateConditionError("The public resolution condition is unavailable")
+    if require_available and any((leaf.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY and child.source_query_matches is None)
+            or (leaf.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY and child.attached_query_matches is None)
+            for leaf,child in zip(leaves,snapshots)):
+        raise FixedPublicStateConditionError('The public object condition is unavailable')
     return condition.matches(snapshot)
 
 

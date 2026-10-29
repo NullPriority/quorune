@@ -615,7 +615,7 @@ def _resolution_body(
         )
         if len(abilities) != 1:
             return None
-        return _activated_effect_material(abilities[0])
+        return _activated_effect_material(abilities[0],source_name=face_name or record.name)
     return None
 
 

@@ -12192,6 +12192,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/activation/public_state_conditions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/activation/query.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -21074,5 +21088,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "75cc4cc1f7695dfcafa26d0ede8c7fccb900d75baa1dd9a3413b7ec3aa52ca0c"
+  "fingerprint": "23fd7712313fd90867aab79a90a4eb9fc0d4999e89e3fe4caca3de59ddb98d7f"
 }

@@ -9218,6 +9218,21 @@
         "test_mana_spent_amounts",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "activation-shared-public-state",
+      "patterns": [
+        "quorune/activation_condition_model.py",
+        "quorune/rules/activation/public_state_conditions.py",
+        "tests/test_activation_public_state.py",
+        "tests/fixtures/activation-public-state-cards.json"
+      ],
+      "test_modules": [
+        "test_activation_public_state",
+        "test_public_activation_conditions",
+        "test_public_state_condition_runtime",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

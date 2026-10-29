@@ -73,6 +73,7 @@
     ],
     "functional-02": [
       "test_ability_source_counter_targets",
+      "test_activation_public_state",
       "test_activation_result_authority",
       "test_activation_view_equivalence",
       "test_all_blocker_requirements",

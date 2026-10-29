@@ -322,6 +322,12 @@ reference, caster and value. The reader requires existing complete cast-event
 facts and adds no checkpoint or event fields. Scalar schemas one through seven
 retain their exact payloads.
 
+Activation-condition schema two contains a closed `fixed_public_state` kind
+and its existing typed condition payload. Source names participate only in
+compilation; replay uses the pinned predicate rather than reparsing Oracle.
+Legacy activation condition fields and fixed-mana payloads keep their original
+forms. The new discriminator adds no game-state or event-history fields.
+
 Public-condition schema eight stores one closed `history_query` and a
 nonnegative count or amount threshold. Its version-one query identifies the
 typed event, principal relation, card-type filters and reduction. It reads the
