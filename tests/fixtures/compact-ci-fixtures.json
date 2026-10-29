@@ -295,6 +295,7 @@
     "tests/fixtures/public-value-cost-cards.json",
     "tests/fixtures/public-zone-condition-cards.json",
     "tests/fixtures/public-zone-quantity-cards.json",
+    "tests/fixtures/qualified-attack-cards.json",
     "tests/fixtures/qualified-declaration-cards.json",
     "tests/fixtures/qualified-enchant-cards.json",
     "tests/fixtures/qualified-entry-state-cards.json",

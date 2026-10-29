@@ -3683,6 +3683,22 @@ player recipient yields its own trigger; the one-or-more descriptor alone
 coalesces that committed batch. Both retain combat and opponent restrictions
 and current observer ability checks. Unsupported source state, token, chosen,
 and ability-dependent qualifiers remain residual.
+Singular controlled attack subjects use closed public characteristic queries
+over a versioned declaration snapshot. The attack owner seals effective types,
+subtypes, colors, keywords, counters, token status and reviewed permanent state
+after costs and becoming attacking, before trigger discovery. Each matching
+declared attacker is a separate occurrence. Source exclusion and attacking
+alone retain their ordinary meaning. Later changes do not retroactively alter
+qualification, and independently exact effects use the existing trigger and
+result owners. The snapshot has its own inferred capability requirement;
+one-or-more declarations and defending-recipient grouping retain separate
+productions. Old qualified-damage query admission stays unchanged.
+An explicit attacker-pronoun characteristic result binds the occurrence's
+logical object, separately from an explicit observer result. The existing
+sealed-object resolver prevents a blink from redirecting the result to a new
+incarnation. Fixed and reviewed public-query amounts use the existing
+characteristic journal; public quantities are evaluated at resolution for the
+trigger controller. Independently unsupported occurrence bodies stay residual.
 Repeatable sacrifice and discard subscriptions also compose with independently
 exact counter-placement bodies. "Another" excludes the current source reference;
 sacrifice predicates consume pre-event custody and characteristics, while typed

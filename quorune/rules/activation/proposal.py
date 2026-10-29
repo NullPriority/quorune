@@ -151,6 +151,15 @@ def _select_ability(
         raise ActivationProposalError(str(exc), reason="ability_selection") from exc
 
 
+def activation_result_is_represented(host, source, ability):
+    """A structural cost catalogue never stands in for an executable result."""
+    from .resolution import is_builtin_activation_semantic
+    key = host._semantic_key_for_ability(source, ability)
+    return (ability.mana_ability or host.semantics.get(key) is not None
+        or is_builtin_activation_semantic(key) or host._crew_threshold(ability) is not None
+        or station_cost_choice(ability) is not None or bool(ability.library_search_types))
+
+
 def _validate_activation_cost_contract(
     host: ActivationProposalHost,
     request: ActivationProposalRequest,
@@ -169,6 +178,9 @@ def _validate_activation_cost_contract(
             status="unresolved",
             reason="uncompiled_cost",
         )
+    if host.state.config.semantic_policy == 'trusted_only' and not activation_result_is_represented(host, source, ability):
+        raise ActivationProposalError('This ability has no compiled result semantics',
+            status='unresolved', reason='unresolved_result_semantics')
     status, reason = host._ability_availability(request.actor, source, ability)
     if status != "payable":
         raise ActivationProposalError(

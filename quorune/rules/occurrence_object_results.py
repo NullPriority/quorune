@@ -29,6 +29,11 @@ def occurrence_object_runtime_dependencies(program):
             raise ValueError('Occurrence controller result requires a closed untargeted tap-state instruction')
         return required
     if not contains(program.effects):return ()
+    if program.event=='creature.attacks':
+        from .attack_event_results import attack_event_characteristic_capabilities
+        required=attack_event_characteristic_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
+        if not required:raise ValueError('Attack occurrence characteristics require one closed untargeted result')
+        return required
     if (program.event not in {'permanent.tap','permanent.untap'} or program.target_schema is not None
             or len(program.effects)!=1 or program.effects[0]!={'op':'destroy','card':'$event.permanent_object'}):
         raise ValueError('Occurrence destruction requires one untargeted tap-state permanent incarnation')

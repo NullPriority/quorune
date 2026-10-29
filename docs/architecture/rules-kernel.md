@@ -384,6 +384,12 @@ activation use read-only immutable proposal builders followed by declared
 typed commit owners; `mana_activation.py`, `tap_state.py`, and
 `token_creation.py`, `regeneration.py`, `destruction.py`, `permanent_exile.py`, and
 `return_to_hand.py` own focused transactions behind typed host protocols.
+An activated-cost catalogue is discovery metadata. In `trusted_only` games,
+the shared proposal contract requires a represented result before advertising
+or accepting a nonmana activation. A missing result rejects before payment or stack creation. Typed
+mana, registered built-in results, Crew, Station and fetch metadata retain
+their existing execution owners. The explicit `arbitrate_or_pause` policy keeps
+its unresolved-proposal and scoped manual resolution workflow.
 `stack_counter.py` owns represented counterability checks, stack removal,
 replacement-aware countered-spell movement, telemetry, and public journaling.
 Destruction delegates shield removal to the counter owner and permanent

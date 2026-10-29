@@ -256,6 +256,18 @@ meaning where the schema allows it. A current runtime never silently recompiles
 or reinterprets an old record as if it used current Oracle, rules, or
 CardPrograms.
 
+Current games pin `qualified_attack_facts_version: 1`. Declared-attack
+occurrences carry versioned public attacker characteristics sealed after
+declaration and before discovery. Pending triggers retain those facts across
+later characteristic changes, source departure, save/load and replay.
+Checkpoints without the execution marker retain the older event contexts and
+hashes; replay does not append the new fields. Unknown versions and Boolean
+versions are rejected.
+Receiver-bound attack characteristic results reuse the sealed
+`event_counter_recipient` reference and logical identity. A departed or new
+incarnation is skipped at resolution; the observer's identity remains the
+effect's source. Public quantity evaluation retains the trigger controller.
+
 Current games pin `spell_mana_counts_version: 1` in the initial checkpoint.
 Each original cast stores an optional version-one `mana_spent_counts` stack
 fact with its physical/logical incarnation and exact concrete WUBRGC amounts.

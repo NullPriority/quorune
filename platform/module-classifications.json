@@ -2468,6 +2468,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/attack_event_results.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/backup_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -5993,6 +6008,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/public_event_query_conditions.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/public_quantity_activation_costs.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -6234,6 +6264,21 @@
     },
     {
       "file": "quorune/compiler/public_zone_quantities.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/qualified_attack_subjects.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -11108,6 +11153,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/qualified_attack_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/qualified_entry_state_model.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -12420,6 +12477,20 @@
     },
     {
       "file": "quorune/rules/attachment_actions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/attack_event_results.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -14786,6 +14857,20 @@
     },
     {
       "file": "quorune/rules/public_zone_move_capability_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/qualified_attacks.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
       "allowed_dependency_layers": [
@@ -20883,5 +20968,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4c9cdb679dec67179bdb4f7111e63f3417ab37da23aab55535e45d8a0d6ed619"
+  "fingerprint": "2035ca675afc7e494477ec56b86cf9b45d927a7161cef8b30dcc783ced6e054a"
 }

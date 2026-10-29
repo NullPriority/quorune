@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 545,
+  "registry_version": 547,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -64583,6 +64583,208 @@
       "dependency_fail_closed_rationale": "Verified parent and child authority withdrawal prevents exact closure while Flying remains exact; runtime binding rejects omitted version3 capability.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting subtype composition fails the exact independent artifact subtype plus quote witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "trigger.event.qualified_attack_singular",
+      "version": 1,
+      "official_rules": [
+        "508.1f",
+        "508.1j",
+        "508.1k",
+        "508.1m",
+        "508.2a",
+        "508.2b",
+        "603.2c",
+        "603.3a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Singular controlled attack subjects lower closed public type/subtype/color/keyword/counter and reviewed state predicates against sealed version1 public attacker facts. One matching declared attacker produces one occurrence; printed source ability, source controller and ordinary attacking-alone semantics remain authoritative.",
+        "inputs": [
+          "Effective public attacker characteristics after declaration",
+          "Current source controller and ability",
+          "Closed independently represented effect body"
+        ],
+        "outputs": [
+          "One trigger for each matching declared attacker",
+          "Source-independent queued results and ordinary target revalidation"
+        ],
+        "exclusions": [
+          "One-or-more declaration or defending-recipient aggregation",
+          "Chosen qualities and unknown subject bodies",
+          "Hidden or source-owner-relative scopes",
+          "Independently inexact result references"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_public_action",
+        "trigger.placement.apnap"
+      ],
+      "implementation_components": [
+        "quorune.compiler.qualified_attack_subjects.qualified_attack_binding_spec",
+        "quorune.compiler.public_event_query_conditions.public_event_query_conditions",
+        "quorune.rules.qualified_attacks.attack_characteristic_context",
+        "quorune.rules.qualified_attacks.qualified_attack_runtime_dependencies",
+        "quorune.attack_transition_engine_adapter.attack_transition_stack_items"
+      ],
+      "positive_tests": [
+        "test_actual_inkcaster_requires_named_counter_and_queued_result_survives_counter_removal",
+        "test_actual_linden_seals_white_at_declaration_across_later_white_and_black_changes",
+        "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
+        "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
+        "test_attack_fact_execution_marker_round_trips_and_absence_preserves_historical_state",
+        "test_closed_subject_queries_share_exact_effects_and_keep_singular_scope",
+        "test_sealed_fact_requirements_reject_malformed_fields_without_widening_old_damage"
+      ],
+      "negative_tests": [
+        "test_actual_inkcaster_requires_named_counter_and_queued_result_survives_counter_removal",
+        "test_actual_linden_seals_white_at_declaration_across_later_white_and_black_changes",
+        "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
+        "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
+        "test_attack_fact_execution_marker_round_trips_and_absence_preserves_historical_state",
+        "test_closed_subject_queries_share_exact_effects_and_keep_singular_scope",
+        "test_runtime_qualified_attack_capability_cannot_be_omitted",
+        "test_sealed_fact_requirements_reject_malformed_fields_without_widening_old_damage",
+        "test_verified_attack_owner_withdrawal_blocks_qualified_sources_and_preserves_plain_flying"
+      ],
+      "interaction_tests": [
+        "test_actual_inkcaster_requires_named_counter_and_queued_result_survives_counter_removal",
+        "test_actual_linden_seals_white_at_declaration_across_later_white_and_black_changes",
+        "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
+        "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce"
+      ],
+      "multiplayer_tests": [
+        "test_actual_inkcaster_requires_named_counter_and_queued_result_survives_counter_removal",
+        "test_actual_linden_seals_white_at_declaration_across_later_white_and_black_changes",
+        "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
+        "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce"
+      ],
+      "privacy_tests": [
+        "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce"
+      ],
+      "replay_tests": [
+        "test_actual_inkcaster_requires_named_counter_and_queued_result_survives_counter_removal",
+        "test_actual_linden_seals_white_at_declaration_across_later_white_and_black_changes",
+        "test_actual_ognis_uses_haste_at_declaration_and_keeps_queued_tapped_treasures_after_blanking",
+        "test_actual_samurai_warrior_union_counts_a_changeling_once_and_alone_counts_all_attackers",
+        "test_actual_utvara_counts_each_controlled_dragon_and_queued_tokens_survive_source_bounce",
+        "test_attack_fact_execution_marker_round_trips_and_absence_preserves_historical_state"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified capability withdrawal blocks qualified attack parsing while Flying remains exact; dynamic runtime requirements infer the new capability from sealed attacker condition fields.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting sealed attacker subtypes is killed by the independent event-boundary witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "resolution.event_object.attack_characteristics",
+      "version": 1,
+      "official_rules": [
+        "113.7a",
+        "400.7",
+        "508.2a",
+        "603.3a",
+        "608.2h",
+        "611.2c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "An explicit attacker-pronoun characteristic result affects the sealed attack occurrence incarnation, independently from its observer. The existing logical-object resolver and characteristic journal execute fixed or reviewed public-query stat/keyword modifications. Public quantities read at resolution for the trigger controller.",
+        "inputs": [
+          "One closed untargeted characteristic result",
+          "One sealed declared attacker identity",
+          "Fixed integer or reviewed public-query characteristic amounts"
+        ],
+        "outputs": [
+          "Receiver-bound EOT characteristic effect with ordinary giver provenance",
+          "No application to a departed, phased-out or new incarnation"
+        ],
+        "exclusions": [
+          "Unknown or ambiguous occurrence result bodies",
+          "Other event families and aggregate receiver sets",
+          "Unreviewed scalar amount kinds"
+        ]
+      },
+      "dependencies": [
+        "resolution.event_object.fixed_result"
+      ],
+      "implementation_components": [
+        "quorune.compiler.attack_event_results.qualified_attack_characteristic_result",
+        "quorune.rules.attack_event_results.attack_event_characteristic_capabilities",
+        "quorune.event_counter_reference.event_counter_recipient_context",
+        "quorune.event_counter_reference.resolve_event_counter_recipient",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_source_characteristics_until_end_of_turn"
+      ],
+      "positive_tests": [
+        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
+        "test_actual_asari_queued_result_does_not_follow_a_blinked_attacker",
+        "test_actual_atarka_grants_double_strike_to_the_other_dragon_and_changes_both_damage_steps",
+        "test_attacker_result_pronoun_and_explicit_observer_keep_distinct_sealed_roles",
+        "test_occurrence_characteristic_shape_rejects_unbound_relative_quantities_and_changed_roles"
+      ],
+      "negative_tests": [
+        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
+        "test_actual_asari_queued_result_does_not_follow_a_blinked_attacker",
+        "test_actual_atarka_grants_double_strike_to_the_other_dragon_and_changes_both_damage_steps",
+        "test_attack_result_owner_withdrawal_keeps_unrelated_qualified_token_result",
+        "test_attacker_result_pronoun_and_explicit_observer_keep_distinct_sealed_roles",
+        "test_occurrence_characteristic_shape_rejects_unbound_relative_quantities_and_changed_roles",
+        "test_runtime_attack_occurrence_result_owner_cannot_be_omitted"
+      ],
+      "interaction_tests": [
+        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
+        "test_actual_asari_queued_result_does_not_follow_a_blinked_attacker",
+        "test_actual_atarka_grants_double_strike_to_the_other_dragon_and_changes_both_damage_steps"
+      ],
+      "multiplayer_tests": [
+        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
+        "test_actual_asari_queued_result_does_not_follow_a_blinked_attacker",
+        "test_actual_atarka_grants_double_strike_to_the_other_dragon_and_changes_both_damage_steps"
+      ],
+      "privacy_tests": [
+        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once"
+      ],
+      "replay_tests": [
+        "test_actual_asari_buffs_the_different_attacker_and_counts_each_union_member_once",
+        "test_actual_asari_queued_result_does_not_follow_a_blinked_attacker",
+        "test_actual_atarka_grants_double_strike_to_the_other_dragon_and_changes_both_damage_steps"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified receiver-result withdrawal leaves the Asari composition partial and preserves the unrelated qualified Dragon-token result; runtime binding infers the receiver capability from the occurrence operand.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the attacker-result binder reproduces observer binding and is killed by the explicit effect-operand witness.",
       "blockers": [],
       "status": "trusted"
     }

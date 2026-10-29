@@ -550,26 +550,8 @@ def _qualified_damage_match_spec(match, *, singular: bool):
         conditions.append({'field':'combat','op':'truthy','value':True})
     if match['recipient'].casefold() == 'an opponent':
         conditions.append({'field':'player','op':'ne','value':'$source.controller'})
-    for field, values, operation, excluded in (
-        ('source_types',query.types_all,'contains_all',False),
-        ('source_types',query.types_any,'contains_any',False),
-        ('source_types',query.excluded_types,'contains_any',True),
-        ('source_subtypes',query.subtypes_all,'contains_all',False),
-        ('source_subtypes',query.subtypes_any,'contains_any',False),
-        ('source_subtypes',query.excluded_subtypes,'contains_any',True),
-        ('source_colors',query.colors_all,'contains_all',False),
-        ('source_colors',query.colors_any,'contains_any',False),
-        ('source_supertypes',query.supertypes_all,'contains_all',False),
-    ):
-        if values:
-            if operation == 'contains_all':
-                conditions.extend({'field':field,'op':'contains_any','value':[value]} for value in values)
-                continue
-            value = {'field':field,'op':operation,'value':list(values)}
-            conditions.append({'not':value} if excluded else value)
-    if query.colorless is not None:
-        value = {'field':'source_colors','op':'eq','value':[]}
-        conditions.append(value if query.colorless else {'not':value})
+    from .public_event_query_conditions import public_event_query_conditions
+    conditions.extend(public_event_query_conditions(query, prefix='source_'))
     return _spec('damage.dealt', QUALIFIED_DAMAGE_SINGULAR_VARIANT if singular else QUALIFIED_DAMAGE_BATCH_VARIANT, match['body'],
         'fixed-counter-public-damage-trigger-v1', 'trigger-event-normalized-damage',
         condition=_all_conditions(*conditions), capabilities=(QUALIFIED_DAMAGE_SINGULAR_CAPABILITY if singular else QUALIFIED_DAMAGE_BATCH_CAPABILITY,))

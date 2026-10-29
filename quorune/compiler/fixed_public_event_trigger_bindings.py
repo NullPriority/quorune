@@ -922,7 +922,8 @@ def _public_damage_spec(
 def _public_attack_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
     match = _PUBLIC_ATTACK_TRIGGER.fullmatch(material_line)
     if match is None:
-        return None
+        from .qualified_attack_subjects import qualified_attack_binding_spec
+        return qualified_attack_binding_spec(material_line)
     subject = " ".join(match.group("subject").casefold().split())
     return _spec(
         "creature.attacks",

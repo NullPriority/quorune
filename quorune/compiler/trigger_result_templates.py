@@ -11,6 +11,9 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=()):
+    from .attack_event_results import qualified_attack_characteristic_result
+    attack_result=qualified_attack_characteristic_result(binding,body,effect_template=effect_template,card_name=card_name)
+    if attack_result is not None:return attack_result
     from .occurrence_object_results import occurrence_object_result
     occurrence=occurrence_object_result(binding,body,effect_template=effect_template,card_name=card_name)
     if occurrence is not None:return occurrence

@@ -9065,6 +9065,56 @@
         "test_card_program_trust",
         "test_fixed_query_quoted_ability_grants"
       ]
+    },
+    {
+      "id": "qualified-attack-subjects",
+      "patterns": [
+        "quorune/compiler/qualified_attack_subjects.py",
+        "quorune/compiler/public_event_query_conditions.py",
+        "quorune/qualified_attack_model.py",
+        "quorune/rules/qualified_attacks.py",
+        "quorune/attack_transition_engine_adapter.py",
+        "tests/test_qualified_attack_subjects.py",
+        "tests/fixtures/qualified-attack-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_attack_subjects",
+        "test_aggregated_zone_event_triggers",
+        "test_attack_transitions",
+        "test_declare_attackers_rules",
+        "test_public_state_event_actions",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "activation-result-authority",
+      "patterns": [
+        "quorune/rules/activation/proposal.py",
+        "tests/test_activation_result_authority.py"
+      ],
+      "test_modules": [
+        "test_activation_result_authority",
+        "test_action_proposals",
+        "test_activation_result_views",
+        "test_activation_view_equivalence",
+        "test_activation_conditions"
+      ]
+    },
+    {
+      "id": "attack-occurrence-characteristic-results",
+      "patterns": [
+        "quorune/compiler/attack_event_results.py",
+        "quorune/rules/attack_event_results.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/rules/occurrence_object_results.py"
+      ],
+      "test_modules": [
+        "test_qualified_attack_subjects",
+        "test_public_state_event_actions",
+        "test_public_query_effect_amounts",
+        "test_fixed_source_characteristic_effects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

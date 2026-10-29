@@ -579,6 +579,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities
     from ..rules.fixed_controller_effect_shapes import fixed_controller_effect_sequence_node_capabilities
     from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
+    from ..rules.attack_event_results import attack_event_characteristic_capabilities
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
         return False
@@ -612,6 +613,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_token_creation_node_capabilities,
             fixed_target_characteristics_node_capabilities,
             fixed_source_characteristics_node_capabilities,
+            attack_event_characteristic_capabilities,
             fixed_resolution_characteristic_set_node_capabilities,
             fixed_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,

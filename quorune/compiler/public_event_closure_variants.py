@@ -6,6 +6,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         'source_damage_death_history',
         'public_anywhere_graveyard_card',
+        'singular_qualified_attack',
         "another_controlled_colorless_creature_enters",
         "another_controlled_creature_power_at_most",
         "controlled_enchantment_graveyard",

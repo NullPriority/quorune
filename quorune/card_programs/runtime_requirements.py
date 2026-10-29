@@ -87,6 +87,9 @@ def program_dynamic_runtime_requirements(program):
         if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
     required={ADVENTURE_CAPABILITY} if ADVENTURE_COVERAGE in program.coverage else set();blockers=set()
+    from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
+    try:required.update(qualified_attack_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_qualified_attack:invalid:{exc}')
     from ..characteristic_fragments import characteristic_quantity_capabilities
     required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     try:required.update(city_activation_runtime_dependencies(program))

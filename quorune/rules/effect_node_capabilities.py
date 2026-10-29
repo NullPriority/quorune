@@ -67,6 +67,7 @@ def effect_node_capabilities(
     from .library_search_rule_shapes import temporary_library_search_node_capabilities
     from .random_graveyard_returns import random_graveyard_return_node_capabilities
     from .occurrence_object_results import occurrence_object_node_capabilities
+    from .attack_event_results import attack_event_characteristic_capabilities
     from .prevention_component_shapes import fixed_prevention_component_capabilities
     from ..attachment_references import AttachmentReferenceError,attachment_information_capabilities
     try:
@@ -78,6 +79,7 @@ def effect_node_capabilities(
         created_token_counter_node_capabilities,
         temporary_library_search_node_capabilities,
         occurrence_object_node_capabilities,
+        attack_event_characteristic_capabilities,
         temporary_cast_node_capabilities,
         random_graveyard_return_node_capabilities,
         fixed_stack_spell_copy_node_capabilities,
