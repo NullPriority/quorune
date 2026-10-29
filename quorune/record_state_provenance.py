@@ -28,7 +28,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
             getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
         ),
         **({"arrival_history_version":1} if getattr(getattr(state,"turn_history",None),"arrival_history_version",None)==1 else {}),
-        **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version')
+        **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
     }
@@ -56,7 +56,7 @@ def validate_state_versions(
     arrival=format_value.get('arrival_history_version',0)
     actual_arrival=getattr(getattr(state,'turn_history',None),'arrival_history_version',None) or 0
     if type(arrival) is not int or arrival not in {0,1} or arrival!=actual_arrival:raise ValueError('Arrival-history provenance does not match the initial checkpoint')
-    for key in ('spell_origin_history_version','graveyard_type_history_version'):
+    for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version'):
         declared=format_value.get(key,0);actual=getattr(getattr(state,'turn_history',None),key,None) or 0
         if type(declared) is not int or declared not in {0,1} or declared!=actual:raise ValueError('Qualified history provenance does not match the initial checkpoint')
     tap_version = format_value.get("tap_state_event_version", 0)

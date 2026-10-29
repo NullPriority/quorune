@@ -124,6 +124,12 @@ one and two retain their exact historical fields and serialization. Public
 price rows for count-sensitive choices include signed generic adjustments so
 the projected form can distinguish different counts from the same sources.
 
+Self-cost metric schema five stores one closed `public_state` condition in the
+existing term list. Earlier metrics omit it and preserve their payloads. The
+prospective stack/controller view used to price it is read-only and ephemeral;
+it adds no saved GameState field. Independent paired discounts retain separate
+terms. See [ADR 0127](../adr/0127-prospective-public-self-cost-conditions.md).
+
 Fixed additional tap prices record `fixed_additional_tap_payment` in the
 selected casting option. Its closed version-one frame contains the compiled
 price and each selected physical object, logical incarnation and reference.
@@ -305,6 +311,15 @@ original spell is still on the stack. Records without runtime-trust metadata
 retain their earlier fallback-lookup behavior. This does not admit an
 unsupported copy-producing card or alter copied casting decisions.
 
+An event-bound spell-copy trigger stores an optional `event_spell_copy_source`
+version-one context containing the original stack item, logical incarnation,
+copiable characteristics, target schema and departure flag. Live references
+read current spell choices; departure updates both placed and waiting trigger
+occurrences before removal. The copy choice continuation retains the same
+reference so load and replay cannot substitute a returned card. Execution
+progress is excluded from the copied snapshot. Existing targeted-copy records
+omit this context and retain their earlier behavior.
+
 Paid-mana result instructions retain a closed threshold and an original-spell
 mana-unit reference. The bound count and selected branch use the existing
 resolution continuation; private Scry still uses its ordinary principal-scoped
@@ -344,6 +359,14 @@ New games enable them; rollover and reset preserve them. The record manifest
 binds their versions to the initial checkpoint. Historical absence omits cast
 origins and retains empty arrival types, so replay adds no previously absent
 facts. Missing modes cannot establish a qualified zero-history condition.
+
+`turn_history.spell_mana_history_version` enables complete current-turn spell
+payment facts when set to one. Each `spell_mana_spent` fact stores its player
+and positive actual paid amount. Reset clears the facts while preserving the
+mode; historical absence omits it and adds no new facts during replay. The
+manifest binds this mode to the initial checkpoint. Expend occurrences retain
+an immutable player and before/after payment totals; later spending cannot
+change a queued crossing.
 
 The version-one `qualified_spell_cast_number` event condition stores one
 closed spell-history query and a fixed positive equality threshold. It locates
@@ -497,6 +520,14 @@ with the existing object-query and keyword-list shapes. Its capability is
 required independently during binding. Earlier keyword-grant descriptors keep
 their identity and decoding behavior, and the new admission adds no GameState
 field or journal.
+
+Characteristic quantity schema six adds an explicit keyword-layer battlefield
+count. Its existing scope, predicate and exclusion fields retain their meaning;
+the serialized reduction is the fixed object-count mode. Earlier versions keep
+their original fields and earlier evaluation boundary. The version supplies no
+new GameState field and cannot encode a hidden-zone keyword count or a
+count-controlled same-layer ability grant. See
+[ADR 0126](../adr/0126-keyword-layer-characteristic-quantities.md).
 
 Bound static declaration rules use a version-one typed fragment containing a
 closed relative receiver selector, public giver condition and intrinsic rule

@@ -460,13 +460,14 @@ def _query_characteristic_effects(
     *,
     context: Mapping[str, Any],
     count_resolver: Callable[[CharacteristicQuantitySpec], int],
+    maximum_layer: Layer | None = None,
 ) -> list[ContinuousEffect]:
     """Materialize typed live quantities at their CR 613 layer boundary.
 
     The source fragment is selected after layer-6 ability applicability. Quantity
-    resolution is supplied by the engine through the layer-5 boundary, so
-    a counted object's later-layer power, toughness, or abilities cannot recurse
-    back into the quantity that is currently being evaluated.
+    resolution uses the quantity's versioned layer boundary. Keyword-layer
+    counts are deferred until their later modifier layer and cannot recurse
+    through an earlier view of that modifier.
     """
 
     if card.zone == "battlefield" and card.phased_out:
@@ -507,6 +508,8 @@ def _query_characteristic_effects(
             not isinstance(fragment, QueryCharacteristicModifierSpec)
             or card.zone != "battlefield"
         ):
+            continue
+        if fragment.quantity.schema_version == 6 and maximum_layer is not None and maximum_layer < Layer.POWER_TOUGHNESS:
             continue
         count = count_resolver(fragment.quantity)
         if type(count) is not int or count < 0:
@@ -758,6 +761,7 @@ def evaluate_card_characteristics(
                 effects,
                 context=context,
                 count_resolver=query_count_resolver,
+                maximum_layer=maximum_layer,
             )
         )
     if maximum_layer is not None:

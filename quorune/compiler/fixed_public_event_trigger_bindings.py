@@ -54,7 +54,7 @@ def _anywhere_graveyard_spec(material_line):
         'fixed-counter-public-anywhere-graveyard-trigger-v1', 'trigger-event-normalized-zone-change',
         condition={'all': conditions}, capabilities=(ANYWHERE_GRAVEYARD_CAPABILITY,))
 _PUBLIC_ATTACK_TRIGGER = re.compile(
-    r"^Whenever (?P<subject>this Vehicle|a creature|"
+    r"^Whenever (?P<subject>this creature|this Vehicle|a creature|"
     r"a creature you control|a creature with flying) "
     r"attacks(?P<alone> alone)?(?: (?P<recipient>you or a planeswalker "
     r"you control))?, (?P<body>.+)$",
@@ -925,15 +925,17 @@ def _public_attack_spec(material_line: str) -> FixedPublicEventBindingSpec | Non
         from .qualified_attack_subjects import qualified_attack_binding_spec
         return qualified_attack_binding_spec(material_line)
     subject = " ".join(match.group("subject").casefold().split())
+    if subject == "this creature" and (match.group("alone") is None or match.group("recipient") is not None):
+        return None
     return _spec(
         "creature.attacks",
-        "public_attack_" + subject.replace(" ", "_"),
+        "source_attacks" if subject == "this creature" else "public_attack_" + subject.replace(" ", "_"),
         match.group("body"),
         "fixed-counter-public-attack-trigger-v1",
         "trigger-event-normalized-public-action",
         condition=_all_conditions(
             {"field": "card", "op": "eq", "value": "$source.ref"}
-            if subject == "this vehicle"
+            if subject in {"this creature", "this vehicle"}
             else None,
             {"field": "controller", "op": "eq", "value": "$source.controller"}
             if subject == "a creature you control"

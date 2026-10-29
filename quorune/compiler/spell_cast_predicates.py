@@ -677,6 +677,9 @@ def _basic_spell_cast_binding(
             ),
             body=ordinary.group("body"),
         )
+    subtyped = _subtyped_creature_spell_cast_binding(material_line)
+    if subtyped is not None:
+        return subtyped
     characteristic = _CHARACTERISTIC_SPELL_CAST_TRIGGER.fullmatch(material_line)
     if characteristic is None:
         return None
@@ -691,6 +694,36 @@ def _basic_spell_cast_binding(
             characteristic_query=query,
         ),
         body=characteristic.group("body"),
+    )
+
+
+def _subtyped_creature_spell_cast_binding(material_line: str) -> FixedSpellCastBindingSpec | None:
+    match = re.fullmatch(
+        r'Whenever (?P<relation>you cast|an opponent casts|a player casts) '
+        r'(?P<article>a|an) (?P<subtypes>[A-Za-z][A-Za-z ,\'-]*?) creature spell, (?P<body>.+)',
+        material_line, re.I,
+    )
+    if match is None:
+        return None
+    words = match['subtypes'].casefold()
+    parts = re.split(r', or |, | or ', words)
+    if (not 1 <= len(parts) <= 3 or len(set(parts)) != len(parts)
+            or words != (parts[0] if len(parts) == 1 else ' or '.join(parts) if len(parts) == 2 else ', '.join(parts[:2]) + ', or ' + parts[2])
+            or match['article'].casefold() != ('an' if words[0] in 'aeiou' else 'a')):
+        return None
+    subtypes = [canonical_creature_subtype(value) for value in parts]
+    if any(value is None for value in subtypes):
+        return None
+    return FixedSpellCastBindingSpec(
+        subject=FixedSpellCastSubject(
+            controller=_spell_cast_controller(match['relation']),
+            quality=FixedSpellCastQuality.CREATURE,
+            characteristic_query=FixedSpellCastCharacteristicQuery(tuple(
+                FixedSpellCastCharacteristicTerm(FixedSpellCastCharacteristicKind.SUBTYPE, value)
+                for value in subtypes
+            )),
+        ),
+        body=match['body'],
     )
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from typing import Any, Mapping
 
 from ..ability_fragments import (
@@ -149,6 +150,19 @@ def _query_quantity_descriptor(
     fields: dict[str, Any] = {"zones": (zone,)}
     if normalized in {"", "card"}:
         return (ObjectQuerySpec(**fields), exclude_source)
+
+    if zone == 'battlefield':
+        from .public_state_queries import fixed_characteristic_battlefield_query_subject
+        non_type = re.fullmatch(r'non(?P<kind>artifact|creature|enchantment|land) (?P<body>.+)', normalized)
+        if non_type is not None:
+            nested = _query_quantity_descriptor(non_type['body'], zone=zone, definition_extensions=definition_extensions)
+            if nested is not None and not nested[1] and not nested[0].types_all and not nested[0].types_any:
+                return replace(nested[0], excluded_types=(non_type['kind'],)), exclude_source
+        plural = re.sub(r'\b(artifact|battle|creature|enchantment|land|permanent|planeswalker|token)\b',
+            lambda match: match[1] + 's', normalized, count=1)
+        parsed = fixed_characteristic_battlefield_query_subject(plural, allow_negative_keyword=True)
+        if parsed is not None and parsed[0] == 'any' and not parsed[2]:
+            return parsed[1], exclude_source
 
     type_unions = {
         "artifact and/or creature": ("artifact", "creature"),
@@ -336,6 +350,12 @@ def query_characteristic_quantity(
 
     relations = (
         (
+            r"(?P<objects>.+?) (?P<relation>you control|your opponents control|on the battlefield) "
+            r"(?P<qualifier>(?:with|without) .+)",
+            None,
+            "battlefield",
+        ),
+        (
             r"(?P<object>.+?) you control",
             CharacteristicQuantityScope.CONTROLLER_ZONE,
             "battlefield",
@@ -384,8 +404,17 @@ def query_characteristic_quantity(
         match = re.fullmatch(pattern, text, re.IGNORECASE)
         if match is None:
             continue
+        if scope is None:
+            scope = {
+                'you control': CharacteristicQuantityScope.CONTROLLER_ZONE,
+                'your opponents control': CharacteristicQuantityScope.OPPONENT_ZONES,
+                'on the battlefield': CharacteristicQuantityScope.ALL_ZONES,
+            }[match['relation'].casefold()]
+            descriptor = match['objects'] + ' ' + match['qualifier']
+        else:
+            descriptor = match.group("object")
         parsed = _query_quantity_descriptor(
-            match.group("object"),
+            descriptor,
             zone=zone,
             definition_extensions=definition_extensions,
         )
@@ -396,6 +425,7 @@ def query_characteristic_quantity(
             scope=scope,
             query=query,
             exclude_source=exclude_source,
+            schema_version=6 if query.keywords_all or query.keywords_none else 1,
         )
     from .shared_characteristic_queries import shared_characteristic_quantity
     return shared_characteristic_quantity(text)
@@ -458,7 +488,7 @@ def query_power_toughness_definition_handler(
         match.group("quantity"),
         source_name=source_name,
     )
-    if quantity is None:
+    if quantity is None or quantity.schema_version == 6:
         return None
     if paired is not None:
         quantity = public_card_quantity(quantity, match.group("quantity"))
@@ -746,6 +776,8 @@ def query_self_characteristics_handler(
         if fixed is None:
             return None
         abilities = fixed[4]
+        if fixed[0].schema_version == 6 and abilities:
+            return None
         fragment = QueryCharacteristicModifierSpec(
             quantity=fixed[0],
             calculation=PowerToughnessCalculation.FIXED_IF_THRESHOLD,

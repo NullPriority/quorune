@@ -14,6 +14,7 @@ from .object_query import object_matches_query, object_query_result
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
 from .rules.self_cost_turn_counts import COUNTED_TURN_FACTS, self_cost_turn_count
 from .rules.self_cost_public_counters import public_player_permanent_counter_total
+from .continuous_conditions import FixedPublicStateConditionSpec
 
 
 class SelfCastReductionError(ValueError):
@@ -31,6 +32,7 @@ class CastReductionQueryScope(str, Enum):
 
 
 class CastReductionMetricKind(str, Enum):
+    PUBLIC_STATE = 'fixed_public_state_condition'
     PUBLIC_COUNTER_TOTAL = 'public_player_permanent_counter_total'
     PUBLIC_AGGREGATE = 'public_characteristic_aggregate'
     FIXED_PUBLIC_THRESHOLD = "fixed_public_threshold"
@@ -170,8 +172,19 @@ class CastReductionMetric:
     counter_name: str | None = None
     schema_version: int = 1
     aggregate: PublicCharacteristicAggregateSpec | None = None
+    public_state: FixedPublicStateConditionSpec | None = None
 
     def _validate_extended_shape(self) -> bool:
+        if self.kind is CastReductionMetricKind.PUBLIC_STATE:
+            if (type(self.schema_version) is not int or self.schema_version!=5
+                    or not isinstance(self.public_state,FixedPublicStateConditionSpec)
+                    or self.queries!=() or self.minimum is not None or self.maximum is not None
+                    or self.require_all is not False or self.color is not None or self.turn_fact is not None
+                    or self.counter_name is not None or self.aggregate is not None):
+                raise SelfCastReductionError('Shared public cost conditions require only their version5 typed condition')
+            return True
+        if self.public_state is not None:
+            raise SelfCastReductionError('Other cost metrics do not carry a public-state condition')
         if self.kind is CastReductionMetricKind.SOURCE_POWER:
             if (type(self.schema_version) is not int or self.schema_version != 4
                     or not isinstance(self.queries, tuple) or self.queries
@@ -437,6 +450,7 @@ class CastReductionMetric:
         if self.schema_version >= 2:
             result["counter_name"] = self.counter_name
         if self.schema_version==3:result['aggregate']=self.aggregate.to_dict()
+        if self.schema_version==5:result['public_state']=self.public_state.to_dict()
         return result
 
     @classmethod
@@ -453,10 +467,12 @@ class CastReductionMetric:
         }
         extended = {*expected, "counter_name"}
         aggregate_fields={*extended,'aggregate'}
-        if not isinstance(value, Mapping) or set(value) not in (expected, extended,aggregate_fields):
+        if not isinstance(value, Mapping) or set(value) not in (expected, extended,aggregate_fields,{*extended,'public_state'}):
             raise SelfCastReductionError("Cast-reduction metrics have a closed schema")
         if (value.get('schema_version')==3)!=('aggregate' in value):
             raise SelfCastReductionError('Aggregate metric fields must match their version')
+        if (value.get('schema_version')==5)!=('public_state' in value):
+            raise SelfCastReductionError('Shared condition fields must match their metric version')
         if not isinstance(value["queries"], list):
             raise SelfCastReductionError("Cast-reduction queries must be an array")
         try:
@@ -478,6 +494,7 @@ class CastReductionMetric:
                 ),
                 counter_name=value.get("counter_name"),
                 aggregate=PublicCharacteristicAggregateSpec.from_dict(value['aggregate']) if value['schema_version']==3 else None,
+                public_state=FixedPublicStateConditionSpec.from_dict(value['public_state']) if value['schema_version']==5 else None,
             )
         except (TypeError, ValueError) as exc:
             raise SelfCastReductionError(
@@ -786,6 +803,9 @@ def cast_reduction_multiplier(
 ) -> int:
     """Return the deterministic nonnegative multiplier for one reduction term."""
 
+    if metric.kind is CastReductionMetricKind.PUBLIC_STATE:
+        from .rules.casting.public_conditions import self_public_condition_multiplier
+        return self_public_condition_multiplier(host,seat,source,metric.public_state)
     if metric.kind is CastReductionMetricKind.PUBLIC_COUNTER_TOTAL:
         return public_player_permanent_counter_total(host)
     if metric.kind in {CastReductionMetricKind.SOURCE_POWER, CastReductionMetricKind.SOURCE_COUNTER_COUNT}:

@@ -118,7 +118,11 @@ class SemanticChoiceCoordinationMixin:
             rows.append(row)
         return tuple(rows)
 
-    def _semantic_choice_stack_rows(self) -> tuple[ChoiceStackView, ...]:
+    def _semantic_choice_stack_rows(self,effect=None) -> tuple[ChoiceStackView, ...]:
+        from ..rules.event_spell_copy import resolve_event_spell_copy_source
+        source=resolve_event_spell_copy_source(self,effect or {})
+        referenced=source.item() if source is not None else None
+        items=tuple(i for i in self.state.stack if referenced is None or i.ref!=referenced.ref)+((referenced,) if referenced is not None else ())
         return tuple(
             ChoiceStackView(
                 ref=item.ref,
@@ -129,8 +133,9 @@ class SemanticChoiceCoordinationMixin:
                 modes=tuple(item.modes),
                 target_groups=dict(item.context.get("target_groups") or {}),
                 target_snapshots=dict(item.context.get("target_snapshots") or {}),
+                copy_source=source.to_dict() if source is not None and item.ref==referenced.ref else None,
             )
-            for item in self.state.stack
+            for item in items
         )
 
     def _semantic_choice_damage_source_candidates(
@@ -242,10 +247,13 @@ class SemanticChoiceCoordinationMixin:
         target_ref = str(
             effect.get("_target_stack_ref") or effect.get("stack") or ""
         )
+        from ..rules.event_spell_copy import resolve_event_spell_copy_source
+        bound_source=resolve_event_spell_copy_source(self,effect)
         target_item = next(
             (item for item in self.state.stack if item.ref == target_ref),
             None,
         )
+        if bound_source is not None:target_item=bound_source.item()
         if target_item is None:
             return target_schemas, validated_targets
         validation_actor = str(
@@ -257,6 +265,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
         raw_schema = effect.get("_target_schema")
+        if bound_source is not None:raw_schema=thaw_value(bound_source.target_schema) if bound_source.target_schema is not None else None
         if not isinstance(raw_schema, Mapping):
             raw_schema = self._stack_target_schema(
                 target_item,
@@ -265,11 +274,15 @@ class SemanticChoiceCoordinationMixin:
         if not isinstance(raw_schema, Mapping) or not target_item.targets:
             return target_schemas, validated_targets
         public_schema: Mapping[str, Any] | None = None
+        from ..target_source import TargetingSource
+        copy_source_ref=None if bound_source is not None else self._stack_source_ref(target_item)
+        acting_copy_source=(TargetingSource.from_characteristics('spell',bound_source.characteristics,controller=validation_actor)
+            if bound_source is not None else stack_targeting_source(self,target_item))
         if operation == "copy_stack_item":
             public_schema = copy_target_public_schema(
                 self, validation_actor, raw_schema, target_item.modes,
                 list(target_item.targets), dict(target_item.context.get("target_groups") or {}),
-                self._stack_source_ref(target_item), acting_source=stack_targeting_source(self,target_item),
+                copy_source_ref, acting_source=acting_copy_source,
             )
         elif available_modes(raw_schema):
             plan = target_plan(
@@ -309,11 +322,11 @@ class SemanticChoiceCoordinationMixin:
         if operation == "copy_stack_item":
             assignment = prepare_copy_targets(
                 self, actor=validation_actor, schema=raw_schema,
-                modes=target_item.modes, source_ref=self._stack_source_ref(target_item),
+                modes=target_item.modes, source_ref=copy_source_ref,
                 original_targets=list(target_item.targets),
                 original_groups=dict(target_item.context.get("target_groups") or {}),
                 original_snapshots=dict(target_item.context.get("target_snapshots") or {}),
-                submitted=submitted, acting_source=stack_targeting_source(self,target_item),
+                submitted=submitted, acting_source=acting_copy_source,
             )
             validated_targets[key] = {
                 "targets": list(assignment.targets), "groups": thaw_value(assignment.groups),
@@ -541,7 +554,7 @@ class SemanticChoiceCoordinationMixin:
             seat_order=tuple(self.seats),
             active_order=tuple(self.active_seats),
             object_rows=object_rows,
-            stack_rows=self._semantic_choice_stack_rows(),
+            stack_rows=self._semantic_choice_stack_rows(choice_effect),
             life_by_seat={
                 seat: self.state.players[seat].life for seat in self.seats
             },

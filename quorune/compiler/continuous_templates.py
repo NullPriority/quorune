@@ -1016,7 +1016,9 @@ def _attached_quoted_ability_shell(
         not quoted
         or "\n" in quoted
         or not text[:quote_start].casefold().startswith(
-            ("enchanted creature ", "equipped creature ", "enchanted land ")
+            ("enchanted artifact ", "enchanted battle ", "enchanted creature ",
+             "enchanted enchantment ", "enchanted land ", "enchanted permanent ",
+             "enchanted planeswalker ", "equipped creature ")
         )
     ):
         return None

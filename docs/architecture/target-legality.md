@@ -197,6 +197,12 @@ remain readable as original-target retention; grouped current-reference
 selections distinguish new targets. Ordinary casting and unrelated retargeting
 receive no copy retention exemption.
 
+Event-bound spell copies feed the same validator from current or departure-
+pinned spell information. Their prospective targeting source uses the copied
+characteristics and the copy controller. The original spell is a distinct
+object and may be a legal new target of its copy. Without an explicit new-target
+permission, the copy retains every original target choice and incarnation.
+
 Normalized becomes-target occurrences use those committed snapshots as well.
 A retained departed incarnation creates no occurrence on a returned permanent
 with the same public reference. Choosing that returned incarnation explicitly

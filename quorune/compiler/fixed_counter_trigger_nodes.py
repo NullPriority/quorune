@@ -133,6 +133,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        'player_expend',
         'public_waterbend',
         'public_ring_temptation', 'public_ring_bearer_choice',
         QUALIFIED_DAMAGE_BATCH_VARIANT, QUALIFIED_DAMAGE_SINGULAR_VARIANT,
@@ -315,6 +316,7 @@ class FixedCounterTriggerEvent(str, Enum):
     """Closed normalized event families accepted by this compiler slice."""
 
     STEP_BEGIN = "step.begin"
+    SPELL_MANA_PAID = 'spell.mana_paid'
     CONTROLLED_LAND_ENTER = "land.enter"
     CONTROLLER_SPELL_CAST = "spell.cast"
     SOURCE_ATTACKS = "creature.attacks"

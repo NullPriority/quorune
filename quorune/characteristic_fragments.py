@@ -101,7 +101,7 @@ class CharacteristicQuantitySpec:
         self._validate_object_query()
 
     def _validate_reduction_version(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3, 4, 5, 6}:
             raise CharacteristicFragmentError(
                 "Unsupported characteristic quantity schema version"
             )
@@ -201,6 +201,13 @@ class CharacteristicQuantitySpec:
                 "Object quantities require one typed object query"
             )
         query = self.query
+        if self.schema_version == 6 and (
+                query.zones != ('battlefield',) or self.reduction is not CharacteristicQuantityReduction.OBJECT_COUNT
+                or self.multiplier != 1 or self.offset != 0 or self.scope not in {
+                    CharacteristicQuantityScope.CONTROLLER_ZONE, CharacteristicQuantityScope.OPPONENT_ZONES,
+                    CharacteristicQuantityScope.ALL_ZONES} or query.numeric_characteristic is not None
+                or query.any_of or query.state_predicate is not None):
+            raise CharacteristicFragmentError('Keyword-layer quantities require one closed battlefield object count')
         if self.reduction is CharacteristicQuantityReduction.DEVOTION and (
             self.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
             or query != ObjectQuerySpec(zones=('battlefield',))
@@ -240,9 +247,9 @@ class CharacteristicQuantitySpec:
             or query.controller is not None
             or query.exclude_ref is not None
             or query.known_to_actor is not None
-            or query.keywords_all
+            or (query.keywords_all and self.schema_version != 6)
             or query.colors_none
-            or query.keywords_none
+            or (query.keywords_none and self.schema_version != 6)
             or query.numeric_characteristic is not None
             or (query.any_of and any(part.exclude_ref is not None for part in query.any_of))
             or query.include_phased_out
@@ -314,7 +321,7 @@ class CharacteristicQuantitySpec:
             "exclude_source": self.exclude_source,
             "exclude_attached_object": self.exclude_attached_object,
             **({"reduction": self.reduction.value, "multiplier": self.multiplier, "offset": self.offset,
-                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5} else {}),
+                "mana_colors": list(self.mana_colors)} if self.schema_version in {2, 3, 4, 5, 6} else {}),
             **({"terms": [term.to_dict() for term in self.terms]} if self.schema_version == 3 else {}),
         }
 
@@ -339,7 +346,7 @@ class CharacteristicQuantitySpec:
             raise CharacteristicFragmentError(
                 "Characteristic quantities have a closed schema"
             )
-        if (value.get("schema_version") in {2, 3, 4, 5}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
+        if (value.get("schema_version") in {2, 3, 4, 5, 6}) != ("reduction" in value) or (value.get("schema_version") == 3) != ("terms" in value):
             raise CharacteristicFragmentError("Characteristic reduction fields must match their version")
         try:
             scope = CharacteristicQuantityScope(value["scope"])
@@ -421,6 +428,8 @@ class QueryCharacteristicModifierSpec:
                 "Query characteristic abilities must be unique strings"
             )
         object.__setattr__(self, "add_abilities", abilities)
+        if self.quantity.schema_version == 6 and abilities:
+            raise CharacteristicFragmentError('Keyword-layer counts cannot supply a same-layer ability grant')
         if self.power == 0 and self.toughness == 0 and not abilities:
             raise CharacteristicFragmentError(
                 "Query characteristic modifiers must change characteristics"
@@ -509,7 +518,7 @@ class QueryPowerToughnessDefinitionSpec:
             raise CharacteristicFragmentError(
                 "Query power/toughness definitions require a typed quantity"
             )
-        if self.quantity.schema_version == 4:
+        if self.quantity.schema_version in {4, 6}:
             raise CharacteristicFragmentError('Current modifier values do not define characteristic values in layer 7a')
         if (
             type(self.define_power) is not bool
@@ -768,6 +777,9 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
         zone_capabilities=public_zone_quantity_dependencies(value)
         devotion = value.get('reduction') == 'devotion' or (value.get('kind') == 'devotion' and 'color' in value)
         own = (*zone_capabilities,*(('state_query.devotion.current',) if devotion else ()))
+        if value.get('schema_version')==6 and {'scope','query','counter_name','exclude_source'}<=set(value):
+            CharacteristicQuantitySpec.from_dict(value)
+            own=(*own,'quantity_expression.keyword_layer_count')
         if value.get('scope')=='controller_opponent_count':own=(*own,'quantity_expression.public_player_count')
         if (value.get('schema_version')==4 and value.get('scope') in {'controller_life_total','opponent_poison_counters','attached_object'}
                 and {'scope','query','counter_name','exclude_source'}<=set(value)):

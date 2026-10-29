@@ -733,6 +733,7 @@ def fixed_public_action_event_binding_spec(
     del card_name
     return (
         _public_attack_spec(material_line)
+        or _public_expend_spec(material_line)
         or _public_ring_spec(material_line)
         or _public_waterbend_spec(material_line)
         or _public_library_action_spec(material_line)
@@ -748,6 +749,18 @@ def _public_waterbend_spec(material_line):
     from ..waterbend import WATERBEND_CAPABILITY,WATERBEND_EVENT
     return _spec(WATERBEND_EVENT,'public_waterbend',match['body'],'fixed-waterbend-trigger-v1',
         'trigger-event-normalized-public-action',condition=_actor_condition(match['actor'],field='player'),capabilities=(WATERBEND_CAPABILITY,))
+
+
+def _public_expend_spec(material_line):
+    match=re.fullmatch(r'Whenever you expend (?P<threshold>[1-9]\d*), (?P<body>.+)',material_line,re.I)
+    if match is None:return None
+    from ..expend_model import EXPEND_CAPABILITY,SPELL_MANA_PAYMENT_EVENT
+    threshold=int(match['threshold'])
+    return _spec(SPELL_MANA_PAYMENT_EVENT,'player_expend',match['body'],
+        'fixed-expend-trigger-v1','cr-603-handling-triggered-abilities',
+        condition={'all':[{'field':'player','op':'eq','value':'$source.controller'},
+            {'field':'mana_before','op':'lt','value':threshold},
+            {'field':'mana_after','op':'gte','value':threshold}]},capabilities=(EXPEND_CAPABILITY,))
 
 
 def _public_ring_spec(material_line):

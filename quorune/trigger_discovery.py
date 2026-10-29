@@ -1031,6 +1031,9 @@ def _semantic_trigger_context(
         ),
     }
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
+    from .rules.event_spell_copy import event_spell_copy_trigger_context
+    try:stack_context.update(event_spell_copy_trigger_context(host,program,event,context))
+    except (TypeError,ValueError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     stack_context.update(printed_backup_source_context(source,program))
     from .connive import connive_trigger_departure_context
     stack_context.update(connive_trigger_departure_context(host, source, program))

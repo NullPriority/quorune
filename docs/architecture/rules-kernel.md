@@ -20,6 +20,13 @@ the existing typed spending-purpose context. Sources are rechecked after mana
 activations before the final spend; ordinary later sacrifice prices do not
 retroactively invalidate an already paid mana cost.
 
+`rules/casting/spell_mana_payments.py` reads actual committed spell payments
+into the bounded turn-history owner and captures Expend occurrences before
+later casting costs remove their sources. The cast coordinator retains those
+occurrences in its existing APNAP batch; rollback covers payment facts and
+collected triggers together. Activation payments and uncast spell copies do
+not enter this journal. See [ADR 0128](../adr/0128-payment-time-expend-occurrences.md).
+
 Fuse is a hand-only casting method selected through the ordinary cast offer and
 proposal. It creates one spell with both halves' names, types, colors, and
 combined printed mana cost and mana value. Casting a single half retains that
@@ -118,6 +125,13 @@ discount. Generic and colored components reduce only their corresponding cost
 requirements, with a zero floor. A face-down casting method suppresses printed
 self-reduction abilities while retaining independently applicable external
 modifiers through the existing cost owner.
+
+Shared public self-cost conditions use a read-only prospective spell view:
+the casting card leaves its former zone before the condition is counted and
+its casting controller supplies `you`, while ownership remains unchanged.
+The shared public-condition evaluator rejects unavailable facts. Accepted
+total cost retains the same pre-payment lock; see
+[ADR 0127](../adr/0127-prospective-public-self-cost-conditions.md).
 
 Counted self-price turn facts use an explicit versioned counted form for
 creature deaths, opponents' spell casts and the caster's actual draws. Death
@@ -1519,6 +1533,15 @@ without erasing the locked trigger. Unsupported grants, text changes,
 Gravestorm, face-down propagation, and unrepresented copied choices remain
 outside trust.
 
+Qualified cast-trigger copies use `rules/event_spell_copy.py` to bind the
+referenced spell's current information or immediate departure information.
+Countering that spell or removing the observer preserves an already detected
+copy trigger. Stack departure owners pin matching live and pending trigger
+references before removing the spell. Immutable pending occurrences retain
+their existing APNAP batch identity through the trigger write owner. Copy
+creation, target assignment and permanent-copy token resolution remain with
+their canonical owners; a copy creates no additional cast or mana payment.
+
 Ordinary printed fixed-mana Echo uses one source-spanned trigger descriptor.
 `control_history.py` owns the public acquisition timestamp and per-player upkeep
 boundary used by its intervening condition; ordinary summoning-sickness turn
@@ -1623,6 +1646,13 @@ with collection and devotion counts. These effects retain live source and
 subject applicability, validate their closed codecs and capability dependencies,
 and store no mutable quantity cache. Existing operation payloads retain their
 serialized fields.
+
+Keyword-qualified characteristic counts use explicit quantity schema six and
+read candidate characteristics through layer six. Their later P/T modifiers
+are not materialized in an earlier view. This retains current keyword grants
+and removal without exposing later statistics or permitting a count-controlled
+ability grant. Ordinary quantities retain their layer-five boundary; see
+[ADR 0126](../adr/0126-keyword-layer-characteristic-quantities.md).
 
 `shared_creature_type_model.py` extends the recipient quantity owner with
 distinct-object shared-type membership. A typed, current public battlefield

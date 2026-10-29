@@ -81,14 +81,27 @@ def _cost_metric_runtime_requirements(handlers):
 
 
 def _event_query_runtime_requirements(program):
-    """Infer the query dependencies of normalized attack and history events."""
+    """Infer descriptor-owned subscriptions and normalized event queries."""
     from ..public_history_query_model import public_history_query_dependencies
     from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
     from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies
     from ..cast_event_amounts import cast_mana_value_runtime_dependencies
+    from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
+    from ..rules.casting.spell_mana_payments import expend_runtime_dependencies
     required,blockers=set(),set()
+    from ..rules.event_subscriptions import FixedEventSubscriptionSet
+    try:
+        subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
+        if subscriptions is not None:
+            required.add('trigger.subscription.fixed_multi_event')
+            if any(child.event == 'spell.cast' for child in subscriptions.subscriptions):
+                required.add('trigger.event.normalized_spell_cast')
+            if any(child.event.removesuffix('.self') == 'permanent.enter' for child in subscriptions.subscriptions):
+                required.add('trigger.event.normalized_zone_change')
+    except (TypeError,ValueError) as exc:
+        blockers.add(f'runtime_event_subscriptions:invalid:{exc}')
     for resolver,value,label in (
         (public_history_query_dependencies,program.event_condition,'public_history'),
         (qualified_spell_ordinal_dependencies,program.event_condition,'qualified_spell_ordinal'),
@@ -96,6 +109,8 @@ def _event_query_runtime_requirements(program):
         (qualified_attack_batch_runtime_dependencies,program,'qualified_attack_batch'),
         (event_player_damage_runtime_dependencies,program,'event_player_damage'),
         (cast_mana_value_runtime_dependencies,program,'cast_spell_mana_value'),
+        (event_spell_copy_runtime_dependencies,program,'event_spell_copy'),
+        (expend_runtime_dependencies,program,'expend'),
     ):
         try:required.update(resolver(value))
         except (ValueError,TypeError) as exc:blockers.add(f'runtime_{label}:invalid:{exc}')
@@ -112,6 +127,9 @@ def program_dynamic_runtime_requirements(program):
     if ADVENTURE_COVERAGE in program.coverage:required.add(ADVENTURE_CAPABILITY)
     from ..characteristic_fragments import characteristic_quantity_capabilities
     required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
+    from ..rules.casting.public_conditions import self_public_condition_dependencies
+    try:required.update(self_public_condition_dependencies((program.handlers,program.cost_schema)))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_self_public_condition:invalid:{exc}')
     try:required.update(city_activation_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_city_activation:invalid:{exc}')
     try:required.update(paid_graveyard_runtime_dependencies(program))

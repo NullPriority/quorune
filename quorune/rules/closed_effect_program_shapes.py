@@ -106,6 +106,15 @@ def closed_effect_program_runtime_dependencies(program):
         return tuple(sorted({*required,*modal_owned}))
     if CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage:
         return ()
+    if (len(program.effects) == 1
+            and program.effects[0].get('op') == 'offer_optional_mana_payment'
+            and program.effects[0].get('schema_version') == 2):
+        from .fixed_effect_payment_shapes import fixed_effect_payment_node_capabilities
+        owned=fixed_effect_payment_node_capabilities(effects=program.effects,
+            target_schema=schema,mechanic_ids=program.coverage)
+        if CLOSED_EFFECT_PROGRAM_CAPABILITY not in owned:
+            raise ValueError('Paid ordered programs require a closed payment and complete child sequence')
+        return owned
     if not 2 <= len(program.effects) <= 8:
         raise ValueError('Closed ordered programs require two to eight effects')
     return (CLOSED_EFFECT_PROGRAM_CAPABILITY,)

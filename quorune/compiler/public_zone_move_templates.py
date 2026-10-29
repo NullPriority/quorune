@@ -332,6 +332,8 @@ def _battlefield_return_template(text: str) -> PublicZoneMoveSetTemplate | None:
 def _graveyard_card_query(subject: str) -> ObjectQuerySpec | None:
     normalized = " ".join(subject.casefold().split())
     fields: dict[str, Any] = {"zones": ("graveyard",)}
+    if not normalized:
+        return ObjectQuerySpec(**fields, token=False)
     if normalized.startswith("legendary "):
         fields["supertypes_all"] = ("legendary",)
         normalized = normalized.removeprefix("legendary ")
@@ -345,7 +347,14 @@ def _graveyard_card_query(subject: str) -> ObjectQuerySpec | None:
         "enchantment": "enchantment",
         "land": "land",
         "planeswalker": "planeswalker",
+        "instant": "instant",
+        "sorcery": "sorcery",
     }
+    if normalized == "permanent":
+        if fields.get('supertypes_all') == ('basic',):
+            return None
+        fields['types_any'] = ('artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker')
+        return ObjectQuerySpec(**fields, token=False)
     parts = tuple(
         part.strip()
         for part in normalized.replace(", and ", ", ")
@@ -355,6 +364,8 @@ def _graveyard_card_query(subject: str) -> ObjectQuerySpec | None:
     if not parts or any(part not in type_words for part in parts):
         return None
     values = tuple(sorted(type_words[part] for part in parts))
+    if set(values).intersection({'instant','sorcery'}):
+        fields['token'] = False
     if len(values) == 1:
         fields["types_all"] = values
     else:
@@ -369,12 +380,12 @@ def _graveyard_public_move_template(
 ) -> PublicZoneMoveSetTemplate | None:
     normalized = " ".join(text.strip().split())
     ordered_hand = re.fullmatch(
-        r"Return to your hand all (?P<subject>.+?) cards in your graveyard\.?",
+        r"Return to your hand all (?:(?P<subject>.+?) )?cards in your graveyard\.?",
         normalized,
         re.IGNORECASE,
     )
     if ordered_hand is not None:
-        query = _graveyard_card_query(ordered_hand.group("subject"))
+        query = _graveyard_card_query(ordered_hand.group("subject") or '')
         return (
             PublicZoneMoveSetTemplate(
                 spec=PublicZoneMoveSetSpec(
@@ -390,7 +401,7 @@ def _graveyard_public_move_template(
             else None
         )
     match = re.fullmatch(
-        r"(?P<verb>Return|Put) all (?P<subject>.+?) cards from "
+        r"(?P<verb>Return|Put) all (?:(?P<subject>.+?) )?cards from "
         r"(?P<scope>your graveyard|all graveyards) "
         r"(?P<direction>to|onto) (?P<destination>your hand|the battlefield)"
         r"(?P<tapped> tapped)?"
@@ -407,7 +418,7 @@ def _graveyard_public_move_template(
         verb == "put" and direction != "onto"
     ):
         return None
-    query = _graveyard_card_query(match.group("subject"))
+    query = _graveyard_card_query(match.group("subject") or '')
     if query is None:
         return None
     destination = (
@@ -417,7 +428,7 @@ def _graveyard_public_move_template(
     )
     types = set((*query.types_all, *query.types_any))
     if destination is PublicZoneDestination.BATTLEFIELD and (
-        not types or types.intersection({"artifact", "enchantment"})
+        not types or types.intersection({"artifact", "enchantment", "instant", "sorcery"})
     ):
         return None
     scope = match.group("scope").casefold()

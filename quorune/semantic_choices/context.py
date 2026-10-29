@@ -22,8 +22,10 @@ class ChoiceStackView:
     modes: tuple[str, ...]
     target_groups: FrozenMap = field(default_factory=FrozenMap)
     target_snapshots: FrozenMap = field(default_factory=FrozenMap)
+    copy_source: FrozenMap | None = None
 
     def __post_init__(self) -> None:
+        if self.copy_source is not None and not isinstance(self.copy_source,FrozenMap):object.__setattr__(self,'copy_source',FrozenMap(self.copy_source))
         if not isinstance(self.target_groups, FrozenMap):
             object.__setattr__(
                 self,

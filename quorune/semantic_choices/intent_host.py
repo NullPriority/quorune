@@ -1189,10 +1189,13 @@ class SemanticChoiceIntentHostMixin:
         self._eliminate_players(list(intent.players), reason=intent.reason)
 
     def copy_stack_item_intent(self, intent: CopyStackItemIntent) -> str:
+        from ..rules.event_spell_copy import resolve_event_spell_copy_source
+        bound=resolve_event_spell_copy_source(self,{'stack':intent.target_stack_ref,'copy_source':intent.copy_source}) if intent.copy_source is not None else None
         target = next(
             (item for item in self.state.stack if item.ref == intent.target_stack_ref),
             None,
         )
+        if bound is not None:target=bound.item()
         if target is None:
             raise GameRuleError(
                 "The stack object selected for copying no longer exists"
@@ -1204,6 +1207,7 @@ class SemanticChoiceIntentHostMixin:
             target_groups=thaw_value(intent.target_groups),
             reason=intent.reason,
             target_snapshots=thaw_value(intent.target_snapshots) if intent.target_snapshots is not None else None,
+            copiable_characteristics=thaw_value(bound.characteristics) if bound is not None else None,
         )
         return copied.ref
 

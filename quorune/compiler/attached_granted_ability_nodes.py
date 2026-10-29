@@ -98,6 +98,11 @@ def attached_granted_program_ability_id(
 def _closed_granted_activation(ability: ActivatedAbility) -> bool:
     """Keep grants inside the shared closed granted-activation schema."""
 
+    from ..granted_activation_model import normalize_granted_cost_choices
+    try:
+        normalize_granted_cost_choices(tuple(choice.to_dict() for choice in ability.choices))
+    except ValueError:
+        return False
     return bool(
         ability.zones == ("battlefield",)
         and ability.compiled_cost

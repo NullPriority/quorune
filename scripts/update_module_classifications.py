@@ -85,6 +85,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/public_history_query_model.py",
         "quorune/spell_history_ordinal_model.py",
         "quorune/cast_event_amounts.py",
+        "quorune/expend_model.py",
+        "quorune/event_spell_copy_model.py",
         "quorune/enchanted_player_model.py",
         "quorune/bound_declaration_model.py",
         "quorune/type_subtype_vocabulary.py",
@@ -488,6 +490,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative in {'quorune/expend_model.py','quorune/rules/casting/spell_mana_payments.py'}:return 'casting_activation_and_costs'
     if relative == 'quorune/characteristic_read_frames.py':return 'card_characteristics'
     if relative == 'quorune/rules/granted_characteristic_shapes.py':return 'continuous_effects'
     if relative == 'quorune/damage_prevention_permission.py':return 'damage'
@@ -522,6 +525,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative == "quorune/preparation.py":
         return "permanent_designations"
     if relative in {"quorune/rules/casting/targeted_costs.py", "quorune/rules/casting/waterbend_costs.py",
+                    "quorune/rules/casting/public_conditions.py",
                     "quorune/rules/self_cost_turn_counts.py",
                     "quorune/rules/self_cost_public_counters.py",
                     "quorune/rules/self_cost_numeric_counts.py",
@@ -636,7 +640,8 @@ def _owner(relative: str, layer: str) -> str:
         return 'mana_rules'
     if relative == 'quorune/spell_mana_conditions.py':
         return 'semantic_choices'
-    if relative in {'quorune/rules/paid_mana_resolution.py','quorune/target_controller_information.py'}:
+    if relative in {'quorune/rules/paid_mana_resolution.py','quorune/target_controller_information.py',
+            'quorune/rules/event_spell_copy.py','quorune/event_spell_copy_model.py'}:
         return 'targets_and_choices'
     if relative == 'quorune/rules/paid_color_entry.py':
         return 'counter_placement'
@@ -1049,6 +1054,8 @@ def build_classifications() -> dict[str, Any]:
                             "attack_transition",
                             "block_transition",
                             "spell_copy_engine_adapter.py",
+                            "event_spell_copy",
+                            "spell_mana_payments.py",
                             "copied_aura_entry.py",
                             "ability_fragment_host.py",
                             "ability_fragments.py",

@@ -113,6 +113,13 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         body = re.sub(r"\b(deals?) damage X\b", r"\1 X damage", body, flags=re.I)
         body = re.sub(r"\b(gain|gains|lose|loses) life X\b", r"\1 X life", body, flags=re.I)
     def canonical_fixed(text):
+        if source_event:
+            from .damage_templates import source_pronoun_damage_effect_template
+            damage = source_pronoun_damage_effect_template(text)
+            if damage is not None:
+                return damage.compiled()
+            from .source_self_effect_templates import normalized_source_result_body
+            text = normalized_source_result_body(text) or text
         result = compile_fixed(text)
         if len(result[1]) == 1 and result[1][0].get("op") == "modify_stats_until_end_of_turn" and result[1][0].get("card") == "$source":
             effect = result[1][0]

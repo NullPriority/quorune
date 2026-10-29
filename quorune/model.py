@@ -55,6 +55,7 @@ PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
 PLAYER_COUNTERS_FIELD = "counters"
 
 TurnHistoryEventKind = Literal[
+    "spell_mana_spent",
     "spell_cast",
     "card_discarded",
     "creature_attacked",
@@ -92,6 +93,11 @@ class TurnHistoryEvent:
     origin: str | None = None
 
     def __post_init__(self):
+        if self.kind=='spell_mana_spent' and (
+                type(self.actor) is not str or not self.actor or type(self.amount) is not int or self.amount<=0
+                or any(value is not None for value in (self.object_incarnation,self.target,self.target_kind,
+                    self.target_object_incarnation,self.origin)) or self.types):
+            raise ValueError('Spell-mana history requires one positive player payment')
         if self.origin is not None and (type(self.origin) is not str or self.origin not in {'battlefield','hand','library','graveyard','stack','exile','command','outside'}):
             raise ValueError('Turn-history arrival origin is closed')
         if self.kind=='card_arrived_graveyard' and (self.origin is None or self.origin=='graveyard' or type(self.object_incarnation) is not str or not self.object_incarnation):
@@ -135,6 +141,7 @@ class TurnHistory:
     mill_history_version: int | None = None
     spell_origin_history_version: int | None = None
     graveyard_type_history_version: int | None = None
+    spell_mana_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -148,13 +155,15 @@ class TurnHistory:
             raise ValueError("Unsupported departure-history version")
         if self.arrival_history_version is not None and (type(self.arrival_history_version) is not int or self.arrival_history_version!=1):raise ValueError('Unsupported arrival-history version')
         if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
-        for mode in (self.spell_origin_history_version,self.graveyard_type_history_version):
+        for mode in (self.spell_origin_history_version,self.graveyard_type_history_version,self.spell_mana_history_version):
             if mode is not None and (type(mode) is not int or mode!=1):raise ValueError('Unsupported qualified history version')
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
         ):
             raise ValueError("Turn-history events must be typed")
+        if self.spell_mana_history_version is None and any(event.kind=='spell_mana_spent' for event in self.events):
+            raise ValueError('Spell-mana facts require complete payment history')
         previous_absent = self.previous_turn_sequence is None
         if previous_absent != (self.previous_active_player is None):
             raise ValueError(
@@ -192,6 +201,7 @@ class TurnHistory:
             **({"mill_history_version":1} if self.mill_history_version is not None else {}),
             **({"spell_origin_history_version":1} if self.spell_origin_history_version is not None else {}),
             **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
+            **({"spell_mana_history_version":1} if self.spell_mana_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -227,6 +237,7 @@ class TurnHistory:
             mill_history_version=data.get("mill_history_version"),
             spell_origin_history_version=data.get("spell_origin_history_version"),
             graveyard_type_history_version=data.get("graveyard_type_history_version"),
+            spell_mana_history_version=data.get("spell_mana_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

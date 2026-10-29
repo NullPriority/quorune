@@ -1303,7 +1303,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
     def test_fixed_typed_event_effect_trigger_variants_remain_material(self):
         cases = (
             "Whenever an opponent casts or copies a spell, draw a card.",
-            "Whenever this creature attacks alone, draw a card.",
+            "Whenever this creature is attacking alone, draw a card.",
             "When you do, draw a card.",
             "At the beginning of your upkeep, choose one —",
         )
@@ -2516,7 +2516,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         variants = (
             "Whenever you cast or copy a noncreature spell, put a +1/+1 counter on this creature.",
             "Whenever an opponent casts or copies a noncreature spell, put a +1/+1 counter on this creature.",
-            "Whenever this creature attacks alone, put a +1/+1 counter on this creature.",
+            "Whenever this creature is attacking alone, put a +1/+1 counter on this creature.",
             "Whenever an opponent gains life, put a +1/+1 counter on this creature.",
             "Whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
             "At the beginning of your upkeep, if a chosen player controls a "

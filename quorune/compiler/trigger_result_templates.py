@@ -11,6 +11,14 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=()):
+    from ..expend_model import EXPEND_CAPABILITY
+    if EXPEND_CAPABILITY in binding.explicit_capabilities:
+        from .source_self_effect_templates import normalized_source_result_body
+        normalized=normalized_source_result_body(body)
+        if normalized is not None:body=normalized
+    from .fixed_stack_spell_copy import cast_event_spell_copy_template
+    cast_copy=cast_event_spell_copy_template(binding,body)
+    if cast_copy is not None:return cast_copy
     from .attack_event_results import qualified_attack_characteristic_result
     attack_result=qualified_attack_characteristic_result(binding,body,effect_template=effect_template,card_name=card_name)
     if attack_result is not None:return attack_result
@@ -48,7 +56,7 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     from .mill_templates import event_recipient_mill_result
     mill=event_recipient_mill_result(binding,body,compile_fixed=lambda text:effect_template(text,card_name=card_name),source_name=card_name)
     if mill is not None:return mill
-    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked'}:
+    if binding.event.value.endswith('.self') or binding.variant in {'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked', 'source_dealt_damage', 'source_received_combat_damage'}:
         from .damage_templates import source_pronoun_damage_effect_template
         damage=source_pronoun_damage_effect_template(body)
         if damage is not None:return damage.compiled(),False

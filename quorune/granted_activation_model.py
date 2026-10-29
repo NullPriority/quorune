@@ -12,6 +12,24 @@ _MANA_KEYS = frozenset({"W", "U", "B", "R", "G", "C", "GENERIC"})
 RESTRICTED_MANA_GRANT_CAPABILITY = 'continuous.ability.restricted_mana_grant'
 
 
+def normalize_granted_cost_choices(choices):
+    """The single closed cost-choice boundary shared by model and compiler."""
+    if not isinstance(choices, tuple):
+        raise AbilityFragmentError('Granted-ability choices must be typed cost choices')
+    normalized = []
+    for choice in choices:
+        if not isinstance(choice, Mapping) or set(choice) != {'kind','count','zone','card_type','another'}:
+            raise AbilityFragmentError('Granted-ability choices have a closed schema')
+        kind=choice.get('kind');card_type=choice.get('card_type')
+        if (kind not in {'discard','sacrifice'} or choice.get('count') != 1
+                or choice.get('another') is not False or choice.get('zone') != ('hand' if kind=='discard' else 'battlefield')
+                or card_type not in {None,'artifact','creature','enchantment','land','permanent'}
+                or kind=='discard' and card_type=='permanent' or kind=='sacrifice' and card_type is None):
+            raise AbilityFragmentError('Granted-ability cost choice is unsupported')
+        normalized.append(FrozenMap(choice))
+    return tuple(normalized)
+
+
 def _mana_pairs(
     value: Mapping[str, Any] | Iterable[tuple[str, int]],
 ) -> tuple[tuple[str, int], ...]:
@@ -86,43 +104,7 @@ class GrantedActivatedAbilitySpec:
             raise AbilityFragmentError(
                 "Granted-ability life payment must be a nonnegative integer"
             )
-        if not isinstance(self.choices, tuple):
-            raise AbilityFragmentError(
-                "Granted-ability choices must be typed cost choices"
-            )
-        normalized_choices: list[FrozenMap] = []
-        choice_fields = {"kind", "count", "zone", "card_type", "another"}
-        for choice in self.choices:
-            if not isinstance(choice, Mapping) or set(choice) != choice_fields:
-                raise AbilityFragmentError(
-                    "Granted-ability choices have a closed schema"
-                )
-            kind = choice.get("kind")
-            zone = choice.get("zone")
-            card_type = choice.get("card_type")
-            if (
-                kind not in {"discard", "sacrifice"}
-                or choice.get("count") != 1
-                or choice.get("another") is not False
-                or zone
-                != ("hand" if kind == "discard" else "battlefield")
-                or card_type
-                not in {
-                    None,
-                    "artifact",
-                    "creature",
-                    "enchantment",
-                    "land",
-                    "permanent",
-                }
-                or (kind == "discard" and card_type == "permanent")
-                or (kind == "sacrifice" and card_type is None)
-            ):
-                raise AbilityFragmentError(
-                    "Granted-ability cost choice is unsupported"
-                )
-            normalized_choices.append(FrozenMap(choice))
-        object.__setattr__(self, "choices", tuple(normalized_choices))
+        object.__setattr__(self, "choices", normalize_granted_cost_choices(self.choices))
         from .mana_restriction_model import valid_mana_spend_restriction
         if self.schema_version == 4:
             if (not valid_mana_spend_restriction(self.mana_spend_restriction)

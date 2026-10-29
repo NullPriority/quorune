@@ -222,6 +222,12 @@ card thresholds and conjunctive card-type exclusions. New graveyard quantities
 explicitly exclude tokens; historical serialized predicates retain their
 existing decoder. Counted graveyard condition captures normalize subtype and
 card-type whitespace before constructing the same immutable query values.
+Intrinsic metric schema five delegates other independently closed public
+conditions to the shared condition owner. It evaluates the candidate in its
+prospective stack zone under the casting controller, excluding its former zone
+membership. Legacy metric precedence stays unchanged. Paired reduction
+sentences require both complete clauses and contribute independent additive
+terms. See [ADR 0127](../adr/0127-prospective-public-self-cost-conditions.md).
 `compiler/undaunted_nodes.py` lowers each printed Undaunted instance through
 that owner with an active-opponent quantity. Repeated instances contribute
 independent terms; reminder text stays in the original source span. Unknown
@@ -251,6 +257,15 @@ clause, including its optional current-controller restriction. The activated
 effect gate delegates this same shape to capability validation. Parent cards
 with unclosed siblings retain their residuals and cannot execute the new copy
 program through strict source validation.
+
+The same leaf lowers “copy that spell” and “copy it” only when a represented
+cast predicate supplies the exact spell reference. Its separate capability
+requires current or departure-pinned spell information and delegates copy
+creation and target decisions to the existing owners. An explicit permission
+allows new targets; otherwise all target choices are retained. Closed creature
+subtype qualifiers reuse the committed creature-type predicate together with
+one to three canonical subtype alternatives. Unknown qualifiers and result
+siblings retain their residuals.
 
 `compiler/casting_keyword_nodes.py` owns the ordered dispatch of closed
 casting-cost keyword productions. It retains the existing lowering order and
@@ -484,7 +499,13 @@ card" wording lowers to an ordinary draw instruction; the turn's ordinary
 draw precedes trigger placement and the extra draw resolves through the stack.
 Existing public intervening conditions are checked at occurrence and resolution.
 The multi-event compiler also composes an explicit source-entry prefix with
-one independently exact distinct same-zone event prefix. Each subscription
+one independently exact distinct same-zone event prefix. A scheduled step may
+pair with one independently closed source-entry or controller spell-cast
+prefix in either printed order. Its step, phase and active-player predicates
+remain separate from the entry's source or the cast's controller and color
+predicates. These scheduled pairs admit a shared independently closed body;
+event-relative result pronouns require a separate exact composition.
+Each subscription
 retains its own source, controller and characteristic predicates; one shared
 result remains one ability. Event alias normalization retains a source-specific
 child's typed identity as well as its predicate; a controller-wide or global
@@ -495,6 +516,14 @@ mixed active zones, and unrepresented prefixes remain residual. Qualified
 public subjects may similarly subscribe to entry and death or departure using
 two independently accepted zone predicates. The canonical predeparture
 snapshot supplies departing characteristics and controller.
+
+Fixed positive Expend thresholds subscribe to the typed spell-mana payment
+event. Their predicates require the source controller and the exact crossing
+`before < threshold <= after`, using actual paid mana rather than printed
+mana value. Source-entry pairs reuse the same subscription composer. Closed
+source-result pronouns in those pairs retain the source's incarnation through
+the existing result owners. Unknown thresholds and result siblings remain
+residual. See [ADR 0128](../adr/0128-payment-time-expend-occurrences.md).
 
 ```mermaid
 flowchart LR
@@ -1083,7 +1112,12 @@ and Retro-Mutation are explicit examples of those exclusions.
 
 The quoted-ability compiler also accepts one independently exact activated,
 fixed-output mana, or triggered body behind a closed live battlefield query.
-The attached grammar includes enchanted lands, and fixed live-query subjects
+The attached grammar includes general enchanted artifacts, battles,
+enchantments, lands, permanents and planeswalkers as well as creatures. Each
+outer type predicate remains exact; granting a represented ordinary ability
+does not add loyalty-ability or player-recipient support. Unsupported granted
+cost choices use the same closed model validator before fragment construction,
+so a wider cost stays residual. Fixed live-query subjects
 include controlled tokens, Foods, Treasures, Clues, and basic lands. Both the
 query and attached forms emit a separately keyed inner CardProgram and
 a typed layer-6 fragment; the runtime never reparses the quote. The fragment
@@ -2232,6 +2266,11 @@ characteristic, attachment-dependent entry, and multiple-destination forms
 remain source-spanned residuals. Commander-profile trust also requires the
 typed CR 903.9 owner choice; the compiler never excludes commanders from an
 otherwise universal Oracle instruction.
+
+Graveyard-to-hand sets include unqualified cards, permanent cards and explicit
+instant/sorcery unions. These new forms select physical cards and reuse the
+existing owner-relative relationship. This hand grammar does not admit instant
+or sorcery battlefield entry, or an unqualified all-cards battlefield set.
 
 `compiler/hand_entry_templates.py` and
 `compiler/public_tap_state_set_templates.py` reuse that public-object query
@@ -3631,6 +3670,18 @@ with a complete fixed keyword/modifier body or an independently closed public
 characteristic scalar. The child result retains its original source span and
 full capability closure; target, created-token, and event-object pronouns do
 not become source references.
+
+Represented source damage events also compose source-led fixed and scalar
+damage results through the existing fixed source-damage leaf. A committed
+event amount stays separate from that source's characteristics and the chosen
+target. The scalar compiler normalizes the source pronoun only after the
+source-event binding establishes its identity; generic other-object events
+retain their own reference requirements. Prevention, current/LKI source facts,
+target placement and resolution revalidation remain with their existing owners.
+Other independently closed source-led scalar results retain their fixed leaf's
+incarnation-pinned reference, including counter instructions. A returned source
+cannot receive a queued counter from its old incarnation.
+
 Source-self results lower through the existing source-characteristic operation
 and logical-object-aware source reference. A departed or re-entered source
 cannot receive the old ability's modifier. A valid quantity resolving to zero
@@ -3638,6 +3689,14 @@ is a no-op after payment; malformed fields remain rejected. Historical records
 retain their saved scalar operations and source references rather than being
 recompiled on load; records declaring superseded exact-runtime trust provenance
 are explicitly incompatible under the Game Record contract.
+
+Qualified battlefield characteristic-count phrases reuse the shared public
+object grammar while retaining their outer seat scope. Keyword predicates
+require explicit quantity schema six and its own capability. They read through
+layer six for a later modifier, with no early definition or same-layer
+count-controlled ability grant. See
+[ADR 0126](../adr/0126-keyword-layer-characteristic-quantities.md).
+
 `semantic_runtime/query_effect_amounts.py` validates and resolves that scalar,
 and `semantic_runtime/values.py` supplies the stack object's locked controller
 to the cycle-safe layer-5 quantity evaluator immediately before the unchanged
@@ -3754,8 +3813,14 @@ after costs and becoming attacking, before trigger discovery. Each matching
 declared attacker is a separate occurrence. Source exclusion and attacking
 alone retain their ordinary meaning. Later changes do not retroactively alter
 qualification, and independently exact effects use the existing trigger and
-result owners. The snapshot has its own inferred capability requirement;
-qualified one-or-more declarations use a separate immutable count and grouping
+result owners. The snapshot has its own inferred capability requirement.
+Source-only “attacks alone” subscriptions also require that exact attacking
+source and the declaration's sealed alone fact. They do not recheck the current
+number of attacking creatures. Already represented public attack subscriptions
+compose explicit attacker-pronoun characteristic results through the same
+sealed event-object owner, preserving the original incarnation separately from
+the observing permanent.
+Qualified one-or-more declarations use a separate immutable count and grouping
 specification. Its minimum counts matching creatures in the sealed declaration,
 and a nonmatching occurrence cannot create the trigger. Declaration-wide,
 attacked-player and attacked-player-or-planeswalker scopes reuse the existing
@@ -3916,6 +3981,9 @@ damage, monstrous, block, and sacrifice pairs plus the exact current enchanted
 creature attack/block relation. Cross-zone Cycling/death pairs, commander and
 Room subjects, linked Haunt, chosen or another-object predicates, unavailable
 event producers, and more than two events remain residual.
+Runtime binding infers the multi-subscription capability directly from this
+descriptor, together with represented cast and entry producer requirements.
+Removing an inventory marker cannot remove those requirements.
 The unqualified source "blocks or becomes blocked" pair preserves independent
 source conditions on both subscriptions. Its fixed signed P/T body uses the
 existing source-incarnation and until-end-of-turn effect owner. The pair does

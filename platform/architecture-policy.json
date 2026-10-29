@@ -360,6 +360,7 @@
       "quorune/champion_state.py": "typed read-only Champion choice revalidation and original-source sacrifice coordination; movement and exile-link mutation delegate to the canonical zone and linked-ability owners",
       "quorune/return_to_hand.py": "typed identity-pinned permanent-return transaction delegating mutation to the canonical zone-change owner",
       "quorune/stack_counter.py": "typed stack-counter legality, removal, ordinary spell destination, telemetry, and public journal owner",
+      "quorune/rules/event_spell_copy.py": "typed exact-spell current/LKI reference owner; pins live occurrence contexts and delegates immutable batch replacement to trigger_processing",
       "quorune/trigger_processing.py": "typed CR 603.3 occurrence batching, APNAP placement, stack commit, and historical continuation owner behind CommanderEngine",
       "quorune/trigger_discovery.py": "normalized semantic trigger detection and immutable ordinary occurrence construction behind CommanderEngine",
       "quorune/turn_priority_owner.py": "typed priority grant/pass, yield invalidation, action-opportunity audit, and deterministic pump owner",
@@ -483,6 +484,7 @@
       "quorune/opening_reveal.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/opening_reveal_model.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/rules/casting/targeted_costs.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
+      "quorune/rules/casting/public_conditions.py": "read-only prospective spell-zone/controller facts and existing public condition evaluation for intrinsic cost reductions",
       "quorune/rules/casting/waterbend_costs.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/rules/waterbend_payments.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/semantic_runtime/devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
@@ -491,7 +493,8 @@
       "quorune/zone_devour.py": "typed read-only proposal/eligibility/continuation facts; mutation delegates to the registered narrow rule owners",
       "quorune/rules/self_cost_turn_counts.py": "typed read-only counted creature deaths, opponent casts and caster draws; consumes canonical history and draw-count ownership without mutation",
       "quorune/rules/self_cost_public_counters.py": "Read existing canonical public counter snapshots for one source spell cost before its payment locks.",
-      "quorune/cost_payments.py": "read-only payment configuration and immutable source planning, delegating activation and mana-provenance mutation to existing canonical owners"
+      "quorune/cost_payments.py": "read-only payment configuration and immutable source planning, delegating activation and mana-provenance mutation to existing canonical owners",
+      "quorune/rules/casting/spell_mana_payments.py": "Read the bounded paid-mana journal and delegate committed recording and payment-time occurrence collection to canonical history and trigger owners."
     },
     "model_definition": "quorune/model.py"
   },

@@ -543,6 +543,9 @@ class ZoneTransitionOwner:
             except LifeStateError as exc:
                 raise GameRuleError(str(exc)) from exc
         if departure.origin == "stack":
+            from .rules.event_spell_copy import pin_event_spell_copy_departure
+            for departing in tuple(self.state.stack):
+                if departing.card_object_id==card.object_id:pin_event_spell_copy_departure(self.host,departing)
             from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
             for item in tuple(self.state.stack):
                 if item.card_object_id==card.object_id:cleanup_stack_cost_hand_reveals(self.host,item)

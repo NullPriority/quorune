@@ -256,6 +256,16 @@ def _term(
 
 
 def _public_condition_metric(condition: str) -> CastReductionMetric | None:
+    legacy=_legacy_public_condition_metric(condition)
+    if legacy is not None:return legacy
+    legacy=_turn_fact_metric(condition)
+    if legacy is not None:return legacy
+    from .public_state_queries import fixed_public_state_condition
+    public=fixed_public_state_condition(re.sub(r'^if ', '', condition.strip(), flags=re.I),source_name='Source')
+    return CastReductionMetric(kind=CastReductionMetricKind.PUBLIC_STATE,public_state=public,schema_version=5) if public is not None else None
+
+
+def _legacy_public_condition_metric(condition: str) -> CastReductionMetric | None:
     normalized = " ".join(condition.casefold().split())
     normalized = normalized.removeprefix("if ")
     patterns = (
@@ -614,6 +624,16 @@ def self_spell_cost_reduction_handler(
     """Lower one source-pinned reduction for the spell carrying this line."""
 
     normalized = _without_ability_word(text)
+    pair=re.fullmatch(r'This spell costs (?P<first>\{[1-9][0-9]*\}) less to cast if (?P<condition>.+?)\. '
+        r'It also costs (?P<second>\{[1-9][0-9]*\}) less to cast if (?P<other>.+?)\.',normalized,re.I)
+    if pair is not None:
+        parts=[self_spell_cost_reduction_handler(f"This spell costs {pair[amount]} less to cast if {pair[condition]}.")
+            for amount,condition in (('first','condition'),('second','other'))]
+        if any(part is None for part in parts):return None
+        specifications=[SelfSpellCostReductionSpec.from_dict(part[1]['reduction']) for part in parts]
+        descriptor={**parts[0][1],'reduction':SelfSpellCostReductionSpec(tuple(term for spec in specifications for term in spec.terms)).to_dict()}
+        dependencies={cap for part in parts for cap in ((part[2],) if isinstance(part[2],str) else part[2])}
+        return parts[0][0],descriptor,tuple(sorted(dependencies))
     leading = _LEADING_SELF_THRESHOLD.fullmatch(normalized)
     if _LIFE_DIFFERENCE_REDUCTION.fullmatch(normalized):
         specification = SelfSpellCostReductionSpec(
@@ -732,6 +752,8 @@ def self_spell_cost_reduction_handler(
     counted_dependencies = (*self_cost_turn_count_dependencies(specification.to_dict()),
                             *self_cost_public_counter_dependencies(specification.to_dict()),
                             *self_cost_numeric_count_dependencies(specification.to_dict()))
+    from ..rules.casting.public_conditions import self_public_condition_dependencies
+    counted_dependencies=(*counted_dependencies,*self_public_condition_dependencies(specification.to_dict()))
     return (
         "self-spell-cost-public-reduction-v1",
         {

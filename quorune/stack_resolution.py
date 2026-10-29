@@ -108,6 +108,8 @@ def complete_stack_resolution(
         from .zone_object_state import mark_resolving_paid_entry_copy, mark_multikicker_paid
         mark_resolving_paid_entry_copy(host.state.cards[item.card_object_id], item.context)
         mark_multikicker_paid(host.state.cards[item.card_object_id], item.context)
+    from .rules.event_spell_copy import pin_event_spell_copy_departure
+    pin_event_spell_copy_departure(host,item)
     host.state.stack.remove(item)
     cleanup_ninjutsu_reveal(host, item)
     cleanup_stack_cost_hand_reveals(host,item)

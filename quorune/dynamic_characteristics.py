@@ -117,7 +117,7 @@ def query_characteristic_count(
                 raise ValueError("A public collection member is unavailable")
             continue
         candidate = host.state.cards[object_id]
-        if (quantity.schema_version == 2 or quantity.query.state_predicate is not None) and candidate.phased_out:
+        if (quantity.schema_version in {2, 6} or quantity.query.state_predicate is not None) and candidate.phased_out:
             continue
         if quantity.schema_version == 2 and quantity.query.zones == ("graveyard",) and quantity.query.token is False and candidate.object_kind != "card":
             continue
@@ -130,7 +130,8 @@ def query_characteristic_count(
             continue
         effective = host._effective_card_data(
             candidate,
-            maximum_layer=Layer.TEXT if quantity.reduction is CharacteristicQuantityReduction.DEVOTION else _maximum_layer,
+            maximum_layer=(Layer.TEXT if quantity.reduction is CharacteristicQuantityReduction.DEVOTION
+                else Layer.ABILITY if quantity.schema_version == 6 else _maximum_layer),
             _enforce_static_component_applicability=(
                 _enforce_static_component_applicability
             ),

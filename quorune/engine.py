@@ -3731,15 +3731,15 @@ class CommanderEngine(
         target_groups: Mapping[str, Sequence[str]],
         reason: str,
         target_snapshots: Mapping[str, Any] | None = None,
+        copiable_characteristics: Mapping[str, Any] | None = None,
     ) -> StackItem:
         """Create an independent stack copy without copying paid costs."""
 
         ref = self._next_ref("S")
         original_card = self.state.cards.get(target.card_object_id or "")
         original_data = (
-            self._copyable_characteristics(original_card)
-            if original_card is not None
-            else {}
+            dict(copiable_characteristics) if copiable_characteristics is not None
+            else self._copyable_characteristics(original_card) if original_card is not None else {}
         )
         original_types, _, _ = self._type_parts(
             str(original_data.get("type_line") or "")
@@ -6802,6 +6802,9 @@ class CommanderEngine(
                 if card.owner == seat and card.zone != "outside":
                     hidden_identity = card.zone in HIDDEN_ZONES or card.face_down
                     if card.zone == "stack":
+                        from .rules.event_spell_copy import pin_event_spell_copy_departure
+                        for departing in tuple(self.state.stack):
+                            if departing.card_object_id==card.object_id:pin_event_spell_copy_departure(self,departing)
                         self.state.stack = [item for item in self.state.stack if item.card_object_id != card.object_id]
                         card.zone = "outside"
                     elif hidden_identity or not self.active_seats:

@@ -1143,10 +1143,11 @@ def _dispatch_cast_events(
     *,
     prior_spell_count: int,
     prior_controller_spell_count: int,
+    payment_triggers: list[StackItem],
 ) -> None:
-    trigger_batch = list(
+    trigger_batch = [*payment_triggers, *(
         cascade_trigger_items(host, spell=item, card=card)
-    )
+    )]
     trigger_batch.extend(replicate_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(conspire_trigger_items(host, spell=item, card=card, program=program))
     trigger_batch.extend(
@@ -1499,6 +1500,8 @@ def _commit_cast_costs_and_stack(
         exclude_sources={card.object_id for card in tap_cards},
         spend_context=host._spell_mana_spend_context(proposal.type_line),
     )
+    from .spell_mana_payments import capture_spell_mana_payment
+    payment_triggers=capture_spell_mana_payment(host,player=proposal.seat,spent=spent)
     from .emerge_costs import validate_emerge_after_mana_payment
     try:
         validate_emerge_after_mana_payment(host, proposal.seat, card, selected_option)
@@ -1567,6 +1570,7 @@ def _commit_cast_costs_and_stack(
         costs,
         prior_spell_count=prior_spell_count,
         prior_controller_spell_count=prior_controller_spell_count,
+        payment_triggers=payment_triggers,
     )
     collect_ward_occurrences(host, item)
     host.state.players[proposal.seat].yield_policy = YieldPolicy()

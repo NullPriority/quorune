@@ -54,6 +54,15 @@ always active for the selected rules profile. Match closure conservatively
 unions all loaded programs and known format dependencies. Dynamic closure
 binds capabilities introduced during play.
 
+Typed event-subscription sets require the multi-event capability at runtime,
+including their represented spell-cast and entry producer requirements.
+The binder derives these minima from the descriptor even when a coverage
+marker or declared dependency was removed.
+An ordered result inside a fixed payment is validated in its child scope
+through the existing payment and component shapes. The single outer payment
+instruction does not turn that result into a bare one-effect ordered program;
+malformed wrappers and unowned children still fail closed.
+
 The current fine-grained registry does not yet inventory the complete
 traditional or Commander format layer. Consequently capability-only strict
 match readiness reports

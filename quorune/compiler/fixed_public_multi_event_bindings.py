@@ -182,6 +182,59 @@ def _source_pair_spec(
     )
 
 
+def _scheduled_pair_spec(material_line, *, card_name):
+    """Compose a step and a closed entry/cast head without sharing predicates."""
+    match = re.fullmatch(
+        r'(?P<first>(?:When|Whenever|At the beginning) .+?) and '
+        r'(?P<second>(?:when|whenever|at the beginning) .+?), (?P<body>.+)',
+        material_line, re.I,
+    )
+    if match is None or not any(match[key].casefold().startswith('at the beginning')
+            for key in ('first', 'second')):
+        return None
+    heads = (match['first'], match['second'])
+    if any(re.search(r'\band (?:when|whenever|at the beginning)\b', head, re.I)
+            for head in heads):
+        return None
+    # These bodies require their own event-result composer. Never infer one
+    # branch's object/player from the other branch's primary event.
+    if re.search(r'\b(?:it|its|they|them|their|that player|that creature|that card|'
+            r'that spell|this way|that much)\b', match['body'], re.I):
+        return None
+    from .fixed_counter_trigger_nodes import (
+        fixed_counter_trigger_binding, _public_state_source_self_trigger_binding,
+    )
+    children = tuple(fixed_counter_trigger_binding(head + ', ' + match['body'], card_name=card_name)
+        or _public_state_source_self_trigger_binding(head + ', ' + match['body'], card_name=card_name)
+        for head in heads)
+    if any(child is None or child.active_zone != 'battlefield'
+            or child.public_state_condition is not None
+            or child.event_condition is not None and 'event_subscriptions' in child.event_condition
+            for child in children):
+        return None
+    events = tuple(child.event.value for child in children)
+    if events.count('step.begin') != 1 or any(event not in {
+            'step.begin', 'spell.cast', 'permanent.enter.self',
+        } for event in events):
+        return None
+    subscriptions = tuple(FixedEventSubscription(
+        'permanent.enter' if event == 'permanent.enter.self' else event,
+        _source_condition(child.event_condition) if event == 'permanent.enter.self'
+        and child.event_condition is not None else _source_condition()
+        if event == 'permanent.enter.self' else child.event_condition,
+    ) for child, event in zip(children, events))
+    from ..rules.capabilities import MECHANIC_CAPABILITY_DEPENDENCIES
+    dependencies = {'trigger.subscription.fixed_multi_event',
+        *(cap for child in children for cap in child.explicit_capabilities),
+        *(cap for child in children for mechanic in child.event_mechanics
+            for cap in MECHANIC_CAPABILITY_DEPENDENCIES.get(mechanic, ())),
+    }
+    return _spec(subscriptions[0].event, 'independent_dual_event', match['body'],
+        'fixed-independent-dual-event-trigger-v1', 'cr-603-handling-triggered-abilities',
+        condition=fixed_event_subscription_condition(subscriptions),
+        capabilities=tuple(sorted(dependencies)))
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
@@ -189,6 +242,9 @@ def fixed_public_multi_event_binding_spec(
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one exact two-event source subscription with one active zone."""
 
+    scheduled = _scheduled_pair_spec(material_line, card_name=card_name)
+    if scheduled is not None:
+        return scheduled
     qualified = re.fullmatch(r'(?:When|Whenever) (?P<subject>(?:a|an|another) .+?) (?P<pair>enters or dies|enters or leaves the battlefield), (?P<body>.+)', material_line, re.I)
     if qualified is not None:
         from .qualified_zone_event_bindings import qualified_public_zone_event_binding_spec

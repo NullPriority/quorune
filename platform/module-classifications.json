@@ -9611,6 +9611,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/event_spell_copy_model.py",
+      "layer": "domain",
+      "owning_subsystem": "targets_and_choices",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/evoke.py",
       "layer": "rules",
       "owning_subsystem": "legacy_rules",
@@ -9640,6 +9652,18 @@
       "file": "quorune/exert_model.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/expend_model.py",
+      "layer": "domain",
+      "owning_subsystem": "casting_activation_and_costs",
       "allowed_dependency_layers": [
         "domain"
       ],
@@ -13158,6 +13182,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/casting/public_conditions.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/casting/repeated_mana_costs.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -13198,6 +13236,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/casting/spell_mana_payments.py",
+      "layer": "rules",
+      "owning_subsystem": "casting_activation_and_costs",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
     },
     {
       "file": "quorune/rules/casting/spree_costs.py",
@@ -13884,6 +13936,20 @@
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
+    },
+    {
+      "file": "quorune/rules/event_spell_copy.py",
+      "layer": "rules",
+      "owning_subsystem": "targets_and_choices",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "mutable_owner",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
     },
     {
       "file": "quorune/rules/event_subscriptions.py",
@@ -21088,5 +21154,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "23fd7712313fd90867aab79a90a4eb9fc0d4999e89e3fe4caca3de59ddb98d7f"
+  "fingerprint": "bd4c2c07a89bd341134521fc59650bd87688c290bcf24651b4758c9dc3cf2d79"
 }
