@@ -169,6 +169,8 @@
       "test_source_characteristic_compositions",
       "test_source_damage_scalars",
       "test_source_zone_ability_grants",
+      "test_special_half_life_triggers",
+      "test_special_trigger_envelopes",
       "test_static_attached_control",
       "test_static_characteristic_settings",
       "test_subtype_composite_grants",

@@ -1142,9 +1142,9 @@ def capability_dependencies_for_node(
 
     mechanic_values = tuple(str(value).casefold() for value in mechanic_ids)
     mechanics = set(mechanic_values)
-    from .special_node_shapes import special_node_capabilities
+    from .special_node_shapes import special_node_capabilities,special_trigger_envelope_capabilities
     special=special_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics,cost_schema=cost_schema)
-    if special is not None:return special
+    if special is not None:return special_trigger_envelope_capabilities(special,mechanics)
     if mechanics.intersection(
         {
             FIXED_CHOOSE_ONE_MODAL_MECHANIC,

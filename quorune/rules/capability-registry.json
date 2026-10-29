@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 566,
+  "registry_version": 567,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -567,7 +567,7 @@
     },
     {
       "id": "life.loss.half_current_player",
-      "version": 3,
+      "version": 4,
       "official_rules": [
         "107.1a",
         "107.1b",
@@ -607,56 +607,73 @@
         "life.change.effect"
       ],
       "implementation_components": [
-        "quorune.fractional_quantity_model.HalfQuantitySpec",
+        "quorune.compiler.event_result_value_templates.event_result_instruction",
+        "quorune.compiler.event_result_value_templates.scheduled_fractional_life_instruction",
         "quorune.compiler.fractional_player_templates.fractional_player_result_template",
-        "quorune.rules.fractional_player_result_shapes.half_life_node_capabilities",
         "quorune.effect_runtime.fractional_life.apply_fractional_life_loss",
         "quorune.effect_runtime.fractional_life.apply_life_loss",
         "quorune.event_player_result_values.event_result_value_capabilities",
-        "quorune.compiler.event_result_value_templates.event_result_instruction",
+        "quorune.fractional_quantity_model.HalfQuantitySpec",
+        "quorune.rules.fractional_player_result_shapes.half_life_node_capabilities",
         "quorune.rules.half_event_player_shapes.half_event_player_node_capabilities",
-        "quorune.compiler.event_result_value_templates.scheduled_fractional_life_instruction",
-        "quorune.rules.half_event_player_shapes.half_scheduled_player_node_capabilities"
+        "quorune.rules.half_event_player_shapes.half_scheduled_player_node_capabilities",
+        "quorune.rules.special_node_shapes.special_result_trigger_runtime_dependencies",
+        "quorune.rules.special_node_shapes.special_trigger_envelope_capabilities"
       ],
       "positive_tests": [
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_bound_half_values_keep_original_event_player_and_full_trigger_minima",
+        "test_half_event_results_preserve_occurrence_recipient_and_typed_amount",
         "test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
         "test_half_quantity_arithmetic_and_malformed_fields_are_closed",
-        "test_half_event_results_preserve_occurrence_recipient_and_typed_amount",
-        "test_bound_half_values_keep_original_event_player_and_full_trigger_minima",
-        "test_original_normally_binds_both_static_and_scheduled_abilities"
+        "test_original_normally_binds_both_static_and_scheduled_abilities",
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected"
       ],
       "negative_tests": [
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
         "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual",
         "test_fractional_binding_keeps_unsupported_antecedents_and_quantity_fields_residual",
         "test_half_event_result_owner_withdrawal_prevents_whole_admission",
         "test_shape_and_wrong_subjects_keep_fraction_rounding_and_domain_boundaries",
-        "test_verified_each_owner_withdrawal_blocks_composition"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
+        "test_special_trigger_runtime_owners_are_inferred_after_annotations_are_removed",
+        "test_verified_each_owner_withdrawal_blocks_composition",
+        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell"
       ],
       "interaction_tests": [
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
-        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
         "test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
         "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure"
       ],
       "multiplayer_tests": [
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
         "test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
         "test_real_each_player_upkeeps_lose_their_own_current_half_once"
       ],
       "privacy_tests": [
-        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
         "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
+        "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure"
       ],
       "replay_tests": [
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
-        "test_actual_quietus_cast_equip_damage_current_life_and_pending_departure",
         "test_real_d_attacker_and_a_equipment_keep_b_as_recipient",
-        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure",
-        "test_real_each_player_upkeeps_lose_their_own_current_half_once"
+        "test_real_each_player_upkeeps_lose_their_own_current_half_once",
+        "test_real_paid_festival_keeps_scheduled_player_and_reads_odd_life_after_source_departure"
       ],
       "required_evidence": [
         "positive",
@@ -30408,7 +30425,7 @@
     },
     {
       "id": "trigger.condition.fixed_public_state",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "109.5",
         "603.4",
@@ -30446,72 +30463,84 @@
         "state_query.permanent.public_state_predicate"
       ],
       "implementation_components": [
-        "quorune.continuous_conditions.FixedPublicStateConditionSpec",
-        "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition",
-        "quorune.compiler.public_state_queries.fixed_public_state_condition",
-        "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._query_matches",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot",
         "quorune.card_programs.runtime.fixed_public_state_condition_matches",
-        "quorune.turn_history.current_turn_history_events",
-        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._fixed_public_state_condition_holds",
+        "quorune.compiler.boolean_public_conditions.compose_public_conditions",
+        "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
+        "quorune.compiler.public_state_fact_queries.fixed_public_fact_condition",
+        "quorune.compiler.public_state_fact_queries.fixed_source_numeric_condition",
+        "quorune.compiler.public_state_queries.fixed_public_state_condition",
+        "quorune.continuous_conditions.FixedPublicStateConditionSpec",
+        "quorune.rules.special_node_shapes.special_result_trigger_runtime_dependencies",
+        "quorune.rules.special_node_shapes.special_trigger_envelope_capabilities",
         "quorune.trigger_discovery.semantic_event_condition_matches",
         "quorune.trigger_discovery.semantic_intervening_condition_matches",
-        "quorune.compiler.boolean_public_conditions.compose_public_conditions",
-        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver.snapshot",
-        "quorune.compiler.public_state_fact_queries.fixed_source_numeric_condition",
-        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._query_matches",
-        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._fixed_public_state_condition_holds"
+        "quorune.turn_history.current_turn_history_events",
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence"
       ],
       "positive_tests": [
-        "test_public_state_intervening_if_contract_matrix",
-        "test_intervening_public_facts_preserve_numeric_and_subtype_meaning",
-        "test_shared_history_conditions_compile_with_exact_thresholds",
-        "test_history_facts_use_sealed_actor_and_target_not_current_objects",
-        "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
+        "test_history_facts_use_sealed_actor_and_target_not_current_objects",
+        "test_intervening_public_facts_preserve_numeric_and_subtype_meaning",
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+        "test_public_state_intervening_if_contract_matrix",
+        "test_shared_history_conditions_compile_with_exact_thresholds",
         "test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
-        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
       ],
       "negative_tests": [
+        "test_absent_history_is_unavailable_not_known_empty",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
+        "test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_no_qualifying_entry_history_draws_nothing",
         "test_public_state_intervening_if_contract_matrix",
         "test_public_state_intervening_if_dependency_and_parser_fail_closed",
-        "test_unrepresented_history_conditions_remain_residual",
-        "test_absent_history_is_unavailable_not_known_empty",
-        "test_no_qualifying_entry_history_draws_nothing",
-        "test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
-        "test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
         "test_source_numeric_intervening_condition_preserves_characteristic_and_bound",
-        "test_source_numeric_query_distinguishes_missing_stat_and_threshold"
+        "test_source_numeric_query_distinguishes_missing_stat_and_threshold",
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
+        "test_special_trigger_runtime_owners_are_inferred_after_annotations_are_removed",
+        "test_unrepresented_history_conditions_remain_residual",
+        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell"
       ],
       "interaction_tests": [
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+        "test_public_attack_subtype_threshold_executes_compiled_consequence",
+        "test_public_death_threshold_counts_causing_event_before_trigger",
+        "test_public_entry_threshold_replays_actions_and_full_draw",
         "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
         "test_source_state_intervening_condition_and_current_ability_fail_closed",
-        "test_public_entry_threshold_replays_actions_and_full_draw",
-        "test_public_death_threshold_counts_causing_event_before_trigger",
-        "test_public_attack_subtype_threshold_executes_compiled_consequence",
-        "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
-        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
       ],
       "multiplayer_tests": [
-        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
-        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
       ],
       "privacy_tests": [
-        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
-        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
       ],
       "replay_tests": [
-        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
-        "test_public_entry_threshold_replays_actions_and_full_draw",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
-        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink",
-        "test_original_angelic_sell_sword_checks_attack_power_again_after_response"
+        "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
+        "test_public_entry_threshold_replays_actions_and_full_draw",
+        "test_public_state_intervening_condition_rechecks_locked_controller_and_replays",
+        "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
       ],
       "required_evidence": [
         "positive",
@@ -30530,7 +30559,7 @@
     },
     {
       "id": "trigger.effect.fixed_event",
-      "version": 16,
+      "version": 17,
       "official_rules": [
         "115.1",
         "120.4",
@@ -30590,34 +30619,41 @@
         "trigger.placement.apnap"
       ],
       "implementation_components": [
+        "quorune.attack_transition_engine_adapter.attack_transition_stack_items",
+        "quorune.card_programs.model.ability_to_card_dict",
         "quorune.compiler.fixed_counter_trigger_nodes.FixedCounterTriggerBinding",
         "quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
-        "quorune.compiler.fixed_public_multi_event_bindings.fixed_public_multi_event_binding_spec",
-        "quorune.rules.event_subscriptions.FixedEventSubscriptionSet",
-        "quorune.card_programs.model.ability_to_card_dict",
         "quorune.compiler.fixed_public_action_event_bindings.fixed_public_action_event_binding_spec",
         "quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec",
+        "quorune.compiler.fixed_public_multi_event_bindings.fixed_public_multi_event_binding_spec",
         "quorune.compiler.fixed_source_combat_growth.fixed_source_combat_growth_effect_template",
+        "quorune.compiler.source_self_effect_templates.normalized_source_result_body",
         "quorune.compiler.spell_cast_predicates.FixedSpellCastSubject",
         "quorune.compiler.spell_cast_predicates.fixed_spell_cast_binding_spec",
-        "quorune.rules.casting.commit._dispatch_cast_events",
-        "quorune.rules.spell_cast_events.SpellCopyEvent",
-        "quorune.spell_copy_engine_adapter.dispatch_normalized_spell_copy_event",
-        "quorune.attack_transition_engine_adapter.attack_transition_stack_items",
-        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence",
         "quorune.damage._collect_damage_result_triggers",
         "quorune.player_result_events.dispatch_card_draw_event",
         "quorune.player_result_events.dispatch_life_gain_event",
+        "quorune.rules.casting.commit._dispatch_cast_events",
+        "quorune.rules.event_subscriptions.FixedEventSubscriptionSet",
+        "quorune.rules.special_node_shapes.special_result_trigger_runtime_dependencies",
+        "quorune.rules.special_node_shapes.special_trigger_envelope_capabilities",
+        "quorune.rules.spell_cast_events.SpellCopyEvent",
+        "quorune.spell_copy_engine_adapter.dispatch_normalized_spell_copy_event",
         "quorune.trigger_discovery.dispatch_semantic_event",
         "quorune.trigger_discovery.program_has_current_ability_fragments",
         "quorune.trigger_processing.collect_trigger_items",
-        "quorune.compiler.source_self_effect_templates.normalized_source_result_body"
+        "quorune.zone_trigger_processing.dispatch_zone_change_occurrence"
       ],
       "positive_tests": [
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_closed_cast_and_source_attack_bindings_compile_exactly",
         "test_controller_draw_step_additional_draw_retains_event_and_recipient",
@@ -30641,14 +30677,20 @@
         "test_public_event_binding_closure_compiles_exact_bodies",
         "test_public_zone_damage_and_cast_predicates_compile_exactly",
         "test_source_combat_growth_triggers_compile_exactly_and_fail_closed",
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
         "test_static_spell_cast_characteristic_bindings_compile_exactly",
         "test_typed_spell_cast_fact_predicates_compile_exactly"
       ],
       "negative_tests": [
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_additional_draw_step_missing_authority_stays_residual",
         "test_adjacent_event_and_body_grammar_remain_material",
@@ -30670,14 +30712,22 @@
         "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
         "test_public_event_near_misses_remain_material",
         "test_runtime_event_mode_and_child_requirements_survive_removed_coverage",
-        "test_verified_child_or_event_owner_withdrawal_rejects_the_complete_modal_trigger"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
+        "test_special_trigger_runtime_owners_are_inferred_after_annotations_are_removed",
+        "test_verified_child_or_event_owner_withdrawal_rejects_the_complete_modal_trigger",
+        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell"
       ],
       "interaction_tests": [
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
         "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attachment_damage_and_death_bindings_use_current_and_lki_relations",
@@ -30721,10 +30771,15 @@
       ],
       "multiplayer_tests": [
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
         "test_actual_scorpion_death_deals_damage_and_gains_life_for_trigger_controller",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
@@ -30748,7 +30803,11 @@
         "test_targeted_cast_projection_save_load_and_exact_replay"
       ],
       "privacy_tests": [
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
         "test_attack_batch_trigger_is_once_per_declaration_and_replays",
         "test_cycling_trigger_uses_public_hand_snapshot",
@@ -30766,9 +30825,14 @@
       ],
       "replay_tests": [
         "test_actual_elder_modes_are_chosen_before_priority_and_survive_source_departure",
+        "test_actual_face_up_reaper_uses_current_life_then_post_damage_opponent_life",
+        "test_actual_morph_attack_has_no_life_loss_but_later_turn_up_restores_damage_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
         "test_actual_radagast_uses_cast_mana_value_and_keeps_queued_bird_mode",
         "test_actual_relic_bind_uses_aura_controller_and_only_the_selected_mode_target",
         "test_actual_scaretiller_keeps_hand_entry_private_and_graveyard_mode_targeted",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_actual_veteran_tap_issues_optional_counter_and_replays",
         "test_actual_zenith_counter_mode_resolves_before_the_second_creature_spell",
         "test_attachment_attack_binding_uses_current_relation_and_ability",
@@ -43725,7 +43789,7 @@
       "status": "trusted"
     },
     {
-      "version": 1,
+      "version": 2,
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -43753,35 +43817,57 @@
         ]
       },
       "positive_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_normal_and_dread_manifest_are_distinct_typed_instructions",
-        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
         "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected"
       ],
       "negative_tests": [
-        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
         "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
+        "test_special_trigger_runtime_owners_are_inferred_after_annotations_are_removed",
+        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell"
       ],
       "interaction_tests": [
-        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
-        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost"
       ],
       "multiplayer_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger"
       ],
       "privacy_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger"
       ],
       "replay_tests": [
-        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_soul_strike_uses_enchanted_death_and_aura_controllers_private_library",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
-        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost"
       ],
       "required_evidence": [
         "positive",
@@ -43817,11 +43903,13 @@
       "implementation_components": [
         "quorune.manifest.prepare_manifest_entry_replacement",
         "quorune.rules.morph_actions.build_turn_face_up_offer",
+        "quorune.rules.special_node_shapes.special_result_trigger_runtime_dependencies",
+        "quorune.rules.special_node_shapes.special_trigger_envelope_capabilities",
         "quorune.semantic_choices.manifest.ManifestChoiceHandler"
       ]
     },
     {
-      "version": 1,
+      "version": 2,
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -43849,35 +43937,51 @@
         ]
       },
       "positive_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_normal_and_dread_manifest_are_distinct_typed_instructions",
         "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
         "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected"
       ],
       "negative_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
         "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
+        "test_special_trigger_runtime_owners_are_inferred_after_annotations_are_removed",
+        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell"
       ],
       "interaction_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
-        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost"
       ],
       "multiplayer_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays"
       ],
       "privacy_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays"
       ],
       "replay_tests": [
+        "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
+        "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
+        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action",
         "test_original_manifest_dread_privately_selects_then_moves_remainder_and_replays",
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
-        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_manifested_instant_has_no_turn_up_offer_or_accepted_action"
+        "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost"
       ],
       "required_evidence": [
         "positive",
@@ -43904,6 +44008,8 @@
         "keyword_action.manifest.card"
       ],
       "implementation_components": [
+        "quorune.rules.special_node_shapes.special_result_trigger_runtime_dependencies",
+        "quorune.rules.special_node_shapes.special_trigger_envelope_capabilities",
         "quorune.semantic_choices.manifest.ManifestChoiceHandler"
       ]
     },

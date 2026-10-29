@@ -1584,6 +1584,21 @@ closure may turn face up for an ordinary printed mana cost; represented Morph,
 Megamorph and Disguise alternatives retain separate offers. Complex mana and
 unsupported card-form or face-up behavior remain explicitly unavailable. See
 [ADR 0115](../adr/0115-typed-manifest-entry-and-turn-up.md).
+An independently validated special result retains the ordinary trigger's
+fixed-event, APNAP and normalized occurrence dependencies. Empty special-shape
+rejections remain terminal. Manifest and typed half-life trigger programs also
+derive their runtime trigger minima from their executable result and event,
+independently of coverage annotations. A public intervening condition retains
+its descriptor owner and is checked at both discovery and resolution. Scheduled
+opponent upkeep, enchanted-creature death and source-attack wrappers use these
+same existing result and event owners.
+Direct source entry/death Manifest leaves retain their existing normalized
+self subscription and APNAP owners; they do not acquire a generic event-result
+wrapper merely through runtime validation.
+The executable payload also retains its result capability: Manifest Dread
+requires both Manifest and Dread owners, and a typed half-life amount requires
+the half-life owner. These result minima apply to ordinary spells and activated
+abilities as well as triggered results, without changing their timing.
 
 Source power and toughness intervening conditions use one fixed numeric
 battlefield creature predicate. Discovery and resolution both read complete

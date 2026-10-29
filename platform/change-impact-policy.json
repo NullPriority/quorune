@@ -9453,6 +9453,29 @@
         "test_player_speed",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "special-result-trigger-envelope",
+      "patterns": [
+        "quorune/rules/special_node_shapes.py",
+        "quorune/rules/capabilities.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/special_trigger_fixture.py",
+        "tests/test_special_trigger_envelopes.py",
+        "tests/test_special_half_life_triggers.py",
+        "tests/fixtures/special-trigger-envelope-cards.json"
+      ],
+      "test_modules": [
+        "test_special_trigger_envelopes",
+        "test_special_half_life_triggers",
+        "test_manifest",
+        "test_fractional_player_results",
+        "test_half_event_player_results",
+        "test_scheduled_half_life",
+        "test_fixed_counter_event_triggers",
+        "test_permanent_additional_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [
