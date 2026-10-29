@@ -342,6 +342,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.ability.graveyard_query_grant",
                 "continuous.ability.fixed_composite_grant",
                 "continuous.characteristics.fixed_type_replacement",
+                "continuous.ability.fixed_subtype_composite_grant",
                 "continuous.ability.graveyard_conditional_grant",
                 "continuous.characteristics.fixed_public_setting",
                 "continuous.characteristics.enchanted_player_query",

@@ -147,6 +147,7 @@
       "test_source_zone_ability_grants",
       "test_static_attached_control",
       "test_static_characteristic_settings",
+      "test_subtype_composite_grants",
       "test_support_counter_placement",
       "test_target_announcements",
       "test_targeted_activation_costs",

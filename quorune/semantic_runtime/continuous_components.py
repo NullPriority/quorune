@@ -1426,6 +1426,7 @@ def default_continuous_effect_component_registry(
     from .shared_type_anthems import SharedTypeAnthemHandler
     from .graveyard_grants import GraveyardQueryAbilityGrantHandler, GraveyardConditionalAbilityGrantHandler
     from .composite_grants import CompositeAbilityGrantHandler, FixedTypeReplacementGrantHandler
+    from .subtype_composite_grants import FixedSubtypeCompositeGrantHandler
     from .conditional_continuous import (
         FixedPublicStateCharacteristicsHandler,
         FixedPublicStateGrantedAbilityHandler,
@@ -1472,6 +1473,7 @@ def default_continuous_effect_component_registry(
             GraveyardQueryAbilityGrantHandler(),
             CompositeAbilityGrantHandler(),
             FixedTypeReplacementGrantHandler(),
+            FixedSubtypeCompositeGrantHandler(),
             GraveyardConditionalAbilityGrantHandler(),
             ConditionalTypedKeywordHandler(),
             AttachedFixedCharacteristicsHandler(),

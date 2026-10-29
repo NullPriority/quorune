@@ -370,6 +370,7 @@
     "tests/fixtures/static-player-restriction-cards.json",
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/storm-cards.json",
+    "tests/fixtures/subtype-composite-grant-cards.json",
     "tests/fixtures/subtype-union-condition-cards.json",
     "tests/fixtures/support-integration-retention-cards.json",
     "tests/fixtures/tagged-partner-cards.json",

@@ -9047,6 +9047,24 @@
         "test_source_zone_ability_grants",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "subtype-composite-grants",
+      "patterns": [
+        "quorune/compiler/subtype_composite_grants.py",
+        "quorune/compiler/composite_grant_nodes.py",
+        "quorune/semantic_runtime/subtype_composite_grants.py",
+        "tests/test_subtype_composite_grants.py",
+        "tests/fixtures/subtype-composite-grant-cards.json"
+      ],
+      "test_modules": [
+        "test_subtype_composite_grants",
+        "test_composite_quoted_grants",
+        "test_type_replacement_grants",
+        "test_static_characteristic_settings",
+        "test_card_program_trust",
+        "test_fixed_query_quoted_ability_grants"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 544,
+  "registry_version": 545,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -64491,6 +64491,98 @@
       "dependency_fail_closed_rationale": "Evidence-verified new absence, ordinary query and Reach owner withdrawal rejects admission with unrelated Monarch control; runtime inference independently requires the new descriptor owner.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting tested-keyword dependency ordering kills the focused late-Flying witness; actual earlier/later Humility and Flight source removal exercise current native results.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.ability.fixed_subtype_composite_grant",
+      "version": 1,
+      "official_rules": [
+        "205.3d",
+        "205.3g",
+        "205.3m",
+        "611.3a",
+        "611.3b",
+        "613.1d",
+        "613.1f",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Version3 couples fixed subtype additions to independently closed quoted children. Each subtype corresponds to a guaranteed creature or artifact receiver type. Existing type sets and abilities remain; the shared effect starts in layer4 and continues in layer6 with current controller scope.",
+        "inputs": [
+          "Current closed public receiver query or attachment",
+          "Canonical correlated subtype additions",
+          "One through four independently closed quote children"
+        ],
+        "outputs": [
+          "Shared layer4/6 plan preserving existing characteristics",
+          "Receiver-controller actions and queued source-independent results"
+        ],
+        "exclusions": [
+          "Chosen or unknown subtypes",
+          "Uncorrelated receiver types",
+          "Replacement or other characteristic settings",
+          "Unknown quote children"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.semantic_runtime.subtype_composite_grants.FixedSubtypeCompositeGrantHandler",
+        "quorune.compiler.subtype_composite_grants.subtype_composite_shell",
+        "quorune.compiler.composite_grant_nodes.composite_granted_ability_nodes"
+      ],
+      "positive_tests": [
+        "test_actual_dismiss_binds_trigger_to_receiver_and_pending_trigger_survives_giver_departure",
+        "test_actual_earlier_and_later_humility_preserve_started_type_effect_and_order_receiver_loss",
+        "test_actual_peacock_nontoken_clue_sacrifice_uses_effective_subtype_and_private_draw",
+        "test_correlated_additions_use_one_versioned_layer_plan_and_keep_old_versions_closed"
+      ],
+      "negative_tests": [
+        "test_actual_dismiss_binds_trigger_to_receiver_and_pending_trigger_survives_giver_departure",
+        "test_actual_earlier_and_later_humility_preserve_started_type_effect_and_order_receiver_loss",
+        "test_actual_peacock_nontoken_clue_sacrifice_uses_effective_subtype_and_private_draw",
+        "test_correlated_additions_use_one_versioned_layer_plan_and_keep_old_versions_closed",
+        "test_runtime_subtype_composite_owner_cannot_be_omitted",
+        "test_unknown_children_unmatched_types_and_trailing_text_remain_material",
+        "test_verified_composite_and_child_withdrawal_fail_closed_with_flying_control"
+      ],
+      "interaction_tests": [
+        "test_actual_dismiss_binds_trigger_to_receiver_and_pending_trigger_survives_giver_departure",
+        "test_actual_earlier_and_later_humility_preserve_started_type_effect_and_order_receiver_loss",
+        "test_actual_peacock_nontoken_clue_sacrifice_uses_effective_subtype_and_private_draw"
+      ],
+      "multiplayer_tests": [
+        "test_actual_dismiss_binds_trigger_to_receiver_and_pending_trigger_survives_giver_departure",
+        "test_actual_earlier_and_later_humility_preserve_started_type_effect_and_order_receiver_loss",
+        "test_actual_peacock_nontoken_clue_sacrifice_uses_effective_subtype_and_private_draw"
+      ],
+      "privacy_tests": [
+        "test_actual_dismiss_binds_trigger_to_receiver_and_pending_trigger_survives_giver_departure",
+        "test_actual_earlier_and_later_humility_preserve_started_type_effect_and_order_receiver_loss",
+        "test_actual_peacock_nontoken_clue_sacrifice_uses_effective_subtype_and_private_draw"
+      ],
+      "replay_tests": [
+        "test_actual_dismiss_binds_trigger_to_receiver_and_pending_trigger_survives_giver_departure",
+        "test_actual_earlier_and_later_humility_preserve_started_type_effect_and_order_receiver_loss",
+        "test_actual_peacock_nontoken_clue_sacrifice_uses_effective_subtype_and_private_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified parent and child authority withdrawal prevents exact closure while Flying remains exact; runtime binding rejects omitted version3 capability.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting subtype composition fails the exact independent artifact subtype plus quote witness.",
       "blockers": [],
       "status": "trusted"
     }

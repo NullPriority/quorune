@@ -1135,6 +1135,16 @@ abilities. The modifier follows one attachment incarnation through layers four,
 five and six. Chosen or dynamic types, basic-land subtype setting and filtered
 recipient sets remain outside this production.
 
+A separate version-three composite adds fixed creature or artifact subtypes
+and one through four independently closed quoted abilities through the same
+layer-four and layer-six plan. Each added subtype must correspond to a card
+type guaranteed by the receiver query. Existing subtypes and abilities remain;
+an artifact becoming a Clue does not gain an intrinsic sacrifice ability beyond
+the explicitly compiled quote. Current controller relations and attachments
+select receivers. Ability removal follows layer-six ordering, including the
+continuation of an effect that began in layer four. Chosen subtypes, type
+replacement and other characteristic settings remain outside this production.
+
 Other quoted static or declaration prose, named or external source
 references, hidden-zone recipients, and independently inexact bodies remain
 material residuals. Granted fixed source-counter removal costs also remain
