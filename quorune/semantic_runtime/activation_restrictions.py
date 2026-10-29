@@ -426,7 +426,7 @@ def current_activation_prohibitions(
     for specification in activation_prohibition_specs(
         host._effective_ability_fragments(source, error_type=RuntimeError)
     ):
-        if specification.scope == "all" or not ability.mana_ability:
+        if specification.relation=='self' and (specification.scope == "all" or not ability.mana_ability):
             prohibitions.append(
                 ActivationProhibition(
                     restriction_source_ref=source.ref,
@@ -445,6 +445,12 @@ def current_activation_prohibitions(
         ):
             continue
         record = host.card_record(restriction_source)
+        if source.zone=='battlefield' and getattr(restriction_source,'attached_to',None)==source.object_id:
+            for specification in activation_prohibition_specs(host._effective_ability_fragments(restriction_source,error_type=RuntimeError)):
+                if specification.relation=='attached' and (specification.scope=='all' or not ability.mana_ability):
+                    prohibitions.append(ActivationProhibition(restriction_source_ref=restriction_source.ref,
+                        candidate_source_name=str(candidate_name),handler_id='ability.static.attached-activation-rule.v1',
+                        reason='current_ability_fragment_prohibition'))
         if record is None:
             continue
         programs = host.semantics.runtime_handler_programs_for_oracle(

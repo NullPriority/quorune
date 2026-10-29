@@ -279,10 +279,20 @@ class StaticSettingCompilerTests(unittest.TestCase):
         for field,value in [('schema_version',True),('event','resolve'),('extra',0)]:
             with self.assertRaises(ValueError):FixedCharacteristicSettingsHandler().validate({**base,field:value})
         missing=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
-        missing['capabilities']=[r for r in missing['capabilities'] if r['id']!='continuous.characteristics.fixed_public_setting']
+        next(r for r in missing['capabilities'] if r['id']=='continuous.characteristics.fixed_public_setting').update(
+            status='blocked',blockers=['Fixed setting owner withdrawn'])
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
+        registry=CapabilityRegistry(missing)
+        index=build_index(registry_value=missing,
+            declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
         ir=compile_oracle_card(replace(query_record('All creatures have base power and toughness 1/1.'),type_line='Enchantment'),
-            capability_registry=CapabilityRegistry(missing))
+            capability_registry=registry)
         self.assertNotEqual('exact',ir.status)
+        self.assertEqual('exact',compile_oracle_card(query_record('Flying'),capability_registry=registry).status)
 
     def test_static_setting_creature_subtype_replacement_keeps_artifact_subtypes(self):
         from quorune.continuous_effects import CharacteristicState,evaluate_continuous_effects

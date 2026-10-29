@@ -1339,6 +1339,28 @@ bind the sealed battlefield incarnation. Filtered blockers, ambiguous
 antecedents, other durations and live recipient groups remain residual in this
 production.
 
+Bare attached declaration restrictions and the restrictions in a compound
+fixed characteristic clause likewise stay on their giver. A compound attached
+activation prohibition uses a version-two source-owned fragment, preserving
+the version-one affected-source shape. Giver removal or ability loss ends
+these rules; receiver ability loss leaves them applicable. Granted keywords
+continue through the ordinary removable ability path.
+
+Player-attached static clauses have independent characteristic and attack-rule
+owners. The characteristic descriptor binds a current reciprocal player
+attachment to creatures with an optional nonlegendary exclusion. It reuses the
+shared closed modifier validator and canonical creature-subtype vocabulary.
+Attack-each-combat instructions remain on their giver and use the ordinary
+requirement solver, including optional attack costs and defender choice.
+Descriptors cannot choose an authoritative player identity. Unknown scopes,
+conditions and result siblings remain residual.
+
+New generated battlefield trigger programs declare the existing current
+ability-component coverage marker. Their source-pinned keys participate in
+layer-six ability presence, so removal suppresses ordinary enter and look-back
+death triggers through the shared trigger owner. Runtime does not add that
+marker to previously serialized programs.
+
 Fixed additional and unlimited blocking permissions lower to typed layer-6
 capacity fragments for source, attachment and closed public-query recipients.
 Fixed public-state conditions use the existing snapshot owner. Printed

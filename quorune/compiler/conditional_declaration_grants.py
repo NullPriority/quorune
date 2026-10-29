@@ -3,6 +3,7 @@ from __future__ import annotations
 """Compile declaration grants behind one independently closed public condition."""
 
 import re
+from collections.abc import Mapping
 
 from ..ability_fragments import ability_fragment_to_dict
 from ..declaration_fragments import (
@@ -32,7 +33,8 @@ def conditional_query_declaration_grant(condition, body: str, *, source_name: st
     from .declaration_nodes import _direct_declaration_grant
 
     direct = _direct_declaration_grant(body, source_name=source_name)
-    if direct is None or direct[1]['handler_id'] != 'continuous.ability.fixed-query-grant.v1':
+    if (direct is None or not isinstance(direct[1],Mapping)
+            or direct[1]['handler_id'] != 'continuous.ability.fixed-query-grant.v1'):
         return None
     descriptor = direct[1]
     fragments = descriptor['modifier']['add_ability_fragments']

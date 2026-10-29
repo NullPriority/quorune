@@ -49,6 +49,15 @@ def attached_player_seat(source: CardInstance) -> str | None:
     return seat or None
 
 
+def current_attached_player_seat(source: CardInstance, players: Mapping[str, PlayerState]) -> str | None:
+    """Read one present reciprocal player attachment without changing it."""
+    seat=attached_player_seat(source)
+    player=players.get(seat or '')
+    if (source.zone!='battlefield' or source.phased_out or player is None or not getattr(player,'in_game',True)
+            or source.object_id not in player.attachments):return None
+    return seat
+
+
 def attachment_target_ref(
     cards: Mapping[str, CardInstance],
     players: Mapping[str, PlayerState],

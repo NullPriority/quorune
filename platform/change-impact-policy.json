@@ -8932,6 +8932,39 @@
         "test_static_characteristic_settings",
         "test_characteristic_read_frames"
       ]
+    },
+    {
+      "id": "enchanted-player-static-scope",
+      "patterns": [
+        "quorune/enchanted_player_model.py",
+        "quorune/compiler/enchanted_player_statics.py",
+        "quorune/attachments.py",
+        "quorune/semantic_runtime/enchanted_player_characteristics.py",
+        "quorune/semantic_runtime/fixed_characteristic_settings.py",
+        "quorune/semantic_runtime/continuous_components.py",
+        "quorune/rules/enchanted_player_requirements.py",
+        "quorune/declaration_requirement_runtime.py",
+        "quorune/card_programs/runtime.py",
+        "quorune/compiler/declaration_nodes.py",
+        "quorune/compiler/program_composition.py",
+        "tests/test_enchanted_player_statics.py",
+        "tests/fixtures/enchanted-player-static-cards.json",
+        "quorune/compiler/conditional_declaration_grants.py",
+        "quorune/ability_fragments.py",
+        "quorune/semantic_runtime/activation_restrictions.py"
+      ],
+      "test_modules": [
+        "test_enchanted_player_statics",
+        "test_static_characteristic_settings",
+        "test_changeling_characteristics",
+        "test_attached_static_characteristics",
+        "test_typed_query_self_characteristics",
+        "test_combat_declaration_constraints",
+        "test_combat_declaration_restrictions",
+        "test_all_blocker_requirements",
+        "test_compound_activation_restrictions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

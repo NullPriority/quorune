@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 538,
+  "registry_version": 540,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -22509,54 +22509,59 @@
         "quorune.rules.block_prohibitions.block_prohibition_verdict"
       ],
       "positive_tests": [
-        "test_declaration_components_are_closed_typed_fragments",
-        "test_prison_tax_is_projected_paid_atomically_and_replays",
-        "test_global_maximum_constrains_requirement_solver",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice",
+        "test_bare_and_compound_attached_restrictions_stay_on_the_giver",
         "test_closed_activated_temporary_declaration_restrictions_compile",
-        "test_source_and_creature_subtype_subjects_compile_closed_shapes",
-        "test_spell_triggered_source_and_subtype_contexts_share_owner",
         "test_compiled_source_activation_locks_rule_to_source_incarnation",
-        "test_static_query_and_attachment_declaration_grants_compile_closed",
         "test_compound_self_restrictions_enforce_every_conjunct",
         "test_conditional_stats_and_declaration_result_preserve_one_live_condition",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_declaration_components_are_closed_typed_fragments",
+        "test_global_maximum_constrains_requirement_solver",
         "test_originals_have_complete_admission_and_original_source_spans",
-        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
-        "test_real_ghost_flash_cast_and_unblockable_combat",
-        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_prison_tax_is_projected_paid_atomically_and_replays",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_source_and_creature_subtype_subjects_compile_closed_shapes",
+        "test_spell_triggered_source_and_subtype_contexts_share_owner",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_static_query_and_attachment_declaration_grants_compile_closed"
       ],
       "negative_tests": [
-        "test_declaration_component_descriptors_reject_malformed_values",
-        "test_raw_oracle_declaration_text_has_no_runtime_authority",
-        "test_open_temporary_declaration_restriction_grammar_stays_residual",
-        "test_malformed_temporary_restriction_rolls_back_without_effect",
-        "test_static_declaration_grant_dependencies_fail_closed",
-        "test_static_query_and_attachment_declaration_grants_compile_closed",
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice",
+        "test_bare_and_compound_attached_restrictions_stay_on_the_giver",
         "test_conditional_declaration_composition_rejects_open_grammar_and_malformed_descriptors",
+        "test_declaration_component_descriptors_reject_malformed_values",
+        "test_malformed_temporary_restriction_rolls_back_without_effect",
+        "test_open_temporary_declaration_restriction_grammar_stays_residual",
         "test_originals_have_complete_admission_and_original_source_spans",
-        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
-        "test_real_ghost_flash_cast_and_unblockable_combat",
-        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_raw_oracle_declaration_text_has_no_runtime_authority",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_static_declaration_grant_dependencies_fail_closed",
+        "test_static_labels_preserve_complete_bodies_and_functional_boundaries",
+        "test_static_query_and_attachment_declaration_grants_compile_closed"
       ],
       "interaction_tests": [
-        "test_global_maximum_constrains_requirement_solver",
-        "test_player_state_declaration_predicates_and_exact_replay",
-        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice",
         "test_all_four_restrictions_change_declaration_behavior_and_expire",
-        "test_static_query_declaration_grant_uses_offer_commit_authority",
-        "test_static_query_restriction_revalidates_and_obeys_ability_removal",
         "test_attached_characteristics_and_requirement_end_with_attachment",
         "test_compound_self_restrictions_enforce_every_conjunct",
+        "test_global_maximum_constrains_requirement_solver",
         "test_original_channeler_condition_controls_required_attack_and_replays",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
-        "test_real_ghost_flash_cast_and_unblockable_combat",
-        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_player_state_declaration_predicates_and_exact_replay",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
+        "test_static_query_declaration_grant_uses_offer_commit_authority",
+        "test_static_query_restriction_revalidates_and_obeys_ability_removal"
       ],
       "multiplayer_tests": [
         "test_prison_tax_is_projected_paid_atomically_and_replays",
@@ -22578,16 +22583,17 @@
         "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
       ],
       "replay_tests": [
-        "test_prison_tax_is_projected_paid_atomically_and_replays",
+        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice",
         "test_attack_or_block_alone_allows_different_defenders_and_replays",
-        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not",
         "test_cleanup_expiration_is_exactly_replayable",
         "test_original_channeler_condition_controls_required_attack_and_replays",
-        "test_actual_bramble_counter_payment_prevents_the_selected_creature_from_blocking",
-        "test_real_ghost_flash_cast_and_unblockable_combat",
-        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_prison_tax_is_projected_paid_atomically_and_replays",
+        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit",
         "test_real_descend_thresholds_accumulate_and_restrict_blocking",
-        "test_real_descend_graveyard_exile_removes_both_bonuses_and_block_limit"
+        "test_real_ghost_ability_removal_restores_legal_blocking",
+        "test_real_ghost_flash_cast_and_unblockable_combat",
+        "test_resolved_rule_survives_ability_removal_while_static_rule_does_not"
       ],
       "required_evidence": [
         "positive",
@@ -29630,8 +29636,18 @@
         "quorune.trigger_discovery.dispatch_semantic_event"
       ],
       "positive_tests": [
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_countered_physical_spell_derives_exact_normalized_events",
         "test_derives_exact_enter_and_death_events",
+        "test_generated_trigger_component_obeys_current_presence_and_unmarked_program_contract_is_explicit",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
         "test_original_anywhere_graveyard_land_mill_uses_destination_owner_and_replays",
@@ -29643,19 +29659,16 @@
         "test_sacrifice_another_and_discard_counter_bodies_share_typed_events",
         "test_self_dies_trigger_uses_last_known_battlefield_zone",
         "test_source_land_entry_predicate_uses_committed_tapped_state",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics",
-        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
-        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
         "test_aggregate_limited_and_malformed_action_grammar_remains_residual",
+        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
         "test_counter_transition_kind_is_closed_and_typed",
+        "test_generated_trigger_component_obeys_current_presence_and_unmarked_program_contract_is_explicit",
         "test_occurrence_rejects_malformed_and_non_event_moves_are_empty",
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
         "test_original_anywhere_graveyard_land_discard_and_battlefield_origins_replay",
@@ -29665,15 +29678,23 @@
         "test_public_action_event_dependencies_and_parser_mutant_fail_closed",
         "test_public_action_event_suffixes_remain_fail_closed",
         "test_public_event_binding_closure_dependencies_and_parser_mutant_fail_closed",
-        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual",
-        "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses"
+        "test_verified_occurrence_and_adjacent_owner_withdrawals_keep_originals_residual"
       ],
       "interaction_tests": [
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
         "test_attachment_damage_and_death_bindings_use_current_and_lki_relations",
         "test_closed_zone_event_predicates_use_lki_and_batching",
         "test_countered_spell_replaced_to_exile_has_no_graveyard_event",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
         "test_history_characteristic_distinguishing_controls",
         "test_history_precedes_final_power_and_keyword_sealing",
         "test_leaving_observer_uses_complete_simultaneous_death_history_in_both_orders",
@@ -29692,14 +29713,7 @@
         "test_simultaneous_entry_history_is_complete_before_discovery_in_both_orders",
         "test_simultaneous_history_uses_final_destinations_and_previous_controllers",
         "test_source_land_entry_predicate_uses_committed_tapped_state",
-        "test_source_that_leaves_still_observes_simultaneous_death",
-        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
-        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
+        "test_source_that_leaves_still_observes_simultaneous_death"
       ],
       "multiplayer_tests": [
         "test_another_excludes_self_sacrifice_while_foreign_owned_controlled_subject_counts",
@@ -29734,9 +29748,18 @@
         "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller"
       ],
       "replay_tests": [
+        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
+        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
+        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
+        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
+        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_compiled_counter_targets_exact_stack_domains_and_replays",
         "test_fixed_life_self_enter_trigger_replays_exactly",
+        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment",
         "test_history_characteristic_distinguishing_controls",
         "test_noncreature_nonland_discard_trigger_uses_replaced_public_result_and_private_choice",
         "test_original_anywhere_graveyard_color_optional_draw_discard_consequence_replays",
@@ -29746,14 +29769,7 @@
         "test_pending_sacrifice_trigger_does_not_modify_blinked_source",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_simultaneous_death_history_replays_from_pre_action_checkpoint",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics",
-        "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
-        "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
-        "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
-        "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
-        "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
-        "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
-        "test_harvest_simultaneous_aura_and_artifact_departure_uses_before_event_attachment"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics"
       ],
       "required_evidence": [
         "positive",
@@ -63937,6 +63953,288 @@
       "dependency_fail_closed_rationale": "Evidence-verified withdrawal removes rule, step or characteristic owner with unrelated Monarch control; runtime descriptors require their independent owner.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting the shared absolute untap permission violates the bounded original Frozen in Ice witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.characteristics.enchanted_player_query",
+      "version": 1,
+      "official_rules": [
+        "303.4a",
+        "303.4c",
+        "303.4e",
+        "508.1d",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "702.73a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current reciprocal player attachment selects fixed creature characteristics, optional nonlegendary exclusion, existing closed modifiers and canonical creature-subtype removal; layers and prospective entry retain their shared owners.",
+        "inputs": [
+          "Present reciprocal player attachment",
+          "Current receiver controller and characteristics",
+          "Current giver ability presence"
+        ],
+        "outputs": [
+          "Source-owned current scope",
+          "Shared layer or combat solver behavior",
+          "Privacy, atomic rejection and replay"
+        ],
+        "exclusions": [
+          "Client-bound player identities",
+          "Dynamic or chosen subjects",
+          "Unknown conditions and compound results"
+        ]
+      },
+      "dependencies": [
+        "continuous.characteristics.fixed_public_setting"
+      ],
+      "implementation_components": [
+        "quorune.attachments.current_attached_player_seat",
+        "quorune.compiler.enchanted_player_statics.enchanted_player_static_node",
+        "quorune.semantic_runtime.enchanted_player_characteristics.EnchantedPlayerCharacteristicsHandler",
+        "quorune.semantic_runtime.fixed_characteristic_settings.fixed_setting_modifier_node",
+        "quorune.card_programs.runtime.collect_card_program_continuous_effects"
+      ],
+      "positive_tests": [
+        "test_actual_conformity_removes_changeling_types_but_preserves_forest_and_legendary_creatures",
+        "test_actual_deaths_hold_applies_additive_delta_only_to_enchanted_player_and_stabilizes_death",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
+        "test_closed_descriptors_cannot_bind_players_or_widen_legacy_scope",
+        "test_complete_static_scopes_preserve_spans_and_independent_owners",
+        "test_live_attachment_scope_tracks_reattachment_phasing_reciprocity_and_giver_presence"
+      ],
+      "negative_tests": [
+        "test_actual_conformity_removes_changeling_types_but_preserves_forest_and_legendary_creatures",
+        "test_actual_deaths_hold_applies_additive_delta_only_to_enchanted_player_and_stabilizes_death",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
+        "test_closed_descriptors_cannot_bind_players_or_widen_legacy_scope",
+        "test_complete_static_scopes_preserve_spans_and_independent_owners",
+        "test_live_attachment_scope_tracks_reattachment_phasing_reciprocity_and_giver_presence",
+        "test_runtime_scope_owners_cannot_be_omitted",
+        "test_verified_scope_and_modifier_withdrawals_fail_closed_with_unrelated_control"
+      ],
+      "interaction_tests": [
+        "test_actual_conformity_removes_changeling_types_but_preserves_forest_and_legendary_creatures",
+        "test_actual_deaths_hold_applies_additive_delta_only_to_enchanted_player_and_stabilizes_death",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana"
+      ],
+      "multiplayer_tests": [
+        "test_actual_conformity_removes_changeling_types_but_preserves_forest_and_legendary_creatures",
+        "test_actual_deaths_hold_applies_additive_delta_only_to_enchanted_player_and_stabilizes_death",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana"
+      ],
+      "privacy_tests": [
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana"
+      ],
+      "replay_tests": [
+        "test_actual_conformity_removes_changeling_types_but_preserves_forest_and_legendary_creatures",
+        "test_actual_deaths_hold_applies_additive_delta_only_to_enchanted_player_and_stabilizes_death",
+        "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
+        "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Evidence-verified owner and modifier/declaration dependency withdrawal fail closed with unrelated Monarch control; runtime omission rejects the corresponding descriptor.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Wrong Aura-controller binding and omitted giver requirement mutants are killed by bounded original-source witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "combat.requirement.enchanted_player",
+      "version": 1,
+      "official_rules": [
+        "303.4a",
+        "303.4c",
+        "303.4e",
+        "508.1d",
+        "611.3a",
+        "611.3b",
+        "611.3c",
+        "613.1d",
+        "613.1f",
+        "613.4b",
+        "613.4c",
+        "702.73a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current reciprocal player attachment imposes a giver-owned attack-each-combat-if-able requirement. Receiver ability loss does not erase it; ordinary restrictions, optional attack costs and defender selection retain existing authority.",
+        "inputs": [
+          "Present reciprocal player attachment",
+          "Current receiver controller and characteristics",
+          "Current giver ability presence"
+        ],
+        "outputs": [
+          "Source-owned current scope",
+          "Shared layer or combat solver behavior",
+          "Privacy, atomic rejection and replay"
+        ],
+        "exclusions": [
+          "Client-bound player identities",
+          "Dynamic or chosen subjects",
+          "Unknown conditions and compound results"
+        ]
+      },
+      "dependencies": [
+        "combat.declaration.typed_components"
+      ],
+      "implementation_components": [
+        "quorune.attachments.current_attached_player_seat",
+        "quorune.compiler.enchanted_player_statics.enchanted_player_static_node",
+        "quorune.enchanted_player_model.EnchantedPlayerAttackRequirementSpec",
+        "quorune.semantic_runtime.ability_fragments.EnchantedPlayerAttackRequirementHandler",
+        "quorune.rules.enchanted_player_requirements.enchanted_player_attacker_requirements",
+        "quorune.declaration_requirement_runtime.typed_attacker_requirements"
+      ],
+      "positive_tests": [
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice",
+        "test_closed_descriptors_cannot_bind_players_or_widen_legacy_scope",
+        "test_complete_static_scopes_preserve_spans_and_independent_owners",
+        "test_live_attachment_scope_tracks_reattachment_phasing_reciprocity_and_giver_presence"
+      ],
+      "negative_tests": [
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice",
+        "test_closed_descriptors_cannot_bind_players_or_widen_legacy_scope",
+        "test_complete_static_scopes_preserve_spans_and_independent_owners",
+        "test_live_attachment_scope_tracks_reattachment_phasing_reciprocity_and_giver_presence",
+        "test_runtime_scope_owners_cannot_be_omitted",
+        "test_verified_scope_and_modifier_withdrawals_fail_closed_with_unrelated_control"
+      ],
+      "interaction_tests": [
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice"
+      ],
+      "multiplayer_tests": [
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice"
+      ],
+      "privacy_tests": [
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice"
+      ],
+      "replay_tests": [
+        "test_actual_nightly_hunt_forces_only_able_attacks_after_receiver_ability_loss_and_keeps_defender_choice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Evidence-verified owner and modifier/declaration dependency withdrawal fail closed with unrelated Monarch control; runtime omission rejects the corresponding descriptor.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Wrong Aura-controller binding and omitted giver requirement mutants are killed by bounded original-source witnesses.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "activation.restriction.attached_static_rule",
+      "version": 1,
+      "official_rules": [
+        "303.4e",
+        "602.1b",
+        "602.5",
+        "611.3a",
+        "611.3b",
+        "613.1f"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "A version2 attached activation-prohibition fragment remains on its current giver. Receiver ability loss or later-granted abilities do not erase the rule; source departure, ability loss or attachment change ends it. Historical version1 affected-source fields remain exact.",
+        "inputs": [
+          "Present reciprocal player attachment",
+          "Current receiver controller and characteristics",
+          "Current giver ability presence"
+        ],
+        "outputs": [
+          "Source-owned current scope",
+          "Shared layer or combat solver behavior",
+          "Privacy, atomic rejection and replay"
+        ],
+        "exclusions": [
+          "Client-bound player identities",
+          "Dynamic or chosen subjects",
+          "Unknown conditions and compound results"
+        ]
+      },
+      "dependencies": [
+        "activation.restriction.attached"
+      ],
+      "implementation_components": [
+        "quorune.ability_fragments.ActivationProhibitionSpec",
+        "quorune.semantic_runtime.ability_fragments.AttachedActivationRuleHandler",
+        "quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions",
+        "quorune.compiler.declaration_nodes._attached_restraint_composition"
+      ],
+      "positive_tests": [
+        "test_actual_arrest_giver_blocks_later_granted_activation_after_receiver_blanking_until_removal",
+        "test_closed_descriptors_cannot_bind_players_or_widen_legacy_scope",
+        "test_complete_static_scopes_preserve_spans_and_independent_owners",
+        "test_live_attachment_scope_tracks_reattachment_phasing_reciprocity_and_giver_presence"
+      ],
+      "negative_tests": [
+        "test_actual_arrest_giver_blocks_later_granted_activation_after_receiver_blanking_until_removal",
+        "test_closed_descriptors_cannot_bind_players_or_widen_legacy_scope",
+        "test_complete_static_scopes_preserve_spans_and_independent_owners",
+        "test_live_attachment_scope_tracks_reattachment_phasing_reciprocity_and_giver_presence",
+        "test_runtime_scope_owners_cannot_be_omitted",
+        "test_verified_scope_and_modifier_withdrawals_fail_closed_with_unrelated_control"
+      ],
+      "interaction_tests": [
+        "test_actual_arrest_giver_blocks_later_granted_activation_after_receiver_blanking_until_removal"
+      ],
+      "multiplayer_tests": [
+        "test_actual_arrest_giver_blocks_later_granted_activation_after_receiver_blanking_until_removal"
+      ],
+      "privacy_tests": [
+        "test_actual_arrest_giver_blocks_later_granted_activation_after_receiver_blanking_until_removal"
+      ],
+      "replay_tests": [
+        "test_actual_arrest_giver_blocks_later_granted_activation_after_receiver_blanking_until_removal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Evidence-verified owner and modifier/declaration dependency withdrawal fail closed with unrelated Monarch control; runtime omission rejects the corresponding descriptor.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Wrong Aura-controller binding and omitted giver requirement mutants are killed by bounded original-source witnesses.",
       "blockers": [],
       "status": "trusted"
     }

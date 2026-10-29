@@ -462,39 +462,14 @@ def _attached_restraint_composition(
     )
     if not declaration.exact or declaration.template is None:
         return None
-    modifier = _attached_modifier()
-    modifier["add_ability_fragments"].extend(
-        (
-            ability_fragment_to_dict(declaration.template),
-            ability_fragment_to_dict(
-                ActivationProhibitionSpec(
-                    "nonmana" if match.group("nonmana") else "all"
-                )
-            ),
-        )
-    )
-    attached_creature = match.group("subject").casefold() == "enchanted creature"
+    rule=ActivationProhibitionSpec('nonmana' if match.group('nonmana') else 'all',schema_version=2,relation='attached')
     return (
-        "continuous-attached-static-restraint-composition-v1",
-        {
-            "handler_id": "continuous.attached.fixed-characteristics.v1",
-            "schema_version": 1,
-            "event": "characteristics.evaluate",
-            "condition": {
-                "relation": "source_attached_object",
-                "types_all": ["creature"] if attached_creature else [],
-            },
-            "modifier": modifier,
-        },
-        tuple(
-            sorted(
-                {
-                    "activation.restriction.attached",
-                    "continuous.attached.fixed_characteristics",
-                    DECLARATION_COMPONENT_CAPABILITY_ID,
-                }
-            )
-        ),
+        'static-attached-restraint-rules-v2',
+        ({'handler_id':DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID,'schema_version':1,
+          'event':'characteristics.evaluate','fragment':ability_fragment_to_dict(declaration.template)},
+         {'handler_id':'ability.static.attached-activation-rule.v1','schema_version':1,
+          'event':'characteristics.evaluate','fragment':ability_fragment_to_dict(rule)}),
+        (DECLARATION_COMPONENT_CAPABILITY_ID,'activation.restriction.attached_static_rule'),
     )
 
 
@@ -572,7 +547,6 @@ def _append_attached_declaration_fragments(
         fragment
         for fragment in fragments
         if isinstance(fragment, DeclarationRestrictionTemplate)
-        and fragment.option_relation == "source_controller"
     )
     source_fragments = tuple(
         replace(
@@ -641,6 +615,13 @@ def _direct_declaration_grant(
         ability_fragment_to_dict(fragment) for fragment in fragments
     ]
     if relation == "attached":
+        owned=fixed_declaration_fragment_sequence(text,card_name=source_name)
+        if owned and all(isinstance(f,DeclarationRestrictionTemplate) and f.scope in {'attached','attached_option'} for f in owned):
+            handlers=tuple({'handler_id':DECLARATION_RESTRICTION_COMPONENT_HANDLER_ID,'schema_version':1,
+                'event':'characteristics.evaluate','fragment':ability_fragment_to_dict(fragment)} for fragment in owned)
+            return ('static-attached-declaration-rule-v1',handlers,
+                tuple(sorted({DECLARATION_COMPONENT_CAPABILITY_ID,
+                    *((PUBLIC_STATE_DECLARATION_CAPABILITY_ID,) if any(f.condition is not None for f in owned) else ())})))
         modifier = _attached_modifier()
         modifier["add_ability_fragments"].extend(fragment_values)
         return (

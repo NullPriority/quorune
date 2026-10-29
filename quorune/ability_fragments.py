@@ -99,30 +99,36 @@ class DamageKeywordTriggerKind(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class ActivationProhibitionSpec:
-    """One layer-6 prohibition carried by the affected source object."""
+    """An affected-source prohibition or independently admitted attached rule."""
 
     scope: str
     schema_version: int = 1
+    relation: str = 'self'
 
     def __post_init__(self) -> None:
-        if self.scope not in {"all", "nonmana"}:
+        if type(self.scope) is not str or self.scope not in {"all", "nonmana"}:
             raise AbilityFragmentError(
                 "Activation prohibitions require all or nonmana scope"
             )
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if (type(self.schema_version) is not int or self.schema_version not in {1,2}
+                or self.relation!=('self' if self.schema_version==1 else 'attached')):
             raise AbilityFragmentError(
                 "Activation-prohibition schema version is unsupported"
             )
 
     def to_dict(self) -> dict[str, Any]:
-        return {"schema_version": self.schema_version, "scope": self.scope}
+        result={"schema_version": self.schema_version, "scope": self.scope}
+        if self.schema_version==2:result['relation']=self.relation
+        return result
+
+    @property
+    def capability_id(self):
+        return 'activation.restriction.attached_static_rule' if self.schema_version==2 else None
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "ActivationProhibitionSpec":
-        if not isinstance(value, Mapping) or set(value) != {
-            "schema_version",
-            "scope",
-        }:
+        if not isinstance(value, Mapping) or set(value) != ({'schema_version','scope','relation'}
+                if value.get('schema_version')==2 else {'schema_version','scope'}):
             raise AbilityFragmentError(
                 "Activation-prohibition fragments have a closed schema"
             )
@@ -449,6 +455,7 @@ class ProtectionSpec:
 
 from .granted_activation_model import GrantedActivatedAbilitySpec
 from .untap_restraint_model import AttachedUntapRestraintSpec
+from .enchanted_player_model import EnchantedPlayerAttackRequirementSpec
 
 
 def _nonempty_string(value: Any, *, field: str) -> str:
@@ -750,6 +757,7 @@ StaticAbilityFragment: TypeAlias = (
     | ProtectionSpec
     | GrantedActivatedAbilitySpec
     | AttachedUntapRestraintSpec
+    | EnchantedPlayerAttackRequirementSpec
     | GrantedTriggeredAbilitySpec
     | CombatKeywordTriggerSpec
     | DamageKeywordTriggerSpec
@@ -799,6 +807,8 @@ def ability_fragment_to_dict(
         kind = "granted_activated"
     elif isinstance(fragment, AttachedUntapRestraintSpec):
         kind = 'attached_untap_restraint'
+    elif isinstance(fragment, EnchantedPlayerAttackRequirementSpec):
+        kind = 'enchanted_player_attack_requirement'
     elif isinstance(fragment, GrantedTriggeredAbilitySpec):
         kind = "granted_triggered"
     elif isinstance(fragment, CombatKeywordTriggerSpec):
@@ -893,6 +903,8 @@ def ability_fragment_from_dict(
         return GrantedActivatedAbilitySpec.from_dict(value["value"])
     if value['kind']=='attached_untap_restraint':
         return AttachedUntapRestraintSpec.from_dict(value['value'])
+    if value['kind']=='enchanted_player_attack_requirement':
+        return EnchantedPlayerAttackRequirementSpec.from_dict(value['value'])
     if value["kind"] == "granted_triggered":
         return GrantedTriggeredAbilitySpec.from_dict(value["value"])
     if value["kind"] == "combat_keyword_trigger":
@@ -1012,6 +1024,7 @@ def canonical_ability_fragments(
                 ProtectionSpec,
                 GrantedActivatedAbilitySpec,
                 AttachedUntapRestraintSpec,
+                EnchantedPlayerAttackRequirementSpec,
                 GrantedTriggeredAbilitySpec,
                 CombatKeywordTriggerSpec,
                 DamageKeywordTriggerSpec,
@@ -1423,6 +1436,7 @@ __all__ = [
     "DeclarationRestrictionTemplate",
     "GrantedActivatedAbilitySpec",
     "AttachedUntapRestraintSpec",
+    "EnchantedPlayerAttackRequirementSpec",
     "GrantedTriggeredAbilitySpec",
     "PartnerWithSpec",
     "ActivationProhibitionSpec",

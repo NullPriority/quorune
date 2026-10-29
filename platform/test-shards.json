@@ -96,6 +96,7 @@
       "test_counter_placement_events",
       "test_distinct_target_costs",
       "test_draw_step_rules",
+      "test_enchanted_player_statics",
       "test_event_player_sacrifices",
       "test_exact_keyword_families",
       "test_exact_land_families",

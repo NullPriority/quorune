@@ -39,6 +39,8 @@ def typed_attacker_requirements(
             )
         )
     encore_opponent = encore_attack_requirement(attacker)
+    from .rules.enchanted_player_requirements import enchanted_player_attacker_requirements
+    result.extend(enchanted_player_attacker_requirements(host,attacker,error_type=error_type))
     if encore_opponent in active_seats:
         result.append(
             DeclarationRequirement(

@@ -419,6 +419,16 @@ ordinary trusted program registration reproduces step and direct-cost checks.
 The existing untap-step descriptor does not admit the new internal any-turn
 participation relation.
 
+Player-attached characteristic contexts contain a derived enchanted-player
+identity read from the current reciprocal attachment. The fixed descriptor
+contains no player ID, and no additional GameState field or journal is stored.
+Giver-owned attack requirements use a closed version-one fragment. Attached
+activation prohibitions add a version-two fragment carrying the attached
+relation; version one retains exactly its prior version and scope fields.
+Newly generated battlefield triggers serialize the existing current-component
+coverage marker. Previously serialized unmarked programs retain their explicit
+coverage and the ordinary runtime-trust admission contract.
+
 Tap-state events use an additive `tap_state_event_version` marker. New games
 pin its version in checkpoint and record format. Absence preserves historical
 untap-step event contexts and does not emit the expanded tap-state vocabulary.

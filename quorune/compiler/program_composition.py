@@ -11,6 +11,7 @@ from ..card_programs.admission import (
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
 from ..semantics import SemanticProgram
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 
 
 COMPOSED_SPELL_EFFECT_SEQUENCE = "composed-spell-effect-sequence-v1"
@@ -566,6 +567,8 @@ def program_from_generated_node_group(
                     kind=first.kind,
                     runtime_handler=runtime_handler_declaration,
                 ),
+                *((CURRENT_ABILITY_FRAGMENT_COVERAGE,) if first.kind=='triggered_ability'
+                    and first.active_zone=='battlefield' else ()),
                 *(
                     coverage
                     for node in nodes

@@ -836,6 +836,21 @@ boundary. The existing component registry owns that descriptor query; no
 second layer or component registry is introduced. Conditional animation,
 chosen or variable P/T, unsupported subtypes and unowned result siblings
 remain outside this production.
+Player-attached fixed characteristics bind the current reciprocal player
+attachment to a live creature query. The Aura controller stays independent.
+The closed scope optionally excludes legendary creatures and reuses the
+existing modifier and layer owners. Creature-subtype removal preserves other
+subtype families and applies after Changeling's characteristic definition.
+Prospective entry uses the same scope before as-entry abilities and enter
+triggers are considered. Counters and ordinary modifiers apply after base P/T.
+
+Player-attached attack requirements stay on the current giver and use the
+ordinary maximum-satisfaction solver. Receiver ability loss leaves the rule
+applicable, while attack restrictions, optional costs and defender choice keep
+their existing authority. Bare and compound attached declaration restrictions
+and source-owned activation prohibitions use the same giver-presence boundary.
+Granted keywords retain their ordinary removable-ability behavior.
+
 The catalog unifies discovery for ordinary Crew, Cycling, fixed Typecycling,
 fixed counter-keyword activations, and represented mana abilities without
 replacing those families' specialized execution owners or capability closure.

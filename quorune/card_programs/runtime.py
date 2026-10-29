@@ -4,7 +4,7 @@ from ..entry_copy import copiable_oracle_id
 from dataclasses import dataclass, field, replace
 from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 
-from ..attachments import attached_object_identity
+from ..attachments import attached_object_identity,current_attached_player_seat
 from ..ability_fragments import static_component_keys
 from ..continuous_effects import ContinuousEffect
 from ..continuous_conditions import (
@@ -842,6 +842,7 @@ def collect_card_program_continuous_effects(
                         from ..soulbond_state import paired_object_identity
                         paired_object = paired_object_identity(state, source)
                     context = ContinuousEffectSourceContext(
+                        enchanted_player=current_attached_player_seat(source,state.players),
                         source_object_id=source.object_id,
                         source_ref=source.ref,
                         source_controller=source.controller,

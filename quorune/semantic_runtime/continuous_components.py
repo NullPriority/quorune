@@ -139,8 +139,12 @@ class ContinuousEffectSourceContext:
     source_designations: FrozenMap = FrozenMap()
     paired_object: ContinuousObjectIdentity | None = None
     public_type_objects: tuple[ObjectQueryResult, ...] | None = None
+    enchanted_player: str | None = None
 
     def __post_init__(self) -> None:
+        if self.enchanted_player is not None and (type(self.enchanted_player) is not str
+                or not self.enchanted_player or self.enchanted_player.strip()!=self.enchanted_player):
+            raise SemanticNodeError('Enchanted-player context requires a canonical player identity')
         if self.public_type_objects is not None and (not isinstance(self.public_type_objects,tuple)
                 or any(not isinstance(row,ObjectQueryResult) for row in self.public_type_objects)):
             raise SemanticNodeError('Public type snapshots require an immutable tuple of typed object facts')
@@ -1403,6 +1407,7 @@ class ContinuousEffectComponentRegistry(
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
     from .conditional_flash import ConditionalFlashKeywordHandler
+    from .enchanted_player_characteristics import EnchantedPlayerCharacteristicsHandler
     from .defender_declarations import DefenderDeclarationPermissionHandler
     from .conditional_color_grants import ConditionalColorGrantHandler
     from .keyword_prohibitions import OpponentKeywordProhibitionHandler
@@ -1472,6 +1477,7 @@ def default_continuous_effect_component_registry(
             SourceChosenAuraProtectionHandler(),
             SoulbondPairedGrantHandler(),
             FixedCharacteristicSettingsHandler(),
+            EnchantedPlayerCharacteristicsHandler(),
             ConditionalCharacteristicSettingsHandler(),
             ConditionalCreatureTypeRemovalHandler(),
             AttachedControlHandler(),
