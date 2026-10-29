@@ -76,6 +76,8 @@ def compile_activated_ability_catalog(
 ) -> dict[str, tuple[ActivatedAbility, ...]]:
     """Return source-face keyed typed abilities for one pinned record."""
 
+    from .station_context_nodes import station_activation_catalog_source
+    station_source = station_activation_catalog_source(record)
     return {
         face_id: tuple(
             _specialize_compiled_ability(
@@ -84,7 +86,7 @@ def compile_activated_ability_catalog(
             )
             for ability in parse_activated_abilities(
                 card_name=face_name,
-                oracle_text=oracle_text,
+                oracle_text=station_source if not record.faces else oracle_text,
                 keywords=keywords,
             )
         )

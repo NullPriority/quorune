@@ -172,7 +172,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v661"
+ORACLE_COMPILER_VERSION = "oracle-ir-v662"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1025,6 +1025,7 @@ def _activated_or_fixed_event_trigger_node(
     residuals: list[OracleResidual],
     effect_template: Any,
     trigger_effect_template: Any | None = None,
+    activation_parse_line: str | None = None,
 ) -> OracleNode | None:
     from .compiler.trigger_limit_nodes import limited_trigger_node
     from .compiler.state_trigger_nodes import public_state_trigger_node
@@ -1040,6 +1041,7 @@ def _activated_or_fixed_event_trigger_node(
         return limited
     activated = activated_oracle_node(
         node_id=node_id, line=line, span=span,
+        parse_line=activation_parse_line,
         card_name=card_name, type_line=type_line,
         keywords=keywords, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
@@ -1208,6 +1210,8 @@ def _compile_face(
 
         ability_node = _activated_or_fixed_event_trigger_node(
             node_id=node_id, line=line, material_line=material_line, span=span,
+            activation_parse_line=material_line if station_context is not None
+                and any(span.line in symbol.member_lines for symbol in station_context.symbols) else None,
             card_name=face_name or record.name, type_line=type_line,
             keywords=keywords, trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,

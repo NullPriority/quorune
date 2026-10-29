@@ -7,6 +7,7 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from .dependency_gate import explicit_capabilities_gate
 from .generated_program_identity import generated_ability_id
 from .ir_model import OracleNode, SourceSpan, append_residual
+from .oracle_source_text import material_source_lines
 
 _SYMBOL = re.compile(r'^(?P<minimum>[1-9]\d*)\+\s*\|\s*(?P<body>.+)$')
 _CREATURE_BOX = re.compile(r"It's an artifact creature at (?P<minimum>[1-9]\d*)\+\.", re.I)
@@ -67,6 +68,19 @@ def _semantic_key(oracle_id, face_id, node):
     identity = generated_ability_id(kind=node.kind, face_id=face_id, line=node.span.line,
         static_declaration=bool(node.handlers or node.kind == 'keyword_ability' and node.capability_dependencies), node_id=node.node_id)
     return f'{oracle_id}:{identity}' if identity else None
+
+
+def station_activation_catalog_source(record):
+    """Give the catalog the same validated Station bodies as IR lowering."""
+    rows = tuple(material_source_lines(record.oracle_text, layout=record.layout, type_line=record.type_line))
+    normalized, context = station_source_context(record, rows)
+    if context is None:
+        return record.oracle_text
+    lines = record.oracle_text.splitlines()
+    for symbol in context.symbols:
+        _original, material, span = normalized[symbol.row]
+        lines[span.line - 1] = material
+    return '\n'.join(lines)
 
 
 def apply_station_context(*, context, oracle_id, face_id, oracle_text, material_rows, nodes,

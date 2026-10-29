@@ -677,6 +677,7 @@ def activated_oracle_node(
         Mapping[str, Any] | None,
         tuple[str, ...],
     ]],
+    parse_line: str | None = None,
 ) -> OracleNode | None:
     """Compile one complete colon-form activated-ability Oracle line."""
 
@@ -697,7 +698,7 @@ def activated_oracle_node(
         )
     abilities = parse_activated_abilities(
         card_name=card_name,
-        oracle_text=line,
+        oracle_text=line if parse_line is None else parse_line,
         keywords=keywords,
     )
     if not abilities:

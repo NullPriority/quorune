@@ -9836,6 +9836,23 @@
         "test_class_lifecycle",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "station-activated-striation-bodies",
+      "patterns": [
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/activated_ability_catalog.py",
+        "quorune/compiler/station_context_nodes.py",
+        "tests/test_station_activation*.py",
+        "tests/fixtures/station-activation-cards.json"
+      ],
+      "test_modules": [
+        "test_station_activation_compilation",
+        "test_station_activation_native",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust",
+        "test_public_quantity_mana"
+      ]
     }
   ],
   "symbol_rules": [

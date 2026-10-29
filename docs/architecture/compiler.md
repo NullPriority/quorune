@@ -2910,6 +2910,12 @@ new incarnations retain neither old counters nor derived animation.
 Source labels such as this Spacecraft share the canonical artifact-subtype
 self-entry/death binding. Existing Station activation, target, cost, APNAP,
 private-choice and result owners perform the actual transitions.
+Activated children parse the validated striation body through the ordinary
+activation parser and pinned catalog. The original complete row and span remain
+provenance; the threshold prefix never becomes an activation cost. Both catalog
+and IR lowering use the same validated body, preserving unconditional sibling
+mana abilities and the child's existing mana or stack timing. Unsupported costs,
+effects and restrictions remain residual.
 
 `compiler/leveler_context_nodes.py` recognizes only ordinary creature Leveler
 layouts with one finite `LEVEL N-M` striation followed by its contiguous

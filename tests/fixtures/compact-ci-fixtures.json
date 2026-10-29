@@ -400,6 +400,7 @@
     "tests/fixtures/static-land-animation-cards.json",
     "tests/fixtures/static-mana-spending-cards.json",
     "tests/fixtures/static-player-restriction-cards.json",
+    "tests/fixtures/station-activation-cards.json",
     "tests/fixtures/station-rules-cards.json",
     "tests/fixtures/station-symbol-cards.json",
     "tests/fixtures/storm-cards.json",
