@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 579,
+  "registry_version": 580,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -25658,6 +25658,137 @@
       "dependency_fail_closed_rationale": "The definition consumes one closed typed quantity through the shared cycle-safe layer-5 characteristic boundary and has no capability dependency.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Focused compiler and runtime mutations remove a defined field, redirect the quantity relation or layer, or expose hidden identity; exact all-zone, controller, copy, layer-ordering, projection, and replay assertions reject each survivor. Fresh native witnesses also kill omission of the shared negative-supertype producer.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "continuous.characteristics.station_symbols",
+      "version": 1,
+      "official_rules": [
+        "702.184b",
+        "721.1",
+        "721.2",
+        "721.2a",
+        "721.2b",
+        "721.2c",
+        "721.4",
+        "613.1d",
+        "613.1f",
+        "613.4b",
+        "613.6"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One or two increasing printed Station symbols with cumulative independently closed children and an explicit pinned P/T-box threshold.",
+        "inputs": [
+          "Typed source incarnation and current charge counters",
+          "Source-spanned symbol membership and fixed P/T box metadata",
+          "Existing effective static component presence"
+        ],
+        "outputs": [
+          "Ordinary source-bound type, ability and base P/T layer operations",
+          "Current conditional child ability membership"
+        ],
+        "exclusions": [
+          "Ambiguous P/T placement or malformed symbols",
+          "Unrepresented child abilities",
+          "Unowned characteristic applicability cycles",
+          "Arbitrary text-changing Station symbols"
+        ]
+      },
+      "dependencies": [],
+      "implementation_components": [
+        "quorune.station_symbol_model.StationSymbolSpec",
+        "quorune.station_symbol_model.StationSymbolsSpec",
+        "quorune.compiler.station_context_nodes.station_source_context",
+        "quorune.compiler.station_context_nodes.apply_station_context",
+        "quorune.semantic_runtime.station_symbols.StationSymbolsHandler",
+        "quorune.rules.station_symbols.compiled_station_symbols",
+        "quorune.ability_fragment_host.AbilityFragmentHostMixin._compiled_base_characteristics",
+        "quorune.ability_fragments.StaticComponentScopeSpec",
+        "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin._effective_static_component_key_map"
+      ],
+      "positive_tests": [
+        "test_station_symbols_roundtrip_reject_ambiguous_boxes_members_and_counter_facts",
+        "test_station_symbols_emit_cumulative_members_and_separate_type_ability_base_layers",
+        "test_station_threshold_predicate_mutant_is_killed",
+        "test_station_symbols_preserve_spans_and_members_without_promoting_unknown_children",
+        "test_station_symbols_verified_owner_withdrawal_blocks_whole_source",
+        "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+        "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+        "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+      ],
+      "negative_tests": [
+        "test_station_symbols_roundtrip_reject_ambiguous_boxes_members_and_counter_facts",
+        "test_station_symbols_emit_cumulative_members_and_separate_type_ability_base_layers",
+        "test_station_threshold_predicate_mutant_is_killed",
+        "test_station_symbols_preserve_spans_and_members_without_promoting_unknown_children",
+        "test_station_symbols_verified_owner_withdrawal_blocks_whole_source",
+        "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+        "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+        "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+      ],
+      "interaction_tests": [
+        "test_station_symbols_emit_cumulative_members_and_separate_type_ability_base_layers",
+        "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+        "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+        "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+      ],
+      "multiplayer_tests": [
+        "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+        "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+        "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+      ],
+      "privacy_tests": [
+        "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+        "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+        "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+      ],
+      "replay_tests": [
+        "test_actual_lumen_cumulative_anthem_animation_counter_loss_and_pending_replay",
+        "test_actual_sawship_attack_legality_changes_at_exact_station_threshold_on_cast_turn",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
+        "test_actual_clone_copies_station_symbols_without_counters_and_humility_restores_after_removal"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal of the Station-symbol owner keeps complete Station cards residual while unrelated draw remains supported. Independently compiled children keep their own dependencies.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the charge threshold is killed by explicit boundary observations before type, keyword and P/T grants. Native exact threshold actions and counter loss protect composition.",
       "blockers": [],
       "status": "trusted"
     },
@@ -59991,7 +60122,7 @@
     },
     {
       "id": "trigger.event.normalized_zone_change",
-      "version": 12,
+      "version": 13,
       "official_rules": [
         "603.2",
         "603.6",
@@ -60051,10 +60182,14 @@
       ],
       "positive_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
         "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
         "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
         "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
@@ -60079,11 +60214,15 @@
         "test_singular_token_entry_retains_unrepresented_qualifiers_and_unknown_results",
         "test_singular_token_entry_verified_zone_owner_withdrawal_preserves_unrelated_draw",
         "test_source_land_entry_predicate_uses_committed_tapped_state",
+        "test_spacecraft_self_zone_labels_share_canonical_vehicle_occurrences_without_type_predicates",
         "test_two_simultaneous_copies_use_post_event_history_characteristics"
       ],
       "negative_tests": [
         "test_action_counter_dependency_and_parser_omission_fail_closed",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
         "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
         "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
@@ -60108,11 +60247,15 @@
       ],
       "interaction_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
         "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
         "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
         "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
@@ -60145,10 +60288,14 @@
       ],
       "multiplayer_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
         "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
@@ -60164,10 +60311,14 @@
       ],
       "privacy_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
         "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
         "test_actual_wildwood_and_swarmkeeper_distinguish_simultaneous_noncreature_and_foreign_tokens_then_attack",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
@@ -60181,11 +60332,15 @@
       ],
       "replay_tests": [
         "test_actual_deathforge_targets_a_player_and_keeps_twice_the_paid_count_after_departure",
+        "test_actual_dirgecraft_apnap_sacrifices_exclude_tokens_then_station_animates",
         "test_actual_harvest_uses_artifact_departure_and_locked_aura_controller",
         "test_actual_junk_winder_affinity_two_token_targets_survive_source_bounce_and_skip_each_controller_untap",
         "test_actual_landfall_counter_enables_ior_ruin_then_source_cost_leaves_draw_pending",
         "test_actual_lightkeeper_pays_zero_or_three_and_uses_sealed_entry_count_after_source_departure",
+        "test_actual_rammer_greenhouse_sweeper_and_scanship_keep_complete_entry_results",
         "test_actual_sacrifice_cost_queues_one_counter_per_object_and_replays",
+        "test_actual_seedship_and_infinite_station_keep_threshold_attack_children_private_and_counted",
+        "test_actual_skiff_return_and_seriema_legend_search_keep_scope_then_animate",
         "test_actual_splendor_and_creature_depart_together_without_restoring_lookback_death_trigger",
         "test_actual_splendor_scopes_current_controller_suppresses_entry_and_keeps_noncreature_mana",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",

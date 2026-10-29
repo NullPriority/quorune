@@ -358,6 +358,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "continuous.characteristics.chosen_designation",
                 "continuous.characteristics.conditional_chosen_designation",
                 "continuous.characteristics.leveler_bands",
+                "continuous.characteristics.station_symbols",
                 "continuous.fixed_query_power_toughness_anthem",
                 "continuous.quantified_query_power_toughness_anthem",
                 "continuous.recipient_quantity_power_toughness_anthem",

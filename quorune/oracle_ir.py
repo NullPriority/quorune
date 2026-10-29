@@ -172,7 +172,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v660"
+ORACLE_COMPILER_VERSION = "oracle-ir-v661"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1154,6 +1154,8 @@ def _compile_face(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
     contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
+    from .compiler import station_context_nodes as station_context_owner
+    material_rows, station_context = station_context_owner.station_source_context(record, material_rows)
     from .compiler.bestow_nodes import face_has_fixed_bestow
     bestow_grant_context=source_attachment_relation is None and face_has_fixed_bestow(material_rows)
     class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=material_rows)
@@ -1356,6 +1358,9 @@ def _compile_face(
             )
         )
     resolved_nodes = _class_context.apply_class_context(context=class_context, oracle_id=record.oracle_id, face_id=face_id, material_rows=material_rows, printed_keywords=keywords, nodes=reject_cast_cost_composition(restrict_temporary_interaction_context(record, face_id, nodes, residuals), residuals), residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
+    resolved_nodes = station_context_owner.apply_station_context(context=station_context, oracle_id=record.oracle_id,
+        face_id=face_id, oracle_text=oracle_text, material_rows=material_rows, nodes=resolved_nodes,
+        residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
     return _leveler_face_ir(
         leveler_context, record.oracle_id, face_id, face_name, oracle_text, material_rows,
         keywords, resolved_nodes, residuals, capability_registry, capability_profile,

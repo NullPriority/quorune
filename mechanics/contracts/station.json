@@ -1,44 +1,160 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "station",
   "official_name": "Station",
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
-  "rule_references": ["107.1b", "122.1", "122.1a", "122.6", "602.1", "602.2", "608.2h", "614.16", "616.1", "702.184", "702.184a", "702.184b", "702.184c", "721", "721.1", "721.2", "721.2a"],
-  "glossary_references": ["station", "station card", "station symbol"],
-  "dependencies": ["activated-abilities", "continuous-effects", "cost-payment", "counters", "last-known information", "priority", "replacement-effects", "stack"],
+  "rule_references": [
+    "107.1b",
+    "122.1",
+    "122.1a",
+    "122.6",
+    "602.1",
+    "602.2",
+    "608.2h",
+    "614.16",
+    "616.1",
+    "702.184",
+    "702.184a",
+    "702.184b",
+    "702.184c",
+    "721",
+    "721.1",
+    "721.2",
+    "721.2a"
+  ],
+  "glossary_references": [
+    "station",
+    "station card",
+    "station symbol"
+  ],
+  "dependencies": [
+    "activated-abilities",
+    "continuous-effects",
+    "cost-payment",
+    "counters",
+    "last-known information",
+    "priority",
+    "replacement-effects",
+    "stack"
+  ],
   "coverage_status": "tested",
   "trust_level": "untrusted",
   "behavior": {
-    "zones": ["battlefield", "stack"],
-    "objects": ["one source-pinned permanent with ordinary printed Station", "one other untapped creature controlled by the activator", "ordinary activated-ability stack object"],
-    "events": ["activate Station", "tap the selected creature as a cost", "resolve the Station ability", "place charge counters"],
-    "state_reads": ["source controller and logical identity", "current effective creature type and exact integral power", "tap and phasing state", "predeparture last-known power"],
-    "state_writes": ["canonical tap-state cost commitment", "ordinary stack placement", "canonical replacement-aware charge-counter placement"],
-    "costs": ["tap exactly one other untapped creature you control"],
-    "timing": ["only during the activator's main phase while the stack is empty"],
+    "zones": [
+      "battlefield",
+      "stack"
+    ],
+    "objects": [
+      "one source-pinned permanent with ordinary printed Station",
+      "one other untapped creature controlled by the activator",
+      "ordinary activated-ability stack object"
+    ],
+    "events": [
+      "activate Station",
+      "tap the selected creature as a cost",
+      "resolve the Station ability",
+      "place charge counters"
+    ],
+    "state_reads": [
+      "source controller and logical identity",
+      "current effective creature type and exact integral power",
+      "tap and phasing state",
+      "predeparture last-known power"
+    ],
+    "state_writes": [
+      "canonical tap-state cost commitment",
+      "ordinary stack placement",
+      "canonical replacement-aware charge-counter placement"
+    ],
+    "costs": [
+      "tap exactly one other untapped creature you control"
+    ],
+    "timing": [
+      "only during the activator's main phase while the stack is empty"
+    ],
     "targets": [],
-    "choices": ["the controller selects one current payable creature", "the affected permanent's controller orders competing represented counter replacements"],
-    "hidden_information": ["all represented source, cost, and counter-replacement objects are public battlefield permanents"],
-    "apnap": ["ordinary priority and stack ordering apply; simultaneous counter replacement events retain canonical APNAP order"],
-    "layers": ["the cost candidate and resolution quantity read the shared current characteristic evaluation; Station-symbol layer behavior is outside this contract"],
-    "replacement_effects": ["positive Station results enter the canonical effect-generated counter quantity replacement transaction"],
-    "copy": ["only a source-pinned printed descriptor in the current effective activated-ability view is executable"],
-    "control_change": ["only the current source controller may activate and only a creature they currently control may pay; source control change after activation does not change the pinned source incarnation"],
-    "zone_change": ["the source result is pinned to the activating incarnation; the tapped creature's immediate predeparture power is captured before a battlefield zone mutation"],
-    "source_leaves": ["the ability remains on the stack, but an absent or returned source receives no counters; a departed cost creature contributes pinned last-known power"]
+    "choices": [
+      "the controller selects one current payable creature",
+      "the affected permanent's controller orders competing represented counter replacements"
+    ],
+    "hidden_information": [
+      "all represented source, cost, and counter-replacement objects are public battlefield permanents"
+    ],
+    "apnap": [
+      "ordinary priority and stack ordering apply; simultaneous counter replacement events retain canonical APNAP order"
+    ],
+    "layers": [
+      "the cost candidate and resolution quantity read the shared current characteristic evaluation; Station-symbol layer behavior is outside this contract"
+    ],
+    "replacement_effects": [
+      "positive Station results enter the canonical effect-generated counter quantity replacement transaction"
+    ],
+    "copy": [
+      "only a source-pinned printed descriptor in the current effective activated-ability view is executable"
+    ],
+    "control_change": [
+      "only the current source controller may activate and only a creature they currently control may pay; source control change after activation does not change the pinned source incarnation"
+    ],
+    "zone_change": [
+      "the source result is pinned to the activating incarnation; the tapped creature's immediate predeparture power is captured before a battlefield zone mutation"
+    ],
+    "source_leaves": [
+      "the ability remains on the stack, but an absent or returned source receives no counters; a departed cost creature contributes pinned last-known power"
+    ]
   },
-  "variants": ["Spacecraft and Planet sources", "summoning-sick cost creatures", "current power changes after activation", "cost-creature departure", "negative power", "source departure and return", "counter quantity replacement"],
-  "witness_cards": [{"name": "Wedgelight Rammer", "oracle_id": "03259ab0-caa8-4620-b070-127e2c712252"}],
+  "variants": [
+    "Spacecraft and Planet sources",
+    "summoning-sick cost creatures",
+    "current power changes after activation",
+    "cost-creature departure",
+    "negative power",
+    "source departure and return",
+    "counter quantity replacement"
+  ],
+  "witness_cards": [
+    {
+      "name": "Wedgelight Rammer",
+      "oracle_id": "03259ab0-caa8-4620-b070-127e2c712252"
+    }
+  ],
   "rulings": [],
-  "test_ids": ["test_ordinary_station_descriptor_is_strict_and_round_trips", "test_ordinary_station_compiles_source_spanned_activation", "test_generated_station_program_is_capability_closed", "test_unsupported_station_families_remain_precise_residuals", "test_station_dependency_mutation_fails_closed", "test_station_compiler_mutant_is_killed", "test_station_taps_exact_creature_and_places_current_power", "test_station_is_available_only_at_sorcery_timing", "test_station_rejects_invalid_cost_objects_and_rolls_back", "test_unresolved_station_power_fails_closed", "test_station_uses_resolution_and_last_known_power", "test_station_source_departure_skips_returned_object", "test_current_effective_station_ability_query_hides_removed_activation", "test_station_lki_capture_rolls_back_before_zone_mutation", "test_station_quantity_replacement_suspends_and_replays"],
+  "test_ids": [
+    "test_ordinary_station_descriptor_is_strict_and_round_trips",
+    "test_ordinary_station_compiles_source_spanned_activation",
+    "test_generated_station_program_is_capability_closed",
+    "test_unsupported_station_families_remain_precise_residuals",
+    "test_station_dependency_mutation_fails_closed",
+    "test_station_compiler_mutant_is_killed",
+    "test_station_taps_exact_creature_and_places_current_power",
+    "test_station_is_available_only_at_sorcery_timing",
+    "test_station_rejects_invalid_cost_objects_and_rolls_back",
+    "test_unresolved_station_power_fails_closed",
+    "test_station_uses_resolution_and_last_known_power",
+    "test_station_source_departure_skips_returned_object",
+    "test_current_effective_station_ability_query_hides_removed_activation",
+    "test_station_lki_capture_rolls_back_before_zone_mutation",
+    "test_station_quantity_replacement_suspends_and_replays"
+  ],
   "implementation": {
     "component": "OrdinaryStationAbilitySpec, StationCostPlan, StationPowerReference, OrdinaryStationAbilityHandler, current activation query/commit, rollback-safe zone-transition LKI, tap-state owner, and canonical counter-placement owner",
     "version": "typed-ordinary-station-activation-v1",
-    "capability_ids": ["counter.producer.station"],
+    "capability_ids": [
+      "counter.producer.station"
+    ],
     "supported_slice": "Printed ordinary Station activation using one other untapped creature's current or predeparture exact power, without Station-symbol or result-modification dependencies."
   },
-  "known_blockers": ["Station symbol threshold and characteristic behavior from CR 721", "Tapestry Warden and other CR 702.184c characteristic substitutions", "cost-creature phasing before resolution", "type-changing interactions that remove creature power before resolution", "unresolved or nonintegral power", "alternative or additional Station costs", "counter prevention or movement", "granted, copied, removed, and text-changing Station outside the current typed activated-ability query", "aggregate Station coverage remains incomplete"],
+  "known_blockers": [
+    "Station symbols are separately owned by the bounded CR721 Station Cards contract; this activation capability does not certify them",
+    "Tapestry Warden and other CR 702.184c characteristic substitutions",
+    "cost-creature phasing before resolution",
+    "type-changing interactions that remove creature power before resolution",
+    "unresolved or nonintegral power",
+    "alternative or additional Station costs",
+    "counter prevention or movement",
+    "granted, copied, removed, and text-changing Station outside the current typed activated-ability query",
+    "aggregate Station coverage remains incomplete"
+  ],
   "review_status": "reviewed"
 }

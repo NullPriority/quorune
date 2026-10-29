@@ -299,8 +299,8 @@ _SUBTYPE_ENTRY_TRIGGER = re.compile(
     r"(?: (?P<relation>you control|an opponent controls|you don't control))? "
     r"enters, (?P<body>.+)$",
 )
-_SOURCE_VEHICLE_ZONE_TRIGGER = re.compile(
-    r"^When this Vehicle (?P<transition>enters|dies), (?P<body>.+)$",
+_SOURCE_ARTIFACT_SUBTYPE_ZONE_TRIGGER = re.compile(
+    r"^When this (?:Vehicle|Spacecraft) (?P<transition>enters|dies), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _SOURCE_GRAVEYARD_TRIGGER = re.compile(
@@ -963,7 +963,7 @@ def _zone_change_trigger_binding(
 def _source_event_trigger_binding(
     material_line: str,
 ) -> FixedCounterTriggerBinding | None:
-    vehicle = _SOURCE_VEHICLE_ZONE_TRIGGER.fullmatch(material_line)
+    vehicle = _SOURCE_ARTIFACT_SUBTYPE_ZONE_TRIGGER.fullmatch(material_line)
     if vehicle is not None:
         transition = vehicle.group("transition").casefold()
         return FixedCounterTriggerBinding(

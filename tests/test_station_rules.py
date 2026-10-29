@@ -259,7 +259,7 @@ class StationCompilerTests(unittest.TestCase):
 
         real_ir, real_node = self.station_node()
         self.assertTrue(real_node.exact)
-        self.assertTrue(real_ir.material_residuals)
+        self.assertEqual('exact', real_ir.status, real_ir.material_residuals)
         capability = self.capabilities.capability(STATION_CAPABILITY)
         assert capability is not None
         exclusions = " ".join(capability["applicability"]["exclusions"])

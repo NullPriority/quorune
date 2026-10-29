@@ -7304,6 +7304,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/station_context_nodes.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/station_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -15896,6 +15911,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/station_symbols.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/surveil_capability_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -19807,6 +19836,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/station_symbols.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/subtype_composite_grants.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -20484,6 +20528,18 @@
         "domain",
         "rules",
         "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/station_symbol_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
       ],
       "game_state_access": "none",
       "card_specificity_policy": "generic_no_growth",
@@ -21515,5 +21571,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "d7399a1a4d24b986a49cf126954b80bc78e15582cf156e0c706fde40997a3f5c"
+  "fingerprint": "ec9c87fbe5429fa4d802a54c7b199b465a1efaa1595079316c6cd7bcad0c582f"
 }

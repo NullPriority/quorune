@@ -88,6 +88,11 @@ class AbilityFragmentHostMixin:
         error_type: type[Exception] | None = None,
     ) -> dict[str, Any]:
         base = base_card_characteristics(card, record)
+        from .rules.station_symbols import compiled_station_symbols
+        if compiled_station_symbols(self, card) is not None:
+            # CR721.2: the P/T box belongs to the symbol's static effect,
+            # rather than unconditional printed characteristics.
+            base.update(power=None, toughness=None)
         from .preparation import compiled_prepare_spell
         from .preparation_model import PREPARE_SPELL_FIELD
         prepare_spell=compiled_prepare_spell(self,card)

@@ -9813,6 +9813,29 @@
         "test_card_program_trust",
         "test_casting_payment_keywords"
       ]
+    },
+    {
+      "id": "station-symbol-scoped-characteristics",
+      "patterns": [
+        "quorune/station_symbol_model.py",
+        "quorune/rules/station_symbols.py",
+        "quorune/semantic_runtime/station_symbols.py",
+        "quorune/compiler/station_context_nodes.py",
+        "quorune/ability_fragment_host.py",
+        "tests/test_station_symbol*.py",
+        "tests/fixtures/station-symbol-cards.json"
+      ],
+      "test_modules": [
+        "test_station_symbols",
+        "test_station_symbol_native",
+        "test_station_symbol_entries",
+        "test_station_symbol_choices",
+        "test_station_symbol_layers",
+        "test_station_rules",
+        "test_leveler_bands",
+        "test_class_lifecycle",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

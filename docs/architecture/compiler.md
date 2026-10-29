@@ -2896,6 +2896,21 @@ characteristic-defining or otherwise dynamic counts, and copy, face, text, or
 type-changing interactions remain residual until a cycle-safe zone-
 characteristic boundary owns them.
 
+`compiler/station_context_nodes.py` binds one or two increasing positive Station symbols
+to independently compiled children. Thresholds accumulate; the explicit pinned
+export annotation locates the final fixed power/toughness box. Ambiguous box
+placement, malformed symbols and unknown children remain residual.
+`StationSymbolsHandler` uses current charge counters and existing source
+incarnations, component scopes and layers. A P/T-bearing symbol adds creature
+in layer four, grants keywords and child membership in layer six, and sets base
+P/T in layer seven b. Its effect retains participation under CR 613.6.
+Intrinsic compiled metadata keeps the conditional P/T box out of unconditional
+base values, including outside the battlefield. Copies use their own counters;
+new incarnations retain neither old counters nor derived animation.
+Source labels such as this Spacecraft share the canonical artifact-subtype
+self-entry/death binding. Existing Station activation, target, cost, APNAP,
+private-choice and result owners perform the actual transitions.
+
 `compiler/leveler_context_nodes.py` recognizes only ordinary creature Leveler
 layouts with one finite `LEVEL N-M` striation followed by its contiguous
 `LEVEL N+` striation and fixed nonnegative power/toughness in both. It combines

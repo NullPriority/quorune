@@ -1406,6 +1406,7 @@ class ContinuousEffectComponentRegistry(
 @lru_cache(maxsize=1)
 def default_continuous_effect_component_registry(
 ) -> ContinuousEffectComponentRegistry:
+    from .station_symbols import StationSymbolsHandler
     from .conditional_flash import ConditionalFlashKeywordHandler
     from .negative_keyword_grants import DisjointNegativeKeywordGrantHandler
     from .enchanted_player_characteristics import EnchantedPlayerCharacteristicsHandler
@@ -1457,6 +1458,7 @@ def default_continuous_effect_component_registry(
             FixedQueryProtectionGrantHandler(),
             FixedQueryCharacteristicProtectionGrantHandler(),
             LevelerBandsHandler(),
+            StationSymbolsHandler(),
             FixedPublicStateCharacteristicsHandler(),
             FixedPublicStateGrantedAbilityHandler(),
             ConditionalColorGrantHandler(),
