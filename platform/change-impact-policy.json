@@ -8903,6 +8903,35 @@
         "test_card_program_trust",
         "test_query_power_toughness_definitions"
       ]
+    },
+    {
+      "id": "attached-untap-restraints",
+      "patterns": [
+        "quorune/untap_restraint_model.py",
+        "quorune/compiler/attached_untap_restraints.py",
+        "quorune/rules/untap_permissions.py",
+        "quorune/semantic_runtime/untap_steps.py",
+        "quorune/tap_state.py",
+        "quorune/untap_step.py",
+        "quorune/rules/activation/availability.py",
+        "quorune/rules/activation/proposal.py",
+        "quorune/rules/action_catalog.py",
+        "quorune/characteristic_read_frames.py",
+        "tests/test_attached_untap_restraints.py",
+        "tests/fixtures/attached-untap-restraint-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_untap_restraints",
+        "test_fixed_untap_participation",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules",
+        "test_targeted_tap_state_effect_clauses",
+        "test_combined_tap_activation_costs",
+        "test_card_program_trust",
+        "test_typed_grant_carriers",
+        "test_static_characteristic_settings",
+        "test_characteristic_read_frames"
+      ]
     }
   ],
   "symbol_rules": [

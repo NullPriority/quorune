@@ -2441,6 +2441,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/attached_untap_restraints.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/backup_nodes.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -15541,6 +15556,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/untap_permissions.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/waterbend_payments.py",
       "layer": "rules",
       "owning_subsystem": "casting_activation_and_costs",
@@ -20270,6 +20299,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/untap_restraint_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/untap_selection.py",
       "layer": "rules",
       "owning_subsystem": "untap_step",
@@ -20700,5 +20741,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "9b800fd99f02dc82b3eb80698a3d9c845a2f5028ab9466c8fe5e76d006b1baa4"
+  "fingerprint": "ef732791e99a0aafa921156fb0f2f4ba203e98248d893e0d575218d0491de19b"
 }

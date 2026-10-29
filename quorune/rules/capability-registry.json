@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 537,
+  "registry_version": 538,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -63835,6 +63835,108 @@
       "dependency_fail_closed_rationale": "Verified registry/evidence withdrawal removes replacement, composite or inner mana authority with unrelated Monarch positive control. Runtime binding requires the registered version2 owner.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Omitting correlated subtype cleanup is killed by the original Moon creature-to-land witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "untap.permission.attached_static_restraint",
+      "version": 1,
+      "official_rules": [
+        "101.2",
+        "107.6",
+        "122.1d",
+        "502.3",
+        "701.26b",
+        "611.3a",
+        "611.3b"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Current attached giver-owned static restraints prohibit controller-step untapping or all untap events. Absolute prohibitions govern manual effects and untap-symbol costs before stun counters; compound ability removal stays separately owned.",
+        "inputs": [
+          "Current phased-in attachment incarnation",
+          "Current giver ability presence",
+          "Closed step-only or absolute rule",
+          "Shared cost and tap-state owners"
+        ],
+        "outputs": [
+          "Current untap-step participation",
+          "Shared offered/accepted untap-cost legality",
+          "No prohibited transition or stun consumption",
+          "Source removal restores ordinary untapping"
+        ],
+        "exclusions": [
+          "Conditional or duration-qualified restraints",
+          "Chosen or dynamic subjects",
+          "Arbitrary untap replacements"
+        ]
+      },
+      "dependencies": [
+        "permanent.untap.effect",
+        "untap.step.static_participation"
+      ],
+      "implementation_components": [
+        "quorune.compiler.attached_untap_restraints.attached_untap_restraint_node",
+        "quorune.untap_restraint_model.AttachedUntapRestraintSpec",
+        "quorune.semantic_runtime.ability_fragments.AttachedUntapRestraintHandler",
+        "quorune.rules.untap_permissions.untap_is_permitted",
+        "quorune.rules.untap_permissions.attached_restraint_step_participations",
+        "quorune.tap_state.untap_permanent",
+        "quorune.rules.activation.availability._source_cost_availability",
+        "quorune.rules.activation.proposal._validate_activation_timing_costs"
+      ],
+      "positive_tests": [
+        "test_actual_frozen_blocks_effect_and_physical_step_before_stun_until_source_leaves",
+        "test_actual_later_mantle_grant_obeys_shared_untap_cost_permission_and_atomic_rejection",
+        "test_actual_step_only_auras_block_controller_step_but_allow_manual_untapping",
+        "test_closed_fragment_codec_and_legacy_descriptor_reject_unknown_fields",
+        "test_complete_spanned_compound_clauses_have_separate_typed_owners",
+        "test_current_giver_and_attachment_presence_govern_absolute_any_turn_participation"
+      ],
+      "negative_tests": [
+        "test_actual_frozen_blocks_effect_and_physical_step_before_stun_until_source_leaves",
+        "test_actual_later_mantle_grant_obeys_shared_untap_cost_permission_and_atomic_rejection",
+        "test_actual_step_only_auras_block_controller_step_but_allow_manual_untapping",
+        "test_closed_fragment_codec_and_legacy_descriptor_reject_unknown_fields",
+        "test_complete_spanned_compound_clauses_have_separate_typed_owners",
+        "test_current_giver_and_attachment_presence_govern_absolute_any_turn_participation",
+        "test_runtime_restraint_owner_cannot_be_omitted",
+        "test_verified_rule_characteristic_and_step_withdrawals_fail_closed"
+      ],
+      "interaction_tests": [
+        "test_actual_frozen_blocks_effect_and_physical_step_before_stun_until_source_leaves",
+        "test_actual_later_mantle_grant_obeys_shared_untap_cost_permission_and_atomic_rejection",
+        "test_actual_step_only_auras_block_controller_step_but_allow_manual_untapping"
+      ],
+      "multiplayer_tests": [
+        "test_actual_frozen_blocks_effect_and_physical_step_before_stun_until_source_leaves",
+        "test_actual_later_mantle_grant_obeys_shared_untap_cost_permission_and_atomic_rejection",
+        "test_actual_step_only_auras_block_controller_step_but_allow_manual_untapping"
+      ],
+      "privacy_tests": [
+        "test_actual_frozen_blocks_effect_and_physical_step_before_stun_until_source_leaves",
+        "test_actual_step_only_auras_block_controller_step_but_allow_manual_untapping"
+      ],
+      "replay_tests": [
+        "test_actual_frozen_blocks_effect_and_physical_step_before_stun_until_source_leaves",
+        "test_actual_later_mantle_grant_obeys_shared_untap_cost_permission_and_atomic_rejection",
+        "test_actual_step_only_auras_block_controller_step_but_allow_manual_untapping"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Evidence-verified withdrawal removes rule, step or characteristic owner with unrelated Monarch control; runtime descriptors require their independent owner.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the shared absolute untap permission violates the bounded original Frozen in Ice witness.",
       "blockers": [],
       "status": "trusted"
     }

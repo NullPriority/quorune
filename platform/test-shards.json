@@ -78,6 +78,7 @@
       "test_amass_rules",
       "test_announced_activation_x",
       "test_announced_hand_discard_costs",
+      "test_attached_untap_restraints",
       "test_backup_rules",
       "test_banding",
       "test_batch_interaction_recovery",

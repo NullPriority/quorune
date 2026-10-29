@@ -56,7 +56,7 @@ def _fragment_descriptor_requirements(value):
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
-        if value.get('kind') == 'granted_activated':
+        if value.get('kind') in {'granted_activated','attached_untap_restraint'}:
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)

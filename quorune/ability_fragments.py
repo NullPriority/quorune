@@ -448,6 +448,7 @@ class ProtectionSpec:
 
 
 from .granted_activation_model import GrantedActivatedAbilitySpec
+from .untap_restraint_model import AttachedUntapRestraintSpec
 
 
 def _nonempty_string(value: Any, *, field: str) -> str:
@@ -748,6 +749,7 @@ StaticAbilityFragment: TypeAlias = (
     | LinkedGraveyardCreatureEnchantSpec
     | ProtectionSpec
     | GrantedActivatedAbilitySpec
+    | AttachedUntapRestraintSpec
     | GrantedTriggeredAbilitySpec
     | CombatKeywordTriggerSpec
     | DamageKeywordTriggerSpec
@@ -795,6 +797,8 @@ def ability_fragment_to_dict(
         kind = "protection"
     elif isinstance(fragment, GrantedActivatedAbilitySpec):
         kind = "granted_activated"
+    elif isinstance(fragment, AttachedUntapRestraintSpec):
+        kind = 'attached_untap_restraint'
     elif isinstance(fragment, GrantedTriggeredAbilitySpec):
         kind = "granted_triggered"
     elif isinstance(fragment, CombatKeywordTriggerSpec):
@@ -887,6 +891,8 @@ def ability_fragment_from_dict(
         return ProtectionSpec.from_dict(value["value"])
     if value["kind"] == "granted_activated":
         return GrantedActivatedAbilitySpec.from_dict(value["value"])
+    if value['kind']=='attached_untap_restraint':
+        return AttachedUntapRestraintSpec.from_dict(value['value'])
     if value["kind"] == "granted_triggered":
         return GrantedTriggeredAbilitySpec.from_dict(value["value"])
     if value["kind"] == "combat_keyword_trigger":
@@ -1005,6 +1011,7 @@ def canonical_ability_fragments(
                 LinkedGraveyardCreatureEnchantSpec,
                 ProtectionSpec,
                 GrantedActivatedAbilitySpec,
+                AttachedUntapRestraintSpec,
                 GrantedTriggeredAbilitySpec,
                 CombatKeywordTriggerSpec,
                 DamageKeywordTriggerSpec,
@@ -1415,6 +1422,7 @@ __all__ = [
     "DeclarationRequirementTemplate",
     "DeclarationRestrictionTemplate",
     "GrantedActivatedAbilitySpec",
+    "AttachedUntapRestraintSpec",
     "GrantedTriggeredAbilitySpec",
     "PartnerWithSpec",
     "ActivationProhibitionSpec",

@@ -412,6 +412,13 @@ Turn rollover and checkpoint hydration preserve the chosen mode. A historical
 record with incompatible runtime trust provenance is explicitly rejected,
 not silently recompiled with new predicates.
 
+Attached untap restraints use version-one typed ability fragments with a
+closed mode and permanent-type subject. Current giver presence and attachment
+determine their applicability. They add no GameState journal or record marker;
+ordinary trusted program registration reproduces step and direct-cost checks.
+The existing untap-step descriptor does not admit the new internal any-turn
+participation relation.
+
 Tap-state events use an additive `tap_state_event_version` marker. New games
 pin its version in checkpoint and record format. Absence preserves historical
 untap-step event contexts and does not emit the expanded tap-state vocabulary.

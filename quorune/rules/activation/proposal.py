@@ -231,6 +231,10 @@ def _validate_activation_timing_costs(
             status="unpayable",
             reason="untap_cost_unpayable",
         )
+    if ability.untap_source:
+        from ..untap_permissions import untap_is_permitted
+        if not untap_is_permitted(host,source):
+            raise ActivationProposalError('An absolute rule prohibits this untap cost',status='unpayable',reason='untap_cost_prohibited')
 
 
 def _creature_power_damage_context(

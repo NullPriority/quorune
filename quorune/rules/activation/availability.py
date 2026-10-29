@@ -217,6 +217,9 @@ def _source_cost_availability(
         or int(card.counters.get("stun", 0)) > 0
     ):
         return "unavailable", "untap_cost_unavailable"
+    if ability.untap_source:
+        from ..untap_permissions import untap_is_permitted
+        if not untap_is_permitted(host,card):return 'unavailable','untap_cost_prohibited'
     if (
         (ability.tap_source or ability.untap_source)
         and zone == "battlefield"

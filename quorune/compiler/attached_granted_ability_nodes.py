@@ -622,6 +622,10 @@ def compile_keyword_or_attached_grant_nodes(
     )
     if typed_token_nodes is not None:
         return typed_token_nodes
+    from .attached_untap_restraints import attached_untap_restraint_node
+    restraint=attached_untap_restraint_node(node_id=node_id,line=line,material_line=material_line,span=span,
+        source_name=source_name,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if restraint is not None:return (restraint,)
     keyword_nodes = keyword_node_compiler(
         record=record, face_id=face_id,
         node_id=node_id, line=line, material_line=material_line,

@@ -28,6 +28,7 @@ class UntapSubjectRelation(str, Enum):
 
 
 class UntapTurnRelation(str, Enum):
+    ANY = 'any'
     SUBJECT_CONTROLLER = "subject_controller"
     OTHER_PLAYER = "other_player"
 
@@ -179,6 +180,7 @@ def _turn_matches(
     row: ObjectQueryResult,
     active_player: str,
 ) -> bool:
+    if participation.turn_relation is UntapTurnRelation.ANY:return True
     if participation.turn_relation is UntapTurnRelation.SUBJECT_CONTROLLER:
         return row.controller == active_player
     return (

@@ -350,6 +350,13 @@ child cannot advertise an activation through its intrinsic descriptor.
 
 `compiler/backup_nodes.py` binds each fixed Backup instance to the complete
 printed ability bundle below it after the face's ordinary nodes are compiled.
+Complete attached ability-removal and untap-restraint clauses lower to separate
+typed descriptors on one source-spanned static node. The restraint descriptor
+distinguishes controller-step restrictions from absolute untap prohibitions;
+it does not grant a removable ability to the affected object. Unknown subjects,
+durations and conditions remain residual. The legacy untap-step descriptor
+retains its closed turn relations.
+
 Keywords and typed declaration fragments retain their owners; activated and
 triggered abilities use independent granted child programs. Unsupported
 downstream text keeps the complete Backup production residual. Copies entering

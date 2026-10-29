@@ -150,6 +150,8 @@ class StaticUntapStepParticipationHandler:
             {"turn_relation", "source_state"},
             field="untap-step condition",
         )
+        if condition['turn_relation']=='any':
+            raise SemanticNodeError('Historical step descriptors retain their original turn relations')
         source_state = condition["source_state"]
         if type(source_state) is not str or source_state not in _SOURCE_STATES:
             raise SemanticNodeError(
@@ -403,6 +405,8 @@ def collect_untap_step_participations(
                     )
                 )
     participations.extend(attached_activation_untap_participations(host))
+    from ..rules.untap_permissions import attached_restraint_step_participations
+    participations.extend(attached_restraint_step_participations(host))
     return tuple(
         sorted(
             participations,

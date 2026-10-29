@@ -3,11 +3,30 @@
 import unittest
 import gc
 import weakref
+from types import SimpleNamespace
+from unittest.mock import patch
 
 from quorune.characteristic_read_frames import characteristic_read_frame, memoized_characteristic_read
 
 
 class CharacteristicReadFrameTests(unittest.TestCase):
+    def test_priority_catalog_reuses_only_its_current_pure_read_and_ends_before_mutation(self):
+        import quorune.rules.action_catalog as catalog
+        host=SimpleNamespace(state=SimpleNamespace());value={'power':1};calls=[]
+        def read():calls.append(value['power']);return dict(value)
+        def offers(*_args):
+            first=memoized_characteristic_read(host,'current-characteristic',read)
+            second=memoized_characteristic_read(host,'current-characteristic',read)
+            self.assertEqual(first,second);return [],[],[]
+        def abilities(*_args):offers();return [],[],[],[]
+        with patch.object(catalog,'_cast_offers',side_effect=offers),patch.object(catalog,'_land_offers',return_value=([],[])),\
+                patch.object(catalog,'_ability_offers',side_effect=abilities),patch.object(catalog,'_turn_face_up_offers',return_value=([],[])),\
+                patch.object(catalog,'_suspend_offers',return_value=([],[])),patch.object(catalog,'_staged_cast_offers',return_value=([],[])),\
+                patch.object(catalog,'priority_actions_with_mana_undo',return_value=[]),patch.object(catalog,'_concede_offer',return_value={'id':'concede'}):
+            expected=catalog.build_priority_action_catalog.__wrapped__(host,'A');self.assertEqual([1,1,1,1],calls)
+            calls.clear();self.assertEqual(expected,catalog.build_priority_action_catalog(host,'A'));self.assertEqual([1],calls)
+            value['power']=4;catalog.build_priority_action_catalog(host,'A');self.assertEqual([1,4],calls)
+
     def test_prospective_identity_cannot_be_reused_inside_a_frame_and_is_released_afterward(self):
         class Prospective:
             pass

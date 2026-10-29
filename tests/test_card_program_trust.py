@@ -249,6 +249,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.conditional_keyword",
                 "ability.static.declaration_cost",
                 "ability.static.declaration_requirement",
+                "ability.static.attached_untap_restraint",
                 "ability.static.declaration_restriction",
                 "ability.static.declaration_restriction_component",
                 "ability.static.landwalk_block_permission",

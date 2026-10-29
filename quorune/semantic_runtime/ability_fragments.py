@@ -39,6 +39,7 @@ from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY,
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER
 from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER
 from ..umbra_armor_model import UmbraArmorSpec, UMBRA_ARMOR_FRAGMENT_CAPABILITY, UMBRA_ARMOR_HANDLER
+from ..untap_restraint_model import AttachedUntapRestraintSpec,UNTAP_RESTRAINT_CAPABILITY,UNTAP_RESTRAINT_HANDLER
 from ..rules.capabilities import load_default_capability_registry
 from ..trigger_participation import TriggerMultiplierSpec, WardSpec
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -444,6 +445,18 @@ class DeclarationRestrictionAbilityFragmentHandler:
     ) -> tuple[StaticAbilityFragment, ...]:
         del context
         return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True,slots=True)
+class AttachedUntapRestraintHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id:str=UNTAP_RESTRAINT_HANDLER
+    family:str='ability.static.attached_untap_restraint'
+    event:str='characteristics.evaluate'
+    rule_references:tuple[str,...]=('101.2','502.3','701.26b','611.3a','611.3b')
+    capability_dependencies:tuple[str,...]=(UNTAP_RESTRAINT_CAPABILITY,)
+
+    def validate(self,descriptor):
+        return _fragment(descriptor,handler_id=self.handler_id,event=self.event,expected_type=AttachedUntapRestraintSpec)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1395,6 +1408,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             ToughnessAssignmentFragmentHandler(),
             UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
+            AttachedUntapRestraintHandler(),
             DeclarationRequirementComponentHandler(),
             DeclarationRestrictionAbilityFragmentHandler(),
             DeclarationRestrictionComponentHandler(),

@@ -159,6 +159,16 @@ permissions cause one untap attempt. An own-step-only prohibition does not
 block that additional untap. General prohibitions and stun replacement still
 apply, and resulting triggers wait for upkeep and ordinary APNAP placement.
 
+Attached untap restraints remain abilities of their current giver. The step
+planner and direct untap owner read the same typed current attachment rule.
+A controller-step restraint permits ordinary untap effects outside that step;
+an absolute restraint also prevents additional untap attempts and paying an
+untap-symbol cost. Both cost availability and proposal validation use the
+shared permission query. A prohibited attempt leaves stun counters untouched.
+Suppressing or removing the giver ends its rule, while removing the recipient's
+abilities does not. Reverting a mana operation preserves the existing undo
+contract without creating an untap event.
+
 Ordinary Morph, Megamorph and Disguise turn-up offers keep their canonical
 unsuffixed action identity when acceptance reads the printed method from the
 offer payload. Manifested permanents expose distinct suffixed method choices.
@@ -1178,7 +1188,10 @@ frame. Host, object identity, layer boundary and face/applicability flags
 separate its keys. Returned data is copied, prospective identities stay alive
 for the frame, and in-progress reads keep their existing recursion behavior.
 Leaving the frame discards the cache, so the next command or mutation reads
-current state. The pure legendary-permanent scan and read-only mana-source
+current state. One complete priority action catalog shares that same bounded
+frame across its pure casting and activation offers, then ends the frame before
+accepting a command or paying a cost. Existing target-candidate telemetry still
+counts discovery work. The pure legendary-permanent scan and read-only mana-source
 discovery share this frame; payment starts after discovery returns. Battle
 protector repair reads types through the established layer-5 query edge.
 Ordinary and alternative activation prices query a legendary-creature discount
