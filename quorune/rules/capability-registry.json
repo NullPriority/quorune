@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 587,
+  "registry_version": 590,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -6314,6 +6314,152 @@
       "status": "trusted"
     },
     {
+      "id": "casting.additional_cost.bargain",
+      "version": 1,
+      "official_rules": [
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.21a",
+        "702.166a",
+        "702.166b",
+        "702.166c",
+        "702.166d",
+        "607.1",
+        "400.7",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One printed optional Bargain on a complete normal spell, choosing one current controlled artifact/enchantment/token sacrifice and retaining its linked declaration for represented results.",
+        "inputs": [
+          "Complete source-spanned declaration",
+          "Current controlled permanent predicates",
+          "Original instance-linked declared choice and entry occurrence"
+        ],
+        "outputs": [
+          "Ordinary optional zone-cost option",
+          "Versioned declared-cost facts",
+          "Independently closed linked ordinary results"
+        ],
+        "exclusions": [
+          "Multiple or granted instances",
+          "Unrepresented conditional announcement targets",
+          "Unknown ordinary bodies or mixed consuming costs",
+          "Unrepresented source layouts"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.permanent_union",
+        "casting.additional_cost.declared_instance"
+      ],
+      "implementation_components": [
+        "quorune.bargain_model.FixedBargainSpec",
+        "quorune.compiler.bargain_nodes.printed_bargain_spec",
+        "quorune.compiler.bargain_nodes.bargain_entry_trigger_node",
+        "quorune.compiler.bargain_conditions.bargain_same_target_template",
+        "quorune.semantic_runtime.bargain.BargainCostHandler",
+        "quorune.rules.casting.bargain_costs.expand_bargain_options",
+        "quorune.rules.casting.bargain_costs.finalize_bargain_option",
+        "quorune.rules.casting.bargain_costs.declared_bargain_context"
+      ],
+      "positive_tests": [
+        "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+        "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+        "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+        "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+        "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+        "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+        "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw",
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "negative_tests": [
+        "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+        "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+        "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+        "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+        "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+        "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+        "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "multiplayer_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "privacy_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "replay_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawal of Bargain, union-price or declared-instance authority rejects complete programs; unrelated draw remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Conjoining artifact/enchantment and token predicates loses independently legal artifact/enchantment prices; admission matrix rejects this mutation.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
       "id": "casting.additional_cost.casualty_fixed",
       "version": 1,
       "official_rules": [
@@ -6711,6 +6857,151 @@
       "dependency_fail_closed_rationale": "Withdrawn Casualty, power-price or copy authority rejects the source while plain draw remains exact.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Weakening the power threshold admits a below-threshold creature and fails the independent candidate witness.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.declared_instance",
+      "version": 1,
+      "official_rules": [
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.21a",
+        "702.166a",
+        "702.166b",
+        "702.166c",
+        "702.166d",
+        "607.1",
+        "400.7",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "Immutable source-local optional additional-cost declarations, retained through spell copies and original entry occurrences; linked fixed result branches through existing condition coordination.",
+        "inputs": [
+          "Complete source-spanned declaration",
+          "Current controlled permanent predicates",
+          "Original instance-linked declared choice and entry occurrence"
+        ],
+        "outputs": [
+          "Ordinary optional zone-cost option",
+          "Versioned declared-cost facts",
+          "Independently closed linked ordinary results"
+        ],
+        "exclusions": [
+          "Multiple or granted instances",
+          "Unrepresented conditional announcement targets",
+          "Unknown ordinary bodies or mixed consuming costs",
+          "Unrepresented source layouts"
+        ]
+      },
+      "dependencies": [
+        "trigger.event.normalized_zone_change",
+        "resolution.effect.public_condition"
+      ],
+      "implementation_components": [
+        "quorune.declared_cast_cost_model.DeclaredCastCostChoice",
+        "quorune.declared_cast_cost_model.DeclaredCastCostFacts",
+        "quorune.declared_cost_conditions.DeclaredCastCostCondition",
+        "quorune.zone_object_state.mark_declared_cast_costs",
+        "quorune.zone_trigger_events.ZoneChangeOccurrence",
+        "quorune.rules.declared_cost_condition_shapes.declared_cost_condition_capabilities",
+        "quorune.semantic_choices.declared_cost_conditions.prepare_declared_cost_condition"
+      ],
+      "positive_tests": [
+        "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+        "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+        "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+        "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+        "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+        "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+        "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw",
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "negative_tests": [
+        "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+        "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+        "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+        "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+        "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+        "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+        "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "multiplayer_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "privacy_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "replay_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawal of Bargain, union-price or declared-instance authority rejects complete programs; unrelated draw remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Conjoining artifact/enchantment and token predicates loses independently legal artifact/enchantment prices; admission matrix rejects this mutation.",
       "blockers": [],
       "status": "trusted"
     },
@@ -7904,6 +8195,146 @@
       "dependency_fail_closed_rationale": "Payload-owned minimum dependencies reject missing cardinality or mandatory price authority.",
       "implementation_mutation_status": "killed",
       "implementation_mutation_rationale": "Fresh target and mandatory-price omissions are exercised by actual original casts.",
+      "blockers": [],
+      "status": "trusted"
+    },
+    {
+      "id": "casting.additional_cost.permanent_union",
+      "version": 1,
+      "official_rules": [
+        "601.2a",
+        "601.2b",
+        "601.2f",
+        "601.2h",
+        "701.21a",
+        "702.166a",
+        "702.166b",
+        "702.166c",
+        "702.166d",
+        "607.1",
+        "400.7",
+        "707.10"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "One schema-five controlled-permanent sacrifice with a bounded disjunction of current type/token predicates, through the existing zone-cost owner.",
+        "inputs": [
+          "Complete source-spanned declaration",
+          "Current controlled permanent predicates",
+          "Original instance-linked declared choice and entry occurrence"
+        ],
+        "outputs": [
+          "Ordinary optional zone-cost option",
+          "Versioned declared-cost facts",
+          "Independently closed linked ordinary results"
+        ],
+        "exclusions": [
+          "Multiple or granted instances",
+          "Unrepresented conditional announcement targets",
+          "Unknown ordinary bodies or mixed consuming costs",
+          "Unrepresented source layouts"
+        ]
+      },
+      "dependencies": [
+        "casting.additional_cost.fixed_sacrifice"
+      ],
+      "implementation_components": [
+        "quorune.sacrifice_union_model.SacrificePredicateUnion",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.casting_additional_costs.fixed_zone_change_cost_candidates"
+      ],
+      "positive_tests": [
+        "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+        "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+        "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+        "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+        "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+        "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+        "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw",
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "negative_tests": [
+        "test_bargain_declared_instances_roundtrip_and_link_only_their_own_choice",
+        "test_bargain_union_admits_artifact_or_enchantment_or_token_not_a_conjunction",
+        "test_bargain_zone_cost_five_is_closed_and_preserves_earlier_descriptor_shapes",
+        "test_bargain_entry_occurrence_omits_legacy_fields_and_seals_declared_instance",
+        "test_bargain_entry_and_same_target_branch_preserve_complete_source_and_instance",
+        "test_bargain_grammar_unknown_siblings_unlinked_and_conditional_targets_remain_residual",
+        "test_bargain_verified_owner_withdrawal_blocks_linked_program_and_keeps_plain_draw"
+      ],
+      "interaction_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "multiplayer_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "privacy_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "replay_tests": [
+        "test_actual_redirected_bargain_price_resumes_with_same_declaration_and_private_cast_frame",
+        "test_actual_high_fae_paid_and_unpaid_casts_keep_opponent_life_results_linked",
+        "test_actual_bargain_offers_enchantment_or_artifact_and_rejects_foreign_or_ordinary_creature",
+        "test_actual_ordinary_clone_does_not_inherit_another_permanents_bargain_declaration",
+        "test_actual_troublemaker_ouphe_exiles_opponent_object_after_enchantment_sacrifice",
+        "test_actual_tomeseeker_sacrifices_fresh_creature_token_and_old_trigger_survives_unpaid_reentry",
+        "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
+        "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
+        "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Withdrawal of Bargain, union-price or declared-instance authority rejects complete programs; unrelated draw remains exact.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Conjoining artifact/enchantment and token predicates loses independently legal artifact/enchantment prices; admission matrix rejects this mutation.",
       "blockers": [],
       "status": "trusted"
     },

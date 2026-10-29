@@ -4362,3 +4362,14 @@ fixed minimum. The declaration and price have separate capability minima, and
 the existing cast-copy owner handles the resulting trigger. See
 [ADR 0136](../adr/0136-power-qualified-casualty-costs.md) and the
 [Casualty contract](../../mechanics/contracts/casualty.json).
+
+Bargain declarations link an optional sacrifice union to a source-local casting
+instance. A complete printed declaration is required before the compiler owns
+a Bargain-dependent body. Linked self-entry productions retain the original
+source span and require immutable entry facts. Complete same-target result
+replacement and appended-keyword clauses reuse the existing condition owner;
+the classifier admits only the production that actually compiled. Role-token
+composition receives the same declaration context as ordinary entry results.
+Each child remains independently capability-bound. Unknown conditional targets,
+discounts and other sibling bodies keep the whole card residual. See the
+[Bargain contract](../../mechanics/contracts/bargain.json).

@@ -765,7 +765,7 @@ class ZoneTransitionOwner:
                 ),
                 cast_option=departure.cast_option,
                 paid_entry_copy=departure.paid_entry_copy,
-                multikicker_paid=departure.multikicker_paid,
+                multikicker_paid=departure.multikicker_paid, declared_cast_costs=departure.declared_cast_costs if card.zone == 'battlefield' else None,
                 trigger_batch=trigger_batch,
             )
         if not defer_control_sync:
@@ -949,6 +949,7 @@ class ZoneTransitionOwner:
             cast_option=departure.cast_option if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             paid_entry_copy=departure.paid_entry_copy if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             multikicker_paid=departure.multikicker_paid if departure.origin == 'stack' and card.zone == 'battlefield' else None,
+            declared_cast_costs=departure.declared_cast_costs if departure.origin == 'stack' and card.zone == 'battlefield' else None,
         )
 
     def move_cards_simultaneously(
@@ -1061,7 +1062,7 @@ class ZoneTransitionOwner:
                 origin_attached_to=departure.attached_to,
                 cast_option=departure.cast_option,
                 paid_entry_copy=departure.paid_entry_copy,
-                multikicker_paid=departure.multikicker_paid,
+                multikicker_paid=departure.multikicker_paid, declared_cast_costs=departure.declared_cast_costs if card.zone == 'battlefield' else None,
                 departure_sources=sources.sources,
                 departure_source_zones=sources.source_zones,
                 departure_source_characteristics=(

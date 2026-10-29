@@ -19,6 +19,7 @@ from ..additional_cost_vocabulary import (
     ZONE_CHANGE_COST_KIND,
 )
 from ..object_predicate import ObjectQuerySpec
+from ..sacrifice_union_model import SacrificePredicateUnion, validate_sacrifice_union_variant
 from ..object_query import object_query_result, query_objects
 
 
@@ -69,6 +70,7 @@ _FIXED_COMBAT_RETURN_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {
     "unblocked_attacker"
 }
 _ANNOUNCED_ZONE_CHANGE_FIELDS = (_FIXED_ZONE_CHANGE_FIELDS - {'count'}) | {'count_parameter'}
+_FIXED_UNION_ZONE_CHANGE_FIELDS = _FIXED_ZONE_CHANGE_FIELDS | {'predicate_union'}
 ANNOUNCED_X_EXILE_CAPABILITY = 'casting.additional_cost.announced_x_graveyard_exile'
 ANNOUNCED_X_DISCARD_CAPABILITY = 'casting.additional_cost.announced_x_hand_discard'
 ANNOUNCED_X_LIFE_CAPABILITY = 'casting.additional_cost.announced_x_life'
@@ -316,11 +318,12 @@ class FixedZoneChangeAdditionalCost:
     count: int | None = 1
     count_parameter: str | None = None
     unblocked_attacker: bool = False
+    predicate_union: SacrificePredicateUnion | None = None
 
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3, 4}
+            or self.schema_version not in {1, 2, 3, 4, 5}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -350,6 +353,8 @@ class FixedZoneChangeAdditionalCost:
             )
         from ..power_sacrifice_model import validate_power_sacrifice_variant
         try:validate_power_sacrifice_variant(self.schema_version,self.operation,self.count,self.predicate,self.unblocked_attacker,self.count_parameter)
+        except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
+        try:validate_sacrifice_union_variant(self.schema_version,self.operation,self.count,self.predicate,self.unblocked_attacker,self.count_parameter,self.predicate_union)
         except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
         expected_owner = "$actor" if origin != "battlefield" else None
         expected_controller = "$actor" if origin == "battlefield" else None
@@ -466,6 +471,7 @@ class FixedZoneChangeAdditionalCost:
                 _FIXED_ZONE_CHANGE_FIELDS,
                 _FIXED_COMBAT_RETURN_FIELDS,
                 _ANNOUNCED_ZONE_CHANGE_FIELDS,
+                _FIXED_UNION_ZONE_CHANGE_FIELDS,
             }
         ):
             raise AdditionalCostError(
@@ -473,6 +479,9 @@ class FixedZoneChangeAdditionalCost:
             )
         try:
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
+            if ('predicate_union' in value) != (value['schema_version'] == 5):
+                raise ValueError('Sacrifice union fields require exactly schema five')
+            predicate_union = SacrificePredicateUnion.from_dict(value['predicate_union']) if 'predicate_union' in value else None
         except (KeyError, TypeError, ValueError) as exc:
             raise AdditionalCostError(
                 "Zone-change additional-cost predicate is malformed"
@@ -483,6 +492,7 @@ class FixedZoneChangeAdditionalCost:
             operation=value["operation"],
             count=value.get("count"),
             count_parameter=value.get("count_parameter"),
+            predicate_union=predicate_union,
             choice_field=value["choice_field"],
             predicate=predicate,
             unblocked_attacker=value.get("unblocked_attacker", False),
@@ -531,6 +541,8 @@ class FixedZoneChangeAdditionalCost:
         if self.schema_version == 3:
             value.pop('count')
             value['count_parameter'] = self.count_parameter
+        if self.schema_version == 5:
+            value['predicate_union'] = self.predicate_union.to_dict()
         return value
 
     def required_count(self, declared_x: Any = None) -> int:
@@ -653,9 +665,9 @@ def fixed_zone_change_cost_candidates(
 ) -> tuple[str, ...]:
     """Return operation-owned candidates through one immutable query path."""
 
-    if cost.schema_version == 4:
-        from .casting.source_placement import power_sacrifice_read_host
-        host = power_sacrifice_read_host(host, actor, exclude_object_id)
+    if cost.schema_version in {4,5}:
+        from .casting.source_placement import prospective_sacrifice_read_host
+        host = prospective_sacrifice_read_host(host, actor, exclude_object_id)
 
     rows = []
     for object_id in host.state.players[actor].zones[cost.origin_zone]:
@@ -675,6 +687,9 @@ def fixed_zone_change_cost_candidates(
             )
         )
     matched = tuple(query_objects(rows, cost.bound_predicate(actor)))
+    if cost.predicate_union is not None:
+        admitted = {row.ref for query in cost.predicate_union.bound_predicates(actor) for row in query_objects(rows, query)}
+        matched = tuple(row for row in matched if row.ref in admitted)
     if cost.unblocked_attacker:
         blockers = (
             host.state.combat.blockers

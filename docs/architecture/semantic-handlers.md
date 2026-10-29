@@ -198,6 +198,29 @@ permanent-copy exceptions, multiple or granted instances, mixed consuming costs
 and unknown companion bodies remain residual. See
 [ADR 0136](../adr/0136-power-qualified-casualty-costs.md).
 
+Printed Bargain uses the same zone-cost selection and payment path with a
+schema-five disjunction of controlled-permanent predicates. An artifact,
+enchantment or token can pay; the predicates are alternatives. Current type,
+control and phase state govern eligibility, while tapping and summoning
+sickness do not restrict sacrifice. Destination replacement retains the
+ordinary sealed cost continuation.
+
+The existing option-expansion owner assembles optional resource prices in a
+fixed order. Each price owner retains its own selection, affordability and
+composition guards; the assembly adds no registry or payment path.
+
+`DeclaredCastCostFacts` records source-local optional-cost choices separately
+from existing Kicker and other historical fields. Bargain records the declared
+intention under CR 702.166b. Linked fixed spell results use version twelve of
+the existing public-condition instruction, with both branches independently
+closed and the same target contract. Entry results consume immutable original
+entry facts; a later departure or unpaid reentry cannot replace that occurrence.
+Spell copies retain declarations, while ordinary permanent copies do not
+inherit another object's casting history. No global flag or game-state mode is
+introduced. Conditional announcement targets, discounts and other unrepresented
+linked bodies remain residual. See
+[ADR 0137](../adr/0137-linked-optional-casting-declarations.md).
+
 Enlist's optional declaration taps and linked reflexive program use the
 existing tap, scalar, APNAP and continuous-effect owners. The trigger context
 pins the original attacker and donor, preserves paid taps across pending

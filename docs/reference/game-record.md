@@ -695,3 +695,19 @@ checks it against the ordinary committed cost context. The existing spell-copy
 template retains X and targets independently of later source departure. Existing
 cast-source-placement modes govern prospective power reads; no new state mode,
 checkpoint field or alternate replacement/copy continuation is introduced.
+
+Zone-cost schema five adds a closed `predicate_union` field for alternative
+current permanent type/token predicates. Earlier schemas omit and reject that
+field. `declared_cast_costs` is a versioned container of source-local instance,
+cost kind and boolean declaration choices. It is carried only by casts that
+use this representation; existing Kicker and other cost fields retain their
+prior codecs. Version-twelve public-condition instructions reference this
+container and validate the linked instance before selecting a result.
+
+Original stack-to-battlefield occurrences may include immutable declaration
+facts. Older occurrences omit the field and retain their existing fingerprints.
+Normalized entry events expose only the chosen instance identifiers. Spell
+copies retain declarations through ordinary copy context and copy templates;
+ordinary permanent copies do not copy another object's casting history.
+Departure and reentry clear the previous object's facts under the existing
+zone-state owner. No checkpoint or game-state mode is added.

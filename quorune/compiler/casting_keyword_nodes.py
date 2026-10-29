@@ -11,9 +11,12 @@ from .public_alternative_cost_nodes import fixed_public_alternative_cost_keyword
 from .counter_keyword_activation_nodes import fixed_counter_keyword_activation_node
 from .conspire_nodes import conspire_static_node
 from .casualty_nodes import casualty_static_node
+from .bargain_nodes import bargain_static_node
 
 
 def casting_keyword_node(*, record, face_id, printed_power, **values):
+    if values['mechanics'] == ('bargain',):
+        return bargain_static_node(record=record, **{key: value for key, value in values.items() if key != 'mechanics'})
     if values['mechanics'] == ('casualty',):
         return casualty_static_node(record=record, **{key: value for key, value in values.items() if key != 'mechanics'})
     if values['mechanics'] == ('equip',):

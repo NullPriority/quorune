@@ -13,6 +13,7 @@ from .multikicker_costs import multikicker_cast_context
 from .replicate_costs import replicate_cast_context
 from .conspire_costs import conspire_cast_context
 from .casualty_costs import casualty_cast_context
+from .bargain_costs import declared_bargain_context
 from .characteristic_methods import characteristic_stack_context
 
 
@@ -39,6 +40,7 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         **replicate_cast_context(selected_option),
         **conspire_cast_context(selected_option),
         **casualty_cast_context(selected_option),
+        **declared_bargain_context(selected_option),
         "target_groups": thaw_json(proposal.target_groups),
         "target_snapshots": thaw_json(proposal.target_snapshots),
         "targets_revalidated": False,

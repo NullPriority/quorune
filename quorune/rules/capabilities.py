@@ -367,6 +367,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     'whole-hand-discard': ('zone.discard.whole_hand',),
     'whole-hand-discard-result': ('zone.discard.whole_hand_result',),
+    'declared-cast-cost-fact': ('casting.additional_cost.declared_instance',),
     **{
         mechanic: ("combat.block.landwalk.basic_type",)
         for mechanic in _BASIC_LANDWALK_MECHANICS

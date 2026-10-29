@@ -7,6 +7,12 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        if value.get('op') == 'apply_if_public_condition' and value.get('schema_version') == 12:
+            from ..declared_cost_conditions import validate_declared_cost_instruction
+            from ..declared_cast_cost_model import DECLARED_CAST_COST_CAPABILITY
+            validate_declared_cost_instruction(value)
+            return tuple(sorted({DECLARED_CAST_COST_CAPABILITY, 'resolution.effect.public_condition',
+                *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child, mechanics=mechanics))}))
         from ..discard_result_model import DISCARD_RESULT_OPERATION, DISCARD_RESULT_CAPABILITY, validate_discard_draw
         if value.get('op') == DISCARD_RESULT_OPERATION:
             validate_discard_draw(value)

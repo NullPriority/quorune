@@ -9926,6 +9926,48 @@
         "test_storm_rules",
         "test_suspend_rules"
       ]
+    },
+    {
+      "id": "bargain-linked-declarations-and-permanent-union-price",
+      "patterns": [
+        "quorune/bargain_model.py",
+        "quorune/sacrifice_union_model.py",
+        "quorune/declared_cast_cost_model.py",
+        "quorune/declared_cost_conditions.py",
+        "quorune/compiler/bargain*.py",
+        "quorune/semantic_runtime/bargain.py",
+        "quorune/semantic_choices/declared_cost_conditions.py",
+        "quorune/rules/casting/bargain_costs.py",
+        "quorune/rules/declared_cost_condition_shapes.py",
+        "tests/test_bargain*.py",
+        "tests/bargain_fixture.py",
+        "tests/fixtures/bargain-cards.json",
+        "mechanics/contracts/bargain.json"
+      ],
+      "test_modules": [
+        "test_bargain_compiler",
+        "test_bargain_model",
+        "test_bargain_native",
+        "test_bargain_results",
+        "test_bestow_rules",
+        "test_card_program_trust",
+        "test_cast_creature_targets",
+        "test_casualty_compiler",
+        "test_casualty_native",
+        "test_casualty_results",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_conspire",
+        "test_fixed_replicate",
+        "test_fixed_sacrifice_additional_costs",
+        "test_fixed_zone_cast_lifecycles",
+        "test_fixed_zone_change_additional_costs",
+        "test_kicker_rules",
+        "test_public_state_mana_actions",
+        "test_resolution_public_conditions",
+        "test_storm_rules",
+        "test_suspend_rules",
+        "test_zone_trigger_events"
+      ]
     }
   ],
   "symbol_rules": [

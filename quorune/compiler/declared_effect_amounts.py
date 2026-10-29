@@ -182,6 +182,12 @@ def closed_additional_cost_x_result(program: Any, *, recognizers) -> bool:
     return any(recognizer(result) for recognizer in recognizers)
 
 
+def _bargain_declaration_available(record, text):
+    if re.search(r'^Bargain\b', text, re.I | re.M) is None:return False
+    from .bargain_nodes import printed_bargain_spec
+    return printed_bargain_spec(record) is not None
+
+
 def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: str,
                                    compile_effect: Callable[..., Any]) -> Callable[..., Any]:
     """Select X only from an ordinary mana cost or one represented price."""
@@ -193,7 +199,8 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
     selected = partial(compile_effect,
         cast_x_available=available and re.search(r"\bX (?:is|can't|cannot)\b",oracle_text,re.I) is None,
         forbid_public_x=available,
-        kicked_self_replacement_available=bool(is_spell and not record.faces))
+        kicked_self_replacement_available=bool(is_spell and not record.faces),
+        bargain_available=bool(is_spell and _bargain_declaration_available(record, oracle_text)))
     from .spell_self_exile import spell_self_exile_effect_compiler
     return spell_self_exile_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
         ordinary_spell=bool(is_spell and not record.faces))

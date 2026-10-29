@@ -155,6 +155,11 @@ def role_token_nodes(*, record, face_id, node_id, line, material_line, span, sou
             return lambda text, **kwargs: role_effect(text, **kwargs) if 'Role token' in text else fallback(text, **kwargs)
         return wrap(ordinary), wrap(triggered)
     from .typed_token_ability_nodes import _outer_nodes
+    from .bargain_nodes import printed_bargain_spec
+    bargain = printed_bargain_spec(record)
+    if bargain is not None:
+        from functools import partial
+        compile_inner = partial(compile_inner, bargain_spec=bargain)
     def role_trigger(**kwargs):
         from functools import partial
         underlying = trigger_node.func if isinstance(trigger_node, partial) else trigger_node

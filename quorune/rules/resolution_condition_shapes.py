@@ -33,6 +33,10 @@ def resolution_condition_node_capabilities(
 ) -> tuple[str, ...]:
     from .capabilities import capability_dependencies_for_node
 
+    if effects and effects[-1].get('schema_version') == 12:
+        from .declared_cost_condition_shapes import declared_cost_condition_capabilities
+        return declared_cost_condition_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids, cost_schema=cost_schema)
+
     if effects and effects[-1].get('schema_version')==11:
         from .kicked_target_replacement_shapes import kicked_target_replacement_capabilities
         return kicked_target_replacement_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids,cost_schema=cost_schema)

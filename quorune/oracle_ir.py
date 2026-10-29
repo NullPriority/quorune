@@ -87,6 +87,7 @@ from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
 from .compiler import cipher_nodes as cipher_context_owner
+from .compiler.bargain_nodes import printed_bargain_spec
 from .compiler.leveler_context_nodes import (
     leveler_compilation_rows as _leveler_compilation_rows,
     leveler_face_ir as _leveler_face_ir,
@@ -173,7 +174,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v666"
+ORACLE_COMPILER_VERSION = "oracle-ir-v667"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1027,6 +1028,7 @@ def _activated_or_fixed_event_trigger_node(
     effect_template: Any,
     trigger_effect_template: Any | None = None,
     activation_parse_line: str | None = None,
+    bargain_spec: Any = None,
 ) -> OracleNode | None:
     from .compiler.trigger_limit_nodes import limited_trigger_node
     from .compiler.state_trigger_nodes import public_state_trigger_node
@@ -1037,7 +1039,7 @@ def _activated_or_fixed_event_trigger_node(
     limited = limited_trigger_node(line=line, material_line=material_line, compile_inner=_activated_or_fixed_event_trigger_node,
         arguments=dict(node_id=node_id, span=span, card_name=card_name, type_line=type_line, keywords=keywords,
             trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
-            residuals=residuals, effect_template=effect_template, trigger_effect_template=trigger_effect_template))
+            residuals=residuals, effect_template=effect_template, trigger_effect_template=trigger_effect_template, bargain_spec=bargain_spec))
     if limited is not None:
         return limited
     activated = activated_oracle_node(
@@ -1051,6 +1053,11 @@ def _activated_or_fixed_event_trigger_node(
     )
     if activated is not None:
         return activated
+    from .compiler.bargain_nodes import bargain_entry_trigger_node
+    bargain_entry = bargain_entry_trigger_node(bargain_spec=bargain_spec, node_id=node_id, line=line, material_line=material_line,
+        span=span, card_name=card_name, effect_template=trigger_effect_template or effect_template, trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if bargain_entry is not None:return bargain_entry
     from .compiler.kicked_entry_trigger_nodes import fixed_source_entry_or_step_trigger_node
     source_entry = fixed_source_entry_or_step_trigger_node(
         node_id=node_id, line=line, material_line=material_line, span=span,
@@ -1214,7 +1221,7 @@ def _compile_face(
             activation_parse_line=material_line if station_context is not None
                 and any(span.line in symbol.member_lines for symbol in station_context.symbols) else None,
             card_name=face_name or record.name, type_line=type_line,
-            keywords=keywords, trusted_mechanics=trusted_mechanics,
+            keywords=keywords, trusted_mechanics=trusted_mechanics, bargain_spec=printed_bargain_spec(record),
             capability_registry=capability_registry,
             capability_profile=capability_profile, residuals=residuals,
             effect_template=contextual_effect_template, trigger_effect_template=contextual_trigger_effect_template,
@@ -1257,7 +1264,7 @@ def _compile_face(
 
         unowned_replacement=unowned_replacement_node(node_id=node_id,line=line,
             material_line=material_line,span=span,source_name=face_name or record.name,
-            spell=spell,permanent=permanent,has_faces=bool(record.faces),
+            spell=spell,permanent=permanent,has_faces=bool(record.faces),bargain_available=printed_bargain_spec(record) is not None,
             compile_effect=contextual_effect_template,residuals=residuals)
         if unowned_replacement is not None:
             nodes.append(unowned_replacement)

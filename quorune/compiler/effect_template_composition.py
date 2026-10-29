@@ -36,6 +36,7 @@ def reviewed_contextual_effect_template(
     compile_fixed: Callable[..., CompiledEffectTemplate],
     cast_x_available: bool = False, forbid_public_x: bool = False,
     kicked_self_replacement_available: bool = False,
+    bargain_available: bool = False,
     **source_context: Any,
 ) -> CompiledEffectTemplate:
     """Bind source context before composing the same closed leaf owners."""
@@ -66,6 +67,10 @@ def reviewed_contextual_effect_template(
             source_card_types=tuple(source_context.get("source_card_types", ())),
         ) or current
 
+    if bargain_available is True:
+        from .bargain_conditions import bargain_same_target_template
+        declared = bargain_same_target_template(text, source_name=card_name, compile_component=atomic_with_characteristics)
+        if declared is not None:return declared
     if kicked_self_replacement_available is True:
         from .kicked_self_replacement_templates import kicked_self_replacement_template
         replacement=kicked_self_replacement_template(text,source_name=card_name,compile_component=atomic_with_characteristics)

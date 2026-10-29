@@ -1205,7 +1205,7 @@ class CommanderEngine(
             str, Mapping[str, Any]
         ],
         reason: str,
-        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None, multikicker_paid: Mapping[str, Any] | None = None,
+        transition_kind: ZoneTransitionKind = ZoneTransitionKind.ORDINARY, read_ahead_chapter: int | None = None, cast_option: str | None = None, paid_entry_copy: Mapping[str, Any] | None = None, multikicker_paid: Mapping[str, Any] | None = None, declared_cast_costs: Mapping[str, Any] | None = None,
         trigger_batch: list[StackItem] | None = None,
         history_pre_recorded: bool = False,
     ) -> None:
@@ -1221,7 +1221,7 @@ class CommanderEngine(
                     characteristics=origin_data,
                     counters=origin_counters,
                     attachments=origin_attachments,
-                    attached_to=origin_attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy, multikicker_paid=multikicker_paid,
+                    attached_to=origin_attached_to, cast_option=cast_option, paid_entry_copy=paid_entry_copy, multikicker_paid=multikicker_paid, declared_cast_costs=declared_cast_costs,
                     sources=departure_sources,
                     source_zones=departure_source_zones,
                     source_characteristics=departure_source_characteristics,

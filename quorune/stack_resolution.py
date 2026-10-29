@@ -105,9 +105,10 @@ def complete_stack_resolution(
 
     item.context.pop("currently_resolving", None)
     if item.card_object_id:
-        from .zone_object_state import mark_resolving_paid_entry_copy, mark_multikicker_paid
+        from .zone_object_state import mark_resolving_paid_entry_copy, mark_multikicker_paid, mark_declared_cast_costs
         mark_resolving_paid_entry_copy(host.state.cards[item.card_object_id], item.context)
         mark_multikicker_paid(host.state.cards[item.card_object_id], item.context)
+        mark_declared_cast_costs(host.state.cards[item.card_object_id], item.context)
     from .rules.event_spell_copy import pin_event_spell_copy_departure
     pin_event_spell_copy_departure(host,item)
     host.state.stack.remove(item)

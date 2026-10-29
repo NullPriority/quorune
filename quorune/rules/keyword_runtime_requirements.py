@@ -79,6 +79,8 @@ def _fragment_descriptor_requirements(value):
 def keyword_runtime_dependencies(program):
     from ..cipher_model import CIPHER_CAPABILITY
     required = set(attached_keyword_runtime_dependencies(program))
+    from ..declared_cast_cost_model import declared_cost_event_dependencies
+    required.update(declared_cost_event_dependencies(getattr(program, 'condition', None)))
     if any(effect.get('op') == 'encode_cipher' for effect in program.effects):
         required.add(CIPHER_CAPABILITY)
     if 'fixed_keyword_event_grant' in program.coverage:
