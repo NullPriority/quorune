@@ -120,7 +120,7 @@ class SourceExploreCompositionTests(fixtures.SourceExploreFixture, unittest.Test
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         changed = deepcopy(raw)
         next(r for r in changed['capabilities'] if r['id'] == 'keyword_action.explore.single').update(status='blocked', blockers=['Explore owner withdrawn'])
         registry = CapabilityRegistry(changed)

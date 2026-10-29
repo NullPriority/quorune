@@ -113,7 +113,7 @@ class QualifiedPublicHistoryCompilerTests(unittest.TestCase):
         current=load_default_capability_registry()
         for cap,text in ((CAST,"you haven't cast a spell from your hand this turn"),(ARRIVAL,'you descended this turn')):
             self.assertEqual('exact',compile_oracle_card(query_record('At the beginning of your end step, if '+text+', draw a card.'),capability_registry=current).status)
-            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']==cap).update(status='blocked',blockers=['qualified owner withdrawn'])
+            raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']==cap).update(status='blocked',blockers=['qualified owner withdrawn'])
             registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
             registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
             self.assertNotEqual('exact',compile_oracle_card(query_record('At the beginning of your end step, if '+text+', draw a card.'),capability_registry=registry).status)

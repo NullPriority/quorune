@@ -38,7 +38,7 @@ class ForecastCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         declarations = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json');tests = set(discover_tests(ROOT).values())
         record = replace(query_record('Forecast — {U}, Reveal this card from your hand: Draw a card.'), keywords=('Forecast',), type_line='Creature — Wizard', power='2', toughness='2')
         for cap in ('activation.forecast.hand', 'activation.usage.once_per_turn', 'activation.condition.phase_window'):

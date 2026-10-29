@@ -98,7 +98,7 @@ class DesignationEventBindingTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         declarations = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json')
         tests = set(discover_tests(ROOT).values())
         for owner in (DESIGNATION_EVENT_CAPABILITY, 'permanent.designation.monstrous'):

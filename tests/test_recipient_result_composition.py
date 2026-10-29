@@ -97,7 +97,7 @@ class RecipientResultCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        original = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        original = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         decl = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json')
         known = set(discover_tests(ROOT).values())
         for owner, text in (('resolution.event_object.fixed_result', 'When enchanted creature is dealt damage, destroy it.'), ('permanent.destroy.regeneration_prohibition', "Whenever a creature is dealt damage, destroy it. It can't be regenerated."), ('counter.producer.optional_fixed_event_trigger', 'Whenever this creature is dealt damage, you may put a +1/+1 counter on it.')):

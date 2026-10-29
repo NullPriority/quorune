@@ -91,7 +91,7 @@ class ActivationPublicStateCompilerTests(unittest.TestCase):
         from scripts.update_capability_evidence import build_index,discover_tests
         record=query_record("{T}: Target creature gets +4/+4 until end of turn. Activate only if this creature's power is 4 or greater.")
         self.assertEqual('exact',compile_oracle_card(record,capability_registry=load_default_capability_registry()).status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['activation predicate owner withdrawn'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['activation predicate owner withdrawn'])
         registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
         registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
         self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=registry).status)

@@ -42,7 +42,7 @@ class BargainCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         decl = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json');discovered = set(discover_tests(ROOT).values())
         record = replace(query_record('Bargain\nDraw a card.'), keywords=('Bargain',), type_line='Sorcery')
         for cap in ('casting.additional_cost.bargain', 'casting.additional_cost.permanent_union', 'casting.additional_cost.declared_instance'):

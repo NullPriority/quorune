@@ -79,7 +79,7 @@ class CasualtyModelCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         discovered = set(discover_tests(ROOT).values());decl = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json')
         record = replace(query_record('Casualty 2\nDraw a card.'), type_line='Sorcery', keywords=('Casualty',))
         for capability in (CASUALTY_CAPABILITY, POWER_SACRIFICE_CAPABILITY, 'stack.copy.fixed_instant_or_sorcery'):

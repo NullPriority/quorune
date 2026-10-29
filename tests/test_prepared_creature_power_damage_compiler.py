@@ -74,7 +74,7 @@ class PreparedPowerDamageCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(r for r in raw['capabilities'] if r['id'] == PREPARED_POWER_DAMAGE_CAPABILITY).update(status='blocked', blockers=['Preparation authority withdrawn'])
         registry = CapabilityRegistry(raw)
         index = build_index(registry_value=raw, declaration_source=read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json'), discovered_test_ids=set(discover_tests(ROOT).values()))

@@ -50,7 +50,7 @@ class DisjointNegativeKeywordCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());decl=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));decl=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         for owner in (CAPABILITY,'continuous.ability.fixed_query_keyword_grant','combat.block.reach','variant.monarch.designate'):
             value=deepcopy(raw);next(r for r in value['capabilities'] if r['id']==owner).update(status='blocked',blockers=['Absence grant owner withdrawn'])
             registry=CapabilityRegistry(value);index=build_index(registry_value=value,declaration_source=decl,discovered_test_ids=known)

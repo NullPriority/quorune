@@ -88,7 +88,7 @@ class PublicHistoryQueryCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in value['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['history query owner withdrawn'])
+        value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in value['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['history query owner withdrawn'])
         registry=CapabilityRegistry(value);index=build_index(registry_value=value,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
         registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
         text='At the beginning of your end step, if a creature died under your control this turn, draw a card.'

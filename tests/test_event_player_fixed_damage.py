@@ -67,7 +67,7 @@ class EventPlayerFixedDamageCompilerTests(unittest.TestCase):
         from scripts.update_capability_evidence import build_index,discover_tests
         record=replace(query_record('Whenever an opponent draws a card, this enchantment deals 1 damage to that player.'),type_line='Enchantment')
         self.assertEqual('exact',compile_oracle_card(record,capability_registry=load_default_capability_registry()).status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['bound damage result withdrawn'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['bound damage result withdrawn'])
         registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
         registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
         self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=registry).status)

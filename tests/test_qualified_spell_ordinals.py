@@ -92,7 +92,7 @@ class QualifiedSpellOrdinalCompilerTests(unittest.TestCase):
             text='Whenever '+subject+' each turn, draw a card.'
             ir=compile_oracle_card(query_record(text),capability_registry=registry)
             self.assertEqual('exact',ir.status,ir.material_residuals);self.assertIn(CAPABILITY,ir.faces[0].nodes[0].capability_dependencies)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['matching ordinal owner withdrawn'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['matching ordinal owner withdrawn'])
         changed=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
         changed.mark_evidence_verified(validate_capability_evidence_index(index,registry=changed))
         self.assertNotEqual('exact',compile_oracle_card(query_record('Whenever you cast your first enchantment spell each turn, draw a card.'),capability_registry=changed).status)

@@ -92,7 +92,7 @@ class QualifiedQuantityCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['keyword-layer count withdrawn'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['keyword-layer count withdrawn'])
         reg=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()));reg.mark_evidence_verified(validate_capability_evidence_index(index,registry=reg))
         self.assertNotEqual('exact',compile_oracle_card(query_record('This creature gets +1/+1 for each other creature you control with flying.'),capability_registry=reg).status)
         self.assertEqual('exact',compile_oracle_card(query_record('This creature gets +1/+1 for each artifact you control.'),capability_registry=reg).status)

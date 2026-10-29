@@ -61,7 +61,7 @@ class QualifiedAttackCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(r for r in value['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['qualified attack owner withdrawn'])
         registry=CapabilityRegistry(value);index=build_index(registry_value=value,
             declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
@@ -105,7 +105,7 @@ class QualifiedAttackCompilerTests(unittest.TestCase):
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
         from quorune.qualified_attack_model import ATTACK_CHARACTERISTIC_RESULT_CAPABILITY
-        value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        value=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(r for r in value['capabilities'] if r['id']==ATTACK_CHARACTERISTIC_RESULT_CAPABILITY).update(status='blocked',blockers=['attack occurrence result withdrawn'])
         registry=CapabilityRegistry(value);index=build_index(registry_value=value,
             declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))

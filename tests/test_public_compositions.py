@@ -86,7 +86,7 @@ class PublicCompositionCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());d=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
+        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));d=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         for cap,text in ((GRANT,'Enchanted artifact has "At the beginning of your upkeep, you lose 2 life."'),(MOVE,'Return all instant and sorcery cards from your graveyard to your hand.')):
             raw=deepcopy(original);next(r for r in raw['capabilities'] if r['id']==cap).update(status='blocked',blockers=['public composition owner withdrawn'])
             registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=d,discovered_test_ids=known);registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))

@@ -101,7 +101,7 @@ class EventSpellCopyCompilerTests(unittest.TestCase):
         self.assertEqual('exact',compile_oracle_card(query_record(text),capability_registry=registry).status)
         permanent='Whenever you cast a creature spell, copy it.'
         self.assertEqual('exact',compile_oracle_card(query_record(permanent),capability_registry=registry).status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['event spell reference withdrawn'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['event spell reference withdrawn'])
         changed=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
         changed.mark_evidence_verified(validate_capability_evidence_index(index,registry=changed))
         self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=changed).status)

@@ -82,7 +82,7 @@ class SelfPublicCostCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['public self-cost condition withdrawn'])
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['public self-cost condition withdrawn'])
         reg=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()));reg.mark_evidence_verified(validate_capability_evidence_index(index,registry=reg))
         self.assertNotEqual('exact',compile_oracle_card(query_record('This spell costs {2} less to cast if an opponent has three or more poison counters.'),capability_registry=reg).status)
         self.assertEqual('exact',compile_oracle_card(query_record('This spell costs {1} less to cast if you control an artifact.'),capability_registry=reg).status)

@@ -151,7 +151,7 @@ class TargetedActivationCostCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
-        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         declarations = read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         discovered = set(discover_tests(ROOT).values())
         for omitted in (TARGETED_ACTIVATION_COST_CAPABILITY, 'activation.mana_cost.static_generic', 'variant.monarch.designate'):

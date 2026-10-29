@@ -110,7 +110,7 @@ class UntargetedUntapCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());next(r for r in raw['capabilities'] if r['id']=='choice.affected_player.fixed_controller_discard').update(status='blocked',blockers=['controller discard withdrawn']);registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()));registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));next(r for r in raw['capabilities'] if r['id']=='choice.affected_player.fixed_controller_discard').update(status='blocked',blockers=['controller discard withdrawn']);registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()));registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
         for text,exact in (('Draw two cards, then discard two cards. Untap up to three lands.',False),('Whenever this creature attacks, you may draw a card. If you do, discard a card.',False),('Untap up to three lands.',True),('Draw a card.',True)):
             self.assertEqual(exact,compile_oracle_card(replace(query_record(text),type_line='Instant'),capability_registry=registry).status=='exact')
 
@@ -148,7 +148,7 @@ class UntargetedUntapCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text());declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
+        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'));declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         for withdrawn in (UNTARGETED_UNTAP_CAPABILITY,'permanent.untap.effect'):
             raw=deepcopy(original);next(r for r in raw['capabilities'] if r['id']==withdrawn).update(status='blocked',blockers=['untap owner withdrawn']);registry=CapabilityRegistry(raw)
             index=build_index(registry_value=raw,declaration_source=declarations,discovered_test_ids=known);registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
