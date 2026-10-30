@@ -36,7 +36,7 @@
     "ordinary printed Exhaust now uses one typed per-ability, per-object once-only activation owner shared by advertised actions and accepted commands; control changes and phasing preserve the consumed use, while a zone change creates a new object and resets it. One closed source-threaded fixed counter-then-until-end-of-turn characteristic sequence is shared by activated and triggered contexts, preserves printed order, suspends for replacement choices, revalidates source identity, and commits atomically. Effects that grant another Exhaust use, copied, granted, removed, or face-down Exhaust abilities, reverse-order or broader source sequences, usage-limited mana auto-payment, and independently unsupported costs or results remain explicit blockers, so aggregate Exhaust is not trusted"
   ],
   "generated": {
-    "evaluated_input_fingerprint": "95250cb311f4a84b78ee8de6e84a8e7a056d88fd29b9dabb2957650f5486ca3d",
+    "evaluated_input_fingerprint": "abebee3cd735e7027a14e3768ba31e998f12c71db872a49042a9017fb5482705",
     "generator": "scripts/update_platform_status.py",
     "input_fingerprint_algorithm": "platform-readiness-derived-inputs-sha256-v1",
     "source": "platform/readiness-source.json",
@@ -763,13 +763,14 @@
         "material_residuals": 20624,
         "status_counts": {
           "residual": 15231,
-          "trusted": 16392
+          "trusted": 16362,
+          "untrusted": 30
         },
         "trust_basis_counts": {
-          "capability_closed": 16356,
+          "capability_closed": 16326,
           "legacy_reviewed": 13,
           "mixed": 23,
-          "unresolved": 15231
+          "unresolved": 15261
         }
       },
       "full": {
@@ -778,13 +779,14 @@
         "status_counts": {
           "failed": 2248,
           "residual": 18822,
-          "trusted": 17553
+          "trusted": 17523,
+          "untrusted": 30
         },
         "trust_basis_counts": {
-          "capability_closed": 17517,
+          "capability_closed": 17487,
           "legacy_reviewed": 13,
           "mixed": 23,
-          "unresolved": 18822
+          "unresolved": 18852
         }
       }
     },

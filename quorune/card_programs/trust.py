@@ -139,6 +139,24 @@ def _semantic_ability_trust_inputs(
     return values, bool(values)
 
 
+def _ability_input_blockers(ability: Any, *, oracle_source_hash: str, rulings_source_hash: str) -> set[str]:
+    """Validate one ability's descriptor minima and pinned source identity."""
+    blockers: set[str] = set()
+    if ability.capability_closure is not None:
+        from .runtime_requirements import program_dynamic_runtime_requirements
+        required, runtime_blockers = program_dynamic_runtime_requirements(ability)
+        blockers.update(f'ability:{ability.ability_id}:{value}' for value in runtime_blockers)
+        blockers.update(f'ability:{ability.ability_id}:capability:undeclared_runtime_dependency:{value}'
+                        for value in required - set(ability.capability_dependencies))
+    if ability.requires_arbiter:
+        blockers.add(f'ability:{ability.ability_id}:requires_arbiter')
+    if ability.provenance.get('source_oracle_hash') != oracle_source_hash:
+        blockers.add(f'ability:{ability.ability_id}:stale_oracle_source')
+    if ability.provenance.get('source_rulings_hash') != rulings_source_hash:
+        blockers.add(f'ability:{ability.ability_id}:stale_rulings_source')
+    return blockers
+
+
 def build_program_trust_closure(
     abilities: Sequence[Any],
     residuals: Sequence[Mapping[str, Any]],
@@ -199,12 +217,8 @@ def build_program_trust_closure(
             provisional = True
         if ability.trust_level != "intentionally_ignored":
             all_ignored = False
-        if ability.requires_arbiter:
-            blockers.add(f"ability:{ability.ability_id}:requires_arbiter")
-        if ability.provenance.get("source_oracle_hash") != oracle_source_hash:
-            blockers.add(f"ability:{ability.ability_id}:stale_oracle_source")
-        if ability.provenance.get("source_rulings_hash") != rulings_source_hash:
-            blockers.add(f"ability:{ability.ability_id}:stale_rulings_source")
+        blockers.update(_ability_input_blockers(ability, oracle_source_hash=oracle_source_hash,
+                                                rulings_source_hash=rulings_source_hash))
     for residual in residuals:
         if residual.get("material", True):
             residual_id = str(residual.get("residual_id") or "unknown")

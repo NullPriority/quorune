@@ -511,6 +511,14 @@ domain fail closed. The older `state_based_destruction` payload keeps its
 original keys and omits the new array. Runtime trust identity distinguishes
 the corrected execution from earlier records.
 
+New state-based frames include the physical `turn_order` and live
+`active_seats`. The retained `active_player` may be a departed physical seat;
+the replacement batch must still contain exactly the live APNAP rotation.
+Resume compares the turn identity, participant context and public frame with
+current state. Closed historical frames without the two seat arrays retain
+their original live-anchor constraint and cannot authorize an unknown anchor
+or a changed participant batch.
+
 Control-instruction execution is also bound to the existing runtime-trust
 identity. Correcting a same-controller instruction does not rename its readable
 descriptor or reset the control-history marker. Records pinned to the prior

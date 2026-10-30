@@ -9,6 +9,94 @@ from quorune.turn_priority_model import PriorityGrantPlan, PriorityPassPlan
 from quorune.turn_step_owner import TURN_STEPS
 
 
+class ContinuingTurnApnapTests(unittest.TestCase):
+    """Independent CR 101.4/800.4 expectation table, including wraparound."""
+
+    @staticmethod
+    def engine(anchor, survivors):
+        from types import SimpleNamespace
+        from quorune.engine import CommanderEngine
+        engine = CommanderEngine.__new__(CommanderEngine)
+        engine.state = SimpleNamespace(
+            turn_order=list('ABCD'), active_player=anchor,
+            players={seat:SimpleNamespace(in_game=seat in survivors) for seat in 'ABCD'})
+        from quorune.model import GameState
+        engine.state.active_seats = lambda: GameState.active_seats(engine.state)
+        return engine
+
+    def test_apnap_rotates_from_retained_anchor_over_only_survivors(self):
+        for anchor, survivors, expected in (
+                ('B', 'ABCD', 'BCDA'), ('B', 'ACD', 'CDA'),
+                ('D', 'AC', 'AC'), ('C', 'AB', 'AB'),
+                ('B', 'AD', 'DA'), ('B', 'A', 'A'), ('B', '', '')):
+            with self.subTest(anchor=anchor, survivors=survivors):
+                engine = self.engine(anchor, survivors)
+                self.assertEqual(list(expected), engine.apnap_order())
+                self.assertEqual(anchor, engine.state.active_player)
+
+    def test_simultaneous_trigger_consumer_preserves_survivor_rotation(self):
+        from quorune.trigger_batches import create_pending_trigger_batch
+        from test_trigger_batches import trigger_payload
+        engine = self.engine('B', 'ACD')
+        batch = create_pending_trigger_batch(
+            batch_id='continuing-turn', ref='TB1',
+            items=[trigger_payload('S'+seat, seat) for seat in 'ACD'],
+            apnap_order=engine.apnap_order(), turn_sequence=4, priority_epoch=2)
+        self.assertEqual(('C', 'D', 'A'), batch.apnap_order)
+        from quorune.trigger_batches import begin_pending_trigger_placement, complete_pending_trigger_group, TriggerBatchError
+        batch = begin_pending_trigger_placement(batch, apnap_order=engine.apnap_order())
+        stack = []
+        with self.assertRaises(TriggerBatchError):
+            complete_pending_trigger_group(batch, controller='A', refs=['SA'])
+        for seat in 'CDA':
+            placed, batch = complete_pending_trigger_group(batch, controller=seat, refs=['S'+seat])
+            stack.extend(item.controller for item in placed)
+        self.assertIsNone(batch)
+        self.assertEqual(['C', 'D', 'A'], stack)  # A's group resolves first.
+
+    def test_state_based_frame_separates_known_anchor_from_participants(self):
+        from copy import deepcopy
+        from quorune.replacement.model import ReplaceableEvent, ReplacementEventBatch, ReplacementEffectError, ReplacementEffect, ReplacementClass
+        from quorune.replacement.operations import SetField
+        from quorune.replacement.replay import ReplacementContinuation
+        frame = dict(active_player='B', phase='postcombat_main', step='main',
+                     turn_sequence=4, stack_refs=[], battlefield=[],
+                     turn_order=list('ABCD'), active_seats=list('ACD'))
+        batch = ReplacementEventBatch('continuing-turn', (
+            ReplaceableEvent(event_id='destroy-C', kind='permanent.destroy',
+                             affected_player='C', payload={}),), tuple('CDA'))
+        value = dict(replacement_resume_kind='state_based_destruction',
+                     state_based_frame=frame, replacement_selections=[],
+                     replacement_batch=batch.to_dict(), replacement_effects=[
+                         ReplacementEffect('replacement', 'source', 'permanent.destroy',
+                                           ReplacementClass.OTHER, operations=(SetField('destination', 'exile'),)).to_dict()])
+        self.assertEqual('B', ReplacementContinuation.from_dict(value).state_based_frame['active_player'])
+        for change in ({'active_player':'unknown'}, {'active_player':True},
+                       {'turn_sequence':True}, {'turn_sequence':-1},
+                       {'turn_order':list('ABCC')}, {'turn_order':list('ACD')},
+                       {'active_seats':list('ABCD')}, {'active_seats':list('AC')},
+                       {'active_seats':[]}, {'active_seats':['C','D','A']},
+                       {'active_seats':['A','C','C','D']}, {'turn_order':'ABCD'},
+                       {'extra':True}):
+            with self.subTest(change=change):
+                bad = deepcopy(value)
+                bad['state_based_frame'].update(change)
+                with self.assertRaises(ReplacementEffectError):
+                    ReplacementContinuation.from_dict(bad)
+        for removed in ('turn_order', 'active_seats'):
+            bad = deepcopy(value)
+            del bad['state_based_frame'][removed]
+            with self.assertRaises(ReplacementEffectError):
+                ReplacementContinuation.from_dict(bad)
+        legacy = deepcopy(value)
+        for key in ('turn_order', 'active_seats'):
+            del legacy['state_based_frame'][key]
+        with self.assertRaises(ReplacementEffectError):
+            ReplacementContinuation.from_dict(legacy)
+        legacy['state_based_frame']['active_player'] = 'C'
+        self.assertEqual('C', ReplacementContinuation.from_dict(legacy).state_based_frame['active_player'])
+
+
 class TurnPriorityDecisionOwnerTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

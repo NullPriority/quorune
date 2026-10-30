@@ -2,7 +2,7 @@
 title: "Platform readiness"
 status: "generated"
 authoritative_source: "platform/readiness-source.json"
-verified: "2ca9e6736d6f840a8542aa4be703b35e426f3544bd6695d6fe99754ad232e4bb"
+verified: "8a952857ff5e4c26756c0d85daa6dd58417e497e51f973166c2e6705801a692e"
 audience: "maintainers, operators, and contributors"
 maintenance: "generated"
 generated_source: "coverage/platform-readiness.json"
@@ -11,7 +11,7 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_platform_status.p
 
 # Platform readiness
 
-Source fingerprint: `2ca9e6736d6f840a8542aa4be703b35e426f3544bd6695d6fe99754ad232e4bb`
+Source fingerprint: `8a952857ff5e4c26756c0d85daa6dd58417e497e51f973166c2e6705801a692e`
 
 ## Current top-level state
 

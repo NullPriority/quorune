@@ -67,7 +67,8 @@ def state_based_replacement_frame(host: Any) -> dict[str, Any]:
         })
     return {"active_player": host.state.active_player, "phase": host.state.phase, "step": host.state.step,
             "turn_sequence": host.state.turn_sequence, "stack_refs": [item.ref for item in host.state.stack],
-            "battlefield": battlefield}
+            "battlefield": battlefield, "turn_order": list(host.state.turn_order),
+            "active_seats": list(host.active_seats)}
 
 
 def issue_state_based_replacement_choice(host: Any, required: Any, selections: Sequence[Any], zone_selections: Sequence[Any] = ()) -> None:
@@ -90,7 +91,11 @@ def issue_state_based_replacement_choice(host: Any, required: Any, selections: S
 
 
 def resume_state_based_replacement(host: Any, restored: Any, selection: Any, *, error_type: type[Exception]) -> None:
-    if thaw_value(restored.state_based_frame) != state_based_replacement_frame(host):
+    frame = thaw_value(restored.state_based_frame)
+    current = state_based_replacement_frame(host)
+    if 'turn_order' not in frame:  # Retain the closed legacy frame contract.
+        current = {key: value for key, value in current.items() if key not in {'turn_order', 'active_seats'}}
+    if frame != current or tuple(restored.batch.apnap_order) != tuple(host.apnap_order()):
         raise error_type("State-based replacement inputs changed before resume")
     try:
         zone_choice = restored.resume_kind == 'state_based_zone_change'
@@ -110,11 +115,24 @@ def resume_state_based_replacement(host: Any, restored: Any, selection: Any, *, 
 def decode_state_based_replacement(continuation_type, value: Mapping[str, Any], batch: Any, effects: Any):
     frame = value["state_based_frame"]
     expected = {"active_player", "phase", "step", "turn_sequence", "stack_refs", "battlefield"}
-    if not isinstance(frame, Mapping) or set(frame) != expected:
+    if not isinstance(frame, Mapping) or set(frame) not in (expected, expected | {'turn_order', 'active_seats'}):
         raise ReplacementEffectError("State-based replacement frame fields are malformed")
-    if (frame["active_player"] not in batch.apnap_order or type(frame["turn_sequence"]) is not int
+    if (type(frame['active_player']) is not str or not frame['active_player']
+            or type(frame["turn_sequence"]) is not int
             or frame["turn_sequence"] < 0 or not isinstance(frame["battlefield"], (list, tuple))):
         raise ReplacementEffectError("State-based replacement frame identity is malformed")
+    if 'turn_order' in frame:
+        from .turn_priority_model import apnap_participants
+        try:
+            if any(not isinstance(frame[key], (list, tuple)) for key in ('turn_order', 'active_seats')):
+                raise ValueError('Seat collections must be arrays')
+            order = apnap_participants(frame['turn_order'], frame['active_seats'], frame['active_player'])
+        except ValueError as exc:
+            raise ReplacementEffectError('State-based replacement frame seats are malformed') from exc
+        if order != batch.apnap_order:
+            raise ReplacementEffectError('State-based replacement participants do not match the batch')
+    elif frame['active_player'] not in batch.apnap_order:
+        raise ReplacementEffectError('Legacy state-based replacement turn anchor is not a participant')
     zone_choice = value['replacement_resume_kind'] == 'state_based_zone_change'
     if any(event.kind != ('zone.change' if zone_choice else 'permanent.destroy') for event in batch.events):
         raise ReplacementEffectError("State-based destruction continuation has wrong event kind")
