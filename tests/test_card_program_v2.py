@@ -449,6 +449,8 @@ class CardProgramV2Tests(unittest.TestCase):
                 self.assertEqual([], program.to_dict()["residuals"])
 
     def test_damage_aftermath_card_program_is_capability_closed(self):
+        """Closed declared capabilities retain independent runtime admission."""
+        from quorune.card_programs import bind_card_program_runtime
         current = compile_card_program(
             self.db,
             self.db.lookup("Deflecting Palm"),
@@ -459,8 +461,16 @@ class CardProgramV2Tests(unittest.TestCase):
 
         self.assertEqual(ORACLE_COMPILER_VERSION, current.compiler_version)
         self.assertEqual(
-            "capability_closed", current.trust_closure["trust_basis"]
+            "unresolved", current.trust_closure["trust_basis"]
         )
+        self.assertFalse(current.trust_closure['strict_capability_ready'])
+        self.assertEqual([], current.to_dict()['residuals'])
+        self.assertTrue(current.abilities[0].capability_closure['trusted'])
+        binding = bind_card_program_runtime(current, capability_registry=self.capabilities,
+                                            profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready'])
+        self.assertIn('runtime_typed_result_amount:invalid:Conditional recipient fields are closed',
+                      binding['ability_bindings'][0]['blockers'])
         self.assertIn(
             "damage.prevention.aftermath.damage",
             current.capability_dependencies,
