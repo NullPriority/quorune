@@ -156,6 +156,61 @@ class GameRecordV3Tests(unittest.TestCase):
                                  seed=31013, auto_pass_empty=False)
                 self.assertIsNone(_VALIDATION_REGISTRY.get())
 
+    def test_save_validation_snapshot_covers_review_and_refreshes_after_return_or_failure(self):
+        from quorune.record import authoritative_state_hash
+        from quorune.rules.capabilities import CapabilityRegistry, CapabilityRegistryError
+        from quorune.rules.evidence import CapabilityEvidenceError, _VALIDATION_REGISTRY
+        from quorune.rules.capabilities import load_default_capability_registry
+        import quorune.session as session_owner
+
+        session = make_session(self.db, self.mishra, self.zimone, players=2,
+                               seed=31014, auto_pass_empty=False)
+        before = authoritative_state_hash(session.state)
+        publish = session_owner.write_review_artifacts
+        seen = []
+
+        def validate_then_publish(*args, **kwargs):
+            # Publication is still inside this one synchronous save. A second
+            # loader must reuse its verified input, then leave no trust behind.
+            seen.append(load_default_capability_registry().evidence_fingerprint)
+            return publish(*args, **kwargs)
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'save-snapshot'
+            with patch.object(CapabilityRegistry, 'from_path', wraps=CapabilityRegistry.from_path) as loader, patch.object(
+                session_owner, 'write_review_artifacts', side_effect=validate_then_publish
+            ):
+                session.save(path)
+                self.assertEqual(1, loader.call_count, 'Save repeats invariant validation in review publication')
+            self.assertEqual(1, len(seen))
+            self.assertIsNotNone(seen[0])
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            self.assertTrue((path / 'review.json').is_file())
+            with patch.object(CapabilityRegistry, 'from_path', wraps=CapabilityRegistry.from_path) as loader, patch.object(
+                session_owner, 'write_review_artifacts', side_effect=AssertionError('review disabled')
+            ):
+                session.save(path, include_review=False)
+                self.assertEqual(1, loader.call_count)
+            self.assertFalse((path / 'review.json').exists())
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            with patch.object(session_owner, 'write_review_artifacts', side_effect=RuntimeError('publication failed')):
+                with self.assertRaisesRegex(RuntimeError, 'publication failed'):
+                    session.save(path)
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            with patch('quorune.rules.capabilities.implementation_component_resolves', return_value=False):
+                with self.assertRaisesRegex(CapabilityRegistryError, 'resolvable implementation'):
+                    session.save(path)
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            with patch('quorune.rules.evidence.load_capability_evidence_index',
+                       side_effect=CapabilityEvidenceError('changed inputs between saves')):
+                with self.assertRaisesRegex(CapabilityEvidenceError, 'changed inputs between saves'):
+                    session.save(path)
+            self.assertIsNone(_VALIDATION_REGISTRY.get())
+            session.save(path)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            self.assertTrue(replay_record(path, self.db, verify=True)['ok'])
+
     def test_nonsemantic_action_records_without_loading_unused_binding_registry(self):
         session = make_session(self.db, self.mishra, self.zimone, players=2,
                                seed=31001, auto_pass_empty=False)
