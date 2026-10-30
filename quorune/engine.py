@@ -986,16 +986,8 @@ class CommanderEngine(
         return active[0]
 
     def apnap_order(self) -> list[str]:
-        if not self.active_seats:
-            return []
-        start = self.state.active_player if self.state.active_player in self.active_seats else self.active_seats[0]
-        result = [start]
-        while len(result) < len(self.active_seats):
-            nxt = self._next_active_after(result[-1])
-            if nxt in result:
-                break
-            result.append(nxt)
-        return result
+        from .turn_priority_model import apnap_participants
+        return list(apnap_participants(self.state.turn_order, self.active_seats, self.state.active_player))
 
     # ------------------------------------------------------------------
     # Zone movement, draw, and knowledge

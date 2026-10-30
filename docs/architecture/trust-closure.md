@@ -54,6 +54,14 @@ always active for the selected rules profile. Match closure conservatively
 unions all loaded programs and known format dependencies. Dynamic closure
 binds capabilities introduced during play.
 
+Intrinsic CardProgram classification also applies the canonical descriptor
+runtime minima to abilities with a capability closure. A malformed descriptor
+or an undeclared minimum makes that classification unresolved, even when all
+Oracle spans compiled exactly. The corpus generator consumes this same trust
+owner; compiler exactness, strict runtime admission, and native gameplay
+evidence remain separate claims. Classification does not repair the missing
+implementation or declaration and does not confer gameplay evidence.
+
 Typed event-subscription sets require the multi-event capability at runtime,
 including their represented spell-cast and entry producer requirements.
 The binder derives these minima from the descriptor even when a coverage

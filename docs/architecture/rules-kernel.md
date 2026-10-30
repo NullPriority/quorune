@@ -761,6 +761,17 @@ does not perform turn-based actions: in particular, draw-step entry records an
 explicit skipped draw instead of submitting an inactive affected player to the
 strict draw and replacement owners.
 
+`CommanderEngine.apnap_order` rotates the physical seat order from the retained
+turn anchor before omitting departed players. During a departed player's
+continuing turn, the next surviving seat is first in APNAP order; that successor
+does not become the turn's active-player identity. The priority model owns this
+shared ordering contract for both live decisions and continuation validation.
+State-based replacement frames retain physical seats and live participants
+separately from the turn anchor. Their decoder requires the batch's participant
+order to match that context, and resume compares the context and public frame
+with current state before committing any replacement. The closed legacy frame
+form retains its live-anchor requirement and current-state validation.
+
 `turn_priority_owner.py` clears the successive-pass round when the priority
 holder confirms a concession. The existing player-departure owner transfers
 priority to the next remaining player. That player receives a fresh usable

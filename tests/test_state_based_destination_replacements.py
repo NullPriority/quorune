@@ -64,6 +64,108 @@ class StateBasedDestinationReplacementTests(unittest.TestCase):
         result = session.act('pilot:'+seat, {'action_id':'choose', 'replacement':options[0]['id']})
         self.assertTrue(result.ok, result.summary)
 
+    def test_departed_turn_anchor_resumes_actual_two_stage_replacement_and_finishes_turn(self):
+        """CR 101.4/800.4j: B's continuing turn, C's choice, A's spell.
+
+        Dauthi remains the existing reviewed replacement control; this witness
+        does not assert complete strict admission of that card.
+        """
+        from quorune.attachments import attach_objects
+        session = self.session(750250)
+        body = self.add(session.engine, 'Grizzly Bears', seat='C')
+        auras = [self.add(session.engine, name, seat='C')
+                 for name in ('Hyena Umbra', 'Spider Umbra')]
+        for aura in auras:
+            attach_objects(session.state.cards, aura, body,
+                           source_timestamp=session.engine._next_zone_timestamp())
+        sources = self.replacements(session)
+        private = self.add(session.engine, 'Generic Bound Growth', seat='D', zone='hand')
+        spell = self.add(session.engine, 'Lightning Bolt', zone='hand')
+        second_spell = self.add(session.engine, 'Lightning Bolt', zone='hand', ref='second-bolt')
+        session.state.active_player = 'B'
+        session.state.started = True
+        session.state.phase = 'postcombat_main'
+        session.state.step = 'main'
+        from quorune.turn_step_owner import TURN_STEPS
+        session.state.phase_index = TURN_STEPS.index(('postcombat_main', 'main'))
+        session.state.players['A'].mana_pool['R'] = 2
+        session.engine._grant_priority('B')
+        session.engine.pump()
+        self.checkpoint(session)  # Replay includes the actual departure.
+        result = session.act('pilot:B', {'action_id':'concede', 'choices':{'confirm_concede':True}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('B', session.state.active_player)
+        self.assertFalse(session.state.players['B'].in_game)
+        self.assertEqual('C', session.state.priority_player)
+        for seat in 'CD':
+            result = session.act('pilot:'+seat, {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == spell.ref)
+        result = session.act('pilot:A', {'action_id':action['id'], 'targets':[body.ref],
+                                        'pay':'manual', 'payment':{'R':1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(3, session.state.cards[body.object_id].marked_damage)
+        for seat in 'CD':
+            result = session.act('pilot:'+seat, {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == second_spell.ref)
+        result = session.act('pilot:A', {'action_id':action['id'], 'targets':[body.ref],
+                                        'pay':'manual', 'payment':{'R':1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('replacement.order', self.resolve(session).kind)
+        value = session.state.pending_decision.continuation
+        self.assertEqual('B', value['state_based_frame']['active_player'])
+        self.assertNotIn('B', value['replacement_batch']['apnap_order'])
+        self.assertEqual(list('CDA'), value['replacement_batch']['apnap_order'])
+        self.assertEqual(['pilot:C'], list(session.pending_principals()))
+        self.assertEqual('state_based_destruction', value['replacement_resume_kind'])
+        # This is the actual saved/command continuation, not a constructed frame.
+        for stage in ('state_based_destruction', 'state_based_zone_change'):
+            self.assertEqual(stage, session.state.pending_decision.continuation['replacement_resume_kind'])
+            self.assertTrue(all(session.state.cards[c.object_id].zone == 'battlefield' for c in (body, *auras)))
+            session = self.replay(session, load=True)
+            options = session.packet('pilot:C', full=True)['decision']['ctx']['options']
+            selected = next(row['id'] for row in options if row['source'] == auras[0].object_id) if stage == 'state_based_destruction' else options[0]['id']
+            if stage == 'state_based_destruction':
+                original = deepcopy(session.state.pending_decision.continuation)
+                for changed in ({'active_player':'C'}, {'turn_sequence':session.state.turn_sequence+1},
+                                {'active_seats':list('ABCD')}, {'phase':'precombat_main'}):
+                    session.state.pending_decision.continuation['state_based_frame'].update(changed)
+                    before = authoritative_state_hash(session.state)
+                    self.assertFalse(session.act('pilot:C', {'action_id':'choose', 'replacement':selected}).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    session.state.pending_decision.continuation = deepcopy(original)
+            for principal, choice in (('pilot:B', selected), ('pilot:A', selected), ('pilot:C', 'unknown')):
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act(principal, {'action_id':'choose', 'replacement':choice}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+            from quorune.state_based_replacement_coordination import decode_state_based_replacement
+            with patch('quorune.state_based_replacement_coordination.decode_state_based_replacement',
+                       wraps=decode_state_based_replacement) as decoder:
+                result = session.act('pilot:C', {'action_id':'choose', 'replacement':selected})
+                self.assertTrue(decoder.called)
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual(('battlefield', 0), (session.state.cards[body.object_id].zone, session.state.cards[body.object_id].marked_damage))
+        self.assertEqual(('exile', 1), (session.state.cards[auras[0].object_id].zone, session.state.cards[auras[0].object_id].counters.get('void', 0)))
+        self.assertEqual('battlefield', session.state.cards[auras[1].object_id].zone)
+        self.assertTrue(all(session.state.cards[c.object_id].zone == 'battlefield' for c in sources))
+        self.assertEqual('graveyard', session.state.cards[spell.object_id].zone)
+        self.assertEqual(('B', 'C'), (session.state.active_player, session.state.priority_player))
+        for seat in 'ABC':
+            self.assertNotIn(private.ref, json.dumps(session.packet('pilot:'+seat, full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:D', full=True)))
+        for _ in range(24):
+            if session.state.active_player != 'B':
+                break
+            self.assertEqual('priority', session.state.pending_decision.kind)
+            result = session.act(session.pending_principals()[0], {'action_id':'pass'})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual('C', session.state.active_player)
+        self.replay(session, load=True)
+
     def test_actual_lethal_damage_choice_rolls_back_wrong_principals_and_replays_from_before_cast(self):
         session = self.session(750200)
         target = self.add(session.engine, 'Grizzly Bears', seat='B')

@@ -8,6 +8,25 @@ from typing import Any, Literal, Mapping, Protocol, Sequence
 from .model import GameState
 
 
+def apnap_participants(
+    turn_order: Sequence[str], participants: Sequence[str], turn_anchor: str | None,
+) -> tuple[str, ...]:
+    """Rotate physical seats before omitting departed decision participants."""
+    seats = tuple(turn_order)
+    live = tuple(participants)
+    if (not seats or any(type(seat) is not str or not seat for seat in seats)
+            or len(seats) != len(set(seats))
+            or any(type(seat) is not str or seat not in seats for seat in live)
+            or live != tuple(seat for seat in seats if seat in live)):
+        raise ValueError('APNAP participants require unique known seats in turn order')
+    if turn_anchor is not None and (type(turn_anchor) is not str or turn_anchor not in seats):
+        raise ValueError('APNAP turn anchor must identify a known physical seat')
+    if not live:
+        return ()
+    start = seats.index(turn_anchor) if turn_anchor is not None else 0
+    return tuple(seat for seat in (*seats[start:], *seats[:start]) if seat in live)
+
+
 YieldInvalidationReason = Literal[
     "none",
     "phase",

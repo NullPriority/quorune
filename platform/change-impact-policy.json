@@ -7262,6 +7262,8 @@
       "patterns": [
         "quorune/state_based_execution.py",
         "quorune/state_based_replacement_coordination.py",
+        "quorune/turn_priority_model.py",
+        "tests/test_turn_priority_owner.py",
         "quorune/destruction.py",
         "quorune/replacement/replay.py",
         "quorune/replacement_decisions.py",
@@ -7270,6 +7272,8 @@
       ],
       "test_modules": [
         "test_state_based_destination_replacements",
+        "test_turn_priority_owner",
+        "test_trigger_batches",
         "test_state_based_actions",
         "test_umbra_armor",
         "test_destruction_rules",
