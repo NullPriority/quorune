@@ -940,6 +940,7 @@ class CommanderSession:
             format=format,
         )
 
+    @_capability_validation_snapshot()
     def save(
         self,
         directory: str | Path,

@@ -159,9 +159,10 @@ Validated public-quantity mana descriptors delegate their nested producer to
 the mana-production owner. Their codec forbids result declaration bindings and
 scalar arithmetic; a similar-looking result value cannot use that delegation.
 
-Session creation and one synchronous Game Record replay share one validated
-read-only capability registry/evidence snapshot across their nested trust
-checks. This is an invocation boundary: the next call re-reads and validates
+Session creation, one synchronous save including derived review publication,
+and one synchronous Game Record replay share one validated read-only capability
+registry/evidence snapshot across their nested trust checks. This is an
+invocation boundary: the next call re-reads and validates
 registry, evidence, and implementation inputs, including edits with unchanged
 file metadata. Nested component batches reuse the current snapshot; normal
 return and exceptions clear it. No process-wide metadata cache grants trust,
