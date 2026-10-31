@@ -6620,24 +6620,24 @@
           "classification": "rules_value",
           "file": "quorune/rules/morph_actions.py",
           "flow_id": "card-identity-flow:f221ce35dee93ce15a8e",
-          "line": 163,
+          "line": 164,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 163,
+          "source_line": 164,
           "symbol": "_build_turn_face_up_offer"
         },
         {
           "classification": "rules_value",
           "file": "quorune/rules/morph_actions.py",
           "flow_id": "card-identity-flow:1e09b32a184d236bc645",
-          "line": 302,
+          "line": 303,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 302,
+          "source_line": 303,
           "symbol": "commit_turn_face_up"
         },
         {
@@ -8012,12 +8012,12 @@
           "classification": "rules_value",
           "file": "quorune/zone_object_state.py",
           "flow_id": "card-identity-flow:6165a3bed2be9381084c",
-          "line": 333,
+          "line": 337,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 333,
+          "source_line": 337,
           "symbol": "reset_card_after_zone_change"
         },
         {
@@ -8048,24 +8048,24 @@
           "classification": "rules_value",
           "file": "quorune/zone_transitions.py",
           "flow_id": "card-identity-flow:80084ee4cda52e61b1c2",
-          "line": 342,
+          "line": 358,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "name",
           "source_kind": "mapping_get",
-          "source_line": 342,
+          "source_line": 358,
           "symbol": "ZoneTransitionOwner._prepare_move"
         },
         {
           "classification": "rules_value",
           "file": "quorune/zone_transitions.py",
           "flow_id": "card-identity-flow:441f552046d7997614a8",
-          "line": 579,
+          "line": 595,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "active_face",
           "source_kind": "attribute",
-          "source_line": 579,
+          "source_line": 595,
           "symbol": "ZoneTransitionOwner._commit_move"
         },
         {
@@ -8897,7 +8897,7 @@
           "expression": "self.state.stack[:] = [ item for item in self.state.stack if item.card_object_id != card.object_id ]",
           "file": "quorune/zone_transitions.py",
           "kind": "assignment",
-          "line": 562,
+          "line": 578,
           "state_path": "stack",
           "symbol": "_commit_move"
         },
@@ -8906,7 +8906,7 @@
           "expression": "self.state.players[card.controller].zones[\"battlefield\"].append(card.object_id)",
           "file": "quorune/zone_transitions.py",
           "kind": "mutating_call:append",
-          "line": 619,
+          "line": 635,
           "state_path": "players.zones",
           "symbol": "_enter_battlefield"
         }
@@ -10435,7 +10435,7 @@
             "symbol": "_commit_move"
           },
           "kind": "assignment",
-          "line": 562,
+          "line": 578,
           "owner_rationale": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner",
           "state_path": "stack",
           "subsystems": [
@@ -10455,7 +10455,7 @@
             "symbol": "_enter_battlefield"
           },
           "kind": "mutating_call:append",
-          "line": 619,
+          "line": 635,
           "owner_rationale": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner",
           "state_path": "players.zones",
           "subsystems": [
@@ -10821,7 +10821,7 @@
         },
         {
           "fan_in": 94,
-          "fan_out": 15,
+          "fan_out": 16,
           "module": "quorune.model"
         },
         {
@@ -10917,17 +10917,17 @@
           "module": "quorune.trigger_discovery"
         },
         {
+          "fan_in": 18,
+          "fan_out": 44,
+          "module": "quorune.zone_transitions"
+        },
+        {
           "fan_in": 7,
           "fan_out": 43,
           "module": "quorune.semantic_choices.defaults"
-        },
-        {
-          "fan_in": 1,
-          "fan_out": 43,
-          "module": "quorune.semantic_runtime.components"
         }
       ],
-      "internal_edges": 8220,
+      "internal_edges": 8224,
       "modules": [
         {
           "fan_in": 2,
@@ -14411,6 +14411,11 @@
         },
         {
           "fan_in": 3,
+          "fan_out": 0,
+          "module": "quorune.face_status_timestamp_model"
+        },
+        {
+          "fan_in": 3,
           "fan_out": 2,
           "module": "quorune.fixed_blocker_restrictions"
         },
@@ -14736,7 +14741,7 @@
         },
         {
           "fan_in": 94,
-          "fan_out": 15,
+          "fan_out": 16,
           "module": "quorune.model"
         },
         {
@@ -15071,7 +15076,7 @@
         },
         {
           "fan_in": 1,
-          "fan_out": 5,
+          "fan_out": 6,
           "module": "quorune.record_state_provenance"
         },
         {
@@ -16306,7 +16311,7 @@
         },
         {
           "fan_in": 2,
-          "fan_out": 9,
+          "fan_out": 10,
           "module": "quorune.rules.morph_actions"
         },
         {
@@ -18610,8 +18615,8 @@
           "module": "quorune.zone_transition_model"
         },
         {
-          "fan_in": 17,
-          "fan_out": 43,
+          "fan_in": 18,
+          "fan_out": 44,
           "module": "quorune.zone_transitions"
         },
         {
@@ -18663,7 +18668,7 @@
       "covered_high_risk_pairs": 563,
       "covered_piece_pairs": 1806,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "a067fd24dfc083a8b98eb02464b7b1a1902f9fb4a5718bdaa3e0b3f30f9b96b0",
+      "source_fingerprint": "779bfa30709ce40c809994cee9f16982fc6621b8641118261f55702280463d89",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -18719,7 +18724,7 @@
       ]
     },
     "production": {
-      "file_count": 1561,
+      "file_count": 1562,
       "largest_functions_and_methods": [
         {
           "end_line": 1912,
@@ -19052,12 +19057,12 @@
           "visibility": "public"
         }
       ],
-      "logical_lines": 292554,
+      "logical_lines": 292591,
       "methods": {
         "dunder": 830,
         "private": 1038,
-        "public": 3046,
-        "total": 4914
+        "public": 3047,
+        "total": 4915
       },
       "modules": [
         {
@@ -19285,18 +19290,18 @@
           "physical_lines": 1409
         },
         {
+          "file": "quorune/zone_transitions.py",
+          "functions_and_methods": 35,
+          "language": "python",
+          "logical_lines": 1321,
+          "physical_lines": 1372
+        },
+        {
           "file": "quorune/rules/node_capability_shapes.py",
           "functions_and_methods": 26,
           "language": "python",
           "logical_lines": 1320,
           "physical_lines": 1410
-        },
-        {
-          "file": "quorune/zone_transitions.py",
-          "functions_and_methods": 34,
-          "language": "python",
-          "logical_lines": 1306,
-          "physical_lines": 1356
         },
         {
           "file": "quorune/effect_runtime/objects_stack_and_tokens.py",
@@ -19379,8 +19384,8 @@
           "file": "quorune/model.py",
           "functions_and_methods": 51,
           "language": "python",
-          "logical_lines": 1061,
-          "physical_lines": 1253
+          "logical_lines": 1066,
+          "physical_lines": 1258
         },
         {
           "file": "quorune/selection/targeting.py",
@@ -20849,8 +20854,8 @@
           "file": "quorune/rules/morph_actions.py",
           "functions_and_methods": 12,
           "language": "python",
-          "logical_lines": 310,
-          "physical_lines": 335
+          "logical_lines": 311,
+          "physical_lines": 336
         },
         {
           "file": "quorune/activation_mana_cost.py",
@@ -20874,18 +20879,18 @@
           "physical_lines": 345
         },
         {
+          "file": "quorune/zone_object_state.py",
+          "functions_and_methods": 14,
+          "language": "python",
+          "logical_lines": 300,
+          "physical_lines": 353
+        },
+        {
           "file": "quorune/semantic_choices/self_counter_keyword_actions.py",
           "functions_and_methods": 6,
           "language": "python",
           "logical_lines": 296,
           "physical_lines": 318
-        },
-        {
-          "file": "quorune/zone_object_state.py",
-          "functions_and_methods": 14,
-          "language": "python",
-          "logical_lines": 296,
-          "physical_lines": 349
         },
         {
           "file": "quorune/compiler/return_to_hand_templates.py",
@@ -24087,6 +24092,13 @@
           "physical_lines": 90
         },
         {
+          "file": "quorune/record_state_provenance.py",
+          "functions_and_methods": 2,
+          "language": "python",
+          "logical_lines": 78,
+          "physical_lines": 89
+        },
+        {
           "file": "quorune/rules/random_graveyard_returns.py",
           "functions_and_methods": 9,
           "language": "python",
@@ -24358,13 +24370,6 @@
           "language": "python",
           "logical_lines": 72,
           "physical_lines": 82
-        },
-        {
-          "file": "quorune/record_state_provenance.py",
-          "functions_and_methods": 2,
-          "language": "python",
-          "logical_lines": 72,
-          "physical_lines": 83
         },
         {
           "file": "quorune/rules/activation/cost_modifiers.py",
@@ -29897,6 +29902,13 @@
           "physical_lines": 10
         },
         {
+          "file": "quorune/face_status_timestamp_model.py",
+          "functions_and_methods": 1,
+          "language": "python",
+          "logical_lines": 6,
+          "physical_lines": 8
+        },
+        {
           "file": "quorune/rules/activation/transform_snapshot.py",
           "functions_and_methods": 1,
           "language": "python",
@@ -30304,8 +30316,8 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 323253,
-      "python_file_count": 1545,
+      "physical_lines": 323293,
+      "python_file_count": 1546,
       "review_thresholds": {
         "function_logical_lines_review": 150,
         "module_logical_lines_review": 1500
@@ -30322,7 +30334,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 5643,
+      "top_level_functions": 5644,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -52703,10 +52715,14 @@
           "casting.aftermath.selected_half",
           "casting.bestow.fixed_mana",
           "casting.cost.self_public_reduction",
+          "casting.disguise.fixed_mana",
           "casting.flashback.fixed_mana",
           "casting.kicker.fixed_mana",
           "casting.lifecycle.fixed_public",
           "casting.lifecycle.fixed_zone_cast",
+          "casting.megamorph.fixed_mana",
+          "casting.morph.fixed_mana",
+          "casting.morph.fixed_nonmana",
           "casting.multikicker.fixed_mana",
           "casting.permission.one_shot_exile_without_mana",
           "casting.permission.source_graveyard_exile",
@@ -52725,6 +52741,7 @@
           "counter.producer.sunburst",
           "damage.creature_power.fixed_interaction",
           "game.opening_hand.battlefield",
+          "keyword_action.manifest.card",
           "library.search.fixed_counted",
           "library.search.fixed_to_battlefield",
           "library.search.partner_with_named_to_hand",
@@ -52771,7 +52788,7 @@
           "zone.self_move.activated",
           "zone.single_owner_move.fixed_destination"
         ],
-        "capability_count": 76,
+        "capability_count": 81,
         "compiler_cardprogram_representations": [
           "typed zone-transition semantic intents"
         ],
@@ -52787,7 +52804,8 @@
           "quorune/zone_transition_model.py",
           "quorune/zone_transitions.py",
           "quorune/zone_trigger_events.py",
-          "quorune/zone_trigger_processing.py"
+          "quorune/zone_trigger_processing.py",
+          "quorune/face_status_timestamp_model.py"
         ],
         "downstream_dependencies": [
           "trigger_processing",
@@ -52827,6 +52845,7 @@
           "quorune/engine.py",
           "quorune/entry_state_conditions.py",
           "quorune/entry_state_metrics.py",
+          "quorune/face_status_timestamp_model.py",
           "quorune/hand_entry_move.py",
           "quorune/hand_entry_queries.py",
           "quorune/impulse_access.py",
@@ -52962,7 +52981,7 @@
         "removal_condition": "No missing-owner condition remains. Compatibility facades may be removed only after historical callers use the typed transition port and exact Game Record v3 replay remains unchanged; future move producers must not restore direct engine zone-list mutation.",
         "replay_behavior": "Physical identity and logical incarnation transitions are serialized in Game Record v3 state and event journals.",
         "responsibility": "Own physical identity, logical incarnations, zone membership, destination replacement, LKI, attachment cleanup, and normalized zone events.",
-        "reusable_piece_count": 77,
+        "reusable_piece_count": 82,
         "reusable_pieces": [
           "capability.activation.transmute.hand",
           "capability.activation.unearth.fixed_mana",
@@ -52973,10 +52992,14 @@
           "capability.casting.aftermath.selected_half",
           "capability.casting.bestow.fixed_mana",
           "capability.casting.cost.self_public_reduction",
+          "capability.casting.disguise.fixed_mana",
           "capability.casting.flashback.fixed_mana",
           "capability.casting.kicker.fixed_mana",
           "capability.casting.lifecycle.fixed_public",
           "capability.casting.lifecycle.fixed_zone_cast",
+          "capability.casting.megamorph.fixed_mana",
+          "capability.casting.morph.fixed_mana",
+          "capability.casting.morph.fixed_nonmana",
           "capability.casting.multikicker.fixed_mana",
           "capability.casting.permission.one_shot_exile_without_mana",
           "capability.casting.permission.source_graveyard_exile",
@@ -52995,6 +53018,7 @@
           "capability.counter.producer.sunburst",
           "capability.damage.creature_power.fixed_interaction",
           "capability.game.opening_hand.battlefield",
+          "capability.keyword_action.manifest.card",
           "capability.library.search.fixed_counted",
           "capability.library.search.fixed_to_battlefield",
           "capability.library.search.partner_with_named_to_hand",
@@ -53048,7 +53072,7 @@
             "model_definition": 1,
             "mutable_owner": 5,
             "none": 12,
-            "read_only": 9
+            "read_only": 10
           },
           "direct_write_count": 7,
           "engine_direct_write_count": 4
@@ -53160,7 +53184,8 @@
           "quorune/zone_transition_model.py",
           "quorune/zone_transitions.py",
           "quorune/zone_trigger_events.py",
-          "quorune/zone_trigger_processing.py"
+          "quorune/zone_trigger_processing.py",
+          "quorune/face_status_timestamp_model.py"
         ],
         "status": "dedicated_typed_owner_with_compatibility_adapters"
       },
@@ -53547,7 +53572,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1454,
     "compiler_module_physical_lines": 1516,
-    "compiler_version": "oracle-ir-v676",
+    "compiler_version": "oracle-ir-v677",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -53866,22 +53891,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 4094,
-          "multiplayer": 2935,
-          "mutation": 1140,
-          "negative": 3860,
-          "positive": 4492,
-          "privacy": 2381,
+          "interaction": 4096,
+          "multiplayer": 2937,
+          "mutation": 1150,
+          "negative": 3870,
+          "positive": 4503,
+          "privacy": 2382,
           "property": 158,
-          "replay": 3601,
+          "replay": 3602,
           "rollback": 310
         },
-        "declaration_count": 22971,
-        "declaration_source_fingerprint": "a873c1b73926fcad7ee41f322c31cc054aeaaa206775fe464f3668ba67357e94",
-        "fingerprint": "109c43c70aa90f62e1aed68eeae538c99e4be472c90bd9156d966d1329d408e3",
-        "registry_fingerprint": "da4d152119b6387e96f03e77c269a3ba460f7b1b46e26d54273a7f0af6a09cad"
+        "declaration_count": 23008,
+        "declaration_source_fingerprint": "28a75f179aadc262ffda72684ec17f3ca74037c788c2b58ab9dc03093437dce7",
+        "fingerprint": "54fb289d64d8f367fb45c990e305e16ce77d1f34eb5684f6fc01de79ba7f1cc2",
+        "registry_fingerprint": "deb3a1208ff5b2ee95a192aca2b79c1fa246d1e807738e0aca78e0f6622c23e5"
       },
-      "fingerprint": "da4d152119b6387e96f03e77c269a3ba460f7b1b46e26d54273a7f0af6a09cad",
+      "fingerprint": "deb3a1208ff5b2ee95a192aca2b79c1fa246d1e807738e0aca78e0f6622c23e5",
       "implementation_mutation_status_counts": {
         "killed": 630,
         "not_run": 4
@@ -53891,7 +53916,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 597,
+      "registry_version": 598,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -54281,7 +54306,7 @@
         "contract_fingerprint": "6988aeb6bf2f9da5484cc0e8cba608bae92c31e8562c176be5be489afbdb1663",
         "exact_cards_with_template": 806,
         "exact_nodes": 931,
-        "fingerprint": "56f848a69a1429a8b2e5ef5eaefee836cdd39df21c77887628c37904d6dcc163",
+        "fingerprint": "38455f40878e40d9211210cf7d0f12dd77807ad42382517e3aa788ff823c5990",
         "grammar_source_fingerprint": "7bfccdf46d8eadf2eb524dd813faf6644d82e06c5272653310803127b752fc13",
         "identity_fingerprint": "a39e5b2b56e087531c5be3de472e0f3b1a9f797e128702f4bc98f6f731dd1e06",
         "present": true,
@@ -54293,7 +54318,7 @@
         "contract_fingerprint": "6988aeb6bf2f9da5484cc0e8cba608bae92c31e8562c176be5be489afbdb1663",
         "exact_cards_with_template": 828,
         "exact_nodes": 964,
-        "fingerprint": "ff7adde181d2292b8155063a3d6834edbfc15ed469d4d7405e5358198aa6137d",
+        "fingerprint": "2a7a9e78b170fa829ee52b9fc99ca441c7feb9e74e0f8649680b7241c3e58c95",
         "grammar_source_fingerprint": "7bfccdf46d8eadf2eb524dd813faf6644d82e06c5272653310803127b752fc13",
         "identity_fingerprint": "80692758cbf1852e48ac7e1edd414b53f1f2a710dc05b0f4e5b4a14610266b55",
         "present": true,
@@ -54312,7 +54337,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "5a530adb5d23a4695ee0e2f37b3fe0e31a941f39072d5b12948cd1a42faa42da",
+      "fingerprint": "07796fda7f58675692561a8f6dee8f6f3ad2f747ff268cf3a1b548de1929b2bc",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -55142,7 +55167,7 @@
       "playwright_e2e_journeys": 11
     },
     "mutation_testing": {
-      "capability_mutation_declarations": 1140,
+      "capability_mutation_declarations": 1150,
       "configured_tools": [],
       "focused_executable_suite": true,
       "mutation_score": null
@@ -55170,8 +55195,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 10165,
-      "discovered_total": 13474,
+      "conventional_ast_cases": 10168,
+      "discovered_total": 13477,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 316,
