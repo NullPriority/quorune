@@ -33,6 +33,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
         **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
+        **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
+        **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
     }
 
 
@@ -72,6 +74,16 @@ def validate_state_versions(
     placement=format_value.get('cast_source_placement_version',0)
     if type(placement) is not int or placement not in {0,1} or placement!=(cast_source_placement_version(getattr(state,'cast_source_placement_version',None)) or 0):
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')
+    from .transform_timestamp_model import transform_timestamp_version
+    timestamp=format_value.get('transform_timestamp_version',0)
+    if (type(timestamp) is not int or timestamp not in {0,1}
+            or timestamp!=(transform_timestamp_version(getattr(state,'transform_timestamp_version',None)) or 0)):
+        raise ValueError('Transform timestamp provenance does not match the initial checkpoint')
+    from .face_status_timestamp_model import face_status_timestamp_version
+    face_status=format_value.get('face_status_timestamp_version',0)
+    if (type(face_status) is not int or face_status not in {0,1}
+            or face_status!=(face_status_timestamp_version(getattr(state,'face_status_timestamp_version',None)) or 0)):
+        raise ValueError('Face-status timestamp provenance does not match the initial checkpoint')
 
 
 __all__ = ["format_state_versions", "validate_state_versions"]

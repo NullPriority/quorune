@@ -22,7 +22,8 @@ from ..morph import (
     MorphError,
     validate_morph_face_down_state,
 )
-from ..zone_object_state import ZoneObjectStateError, turn_card_face_up
+from ..zone_object_state import ZoneObjectStateError
+from ..zone_transitions import ZoneTransitionOwner
 from .action_proposals import ActionOffer, freeze_json
 
 
@@ -246,7 +247,7 @@ def commit_turn_face_up(
         host.turn_priority.complete_special_action(seat)
         return
     try:
-        turn_card_face_up(card, viewers=tuple(host.seats))
+        ZoneTransitionOwner(host).turn_face_up(card, viewers=tuple(host.seats))
     except ZoneObjectStateError as exc:
         raise GameRuleError(str(exc)) from exc
     if spec.method == MEGAMORPH_CAST_METHOD:

@@ -86,6 +86,66 @@ def focused_card_database(directory: str) -> CardDatabase:
 
 
 class FixedManaMorphModelTests(unittest.TestCase):
+    def face_timestamp_state(self):
+        from quorune.model import GameConfig,GameState
+        return GameState(game_id='face-status-version-fixture',config=GameConfig(),players={},cards={},
+            deck_names={},commander_oracle_ids={},turn_order=[],current_turn=None,last_normal_turn_player=None)
+
+    def test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions,validate_state_versions
+        state=self.face_timestamp_state();wire=state.to_dict()
+        self.assertEqual(1,wire['face_status_timestamp_version'])
+        self.assertEqual(wire,GameState.from_dict(wire).to_dict())
+        modern={'format':format_state_versions(state)};validate_state_versions(modern,state)
+        old={key:value for key,value in wire.items() if key!='face_status_timestamp_version'}
+        legacy=GameState.from_dict(old)
+        self.assertIsNone(legacy.face_status_timestamp_version)
+        self.assertEqual(1,legacy.transform_timestamp_version)
+        self.assertEqual(old,legacy.to_dict())
+        historical={'format':format_state_versions(legacy)};validate_state_versions(historical,legacy)
+        self.assertNotIn('face_status_timestamp_version',historical['format'])
+        for manifest,value in ((modern,legacy),(historical,state)):
+            with self.assertRaises(ValueError):validate_state_versions(manifest,value)
+        for bad in (True,False,0,2,'1',{}):
+            with self.subTest(bad=bad):
+                with self.assertRaises(ValueError):GameState.from_dict({**wire,'face_status_timestamp_version':bad})
+                with self.assertRaises(ValueError):validate_state_versions(
+                    {'format':{**modern['format'],'face_status_timestamp_version':bad}},state)
+
+    def test_face_status_clock_advances_only_for_an_eligible_current_object(self):
+        from dataclasses import replace
+        from types import SimpleNamespace
+        from quorune.zone_transitions import ZoneTransitionOwner
+        from quorune.zone_object_state import ZoneObjectStateError
+        state=self.face_timestamp_state();state.timestamp_sequence=9
+        card=CardInstance(object_id='FACE',ref='FACE',oracle_id='face-source',printed_name='Face fixture',
+            owner='A',controller='B',zone='battlefield',zone_timestamp=4,face_down=True,counters={'charge':2},
+            marked_damage=1,tapped=True,acquired_control_turn_count=3)
+        state.cards[card.object_id]=card;owner=ZoneTransitionOwner(SimpleNamespace(state=state))
+        identity=card.logical_object_id
+        owner.turn_face_up(card,viewers=('A','B'))
+        self.assertEqual((10,10,False,identity,{'charge':2},1,True,3),
+            (state.timestamp_sequence,card.zone_timestamp,card.face_down,card.logical_object_id,card.counters,
+             card.marked_damage,card.tapped,card.acquired_control_turn_count))
+        self.assertEqual((['A','B'],['A','B']),(card.known_to,card.revealed_to))
+        before=card.to_dict()
+        with self.assertRaises(ZoneObjectStateError):owner.turn_face_up(card,viewers=('A','B'))
+        self.assertEqual((10,before),(state.timestamp_sequence,card.to_dict()))
+        card.face_down=True;state.face_status_timestamp_version=None
+        owner.turn_face_up(card,viewers=('A','B'))
+        self.assertEqual((10,10,False),(state.timestamp_sequence,card.zone_timestamp,card.face_down))
+        card.face_down=True;state.face_status_timestamp_version=1
+        for mode,clock,phased,viewers,source in ((True,10,False,('A','B'),card),
+                (1,True,False,('A','B'),card),(1,8,False,('A','B'),card),
+                (1,10,True,('A','B'),card),(1,10,False,('A',1),card),
+                (1,10,False,('A','B'),replace(card))):
+            state.face_status_timestamp_version=mode;state.timestamp_sequence=clock;card.phased_out=phased
+            before=card.to_dict()
+            with self.subTest(mode=mode,clock=clock,phased=phased,viewers=viewers,current=source is card):
+                with self.assertRaises((ValueError,GameRuleError)):owner.turn_face_up(source,viewers=viewers)
+                self.assertEqual((clock,before),(state.timestamp_sequence,card.to_dict()))
+
     def test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint(self):
         from types import SimpleNamespace
         from quorune.rules.morph_actions import build_turn_face_up_offer
@@ -692,6 +752,8 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
             method=MEGAMORPH_CAST_METHOD,
         )
         before_mana = sum(engine.state.players["B"].mana_pool.values())
+        before_timestamp=engine.state.cards[card.object_id].zone_timestamp
+        before_clock=engine.state.timestamp_sequence
         result = session.act(
             "pilot:B",
             {"action_id": f"turn-face-up:{card.ref}"},
@@ -700,6 +762,7 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
         self.assertEqual("replacement.order", engine.state.pending_decision.kind)
         current = engine.state.cards[card.object_id]
         self.assertTrue(current.face_down)
+        self.assertEqual((before_timestamp,before_clock),(current.zone_timestamp,engine.state.timestamp_sequence))
         self.assertEqual(0, current.counters.get("+1/+1", 0))
         self.assertEqual(
             before_mana,
@@ -718,6 +781,7 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
         self.choose_replacements(session)
         current = engine.state.cards[card.object_id]
         self.assertFalse(current.face_down)
+        self.assertGreater(current.zone_timestamp,before_timestamp)
         self.assertGreater(current.counters.get("+1/+1", 0), 1)
         expected_hash = authoritative_state_hash(engine.state)
         with tempfile.TemporaryDirectory() as temporary:
@@ -882,7 +946,15 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
                 )
 
     def test_morph_cast_turn_up_privacy_and_replay(self):
+        self._morph_timestamp_journey(legacy_timestamp=False)
+
+    def test_legacy_absent_face_status_timestamp_retains_native_morph_hashes(self):
+        self._morph_timestamp_journey(legacy_timestamp=True)
+
+    def _morph_timestamp_journey(self,*,legacy_timestamp):
         session = self.session(70237001, players=4)
+        if legacy_timestamp:session.state.face_status_timestamp_version=None
+        else:self.assertEqual(1,session.state.face_status_timestamp_version)
         engine = session.engine
         card = self.add_card(session, name="Lumithread Field", ref="MORPH1")
         witness_ref = engine.create_token(
@@ -964,12 +1036,15 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
             if action["id"] == f"turn-face-up:{card.ref}"
         )
         self.assertEqual("{1}{W}", turn_offer["cost"])
+        before_timestamp=card.zone_timestamp
         result = session.act(
             "pilot:B",
             {"action_id": turn_offer["id"]},
         )
         self.assertTrue(result.ok, result.summary)
         self.assertFalse(card.face_down)
+        if legacy_timestamp:self.assertEqual(before_timestamp,card.zone_timestamp)
+        else:self.assertGreater(card.zone_timestamp,before_timestamp)
         self.assertEqual("Enchantment", engine._effective_card_data(card)["type_line"])
         self.assertEqual("3", engine._effective_card_data(witness)["toughness"])
         self.assertIn(

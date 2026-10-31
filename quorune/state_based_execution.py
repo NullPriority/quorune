@@ -40,9 +40,15 @@ def synchronize_state_based_observers(host):
     synchronize_preparation_copies(host)
     from .soulbond_state import reconcile_soulbond_pairs
     reconcile_soulbond_pairs(host)
-    host._synchronize_world_supertype_timestamps()
+    from .transform_order_model import TransformTimestampOrderRequired
+    try:host._synchronize_world_supertype_timestamps()
+    except TransformTimestampOrderRequired as needed:
+        from .transform_timestamp_order import begin_transform_timestamp_order
+        begin_transform_timestamp_order(host,needed.request,resume_kind='stabilize')
+        return True
     from .rules.state_triggers import observe_public_state_triggers
     observe_public_state_triggers(host)
+    return False
 
 
 class StateBasedSnapshotHost(Protocol):
