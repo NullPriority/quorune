@@ -93,6 +93,22 @@ class ZoneTransitionOwner:
         self.state.timestamp_sequence += 1
         return self.state.timestamp_sequence
 
+    def turn_face_up(self,card:CardInstance,*,viewers:tuple[str,...])->None:
+        """Validate the planned face timestamp before publishing any face-up observers."""
+        from .face_status_timestamp_model import face_status_timestamp_version
+        from .zone_object_state import turn_card_face_up
+        if not isinstance(card,CardInstance) or self.state.cards.get(card.object_id) is not card:
+            raise GameRuleError('Turning face up requires its exact current object')
+        try:version=face_status_timestamp_version(getattr(self.state,'face_status_timestamp_version',None))
+        except ValueError as error:raise GameRuleError(str(error)) from error
+        clock=self.state.timestamp_sequence
+        if version==1 and (type(clock) is not int or clock<0):
+            raise GameRuleError('Turning face up requires the canonical timestamp clock')
+        timestamp=clock+1 if version==1 else None
+        turn_card_face_up(card,viewers=viewers,timestamp=timestamp)
+        if timestamp is not None and self.next_timestamp()!=timestamp:
+            raise StateInvariantError('Face-up timestamp changed during commitment')
+
     def pin_characteristic_departures(
         self,
         cards: Sequence[CardInstance],

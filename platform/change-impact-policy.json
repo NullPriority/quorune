@@ -1350,14 +1350,19 @@
         "mechanics/contracts/spell-history-transformations.json",
         "rules/conformance-reviews/cr-731-spell-history-transformations.json",
         "tests/fixtures/spell-history-transformations-cards.json",
-        "tests/test_spell_history_transformations.py"
+        "tests/test_spell_history_transformations.py",
+        "quorune/transform_timestamp_model.py",
+        "quorune/transform_order_model.py",
+        "quorune/transform_timestamp_order.py",
+        "quorune/decision_completion.py"
       ],
       "test_modules": [
         "test_beginning_phase_rules",
         "test_card_program_trust",
         "test_object_identity",
         "test_spell_history_transformations",
-        "test_trigger_batches"
+        "test_trigger_batches",
+        "test_activated_self_transform"
       ]
     },
     {
@@ -4477,7 +4482,9 @@
         "quorune/zone_object_state.py",
         "quorune/semantic_runtime/zone_move_intent.py",
         "quorune/rules/morph_actions.py",
-        "tests/fixtures/manifest-cards.json"
+        "tests/fixtures/manifest-cards.json",
+        "quorune/face_status_timestamp_model.py",
+        "quorune/record_state_provenance.py"
       ],
       "test_modules": [
         "test_split_second_rules",
@@ -4489,7 +4496,8 @@
         "test_zone_general_rules",
         "test_zone_transition_owner",
         "test_semantic_choice_characterization",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_nonmana_morph"
       ]
     },
     {

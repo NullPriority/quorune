@@ -8993,6 +8993,22 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/decision_completion.py",
+      "layer": "adapter",
+      "owning_subsystem": "turn_priority_and_decisions",
+      "allowed_dependency_layers": [
+        "adapter",
+        "application",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/deck.py",
       "layer": "adapter",
       "owning_subsystem": "legacy_adapter",
@@ -10068,6 +10084,18 @@
         "domain"
       ],
       "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/face_status_timestamp_model.py",
+      "layer": "domain",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "read_only",
       "card_specificity_policy": "generic_no_growth",
       "visibility_sensitivity": "authoritative_internal",
       "replay_participation": "none"
@@ -21363,6 +21391,44 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/transform_order_model.py",
+      "layer": "domain",
+      "owning_subsystem": "day_night_and_transform",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/transform_timestamp_model.py",
+      "layer": "domain",
+      "owning_subsystem": "day_night_and_transform",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/transform_timestamp_order.py",
+      "layer": "rules",
+      "owning_subsystem": "day_night_and_transform",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/transmute.py",
       "layer": "rules",
       "owning_subsystem": "activated_abilities",
@@ -22029,5 +22095,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "4de2072cb86978e082847e8780fdd23d7a2b635a4ee10376fc9e7cabae13805b"
+  "fingerprint": "0bf24cd5e971cb74097d5f0355e4b4af6b03e409a92766bdb079eae0284e3052"
 }

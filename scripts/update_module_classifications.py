@@ -46,6 +46,10 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
+    if relative=='quorune/transform_order_model.py':return 'domain'
+    if relative=='quorune/decision_completion.py':return 'adapter'
+    if relative=='quorune/transform_timestamp_model.py':return 'domain'
+    if relative=='quorune/face_status_timestamp_model.py':return 'domain'
     if relative == 'quorune/characteristic_read_frames.py':
         return 'rules'
     if relative.startswith("server/") or relative == "simctl.py":
@@ -511,6 +515,10 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative in {'quorune/transform_order_model.py','quorune/transform_timestamp_order.py'}:return 'day_night_and_transform'
+    if relative=='quorune/decision_completion.py':return 'turn_priority_and_decisions'
+    if relative=='quorune/transform_timestamp_model.py':return 'day_night_and_transform'
+    if relative=='quorune/face_status_timestamp_model.py':return 'zones_and_object_identity'
     if relative in {'quorune/expend_model.py','quorune/rules/casting/spell_mana_payments.py'}:return 'casting_activation_and_costs'
     if relative == 'quorune/characteristic_read_frames.py':return 'card_characteristics'
     if relative == 'quorune/rules/granted_characteristic_shapes.py':return 'continuous_effects'

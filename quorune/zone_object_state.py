@@ -226,6 +226,7 @@ def turn_card_face_up(
     card: CardInstance,
     *,
     viewers: tuple[str, ...],
+    timestamp: int | None = None,
 ) -> None:
     """End one represented face-down effect without changing incarnation."""
 
@@ -233,11 +234,14 @@ def turn_card_face_up(
         not isinstance(card, CardInstance)
         or card.zone != "battlefield"
         or not card.face_down
+        or card.phased_out
         or any(type(viewer) is not str or not viewer for viewer in viewers)
         or len(set(viewers)) != len(viewers)
+        or timestamp is not None and (type(timestamp) is not int or timestamp<=0 or timestamp<=card.zone_timestamp)
     ):
         raise ZoneObjectStateError("Turn-face-up state is malformed")
     card.face_down = False
+    if timestamp is not None:card.zone_timestamp=timestamp
     card.annotations.pop('manifested_card', None)
     card.annotations.pop(MORPH_FACE_DOWN_ANNOTATION, None)
     card.annotations.pop(MORPH_METHOD_ANNOTATION, None)

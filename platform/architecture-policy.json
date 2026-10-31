@@ -116,6 +116,10 @@
     ]
   },
   "protected_rules_modules": [
+    "quorune/transform_timestamp_model.py",
+    "quorune/transform_order_model.py",
+    "quorune/transform_timestamp_order.py",
+    "quorune/decision_completion.py",
     "quorune/source_damage_death.py",
     "quorune/rampage.py",
     "quorune/energy_payment.py",
@@ -257,7 +261,8 @@
     "quorune/transmute.py",
     "quorune/conditional_exile_return.py",
     "quorune/conditional_exile_model.py",
-    "quorune/cost_payments.py"
+    "quorune/cost_payments.py",
+    "quorune/face_status_timestamp_model.py"
   ],
   "protected_future_prefixes": [
     "quorune/domain/",
@@ -382,7 +387,7 @@
       "quorune/zone_object_state.py": "typed object-local CR 400.7 reset owner behind the canonical zone transition",
       "quorune/zone_transitions.py": "typed authoritative single and simultaneous zone-membership, logical-incarnation, timestamp, LKI, and announcement owner",
       "quorune/day_night.py": "typed CR 731 public designation and untap synchronization owner",
-      "quorune/permanent_transform.py": "typed CR 701.27 active-face and transform-count mutation owner",
+      "quorune/permanent_transform.py": "typed CR 701.27 active-face/transform-count owner with versioned timestamp assignment through the canonical zone clock",
       "quorune/selection/public_choice.py": "typed represented public nontarget choice projection, continuation validation, and authoritative result coordination",
       "quorune/selection/exile_cast.py": "typed one-shot public exile-cast choice, continuation validation, and authoritative resolution cleanup owner",
       "quorune/selection/searching.py": "typed hidden-zone search projection, continuation validation, result binding, and canonical zone-transition coordination",
@@ -495,7 +500,12 @@
       "quorune/rules/self_cost_public_counters.py": "Read existing canonical public counter snapshots for one source spell cost before its payment locks.",
       "quorune/cost_payments.py": "read-only payment configuration and immutable source planning, delegating activation and mana-provenance mutation to existing canonical owners",
       "quorune/rules/casting/spell_mana_payments.py": "Read the bounded paid-mana journal and delegate committed recording and payment-time occurrence collection to canonical history and trigger owners.",
-      "quorune/static_component_participation.py": "pure source-prefix participation and immutable same-layer dependency ordering over authoritative public state"
+      "quorune/static_component_participation.py": "pure source-prefix participation and immutable same-layer dependency ordering over authoritative public state",
+      "quorune/transform_timestamp_model.py": "pure optional timestamp-version validation and APNAP grouping of supplied card values; no live state mutation",
+      "quorune/transform_order_model.py": "closed immutable simultaneous transform request, subject scopes, controller permutations and continuation codec; no live mutation",
+      "quorune/transform_timestamp_order.py": "data-only scoped timestamp selection and authenticated decision coordination; delegates every live mutation to existing permission, turn, transform and timestamp owners",
+      "quorune/decision_completion.py": "existing decision-kind routing extracted from engine with delegation to the same owners; no state mutation or second registry",
+      "quorune/face_status_timestamp_model.py": "pure optional face-status timestamp version validation; no state mutation or timestamp allocation"
     },
     "model_definition": "quorune/model.py"
   },

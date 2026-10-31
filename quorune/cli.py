@@ -76,6 +76,19 @@ def _load(db_path: str, game_dir: str) -> tuple[CardDatabase, CommanderSession]:
     return db, session
 
 
+def _scripted_rules_order_choice(kind,context,actions):
+    if kind not in {'state.legend','choice.apnap','trigger.order','permanent.timestamp_order'}:return None
+    options=(context.get('keep_one') or context.get('options')
+        or ([item['id'] for item in context.get('cards',[])] if kind=='permanent.timestamp_order' else [])
+        or [item['id'] for item in context.get('triggers') or []])
+    if kind=='state.legend':choices={'card':options[0]}
+    elif kind=='trigger.order':choices={'triggers':options}
+    elif kind=='permanent.timestamp_order':choices={'cards':options}
+    else:choices={'cards':options[:int(context.get('count',0))]}
+    return {'action_id':actions[0]['id'] if actions else 'choose',**choices,
+        'plan':'DEVELOP_ENGINE','reason':'Make the deterministic required rules choice.'}
+
+
 def _scripted_choice(
     observation: dict[str, Any],
     decision: dict[str, Any],
@@ -214,25 +227,8 @@ def _scripted_choice(
             "plan": "DEVELOP_ENGINE",
             "reason": "Return the commander to the command zone.",
         }
-    if kind in {"state.legend", "choice.apnap", "trigger.order"}:
-        options = (
-            context.get("keep_one")
-            or context.get("options")
-            or [item["id"] for item in context.get("triggers") or []]
-        )
-        choices = {}
-        if kind == "state.legend":
-            choices["card"] = options[0]
-        elif kind == "trigger.order":
-            choices["triggers"] = options
-        else:
-            choices["cards"] = options[: int(context.get("count", 0))]
-        return {
-            "action_id": actions[0]["id"] if actions else "choose",
-            **choices,
-            "plan": "DEVELOP_ENGINE",
-            "reason": "Make the deterministic required rules choice.",
-        }
+    ordered_choice=_scripted_rules_order_choice(kind,context,actions)
+    if ordered_choice is not None:return ordered_choice
     land = next((item for item in actions if item.get("kind") == "play_land"), None)
     if land:
         choices = {}

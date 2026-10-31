@@ -20,6 +20,122 @@ import test_bound_effect_programs as witnesses
 import test_counter_placement_events as counter_witnesses
 
 
+class TransformTimestampVersionTests(unittest.TestCase):
+    def test_scripted_pilot_uses_the_advertised_timestamp_permutation(self):
+        from quorune.cli import _scripted_choice
+        decision={'kind':'permanent.timestamp_order','ctx':{'cards':[{'id':'SECOND'},{'id':'FIRST'}]},
+            'legal_actions':[{'id':'order','action':'order'}]}
+        result=_scripted_choice({},decision,None)
+        self.assertEqual('order',result['action_id']);self.assertEqual(['SECOND','FIRST'],result['cards'])
+
+    def ordering_frame(self):
+        from quorune.model import CardInstance
+        from quorune.transform_order_model import TransformTimestampContinuation,TransformTimestampRequest
+        from quorune.replacement.immutable import FrozenMap
+        cards=tuple(CardInstance(object_id=ref,ref=ref,oracle_id='ordering-fixture',printed_name=ref,
+            owner=actor,controller=actor,zone='battlefield') for actor,ref in
+            (('C','C1'),('C','C2'),('A','A1'),('A','A2')))
+        request=TransformTimestampRequest(tuple(FrozenMap(card.to_dict()) for card in cards),'day/night fixture',True,FrozenMap({}))
+        return TransformTimestampContinuation(request,FrozenMap({'active_player':'B','turn_sequence':2,
+            'phase_index':0,'phase':'beginning','step':'untap'}),'untap',None,())
+
+    def test_ordering_frame_has_closed_codec_and_complete_controller_permutations(self):
+        from quorune.transform_order_model import TransformTimestampModelError
+        from quorune.transform_order_model import TransformTimestampContinuation
+        frame=self.ordering_frame()
+        self.assertEqual(frame,TransformTimestampContinuation.from_dict(frame.to_dict()))
+        self.assertEqual(('C',('C1','C2')),frame.current_choice)
+        next_frame=frame.with_order(['C2','C1'])
+        self.assertEqual(('A',('A1','A2')),next_frame.current_choice)
+        complete=next_frame.with_order(['A2','A1'])
+        self.assertEqual(('C2','C1','A2','A1'),complete.ordered_ids)
+        for values in (['C1'],['C1','C1'],['A1','C2'],[True,'C2']):
+            with self.assertRaises(TransformTimestampModelError):frame.with_order(values)
+        wire=frame.to_dict()
+        for bad in ({**wire,'extra':1},{**wire,'schema_version':True},{**wire,'orders':['C2C1']},
+                {**wire,'held_triggers':[{}]},
+                {**wire,'context':{**wire['context'],'turn_sequence':True}},
+                {**wire,'request':{**wire['request'],'subjects':'not-an-array'}}):
+            with self.assertRaises(TransformTimestampModelError):TransformTimestampContinuation.from_dict(bad)
+
+    def test_ordering_frame_rejects_stale_subjects_and_forged_apnap(self):
+        from quorune.transform_order_model import TransformTimestampModelError
+        from types import SimpleNamespace
+        from quorune.model import CardInstance
+        from quorune.replacement.immutable import thaw_value
+        frame=self.ordering_frame()
+        cards={raw['object_id']:CardInstance.from_dict(thaw_value(raw)) for raw in frame.request.subjects}
+        host=SimpleNamespace(state=SimpleNamespace(cards=cards),apnap_order=lambda:['B','C','D','A'])
+        frame.request.validate_current(host)
+        cards['C1'].transform_count=1
+        with self.assertRaises(TransformTimestampModelError):frame.request.validate_current(host)
+        cards['C1'].transform_count=0;host.apnap_order=lambda:['A','B','C','D']
+        with self.assertRaises(TransformTimestampModelError):frame.request.validate_current(host)
+
+    def test_simultaneous_timestamp_plan_uses_live_apnap_and_preserves_controller_input_order(self):
+        from types import SimpleNamespace
+        from quorune.transform_timestamp_model import ordered_transform_cards
+        first=SimpleNamespace(controller='A',object_id='first');second=SimpleNamespace(controller='A',object_id='second');other=SimpleNamespace(controller='C',object_id='other')
+        self.assertEqual((other,first,second),ordered_transform_cards((first,other,second),('B','C','D','A')))
+        with self.assertRaises(ValueError):ordered_transform_cards((first,),('B','C','D'))
+        with self.assertRaises(ValueError):ordered_transform_cards((first,),('A','A'))
+
+    def test_shared_timestamp_clock_advances_only_for_current_successful_transforms(self):
+        from types import SimpleNamespace
+        from quorune.model import CardInstance
+        from quorune.permanent_transform import transform_permanent
+        from quorune.characteristic_evaluation import type_parts
+        state=self.state();state.timestamp_sequence=9
+        card=CardInstance(object_id='timestamp-source',ref='TIME_SOURCE',oracle_id='timestamp-source-oracle',
+            printed_name='Clock fixture',owner='A',controller='A',zone='battlefield',zone_timestamp=4,active_face='front')
+        record=SimpleNamespace(oracle_id=card.oracle_id,layout='transform',faces=({'name':'front','type_line':'Creature'},
+            {'name':'back','type_line':'Creature'}))
+        host=SimpleNamespace(state=state,card_record=lambda _card:record,_type_parts=type_parts,
+            _effective_card_data=lambda _card:{'type_line':'Creature','ability_fragments':[]},
+            semantic_program_is_current_trusted=lambda _program:False,
+            semantics=SimpleNamespace(programs_for_oracle=lambda *_args,**_kwargs:()))
+        identity=card.logical_object_id
+        self.assertIsNotNone(transform_permanent(host,card,expected_transform_count=0,day_night_instruction=False))
+        self.assertEqual((10,10,'back',1,identity),
+            (state.timestamp_sequence,card.zone_timestamp,card.active_face,card.transform_count,card.logical_object_id))
+        self.assertIsNone(transform_permanent(host,card,expected_transform_count=0,day_night_instruction=False))
+        card.face_down=True
+        self.assertIsNone(transform_permanent(host,card,expected_transform_count=1,day_night_instruction=False))
+        self.assertEqual(10,state.timestamp_sequence)
+        card.face_down=False;state.transform_timestamp_version=None
+        self.assertIsNotNone(transform_permanent(host,card,expected_transform_count=1,day_night_instruction=False))
+        self.assertEqual((10,10,'front'),(state.timestamp_sequence,card.zone_timestamp,card.active_face))
+
+    def state(self):
+        from quorune.model import GameConfig,GameState
+        return GameState(game_id='transform-version-fixture',config=GameConfig(),players={},cards={},
+            deck_names={},commander_oracle_ids={},turn_order=[],current_turn=None,last_normal_turn_player=None)
+
+    def test_current_and_legacy_state_codecs_preserve_explicit_provenance(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions,validate_state_versions
+        state=self.state();wire=state.to_dict()
+        self.assertEqual(1,wire['transform_timestamp_version'])
+        self.assertEqual(wire,GameState.from_dict(wire).to_dict())
+        modern={'format':format_state_versions(state)}
+        self.assertEqual(1,modern['format']['transform_timestamp_version'])
+        validate_state_versions(modern,state)
+        old={key:value for key,value in wire.items() if key!='transform_timestamp_version'}
+        legacy=GameState.from_dict(old)
+        self.assertIsNone(legacy.transform_timestamp_version)
+        self.assertEqual(old,legacy.to_dict())
+        historical={'format':format_state_versions(legacy)}
+        self.assertNotIn('transform_timestamp_version',historical['format'])
+        validate_state_versions(historical,legacy)
+        for manifest,value in ((historical,state),(modern,legacy)):
+            with self.assertRaises(ValueError):validate_state_versions(manifest,value)
+        for bad in (True,False,0,2,'1',{}):
+            with self.subTest(bad=bad):
+                with self.assertRaises(ValueError):GameState.from_dict({**wire,'transform_timestamp_version':bad})
+                with self.assertRaises(ValueError):validate_state_versions(
+                    {'format':{**modern['format'],'transform_timestamp_version':bad}},state)
+
+
 class ActivatedTransformCompilerTests(unittest.TestCase):
     def test_fixed_self_transform_has_same_generic_owner_and_count_snapshot(self):
         registry=load_default_capability_registry();record=query_record('{6}: Transform this creature.')
@@ -82,13 +198,23 @@ class ActivatedTransformRuntimeTests(unittest.TestCase):
         return next(a for a in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if a['id'].startswith('activate:'+card.ref+':') and 'Transform' in a['label'])
 
     def test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability(self):
+        self._ulvenwald_transform_journey(legacy=False)
+
+    def test_historical_absent_version_transform_preserves_legacy_timestamp_and_replay(self):
+        self._ulvenwald_transform_journey(legacy=True)
+
+    def _ulvenwald_transform_journey(self,*,legacy):
         s=self.session(326001);e=s.engine;source=self.add(e,'Ulvenwald Captive // Ulvenwald Abomination');source.acquired_control_turn_count=-1;source.counters['+1/+1']=1;source.marked_damage=1
+        if legacy:e.state.transform_timestamp_version=None
         self.ready(s,source,{'G':3,'C':6});self.checkpoint(s);identity=source.logical_object_id;timestamp=source.zone_timestamp
         action=self.activation(s,source);before=authoritative_state_hash(e.state)
         wrong=s.act('pilot:B',{'action_id':action['id'],'pay':'auto'});self.assertFalse(wrong.ok);self.assertEqual(before,authoritative_state_hash(e.state))
         result=s.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(result.ok,result.summary);self.assertEqual(0,e.state.stack[-1].context.get('source_transform_count'));self.resolve(s)
         current=e.state.cards[source.object_id];self.assertEqual('Ulvenwald Abomination',current.active_face)
-        self.assertEqual(identity,current.logical_object_id);self.assertEqual(timestamp,current.zone_timestamp);self.assertEqual(1,current.counters['+1/+1']);self.assertEqual(1,current.marked_damage)
+        self.assertEqual(identity,current.logical_object_id)
+        if legacy:self.assertEqual(timestamp,current.zone_timestamp)
+        else:self.assertGreater(current.zone_timestamp,timestamp)
+        self.assertEqual(1,current.counters['+1/+1']);self.assertEqual(1,current.marked_damage)
         action=next(a for a in s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions'] if a['id'].startswith('activate:'+current.ref+':') and 'Add {C}{C}' in a['label'])
         count=e.state.players['A'].mana_pool['C'];result=s.act('pilot:A',{'action_id':action['id'],'pay':'auto'});self.assertTrue(result.ok,result.summary)
         self.assertEqual(count+2,e.state.players['A'].mana_pool['C']);self.replay(s,load=True)
@@ -98,7 +224,10 @@ class ActivatedTransformRuntimeTests(unittest.TestCase):
         self.ready(s,source,{'C':12});self.checkpoint(s)
         for _ in range(2):
             result=s.act('pilot:A',{'action_id':self.activation(s,source)['id'],'pay':'auto'});self.assertTrue(result.ok,result.summary)
-        self.assertEqual(2,len(e.state.stack));self.resolve(s);current=e.state.cards[source.object_id]
+        self.assertEqual(2,len(e.state.stack));sequence=e.state.timestamp_sequence
+        self.resolve(s);current=e.state.cards[source.object_id]
+        self.assertEqual(sequence+1,e.state.timestamp_sequence)
+        self.assertEqual(e.state.timestamp_sequence,current.zone_timestamp)
         self.assertEqual('Stonewing Antagonizer',current.active_face);self.assertEqual(1,current.transform_count);self.assertIn('flying',e._combat_keywords(current));self.replay(s,load=True)
 
     def test_omitting_activation_transform_count_mutant_is_killed(self):

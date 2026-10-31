@@ -908,7 +908,8 @@ class SpellHistoryTransformationTests(unittest.TestCase):
         self.assertEqual("Moonlit Adept", bound_a.active_face)
         self.assertEqual("Moonlit Adept", bound_c.active_face)
         self.assertEqual(identity, bound_a.logical_object_id)
-        self.assertEqual(timestamp, bound_a.zone_timestamp)
+        self.assertGreater(bound_a.zone_timestamp,timestamp)
+        self.assertLess(bound_c.zone_timestamp,bound_a.zone_timestamp)
         self.assertEqual(2, bound_a.counters["+1/+1"])
         self.assertEqual(1, bound_a.marked_damage)
         self.assertEqual(aura.object_id, bound_a.attachments[0])
@@ -949,7 +950,106 @@ class SpellHistoryTransformationTests(unittest.TestCase):
             loaded.save(directory)
             replay = replay_record(directory, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
-        self.assertEqual(expected_hash, replay["final_state_hash"])
+        self.assertEqual(expected_hash,replay["final_state_hash"])
+
+    def test_simultaneous_transforms_ask_controller_to_order_own_timestamps_before_face_commit(self):
+        session=self.session(73107);engine=session.engine
+        first=self.add_card(session,name='Sunlit Adept',ref='timestamp-first',owner='A')
+        second=self.add_card(session,name='Sunlit Adept',ref='timestamp-second',owner='A')
+        before=(first.zone_timestamp,second.zone_timestamp)
+        self.prepare_completed_turn(session,sequence=1,active='A')
+        engine.state.day_night='day'
+        self.begin_next_turn(session,'B')
+        decision=engine.state.pending_decision
+        self.assertIsNotNone(decision)
+        self.assertEqual('permanent.timestamp_order',decision.kind)
+        self.assertEqual(['A'],decision.actors)
+        self.assertEqual(('Sunlit Adept','Sunlit Adept'),(first.active_face,second.active_face))
+        self.assertEqual((0,0),(first.transform_count,second.transform_count))
+        self.assertEqual(before,(first.zone_timestamp,second.zone_timestamp))
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        packet=session.packet('pilot:A',full=True)
+        action=packet['decision']['legal_actions'][0]
+        self.assertTrue(action['form']['fields'][0]['ordered'])
+        self.assertNotIn('transform_timestamp_order',json.dumps(session.packet('pilot:B',full=True)))
+        original_hash=authoritative_state_hash(engine.state)
+        self.assertFalse(session.act('pilot:B',{'action_id':'order','cards':[first.ref,second.ref]}).ok)
+        self.assertEqual(original_hash,authoritative_state_hash(engine.state))
+        for refs in ([first.ref,first.ref],[first.ref],['unknown',second.ref]):
+            self.assertFalse(session.act('pilot:A',{'action_id':'order','cards':refs}).ok)
+            self.assertEqual(original_hash,authoritative_state_hash(engine.state))
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary)/'timestamp-order'
+            session.save(directory);loaded=CommanderSession.load(self.db,directory)
+            self.assertEqual(original_hash,authoritative_state_hash(loaded.state))
+            accepted=loaded.act('pilot:A',{'action_id':'order','cards':[second.ref,first.ref]})
+            self.assertTrue(accepted.ok,accepted.summary)
+            current_first=loaded.state.cards[first.object_id];current_second=loaded.state.cards[second.object_id]
+            self.assertEqual(('Moonlit Adept','Moonlit Adept'),(current_first.active_face,current_second.active_face))
+            self.assertEqual((1,1),(current_first.transform_count,current_second.transform_count))
+            self.assertLess(current_second.zone_timestamp,current_first.zone_timestamp)
+            self.assertGreater(current_second.zone_timestamp,max(before))
+            self.assertNotEqual('untap',loaded.state.step)
+            expected=authoritative_state_hash(loaded.state);loaded.save(directory)
+            result=replay_record(directory,self.db,verify=True)
+            self.assertTrue(result['ok'],result)
+            self.assertEqual(expected,result['final_state_hash'])
+
+    def test_timestamp_groups_ask_in_apnap_order_and_expose_previous_public_orders(self):
+        session=self.session(73108);engine=session.engine
+        cards={ref:self.add_card(session,name='Sunlit Adept',ref=ref,owner=actor)
+            for actor,ref in (('A','order-A1'),('A','order-A2'),('C','order-C1'),('C','order-C2'))}
+        self.prepare_completed_turn(session,sequence=1,active='A');engine.state.day_night='day'
+        self.begin_next_turn(session,'B')
+        self.assertEqual(['C'],engine.state.pending_decision.actors)
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        self.assertTrue(session.act('pilot:C',{'action_id':'order','cards':['order-C2','order-C1']}).ok)
+        self.assertEqual(['A'],engine.state.pending_decision.actors)
+        self.assertTrue(all(card.transform_count==0 for card in cards.values()))
+        previous=session.packet('pilot:A',full=True)['decision']['ctx']['previous_orders']
+        self.assertEqual([{'controller':'C','cards':['order-C2','order-C1']}],previous)
+        self.assertTrue(session.act('pilot:A',{'action_id':'order','cards':['order-A2','order-A1']}).ok)
+        actual=[cards[ref].zone_timestamp for ref in ('order-C2','order-C1','order-A2','order-A1')]
+        self.assertEqual(sorted(actual),actual);self.assertEqual(4,len(set(actual)))
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary)/'timestamp-groups';session.save(directory)
+            result=replay_record(directory,self.db,verify=True)
+            self.assertTrue(result['ok'],result)
+
+    def test_timestamp_choice_resumes_state_actions_and_rebuilds_after_controller_departure(self):
+        session=self.session(73109);engine=session.engine
+        first=self.add_card(session,name='Sunlit Adept',ref='depart-first',owner='A')
+        self.add_card(session,name='Sunlit Adept',ref='depart-second',owner='A')
+        survivor=self.add_card(session,name='Sunlit Adept',ref='depart-survivor',owner='C')
+        self.prepare_completed_turn(session,sequence=1,active='B');engine.state.day_night='night'
+        self.assertTrue(engine._stabilize())
+        self.assertEqual('permanent.timestamp_order',engine.state.pending_decision.kind)
+        self.assertEqual(0,first.transform_count)
+        with engine.transaction():engine._eliminate_players(['A'],reason='timestamp owner departure control')
+        self.assertFalse(engine.state.players['A'].in_game)
+        self.assertEqual('Moonlit Adept',engine.state.cards[survivor.object_id].active_face)
+        self.assertEqual(1,engine.state.cards[survivor.object_id].transform_count)
+        self.assertTrue(engine.state.pending_decision is None or 'A' not in engine.state.pending_decision.actors)
+
+    def test_timestamp_order_resumes_general_stabilization_with_pending_load_and_replay(self):
+        session=self.session(73110);engine=session.engine
+        first=self.add_card(session,name='Sunlit Adept',ref='sba-order-first',owner='A')
+        second=self.add_card(session,name='Sunlit Adept',ref='sba-order-second',owner='A')
+        self.prepare_completed_turn(session,sequence=1,active='B');engine.state.day_night='night'
+        self.assertTrue(engine._stabilize())
+        self.assertEqual('stabilize',engine.state.pending_decision.continuation['transform_timestamp_order']['resume_kind'])
+        session.initial_checkpoint=checkpoint_envelope(engine.state);session.commands.clear();session.decisions.clear()
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary)/'timestamp-sba';session.save(directory)
+            loaded=CommanderSession.load(self.db,directory)
+            result=loaded.act('pilot:A',{'action_id':'order','cards':[second.ref,first.ref]})
+            self.assertTrue(result.ok,result.summary)
+            a=loaded.state.cards[first.object_id];b=loaded.state.cards[second.object_id]
+            self.assertEqual((1,1),(a.transform_count,b.transform_count));self.assertLess(b.zone_timestamp,a.zone_timestamp)
+            self.assertTrue(loaded.state.pending_decision is None or loaded.state.pending_decision.kind!='permanent.timestamp_order')
+            expected=authoritative_state_hash(loaded.state);loaded.save(directory)
+            replay=replay_record(directory,self.db,verify=True)
+            self.assertTrue(replay['ok'],replay);self.assertEqual(expected,replay['final_state_hash'])
 
 
 if __name__ == "__main__":

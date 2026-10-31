@@ -154,3 +154,5 @@ deployment modes, or architecture review thresholds.
 - [ADR 0137 — linked optional casting declarations](0137-linked-optional-casting-declarations.md)
 - [ADR 0138 — Forecast hand-source disclosure](0138-forecast-hand-source-disclosure.md)
 - [ADR 0139 — static source removal dependencies](0139-static-source-removal-dependencies.md)
+- [ADR 0149 — versioned transform timestamps](0149-versioned-transform-timestamps.md)
+- [ADR 0150 — versioned face-status timestamps](0150-versioned-face-status-timestamps.md)

@@ -1452,71 +1452,8 @@ class CommanderEngine(
             return ActionResult(False, str(exc), [], state_changed=False, warnings=["State was rolled back."])
 
     def _dispatch_completed_decision(self, decision: Any) -> None:
-        kind = decision.kind
-        if kind == "mulligan.declare":
-            self._complete_mulligan_declaration(decision)
-        elif kind == "mulligan.bottom":
-            self._complete_mulligan_bottom(decision)
-        elif kind == 'opening.hand':
-            from .opening_hand import complete_opening_hand_action
-            complete_opening_hand_action(self,decision)
-        elif kind == "priority":
-            self._complete_priority(decision)
-        elif kind == "combat.attackers":
-            self._complete_attackers(decision)
-        elif kind == "untap.optional_source":
-            from .optional_untap import complete_optional_untap_choice
-            complete_optional_untap_choice(self, decision)
-        elif kind == "combat.blockers":
-            self._complete_blockers(decision)
-        elif kind == "combat.damage":
-            self._complete_combat_damage(decision)
-        elif kind == "cleanup.discard":
-            self._complete_cleanup_discard(decision)
-        elif kind == "state.legend":
-            self._complete_legend_choice(decision)
-        elif kind == "state.commander_zone":
-            self._complete_commander_zone_choice(decision)
-        elif kind == "state.battle_protector":
-            self._complete_battle_protector_choice(decision)
-        elif kind == "battle.enter_protector":
-            self._complete_battle_entry_protector_choice(decision)
-        elif kind == "battle.siege_defeated":
-            self._complete_siege_defeated_choice(decision)
-        elif kind == "selection.exile_cast":
-            self._complete_one_shot_exile_cast_choice(decision)
-        elif kind == "choice.apnap":
-            self._complete_apnap_choice(decision)
-        elif kind == "replacement.order":
-            complete_replacement_order_choice(
-                self,
-                decision,
-                error_type=GameRuleError,
-            )
-        elif kind == "aura.entry":
-            complete_aura_entry_choice(
-                self,
-                decision,
-                error_type=GameRuleError,
-            )
-        elif kind == "trigger.order":
-            complete_trigger_order_decision(self, decision)
-        elif kind == "arbiter.resolve":
-            self._complete_arbiter_resolution(decision)
-        elif kind == "search.fetch":
-            self._complete_fetch_choice(decision)
-        elif kind == "semantic.target":
-            self._complete_semantic_target(decision)
-        elif kind == "semantic.choice":
-            self._complete_semantic_choice(decision)
-        elif kind == "semantic.search":
-            self._complete_semantic_search(decision)
-        elif kind == "semantic.storm":
-            self._complete_storm_choice(decision)
-        elif kind in {"draw.replacement", "draw.reveal"}:
-            self._complete_draw_replacement(decision)
-        else:
-            raise GameRuleError(f"Unsupported completed decision {kind}")
+        from .decision_completion import dispatch_completed_decision
+        dispatch_completed_decision(self,decision)
 
     # ------------------------------------------------------------------
     # Multiplayer London mulligan
@@ -6551,7 +6488,7 @@ class CommanderEngine(
                 )
                 return True
 
-            synchronize_state_based_observers(self)
+            if synchronize_state_based_observers(self):return True
             sba_batch = evaluate_state_based_actions(
                 permanents=self._permanent_sba_snapshots(),
                 objects=self._object_sba_snapshots(),
@@ -6898,6 +6835,8 @@ class CommanderEngine(
             self._log(None, "game.draw", "All remaining players lost simultaneously.", importance=3)
         elif self.state.priority_player in unique:
             self.state.priority_player = self._next_active_after(unique[-1])
+        from .transform_timestamp_order import reconcile_transform_timestamp_order_after_departure
+        reconcile_transform_timestamp_order_after_departure(self)
 
     # ------------------------------------------------------------------
     # Generic effect DSL used only by the arbiter/semantic executor
