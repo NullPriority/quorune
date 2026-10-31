@@ -10089,6 +10089,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/face_status_timestamp_model.py",
+      "layer": "domain",
+      "owning_subsystem": "zones_and_object_identity",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/fixed_blocker_restrictions.py",
       "layer": "domain",
       "owning_subsystem": "legacy_domain",
@@ -22083,5 +22095,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "711bf52942e8a4766aeac538e8e32a4ea2a8fd5fe34d3a032a331a474b73f47b"
+  "fingerprint": "0bf24cd5e971cb74097d5f0355e4b4af6b03e409a92766bdb079eae0284e3052"
 }

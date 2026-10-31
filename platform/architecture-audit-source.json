@@ -188,7 +188,8 @@
         "quorune/zone_transition_model.py",
         "quorune/zone_transitions.py",
         "quorune/zone_trigger_events.py",
-        "quorune/zone_trigger_processing.py"
+        "quorune/zone_trigger_processing.py",
+        "quorune/face_status_timestamp_model.py"
       ],
       "missing_dedicated_owner": false,
       "context": {

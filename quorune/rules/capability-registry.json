@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 597,
+  "registry_version": 598,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11848,22 +11848,23 @@
     },
     {
       "id": "casting.disguise.fixed_mana",
-      "version": 3,
+      "version": 4,
       "official_rules": [
+        "107.4e",
         "116.2b",
         "601.2b",
         "601.2f",
         "601.2h",
-        "702.21",
+        "613.7f",
         "702.168",
         "702.168a",
         "702.168b",
+        "702.21",
         "708.2",
         "708.4",
         "708.5",
         "708.8",
-        "708.9",
-        "107.4e"
+        "708.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -11877,7 +11878,8 @@
           "one source-spanned ordinary Disguise line",
           "one fixed ordinary mana turn-up cost",
           "current priority",
-          "current face-up effective Disguise presence"
+          "current face-up effective Disguise presence",
+          "authoritative face-status timestamp checkpoint version"
         ],
         "outputs": [
           "private server-authored face-down cast for {3}",
@@ -11885,7 +11887,8 @@
           "current Ward {2} fragment while face down",
           "fixed-cost turn-face-up offer",
           "Ward removal on reveal",
-          "exact replay"
+          "exact replay",
+          "fresh canonical timestamp after current successful turn-up; historical absent-mode timestamp retained"
         ],
         "exclusions": [
           "Morph, Megamorph, cloak, manifest, and other face-down methods",
@@ -11910,7 +11913,10 @@
         "quorune.rules.casting.commit.commit_cast",
         "quorune.rules.morph_actions.commit_turn_face_up",
         "quorune.trigger_processing.collect_ward_occurrences",
-        "quorune.activation_mana_cost.fixed_complex_activation_mana_options"
+        "quorune.activation_mana_cost.fixed_complex_activation_mana_options",
+        "quorune.face_status_timestamp_model.face_status_timestamp_version",
+        "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
+        "quorune.zone_object_state.turn_card_face_up"
       ],
       "positive_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
@@ -11919,13 +11925,17 @@
         "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
         "test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
         "test_nine_actual_fixed_hybrid_disguise_originals_bind_completely",
-        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "negative_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_layer_six_removal_uses_shared_face_down_method_query",
         "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
-        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay"
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "interaction_tests": [
         "test_disguise_ward_uses_face_down_characteristics_only",
@@ -11959,7 +11969,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking fixed-generic Ward prevents Disguise's exact keyword node and complete-card runtime admission; face-down characteristics cannot gain an untrusted executable Ward fallback.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler, characteristic-fragment, current-ability, and Ward-consumption assertions reject method-specific or prose-driven survivors. The hybrid generic-fee omission mutant keeps complete original admission but fails the exact native mana balance.",
+      "implementation_mutation_rationale": "Focused compiler, characteristic-fragment, current-ability, and Ward-consumption assertions reject method-specific or prose-driven survivors. The hybrid generic-fee omission mutant keeps complete original admission but fails the exact native mana balance. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
       "blockers": [],
       "status": "trusted"
     },
@@ -13268,12 +13278,14 @@
     },
     {
       "id": "casting.megamorph.fixed_mana",
-      "version": 3,
+      "version": 4,
       "official_rules": [
+        "107.4e",
         "116.2b",
         "601.2b",
         "601.2f",
         "601.2h",
+        "613.7f",
         "702.37",
         "702.37c",
         "702.37e",
@@ -13281,8 +13293,7 @@
         "708.4",
         "708.5",
         "708.8",
-        "708.9",
-        "107.4e"
+        "708.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -13296,7 +13307,8 @@
           "one source-spanned ordinary Megamorph line",
           "one fixed ordinary mana turn-up cost",
           "current priority",
-          "current face-up effective Megamorph presence"
+          "current face-up effective Megamorph presence",
+          "authoritative face-status timestamp checkpoint version"
         ],
         "outputs": [
           "private server-authored face-down cast for {3}",
@@ -13304,7 +13316,8 @@
           "fixed-cost turn-face-up offer",
           "replacement-aware +1/+1 counter placement",
           "face-up event after counter commit",
-          "exact replay"
+          "exact replay",
+          "fresh canonical timestamp after current successful turn-up; historical absent-mode timestamp retained"
         ],
         "exclusions": [
           "Morph, disguise, manifest, cloak, and other face-down methods",
@@ -13330,24 +13343,32 @@
         "quorune.counter_placement.prepare_counter_placements",
         "quorune.counter_placement.commit_prepared_counter_placements",
         "quorune.mana_payment_continuations.execute_mana_choice_capable_priority_action",
-        "quorune.activation_mana_cost.fixed_complex_activation_mana_options"
+        "quorune.activation_mana_cost.fixed_complex_activation_mana_options",
+        "quorune.face_status_timestamp_model.face_status_timestamp_version",
+        "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
+        "quorune.zone_object_state.turn_card_face_up"
       ],
       "positive_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
-        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "negative_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_layer_six_removal_uses_shared_face_down_method_query",
-        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "interaction_tests": [
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
         "test_megamorph_counter_replacement_suspends_and_replays"
       ],
       "multiplayer_tests": [
-        "test_megamorph_counter_precedes_face_up_trigger_and_replays"
+        "test_megamorph_counter_precedes_face_up_trigger_and_replays",
+        "test_megamorph_counter_replacement_suspends_and_replays"
       ],
       "privacy_tests": [
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
@@ -13368,7 +13389,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking canonical counter placement prevents Megamorph's exact keyword node and complete-card runtime admission; there is no direct counter mutation fallback.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler, current-ability, event-order, and counter-owner mutations are rejected by exact node and behavioral assertions.",
+      "implementation_mutation_rationale": "Focused compiler, current-ability, event-order, and counter-owner mutations are rejected by exact node and behavioral assertions. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
       "blockers": [],
       "status": "trusted"
     },
@@ -13604,12 +13625,14 @@
     },
     {
       "id": "casting.morph.fixed_mana",
-      "version": 4,
+      "version": 5,
       "official_rules": [
+        "107.4e",
         "116.2b",
         "601.2b",
         "601.2f",
         "601.2h",
+        "613.7f",
         "702.37",
         "702.37a",
         "702.37c",
@@ -13618,8 +13641,7 @@
         "708.4",
         "708.5",
         "708.8",
-        "708.9",
-        "107.4e"
+        "708.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -13633,7 +13655,8 @@
           "one source-spanned ordinary Morph line",
           "one fixed ordinary mana morph cost",
           "current priority",
-          "current face-up effective Morph presence"
+          "current face-up effective Morph presence",
+          "authoritative face-status timestamp checkpoint version"
         ],
         "outputs": [
           "a private server-authored face-down cast offer for {3}",
@@ -13641,7 +13664,8 @@
           "a controller-scoped fixed-cost turn-face-up offer",
           "canonical mana payment",
           "public reveal without a stack object",
-          "zone-departure reveal and exact replay"
+          "zone-departure reveal and exact replay",
+          "fresh canonical timestamp after current successful turn-up; historical absent-mode timestamp retained"
         ],
         "exclusions": [
           "Megamorph, disguise, manifest, cloak, and other face-down methods",
@@ -13668,34 +13692,46 @@
         "quorune.characteristic_evaluation.evaluate_card_characteristics",
         "quorune.turn_priority_owner.TurnPriorityDecisionOwner.complete_special_action",
         "quorune.projection.StateProjector",
-        "quorune.activation_mana_cost.fixed_complex_activation_mana_options"
+        "quorune.activation_mana_cost.fixed_complex_activation_mana_options",
+        "quorune.face_status_timestamp_model.face_status_timestamp_version",
+        "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
+        "quorune.zone_object_state.turn_card_face_up"
       ],
       "positive_tests": [
         "test_fixed_mana_morph_compiles_source_spanned_typed_program",
         "test_morph_cast_turn_up_privacy_and_replay",
         "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
-        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
       ],
       "negative_tests": [
         "test_nonordinary_morph_costs_remain_residual",
         "test_partial_card_does_not_receive_a_morph_cast_offer",
         "test_stale_morph_cast_contract_rolls_back_before_payment",
         "test_stale_or_ability_removed_turn_up_rolls_back",
-        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict"
+        "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "interaction_tests": [
         "test_face_down_departure_reveals_identity_and_resets_method",
         "test_face_down_static_source_is_inert_until_turned_face_up",
-        "test_morph_cast_turn_up_privacy_and_replay"
+        "test_morph_cast_turn_up_privacy_and_replay",
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
       ],
       "multiplayer_tests": [
-        "test_morph_cast_turn_up_privacy_and_replay"
+        "test_morph_cast_turn_up_privacy_and_replay",
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
       ],
       "privacy_tests": [
-        "test_morph_cast_turn_up_privacy_and_replay"
+        "test_morph_cast_turn_up_privacy_and_replay",
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
       ],
       "replay_tests": [
-        "test_morph_cast_turn_up_privacy_and_replay"
+        "test_morph_cast_turn_up_privacy_and_replay",
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
       ],
       "required_evidence": [
         "positive",
@@ -13708,25 +13744,26 @@
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The capability has no child capability dependencies; its runtime handler, compiler-pinned complete-card admission certificate, exact state marker, current effective keyword query, and closed cost shape all fail closed independently.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_morph_compiler_mutation_is_killed removes the Morph node production and proves the real card returns to a material dependency residual.",
+      "implementation_mutation_rationale": "test_morph_compiler_mutation_is_killed removes the Morph node production and proves the real card returns to a material dependency residual. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "casting.morph.fixed_nonmana",
-      "version": 1,
+      "version": 2,
       "official_rules": [
-        "702.37a",
-        "702.37d",
-        "702.37e",
         "116.2b",
         "118.3",
         "118.6",
+        "400.7",
         "601.2g",
         "601.2h",
+        "613.7f",
+        "702.37a",
+        "702.37d",
+        "702.37e",
         "708.2a",
-        "708.9",
-        "400.7"
+        "708.9"
       ],
       "supported_profiles": [
         "traditional",
@@ -13737,11 +13774,13 @@
         "summary": "Fixed nonmana Morph costs use current resource queries and canonical payment through the existing face-down special action.",
         "inputs": [
           "complete printed normal-layout Morph source",
-          "fixed life, colored reveal, discard or subtype return cost"
+          "fixed life, colored reveal, discard or subtype return cost",
+          "authoritative face-status timestamp checkpoint version"
         ],
         "outputs": [
           "private face-down cast for three generic",
-          "controller priority turn-face-up with exact nonmana payment"
+          "controller priority turn-face-up with exact nonmana payment",
+          "fresh canonical timestamp after current successful turn-up; historical absent-mode timestamp retained"
         ],
         "exclusions": [
           "sacrifice and compound costs",
@@ -13757,7 +13796,10 @@
         "quorune.semantic_runtime.nonmana_morph.FixedNonmanaMorphHandler",
         "quorune.rules.nonmana_morph_costs.nonmana_morph_offer_fields",
         "quorune.rules.nonmana_morph_costs.pay_nonmana_morph_cost",
-        "quorune.rules.morph_actions.commit_turn_face_up"
+        "quorune.rules.morph_actions.commit_turn_face_up",
+        "quorune.face_status_timestamp_model.face_status_timestamp_version",
+        "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
+        "quorune.zone_object_state.turn_card_face_up"
       ],
       "positive_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13774,7 +13816,9 @@
         "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
         "test_native_island_mana_can_be_floated_before_paying_the_return_cost",
         "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
-        "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back"
+        "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "negative_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13790,7 +13834,9 @@
         "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
         "test_native_island_mana_can_be_floated_before_paying_the_return_cost",
         "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
-        "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back"
+        "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "interaction_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13845,7 +13891,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Withdrawing the nonmana owner or compiler production leaves a source-spanned residual. Complete original admission rejects unknown siblings and unsupported costs; the historical mana handler rejects schema three.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting only canonical life payment preserves complete original admission but violates the independently specified five-life native consequence. Removing nonmana production restores material residuals.",
+      "implementation_mutation_rationale": "Omitting only canonical life payment preserves complete original admission but violates the independently specified five-life native consequence. Removing nonmana production restores material residuals. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
       "blockers": [],
       "status": "trusted"
     },
@@ -41408,7 +41454,7 @@
       ]
     },
     {
-      "version": 2,
+      "version": 3,
       "supported_profiles": [
         "traditional",
         "commander_duel",
@@ -41420,12 +41466,14 @@
           "currentlibrarycardincarnations",
           "manifest/dreadmode",
           "privatecontrollerlook",
-          "typedfacedownentrycharacteristics"
+          "typedfacedownentrycharacteristics",
+          "authoritative face-status timestamp checkpoint version"
         ],
         "outputs": [
           "hidden2/2facedowncreature",
           "privatedreadchoice",
-          "wholecardgatedturnupaction"
+          "wholecardgatedturnupaction",
+          "fresh canonical timestamp after current successful turn-up; historical absent-mode timestamp retained"
         ],
         "exclusions": [
           "otherplayerorigins",
@@ -41444,7 +41492,9 @@
         "test_original_manifested_megamorph_offers_both_costs_and_counter_only_for_megamorph",
         "test_original_soul_summons_manifests_hidden_card_then_turns_up_without_entry_trigger",
         "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
-        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected"
+        "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "negative_tests": [
         "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
@@ -41456,7 +41506,9 @@
         "test_original_sultai_emissary_dies_then_manifests_after_sacrifice_cost",
         "test_special_body_keeps_trigger_transport_and_invalid_body_stays_rejected",
         "test_special_trigger_runtime_owners_are_inferred_after_annotations_are_removed",
-        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell"
+        "test_verified_event_result_and_condition_withdrawal_keep_unrelated_spell",
+        "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
+        "test_face_status_clock_advances_only_for_an_eligible_current_object"
       ],
       "interaction_tests": [
         "test_actual_oculus_pays_six_owned_graveyard_cards_then_triggers_each_opponent_upkeep",
@@ -41499,11 +41551,13 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Typedmode/originallibraryincarnationandwholefaceupcardclosuregatebeforemutation/payment",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Unknownmode,privateforeignselection/staleincarnationsfailindependentchoiceandentrywitnesses",
+      "implementation_mutation_rationale": "Unknownmode,privateforeignselection/staleincarnationsfailindependentchoiceandentrywitnesses Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
       "blockers": [],
       "status": "trusted",
       "id": "keyword_action.manifest.card",
       "official_rules": [
+        "116.2b",
+        "613.7f",
         "701.40a",
         "701.40b",
         "701.40c",
@@ -41511,7 +41565,6 @@
         "701.40e",
         "701.40f",
         "701.40g",
-        "116.2b",
         "708.2",
         "708.5"
       ],
@@ -41524,7 +41577,10 @@
         "quorune.rules.morph_actions.build_turn_face_up_offer",
         "quorune.rules.special_node_shapes.special_result_trigger_runtime_dependencies",
         "quorune.rules.special_node_shapes.special_trigger_envelope_capabilities",
-        "quorune.semantic_choices.manifest.ManifestChoiceHandler"
+        "quorune.semantic_choices.manifest.ManifestChoiceHandler",
+        "quorune.face_status_timestamp_model.face_status_timestamp_version",
+        "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
+        "quorune.zone_object_state.turn_card_face_up"
       ]
     },
     {

@@ -199,6 +199,11 @@ unsuffixed action identity when acceptance reads the printed method from the
 offer payload. Manifested permanents expose distinct suffixed method choices.
 Both paths retain the same expiry and proposal-fingerprint validation before
 payment, including special actions taken while Split Second is on the stack.
+Successful turn-up delegates to `ZoneTransitionOwner.turn_face_up`, which
+coordinates the existing object-state owner and canonical timestamp clock before
+counter or trigger observers run. Current checkpoints explicitly pin face-status
+timestamp semantics; historical absence retains the previous timestamp under
+[ADR 0150](../adr/0150-versioned-face-status-timestamps.md).
 
 Printed fixed nonmana Morph prices share that same action and whole-source
 admission. Typed costs query current hand colors or controlled subtypes and

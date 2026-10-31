@@ -165,9 +165,11 @@ class ManifestEntryOwnerTests(unittest.TestCase):
         self.assertEqual(before, authoritative_state_hash(session.state))
         actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
         offered = next(a for a in actions if a['id'] == 'turn-face-up:' + card.ref + ':manifest')
+        before_timestamp=session.state.cards[card.object_id].zone_timestamp
         accepted = session.act('pilot:A', {'action_id': offered['id'], 'pay': 'auto'})
         self.assertTrue(accepted.ok, accepted.summary)
         self.assertFalse(session.state.cards[card.object_id].face_down)
+        self.assertGreater(session.state.cards[card.object_id].zone_timestamp,before_timestamp)
         self.assertEqual(2, session.engine._numeric_stat(card.object_id, 'power'))
         self.assertEqual([], session.state.stack)
         self.replay(session)

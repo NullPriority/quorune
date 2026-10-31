@@ -48,6 +48,12 @@ timestamp clock while retaining the logical object. Historical absence retains
 the previous timestamp behavior and remains absent on serialization. Unknown,
 boolean and mismatched versions reject before replay. See
 [ADR 0149](../adr/0149-versioned-transform-timestamps.md).
+Current ordinary turn-up actions independently pin
+`face_status_timestamp_version: 1`. The zone owner assigns a fresh timestamp
+before face-up observers run. Absence retains the prior ordinary timestamp even
+when transform semantics are explicitly pinned. This marker follows the same
+strict codec and manifest/checkpoint agreement contract; see
+[ADR 0150](../adr/0150-versioned-face-status-timestamps.md).
 Declared runtime-trust identity remains exact; records pinned to a different
 identity retain the existing provenance rejection.
 
