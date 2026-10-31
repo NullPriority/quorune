@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 596,
+  "registry_version": 597,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -33929,7 +33929,7 @@
           "exact replay"
         ],
         "exclusions": [
-          "Modular\u00e2\u20ac\u201dSunburst",
+          "Modularâ€”Sunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -35175,7 +35175,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
+          "Modularâ€”Sunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ]
       },
@@ -46875,10 +46875,14 @@
     },
     {
       "id": "permanent.transform.face_change",
-      "version": 2,
+      "version": 3,
       "official_rules": [
+        "101.4",
         "202.3b",
         "202.3d",
+        "502.2",
+        "613.7g",
+        "613.7m",
         "701.27",
         "701.27a",
         "701.27c",
@@ -46896,20 +46900,24 @@
         "commander_review"
       ],
       "applicability": {
-        "summary": "Transform one source-pinned phased-in nonmodal double-faced card permanent through independently closed printed activation or trigger grammar, preserving its logical object and rejecting stale source incarnations or transform-count instructions.",
+        "summary": "Transform one source-pinned phased-in nonmodal double-faced card permanent, preserving its logical object and count guard, with fresh version-one timestamps and historical absent-mode replay.",
         "inputs": [
           "one represented double-faced card permanent",
           "current face and next permanent face",
           "current logical object",
           "captured transform count for activated or triggered instructions",
-          "current applicable Daybound or Nightbound component"
+          "current applicable Daybound or Nightbound component",
+          "authoritative transform-timestamp checkpoint version",
+          "authenticated controller permutations for simultaneous same-controller timestamps"
         ],
         "outputs": [
           "opposite active face",
           "incremented transform count",
-          "unchanged logical object, counters, damage, controller, attachments, and timestamp",
+          "unchanged logical object, counters, damage, controller, attachments",
           "normalized public transform event",
-          "ordinary trigger batching and exact replay"
+          "ordinary trigger batching and exact replay",
+          "fresh canonical timestamp for current successful transforms; historical absence retains former timestamp",
+          "live APNAP/controller-ordered atomic timestamp batch with saved untap or state-action continuation"
         ],
         "exclusions": [
           "double-faced tokens, card copies, copied or granted characteristics, face-down or phased-out objects",
@@ -46934,7 +46942,13 @@
         "quorune.rules.current_face_keywords.current_printed_face_keywords",
         "quorune.rules.face_characteristic_values.current_face_mana_value",
         "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.trigger_discovery._semantic_trigger_context"
+        "quorune.trigger_discovery._semantic_trigger_context",
+        "quorune.transform_timestamp_model.transform_timestamp_version",
+        "quorune.transform_timestamp_model.ordered_transform_cards",
+        "quorune.transform_timestamp_order.select_transform_timestamp_cards",
+        "quorune.transform_timestamp_order.begin_transform_timestamp_order",
+        "quorune.transform_timestamp_order.complete_transform_timestamp_order",
+        "quorune.transform_timestamp_order.reconcile_transform_timestamp_order_after_departure"
       ],
       "positive_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -46947,14 +46961,28 @@
         "test_legacy_transform_intervening_identity_and_transform_count",
         "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
         "test_original_back_face_retains_front_value_without_front_cost_or_color",
-        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_historical_absent_version_transform_preserves_legacy_timestamp_and_replay",
+        "test_current_and_legacy_state_codecs_preserve_explicit_provenance",
+        "test_shared_timestamp_clock_advances_only_for_current_successful_transforms",
+        "test_simultaneous_transforms_ask_controller_to_order_own_timestamps_before_face_commit",
+        "test_timestamp_groups_ask_in_apnap_order_and_expose_previous_public_orders",
+        "test_timestamp_order_resumes_general_stabilization_with_pending_load_and_replay",
+        "test_simultaneous_transform_apnap_state_and_replay",
+        "test_ordering_frame_has_closed_codec_and_complete_controller_permutations"
       ],
       "negative_tests": [
         "test_actual_eliminate_rejects_transformed_five_mana_creature",
         "test_day_night_and_transform_grammar_exclusions_fail_closed",
         "test_modal_faces_and_split_selected_stack_and_prospective_views_keep_their_values",
         "test_targeted_and_unrepresented_transform_variants_stay_residual",
-        "test_transform_capability_and_compiler_mutations_fail_closed"
+        "test_transform_capability_and_compiler_mutations_fail_closed",
+        "test_current_and_legacy_state_codecs_preserve_explicit_provenance",
+        "test_shared_timestamp_clock_advances_only_for_current_successful_transforms",
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_simultaneous_transforms_ask_controller_to_order_own_timestamps_before_face_commit",
+        "test_ordering_frame_has_closed_codec_and_complete_controller_permutations",
+        "test_ordering_frame_rejects_stale_subjects_and_forged_apnap"
       ],
       "interaction_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -46966,19 +46994,29 @@
         "test_actual_token_copy_of_back_face_has_zero_mana_value",
         "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
         "test_simultaneous_transform_apnap_state_and_replay",
-        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_historical_absent_version_transform_preserves_legacy_timestamp_and_replay",
+        "test_simultaneous_transforms_ask_controller_to_order_own_timestamps_before_face_commit",
+        "test_timestamp_groups_ask_in_apnap_order_and_expose_previous_public_orders",
+        "test_timestamp_choice_resumes_state_actions_and_rebuilds_after_controller_departure",
+        "test_timestamp_order_resumes_general_stabilization_with_pending_load_and_replay"
       ],
       "multiplayer_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
         "test_simultaneous_transform_apnap_state_and_replay",
-        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_simultaneous_transforms_ask_controller_to_order_own_timestamps_before_face_commit",
+        "test_timestamp_groups_ask_in_apnap_order_and_expose_previous_public_orders",
+        "test_timestamp_choice_resumes_state_actions_and_rebuilds_after_controller_departure"
       ],
       "privacy_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
         "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
         "test_simultaneous_transform_apnap_state_and_replay",
-        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_simultaneous_transforms_ask_controller_to_order_own_timestamps_before_face_commit",
+        "test_timestamp_groups_ask_in_apnap_order_and_expose_previous_public_orders"
       ],
       "replay_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -46991,7 +47029,11 @@
         "test_actual_token_copy_of_back_face_has_zero_mana_value",
         "test_actual_ulvenwald_transform_preserves_object_and_uses_back_mana_ability",
         "test_simultaneous_transform_apnap_state_and_replay",
-        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement"
+        "test_two_actual_gargoyle_activations_transform_only_once_since_stack_placement",
+        "test_historical_absent_version_transform_preserves_legacy_timestamp_and_replay",
+        "test_simultaneous_transforms_ask_controller_to_order_own_timestamps_before_face_commit",
+        "test_timestamp_groups_ask_in_apnap_order_and_expose_previous_public_orders",
+        "test_timestamp_order_resumes_general_stabilization_with_pending_load_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -47004,7 +47046,7 @@
       "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Blocking normalized public events or APNAP trigger placement prevents the transform capability and each dependent card-form or upkeep trigger from receiving trusted closure.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The focused mutation test removes transform lowering or changes its source snapshot and proves the compiler withholds trusted admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face.",
+      "implementation_mutation_rationale": "The focused mutation test removes transform lowering or changes its source snapshot and proves the compiler withholds trusted admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face. Independent unchanged-runtime native witness fails fresh timestamp29>29. Shared-clock/no-op, modern/legacy provenance and actual replay controls distinguish the correction. Missing controller choice fails native before any face commit; APNAP36<35 failure distinguishes controller grouping. Saved permutations, live scopes and trusted participant-departure controls retain atomicity.",
       "blockers": [],
       "status": "trusted"
     },

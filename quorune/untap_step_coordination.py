@@ -98,10 +98,12 @@ def coordinate_untap_step(
         )
         return
     day_night_triggers = list(held_triggers)
-    apply_untap_day_night_transition(
-        host,
-        trigger_batch=day_night_triggers,
-    )
+    from .transform_order_model import TransformTimestampOrderRequired
+    try:apply_untap_day_night_transition(host,trigger_batch=day_night_triggers)
+    except TransformTimestampOrderRequired as needed:
+        from .transform_timestamp_order import begin_transform_timestamp_order
+        begin_transform_timestamp_order(host,needed.request,resume_kind='untap',held_triggers=day_night_triggers)
+        return
     plan = current_untap_step_plan(host, active_player)
     if plan.unsupported_source_object_id is not None:
         host._pause_for_unsupported_semantic(

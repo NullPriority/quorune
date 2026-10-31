@@ -25,6 +25,7 @@
       "type": "object",
       "required": ["game_id", "config", "players", "cards", "events", "capabilities"],
       "properties": {
+        "transform_timestamp_version": {"type": "integer", "const": 1},
         "events": {"type": "array", "maxItems": 0},
         "capabilities": {"type": "object", "maxProperties": 0}
       },

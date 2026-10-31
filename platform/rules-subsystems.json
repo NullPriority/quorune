@@ -4133,7 +4133,7 @@
           "expected_downstream_closure": "Promotes all current ordinary named Partner with carriers through one typed two-ability production without granting ordinary Partner authority or introducing another setup, trigger, search, or zone-transition path.",
           "explicit_exclusions": [
             "Partner with itself and the choose-any-legendary-Knight variant",
-            "Partner\u2014named variants such as Friends forever, Doctors, Survivors, Character select, and Father and son",
+            "Partner—named variants such as Friends forever, Doctors, Survivors, Character select, and Father and son",
             "independently unsupported sibling abilities",
             "multiple names, compound tails, alternative destinations, nonlibrary searches, and search-replacement effects",
             "nonreciprocal, missing, duplicate, copied, granted, removed, or text-changed setup declarations"
@@ -7647,14 +7647,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v675-continuing-turn-participants",
-      "compiler_version": "oracle-ir-v675",
-      "bundle_id": null,
-      "candidate_ids": [],
       "family_ids": [],
-      "capability_ids": [],
+      "transition_id": "oracle-ir-v676-transform-timestamps",
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct continuing-turn APNAP rotation and authenticated state-based replacement frames after the turn anchor departs. Retain physical seat order, live participants, legacy frame validation, transactional choices, privacy and replay. Apply existing descriptor runtime minima to intrinsic CardProgram classification so compiler exactness cannot overstate strict admission. No new mechanics, capability promotion or support harvest is claimed."
+      "capability_ids": [],
+      "candidate_ids": [],
+      "compiler_version": "oracle-ir-v676",
+      "bundle_id": null,
+      "non_harvest_reason": "Correct CR 613.7g timestamp assignment for successful double-faced transforms through the canonical zone clock. Pin current timestamp semantics in checkpoint and record format while preserving historical absent-mode hashes, strict declared-runtime provenance, source identity, count guards and replay. No new transform grammar, mechanic promotion or card-support harvest is claimed."
     },
     "forecast_corrections": [
       {
@@ -8300,7 +8300,7 @@
       {
         "candidate_id": "compiler:partner-with",
         "selected_over": "frontier:continuous_layer:continuous-effect-layers-and-dependencies",
-        "reason": "The post-quoted-grant selector has no eligible carried candidate while its raw continuous-layer leader remains heterogeneous. Bounded review retires public quantity life or damage and remaining dynamic anthem slices below every normal harvest floor. The generated Partner with probe instead isolates 52 current Commander-legal carriers and a conservative 104-node lower bound because the rule intrinsically contributes one typed reciprocal setup declaration and one typed targeted self-entry search per carrier. It reuses the existing Commander pairing, normalized entry-event, APNAP, target-revalidation, private library-search, destination-replacement, Commander-replacement, current layer-6 ability-applicability, and exact replay owners. Partner\u2014named variants, Partner with itself, the choose-any-Knight variant, nonreciprocal names, compound searches, search replacement, and independently unsupported siblings remain fail-closed; current card identities and closure measurements are generated from the current frontier."
+        "reason": "The post-quoted-grant selector has no eligible carried candidate while its raw continuous-layer leader remains heterogeneous. Bounded review retires public quantity life or damage and remaining dynamic anthem slices below every normal harvest floor. The generated Partner with probe instead isolates 52 current Commander-legal carriers and a conservative 104-node lower bound because the rule intrinsically contributes one typed reciprocal setup declaration and one typed targeted self-entry search per carrier. It reuses the existing Commander pairing, normalized entry-event, APNAP, target-revalidation, private library-search, destination-replacement, Commander-replacement, current layer-6 ability-applicability, and exact replay owners. Partner—named variants, Partner with itself, the choose-any-Knight variant, nonreciprocal names, compound searches, search replacement, and independently unsupported siblings remain fail-closed; current card identities and closure measurements are generated from the current frontier."
       },
       {
         "candidate_id": "compiler:fixed-mana-madness",

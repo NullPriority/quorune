@@ -1350,14 +1350,19 @@
         "mechanics/contracts/spell-history-transformations.json",
         "rules/conformance-reviews/cr-731-spell-history-transformations.json",
         "tests/fixtures/spell-history-transformations-cards.json",
-        "tests/test_spell_history_transformations.py"
+        "tests/test_spell_history_transformations.py",
+        "quorune/transform_timestamp_model.py",
+        "quorune/transform_order_model.py",
+        "quorune/transform_timestamp_order.py",
+        "quorune/decision_completion.py"
       ],
       "test_modules": [
         "test_beginning_phase_rules",
         "test_card_program_trust",
         "test_object_identity",
         "test_spell_history_transformations",
-        "test_trigger_batches"
+        "test_trigger_batches",
+        "test_activated_self_transform"
       ]
     },
     {

@@ -343,6 +343,20 @@ Server and browser forms share subset bounds and mandatory completion metadata.
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
 the same permanent, counters, damage, attachments and acquisition history.
+For current games, a successful double-faced transform receives a fresh
+timestamp from the canonical zone clock under CR 613.7g. The explicit
+`transform_timestamp_version` checkpoint marker preserves historical absent-mode
+timestamps and replay. Failed or stale transform instructions consume no new
+timestamp. See [ADR 0149](../adr/0149-versioned-transform-timestamps.md).
+Simultaneous transform groups receive timestamps in live APNAP order. A controller
+with several transforming permanents chooses a complete private permutation
+through the existing decision capability and ordering form. Faces, counts and
+timestamps stay unchanged until every required order is collected. The closed
+continuation retains source state, turn/step context and held triggers; completion
+resumes the interrupted untap step or state-action synchronization once. Earlier
+public orders are available to later controllers. Participant departure rebuilds
+the pending batch through the same owners. Completed decision routing lives in
+`decision_completion.py`; the engine retains its existing facade.
 A controller change preserves the original activation controller and source
 binding; a blink creates a new object and invalidates that activation. Current
 fixed keywords on a double-faced spell or permanent come from trusted printed

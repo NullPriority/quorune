@@ -13,6 +13,7 @@ from .day_night_model import (
 )
 from .model import CardInstance, StackItem
 from .trigger_processing import enqueue_trigger_batch
+from .transform_timestamp_model import transform_timestamp_version,ordered_transform_cards
 
 
 TRANSFORM_OPERATION = "transform"
@@ -27,6 +28,8 @@ class PermanentTransformHost(Protocol):
     state: Any
     seats: Sequence[str]
     semantics: Any
+
+    def apnap_order(self) -> Sequence[str]: ...
 
     def card_record(self, card: CardInstance) -> Any: ...
 
@@ -206,14 +209,16 @@ def _other_face(host: PermanentTransformHost, card: CardInstance) -> tuple[str, 
     return current, names[target_index]
 
 
-def transform_permanent(
+def _prepared_transform_faces(
     host: PermanentTransformHost,
     card: CardInstance,
     *,
     expected_transform_count: int | None,
     day_night_instruction: bool,
-) -> PermanentTransformResult | None:
-    """Commit one face change without changing logical object or timestamp."""
+) -> tuple[str,str] | None:
+    """Validate one face change before any member of its batch commits."""
+
+    timestamp_version=transform_timestamp_version(getattr(host.state,'transform_timestamp_version',None))
 
     if type(day_night_instruction) is not bool:
         raise PermanentTransformError("Transform instruction kind must be explicit")
@@ -245,21 +250,29 @@ def transform_permanent(
         )
     ):
         return None
-    faces = _other_face(host, card)
-    if faces is None:
-        return None
+    return _other_face(host,card)
+
+
+def _commit_transform_faces(host,card,faces):
+    timestamp_version=transform_timestamp_version(getattr(host.state,'transform_timestamp_version',None))
     previous_face, current_face = faces
+    if timestamp_version==1:
+        from .zone_transitions import ZoneTransitionOwner
+        card.zone_timestamp=ZoneTransitionOwner(host).next_timestamp()
     card.active_face = current_face
     card.transform_count += 1
-    return PermanentTransformResult(
-        object_id=card.object_id,
-        card_ref=card.ref,
-        logical_object_id=card.logical_object_id,
-        previous_face=previous_face,
-        current_face=current_face,
-        transform_count=card.transform_count,
-        controller=card.controller,
-    )
+    return PermanentTransformResult(object_id=card.object_id,card_ref=card.ref,
+        logical_object_id=card.logical_object_id,previous_face=previous_face,current_face=current_face,
+        transform_count=card.transform_count,controller=card.controller)
+
+
+def transform_permanent(host,card,*,expected_transform_count,day_night_instruction):
+    """Commit one face change while retaining the logical incarnation."""
+    faces=_prepared_transform_faces(host,card,expected_transform_count=expected_transform_count,
+        day_night_instruction=day_night_instruction)
+    if faces is None:
+        return None
+    return _commit_transform_faces(host,card,faces)
 
 
 def commit_transform_batch(
@@ -285,19 +298,18 @@ def commit_transform_batch(
         raise PermanentTransformError(
             "Transform count snapshots must match the requested batch"
         )
-    results = tuple(
-        result
-        for card in cards
-        if (
-            result := transform_permanent(
-                host,
-                card,
-                expected_transform_count=expected.get(card.object_id),
-                day_night_instruction=day_night_instruction,
-            )
-        )
-        is not None
-    )
+    if transform_timestamp_version(getattr(host.state,'transform_timestamp_version',None))==1:
+        plans={card.object_id:_prepared_transform_faces(host,card,expected_transform_count=expected.get(card.object_id),
+            day_night_instruction=day_night_instruction) for card in cards}
+        cards=tuple(card for card in cards if plans[card.object_id] is not None)
+        if len(cards)>1:cards=ordered_transform_cards(cards,host.apnap_order())
+        from .transform_timestamp_order import select_transform_timestamp_cards
+        cards=select_transform_timestamp_cards(host,cards,reason=reason,day_night_instruction=day_night_instruction,
+            expected_counts=expected)
+        results=tuple(_commit_transform_faces(host,card,plans[card.object_id]) for card in cards)
+    else:
+        results=tuple(result for card in cards if (result:=transform_permanent(host,card,
+            expected_transform_count=expected.get(card.object_id),day_night_instruction=day_night_instruction)) is not None)
     if not results:
         return ()
     from .soulbond_state import reconcile_soulbond_pairs

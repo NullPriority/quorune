@@ -54,30 +54,30 @@
       "quorune/continuous_effect_state.py",
       "quorune/tap_state.py",
       "quorune/stack_counter.py",
-      "quorune/token_creation.py"
-      ,"quorune/mana_activation.py"
-      ,"quorune/mana_provenance.py"
-      ,"quorune/semantic_choices/intent_host.py"
-      ,"quorune/effect_runtime/state_and_permissions.py"
-      ,"quorune/effect_runtime/zones_and_attachments.py"
-      ,"quorune/effect_runtime/damage_life_and_turns.py"
-      ,"quorune/effect_runtime/damage_modifiers.py"
-      ,"quorune/effect_runtime/objects_stack_and_tokens.py"
-      ,"quorune/rules/casting/commit.py"
-      ,"quorune/rules/activation/commit.py"
-      ,"quorune/activation_usage.py"
-      ,"quorune/permanent_designations.py"
-      ,"quorune/zone_object_state.py"
-      ,"quorune/trigger_processing.py"
-      ,"quorune/zone_transition_journal.py"
-      ,"quorune/zone_transition_model.py"
-      ,"quorune/zone_transitions.py"
-      ,"quorune/selection/public_choice.py"
-      ,"quorune/selection/exile_cast.py"
-      ,"quorune/selection/searching.py"
-      ,"quorune/selection/storm.py"
-      ,"quorune/selection/targeting.py"
-      ,"quorune/impulse_access.py"
+      "quorune/token_creation.py",
+      "quorune/mana_activation.py",
+      "quorune/mana_provenance.py",
+      "quorune/semantic_choices/intent_host.py",
+      "quorune/effect_runtime/state_and_permissions.py",
+      "quorune/effect_runtime/zones_and_attachments.py",
+      "quorune/effect_runtime/damage_life_and_turns.py",
+      "quorune/effect_runtime/damage_modifiers.py",
+      "quorune/effect_runtime/objects_stack_and_tokens.py",
+      "quorune/rules/casting/commit.py",
+      "quorune/rules/activation/commit.py",
+      "quorune/activation_usage.py",
+      "quorune/permanent_designations.py",
+      "quorune/zone_object_state.py",
+      "quorune/trigger_processing.py",
+      "quorune/zone_transition_journal.py",
+      "quorune/zone_transition_model.py",
+      "quorune/zone_transitions.py",
+      "quorune/selection/public_choice.py",
+      "quorune/selection/exile_cast.py",
+      "quorune/selection/searching.py",
+      "quorune/selection/storm.py",
+      "quorune/selection/targeting.py",
+      "quorune/impulse_access.py"
     ],
     "state_parameter_modules": [
       "quorune/record.py",
@@ -138,7 +138,8 @@
         "quorune/permissions.py",
         "quorune/turn_priority_model.py",
         "quorune/turn_priority_owner.py",
-        "quorune/turn_step_owner.py"
+        "quorune/turn_step_owner.py",
+        "quorune/decision_completion.py"
       ],
       "missing_dedicated_owner": false,
       "context": {

@@ -42,6 +42,22 @@ Existing Explore instructions and Map builtins retain their schemas. See
 
 ## Directory contract
 
+Current checkpoints carry `transform_timestamp_version: 1`, mirrored in manifest
+format provenance. A successful double-faced transform advances the canonical
+timestamp clock while retaining the logical object. Historical absence retains
+the previous timestamp behavior and remains absent on serialization. Unknown,
+boolean and mismatched versions reject before replay. See
+[ADR 0149](../adr/0149-versioned-transform-timestamps.md).
+Declared runtime-trust identity remains exact; records pinned to a different
+identity retain the existing provenance rejection.
+
+The `permanent.timestamp_order` decision retains a schema-one closed transform
+request and continuation. Current subjects, expected transform counts, turn/step
+context, collected controller permutations and held triggers survive save/load.
+Only the current authenticated controller receives the ordering form. Completion
+validates delivered metadata and current source state before retrying the existing
+transform owner. No bearer token or executable callback is saved in the frame.
+
 | File | Contract |
 | --- | --- |
 | `manifest.json` | Public identity, lifecycle, profiles, source fingerprints, outcome, replay, and fidelity summary |
