@@ -122,6 +122,7 @@ define rules authority or become a production runtime dependency.
 - [Architecture decision records](adr/index.md)
 - [Generated-artifact finalization decision](adr/0042-canonical-generated-artifact-finalization.md)
 - [Face-status timestamp compatibility](adr/0150-versioned-face-status-timestamps.md)
+- [Face-down characteristic compatibility](adr/0151-versioned-face-down-characteristics.md)
 - [Semantic-pack compatibility](history/semantic-packs.md)
 
 ## Maintenance rules

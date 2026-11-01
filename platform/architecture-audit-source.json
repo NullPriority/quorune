@@ -189,7 +189,8 @@
         "quorune/zone_transitions.py",
         "quorune/zone_trigger_events.py",
         "quorune/zone_trigger_processing.py",
-        "quorune/face_status_timestamp_model.py"
+        "quorune/face_status_timestamp_model.py",
+        "quorune/face_down_characteristics_model.py"
       ],
       "missing_dedicated_owner": false,
       "context": {
@@ -373,7 +374,8 @@
       "owners": [
         "quorune/token_creation.py",
         "quorune/semantic_runtime/token_replacements.py",
-        "quorune/engine.py"
+        "quorune/engine.py",
+        "quorune/face_down_copy.py"
       ],
       "missing_dedicated_owner": false
     },

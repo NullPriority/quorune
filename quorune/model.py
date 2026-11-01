@@ -26,6 +26,7 @@ from .cast_source_placement_model import cast_source_placement_version
 from .explore_action_model import explore_action_version
 from .transform_timestamp_model import transform_timestamp_version
 from .face_status_timestamp_model import face_status_timestamp_version
+from .face_down_characteristics_model import face_down_characteristics_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
 
@@ -1012,6 +1013,7 @@ class GameState:
     explore_action_version: int | None = 1
     transform_timestamp_version: int | None = 1
     face_status_timestamp_version: int | None = 1
+    face_down_characteristics_version: int | None = 1
     qualified_attack_facts_version: int | None = 1
 
     def active_seats(self) -> list[str]:
@@ -1024,6 +1026,7 @@ class GameState:
         explore_action_version(self.explore_action_version)
         transform_timestamp_version(self.transform_timestamp_version)
         face_status_timestamp_version(self.face_status_timestamp_version)
+        face_down_characteristics_version(self.face_down_characteristics_version)
         qualified_attack_facts_version(self.qualified_attack_facts_version)
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
@@ -1063,6 +1066,7 @@ class GameState:
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
             **({'transform_timestamp_version':self.transform_timestamp_version} if self.transform_timestamp_version is not None else {}),
             **({'face_status_timestamp_version':self.face_status_timestamp_version} if self.face_status_timestamp_version is not None else {}),
+            **({'face_down_characteristics_version':self.face_down_characteristics_version} if self.face_down_characteristics_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1133,6 +1137,7 @@ class GameState:
             explore_action_version=explore_action_version(data.get('explore_action_version')),
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),
             face_status_timestamp_version=face_status_timestamp_version(data.get('face_status_timestamp_version')),
+            face_down_characteristics_version=face_down_characteristics_version(data.get('face_down_characteristics_version')),
             game_id=str(data["game_id"]),
             config=GameConfig.from_dict(data["config"]),
             players={seat: PlayerState.from_dict(player) for seat, player in data["players"].items()},

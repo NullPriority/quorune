@@ -72,6 +72,24 @@ def compiled_fixed_mana_morph_spec(
     )
 
 
+def current_face_down_spell_is_trusted(host,item,card):
+    """Validate a current empty creature resolution against its whole cast source."""
+    from collections.abc import Mapping
+    from .morph import MORPH_METHOD_ANNOTATION,MorphError,validate_morph_face_down_state
+    if (card is None or item.kind!='spell' or item.card_object_id!=card.object_id
+            or card.zone!='stack' or card.face_down is not True or item.default_destination!='battlefield'):
+        return False
+    marker=card.annotations.get(MORPH_METHOD_ANNOTATION)
+    if not isinstance(marker,Mapping) or type(marker.get('schema_version')) is not int:return False
+    method=marker.get('kind')
+    if method not in FACE_DOWN_CAST_METHODS or item.semantic_key!=f'builtin:{method}-face-down':return False
+    spec=compiled_fixed_mana_face_down_method_spec(host,card,method=method)
+    if spec is None:return False
+    try:validate_morph_face_down_state(card,spec)
+    except (MorphError,ValueError):return False
+    return True
+
+
 __all__ = [
     "CompiledMorphHost",
     "compiled_fixed_mana_face_down_method_spec",

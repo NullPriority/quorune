@@ -7648,13 +7648,13 @@
     },
     "semantic_transition_declaration": {
       "family_ids": [],
-      "transition_id": "oracle-ir-v677-face-status-timestamps",
+      "transition_id": "oracle-ir-v678-face-down-copy-privacy",
       "expected_complete_card_gain": null,
       "capability_ids": [],
       "candidate_ids": [],
-      "compiler_version": "oracle-ir-v677",
+      "compiler_version": "oracle-ir-v678",
       "bundle_id": null,
-      "non_harvest_reason": "Correct CR613.7f timestamps for ordinary represented face-up special actions through existing object-state and canonical zone-clock owners. Independently pin face-status timestamp semantics in checkpoint and record provenance, preserve historical absence and strict declared runtime trust, and retain the combined CR613.7g/m transform correction. No new grammar, mechanic promotion or card-support harvest is claimed."
+      "non_harvest_reason": "Correct face-down copiable status values, anonymous copy name/Oracle identity and validated current creature-spell resolution. Exact-main native reproductions expose hidden Morph identity and a printed-land resolution stall. Preserve historical absence through an independent checkpoint/record marker and leave strict runtime provenance unchanged. No new grammar, mechanic promotion, original-card gain or support harvest is claimed."
     },
     "forecast_corrections": [
       {

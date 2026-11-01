@@ -262,7 +262,9 @@
     "quorune/conditional_exile_return.py",
     "quorune/conditional_exile_model.py",
     "quorune/cost_payments.py",
-    "quorune/face_status_timestamp_model.py"
+    "quorune/face_status_timestamp_model.py",
+    "quorune/face_down_copy.py",
+    "quorune/face_down_characteristics_model.py"
   ],
   "protected_future_prefixes": [
     "quorune/domain/",
@@ -505,7 +507,9 @@
       "quorune/transform_order_model.py": "closed immutable simultaneous transform request, subject scopes, controller permutations and continuation codec; no live mutation",
       "quorune/transform_timestamp_order.py": "data-only scoped timestamp selection and authenticated decision coordination; delegates every live mutation to existing permission, turn, transform and timestamp owners",
       "quorune/decision_completion.py": "existing decision-kind routing extracted from engine with delegation to the same owners; no state mutation or second registry",
-      "quorune/face_status_timestamp_model.py": "pure optional face-status timestamp version validation; no state mutation or timestamp allocation"
+      "quorune/face_status_timestamp_model.py": "pure optional face-status timestamp version validation; no state mutation or timestamp allocation",
+      "quorune/face_down_copy.py": "reads represented status-layer copy values and prepares anonymous copy/snapshot identity; no state, ref, zone, clock or projection mutation authority",
+      "quorune/face_down_characteristics_model.py": "pure optional status-characteristic version validation and current-mode read; no state mutation or coupling to unrelated copy semantics"
     },
     "model_definition": "quorune/model.py"
   },

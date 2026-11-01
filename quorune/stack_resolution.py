@@ -27,6 +27,9 @@ def physical_stack_record(host: Any, item: StackItem):
     from .entry_copy import copiable_oracle_id
 
     card = host.state.cards.get(item.card_object_id or '')
+    from .face_down_characteristics_model import face_down_characteristics_mode
+    if (card is not None and item.kind=='spell_copy' and face_down_characteristics_mode(host)==1
+            and card.oracle_id.startswith('custom-copy:')):return None
     if card is not None and copiable_oracle_id(card) != card.oracle_id:
         return host.card_db.by_oracle_id(card.oracle_id)
     return host.card_record(item.card_object_id)
@@ -72,6 +75,14 @@ def trusted_generic_empty_resolution(
     provenance: str | None = None
     if item.kind == "spell" and item.card_object_id:
         record = physical_stack_record(host, item)
+        from .face_down_characteristics_model import face_down_characteristics_mode
+        if face_down_characteristics_mode(host)==1:
+            card=host.state.cards.get(item.card_object_id)
+            if card is not None and card.face_down:
+                from .compiled_morph import current_face_down_spell_is_trusted
+                if not current_face_down_spell_is_trusted(host,item,card):return None
+                return EmptyStackResolution(item.default_destination,
+                    'Trusted exact spell resolved with no executable resolution effects','trusted_generic_face_down_spell')
         face=next((f for f in record.faces if f.get('name')==item.chosen_face),None) if record is not None and record.faces else None
         if record is not None:record=prospective_cast_record(record,face)
         if record and host._trusted_generic_spell(record):

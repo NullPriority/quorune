@@ -10162,6 +10162,24 @@
         "test_shared_creature_type_quantities",
         "test_type_replacement_grants"
       ]
+    },
+    {
+      "id": "face-down-characteristics-and-copy-privacy",
+      "patterns": [
+        "quorune/face_down_copy.py",
+        "quorune/face_down_characteristics_model.py",
+        "tests/test_face_down_copy.py",
+        "tests/fixtures/face-down-copy-cards.json"
+      ],
+      "test_modules": [
+        "test_face_down_copy",
+        "test_event_spell_copy",
+        "test_morph_rules",
+        "test_nonmana_morph",
+        "test_copy_objects",
+        "test_game_record_v3",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

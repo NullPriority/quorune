@@ -167,9 +167,11 @@ def token_copy_snapshot(
     """Capture one public copiable-value snapshot for later token creation."""
 
     copyable = copy.deepcopy(dict(host._copyable_characteristics(source)))
+    from .face_down_copy import token_snapshot_identity
+    oracle_id,printed_name=token_snapshot_identity(host,source,copyable)
     return {
-        "oracle_id": source.oracle_id,
-        "printed_name": source.printed_name,
+        "oracle_id": oracle_id,
+        "printed_name": printed_name,
         "annotations": {
             "copied_from": source.object_id,
             "copy_overrides": copyable,
@@ -604,6 +606,10 @@ def _copied_token_identity(
         str(copy_of),
         zones={copy_source_zone},
     )
+    from .face_down_characteristics_model import face_down_characteristics_mode
+    if original.face_down and face_down_characteristics_mode(host)==1:
+        return _copied_token_identity(host,controller,copy_of=copy_of,name=name,characteristics=characteristics,
+            ref=ref,copy_source_zone=copy_source_zone,copy_snapshot=token_copy_snapshot(host,original))
     annotations = copy.deepcopy(original.annotations)
     annotations["copied_from"] = original.object_id
     overrides = dict(annotations.get("copy_overrides") or {})

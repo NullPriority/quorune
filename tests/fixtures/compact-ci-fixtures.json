@@ -154,6 +154,7 @@
     "tests/fixtures/external-entry-counter-cards.json",
     "tests/fixtures/external-entry-tapped-cards.json",
     "tests/fixtures/extort-cards.json",
+    "tests/fixtures/face-down-copy-cards.json",
     "tests/fixtures/fading-cards.json",
     "tests/fixtures/filtered-prevention-cards.json",
     "tests/fixtures/finite-prevention-recipient-cards.json",

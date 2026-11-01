@@ -35,6 +35,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
+        **({'face_down_characteristics_version':state.face_down_characteristics_version} if getattr(state,'face_down_characteristics_version',None) is not None else {}),
     }
 
 
@@ -84,6 +85,11 @@ def validate_state_versions(
     if (type(face_status) is not int or face_status not in {0,1}
             or face_status!=(face_status_timestamp_version(getattr(state,'face_status_timestamp_version',None)) or 0)):
         raise ValueError('Face-status timestamp provenance does not match the initial checkpoint')
+    from .face_down_characteristics_model import face_down_characteristics_version
+    face_down=format_value.get('face_down_characteristics_version',0)
+    if (type(face_down) is not int or face_down not in {0,1}
+            or face_down!=(face_down_characteristics_version(getattr(state,'face_down_characteristics_version',None)) or 0)):
+        raise ValueError('Face-down characteristic provenance does not match the initial checkpoint')
 
 
 __all__ = ["format_state_versions", "validate_state_versions"]
