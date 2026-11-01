@@ -28,7 +28,8 @@ def _snapshot(host: Any, card: Any) -> dict[str, Any]:
     from .token_creation import token_copy_snapshot
     if card.phased_out:
         raise TokenCopyRecipeError("Copy reference is phased out")
-    if card.face_down:
+    from .face_down_characteristics_model import face_down_characteristics_mode
+    if card.face_down and face_down_characteristics_mode(host)!=1:
         raise TokenCopyRecipeError("Face-down copiable characteristics are not represented by this recipe")
     return {"object_id": card.object_id, "logical_object_id": card.logical_object_id,
             "ref": card.ref, "zone": card.zone, "snapshot": token_copy_snapshot(host, card)}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 598,
+  "registry_version": 599,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -11848,9 +11848,11 @@
     },
     {
       "id": "casting.disguise.fixed_mana",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "107.4e",
+        "110.5a",
+        "110.5b",
         "116.2b",
         "601.2b",
         "601.2f",
@@ -11860,6 +11862,10 @@
         "702.168a",
         "702.168b",
         "702.21",
+        "702.37a",
+        "702.37c",
+        "707.2",
+        "707.3",
         "708.2",
         "708.4",
         "708.5",
@@ -11879,7 +11885,8 @@
           "one fixed ordinary mana turn-up cost",
           "current priority",
           "current face-up effective Disguise presence",
-          "authoritative face-status timestamp checkpoint version"
+          "authoritative face-status timestamp checkpoint version",
+          "independent face_down_characteristics_version checkpoint/record marker: current1 or historical absence"
         ],
         "outputs": [
           "private server-authored face-down cast for {3}",
@@ -11916,7 +11923,9 @@
         "quorune.activation_mana_cost.fixed_complex_activation_mana_options",
         "quorune.face_status_timestamp_model.face_status_timestamp_version",
         "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
-        "quorune.zone_object_state.turn_card_face_up"
+        "quorune.zone_object_state.turn_card_face_up",
+        "quorune.compiled_morph.current_face_down_spell_is_trusted",
+        "quorune.stack_resolution.trusted_generic_empty_resolution"
       ],
       "positive_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
@@ -11927,7 +11936,12 @@
         "test_nine_actual_fixed_hybrid_disguise_originals_bind_completely",
         "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
-        "test_face_status_clock_advances_only_for_an_eligible_current_object"
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "negative_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
@@ -11935,28 +11949,44 @@
         "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
         "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
-        "test_face_status_clock_advances_only_for_an_eligible_current_object"
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "interaction_tests": [
         "test_disguise_ward_uses_face_down_characteristics_only",
         "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
         "test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
-        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "multiplayer_tests": [
         "test_disguise_ward_uses_face_down_characteristics_only",
-        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay"
+        "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "privacy_tests": [
         "test_disguise_ward_uses_face_down_characteristics_only",
         "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
-        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax"
       ],
       "replay_tests": [
         "test_disguise_ward_uses_face_down_characteristics_only",
         "test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay",
         "test_actual_hybrid_dog_walker_all_payments_trigger_after_turn_up_and_load",
-        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load"
+        "test_actual_manifested_hybrid_original_uses_its_disguise_alternative_after_load",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_historical_absence_preserves_the_original_copy_representation_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -11967,9 +11997,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Blocking fixed-generic Ward prevents Disguise's exact keyword node and complete-card runtime admission; face-down characteristics cannot gain an untrusted executable Ward fallback.",
+      "dependency_fail_closed_rationale": "Blocking fixed-generic Ward prevents Disguise's exact keyword node and complete-card runtime admission; face-down characteristics cannot gain an untrusted executable Ward fallback. Current status reads require represented layer1b values; empty resolution requires complete current method admission and exact builtin/fingerprint/status/destination. Wrong principals and malformed modes reject; declared runtime trust remains unchanged.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler, characteristic-fragment, current-ability, and Ward-consumption assertions reject method-specific or prose-driven survivors. The hybrid generic-fee omission mutant keeps complete original admission but fails the exact native mana balance. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
+      "implementation_mutation_rationale": "Focused compiler, characteristic-fragment, current-ability, and Ward-consumption assertions reject method-specific or prose-driven survivors. The hybrid generic-fee omission mutant keeps complete original admission but fails the exact native mana balance. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback. Exact unchanged main08a native normally admitted Morph copying exposes the hidden name/Oracle/text/price to an opponent (1FAIL15.451s); original admitted Zoetic Morph pauses from its printed land type (1FAIL8.366s). Anonymous status values and validated creature resolution distinguish corrections, while Ward payment and historical replay protect nearby contracts.",
       "blockers": [],
       "status": "trusted"
     },
@@ -13278,17 +13308,22 @@
     },
     {
       "id": "casting.megamorph.fixed_mana",
-      "version": 4,
+      "version": 5,
       "official_rules": [
         "107.4e",
+        "110.5a",
+        "110.5b",
         "116.2b",
         "601.2b",
         "601.2f",
         "601.2h",
         "613.7f",
         "702.37",
+        "702.37a",
         "702.37c",
         "702.37e",
+        "707.2",
+        "707.3",
         "708.2",
         "708.4",
         "708.5",
@@ -13308,7 +13343,8 @@
           "one fixed ordinary mana turn-up cost",
           "current priority",
           "current face-up effective Megamorph presence",
-          "authoritative face-status timestamp checkpoint version"
+          "authoritative face-status timestamp checkpoint version",
+          "independent face_down_characteristics_version checkpoint/record marker: current1 or historical absence"
         ],
         "outputs": [
           "private server-authored face-down cast for {3}",
@@ -13346,37 +13382,60 @@
         "quorune.activation_mana_cost.fixed_complex_activation_mana_options",
         "quorune.face_status_timestamp_model.face_status_timestamp_version",
         "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
-        "quorune.zone_object_state.turn_card_face_up"
+        "quorune.zone_object_state.turn_card_face_up",
+        "quorune.compiled_morph.current_face_down_spell_is_trusted",
+        "quorune.stack_resolution.trusted_generic_empty_resolution"
       ],
       "positive_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_printed_turn_up_method_preserves_advertised_identity_and_fingerprint",
         "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
-        "test_face_status_clock_advances_only_for_an_eligible_current_object"
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "negative_tests": [
         "test_fixed_face_down_methods_compile_and_fail_closed",
         "test_layer_six_removal_uses_shared_face_down_method_query",
         "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
-        "test_face_status_clock_advances_only_for_an_eligible_current_object"
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "interaction_tests": [
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
-        "test_megamorph_counter_replacement_suspends_and_replays"
+        "test_megamorph_counter_replacement_suspends_and_replays",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "multiplayer_tests": [
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
-        "test_megamorph_counter_replacement_suspends_and_replays"
+        "test_megamorph_counter_replacement_suspends_and_replays",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "privacy_tests": [
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
-        "test_megamorph_counter_replacement_suspends_and_replays"
+        "test_megamorph_counter_replacement_suspends_and_replays",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax"
       ],
       "replay_tests": [
         "test_megamorph_counter_precedes_face_up_trigger_and_replays",
-        "test_megamorph_counter_replacement_suspends_and_replays"
+        "test_megamorph_counter_replacement_suspends_and_replays",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_historical_absence_preserves_the_original_copy_representation_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -13387,9 +13446,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Blocking canonical counter placement prevents Megamorph's exact keyword node and complete-card runtime admission; there is no direct counter mutation fallback.",
+      "dependency_fail_closed_rationale": "Blocking canonical counter placement prevents Megamorph's exact keyword node and complete-card runtime admission; there is no direct counter mutation fallback. Current status reads require represented layer1b values; empty resolution requires complete current method admission and exact builtin/fingerprint/status/destination. Wrong principals and malformed modes reject; declared runtime trust remains unchanged.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Focused compiler, current-ability, event-order, and counter-owner mutations are rejected by exact node and behavioral assertions. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
+      "implementation_mutation_rationale": "Focused compiler, current-ability, event-order, and counter-owner mutations are rejected by exact node and behavioral assertions. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback. Exact unchanged main08a native normally admitted Morph copying exposes the hidden name/Oracle/text/price to an opponent (1FAIL15.451s); original admitted Zoetic Morph pauses from its printed land type (1FAIL8.366s). Anonymous status values and validated creature resolution distinguish corrections, while Ward payment and historical replay protect nearby contracts.",
       "blockers": [],
       "status": "trusted"
     },
@@ -13625,9 +13684,11 @@
     },
     {
       "id": "casting.morph.fixed_mana",
-      "version": 5,
+      "version": 6,
       "official_rules": [
         "107.4e",
+        "110.5a",
+        "110.5b",
         "116.2b",
         "601.2b",
         "601.2f",
@@ -13637,6 +13698,8 @@
         "702.37a",
         "702.37c",
         "702.37e",
+        "707.2",
+        "707.3",
         "708.2",
         "708.4",
         "708.5",
@@ -13656,7 +13719,8 @@
           "one fixed ordinary mana morph cost",
           "current priority",
           "current face-up effective Morph presence",
-          "authoritative face-status timestamp checkpoint version"
+          "authoritative face-status timestamp checkpoint version",
+          "independent face_down_characteristics_version checkpoint/record marker: current1 or historical absence"
         ],
         "outputs": [
           "a private server-authored face-down cast offer for {3}",
@@ -13695,7 +13759,9 @@
         "quorune.activation_mana_cost.fixed_complex_activation_mana_options",
         "quorune.face_status_timestamp_model.face_status_timestamp_version",
         "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
-        "quorune.zone_object_state.turn_card_face_up"
+        "quorune.zone_object_state.turn_card_face_up",
+        "quorune.compiled_morph.current_face_down_spell_is_trusted",
+        "quorune.stack_resolution.trusted_generic_empty_resolution"
       ],
       "positive_tests": [
         "test_fixed_mana_morph_compiles_source_spanned_typed_program",
@@ -13704,7 +13770,12 @@
         "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
         "test_face_status_clock_advances_only_for_an_eligible_current_object",
-        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "negative_tests": [
         "test_nonordinary_morph_costs_remain_residual",
@@ -13713,25 +13784,41 @@
         "test_stale_or_ability_removed_turn_up_rolls_back",
         "test_fixed_hybrid_schema_options_and_historical_ordinary_shapes_are_strict",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
-        "test_face_status_clock_advances_only_for_an_eligible_current_object"
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "interaction_tests": [
         "test_face_down_departure_reveals_identity_and_resets_method",
         "test_face_down_static_source_is_inert_until_turned_face_up",
         "test_morph_cast_turn_up_privacy_and_replay",
-        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "multiplayer_tests": [
         "test_morph_cast_turn_up_privacy_and_replay",
-        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "privacy_tests": [
         "test_morph_cast_turn_up_privacy_and_replay",
-        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax"
       ],
       "replay_tests": [
         "test_morph_cast_turn_up_privacy_and_replay",
-        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes"
+        "test_legacy_absent_face_status_timestamp_retains_native_morph_hashes",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_historical_absence_preserves_the_original_copy_representation_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -13742,16 +13829,18 @@
         "replay"
       ],
       "dependency_fail_closed_status": "not_applicable",
-      "dependency_fail_closed_rationale": "The capability has no child capability dependencies; its runtime handler, compiler-pinned complete-card admission certificate, exact state marker, current effective keyword query, and closed cost shape all fail closed independently.",
+      "dependency_fail_closed_rationale": "The capability has no child capability dependencies; its runtime handler, compiler-pinned complete-card admission certificate, exact state marker, current effective keyword query, and closed cost shape all fail closed independently. Current status reads require represented layer1b values; empty resolution requires complete current method admission and exact builtin/fingerprint/status/destination. Wrong principals and malformed modes reject; declared runtime trust remains unchanged.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_morph_compiler_mutation_is_killed removes the Morph node production and proves the real card returns to a material dependency residual. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
+      "implementation_mutation_rationale": "test_morph_compiler_mutation_is_killed removes the Morph node production and proves the real card returns to a material dependency residual. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback. Exact unchanged main08a native normally admitted Morph copying exposes the hidden name/Oracle/text/price to an opponent (1FAIL15.451s); original admitted Zoetic Morph pauses from its printed land type (1FAIL8.366s). Anonymous status values and validated creature resolution distinguish corrections, while Ward payment and historical replay protect nearby contracts.",
       "blockers": [],
       "status": "trusted"
     },
     {
       "id": "casting.morph.fixed_nonmana",
-      "version": 2,
+      "version": 3,
       "official_rules": [
+        "110.5a",
+        "110.5b",
         "116.2b",
         "118.3",
         "118.6",
@@ -13760,9 +13849,15 @@
         "601.2h",
         "613.7f",
         "702.37a",
+        "702.37c",
         "702.37d",
         "702.37e",
+        "707.2",
+        "707.3",
+        "708.2",
         "708.2a",
+        "708.4",
+        "708.5",
         "708.9"
       ],
       "supported_profiles": [
@@ -13775,7 +13870,8 @@
         "inputs": [
           "complete printed normal-layout Morph source",
           "fixed life, colored reveal, discard or subtype return cost",
-          "authoritative face-status timestamp checkpoint version"
+          "authoritative face-status timestamp checkpoint version",
+          "independent face_down_characteristics_version checkpoint/record marker: current1 or historical absence"
         ],
         "outputs": [
           "private face-down cast for three generic",
@@ -13799,7 +13895,9 @@
         "quorune.rules.morph_actions.commit_turn_face_up",
         "quorune.face_status_timestamp_model.face_status_timestamp_version",
         "quorune.zone_transitions.ZoneTransitionOwner.turn_face_up",
-        "quorune.zone_object_state.turn_card_face_up"
+        "quorune.zone_object_state.turn_card_face_up",
+        "quorune.compiled_morph.current_face_down_spell_is_trusted",
+        "quorune.stack_resolution.trusted_generic_empty_resolution"
       ],
       "positive_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13818,7 +13916,12 @@
         "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
         "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
-        "test_face_status_clock_advances_only_for_an_eligible_current_object"
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "negative_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13836,7 +13939,11 @@
         "test_nonmana_cost_codec_is_closed_and_historical_mana_handler_rejects_it",
         "test_stale_selected_return_resource_and_internal_journal_attempts_roll_back",
         "test_face_status_timestamp_codec_and_manifest_preserve_independent_legacy_absence",
-        "test_face_status_clock_advances_only_for_an_eligible_current_object"
+        "test_face_status_clock_advances_only_for_an_eligible_current_object",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "interaction_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13848,7 +13955,10 @@
         "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
         "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
         "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
-        "test_native_island_mana_can_be_floated_before_paying_the_return_cost"
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "multiplayer_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13860,13 +13970,18 @@
         "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
         "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
         "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
-        "test_native_island_mana_can_be_floated_before_paying_the_return_cost"
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "privacy_tests": [
         "test_actual_fathom_seer_returns_two_distinct_islands_then_draws_privately",
         "test_actual_reveal_prices_publish_only_one_eligible_card_and_execute_face_up_triggers",
         "test_actual_zombie_cutthroat_pays_life_to_turn_face_up_without_a_stack_item",
-        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load"
+        "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax"
       ],
       "replay_tests": [
         "test_actual_bird_return_uses_controller_and_returns_to_physical_owner",
@@ -13878,7 +13993,11 @@
         "test_life_shortfall_and_prospective_ability_removal_suppress_turn_up",
         "test_native_discard_replacement_suspends_before_reveal_then_resumes_after_load",
         "test_native_horde_ambusher_face_up_trigger_prohibits_the_chosen_blocker",
-        "test_native_island_mana_can_be_floated_before_paying_the_return_cost"
+        "test_native_island_mana_can_be_floated_before_paying_the_return_cost",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_historical_absence_preserves_the_original_copy_representation_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -13889,9 +14008,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Withdrawing the nonmana owner or compiler production leaves a source-spanned residual. Complete original admission rejects unknown siblings and unsupported costs; the historical mana handler rejects schema three.",
+      "dependency_fail_closed_rationale": "Withdrawing the nonmana owner or compiler production leaves a source-spanned residual. Complete original admission rejects unknown siblings and unsupported costs; the historical mana handler rejects schema three. Current status reads require represented layer1b values; empty resolution requires complete current method admission and exact builtin/fingerprint/status/destination. Wrong principals and malformed modes reject; declared runtime trust remains unchanged.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting only canonical life payment preserves complete original admission but violates the independently specified five-life native consequence. Removing nonmana production restores material residuals. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback.",
+      "implementation_mutation_rationale": "Omitting only canonical life payment preserves complete original admission but violates the independently specified five-life native consequence. Removing nonmana production restores material residuals. Independent original native Morph observation fails timestamp31>31. Current/legacy codec and native replay, shared-clock rejection and pending Megamorph replacement distinguish successful commitment from rollback. Exact unchanged main08a native normally admitted Morph copying exposes the hidden name/Oracle/text/price to an opponent (1FAIL15.451s); original admitted Zoetic Morph pauses from its printed land type (1FAIL8.366s). Anonymous status values and validated creature resolution distinguish corrections, while Ward payment and historical replay protect nearby contracts.",
       "blockers": [],
       "status": "trusted"
     },
@@ -53426,16 +53545,24 @@
     },
     {
       "id": "stack.copy.cast_event_spell",
-      "version": 3,
+      "version": 4,
       "official_rules": [
-        "707.2",
+        "110.5a",
+        "110.5b",
+        "113.7a",
+        "400.7",
+        "608.2h",
+        "702.37a",
+        "702.37c",
         "707.10",
         "707.10a",
         "707.10c",
         "707.10d",
-        "608.2h",
-        "113.7a",
-        "400.7"
+        "707.2",
+        "707.3",
+        "708.2",
+        "708.4",
+        "708.5"
       ],
       "supported_profiles": [
         "traditional",
@@ -53448,7 +53575,8 @@
           "Normalized cast occurrence and exact spell incarnation",
           "Current or departure-pinned copiable spell information",
           "Authenticated trigger controller and retained target incarnations",
-          "An independently closed cast-event spell copy inside the existing optional fixed mana payment result"
+          "An independently closed cast-event spell copy inside the existing optional fixed mana payment result",
+          "independent face_down_characteristics_version checkpoint/record marker: current1 or historical absence"
         ],
         "outputs": [
           "One independent spell copy without a new cast or new mana payment",
@@ -53475,7 +53603,12 @@
         "quorune.rules.event_spell_copy.resolve_event_spell_copy_source",
         "quorune.rules.fixed_effect_clause_shapes.closed_effect_component_capabilities",
         "quorune.selection.copy_targets.prepare_copy_targets",
-        "quorune.semantic_choices.stack_targets.StackTargetChoiceHandler"
+        "quorune.semantic_choices.stack_targets.StackTargetChoiceHandler",
+        "quorune.face_down_copy.current_face_down_copy_values",
+        "quorune.face_down_copy.copy_object_identity",
+        "quorune.face_down_copy.token_snapshot_identity",
+        "quorune.face_down_characteristics_model.face_down_characteristics_version",
+        "quorune.stack_resolution.physical_stack_record"
       ],
       "positive_tests": [
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
@@ -53497,7 +53630,12 @@
         "test_paid_copy_component_retains_exact_source_cost_and_target_boundaries",
         "test_qualified_cast_copy_forms_and_verified_withdrawal_preserve_targeted_copy",
         "test_reference_capture_is_inferred_from_the_instruction_without_a_coverage_marker",
-        "test_subtype_creature_cast_predicate_requires_both_type_and_one_closed_subtype"
+        "test_subtype_creature_cast_predicate_requires_both_type_and_one_closed_subtype",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "negative_tests": [
         "test_absent_unpinned_or_replaced_sources_fail_closed_and_legacy_effect_is_unchanged",
@@ -53515,7 +53653,11 @@
         "test_qualified_cast_copy_forms_and_verified_withdrawal_preserve_targeted_copy",
         "test_reference_capture_is_inferred_from_the_instruction_without_a_coverage_marker",
         "test_runtime_event_copy_dependency_is_inferred_without_declaration",
-        "test_verified_copy_or_payment_withdrawal_keeps_unrelated_draw"
+        "test_verified_copy_or_payment_withdrawal_keeps_unrelated_draw",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "interaction_tests": [
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
@@ -53531,7 +53673,10 @@
         "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_actual_self_cast_copy_survives_countering_the_original_and_keeps_equipment_actions",
         "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
-        "test_departure_pin_preserves_immutable_waiting_occurrence_and_unrelated_batch_payload"
+        "test_departure_pin_preserves_immutable_waiting_occurrence_and_unrelated_batch_payload",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "multiplayer_tests": [
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
@@ -53546,13 +53691,18 @@
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
         "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_actual_self_cast_copy_survives_countering_the_original_and_keeps_equipment_actions",
-        "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets"
+        "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "privacy_tests": [
         "test_actual_double_vision_untargeted_copy_draws_twice_without_casting_the_copy",
         "test_actual_gorion_and_chancellor_copy_adventure_face_without_copy_permission_or_normal_face_trigger",
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
-        "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets"
+        "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax"
       ],
       "replay_tests": [
         "test_actual_blinked_target_retention_and_current_selection_use_distinct_incarnations",
@@ -53567,7 +53717,11 @@
         "test_actual_mirari_payment_resolution_decline_unaffordable_and_private_draw",
         "test_actual_riku_keeps_modal_choice_and_uses_separate_entering_creature_copy",
         "test_actual_self_cast_copy_survives_countering_the_original_and_keeps_equipment_actions",
-        "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets"
+        "test_actual_swarm_optional_copy_declines_then_copies_countered_x_with_new_targets",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_historical_absence_preserves_the_original_copy_representation_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -53578,9 +53732,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Verified capability withdrawal blocks event-bound copying while preserving existing targeted copy. Runtime minima independently infer the reference capability; unavailable exact spell information fails closed.",
+      "dependency_fail_closed_rationale": "Verified capability withdrawal blocks event-bound copying while preserving existing targeted copy. Runtime minima independently infer the reference capability; unavailable exact spell information fails closed. Current status reads require represented layer1b values; empty resolution requires complete current method admission and exact builtin/fingerprint/status/destination. Wrong principals and malformed modes reject; declared runtime trust remains unchanged.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting departure pinning loses the exact referenced spell after removal and fails the independently specified copy consequence.",
+      "implementation_mutation_rationale": "Omitting departure pinning loses the exact referenced spell after removal and fails the independently specified copy consequence. Exact unchanged main08a native normally admitted Morph copying exposes the hidden name/Oracle/text/price to an opponent (1FAIL15.451s); original admitted Zoetic Morph pauses from its printed land type (1FAIL8.366s). Anonymous status values and validated creature resolution distinguish corrections, while Ward payment and historical replay protect nearby contracts.",
       "blockers": [],
       "status": "trusted"
     },
@@ -57613,8 +57767,10 @@
     },
     {
       "id": "token.creation.fixed_copy",
-      "version": 11,
+      "version": 12,
       "official_rules": [
+        "110.5a",
+        "110.5b",
         "111.12",
         "111.2",
         "115.1a",
@@ -57629,8 +57785,14 @@
         "608.2c",
         "614.16",
         "616.1",
+        "702.37a",
+        "702.37c",
         "707.2",
+        "707.3",
         "707.9",
+        "708.2",
+        "708.4",
+        "708.5",
         "712.8c"
       ],
       "supported_profiles": [
@@ -57644,7 +57806,8 @@
           "one qualified current legal target, source, normalized zone-event object, or controlled creature-token choice",
           "current or immediate-departure copiable characteristics",
           "fixed quantity from one through five and closed copy exceptions",
-          "resolving controller"
+          "resolving controller",
+          "independent face_down_characteristics_version checkpoint/record marker: current1 or historical absence"
         ],
         "outputs": [
           "copiable typed exceptions and granted child abilities",
@@ -57677,7 +57840,12 @@
         "quorune.token_copy_references.pin_copy_characteristic_departures",
         "quorune.token_copy_runtime.apply_copy_recipe",
         "quorune.token_copy_runtime.finish_copy_aftercare",
-        "quorune.token_creation.create_tokens"
+        "quorune.token_creation.create_tokens",
+        "quorune.face_down_copy.current_face_down_copy_values",
+        "quorune.face_down_copy.copy_object_identity",
+        "quorune.face_down_copy.token_snapshot_identity",
+        "quorune.face_down_characteristics_model.face_down_characteristics_version",
+        "quorune.stack_resolution.physical_stack_record"
       ],
       "positive_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -57698,7 +57866,12 @@
         "test_original_type_exception_carriers_require_whole_card_admission",
         "test_simultaneous_copies_see_the_complete_entry_history",
         "test_subsequent_haste_does_not_rewrite_entry_facts",
-        "test_two_simultaneous_copies_use_post_event_history_characteristics"
+        "test_two_simultaneous_copies_use_post_event_history_characteristics",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "negative_tests": [
         "test_actual_eliminate_rejects_transformed_five_mana_creature",
@@ -57713,7 +57886,11 @@
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
         "test_token_production_grammar_and_capability_mutants_fail_closed",
         "test_unavailable_prospective_component_query_rejects_resolution_atomically",
-        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary"
+        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_current_status_reads_are_pure_and_malformed_method_frames_fail_closed",
+        "test_codec_and_manifest_keep_independent_current_and_historical_modes"
       ],
       "interaction_tests": [
         "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
@@ -57735,7 +57912,10 @@
         "test_one_copy_and_sequential_creation_history_controls",
         "test_replacement_adjusted_history_characteristic_quantity",
         "test_simultaneous_copies_see_the_complete_entry_history",
-        "test_token_replacement_order_rollback_and_privacy"
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "multiplayer_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -57744,7 +57924,10 @@
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
         "test_creation_and_entry_counter_choices_resume_once_and_replay",
-        "test_token_replacement_order_rollback_and_privacy"
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land"
       ],
       "privacy_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -57754,7 +57937,9 @@
         "test_actual_sprouting_source_copy_uses_copiable_values_after_buff_or_lethal_and_copies_retrigger",
         "test_actual_synth_exception_is_copiable_and_survives_ability_removal",
         "test_creation_and_entry_counter_choices_resume_once_and_replay",
-        "test_token_replacement_order_rollback_and_privacy"
+        "test_token_replacement_order_rollback_and_privacy",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax"
       ],
       "replay_tests": [
         "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
@@ -57775,7 +57960,11 @@
         "test_simultaneous_copies_see_the_complete_entry_history",
         "test_subsequent_haste_does_not_rewrite_entry_facts",
         "test_two_simultaneous_copies_use_post_event_history_characteristics",
-        "test_unavailable_prospective_component_query_rejects_resolution_atomically"
+        "test_unavailable_prospective_component_query_rejects_resolution_atomically",
+        "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+        "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+        "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+        "test_historical_absence_preserves_the_original_copy_representation_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -57786,9 +57975,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Blocking target revalidation prevents a fixed copy-token node from receiving trusted closure.",
+      "dependency_fail_closed_rationale": "Blocking target revalidation prevents a fixed copy-token node from receiving trusted closure. Current status reads require represented layer1b values; empty resolution requires complete current method admission and exact builtin/fingerprint/status/destination. Wrong principals and malformed modes reject; declared runtime trust remains unchanged.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Existing copy-shape and copiable-value mutations remain killed; focused owner contracts additionally kill incomplete simultaneous history and separately instructed aftercare occurring before entry discovery. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face. Omitting copied face provenance retains source admission and copied characteristics but makes the actual back-face token die; the native departure-history witness detects it.",
+      "implementation_mutation_rationale": "Existing copy-shape and copiable-value mutations remain killed; focused owner contracts additionally kill incomplete simultaneous history and separately instructed aftercare occurring before entry discovery. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face. Omitting copied face provenance retains source admission and copied characteristics but makes the actual back-face token die; the native departure-history witness detects it. Exact unchanged main08a native normally admitted Morph copying exposes the hidden name/Oracle/text/price to an opponent (1FAIL15.451s); original admitted Zoetic Morph pauses from its printed land type (1FAIL8.366s). Anonymous status values and validated creature resolution distinguish corrections, while Ward payment and historical replay protect nearby contracts.",
       "blockers": [],
       "status": "trusted"
     },

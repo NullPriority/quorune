@@ -948,6 +948,9 @@ class CommanderEngine(
     def _copyable_characteristics(
         self, card: CardInstance
     ) -> dict[str, Any]:
+        from .face_down_copy import current_face_down_copy_values
+        values=current_face_down_copy_values(self,card)
+        if values is not None:return values
         record = self.card_record(card)
         base = self._compiled_base_characteristics(
             card,
@@ -3567,18 +3570,8 @@ class CommanderEngine(
         ref = self._next_ref("O")
         object_id = self._stable_runtime_id("copy-object", ref)
         copied_values = copy.deepcopy(dict(characteristics))
-        name = str(
-            copied_values.get("name")
-            or (source.printed_name if source is not None else "Copy")
-        )
-        oracle_id = (
-            source.oracle_id
-            if source is not None
-            else (
-                "custom-copy:"
-                f"{self._stable_runtime_id('copy-oracle', ref)}"
-            )
-        )
+        from .face_down_copy import copy_object_identity
+        name,oracle_id,active_face=copy_object_identity(self,source,copied_values,ref)
         public = zone in PUBLIC_ZONES or zone in {
             "battlefield",
             "stack",
@@ -3593,9 +3586,7 @@ class CommanderEngine(
             zone=zone,
             object_kind=object_kind,
             zone_timestamp=self._next_zone_timestamp(),
-            active_face=(
-                source.active_face if source is not None else None
-            ),
+            active_face=active_face,
             annotations={
                 "copy_overrides": copied_values,
                 **(

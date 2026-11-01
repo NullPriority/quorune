@@ -162,6 +162,7 @@
       "test_entry_value_consumers",
       "test_event_player_sacrifices",
       "test_event_spell_copy",
+      "test_face_down_copy",
       "test_fixed_attachment_actions",
       "test_fixed_characteristic_enchant",
       "test_fixed_counter_keyword_activations",

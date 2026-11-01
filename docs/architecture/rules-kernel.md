@@ -375,6 +375,22 @@ they do not copy the original's derived front-face value. A copy of a
 transforming back face therefore has mana value zero. Modal faces and split
 card stack and prospective views retain their separate selected-face rules.
 
+Current face-down copy reads use the existing layer-1b values and an anonymous
+copiable source. Listed Ward remains part of those values; the hidden printed
+name, type, cost, activation catalog and mana-production index do not. Copy
+identity planning preserves an explicitly empty name and uses a synthetic
+public Oracle identity. The copy is face up, while the original keeps its
+physical identity and its permitted turn-up action. Token-copy recipes share
+that status read and snapshot planner.
+
+Empty face-down spell resolution validates the current complete method,
+exact builtin, fingerprint, status and destination before resolving the
+creature on the stack. A printed land type cannot override that contract.
+Anonymous noncard spell copies have no physical-card record and retain the
+existing builtin execution provenance. The independent checkpoint/record
+marker preserves historical absence; see
+[ADR 0151](../adr/0151-versioned-face-down-characteristics.md).
+
 Prototype selection changes base mana cost, color, power and toughness while
 casting, on the stack and on the battlefield. It preserves the card's types
 and independently compiled abilities. Both normal and Prototype choices use

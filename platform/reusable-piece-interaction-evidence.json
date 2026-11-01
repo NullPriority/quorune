@@ -20612,6 +20612,51 @@
       ],
       "interaction_order": 2,
       "assertion": "The pinned original is analyzed with each named represented piece and its material residual sibling, then rejected by complete CardProgram runtime binding with unresolved trust and no strict or compatible admission; an independent Divination control remains admitted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents",
+      "piece_ids": [
+        "capability.casting.morph.fixed_mana",
+        "capability.stack.copy.cast_event_spell"
+      ],
+      "capability_ids": [
+        "casting.morph.fixed_mana",
+        "stack.copy.cast_event_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual admitted Morph and generic complete cast observer preserve anonymous status-defined copy values, physical original/turn-up distinction, principals, pending load and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax",
+      "piece_ids": [
+        "capability.casting.disguise.fixed_mana",
+        "capability.token.creation.fixed_copy"
+      ],
+      "capability_ids": [
+        "casting.disguise.fixed_mana",
+        "token.creation.fixed_copy"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual Cackling Counterpart copies facedown Disguise into a face-up anonymous2/2 with listed Ward2 and no printed flying/identity. Opponent Turn to Frog pays real Ward then removes it; principal rollback and replay agree."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "test_actual_morph_land_resolves_as_current_creature_then_turns_up_as_land",
+      "piece_ids": [
+        "capability.casting.morph.fixed_mana",
+        "capability.mana.activated.fixed_result"
+      ],
+      "capability_ids": [
+        "casting.morph.fixed_mana",
+        "mana.activated.fixed_result"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Zoetic Morph resolves from its validated current creature contract and turns up as the same land; the original battlefield incarnation and full pre-action replay remain intact."
     }
   ]
 }
