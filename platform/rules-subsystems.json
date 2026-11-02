@@ -7648,13 +7648,13 @@
     },
     "semantic_transition_declaration": {
       "family_ids": [],
-      "transition_id": "oracle-ir-v678-face-down-copy-privacy",
+      "transition_id": "oracle-ir-v679-library-order-knowledge",
       "expected_complete_card_gain": null,
       "capability_ids": [],
       "candidate_ids": [],
-      "compiler_version": "oracle-ir-v678",
+      "compiler_version": "oracle-ir-v679",
       "bundle_id": null,
-      "non_harvest_reason": "Correct face-down copiable status values, anonymous copy name/Oracle identity and validated current creature-spell resolution. Exact-main native reproductions expose hidden Morph identity and a printed-land resolution stall. Preserve historical absence through an independent checkpoint/record marker and leave strict runtime provenance unchanged. No new grammar, mechanic promotion, original-card gain or support harvest is claimed."
+      "non_harvest_reason": "Repair confirmed hidden-library positional disclosure after fixed library selection. Random multi-card remainder loses positional knowledge for all seats; owner-chosen bottom ordering is private; legitimate singleton and unaffected-card knowledge remains. Independent current/absent state provenance retains historical command behavior and hashes without relaxing runtime trust. No grammar expansion, original-card gain or support harvest is claimed."
     },
     "forecast_corrections": [
       {

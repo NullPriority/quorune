@@ -865,10 +865,12 @@ class SemanticChoiceIntentHostMixin:
             )
         except LibrarySelectionError as exc:
             raise GameRuleError(str(exc)) from exc
-        if (
-            intent.arrangement.remainder_destination == "library_bottom"
-            and not intent.looked_are_public
-        ):
+        from ..library_selection_knowledge_model import remainder_knowledge_viewers
+        viewers = remainder_knowledge_viewers(
+            version=getattr(self.state,'library_selection_knowledge_version',None), player=intent.player,
+            looked_are_public=intent.looked_are_public, order=intent.arrangement.remainder_order,
+            count=len(intent.arrangement.remainder_refs))
+        if intent.arrangement.remainder_destination == "library_bottom" and viewers is not None:
             for ref in intent.arrangement.remainder_refs:
                 card = self._resolve_object(
                     intent.actor,
@@ -876,18 +878,14 @@ class SemanticChoiceIntentHostMixin:
                     zones={"library"},
                     owned_only=True,
                 )
-                card.known_to = [intent.player]
+                card.known_to = list(viewers)
                 card.revealed_to = []
         if intent.looked_are_public or intent.selected_are_public:
             viewers = sorted(set(self.seats))
             for ref in intent.arrangement.selected_refs:
                 card = self._resolve_object(intent.actor, ref)
-                card.known_to = sorted(
-                    set(card.known_to).union(viewers)
-                )
-                card.revealed_to = sorted(
-                    set(card.revealed_to).union(viewers)
-                )
+                card.known_to = sorted(set(card.known_to).union(viewers))
+                card.revealed_to = sorted(set(card.revealed_to).union(viewers))
         return looked
 
     def reorder_library_top_intent(

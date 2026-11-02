@@ -241,6 +241,7 @@
     "tests/fixtures/library-other-remainder-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/library-search-rules-cards.json",
+    "tests/fixtures/library-selection-knowledge-cards.json",
     "tests/fixtures/library-selection-predicate-cards.json",
     "tests/fixtures/life-gain-prohibition-cards.json",
     "tests/fixtures/limited-event-triggers.json",

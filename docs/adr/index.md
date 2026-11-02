@@ -157,3 +157,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0149 — versioned transform timestamps](0149-versioned-transform-timestamps.md)
 - [ADR 0150 — versioned face-status timestamps](0150-versioned-face-status-timestamps.md)
 - [ADR 0151 — versioned face-down characteristics](0151-versioned-face-down-characteristics.md)
+- [ADR 0156 — versioned library-order knowledge](0156-versioned-library-order-knowledge.md)

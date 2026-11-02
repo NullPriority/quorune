@@ -43,6 +43,7 @@
         "explore_action_version": {"type": "integer", "const": 1},
         "transform_timestamp_version": {"type": "integer", "const": 1},
         "face_status_timestamp_version": {"type": "integer", "const": 1},
+        "library_selection_knowledge_version": {"type": "integer", "enum": [0, 1]},
         "commander_damage_identity_version": {
           "type": "integer",
           "enum": [1, 2]

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 599,
+  "registry_version": 600,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -43060,20 +43060,25 @@
     },
     {
       "id": "library.select.fixed_controller",
-      "version": 4,
+      "version": 5,
       "official_rules": [
-        "400.2",
-        "401.4",
-        "404.3",
-        "608.2c",
-        "701.16",
         "205.2a",
         "205.3a",
         "205.3b",
         "205.3j",
         "205.3k",
+        "400.2",
+        "401.2",
+        "401.4",
+        "404.3",
+        "608.2c",
         "608.2d",
-        "609.3"
+        "609.3",
+        "701.16",
+        "701.20a",
+        "701.20b",
+        "701.20d",
+        "701.20e"
       ],
       "supported_profiles": [
         "traditional",
@@ -43088,7 +43093,8 @@
           "closed immutable type, subtype, supertype, color, colorless, or historic predicates",
           "one complete actor-private selection or ordered partition",
           "current destination replacements",
-          "stable looked-at physical and logical identities"
+          "stable looked-at physical and logical identities",
+          "independent library_selection_knowledge_version checkpoint/record marker: current integer one or historical absence"
         ],
         "outputs": [
           "one private or public looked-at set according to the printed instruction",
@@ -43097,7 +43103,8 @@
           "one replacement-aware simultaneous public-zone transition",
           "one chosen or deterministic-random remainder order",
           "exact replay without hidden-order disclosure",
-          "optional up-to-one top retention and complete exile remainder for the version-two private look"
+          "optional up-to-one top retention and complete exile remainder for the version-two private look",
+          "current multi-card random remainder hides positional knowledge from every player; private chosen order remains owner-known; legitimate singleton knowledge is retained"
         ],
         "exclusions": [
           "dynamic or variable look counts",
@@ -43122,14 +43129,22 @@
         "quorune.rules.library_selection.LibrarySelectionArrangement",
         "quorune.rules.library_selection.commit_library_selection",
         "quorune.semantic_runtime.intents.LibrarySelectionIntent",
-        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
+        "quorune.library_selection_knowledge_model.library_selection_knowledge_version",
+        "quorune.library_selection_knowledge_model.remainder_knowledge_viewers"
       ],
       "positive_tests": [
         "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_actual_life_transfer_and_top_exile_results_have_reusable_closed_templates",
         "test_card_qualifiers_and_optional_slots_preserve_independent_meaning",
         "test_compiles_fixed_library_selection_across_spell_activation_trigger_and_modal_contexts",
+        "test_current_and_absent_state_versions_require_matching_record_provenance",
+        "test_hidden_permutations_and_legitimate_singletons_have_distinct_viewers",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_private_chosen_order_retains_unaffected_and_selected_knowledge",
+        "test_original_public_reveal_keeps_chosen_bottom_order_private",
+        "test_original_public_singleton_retains_revealed_identity_and_selected_hand_card",
+        "test_original_random_remainder_hides_positions_from_every_player_after_pending_load",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
         "test_selected_cards_and_remainder_commit_in_printed_destinations",
@@ -43137,9 +43152,13 @@
       ],
       "negative_tests": [
         "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
+        "test_current_and_absent_state_versions_require_matching_record_provenance",
         "test_devourer_empty_library_completes_and_changed_looked_incarnation_rejects",
+        "test_hidden_permutations_and_legitimate_singletons_have_distinct_viewers",
         "test_malformed_stale_and_predicate_invalid_responses_fail_before_mutation",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_public_reveal_keeps_chosen_bottom_order_private",
+        "test_original_random_remainder_hides_positions_from_every_player_after_pending_load",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_single_other_remainder_uses_fixed_selection_only_when_cardinality_agrees",
         "test_slot_priority_and_unrepresented_subtype_descriptor_mutants_are_killed",
@@ -43151,12 +43170,20 @@
         "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_graveyard_destination_replacement_resumes_before_partition_commit",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_private_chosen_order_retains_unaffected_and_selected_knowledge",
+        "test_original_public_reveal_keeps_chosen_bottom_order_private",
+        "test_original_public_singleton_retains_revealed_identity_and_selected_hand_card",
+        "test_original_random_remainder_hides_positions_from_every_player_after_pending_load",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_on_short_library_commits_only_available_cards"
       ],
       "multiplayer_tests": [
         "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_private_chosen_order_retains_unaffected_and_selected_knowledge",
+        "test_original_public_reveal_keeps_chosen_bottom_order_private",
+        "test_original_public_singleton_retains_revealed_identity_and_selected_hand_card",
+        "test_original_random_remainder_hides_positions_from_every_player_after_pending_load",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
         "test_private_look_and_public_reveal_are_projected_to_the_correct_seats"
@@ -43164,6 +43191,10 @@
       "privacy_tests": [
         "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_private_chosen_order_retains_unaffected_and_selected_knowledge",
+        "test_original_public_reveal_keeps_chosen_bottom_order_private",
+        "test_original_public_singleton_retains_revealed_identity_and_selected_hand_card",
+        "test_original_random_remainder_hides_positions_from_every_player_after_pending_load",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
         "test_private_look_and_public_reveal_are_projected_to_the_correct_seats"
@@ -43171,7 +43202,12 @@
       "replay_tests": [
         "test_actual_devourer_keeps_up_to_one_on_top_exiles_exact_remainder_and_retains_cast_trigger",
         "test_graveyard_destination_replacement_resumes_before_partition_commit",
+        "test_historical_absence_retains_old_knowledge_and_replays_without_rewriting_provenance",
         "test_original_frontier_seeker_selects_mount_creature_and_keeps_private_remainder",
+        "test_original_private_chosen_order_retains_unaffected_and_selected_knowledge",
+        "test_original_public_reveal_keeps_chosen_bottom_order_private",
+        "test_original_public_singleton_retains_revealed_identity_and_selected_hand_card",
+        "test_original_random_remainder_hides_positions_from_every_player_after_pending_load",
         "test_original_relentless_pursuit_offers_and_commits_both_independent_slots",
         "test_original_sleight_and_tower_geist_private_partition_reload_and_replay",
         "test_original_sleight_on_short_library_commits_only_available_cards",
@@ -43187,9 +43223,9 @@
         "replay"
       ],
       "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Removing destination-replacement closure prevents the compiler node from becoming trusted, while malformed, stale, predicate-invalid, and incomplete partitions fail before any card moves or hidden order changes.",
+      "dependency_fail_closed_rationale": "Removing destination-replacement closure prevents the compiler node from becoming trusted, while malformed, stale, predicate-invalid, and incomplete partitions fail before any card moves or hidden order changes. The independent record marker validates current or absent semantics and exact manifest/checkpoint agreement. Knowledge updates affect only reordered remainder objects; principal, partition and incarnation validation remain in the canonical choice and movement owners.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "test_library_selection_shape_and_compiler_mutants_are_killed removes either the typed grammar producer or closed node-shape mapping, and the exact CardProgram assertions reject the survivor.",
+      "implementation_mutation_rationale": "test_library_selection_shape_and_compiler_mutants_are_killed removes either the typed grammar producer or closed node-shape mapping, and the exact CardProgram assertions reject the survivor. Unchanged main157c native original Commune with Spirits is normally strict admitted and exposes all three randomized positions to its owner. Current/absent native witnesses distinguish clearing randomized knowledge from legacy bookkeeping. Original Lair Delve separates a privately chosen multi-card order from legitimate public singleton knowledge; Anticipate preserves unaffected cards and private hand selection. No replay-trust exception is introduced.",
       "blockers": [],
       "status": "trusted"
     },

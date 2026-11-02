@@ -10180,6 +10180,20 @@
         "test_game_record_v3",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "versioned-library-selection-knowledge",
+      "patterns": [
+        "quorune/library_selection_knowledge_model.py",
+        "tests/test_library_selection_knowledge.py",
+        "tests/fixtures/library-selection-knowledge-cards.json"
+      ],
+      "test_modules": [
+        "test_library_selection_knowledge",
+        "test_fixed_library_selection",
+        "test_game_record_v3",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -65,6 +65,15 @@ does not change timestamp or unrelated copy semantics; see
 Declared runtime-trust identity remains exact; records pinned to a different
 identity retain the existing provenance rejection.
 
+`library_selection_knowledge_version: 1` separately pins positional knowledge
+after a fixed library selection reorders its bottom remainder. Multi-card random
+ordering hides the result from every seat; an owner-chosen order is private to
+the owner. Legitimate singleton and unaffected-card knowledge remain. Historical
+absence preserves the former bookkeeping and stays absent on serialization.
+Unknown, boolean and manifest/checkpoint mismatches reject. This marker does not
+alter declared runtime-trust checks; see
+[ADR 0156](../adr/0156-versioned-library-order-knowledge.md).
+
 The `permanent.timestamp_order` decision retains a schema-one closed transform
 request and continuation. Current subjects, expected transform counts, turn/step
 context, collected controller permutations and held triggers survive save/load.
