@@ -10,6 +10,14 @@ concern: "oracle-ir"
 
 # Typed Oracle IR
 
+`oracle-ir-v680` accompanies the completed characteristic-query correctness
+transition. Existing type/color settings and conditional grant grammar remain
+unchanged. Runtime reads use the independent `characteristic_query_boundary_version`
+record marker to include the completed requested layer while retaining source
+eligibility and historical absence. This is a correctness/non-harvest transition;
+whole-card support effects are measured through canonical generation. See
+[ADR 0160](../adr/0160-versioned-completed-characteristic-queries.md).
+
 `CharacteristicQuantitySpec` version four carries closed current-value scopes
 for a source controller's nonnegative life total, current opponents' poison
 counters, or an attached recipient's colors or mana value. It retains the

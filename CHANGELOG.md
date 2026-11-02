@@ -9,6 +9,11 @@ maintenance: "hand-maintained"
 
 # Changelog
 
+- Correct bounded public characteristic queries to include their completed final
+  layer, ending white-dependent bonuses after a creature becomes black. Preserve
+  earlier-source authority and historical replay through an independent record
+  version; retain the existing strict runtime provenance contract.
+
 - Add typed current battlefield counts for resolution and mana instructions,
   preserving combat membership, current keywords, controller scope, and source
   exclusion while retaining the static quantity layer boundary.

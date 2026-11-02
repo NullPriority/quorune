@@ -7648,13 +7648,13 @@
     },
     "semantic_transition_declaration": {
       "family_ids": [],
-      "transition_id": "oracle-ir-v679-library-order-knowledge",
+      "transition_id": "oracle-ir-v680-completed-characteristic-queries",
       "expected_complete_card_gain": null,
       "capability_ids": [],
       "candidate_ids": [],
-      "compiler_version": "oracle-ir-v679",
+      "compiler_version": "oracle-ir-v680",
       "bundle_id": null,
-      "non_harvest_reason": "Repair confirmed hidden-library positional disclosure after fixed library selection. Random multi-card remainder loses positional knowledge for all seats; owner-chosen bottom ordering is private; legitimate singleton and unaffected-card knowledge remains. Independent current/absent state provenance retains historical command behavior and hashes without relaxing runtime trust. No grammar expansion, original-card gain or support harvest is claimed."
+      "non_harvest_reason": "Correct confirmed completed-layer public query defect: actual normally admitted Steel/Darkest casts incorrectly retain white-only bonus and lifelink on a black creature. Include the requested layer through the existing source selector while preserving source-start/dependency authority. Versioned current/absent state provenance retains historical command behavior and strict runtime trust. No syntax expansion or original-card gain is claimed."
     },
     "forecast_corrections": [
       {

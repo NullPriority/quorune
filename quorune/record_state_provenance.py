@@ -37,6 +37,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
         **({'face_down_characteristics_version':state.face_down_characteristics_version} if getattr(state,'face_down_characteristics_version',None) is not None else {}),
         **({'library_selection_knowledge_version':state.library_selection_knowledge_version} if getattr(state,'library_selection_knowledge_version',None) is not None else {}),
+        **({'characteristic_query_boundary_version':state.characteristic_query_boundary_version} if getattr(state,'characteristic_query_boundary_version',None) is not None else {}),
     }
 
 
@@ -96,6 +97,11 @@ def validate_state_versions(
     if (type(knowledge) is not int or knowledge not in {0,1}
             or knowledge!=(library_selection_knowledge_version(getattr(state,'library_selection_knowledge_version',None)) or 0)):
         raise ValueError('Library selection knowledge provenance does not match the initial checkpoint')
+    from .characteristic_query_boundary_model import characteristic_query_boundary_version
+    boundary=format_value.get('characteristic_query_boundary_version',0)
+    if (type(boundary) is not int or boundary not in {0,1}
+            or boundary!=(characteristic_query_boundary_version(getattr(state,'characteristic_query_boundary_version',None)) or 0)):
+        raise ValueError('Characteristic query boundary provenance does not match the initial checkpoint')
 
 
 __all__ = ["format_state_versions", "validate_state_versions"]

@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # CardProgram architecture
 
+Completed bounded characteristic queries are a versioned GameState/record
+contract, separate from CardProgram closure and unchanged handler codecs.
+Current reads include the requested layer through the existing source selector;
+historical absence retains the prior boundary. Correcting already-admitted
+color-conditioned behavior establishes no card gain. See
+[ADR 0160](../adr/0160-versioned-completed-characteristic-queries.md).
+
 Commander-qualified live grants retain physical designation in a typed object
 query, separate from copiable characteristics. Their owner/control relation is
 bound from the current grant-source controller. The outer grant and every inner

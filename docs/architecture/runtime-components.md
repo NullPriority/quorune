@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # CardProgram runtime components
 
+Current `characteristic_query_boundary_version: 1` public reads include their
+completed final layer. A layer-five query therefore includes color settings
+that start in layer five before evaluating later conditional grants. The shared
+source selector still checks earlier-layer source eligibility and layer-six
+dependency participation. Historical absence retains the prior cutoff. See
+[ADR 0160](../adr/0160-versioned-completed-characteristic-queries.md).
+
 `rules/live_modifier_quantities.py` reads the current source controller's
 nonnegative life value, current opponents' canonical poison counts, or an
 attached recipient's current colors and mana value. Player elimination and
