@@ -46,7 +46,7 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
-    if relative=='quorune/library_selection_knowledge_model.py':return 'domain'
+    if relative in {'quorune/library_selection_knowledge_model.py','quorune/characteristic_query_boundary_model.py'}:return 'domain'
     if relative=='quorune/transform_order_model.py':return 'domain'
     if relative=='quorune/decision_completion.py':return 'adapter'
     if relative=='quorune/transform_timestamp_model.py':return 'domain'
@@ -518,6 +518,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 def _owner(relative: str, layer: str) -> str:
     if relative=='quorune/library_selection_knowledge_model.py':return 'search_target_and_choice'
+    if relative=='quorune/characteristic_query_boundary_model.py':return 'continuous_effects'
     if relative=='quorune/face_down_characteristics_model.py':return 'zones_and_object_identity'
     if relative=='quorune/face_down_copy.py':return 'token_creation'
     if relative in {'quorune/transform_order_model.py','quorune/transform_timestamp_order.py'}:return 'day_night_and_transform'

@@ -10,6 +10,15 @@ concern: "game-record"
 
 # Game Record v3
 
+Current games pin `characteristic_query_boundary_version: 1` in authoritative
+checkpoints and format provenance. Bounded public characteristic reads include
+their completed requested layer, including color changes used by later conditional
+ability grants. Earlier-source participation and layer-six dependencies retain
+their existing owners. Historical absence preserves the former cutoff and remains
+absent on serialization. Unknown or boolean state versions and mismatched format
+provenance reject; declared runtime provenance retains its separate strict check.
+See [ADR 0160](../adr/0160-versioned-completed-characteristic-queries.md).
+
 Cipher records retain a version-one typed `cipher_encoding` link on the
 physical exiled card, including both original incarnations. A committed encoded
 object departure ends the link for future grants. Existing pending triggers

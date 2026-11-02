@@ -6,6 +6,7 @@ from typing import Any, TYPE_CHECKING, Callable, Mapping, Protocol, Sequence
 
 from ..attachments import attached_object_identity,current_attached_player_seat
 from ..ability_fragments import static_component_keys
+from ..characteristic_query_boundary_model import characteristic_query_boundary_version
 from ..continuous_effects import ContinuousEffect
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_CHARACTERISTICS_HANDLER_ID,
@@ -42,6 +43,7 @@ class ContinuousRuntimeState(Protocol):
     turn_order: Sequence[str]
     players: Mapping[str, Any]
     cards: Mapping[str, Any]
+    characteristic_query_boundary_version: int | None
 
 
 @dataclass(slots=True)
@@ -612,6 +614,7 @@ def _continuous_programs_for_source(
     early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     maximum_layer: Layer | None = None,
     ability_source_participation: Callable[[Any,str],bool|None] | None = None,
+    *, completed_layer_queries: bool = False,
 ) -> tuple["SemanticProgram", ...]:
     if source.zone == 'exile':
         from ..cipher_model import CIPHER_GRANT_HANDLER
@@ -637,7 +640,9 @@ def _continuous_programs_for_source(
                         programs.pop(program.key,None)
                         if present:programs[program.key]=program
                 continue
-            if maximum_layer is not None and maximum_layer <= layer:
+            if maximum_layer is not None and (
+                maximum_layer < layer or (maximum_layer == layer and not completed_layer_queries)
+            ):
                 programs.pop(program.key, None)
                 continue
             if early_static_component_resolver is None:
@@ -799,6 +804,9 @@ def collect_card_program_continuous_effects(
     ability_source_participation: Callable[[Any,str],bool|None] | None = None,
     generated_effect_sources: dict[str,tuple[str,str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
+    completed_layer_queries = characteristic_query_boundary_version(
+        getattr(state, 'characteristic_query_boundary_version', None)
+    ) == 1
     registry = default_continuous_effect_component_registry()
     registered_handler_ids = frozenset(
         str(row["handler_id"]) for row in registry.inventory()
@@ -835,6 +843,7 @@ def collect_card_program_continuous_effects(
             programs = () if getattr(source, 'face_down', False) else _continuous_programs_for_source(
                 semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer,
                 ability_source_participation,
+                completed_layer_queries=completed_layer_queries,
             )
             if metrics is not None:
                 metrics.card_program_lookups += 1

@@ -10194,6 +10194,20 @@
         "test_game_record_v3",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "versioned-completed-characteristic-queries",
+      "patterns": [
+        "quorune/characteristic_query_boundary_model.py",
+        "tests/test_completed_characteristic_queries.py"
+      ],
+      "test_modules": [
+        "test_completed_characteristic_queries",
+        "test_static_characteristic_settings",
+        "test_composite_quoted_grants",
+        "test_game_record_v3",
+        "test_card_program_trust"
+      ]
     }
   ],
   "symbol_rules": [

@@ -1475,6 +1475,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/characteristic_query_boundary_model.py",
+      "layer": "domain",
+      "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/characteristic_read_frames.py",
       "layer": "rules",
       "owning_subsystem": "card_characteristics",
@@ -22133,5 +22145,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "74bf410744b6194f9574aa0b68ea051df7fd26e61fce4ff445320d8aea871c1d"
+  "fingerprint": "6dba2485ef07f22105de7fbfda7f0bc1a7d2e99a1962e592bb54754238f19792"
 }

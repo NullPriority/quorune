@@ -426,7 +426,8 @@
       "status": "partial_dedicated_module_with_engine_integration",
       "owners": [
         "quorune/continuous_effects.py",
-        "quorune/engine.py"
+        "quorune/engine.py",
+        "quorune/characteristic_query_boundary_model.py"
       ],
       "missing_dedicated_owner": false
     },
