@@ -278,7 +278,8 @@
         "quorune/target_protection.py",
         "quorune/target_protection_engine_adapter.py",
         "quorune/targets.py",
-        "quorune/choice_forms.py"
+        "quorune/choice_forms.py",
+        "quorune/library_selection_knowledge_model.py"
       ],
       "missing_dedicated_owner": false,
       "context": {

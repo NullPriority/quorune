@@ -10599,6 +10599,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/library_selection_knowledge_model.py",
+      "layer": "domain",
+      "owning_subsystem": "search_target_and_choice",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "read_only",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/life_change.py",
       "layer": "rules",
       "owning_subsystem": "life_state",
@@ -22121,5 +22133,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a8ba9126ad5f5a6d607e16c67fde35c496dee5e0702c5209c0ccf88869c4f0c9"
+  "fingerprint": "74bf410744b6194f9574aa0b68ea051df7fd26e61fce4ff445320d8aea871c1d"
 }

@@ -111,6 +111,7 @@
       "test_hand_rules",
       "test_history_entry_characteristics",
       "test_kicked_damage_replacements",
+      "test_library_selection_knowledge",
       "test_mill_rules",
       "test_modal_token_programs",
       "test_modular_rules",

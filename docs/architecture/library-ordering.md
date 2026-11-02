@@ -136,6 +136,20 @@ before any member of the partition moves. Public reveals project the known top
 to every seat; private looks and hidden resulting order remain seat-scoped.
 Exact replay carries the immutable arrangement and any replacement selections.
 
+Current games clear positional knowledge for every card in a randomized
+multi-card bottom remainder, including knowledge previously held by its owner.
+A multi-card bottom order chosen by the owner remains private to that owner,
+even when the inspected set was publicly revealed. Reordered cards cease to be
+revealed. Zero or one remainder card creates no hidden permutation, so its
+legitimate prior knowledge remains. Selected hand cards and cards outside the
+remainder retain their independent visibility. This procedure does not shuffle
+the library or advance its shuffle counter.
+
+`library_selection_knowledge_version: 1` pins this correction independently in
+the checkpoint and record format. Historical absence retains the previous
+bookkeeping and serialized shape. The existing mutation and projection owners
+remain authoritative; see [ADR 0156](../adr/0156-versioned-library-order-knowledge.md).
+
 A version-two fixed selection additionally represents a private fixed look,
 keeping up to one available card on top and exiling the complete remainder.
 Zero kept and short or empty libraries preserve the printed procedure.

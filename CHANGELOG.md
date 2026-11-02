@@ -15,6 +15,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Hide randomized library remainder positions from all players and keep an
+  owner's chosen bottom ordering private after a public reveal. Preserve
+  legitimate singleton knowledge and version the correction for exact replay.
+
 - Return untargeted random subsets from the resolving controller's graveyard
   through shared keyed selection and simultaneous zone transitions, retaining
   type filters, printed costs, trigger timing, replacements and replay privacy.
