@@ -843,6 +843,11 @@ def _public_zone_spec(
     return _named_source_graveyard_spec(material_line, card_name=card_name)
 
 
+def source_damage_incarnation_condition() -> Mapping[str, Any]:
+    """CR201.5/400.7: damage must come from this source incarnation."""
+    return {'field':'source_logical_object_id','op':'eq','value':'$source.logical_object_id'}
+
+
 def _damage_subject_condition(
     subject: str,
     *,
@@ -880,7 +885,8 @@ def _damage_subject_condition(
     if card_name and subject == " ".join(
         card_name.split(",", 1)[0].casefold().split()
     ):
-        return {"field": "source", "op": "eq", "value": "$source.ref"}
+        return _all_conditions({'field':'source','op':'eq','value':'$source.ref'},
+            source_damage_incarnation_condition())
     return None
 
 

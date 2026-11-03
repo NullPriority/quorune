@@ -210,6 +210,12 @@ def semantic_event_value(
     source: CardInstance,
     context: Mapping[str, Any],
 ) -> Any:
+    if value=='$source.logical_object_id':
+        identity=(context.get('source_logical_object_id') if 'intervening_condition_controller' in context
+            else getattr(source,'logical_object_id',None))
+        if type(identity)is not str or not identity:
+            raise GameRuleError('Event source requires its nonempty logical object identity')
+        return identity
     locked_controller = context.get(
         "intervening_condition_controller",
         source.controller,

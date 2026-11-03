@@ -468,6 +468,7 @@
       "test_class_lifecycle",
       "test_counter_prohibition_runtime",
       "test_cumulative_upkeep_counter_placement",
+      "test_damage_source_identity",
       "test_decision_opportunities",
       "test_declare_attackers_rules",
       "test_destruction_rules",

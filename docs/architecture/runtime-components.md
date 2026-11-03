@@ -39,6 +39,16 @@ replacement effects, prevention effects, draw policies, or continuous effects
 from live source descriptors. Components participate in a subsystem-owned
 transaction; they do not commit state.
 
+Compiler-generated source-self damage predicates pair the source reference with
+`$source.logical_object_id`. Damage from an old incarnation cannot trigger a
+returned object's ability. A control change preserves identity, and an already
+created trigger retains its ordinary controller and resolution behavior after
+source departure. Discovery reads the observing source's current identity;
+intervening-condition reevaluation uses the existing captured source context.
+Receiving-damage and controlled-other-source predicates retain their separate
+roles. The compiled conditions keep the current program encoding and strict
+declared runtime-provenance validation.
+
 The source-chosen Aura protection component reads the existing immutable
 `chosen_color` source designation and current attached-object identity. It
 emits ordinary layer-six Protection values with one granting-Aura incarnation
