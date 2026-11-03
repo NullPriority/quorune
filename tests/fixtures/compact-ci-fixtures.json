@@ -114,6 +114,7 @@
     "tests/fixtures/creature-subtype-addition-cards.json",
     "tests/fixtures/cycle-or-discard-event-cards.json",
     "tests/fixtures/damage-result-cards.json",
+    "tests/fixtures/damage-source-identity-cards.json",
     "tests/fixtures/defender-declaration-numeric-cards.json",
     "tests/fixtures/defender-permission-cards.json",
     "tests/fixtures/delivery-interaction-boundary-cards.json",

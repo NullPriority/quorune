@@ -1363,6 +1363,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertTrue(mutated.material_residuals)
 
     def test_fixed_source_zone_and_damage_bindings_compile_exactly(self):
+        source_identity={'field':'source_logical_object_id','op':'eq','value':'$source.logical_object_id'}
         cases = (
             (
                 "When this Vehicle enters, draw a card.",
@@ -1407,6 +1408,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                             "op": "truthy",
                             "value": True,
                         },
+                        source_identity,
                     ]
                 },
                 "trigger.event.normalized_damage",
@@ -1434,6 +1436,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                             "op": "ne",
                             "value": "$source.controller",
                         },
+                        source_identity,
                     ]
                 },
                 "trigger.event.normalized_damage",
@@ -1456,6 +1459,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                             "op": "ne",
                             "value": "$source.controller",
                         },
+                        source_identity,
                     ]
                 },
                 "trigger.event.normalized_damage",
@@ -3704,6 +3708,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                     "all": [
                         {"field": "target_kind", "op": "eq", "value": "player"},
                         {"field": "combat", "op": "truthy", "value": True},
+                        {"field": "source_logical_object_id", "op": "eq", "value": "$source.logical_object_id"},
                     ]
                 },
             ),

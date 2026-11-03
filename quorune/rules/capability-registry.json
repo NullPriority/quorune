@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "registry_version": 601,
+  "registry_version": 602,
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "profiles": [
@@ -34136,7 +34136,7 @@
           "exact replay"
         ],
         "exclusions": [
-          "Modularâ€”Sunburst",
+          "Modular\u00e2\u20ac\u201dSunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -35382,7 +35382,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modularâ€”Sunburst variable linkage",
+          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ]
       },
@@ -60631,14 +60631,16 @@
     },
     {
       "id": "trigger.event.normalized_damage",
-      "version": 10,
+      "version": 11,
       "official_rules": [
         "120.4",
         "603.2",
         "603.2c",
         "603.2d",
         "603.3",
-        "603.6"
+        "603.6",
+        "201.5",
+        "400.7"
       ],
       "supported_profiles": [
         "traditional",
@@ -60675,7 +60677,9 @@
         "quorune.damage.DamageBatchResult",
         "quorune.damage._collect_damage_result_triggers",
         "quorune.trigger_discovery._semantic_trigger_context",
-        "quorune.trigger_discovery.dispatch_semantic_event"
+        "quorune.trigger_discovery.dispatch_semantic_event",
+        "quorune.compiler.fixed_public_event_trigger_bindings.source_damage_incarnation_condition",
+        "quorune.trigger_discovery.semantic_event_value"
       ],
       "positive_tests": [
         "test_actual_destructive_urge_uses_damaged_player_land_choice",
@@ -60716,7 +60720,11 @@
         "test_source_damage_event_amount_keeps_subscription_identity_and_amount",
         "test_source_explore_and_empty_counter_omission_mutants_are_killed",
         "test_source_explore_named_and_self_heads_keep_identity_and_ambiguous_receivers_residual",
-        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw"
+        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw",
+        "test_source_self_damage_rejects_reference_reuse_but_keeps_the_same_control_changed_object",
+        "test_controlled_other_sources_and_receiving_events_keep_distinct_identity_roles",
+        "test_intervening_recheck_keeps_the_already_captured_event_source_identity",
+        "test_actual_old_damage_does_not_trigger_a_returned_niv_and_keeps_created_triggers_and_control_changes"
       ],
       "negative_tests": [
         "test_actual_destructive_urge_uses_damaged_player_land_choice",
@@ -60754,7 +60762,9 @@
         "test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
         "test_source_explore_and_empty_counter_omission_mutants_are_killed",
         "test_source_explore_named_and_self_heads_keep_identity_and_ambiguous_receivers_residual",
-        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw"
+        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw",
+        "test_source_self_damage_rejects_reference_reuse_but_keeps_the_same_control_changed_object",
+        "test_event_source_identity_value_requires_a_real_logical_identity"
       ],
       "interaction_tests": [
         "test_actual_destructive_urge_uses_damaged_player_land_choice",
@@ -60788,7 +60798,8 @@
         "test_source_damage_bindings_use_committed_damage_events",
         "test_source_explore_and_empty_counter_omission_mutants_are_killed",
         "test_source_explore_named_and_self_heads_keep_identity_and_ambiguous_receivers_residual",
-        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw"
+        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw",
+        "test_actual_old_damage_does_not_trigger_a_returned_niv_and_keeps_created_triggers_and_control_changes"
       ],
       "multiplayer_tests": [
         "test_actual_destructive_urge_uses_damaged_player_land_choice",
@@ -60819,7 +60830,8 @@
         "test_source_damage_bindings_use_committed_damage_events",
         "test_source_explore_and_empty_counter_omission_mutants_are_killed",
         "test_source_explore_named_and_self_heads_keep_identity_and_ambiguous_receivers_residual",
-        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw"
+        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw",
+        "test_actual_old_damage_does_not_trigger_a_returned_niv_and_keeps_created_triggers_and_control_changes"
       ],
       "privacy_tests": [
         "test_actual_destructive_urge_uses_damaged_player_land_choice",
@@ -60848,7 +60860,8 @@
         "test_source_damage_bindings_use_committed_damage_events",
         "test_source_explore_and_empty_counter_omission_mutants_are_killed",
         "test_source_explore_named_and_self_heads_keep_identity_and_ambiguous_receivers_residual",
-        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw"
+        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw",
+        "test_actual_old_damage_does_not_trigger_a_returned_niv_and_keeps_created_triggers_and_control_changes"
       ],
       "replay_tests": [
         "test_actual_destructive_urge_uses_damaged_player_land_choice",
@@ -60878,7 +60891,8 @@
         "test_source_damage_bindings_use_committed_damage_events",
         "test_source_explore_and_empty_counter_omission_mutants_are_killed",
         "test_source_explore_named_and_self_heads_keep_identity_and_ambiguous_receivers_residual",
-        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw"
+        "test_verified_source_explore_withdrawal_keeps_unrelated_source_draw",
+        "test_actual_old_damage_does_not_trigger_a_returned_niv_and_keeps_created_triggers_and_control_changes"
       ],
       "required_evidence": [
         "positive",
@@ -60891,7 +60905,7 @@
       "dependency_fail_closed_status": "not_applicable",
       "dependency_fail_closed_rationale": "The occurrence is emitted directly from the canonical committed DamageEvent; each consuming trigger separately declares APNAP placement and its typed result dependencies.",
       "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "The focused runtime witness suppresses the canonical semantic dispatcher and proves no alternate damage-trigger path survives.",
+      "implementation_mutation_rationale": "The focused runtime witness suppresses the canonical semantic dispatcher and proves no alternate damage-trigger path survives. Replacing the observing-source identity with the incoming damage identity fails the source-reentry owner witness.",
       "blockers": [],
       "status": "trusted"
     },

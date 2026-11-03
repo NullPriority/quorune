@@ -20,6 +20,10 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Bind source-self damage triggers to their original logical incarnation so a
+  returned object cannot trigger from an old ability's damage. Preserve actual
+  damage, same-object control changes and already-created triggers.
+
 - Hide randomized library remainder positions from all players and keep an
   owner's chosen bottom ordering private after a public reveal. Preserve
   legitimate singleton knowledge and version the correction for exact replay.

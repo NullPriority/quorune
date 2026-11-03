@@ -19,6 +19,7 @@ from ..rules.capabilities import CapabilityRegistry
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .trigger_result_templates import binding_effect_template
+from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
@@ -784,6 +785,7 @@ class FixedCounterTriggerBinding:
                         "value": "$source.controller",
                     }
                 )
+            conditions.append(source_damage_incarnation_condition())
             return {"all": conditions}
         if self.event in {FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE, FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE}:
             recipient = {

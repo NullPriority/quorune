@@ -532,7 +532,8 @@ class ScalarEffectAmountCompilerTests(unittest.TestCase):
         self.assertEqual('damage.dealt.self',node.event)
         self.assertEqual('committed_event_amount',node.effects[0]['count']['origin'])
         self.assertEqual({'all':[{'field':'target_kind','op':'eq','value':'player'},
-            {'field':'combat','op':'truthy','value':True}]},node.event_condition)
+            {'field':'combat','op':'truthy','value':True},
+            {'field':'source_logical_object_id','op':'eq','value':'$source.logical_object_id'}]},node.event_condition)
 
     def test_public_stat_aggregate_codec_dependencies_and_static_exclusions_fail_closed(self):
         import json
