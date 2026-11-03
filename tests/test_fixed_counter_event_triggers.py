@@ -3708,6 +3708,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                     "all": [
                         {"field": "target_kind", "op": "eq", "value": "player"},
                         {"field": "combat", "op": "truthy", "value": True},
+                        {"field": "source_logical_object_id", "op": "eq", "value": "$source.logical_object_id"},
                     ]
                 },
             ),
