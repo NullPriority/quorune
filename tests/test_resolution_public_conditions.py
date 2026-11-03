@@ -71,10 +71,18 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
                 composed=SimpleNamespace(event=node.event,event_condition=node.event_condition,active_zone=node.active_zone)
                 for ref,expected in (('observer',True),('friendly',False),('opponent',False),('same-name',False)):
                     context={**facts,'card':ref,'controller':'B' if ref=='opponent' else 'A'}
+                    if event=='damage.dealt':
+                        context['source_logical_object_id']=source.logical_object_id if ref==source.ref else ref+'@0'
                     standalone=semantic_event_matches(host,child_program,source,event,context)
                     combined=semantic_event_matches(host,composed,source,event,context)
                     self.assertEqual(expected,standalone,context)
                     self.assertEqual(standalone,combined,context)
+                if event=='damage.dealt':
+                    for identity in (None,source.logical_object_id+'-old'):
+                        context={**facts,'card':source.ref,'controller':'A'}
+                        if identity is not None:context['source_logical_object_id']=identity
+                        self.assertFalse(semantic_event_matches(host,child_program,source,event,context),context)
+                        self.assertFalse(semantic_event_matches(host,composed,source,event,context),context)
         for prefix in ('Whenever a player casts a spell','Whenever you cast a Spirit spell'):
             child=fixed_counter_trigger_binding(prefix+', draw a card.',card_name='Fixture')
             ir=compile_oracle_card(record('When this creature enters and '+prefix.casefold()+', draw a card.','Creature — Human'),capability_registry=registry)
@@ -126,9 +134,15 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
                ('opponent-other',True,'player',False),('same-name-other',True,'player',False),
                ('actual-source',False,'player',False),('actual-source',True,'permanent',False))
         for card,combat,target_kind,expected in cases:
-            context={'card':card,'combat':combat,'target_kind':target_kind,'source_controller':'A' if card!='opponent-other' else 'B'}
+            context={'card':card,'combat':combat,'target_kind':target_kind,'source_controller':'A' if card!='opponent-other' else 'B',
+                'source_logical_object_id':source.logical_object_id if card==source.ref else card+'@0'}
             self.assertEqual(expected,semantic_event_matches(host,standalone,source,'damage.dealt',context),context)
             self.assertEqual(expected,semantic_event_matches(host,program,source,'damage.dealt',context),context)
+        for identity in (None,source.logical_object_id+'-old'):
+            context={'card':source.ref,'combat':True,'target_kind':'player','source_controller':'A'}
+            if identity is not None:context['source_logical_object_id']=identity
+            self.assertFalse(semantic_event_matches(host,standalone,source,'damage.dealt',context),context)
+            self.assertFalse(semantic_event_matches(host,program,source,'damage.dealt',context),context)
 
     def test_fixed_numeric_existence_condition_has_explicit_timing_and_closed_value(self):
         from test_bound_effect_programs import record
