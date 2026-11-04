@@ -175,7 +175,7 @@ class PaidColorEntryTests(unittest.TestCase):
     def test_fresh_copy_provenance_omission_is_killed(self):
         import quorune.record_trust as owner
         original=owner.physical_stack_record
-        def without_copies(host,item):return None if item.kind=='spell_copy' else original(host,item)
+        def without_copies(host,item,**kwargs):return None if item.kind=='spell_copy' else original(host,item,**kwargs)
         method='test_legacy_generic_permanent_copy_records_its_exact_resolution_provenance'
         with patch.object(owner,'physical_stack_record',side_effect=without_copies):
             with self.assertRaisesRegex(ValueError,'provenance mismatch for oracle_id'):

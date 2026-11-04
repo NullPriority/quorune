@@ -11347,7 +11347,7 @@
         "permanent.indestructible.ordinary"
       ],
       "interaction_order": 2,
-      "assertion": "Complete original Kytheon/Gideon CardProgram retains the named Indestructible result but unrepresented prevention and other face siblings prevent strict and compatible admission. This is an explicit unsupported boundary."
+      "assertion": "An explicit synthetic Indestructible source with dynamically qualified source-choice prevention rejects strict and compatible admission. Original Kytheon/Gideon separately retains represented fixed prevention while unrepresented tap/untap composition still blocks complete admission."
     },
     {
       "evidence_class": "interaction",
@@ -12480,7 +12480,7 @@
         "continuous.control.attached_source"
       ],
       "interaction_order": 2,
-      "assertion": "Original Kitnap retains exact static Aura control and material Gift/replacement siblings; observed pieces are asserted and canonical whole CardProgram binding rejects both strict and compatible runtime admission without construction failure."
+      "assertion": "Original Kitnap retains exact Aura control and material Gift/conditional entry siblings. An explicit constructed Aura combines that control leaf with an unrepresented skipped-draw replacement; both programs reject strict and compatible admission without construction failure."
     },
     {
       "evidence_class": "interaction",
@@ -12494,7 +12494,7 @@
         "continuous.control.attached_source"
       ],
       "interaction_order": 2,
-      "assertion": "Original Kitnap retains exact static Aura control and material Gift/replacement siblings; observed pieces are asserted and canonical whole CardProgram binding rejects both strict and compatible runtime admission without construction failure."
+      "assertion": "Original Kitnap retains exact Aura control and material Gift/conditional entry siblings. An explicit constructed Aura combines that control leaf with an unrepresented skipped-draw replacement; both programs reject strict and compatible admission without construction failure."
     },
     {
       "evidence_class": "interaction",
@@ -13039,7 +13039,7 @@
         "continuous.characteristics.conditional_creature_type_removal"
       ],
       "interaction_order": 2,
-      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "Original records retain their actual material siblings and reject strict and compatible admission. Siege originals retain unrepresented Battle/event contracts; a constructed source-damage control separately preserves replacement-ordering rejection."
     },
     {
       "evidence_class": "interaction",
@@ -13053,7 +13053,7 @@
         "continuous.characteristics.conditional_creature_type_removal"
       ],
       "interaction_order": 2,
-      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "Original records retain their actual material siblings and reject strict and compatible admission. Siege originals retain unrepresented Battle/event contracts; a constructed source-damage control separately preserves replacement-ordering rejection."
     },
     {
       "evidence_class": "interaction",
@@ -13067,7 +13067,7 @@
         "damage.source.stack_current_or_lki"
       ],
       "interaction_order": 2,
-      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "Original records retain their actual material siblings and reject strict and compatible admission. Siege originals retain unrepresented Battle/event contracts; a constructed source-damage control separately preserves replacement-ordering rejection."
     },
     {
       "evidence_class": "interaction",
@@ -13081,7 +13081,7 @@
         "damage.source.stack_current_or_lki"
       ],
       "interaction_order": 2,
-      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "Original records retain their actual material siblings and reject strict and compatible admission. Siege originals retain unrepresented Battle/event contracts; a constructed source-damage control separately preserves replacement-ordering rejection."
     },
     {
       "evidence_class": "interaction",
@@ -13095,7 +13095,7 @@
         "damage.source.stack_current_or_lki"
       ],
       "interaction_order": 2,
-      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "Original records retain their actual material siblings and reject strict and compatible admission. Siege originals retain unrepresented Battle/event contracts; a constructed source-damage control separately preserves replacement-ordering rejection."
     },
     {
       "evidence_class": "interaction",
@@ -13109,7 +13109,7 @@
         "mana.production.source_chosen_color"
       ],
       "interaction_order": 2,
-      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "Original records retain their actual material siblings and reject strict and compatible admission. Siege originals retain unrepresented Battle/event contracts; a constructed source-damage control separately preserves replacement-ordering rejection."
     },
     {
       "evidence_class": "interaction",
@@ -13123,7 +13123,7 @@
         "mana.production.source_chosen_color"
       ],
       "interaction_order": 2,
-      "assertion": "The named pinned boundary carriers of this pair retain material unrepresented siblings and reject complete CardProgram admission in both strict and compatibility modes. The recognized leaf and the stated residual coexist; no gameplay support is claimed for the rejected whole card."
+      "assertion": "Original records retain their actual material siblings and reject strict and compatible admission. Siege originals retain unrepresented Battle/event contracts; a constructed source-damage control separately preserves replacement-ordering rejection."
     },
     {
       "evidence_class": "interaction",
@@ -13346,7 +13346,7 @@
         "continuous.control.fixed_resolution"
       ],
       "interaction_order": 2,
-      "assertion": "Original The Shattered States Era // Nameless Conqueror retains its observed supported fixed-control leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+      "assertion": "Explicit synthetic fixed-control and public-quantity mana programs retain their represented bodies beside an unrepresented skip-draw replacement. Both strict and compatible whole-program admission reject them. Original transformed Sagas are separately checked against their remaining chapter-body boundaries; no successful replacement composition is claimed."
     },
     {
       "evidence_class": "interaction",
@@ -13360,7 +13360,7 @@
         "continuous.control.fixed_resolution"
       ],
       "interaction_order": 2,
-      "assertion": "Original The Shattered States Era // Nameless Conqueror retains its observed supported fixed-control leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+      "assertion": "Explicit synthetic fixed-control and public-quantity mana programs retain their represented bodies beside an unrepresented skip-draw replacement. Both strict and compatible whole-program admission reject them. Original transformed Sagas are separately checked against their remaining chapter-body boundaries; no successful replacement composition is claimed."
     },
     {
       "evidence_class": "interaction",
@@ -13374,7 +13374,7 @@
         "mana.production.public_quantity"
       ],
       "interaction_order": 2,
-      "assertion": "Original The Legend of Kyoshi // Avatar Kyoshi retains its observed supported public-quantity mana leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+      "assertion": "Explicit synthetic fixed-control and public-quantity mana programs retain their represented bodies beside an unrepresented skip-draw replacement. Both strict and compatible whole-program admission reject them. Original transformed Sagas are separately checked against their remaining chapter-body boundaries; no successful replacement composition is claimed."
     },
     {
       "evidence_class": "interaction",
@@ -13388,7 +13388,7 @@
         "mana.production.public_quantity"
       ],
       "interaction_order": 2,
-      "assertion": "Original The Legend of Kyoshi // Avatar Kyoshi retains its observed supported public-quantity mana leaf beside unsupported transformed Saga replacement and ordering. Canonical whole CardProgram binding rejects strict and compatible admission."
+      "assertion": "Explicit synthetic fixed-control and public-quantity mana programs retain their represented bodies beside an unrepresented skip-draw replacement. Both strict and compatible whole-program admission reject them. Original transformed Sagas are separately checked against their remaining chapter-body boundaries; no successful replacement composition is claimed."
     },
     {
       "evidence_class": "interaction",
@@ -19954,7 +19954,7 @@
         "permanent.untap.fixed_land_choice"
       ],
       "interaction_order": 2,
-      "assertion": "The pinned original is analyzed with each named represented piece and its material residual sibling, then rejected by complete CardProgram runtime binding with unresolved trust and no strict or compatible admission; an independent Divination control remains admitted."
+      "assertion": "An explicit synthetic fixed land-untap program beside an unrepresented skip-draw replacement rejects strict and compatible admission. Original Azusa retains the represented land-untap body but its remaining material chapter bodies still block whole-card admission."
     },
     {
       "evidence_class": "interaction",
@@ -19968,7 +19968,7 @@
         "permanent.untap.fixed_land_choice"
       ],
       "interaction_order": 2,
-      "assertion": "The pinned original is analyzed with each named represented piece and its material residual sibling, then rejected by complete CardProgram runtime binding with unresolved trust and no strict or compatible admission; an independent Divination control remains admitted."
+      "assertion": "An explicit synthetic fixed land-untap program beside an unrepresented skip-draw replacement rejects strict and compatible admission. Original Azusa retains the represented land-untap body but its remaining material chapter bodies still block whole-card admission."
     },
     {
       "evidence_class": "interaction",
@@ -21768,6 +21768,151 @@
       ],
       "interaction_order": 2,
       "assertion": "Actual simultaneously departing Teysa permits two independently targeted Arsonist abilities; adding simultaneously departing Hushbringer prevents both. Canonical targets, optional apply choices and replay retain event-time precedence."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries",
+      "piece_ids": [
+        "capability.continuous.control.fixed_resolution",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.effect_clause.exact-typed-chapter-effect-body"
+      ],
+      "capability_ids": [
+        "continuous.control.fixed_resolution"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original The Shattered States Era retains fixed control, while complete material Saga chapter binding remains unresolved and blocks strict and compatible whole-card admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_transform_carriers_retain_control_and_quantity_replacement_boundaries",
+      "piece_ids": [
+        "capability.mana.production.public_quantity",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.effect_clause.exact-typed-chapter-effect-body"
+      ],
+      "capability_ids": [
+        "mana.production.public_quantity"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original The Legend of Kyoshi retains public-quantity mana, while complete material Saga chapter binding remains unresolved and blocks strict and compatible whole-card admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_original_new_untap_public_set_and_copy_siblings_reject_runtime_admission",
+      "piece_ids": [
+        "capability.permanent.untap.fixed_land_choice",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.effect_clause.exact-typed-chapter-effect-body"
+      ],
+      "capability_ids": [
+        "permanent.untap.fixed_land_choice"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Azusa retains fixed land choice; complete material Saga chapter binding remains unresolved and blocks strict and compatible whole-card admission."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_named_source_promotions_keep_replacement_and_prevention_siblings_fail_closed",
+      "piece_ids": [
+        "capability.damage.prevention.persistent_amount",
+        "capability.permanent.indestructible.ordinary",
+        "residual.activated_effect.tap-state"
+      ],
+      "capability_ids": [
+        "damage.prevention.persistent_amount",
+        "permanent.indestructible.ordinary"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Kytheon/Gideon represents Indestructible and fixed self prevention while a remaining material tap/untap result keeps the complete card unresolved. Strict and compatible whole-card admission reject it; no native composition is claimed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_disturb_granted_attack_belongs_to_recipient_controller_and_defender",
+      "piece_ids": [
+        "capability.casting.lifecycle.disturb_fixed_mana",
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.permanent.tap.effect",
+        "capability.trigger.event.normalized_self_attack"
+      ],
+      "capability_ids": [
+        "casting.lifecycle.disturb_fixed_mana",
+        "continuous.attached.fixed_characteristics",
+        "permanent.tap.effect",
+        "trigger.event.normalized_self_attack"
+      ],
+      "interaction_order": 4,
+      "assertion": "An actual Disturb Aura controlled by A grants B's creature the attack ability. B attacks C, chooses only a creature C controls, and taps it; unauthorized and wrong-defender submissions roll back. The cast, pending choice, combat damage and principal-private projection survive load and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_dorothea_granted_attack_chooses_token_destination_and_cleans_up",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "capability.token.creation.fixed_attacking_definition",
+        "capability.token.creation.fixed_definition_cleanup"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics",
+        "token.creation.fixed_attacking_definition",
+        "token.creation.fixed_definition_cleanup"
+      ],
+      "interaction_order": 3,
+      "assertion": "An actual disturbed Dorothea Aura controlled by A grants B's attacker its token result. B chooses D as the entering Spirit's defender while the original attacker attacks C. The token is B-owned, tapped, flying and 4/4, deals damage to D and is sacrificed at end of combat; pending choice, privacy, rejected-command rollback, load and replay are preserved."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_riddlekeeper_emerge_cast_trigger_taps_and_stuns_selected_permanents",
+      "piece_ids": [
+        "capability.casting.alternative_cost.emerge_fixed_mana",
+        "capability.counter.producer.quantified_target_set",
+        "capability.resolution.target_set.ordered_results"
+      ],
+      "capability_ids": [
+        "casting.alternative_cost.emerge_fixed_mana",
+        "counter.producer.quantified_target_set",
+        "resolution.target_set.ordered_results"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Twisted Riddlekeeper sacrifices a five-mana creature to pay emerge with colorless and blue mana. Its cast trigger selects two distinct permanents before resolution, taps and stuns both, leaves an unselected permanent unchanged, and then the creature enters with flying. Unauthorized and duplicate-target rejection, private projection, pending save/load and replay are asserted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_gift_aura_replacement_siblings_reject_whole_runtime_admission",
+      "piece_ids": [
+        "capability.continuous.control.attached_source",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "continuous.control.attached_source"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Kitnap has exact attached Aura control while Gift and conditional entry effects retain material residuals. Normal complete-program strict and compatible admission remain rejected without construction failure; no gameplay support is claimed."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_promoted_leaves_keep_unrepresented_siblings_closed_at_admission",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.event_binding.intervening-if-and-reflexive-trigger-grammar",
+        "residual.event_binding.normalized-event-binding"
+      ],
+      "capability_ids": [
+        "damage.source.stack_current_or_lki"
+      ],
+      "interaction_order": 4,
+      "assertion": "Original Invasion of Karsus and Invasion of Kaldheim retain their exact source-damage leaves and unrepresented Siege/static and entry-event contracts. Normal complete-program strict and compatible admission reject both; a separate constructed control preserves replacement-family coverage."
     }
   ],
   "schema_version": 2

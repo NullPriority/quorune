@@ -17,7 +17,7 @@ from quorune.continuous_effects import (
     evaluate_continuous_effects,
 )
 from quorune.object_predicate import ObjectQuerySpec
-from quorune.model import CardInstance
+from quorune.model import CardInstance, PlayerState
 from scripts.benchmark_continuous_effects import _source_hash_bytes
 
 
@@ -62,9 +62,8 @@ def _fixture(*, players: int, permanents_per_player: int, descriptors: int = 1):
                     handlers=[_descriptor() for _ in range(descriptors)],
                 ),
             )
-        player_rows[seat] = SimpleNamespace(
-            zones={"battlefield": battlefield,"graveyard":[],"exile":[]}
-        )
+        player_rows[seat] = PlayerState(seat=seat, name=f"Performance {seat}")
+        player_rows[seat].zones["battlefield"] = battlefield
     state = SimpleNamespace(
         turn_order=seats,
         players=player_rows,

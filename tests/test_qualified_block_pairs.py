@@ -104,6 +104,21 @@ class QualifiedBlockPairOwnerTests(unittest.TestCase):
         for value in (True,0,2,'1'):
             with self.assertRaises(ValueError):block_characteristics_version(value)
 
+    def test_fact_capture_deduplicates_qualities_without_removing_ability_instances(self):
+        # CR 113.2c permits multiple instances; a characteristic predicate asks
+        # whether the quality is present, not how many instances supplied it.
+        card=SimpleNamespace(logical_object_id='other@0')
+        participant=SimpleNamespace(object_id='other-id',logical_object_id='other@0')
+        row=ObjectQueryResult('other-id','other','Witness','B','B','battlefield',
+            types=('creature',),colors=('G','G'),keywords=('intimidate','skulk','intimidate'),
+            effective_power=2,effective_toughness=3,logical_object_id='other@0')
+        host=SimpleNamespace(state=SimpleNamespace(block_characteristics_version=1,cards={'other-id':card}),
+            _public_object_query_result=lambda card:row)
+        captured=block_characteristic_contexts(host,SimpleNamespace(participants=(participant,)))['other-id']
+        self.assertEqual(['G'],captured['colors'])
+        self.assertEqual(['intimidate','skulk'],captured['keywords'])
+        self.assertEqual(('intimidate','skulk','intimidate'),row.keywords)
+
     def test_runtime_queries_and_saved_block_facts_reject_unrepresented_fields(self):
         spec=qualified_block_pair_spec('Whenever this creature blocks a nonblack creature, destroy that creature at end of combat.')
         condition=qualifier(spec)

@@ -267,7 +267,7 @@ class FixedEmergeRuntimeTests(unittest.TestCase):
     def test_original_emerge_cards_need_complete_result_bodies_and_normal_registration(self):
         expected = {'Vexing Scuttler', 'Abundant Maw', 'Elder Deep-Fiend', 'Mockery of Nature',
             'Decimator of the Provinces', 'Wretched Gryff', 'Lashweed Lurker', 'Drownyard Behemoth',
-            'It of the Horrid Swarm'}
+            'It of the Horrid Swarm', 'Twisted Riddlekeeper'}
         for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if 'Emerge' not in raw['keywords']:
                 continue
@@ -287,3 +287,45 @@ class FixedEmergeRuntimeTests(unittest.TestCase):
                         if 'generated_oracle_ir' in p.coverage)
                     self.assertTrue(programs)
                     self.assertTrue(all(p.trust_level == 'trusted' for p in programs))
+
+    def test_original_riddlekeeper_emerge_cast_trigger_taps_and_stuns_selected_permanents(self):
+        # Printed Oracle: emerge {5}{C}{U}, then a cast trigger with up to two
+        # targets. CR 601.2/603.3: the cast trigger resolves before the creature.
+        session=self.session(70211980)
+        source=self.add(session.engine,'Twisted Riddlekeeper',zone='hand',ref='emerge-riddlekeeper')
+        sacrifice=self.add(session.engine,'Glass Golem',ref='riddlekeeper-price')
+        first=self.add(session.engine,'Generic Bound Body',seat='B',ref='riddlekeeper-first')
+        second=self.add(session.engine,'Great Furnace',seat='C',ref='riddlekeeper-second')
+        untouched=self.add(session.engine,'Memnite',seat='D',ref='riddlekeeper-unselected')
+        private=self.add(session.engine,'Generic Bound Growth',seat='C',zone='hand',ref='riddlekeeper-private')
+        self.assert_closed(session,source)
+        self.prepare(session,mana={'C':1,'U':1})
+        offered=next(row for row in session.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
+            if row['id']=='cast:'+source.ref)
+        option=next(row for row in offered['cost_options'] if row['id'].startswith('emerge:'))
+        self.checkpoint(session)
+        result=session.act('pilot:A',{'action_id':offered['id'],'cost_option':option['id'],
+            'sacrifice_cards':[sacrifice.ref],'pay':'auto'})
+        self.assertTrue(result.ok,result.summary)
+        self.assertEqual('graveyard',session.state.cards[sacrifice.object_id].zone)
+        self.assertEqual('stack',session.state.cards[source.object_id].zone)
+        self.assertEqual('semantic.target',session.state.pending_decision.kind)
+        self.assertEqual(['pilot:A'],session.pending_principals())
+        self.reject(session,'choose','D',targets=[first.ref,second.ref])
+        self.reject(session,'choose',targets=[first.ref,first.ref])
+        for card in (first,second,untouched):
+            self.assertFalse(session.state.cards[card.object_id].tapped)
+            self.assertEqual(0,session.state.cards[card.object_id].counters.get('stun',0))
+        session=self.replay(session,load=True)
+        result=session.act('pilot:A',{'action_id':'choose','targets':[first.ref,second.ref]})
+        self.assertTrue(result.ok,result.summary);self.resolve(session)
+        for card in (first,second):
+            self.assertTrue(session.state.cards[card.object_id].tapped)
+            self.assertEqual(1,session.state.cards[card.object_id].counters.get('stun',0))
+        self.assertFalse(session.state.cards[untouched.object_id].tapped)
+        self.assertFalse(session.state.cards[untouched.object_id].counters)
+        self.assertEqual('battlefield',session.state.cards[source.object_id].zone)
+        self.assertIn('flying',session.engine._combat_keywords(session.state.cards[source.object_id]))
+        for viewer in 'ABD':
+            self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+viewer,full=True)))
+        self.replay(session,load=True)

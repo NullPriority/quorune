@@ -53,7 +53,7 @@ class FixedMillCompilerTests(unittest.TestCase):
             self.assertNotEqual('exact',compile_oracle_card(card,capability_registry=CapabilityRegistry(value)).status)
         for altered in (
             'Whenever this creature deals damage, that player mills two cards.',
-            'Whenever a creature attacks, defending player mills two cards.',
+            'Whenever two or more creatures with different colors attack, defending player mills two cards.',
             text+' Return one of those cards to hand.',
         ):
             self.assertNotEqual('exact',compile_oracle_card(replace(card,oracle_text=altered),capability_registry=self.capabilities).status)
@@ -68,6 +68,7 @@ class FixedMillCompilerTests(unittest.TestCase):
             ('Whenever this creature deals combat damage to a player, that player mills two cards.','$context.target',2),
             ('Whenever this creature deals combat damage to a player, that player mills that many cards.','$context.target',None),
             ('Whenever this creature attacks, defending player mills ten cards.','$context.defending_player',10),
+            ('Whenever a creature attacks, defending player mills two cards.','$context.defending_player',2),
             ('Whenever an opponent casts a spell, that player mills two cards.','$context.player',2),
         )
         for text,player,count in cases:

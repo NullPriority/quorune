@@ -80,6 +80,14 @@ authoritative hashes, projection, rejected-command rollback and replay assertion
 Local witness timings establish a local opportunity; complete protected runs
 establish the pipeline result.
 
+Browser startup helpers await the accepted room-start response before checking
+the projected hand. The response wait uses the existing journey deadline;
+ordinary projection assertions retain their shorter timeout. A held-response
+control proves startup cannot finish on the click alone. Four-deck private
+mulligan journeys use the same cold-start budget as the shared-cookie journey.
+Synthetic continuous-effect fixtures use `PlayerState`'s complete zone mapping
+so adding a legitimate source zone cannot leave a partial fixture behind.
+
 Whole-program cohort probes lazily construct one built-in semantic registry
 per measurement and reuse it for read-only compilation of that measurement's
 cards. Separate measurements construct fresh registries, and probes with no

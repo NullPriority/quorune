@@ -42,6 +42,9 @@ class _IterationHost:
             game_id="draw-iteration",
             turn_sequence=1,
             event_sequence=0,
+            # This isolated trampoline host has synthetic library entries,
+            # without card definitions or intrinsic reveal declarations.
+            cards={},
             players={
                 "A": SimpleNamespace(
                     zones={"library": list(range(library_size))},

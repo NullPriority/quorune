@@ -2027,6 +2027,10 @@ This post-entry primitive does not choose an attacker or expose a player
 command; source-specific entry choices and compiler grammar require their own
 typed integration.
 
+Blocking counterpart snapshots capture each public characteristic term once;
+multiple instances of a keyword remain independent abilities on the object.
+Saved snapshots still reject duplicated terms and malformed participant facts.
+
 Rampage uses the same sealed becomes-blocked transition and retains each typed
 instance independently. Its rules helper counts the original attacker's current
 blockers beyond the first only when that occurrence resolves. The existing

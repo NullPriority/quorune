@@ -16,6 +16,7 @@ import test_ring_native_actions as turns
 from test_qualified_zone_event_queries import query_record
 from quorune.ability_fragments import StaticComponentSpec, canonical_ability_fragments, static_component_keys, ability_fragment_to_dict
 from quorune.carddb import CardDatabase
+from quorune.model import CardInstance
 from quorune.card_programs.runtime import _continuous_program_instances, _granted_characteristic_timestamp_order
 from quorune.compiler.continuous_templates import attached_fixed_characteristics_handler, fixed_power_toughness_anthem_handler
 from quorune.continuous_effect_model import ContinuousEffect, ContinuousOperation, Layer
@@ -64,16 +65,18 @@ class GrantedStaticCharacteristicModelTests(unittest.TestCase):
             active_zone='battlefield', event='characteristics.evaluate', effects=(),
             handlers=(attached_fixed_characteristics_handler('Equipped creature has flying.')[1],))
         semantics = SimpleNamespace(get=lambda key:child if key=='child' else None)
-        instances = _continuous_program_instances(semantics, object(), (child,), lambda source:(('child',3),('child',5)))
+        source = CardInstance(object_id='equipment', ref='EQUIPMENT', oracle_id='fixture:equipment',
+            printed_name='Generic Equipment Source', owner='A', controller='A', zone='battlefield')
+        instances = _continuous_program_instances(semantics, source, (child,), lambda source:(('child',3),('child',5)))
         self.assertEqual(((child,3,0),(child,5,1)), instances)
         legacy=replace_namespace(child,ability_id='static:front:n4:role:1',coverage=())
-        self.assertEqual(((legacy,None,None),),_continuous_program_instances(semantics,object(),(legacy,),lambda source:()))
+        self.assertEqual(((legacy,None,None),),_continuous_program_instances(semantics,source,(legacy,),lambda source:()))
         from quorune.rules.keyword_runtime_requirements import keyword_runtime_dependencies
         self.assertNotIn(CAPABILITY,keyword_runtime_dependencies(legacy))
         for value in (None, replace_namespace(child, provenance={'granted_only':False}),
                 replace_namespace(child, active_zone='hand'), replace_namespace(child,event='draw')):
             with self.assertRaises(ValueError):
-                _continuous_program_instances(SimpleNamespace(get=lambda key:value), object(), (), lambda source:(('child',3),))
+                _continuous_program_instances(SimpleNamespace(get=lambda key:value), source, (), lambda source:(('child',3),))
 
     def test_child_shapes_exclude_recursive_grants_and_unrepresented_characteristics(self):
         attached = attached_fixed_characteristics_handler('Equipped creature gets +1/+1 and has trample.')[1]

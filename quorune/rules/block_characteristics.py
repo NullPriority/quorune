@@ -16,7 +16,7 @@ def block_characteristic_contexts(host,event):
         row=host._public_object_query_result(card)
         facts={'schema_version':1,'object_id':row.object_id,'reference':row.ref,'logical_object_id':row.logical_object_id,
             'owner':row.owner,'controller':row.controller,'power':row.effective_power,'toughness':row.effective_toughness,
-            **{name:list(getattr(row,name)) for name in BLOCK_FACT_COLLECTIONS}}
+            **{name:list(dict.fromkeys(getattr(row,name))) for name in BLOCK_FACT_COLLECTIONS}}
         validate_block_characteristics(facts);result[participant.object_id]=facts
     return result
 

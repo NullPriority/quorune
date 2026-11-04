@@ -3,6 +3,7 @@ from __future__ import annotations
 import unittest
 
 from quorune.carddb import CardRecord
+from quorune.model import CardInstance
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 
@@ -67,7 +68,9 @@ class PredefinedRoleCompilerTests(unittest.TestCase):
         host = SimpleNamespace(semantics=registry, card_record=lambda _card: role_creator('Draw a card.'),
             semantic_program_is_current_trusted=lambda _program: self.fail('Granted-only creator child was consulted'))
         program.handlers = ({'handler_id': 'continuous.attached.fixed-characteristics.v1'},)
-        card = SimpleNamespace(active_face=None)
+        card = CardInstance(object_id='role-source', ref='ROLE_SOURCE',
+            oracle_id=role_creator('Draw a card.').oracle_id, printed_name='Generic Role Creator',
+            owner='A', controller='A', zone='battlefield')
         self.assertEqual((), compiled_static_ability_fragments(host, card))
 
     def test_role_static_children_lower_through_existing_program_identity(self):
