@@ -1,0 +1,741 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Beastmaster Ascension",
+      "oracle_id": "11b5308d-5bc0-4782-875f-a28be36e665d",
+      "oracle_text": "Whenever a creature you control attacks, you may put a quest counter on this enchantment.\nAs long as this enchantment has seven or more quest counters on it, creatures you control get +5/+5.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-04-29",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Battle Cry"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Hero of Bladehold",
+      "oracle_id": "454a8902-8120-4373-96ee-bbf352b04e8d",
+      "oracle_text": "Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)\nWhenever this creature attacks, create two 1/1 white Soldier creature tokens that are tapped and attacking.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Human Knight"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Impact Tremors",
+      "oracle_id": "9242cd3e-1a71-4700-8182-9c1005616033",
+      "oracle_text": "Whenever a creature you control enters, this enchantment deals 1 damage to each opponent.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Dog"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": "3",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Jace Beleren",
+      "oracle_id": "cc2b6e58-2d6f-495e-95f3-9496105c4cba",
+      "oracle_text": "+2: Each player draws a card.\n\u22121: Target player draws a card.\n\u221210: Target player mills twenty cards.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker \u2014 Jace"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Leonin Warleader",
+      "oracle_id": "8b1351e6-165e-4ca3-96d5-4774b3176362",
+      "oracle_text": "Whenever this creature attacks, create two 1/1 white Cat creature tokens with lifelink that are tapped and attacking.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2018-07-13",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Cat Soldier"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{W}",
+      "name": "Loxodon Smiter",
+      "oracle_id": "18ac2282-83af-4acc-b20b-6a95771da688",
+      "oracle_text": "This spell can't be countered.\nIf a spell or ability an opponent controls causes you to discard this card, put it onto the battlefield instead of putting it into your graveyard.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Elephant Soldier"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{W}{B}",
+      "name": "Mardu Ascendancy",
+      "oracle_id": "aa1de5ce-ddd4-4c1f-8c52-0311f4419e7b",
+      "oracle_text": "Whenever a nontoken creature you control attacks, create a 1/1 red Goblin creature token that's tapped and attacking.\nSacrifice this enchantment: Creatures you control get +0/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-09-26",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Parallel Lives",
+      "oracle_id": "84dc94b2-95fb-4d53-aaa2-191cb645639f",
+      "oracle_text": "If an effect would create one or more tokens under your control, it creates twice that many of those tokens instead.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-09-30",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Vigilance",
+        "First strike",
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{W}{W}",
+      "name": "Parhelion II",
+      "oracle_id": "24d22bcb-8a77-4c47-a508-6f4bc093c1d0",
+      "oracle_text": "Flying, first strike, vigilance\nWhenever Parhelion II attacks, create two 4/4 white Angel creature tokens with flying and vigilance that are attacking.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "5",
+      "type_line": "Legendary Artifact \u2014 Vehicle"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Plains",
+      "oracle_id": "bc71ebf6-2056-41f7-be35-b2e5c34afa99",
+      "oracle_text": "({T}: Add {W}.)",
+      "power": null,
+      "produced_mana": [
+        "W"
+      ],
+      "released_at": "2026-11-13",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Plains"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{W}",
+      "name": "Skyknight Vanguard",
+      "oracle_id": "9180f77f-c288-4a24-a35d-a16270b3d737",
+      "oracle_text": "Flying\nWhenever this creature attacks, create a 1/1 white Soldier creature token that's tapped and attacking.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2019-07-12",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Knight"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If you attack with multiple creatures, Beastmaster Ascension's first ability triggers multiple times.",
+      "oracle_id": "11b5308d-5bc0-4782-875f-a28be36e665d",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you discard Loxodon Smiter and put it onto the battlefield, you've still discarded a card. Abilities that trigger when you discard a card (such as the one from Liliana's Caress) will still trigger.",
+      "oracle_id": "18ac2282-83af-4acc-b20b-6a95771da688",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although the tokens are attacking, they were never declared as attacking creatures (for the purposes of abilities that trigger whenever a creature attacks, for example).",
+      "oracle_id": "24d22bcb-8a77-4c47-a508-6f4bc093c1d0",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose which players or planeswalkers the two tokens are attacking. They don't have to be attacking the same player or planeswalker that Parhelion II is attacking, and they can each be attacking different players and/or planeswalkers.",
+      "oracle_id": "24d22bcb-8a77-4c47-a508-6f4bc093c1d0",
+      "published_at": "2019-05-03",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although the tokens are attacking, they never were declared as attacking creatures (for purposes of abilities that trigger whenever a creature attacks, for example).",
+      "oracle_id": "454a8902-8120-4373-96ee-bbf352b04e8d",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Whenever Hero of Bladehold attacks, both abilities will trigger. You can put them onto the stack in any order. If the token-creating ability resolves first, the tokens each get +1/+0 until end of turn from the battle cry ability.",
+      "oracle_id": "454a8902-8120-4373-96ee-bbf352b04e8d",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose which opponent or planeswalker an opponent controls that each token is attacking when it is put onto the battlefield.",
+      "oracle_id": "454a8902-8120-4373-96ee-bbf352b04e8d",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Everything that is specified by the effect creating the original token or tokens will also be true about the additional token or tokens created by Parallel Lives's replacement effect. For example, if an effect tells you to create a token \"tapped and attacking,\" the additional tokens will also be tapped and attacking.",
+      "oracle_id": "84dc94b2-95fb-4d53-aaa2-191cb645639f",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control two Parallel Lives, then the number of tokens created is four times the original number. If you control three, then the number of tokens created is eight times the original number, and so on.",
+      "oracle_id": "84dc94b2-95fb-4d53-aaa2-191cb645639f",
+      "published_at": "2023-09-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although the tokens are attacking, they were never declared as attacking creatures (for the purposes of abilities that trigger whenever a creature attacks, for example).",
+      "oracle_id": "8b1351e6-165e-4ca3-96d5-4774b3176362",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose which players or planeswalkers the two tokens are attacking. They don\u2019t have to be attacking the same player or planeswalker that Leonin Warleader is attacking, and they can each be attacking different players and/or planeswalkers.",
+      "oracle_id": "8b1351e6-165e-4ca3-96d5-4774b3176362",
+      "published_at": "2018-07-13",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although the token is an attacking creature, it was never declared as an attacking creature. This means that abilities that trigger whenever a creature attacks won\u2019t trigger when the token enters the battlefield attacking.",
+      "oracle_id": "9180f77f-c288-4a24-a35d-a16270b3d737",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose which player or planeswalker the token is attacking. It doesn\u2019t have to be attacking the same player or planeswalker that Skyknight Vanguard is attacking.",
+      "oracle_id": "9180f77f-c288-4a24-a35d-a16270b3d737",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If multiple creatures you control enter at the same time, Impact Tremors will trigger once for each of those creatures. This is true even if Impact Tremors enters at the same time as those creatures.",
+      "oracle_id": "9242cd3e-1a71-4700-8182-9c1005616033",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although the tokens are attacking, they were never declared as attacking creatures (for purposes of abilities that trigger whenever a creature attacks, for example).",
+      "oracle_id": "aa1de5ce-ddd4-4c1f-8c52-0311f4419e7b",
+      "published_at": "2014-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "As the Goblin token enters the battlefield, you choose which opponent or opposing planeswalker it\u2019s attacking. It doesn\u2019t have to attack the same opponent or opposing planeswalker that the original creature is attacking.",
+      "oracle_id": "aa1de5ce-ddd4-4c1f-8c52-0311f4419e7b",
+      "published_at": "2014-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "If there are fewer than twenty cards in the targeted player's library, that player puts all the cards from their library into their graveyard.",
+      "oracle_id": "cc2b6e58-2d6f-495e-95f3-9496105c4cba",
+      "published_at": "2009-10-01",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

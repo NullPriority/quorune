@@ -62,6 +62,7 @@ VALID_EFFECT_OPERATIONS = {
     "choose_cards_apnap",
     "choose_damage_source",
     "choose_attacking_token_destinations",
+    "choose_fixed_attacking_token_destinations",
     "choose_myriad_token_destinations",
     "choose_mana",
     "copy_all_tokens",

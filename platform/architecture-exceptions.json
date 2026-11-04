@@ -1481,6 +1481,30 @@
         "tests.test_permanent_composition.CompositionStorageTests.test_object_map_port_preserves_aliases_and_rejects_the_whole_invalid_edit",
         "tests.test_permanent_composition.CompositionCaptureNativeTests.test_physical_merge_kernel_keeps_one_object_and_rolls_back_partial_commit"
       ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0063",
+      "adr": "docs/adr/0161-ordinary-attacking-token-results.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "b94b2c6fe30759d1da93b7a8f68bf6c6f3800cb2d4b69858640685eb9dcc5953",
+      "exact_allowance": "The exact inherited baseline plus only choose_fixed_attacking_token_destinations. All module/function size ceilings, engine methods, direct-write identities and identity-flow limits remain unchanged.",
+      "rationale": "Ordinary fixed creature definitions enter attacking through a principal-bound typed choice over a replacement-expanded public preview. Shared destination planning and canonical CreateTokenIntent retain all mutation authority; a separately pinned Battle Cry resolution policy integrates the newly reachable live attacking set.",
+      "owner": "rules and compiler maintainers",
+      "maximum_scope": "One closed fixed-definition combat-entry operation; no new generic mutation, copy recipe, recipient grammar, private-information channel, registry or callback surface.",
+      "removal_condition": "Remove this operation allowance when the registered semantic-choice inventory is validated directly through capability-bound handler contracts; retain no extra size or direct-write exceptions.",
+      "target_milestone": "capability-closed ordinary attacking-token entry",
+      "replay_implications": "New operation has an exact version-one result and continuation. Mobilize/Myriad shapes remain unchanged. Current Battle Cry live recipients are pinned by battle_cry_resolution_version1; historical absence retains the declared-set boundary. Trust provenance remains strict.",
+      "privacy_implications": "Only live public defending players, planeswalkers and battles are projected. Hidden hands and libraries do not participate in destination choice.",
+      "security_implications": "Malformed definitions, unknown fields/versions, unauthorized principals, stale previews and incomplete or illegal destination maps fail before token entry.",
+      "tests": [
+        "tests.test_attacking_token_results.AttackingTokenResultCompilerTests.test_withdrawn_attacking_owner_does_not_withdraw_ordinary_fixed_tokens",
+        "tests.test_attacking_token_results.AttackingTokenDestinationModelTests.test_malformed_definitions_and_stale_or_incomplete_assignments_are_rejected",
+        "tests.test_attacking_token_results.AttackingTokenDestinationModelTests.test_battle_cry_marker_codec_preserves_legacy_absence_and_rejects_mismatch",
+        "tests.test_attacking_token_results.AttackingTokenResultNativeTests.test_actual_hero_entry_before_battle_cry_uses_live_attackers_without_attack_events",
+        "tests.test_attacking_token_results.AttackingTokenResultNativeTests.test_actual_parhelion_crew_creates_untapped_attacking_angels_that_survive_end_step",
+        "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_mobilize_token_multiplier_expands_independent_destination_choices",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"
+      ]
     }
   ]
 }

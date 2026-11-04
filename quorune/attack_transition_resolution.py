@@ -87,27 +87,11 @@ def resolve_attack_keyword_trigger(
             "Attack-trigger resolution requires a typed occurrence"
         )
     _identity(stack_ref, field="Resolving attack-trigger stack reference")
-    expected = {
-        occurrence.source.object_id: occurrence.source,
-        **{value.object_id: value for value in occurrence.affected},
-    }
-    if occurrence.kind is CombatKeywordTriggerKind.BATTLE_CRY:
-        unexpected = set(host.state.combat.attackers) - set(expected)
-        if unexpected:
-            raise AttackTransitionError(
-                "Battle Cry cannot resolve across an unrepresented new attacker"
-            )
-        for object_id in set(host.state.combat.attackers) & set(expected):
-            card = host.state.cards.get(object_id)
-            if (
-                card is not None
-                and card.logical_object_id != expected[object_id].logical_object_id
-            ):
-                raise AttackTransitionError(
-                    "Battle Cry cannot resolve across a changed attacker identity"
-                )
+    from .battle_cry_resolution import battle_cry_recipient_identities
+    identities = (battle_cry_recipient_identities(host.state, occurrence)
+        if occurrence.kind is CombatKeywordTriggerKind.BATTLE_CRY else occurrence.affected)
     targets = []
-    for identity in occurrence.affected:
+    for identity in identities:
         card = host.state.cards.get(identity.object_id)
         if (
             card is None

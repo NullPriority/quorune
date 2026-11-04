@@ -124,6 +124,12 @@ ownership or adding a cross-layer dependency requires an ADR. Reviewed legacy
 exceptions require an ADR and removal plan. The identity-flow guard has no
 growth allowance or card-database-derived exception surface.
 
+[ADR 0161](../adr/0161-ordinary-attacking-token-results.md) reviews the closed
+ordinary attacking-token choice over the shared public destination planner.
+`CreateTokenIntent` retains token mutation authority; the versioned Battle Cry
+recipient selector reads the combat set and uses the existing continuous-effect
+owner. The review adds one operation and no size or direct-write allowance.
+
 The separate raw Oracle-ID-literal ratchet remains active. It protects literal
 identity leakage and reviewed historical debt independently of whether a literal
 currently reaches a behavior-selection sink; it does not replace or weaken the

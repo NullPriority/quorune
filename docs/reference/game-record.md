@@ -10,6 +10,23 @@ concern: "game-record"
 
 # Game Record v3
 
+`battle_cry_resolution_version: 1` selects current other attacking creature
+incarnations when Battle Cry resolves, including creatures that entered
+attacking. Historical absence retains the earlier declared-set and rejection
+boundary and remains absent when serialized. Checkpoint and manifest markers
+must agree; unknown and boolean values reject. The ordinary continuous-effect
+record still pins only the creatures affected at resolution.
+
+Ordinary fixed attacking-token results use
+`choose_fixed_attacking_token_destinations` with `token_entry_version: 1`.
+Their continuation retains the printed definition and tapped state, the
+replacement-expanded preview, and one public destination per entering token.
+Resumption validates the same principal, preview and live recipients before
+committing token creation. An ephemeral choice-query fact distinguishes an
+attacking controller from creation outside combat; it adds no historical
+checkpoint field. Existing Mobilize and Myriad operations retain their earlier
+continuation shapes and lifecycle effects.
+
 Represented self-entry X results retain `source_entry_x_information` in their
 zone occurrence and queued trigger context. Its closed version-one value pins
 the entered incarnation and the resolving spell's X, including copied spells;

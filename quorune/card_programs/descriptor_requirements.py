@@ -105,6 +105,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *designation_predicate_dependencies(value))
         from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
         own = (*own, *token_definition_payload_dependencies(value,mechanics))
+        from ..rules.attacking_token_results import attacking_token_payload_dependencies
+        own = (*own, *attacking_token_payload_dependencies(value))
         from ..source_prevention import source_prevention_dependencies
         own = (*own, *source_prevention_dependencies(value))
         from ..conditional_recipient_model import conditional_recipient_capabilities

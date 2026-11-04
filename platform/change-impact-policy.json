@@ -11786,6 +11786,33 @@
         "test_gain_and_get_sets",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ordinary-fixed-attacking-token-results",
+      "patterns": [
+        "quorune/compiler/attacking_token_results.py",
+        "quorune/rules/attacking_token_results.py",
+        "quorune/semantic_choices/fixed_attacking_tokens.py",
+        "quorune/semantic_choices/token_destination_plans.py",
+        "quorune/semantic_choices/token_creation_queries.py",
+        "quorune/semantic_choices/attacking_tokens.py",
+        "quorune/battle_cry_resolution.py",
+        "quorune/battle_cry_resolution_model.py",
+        "quorune/attack_transition_resolution.py",
+        "tests/test_attacking_token_results.py",
+        "tests/fixtures/attacking-token-result-cards.json"
+      ],
+      "test_modules": [
+        "test_attacking_token_results",
+        "test_fixed_keyword_event_effects",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_fixed_token_creation_effects",
+        "test_token_entry_boundaries",
+        "test_semantic_choice_model",
+        "test_attack_keyword_triggers",
+        "test_attack_transitions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

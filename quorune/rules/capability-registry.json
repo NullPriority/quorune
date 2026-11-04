@@ -22109,7 +22109,6 @@
         "exclusions": [
           "conditional or rules-text-equivalent Battle Cry wording",
           "granted, copied, or face-down Battle Cry outside trusted typed fragments",
-          "put-onto-the-battlefield-attacking effects",
           "unsupported attack costs that remove a declared attacker",
           "trigger doubling and countering policies beyond the ordinary trigger subsystem"
         ],
@@ -22117,7 +22116,8 @@
           "immutable canonical attack-transition event",
           "current typed Battle Cry ability fragments",
           "complete declared-attacker set",
-          "physical and logical source and affected-attacker identities"
+          "physical and logical source and affected-attacker identities",
+          "versioned current attacking set at resolution"
         ],
         "outputs": [
           "one occurrence per Battle Cry instance",
@@ -22125,7 +22125,7 @@
           "identity-pinned layer 7c +1/+0 result for each other attacker",
           "no effect for an affected attacker after its identity changes"
         ],
-        "summary": "After one complete attack declaration, create one ordinary Battle Cry trigger per current typed instance on each declared attacking source, then give every other exact attacking creature logical object +1/+0 until end of turn on resolution."
+        "summary": "Resolve Battle Cry over current other attacking creature incarnations when battle_cry_resolution_version1 is pinned; historical absence retains the former declared-set boundary."
       },
       "blockers": [],
       "dependencies": [
@@ -22139,9 +22139,11 @@
         "quorune.attack_transition_model.AttackTransitionEvent",
         "quorune.attack_transition_model.derive_attack_keyword_trigger_occurrences",
         "quorune.attack_transition_resolution.resolve_attack_keyword_trigger",
+        "quorune.battle_cry_resolution.battle_cry_recipient_identities",
+        "quorune.battle_cry_resolution_model.battle_cry_resolution_version",
         "quorune.semantic_runtime.ability_fragments.BattleCryAbilityFragmentHandler"
       ],
-      "implementation_mutation_rationale": "test_attack_keyword_trigger_mutants_are_killed includes the source among affected attackers and the focused source-exclusion assertion rejects the survivor.",
+      "implementation_mutation_rationale": "Replacing the current resolution set with the declared affected set omits an entered attacking creature and fails the independent current-set witness.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_attack_keywords_share_one_completed_declaration_batch",
@@ -22154,8 +22156,11 @@
         "test_malformed_attack_transition_and_occurrence_fail_closed"
       ],
       "official_rules": [
+        "400.7",
+        "508.4",
         "603.2c",
         "603.3",
+        "608.2h",
         "702.91",
         "702.91a",
         "702.91b"
@@ -22183,7 +22188,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -61620,6 +61625,97 @@
     {
       "applicability": {
         "exclusions": [
+          "specified recipient wording",
+          "new copy recipes",
+          "unrepresented delayed riders",
+          "new token-definition grammar",
+          "new variable quantities"
+        ],
+        "inputs": [
+          "ordinary fixed creature definition",
+          "replacement-expanded token preview",
+          "live defending recipients and attacking-controller fact"
+        ],
+        "outputs": [
+          "one atomic token entry batch",
+          "independent player,planeswalker,battle destinations",
+          "printed tapped state",
+          "entry outside combat without attacking"
+        ],
+        "summary": "Create independently closed fixed creature definitions with per-token unrestricted legal combat destinations."
+      },
+      "blockers": [],
+      "dependencies": [
+        "token.creation.fixed_definition",
+        "token.creation.quantity_replacement",
+        "combat.entry.lifecycle.fixed_public",
+        "combat.trigger.battle_cry"
+      ],
+      "dependency_fail_closed_rationale": "Verified attacking-token owner withdrawal rejects new results while ordinary fixed token creation retains its prior owner; executable payload infers new authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "token.creation.fixed_attacking_definition",
+      "implementation_components": [
+        "quorune.compiler.attacking_token_results.fixed_attacking_token_template",
+        "quorune.rules.attacking_token_results.attacking_token_result_closure",
+        "quorune.rules.attacking_token_results.attacking_token_payload_dependencies",
+        "quorune.semantic_choices.fixed_attacking_tokens.FixedAttackingTokenDestinationHandler",
+        "quorune.semantic_choices.token_destination_plans.prepare_attacking_destinations",
+        "quorune.semantic_choices.token_destination_plans.complete_attacking_destinations",
+        "quorune.semantic_choices.token_creation_queries.semantic_choice_token_creation_preview"
+      ],
+      "implementation_mutation_rationale": "Inheriting Mobilize sacrifice makes the independent no-unprinted-sacrifice assertions fail.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_hero_entry_before_battle_cry_uses_live_attackers_without_attack_events",
+        "test_actual_parhelion_crew_creates_untapped_attacking_angels_that_survive_end_step"
+      ],
+      "multiplayer_tests": [
+        "test_actual_hero_entry_before_battle_cry_uses_live_attackers_without_attack_events",
+        "test_actual_parhelion_crew_creates_untapped_attacking_angels_that_survive_end_step"
+      ],
+      "negative_tests": [
+        "test_new_result_does_not_consume_specified_recipients_copies_or_delayed_riders",
+        "test_withdrawn_attacking_owner_does_not_withdraw_ordinary_fixed_tokens",
+        "test_malformed_definitions_and_stale_or_incomplete_assignments_are_rejected",
+        "test_nonattacking_controller_creates_printed_tokens_without_combat_assignments"
+      ],
+      "official_rules": [
+        "111.2",
+        "506.3b",
+        "508.4",
+        "508.4c",
+        "603.6a",
+        "614.16"
+      ],
+      "positive_tests": [
+        "test_fixed_attacking_results_keep_printed_definition_and_entry_state"
+      ],
+      "privacy_tests": [
+        "test_actual_hero_entry_before_battle_cry_uses_live_attackers_without_attack_events"
+      ],
+      "replay_tests": [
+        "test_actual_hero_entry_before_battle_cry_uses_live_attackers_without_attack_events",
+        "test_actual_parhelion_crew_creates_untapped_attacking_angels_that_survive_end_step"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "multiple or optional targets",
           "variable or optional quantities",
           "linked, hidden, graveyard, stack, spell and card copy origins",
@@ -77886,7 +77982,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 688,
+  "registry_version": 690,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

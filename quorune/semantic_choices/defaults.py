@@ -51,6 +51,7 @@ from .apnap_commit import APNAP_COMMIT_CHOICE_HANDLERS
 from .madness import MADNESS_CHOICE_HANDLERS
 from .miracle import MiracleCastChoiceHandler
 from .attacking_tokens import ATTACKING_TOKEN_CHOICE_HANDLERS
+from .fixed_attacking_tokens import FixedAttackingTokenDestinationHandler
 from .hand_inspection import HAND_INSPECTION_CHOICE_HANDLERS
 from .connive import FixedConniveChoiceHandler
 from .exploit import ExploitChoiceHandler
@@ -67,6 +68,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
     return SemanticChoiceRegistry(
         (
             ExtortChoiceHandler(),
+            FixedAttackingTokenDestinationHandler(),
             CompositionOrderHandler(),
             MutateMergeChoiceHandler(),
             ActualLifeTransferHandler(),

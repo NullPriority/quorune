@@ -9,6 +9,17 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/attacking_token_results.py` recognizes a complete ordinary attacking
+rider over an independently closed fixed creature-token definition. Each
+replacement-expanded token receives its own public defending-player,
+planeswalker, or battle destination through the shared destination planner and
+canonical token transaction. The printed tapped state is retained. Entering
+attacking does not dispatch an attack-declaration event; ordinary entry triggers
+still see the batch. A nonattacking controller creates the printed tokens
+without adding attackers. Specified recipients, new copies, delayed riders and
+unrepresented definitions remain residual. Mobilize keeps its existing schema
+and delayed sacrifice under its separate owner.
+
 An unsupported trigger result keeps a material `trigger_effect` residual when
 its event is already exact. The frontier classifies its executable clause
 landmarks instead of attributing the failure to event binding. Unknown events

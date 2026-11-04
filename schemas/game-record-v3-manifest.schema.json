@@ -95,6 +95,13 @@
     "format": {
       "additionalProperties": true,
       "properties": {
+        "battle_cry_resolution_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
         "cast_source_placement_version": {
           "const": 1,
           "type": "integer"

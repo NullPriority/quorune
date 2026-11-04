@@ -42,6 +42,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'block_characteristics_version':state.block_characteristics_version} if getattr(state,'block_characteristics_version',None) is not None else {}),
         **({'unblocked_attacker_event_version':state.unblocked_attacker_event_version} if getattr(state,'unblocked_attacker_event_version',None) is not None else {}),
         **({'permanent_event_state_version':state.permanent_event_state_version} if getattr(state,'permanent_event_state_version',None) is not None else {}),
+        **({'battle_cry_resolution_version':state.battle_cry_resolution_version} if getattr(state,'battle_cry_resolution_version',None) is not None else {}),
     }
 
 
@@ -109,6 +110,11 @@ def validate_state_versions(
     from .block_characteristic_model import block_characteristics_version
     from .unblocked_attacker_model import unblocked_attacker_event_version
     from .permanent_event_state_model import permanent_event_state_version
+    from .battle_cry_resolution_model import battle_cry_resolution_version
+    battle_cry=format_value.get('battle_cry_resolution_version',0)
+    if (type(battle_cry) is not int or battle_cry not in {0,1}
+            or battle_cry!=(battle_cry_resolution_version(getattr(state,'battle_cry_resolution_version',None)) or 0)):
+        raise ValueError('Battle Cry resolution provenance does not match the initial checkpoint')
     permanent_state=format_value.get('permanent_event_state_version',0)
     if (type(permanent_state) is not int or permanent_state not in {0,1}
             or permanent_state!=(permanent_event_state_version(getattr(state,'permanent_event_state_version',None)) or 0)):

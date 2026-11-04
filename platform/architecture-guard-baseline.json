@@ -262,15 +262,15 @@
     },
     {
       "file": "quorune/game_object_store.py",
-      "symbol": "commit",
       "kind": "mutating_call:pop",
-      "state_path": "cards"
+      "state_path": "cards",
+      "symbol": "commit"
     },
     {
       "file": "quorune/game_object_store.py",
-      "symbol": "commit",
       "kind": "mutating_call:update",
-      "state_path": "cards"
+      "state_path": "cards",
+      "symbol": "commit"
     },
     {
       "file": "quorune/permissions.py",
@@ -412,9 +412,9 @@
     },
     {
       "file": "quorune/zone_transitions.py",
-      "symbol": "_depart_stack_object",
       "kind": "assignment",
-      "state_path": "stack"
+      "state_path": "stack",
+      "symbol": "_depart_stack_object"
     },
     {
       "file": "quorune/zone_transitions.py",
@@ -432,12 +432,12 @@
   "direct_game_state_writes_by_file": {
     "quorune/emblems.py": 2,
     "quorune/engine.py": 43,
+    "quorune/game_object_store.py": 2,
     "quorune/permissions.py": 8,
     "quorune/record.py": 11,
     "quorune/selection/storm.py": 3,
     "quorune/trigger_processing.py": 2,
-    "quorune/zone_transitions.py": 3,
-    "quorune/game_object_store.py": 2
+    "quorune/zone_transitions.py": 3
   },
   "engine": {
     "logical_lines": 6560,
@@ -1571,9 +1571,9 @@
     "physical_lines": 7062
   },
   "exception_binding": {
-    "exception_id": "ARCH-EXC-0062",
-    "adr": "docs/adr/0148-physical-composition-storage.md",
-    "allowance_fingerprint": "3670b275e1b5c96fc6f3094fda6aec609ac99440142fe7606254acc4b5ae2b66"
+    "adr": "docs/adr/0161-ordinary-attacking-token-results.md",
+    "allowance_fingerprint": "b94b2c6fe30759d1da93b7a8f68bf6c6f3800cb2d4b69858640685eb9dcc5953",
+    "exception_id": "ARCH-EXC-0063"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1804,6 +1804,7 @@
     "choose_cards_apnap",
     "choose_creature_type",
     "choose_damage_source",
+    "choose_fixed_attacking_token_destinations",
     "choose_mana",
     "choose_modified_token_copy",
     "choose_myriad_token_destinations",

@@ -23,28 +23,8 @@ ATTACKING_TOKEN_DESTINATION_OPERATION = "choose_attacking_token_destinations"
 MYRIAD_TOKEN_DESTINATION_OPERATION = "choose_myriad_token_destinations"
 
 
-def _legal_destinations(
-    query: SemanticChoiceQuery,
-    actor: str,
-) -> tuple[str, ...]:
-    opponents = {seat for seat in query.active_seats if seat != actor}
-    destinations = set(opponents)
-    for row in query.objects(zones=("battlefield",)):
-        if "planeswalker" in row.types and row.controller in opponents:
-            destinations.add(row.ref)
-        elif "battle" in row.types and row.battle_protector in opponents:
-            destinations.add(row.ref)
-    seat_order = {seat: index for index, seat in enumerate(query.seats)}
-    return tuple(
-        sorted(
-            destinations,
-            key=lambda value: (
-                0 if value in seat_order else 1,
-                seat_order.get(value, 0),
-                value,
-            ),
-        )
-    )
+from .token_destination_plans import (legal_attacking_destinations as _legal_destinations,
+    prepare_attacking_destinations, complete_attacking_destinations)
 
 
 @dataclass(frozen=True, slots=True)
@@ -110,53 +90,8 @@ class AttackingTokenDestinationChoiceHandler:
             }
         ):
             raise SemanticChoiceError("Mobilize token choice is malformed")
-        destinations = _legal_destinations(context.query, context.actor)
-        if not destinations:
-            return SemanticChoicePreparation(
-                request=None,
-                continuation_effect=FrozenMap(effect),
-                auto_continue=AutoContinue(reason="no defending recipient"),
-            )
-        preview = tuple(context.query.token_creation_preview())
-        groups = tuple(
-            str(row.get("_attacking_group") or "")
-            for row in preview
-            for _ in range(int(row.get("quantity", 1)))
-            if row.get("_attacking_group") is not None
-        )
-        if not preview or any(group != "any" for group in groups):
-            raise SemanticChoiceError(
-                "Mobilize token replacement preview is malformed"
-            )
-        token_ids = tuple(f"mobilize:{index}" for index in range(len(groups)))
-        return SemanticChoicePreparation(
-            request=SemanticChoiceRequest(
-                prompt="Choose what each Mobilize token is attacking.",
-                choice=DecisionMapChoice(
-                    field_name="attacking",
-                    legal_refs=token_ids,
-                    required=len(token_ids),
-                    legal_values=destinations,
-                ),
-                public_context=FrozenMap(
-                    {
-                        "stack": context.stack_ref,
-                        "operation": self.operation,
-                        "destinations": destinations,
-                    }
-                ),
-            ),
-            continuation_effect=FrozenMap(
-                {
-                    **dict(effect),
-                    "_choice_actor": context.actor,
-                    "_token_ids": token_ids,
-                    "_destinations": destinations,
-                    "_stack_label": context.stack_label,
-                    "_preview_specs": preview,
-                }
-            ),
-        )
+        return prepare_attacking_destinations(effect, context, operation=self.operation,
+            label='Mobilize', prefix='mobilize')
 
     def complete(
         self,
@@ -164,51 +99,8 @@ class AttackingTokenDestinationChoiceHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
-        effect = continuation.effect
-        raw = response.get("attacking")
-        if not isinstance(raw, Mapping):
-            raise SemanticChoiceError("Mobilize assignments must be an object map")
-        decisions = {str(key): str(value) for key, value in raw.items()}
-        token_ids = tuple(str(value) for value in effect.get("_token_ids", ()))
-        destinations = set(
-            str(value) for value in effect.get("_destinations", ())
-        )
-        actor = str(effect.get("_choice_actor") or "")
-        current_preview = tuple(query.token_creation_preview())
-        if (
-            set(decisions) != set(token_ids)
-            or any(value not in destinations for value in decisions.values())
-            or not destinations.issubset(set(_legal_destinations(query, actor)))
-            or current_preview != tuple(effect.get("_preview_specs", ()))
-        ):
-            raise SemanticChoiceError(
-                "Mobilize assignments are stale or incomplete"
-            )
-        return SemanticChoiceCompletion(
-            intents=(
-                CreateTokenIntent(
-                    actor=actor,
-                    controller=actor,
-                    name="Warrior",
-                    quantity=int(effect.get("quantity", 0)),
-                    characteristics=FrozenMap(
-                        dict(effect.get("characteristics") or {})
-                    ),
-                    tapped=True,
-                    attacking_assignments=tuple(
-                        decisions[token_id] for token_id in token_ids
-                    ),
-                    attacking_groups=tuple(
-                        "any" for _ in range(int(effect.get("quantity", 0)))
-                    ),
-                    sacrifice_at_end_step=True,
-                    reason=str(effect.get("_stack_label") or "Mobilize"),
-                    replacement_selections=tuple(
-                        effect.get("_replacement_selections", ())
-                    ),
-                ),
-            )
-        )
+        return complete_attacking_destinations(continuation.effect, response, query,
+            name='Warrior', tapped=True, sacrifice=True, label='Mobilize')
 
 
 ATTACKING_TOKEN_CHOICE_HANDLERS = (

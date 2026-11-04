@@ -482,11 +482,14 @@ def fixed_token_creation_effect_template(
 
     A single fixed definition or an unambiguous two- or three-definition
     simultaneous nontargeted batch is accepted. Dynamic quantities,
-    source-relative or modified copies, open ability text, attachments,
-    attacking tokens, and compound non-token instructions remain residual.
+    source-relative or modified copies, open ability text, attachments, and
+    compound non-token instructions remain residual. Complete ordinary attacking
+    riders use the closed public destination choice over the fixed definition.
     """
 
-    return _single_fixed_token_creation_effect_template(
+    from .attacking_token_results import fixed_attacking_token_template
+    attacking = fixed_attacking_token_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
+    return attacking or _single_fixed_token_creation_effect_template(
         text
     ) or _fixed_token_batch_creation_effect_template(text)
 

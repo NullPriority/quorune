@@ -175,3 +175,4 @@ deployment modes, or architecture review thresholds.
 - [ADR 0158 — event-incarnation trigger usage](0158-event-incarnation-trigger-usage.md)
 - [ADR 0159 — typed trigger source and event participation](0159-typed-trigger-source-and-event-participation.md)
 - [ADR 0160 — versioned completed characteristic queries](0160-versioned-completed-characteristic-queries.md)
+- [ADR 0161 — ordinary attacking-token results](0161-ordinary-attacking-token-results.md)

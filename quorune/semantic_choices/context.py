@@ -152,6 +152,9 @@ class SemanticChoiceQuery(
     def token_creation_preview(self) -> tuple[Mapping[str, Any], ...]: ...
 
     @property
+    def attacking_token_entry_allowed(self) -> bool: ...
+
+    @property
     def damage_source_candidates_are_complete(self) -> bool: ...
 
     @property
@@ -197,8 +200,11 @@ class SnapshotSemanticChoiceQuery:
     resolution_source_is_physical_card: bool | None = None
     apnap_order: tuple[str, ...] = ()
     discard_hand_inputs: FrozenMap | None = None
+    attacking_token_entry_allowed: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.attacking_token_entry_allowed) is not bool:
+            raise ValueError('Attacking token entry fact must be boolean')
         if self.discard_hand_inputs is not None and not isinstance(self.discard_hand_inputs, FrozenMap):
             object.__setattr__(self, 'discard_hand_inputs', FrozenMap(self.discard_hand_inputs))
         if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:

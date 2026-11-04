@@ -1011,6 +1011,7 @@
       "test_another_sacrifice_native",
       "test_another_sacrifice_payments",
       "test_ante_rules",
+      "test_attacking_token_results",
       "test_beginning_phase_rules",
       "test_bestow_typed_grants",
       "test_block_capacity",
