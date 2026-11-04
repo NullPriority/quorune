@@ -135,7 +135,8 @@ def event_recipient_mill_result(binding,body,*,compile_fixed,source_name):
     if match is None:return None
     player=None
     if match['subject'].casefold()=='defending player':
-        if binding.event.value=='creature.attacks' and binding.variant=='source_attacks':player='$context.defending_player'
+        from .event_player_results import _event_player
+        player=_event_player(binding,'defending player')
     elif binding.event.value in {'damage.dealt','damage.dealt.self'}:
         def guarantees_player(condition):
             return isinstance(condition,Mapping) and (condition=={'field':'target_kind','op':'eq','value':'player'}

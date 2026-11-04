@@ -100,6 +100,25 @@ class ScalarChoice:
 
 
 @dataclass(frozen=True, slots=True)
+class CastOrDeclineChoice:
+    cast_options: tuple[FrozenMap, ...]
+
+    def __post_init__(self):
+        options = tuple(option if isinstance(option, FrozenMap) else FrozenMap(option)
+                        for option in self.cast_options)
+        ids = [option.get('id') for option in options]
+        if (any(type(value) is not str or not value for value in ids)
+                or len(ids) != len(set(ids))):
+            raise SemanticChoiceError('Resolving cast options require unique current IDs')
+        object.__setattr__(self, 'cast_options', options)
+
+    def choice_schema(self):
+        return {'field':'choice','legal_values':['cast','decline'] if self.cast_options else ['decline'],
+                'cast_options':[thaw_value(option) for option in self.cast_options],
+                'cast_options_when':{'field':'choice','value':'cast'}}
+
+
+@dataclass(frozen=True, slots=True)
 class ObjectChoice:
     field_name: str
     legal_refs: tuple[str, ...]
@@ -444,6 +463,7 @@ class ReferenceSetChoice:
 
 ChoiceModel = (
     ScalarChoice
+    | CastOrDeclineChoice
     | ObjectChoice
     | TargetAssignmentChoice
     | OrderingChoice

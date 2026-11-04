@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "cards": [
+    {
+      "oracle_id": "fixture:participation-attacker",
+      "name": "Generic Participation Attack Observer",
+      "mana_cost": "{2}",
+      "cmc": 2,
+      "type_line": "Creature \u2014 Human",
+      "oracle_text": "Whenever this creature attacks, draw a card.",
+      "power": "2",
+      "toughness": "2",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      },
+      "id": "fixture:participation-attacker"
+    }
+  ],
+  "rulings": []
+}

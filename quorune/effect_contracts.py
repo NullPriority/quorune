@@ -15,6 +15,11 @@ class EffectFamilyContract:
 
 EFFECT_FAMILY_CONTRACTS = (
     EffectFamilyContract(
+        family_id='compiled-emblem-creation.v1', semantic_family='effect.emblem-creation',
+        rule_references=('114.1', '114.2', '114.3', '114.4', '114.5'),
+        operations=frozenset({'create_compiled_emblem'}),
+    ),
+    EffectFamilyContract(
         family_id="state-and-permissions.v1",
         semantic_family="effect.state-permissions",
         rule_references=("609.1", "716.2a"),
@@ -108,6 +113,7 @@ EFFECT_FAMILY_CONTRACTS = (
             "119.2",
             "119.3",
             "119.4",
+            "119.5",
             "608.2c",
             "614.1",
             "616.1",
@@ -120,6 +126,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "lose_life",
                 "lose_life_each_opponent",
                 "lose_life_equal_mana_value",
+                "set_life_total",
             }
         ),
     ),
@@ -177,6 +184,8 @@ EFFECT_FAMILY_CONTRACTS = (
                 "create_token_batch",
                 "create_token_if_no_controlled_subtype",
                 "delayed_trigger",
+                "schedule_fixed_object_action",
+                "resolve_fixed_object_action",
                 "grant_cast_permission",
                 "grant_keyword_until_end_of_turn",
                 "grant_play_without_mana_cost",
@@ -185,6 +194,7 @@ EFFECT_FAMILY_CONTRACTS = (
                 "note",
                 "reorder_top",
                 "transform",
+                "turn_face_up",
             }
         ),
     ),

@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from ...replacement.immutable import FrozenMap, thaw_value
+from ...defined_token_faces import DEFINED_TOKEN_TRANSFORM_KEY
 
 
 _HISTORICAL_GAIN_LIFE_KEY = "builtin:food"
@@ -28,6 +29,12 @@ def builtin_activation_resolution(
 ) -> BuiltinActivationResolution | None:
     """Lower generic activation semantics into immutable resolution effects."""
 
+    if semantic_key == DEFINED_TOKEN_TRANSFORM_KEY:
+        return BuiltinActivationResolution(
+            effects=(FrozenMap({'op':'transform','card':'$source.zone_object',
+                                'expected_transform_count':'$source.transform_count'}),),
+            note='Defined token transform ability resolved',
+        )
     if semantic_key == _HISTORICAL_GAIN_LIFE_KEY:
         return _gain_life_resolution(controller, 3, reason="Food token")
     if semantic_key and semantic_key.startswith("builtin:gain-life:"):

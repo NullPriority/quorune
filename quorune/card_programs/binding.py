@@ -37,9 +37,9 @@ def bind_semantic_program_runtime(
     required,blockers=program_dynamic_runtime_requirements(program)
     unregistered_operations: set[str] = set()
     if getattr(program, "trigger_limit", None) is not None:
-        from ..rules.trigger_limits import validate_program_trigger_limit, TRIGGER_ONCE_PER_TURN_CAPABILITY
-        required.add(TRIGGER_ONCE_PER_TURN_CAPABILITY)
+        from ..rules.trigger_limits import validate_program_trigger_limit,trigger_limit_capabilities
         try:
+            required.update(trigger_limit_capabilities(program.trigger_limit))
             validate_program_trigger_limit(program)
         except (TypeError, ValueError) as exc:
             blockers.add(f"runtime_trigger_limit:invalid:{exc}")

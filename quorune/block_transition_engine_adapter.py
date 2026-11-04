@@ -127,6 +127,9 @@ def _dispatch_block_relationship_triggers(
     engine, event, stack_items, *, put_blocking, already_blocked,
 ):
     participants = {value.object_id: value for value in event.participants}
+    from .rules.block_characteristics import block_characteristic_contexts
+    from .block_characteristic_model import BLOCK_CHARACTERISTIC_CONTEXT
+    characteristic_contexts=block_characteristic_contexts(engine,event)
     sources = tuple(engine._semantic_event_sources(zones={"battlefield"}))
     refs = []
     blocked = set(already_blocked)
@@ -137,14 +140,16 @@ def _dispatch_block_relationship_triggers(
             refs.extend(engine._dispatch_semantic_event(
                 "creature.blocks", _block_event_context(event, blocker,
                     blocked_attacker=attacker.reference,
-                    blocked_attacker_keywords=list(attacker.keywords)),
+                    blocked_attacker_keywords=list(attacker.keywords),
+                    **({'block_pair_event':'creature.blocks',BLOCK_CHARACTERISTIC_CONTEXT:characteristic_contexts[attacker.object_id]} if characteristic_contexts else {})),
                 sources=sources, trigger_batch=stack_items))
         refs.extend(engine._dispatch_semantic_event(
             "creature.becomes_blocked_by", _block_event_context(event, attacker,
                 blocking_creature=blocker.reference,
                 blocking_creature_object_id=blocker.object_id,
                 blocking_creature_logical_object_id=blocker.logical_object_id,
-                blocking_creature_controller=blocker.controller),
+                blocking_creature_controller=blocker.controller,
+                **({'block_pair_event':'creature.becomes_blocked_by',BLOCK_CHARACTERISTIC_CONTEXT:characteristic_contexts[blocker.object_id]} if characteristic_contexts else {})),
             sources=sources, trigger_batch=stack_items))
         if attacker.object_id in blocked:
             continue
@@ -179,10 +184,17 @@ def _block_transition_trigger_items(engine, event, *, put_blocking=False, alread
 def enqueue_block_transition_triggers(engine: Any) -> None:
     """Seal one public block event and merge its triggers before priority."""
     try:
+        from .rules.unblocked_attackers import unblocked_attacker_trigger_items
+        from .rules.unblocked_attackers import unblocked_attacker_occurrences
+        unblocked=unblocked_attacker_occurrences(engine)
         event = build_block_transition(EngineBlockTransitionQuery(engine))
         if event is None:
+            unblocked_items,_unblocked_refs=unblocked_attacker_trigger_items(engine,rows=unblocked)
+            enqueue_trigger_batch(engine,unblocked_items)
             return
         items, occurrences, refs = _block_transition_trigger_items(engine, event)
+        unblocked_items,_unblocked_refs=unblocked_attacker_trigger_items(engine,rows=unblocked)
+        items.extend(unblocked_items)
     except (AbilityFragmentError, BlockTransitionError) as exc:
         raise StateInvariantError(str(exc)) from exc
     engine._log(None, 'combat.block_transition',

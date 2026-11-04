@@ -165,6 +165,8 @@ def apply_static_reductions(
         )
     from .optional_life_costs import apply_optional_life_reduction
     apply_optional_life_reduction(option)
+    from .declared_cost_reductions import apply_declared_cost_reductions
+    apply_declared_cost_reductions(host,card,option,face_down_method=face_down_method)
 
 
 __all__ = [

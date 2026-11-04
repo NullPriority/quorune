@@ -71,6 +71,15 @@ their live evaluation. Compare the resulting presence effects with full
 collection and retain current-ability removal, malformed-descriptor, action,
 save/load and replay controls.
 
+Target-candidate enumeration and Aura-target reference queries share the existing
+characteristic read frame across their synchronous query. Each query releases its
+completed characteristic views on return, so later commands recompute after
+reattachment, removal, control, visibility or characteristic changes. Compare the
+same real-action witness from identical initial identities and retain its full
+authoritative hashes, projection, rejected-command rollback and replay assertions.
+Local witness timings establish a local opportunity; complete protected runs
+establish the pipeline result.
+
 Whole-program cohort probes lazily construct one built-in semantic registry
 per measurement and reuse it for read-only compilation of that measurement's
 cards. Separate measurements construct fresh registries, and probes with no
@@ -684,6 +693,13 @@ malformed, contains duplicate, missing, escaping, or noncanonical paths, or a
 registered consumer reintroduces its own `--fixture` list. Add a required
 fixture once to the manifest; all consumers retain isolated output paths while
 receiving the same composed card set automatically.
+
+After editing fixture payloads, build that composed database locally as well as
+validating the manifest. The build rejects inconsistent records for one Oracle
+ID across files, including empty face encodings and metadata differences that
+isolated test databases cannot expose. Reuse the existing canonical record for
+shared controls; preserve rules text, characteristics and supported format
+legality when reconciling metadata.
 
 `python scripts/build_test_database.py validate-ci-dependencies` proves that
 the set is sufficient. The structural analyzer discovers exact `CardDatabase`

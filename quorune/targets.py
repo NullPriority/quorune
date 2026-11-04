@@ -129,7 +129,7 @@ def _target_relations(raw: Mapping[str, Any]) -> tuple[str, str, str]:
         ("owner", owner),
         ("player", player),
     ):
-        if relation not in {"any", "you", "opponent"}:
+        if relation not in ({"any", "you", "opponent", "spell_owner"} if name=="owner" else {"any", "you", "opponent"}):
             raise ValueError(f"Unknown {name} relation {relation!r}")
     return controller, owner, player
 

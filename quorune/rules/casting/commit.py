@@ -1181,6 +1181,8 @@ def _dispatch_cast_events(
         )
     from ..target_announcements import dispatch_target_announcements
     dispatch_target_announcements(host, item, trigger_batch=trigger_batch)
+    from ..crime import record_crime_for_stack_placement
+    record_crime_for_stack_placement(host,item,trigger_batch=trigger_batch)
     enqueue_trigger_batch(host, trigger_batch)
 
 

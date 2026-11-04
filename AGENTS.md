@@ -405,8 +405,13 @@ The compact CI card database is specifically owned by
 main-smoke, nightly, quick-gate, and local-gate consumers must call
 `scripts/build_test_database.py build-ci --output <path>` and must not copy
 `--fixture` arguments. Run `scripts/build_test_database.py validate-ci` after
-changing its manifest, builder, or any consumer. Focused test-only databases may
-continue to pass their narrow fixtures directly to `build_fixture_database`.
+changing its manifest, builder, or any consumer. That command validates paths
+and consumers; shared fixture payloads also have to merge. After adding or changing
+fixture payloads, also build the canonical compact database with
+`scripts/build_test_database.py build-ci --output local/test-data/ci.sqlite3`;
+identical Oracle IDs must retain one consistent record across fixture files.
+Focused test-only databases may continue to pass their narrow fixtures directly
+to `build_fixture_database`.
 
 Compiler-only tests must construct a minimal `CardRecord` directly instead of
 depending on an incidental card in the local or compact CI database. Tests of
@@ -423,6 +428,12 @@ promoted integration cases to positive witnesses, and use a deliberately
 constructed boundary when an exclusion still needs protection. The
 [testing strategy](docs/testing/strategy.md) owns these three test purposes; do
 not churn unrelated real cards through a generic "unsupported" slot.
+
+Before freezing a grammar expansion for public CI, run its owning compiler test
+class once alongside the focused regression. Check earlier material/residual
+expectations as well as the new positive case, and retain a true unsupported
+neighbor when a former negative becomes supported. Record the command and
+numeric result so those checks can be reused while their source inputs match.
 
 Push the coherent exact head and let public pull-request CI run the fail-closed
 impact-selected Python, generated, package, platform and headless-browser

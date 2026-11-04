@@ -13,14 +13,6 @@ from ..tap_state import untap_permanent
 PROVOKE_CAPABILITY='trigger.keyword.provoke.fixed'
 
 
-def bound_defending_controller_schema(schema,context):
-    if not isinstance(schema,Mapping) or schema.get('controller_seat')!='$context.defending_player':return schema
-    player=context.get('defending_player')
-    if type(player) is not str or not player or player.startswith('$'):
-        raise ValueError('Defending-player target binding is unavailable')
-    return {**schema,'controller_seat':player}
-
-
 def resolve_blocking_requirement(host,effect,*,actor,reason):
     allowed={'op','attacker','blocker','untap_blocker','reason','_runtime_source'}
     if (set(effect)-allowed or effect.get('op')!=BLOCKING_REQUIREMENT_OPERATION

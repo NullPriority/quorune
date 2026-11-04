@@ -44,6 +44,88 @@ def occurrence(**changes) -> ZoneChangeOccurrence:
 
 
 class ZoneTriggerEventModelTests(unittest.TestCase):
+    def test_composition_separates_one_permanent_departure_from_each_physical_arrival(self):
+        from quorune.composition_departure import CompositionZoneFact,CompositionZoneRole
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        parent=ContinuousObjectIdentity('object-1','object-1@2')
+        departure=occurrence(origin='battlefield',destination='graveyard',
+            previous_logical_object_id='object-1@2',current_logical_object_id='object-1@3',
+            previous_characteristics={'type_line':'Artifact Creature — Beast'},
+            composition=CompositionZoneFact(parent,CompositionZoneRole.PERMANENT,2))
+        kinds=[event.kind for event in normalized_zone_trigger_events(departure)]
+        self.assertEqual(1,kinds.count('permanent.leave'));self.assertEqual(1,kinds.count('creature.dies'))
+        self.assertNotIn('card.enter_graveyard',kinds)
+        for index,type_line in enumerate(('Creature — Beast','Artifact')):
+            component=occurrence(object_id='part-'+str(index),card_ref='PART'+str(index),
+                origin='battlefield',destination='graveyard',previous_characteristics={'type_line':'Creature'},
+                current_characteristics={'type_line':type_line},
+                composition=CompositionZoneFact(parent,CompositionZoneRole.COMPONENT,2))
+            kinds=[event.kind for event in normalized_zone_trigger_events(component)]
+            self.assertEqual(['card.enter_graveyard'],kinds)
+
+    def test_composition_token_parent_and_card_parts_keep_independent_histories(self):
+        from types import SimpleNamespace
+        from quorune.composition_departure import CompositionZoneFact,CompositionZoneRole
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        from quorune.zone_trigger_processing import record_zone_change_history
+        parent=ContinuousObjectIdentity('object-1','object-1@2');recorded=[]
+        host=SimpleNamespace(state=SimpleNamespace(turn_history=SimpleNamespace(arrival_history_version=1,
+            graveyard_type_history_version=1,departure_history_version=1)),
+            _record_turn_history=lambda kind,**data:recorded.append((kind,data)))
+        whole=occurrence(origin='battlefield',destination='graveyard',token=True,card_object=False,
+            previous_logical_object_id='object-1@2',current_logical_object_id='object-1@3',
+            previous_characteristics={'type_line':'Creature'},
+            composition=CompositionZoneFact(parent,CompositionZoneRole.PERMANENT,2))
+        card=occurrence(object_id='card-part',origin='battlefield',destination='graveyard',
+            previous_characteristics={'type_line':'Artifact Creature'},current_characteristics={'type_line':'Artifact'},
+            composition=CompositionZoneFact(parent,CompositionZoneRole.COMPONENT,2))
+        token=occurrence(object_id='token-part',origin='battlefield',destination='graveyard',token=True,card_object=False,
+            previous_characteristics={'type_line':'Creature'},
+            composition=CompositionZoneFact(parent,CompositionZoneRole.COMPONENT,2))
+        for item in (whole,card,token):record_zone_change_history(host,item)
+        kinds=[kind for kind,_data in recorded]
+        self.assertEqual(1,kinds.count('permanent_left'));self.assertEqual(1,kinds.count('creature_died'))
+        self.assertEqual(1,kinds.count('card_arrived_graveyard'))
+        arrival=next(data for kind,data in recorded if kind=='card_arrived_graveyard')
+        self.assertEqual({'artifact'},arrival['types'])
+
+    def test_composition_event_wire_is_additive_and_rejects_contradictory_scope(self):
+        from dataclasses import replace
+        from quorune.composition_departure import CompositionZoneFact,CompositionZoneRole
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        ordinary=occurrence();self.assertNotIn('composition',ordinary.to_dict())
+        parent=ContinuousObjectIdentity('object-1','object-1@2')
+        fact=CompositionZoneFact(parent,CompositionZoneRole.PERMANENT,2)
+        self.assertEqual(fact,CompositionZoneFact.from_dict(fact.to_dict()))
+        valid=occurrence(origin='battlefield',destination='graveyard',previous_logical_object_id='object-1@2',
+            composition=fact.to_dict())
+        self.assertEqual(fact.to_dict(),valid.to_dict()['composition'])
+        with self.assertRaises(ValueError):replace(valid,previous_logical_object_id='object-1@4')
+        with self.assertRaises(ValueError):replace(valid,origin='hand')
+        with self.assertRaises(ValueError):replace(valid,destination='battlefield')
+        component=replace(valid,composition=CompositionZoneFact(parent,CompositionZoneRole.COMPONENT,2))
+        with self.assertRaises(ValueError):replace(component,transition_kind=ZoneTransitionKind.SACRIFICE)
+        for changed in ({**fact.to_dict(),'member_count':True},{**fact.to_dict(),'role':'both'},
+                        {**fact.to_dict(),'extra':True}):
+            with self.assertRaises(ValueError):CompositionZoneFact.from_dict(changed)
+
+    def test_entry_cast_information_is_additive_and_bound_to_the_committed_entry(self):
+        from quorune.source_entry_cast_information import EntryCastInformation
+        from quorune.continuous_effect_model import ContinuousObjectIdentity
+        ordinary=occurrence()
+        self.assertNotIn('source_entry_cast_information',ordinary.to_dict())
+        self.assertTrue(all('source_entry_cast_information' not in event.context
+            for event in normalized_zone_trigger_events(ordinary)))
+        info=EntryCastInformation(ContinuousObjectIdentity(ordinary.object_id,'object-1@1'),None)
+        current=occurrence(previous_logical_object_id='object-1@0',current_logical_object_id='object-1@1',
+            source_entry_cast_information=info.to_dict())
+        self.assertEqual(info.to_dict(),current.to_dict()['source_entry_cast_information'])
+        self.assertTrue(any(event.context.get('source_entry_cast_information')==info.to_dict()
+            for event in normalized_zone_trigger_events(current)))
+        with self.assertRaises(ValueError):
+            occurrence(source_entry_cast_information=EntryCastInformation(
+                ContinuousObjectIdentity('other','other@1'),None).to_dict())
+
     def test_anywhere_graveyard_event_reads_destination_facts_and_observers(self):
         for origin, transition_kind in (
             ('battlefield', ZoneTransitionKind.ORDINARY),

@@ -56,6 +56,18 @@ def _target_designation(
     return None
 
 
+def _bound_ability_presence(host,automatic_bounds):
+    """Inherited abilities establish a designation without implying physical faces."""
+    from .composition_characteristics import composition_day_night_bound_modes
+    values=list(automatic_bounds)
+    for card in host.state.cards.values():
+        if getattr(card,'permanent_composition',None) is None:continue
+        try:modes=composition_day_night_bound_modes(host,card)
+        except ValueError as error:raise DayNightError(str(error)) from error
+        values.extend((card,mode) for mode in DayNightBoundMode if mode in modes)
+    return tuple(sorted(values,key=lambda item:(item[0].object_id,item[1].value)))
+
+
 def _commit_designation(
     host: DayNightHost,
     designation: str,
@@ -95,7 +107,7 @@ def synchronize_day_night(
     if type(reason) is not str or not reason:
         raise DayNightError("Day/night synchronization requires a reason")
     bounds = _bound_permanents(host)
-    designation = _target_designation(host.state.day_night, bounds)
+    designation = _target_designation(host.state.day_night, _bound_ability_presence(host,bounds))
     if designation is None:
         return None, ()
     _commit_designation(host, designation, reason=reason)

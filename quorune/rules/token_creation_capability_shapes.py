@@ -14,6 +14,7 @@ from ..ability_fragments import (
     QueryPowerToughnessDefinitionSpec,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
+    ToxicSpec,
     canonical_ability_fragments,
 )
 from ..compiler.token_templates import (
@@ -61,8 +62,33 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
                 from ..replacement.immutable import thaw_value
                 if thaw_value(value)==afterlife_token_effect(quantity):return (AFTERLIFE_CAPABILITY_ID,)
             except FixedTokenProductionError:pass
-        return ('token.creation.fixed_definition',)
+        return (
+            'token.creation.fixed_definition',
+            *token_toxic_definition_dependencies(value['characteristics']),
+        )
     return ()
+
+
+def token_toxic_definition_dependencies(characteristics: Mapping[str, Any]) -> tuple[str, ...]:
+    """Require one typed instance for each printed positive fixed Toxic value."""
+    keywords = characteristics.get("keywords", ())
+    raw = characteristics.get("ability_fragments", ())
+    if not isinstance(keywords, (tuple, list)) or not isinstance(raw, (tuple, list)):
+        raise ValueError("Token keyword and fragment arrays are malformed")
+    fragments = canonical_ability_fragments(raw)
+    toxic = sorted(fragment.value for fragment in fragments if isinstance(fragment, ToxicSpec))
+    printed = []
+    for keyword in keywords:
+        if not isinstance(keyword, str):
+            raise ValueError("Token keyword must be text")
+        if keyword.casefold().startswith("toxic"):
+            match = re.fullmatch(r"Toxic ([1-9]\d*)", keyword)
+            if match is None:
+                raise ValueError("Token Toxic must have a canonical positive fixed value")
+            printed.append(int(match[1]))
+    if sorted(printed) != toxic or len(printed) != len(set(printed)):
+        raise ValueError("Token Toxic keywords require matching typed instances")
+    return ("damage.result.toxic",) if toxic else ()
 
 
 _CREATURE_KEYWORDS = frozenset(
@@ -218,14 +244,18 @@ def _fixed_creature_effect_closure(
     keywords = characteristics.get("keywords", [])
     if (
         not isinstance(keywords, list)
-        or any(keyword not in _CREATURE_KEYWORDS for keyword in keywords)
+        or any(
+            not isinstance(keyword, str)
+            or (keyword not in _CREATURE_KEYWORDS and re.fullmatch(r"Toxic [1-9]\d*", keyword) is None)
+            for keyword in keywords
+        )
         or len(keywords) != len(set(keywords))
     ):
         return None
     capabilities = {"token.creation.fixed_definition"}
     mechanics = {
         _TOKEN_MECHANIC,
-        *(keyword.casefold() for keyword in keywords),
+        *("toxic" if keyword.startswith("Toxic ") else keyword.casefold() for keyword in keywords),
     }
     subtype_text = type_line.split(" — ", 1)[1]
     if name != subtype_text or "Legendary" in type_line:
@@ -239,13 +269,19 @@ def _fixed_creature_effect_closure(
         return None
     if len(fragments) != len(raw_fragments):
         return None
+    try:
+        capabilities.update(token_toxic_definition_dependencies(characteristics))
+    except (AbilityFragmentError, TypeError, ValueError):
+        return None
     from .token_prowess_requirements import token_prowess_definition_dependencies
     try:capabilities.update(token_prowess_definition_dependencies(characteristics))
     except (TypeError,ValueError):return None
     typed_ability_definition = False
     typed_ability_fragment = False
     for fragment in fragments:
-        if isinstance(fragment, AllCreatureTypesCharacteristicDefinitionSpec):
+        if isinstance(fragment, ToxicSpec):
+            capabilities.add("damage.result.toxic")
+        elif isinstance(fragment, AllCreatureTypesCharacteristicDefinitionSpec):
             if "Changeling" not in keywords:
                 return None
             capabilities.add("continuous.characteristics.changeling")
@@ -629,6 +665,8 @@ def fixed_token_creation_covered_mechanics(
     """Return mechanics owned by the closed token-production capabilities."""
 
     covered: set[str] = set()
+    if 'token.creation.defined_transforming' in capability_ids:
+        covered.add('cr-111-tokens')
     if "token.creation.fixed_definition" in capability_ids:
         covered.update(
             {

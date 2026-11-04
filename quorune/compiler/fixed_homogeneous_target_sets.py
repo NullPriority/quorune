@@ -14,6 +14,8 @@ from .return_to_hand_templates import (
     targeted_return_to_hand_effect_template,
 )
 from .tap_state_templates import targeted_tap_state_effect_template
+from .reanimation_templates import (fixed_target_reanimation_effect_template,
+    FIXED_TARGET_REANIMATION_SET_MECHANIC)
 
 
 FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC = "fixed-homogeneous-target-set"
@@ -30,7 +32,7 @@ _COUNT_VALUES = {
     "six": 6,
 }
 _MULTI_TARGET = re.compile(
-    r"(?P<verb>destroy|exile|tap|untap|return) "
+    r"(?P<verb>destroy|exile|tap|untap|return|put) "
     r"(?P<count>up to (?:one|two|three|four|five|six)|one or two|"
     r"two|three|four|five|six)(?P<other> other)? target "
     r"(?P<subject>[^.]+)\.?",
@@ -46,11 +48,13 @@ _OPERATION_LIFT = {
     "exile_public_graveyard_card": "exile_public_graveyard_targets",
     "tap": "tap_targets",
     "untap": "untap_targets",
+    "reanimate": "reanimate_targets",
 }
 
 
 def _singularize_subject(value: str) -> str:
     replacements = (
+        (r"\bunder their owners['’] control\b", "under its owner's control"),
         (r"\btheir owners' hands\b", "its owner's hand"),
         (r"\btheir owner's hands\b", "its owner's hand"),
         (r"\band/or\b", "or"),
@@ -107,7 +111,10 @@ def _compiled_singular(
         compilers = (
             targeted_return_to_hand_effect_template,
             targeted_own_graveyard_return_to_hand_effect_template,
+            fixed_target_reanimation_effect_template,
         )
+    elif verb == "put":
+        compilers = (fixed_target_reanimation_effect_template,)
     elif verb in {"tap", "untap"}:
         compilers = (targeted_tap_state_effect_template,)
     else:
@@ -141,11 +148,15 @@ class FixedHomogeneousTargetSetTemplate:
 
     def __post_init__(self) -> None:
         operation = self.singular_effect.get("op")
+        reanimation=operation=='reanimate'
         reference_fields = set(self.singular_effect) - {"op"}
         if (
             operation not in _OPERATION_LIFT
-            or reference_fields != {"card"}
+            or reference_fields != ({"card","controller","tapped"} if reanimation else {"card"})
             or self.singular_effect.get("card") != "$target.0"
+            or reanimation and (self.singular_effect.get('controller') not in ('$controller','$target.owner.0')
+                or type(self.singular_effect.get('tapped')) is not bool
+                or type(self.maximum_targets) is not int or self.maximum_targets<2)
             or not isinstance(self.singular_target_schema, Mapping)
             or type(self.minimum_targets) is not int
             or type(self.maximum_targets) is not int
@@ -154,7 +165,7 @@ class FixedHomogeneousTargetSetTemplate:
             or type(self.same_owner) is not bool
             or (
                 self.same_owner
-                and operation != "exile_public_graveyard_card"
+                and operation not in {"exile_public_graveyard_card","reanimate"}
             )
         ):
             raise ValueError("Fixed homogeneous target set is unsupported")
@@ -174,6 +185,9 @@ class FixedHomogeneousTargetSetTemplate:
                 "op": _OPERATION_LIFT[str(self.singular_effect["op"])],
                 "cards": "$targets",
                 "maximum_targets": self.maximum_targets,
+                **({'schema_version':1,
+                    'battlefield_controller':'owner' if self.singular_effect['controller']=='$target.owner.0' else 'actor',
+                    'battlefield_tapped':self.singular_effect['tapped']} if self.singular_effect['op']=='reanimate' else {}),
             },
         )
 
@@ -205,6 +219,7 @@ class FixedHomogeneousTargetSetTemplate:
                     (
                         *self.mechanic_ids,
                         FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,
+                        *((FIXED_TARGET_REANIMATION_SET_MECHANIC,) if self.singular_effect['op']=='reanimate' else ()),
                         "cr-115-targets",
                     )
                 )

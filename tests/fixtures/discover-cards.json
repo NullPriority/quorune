@@ -1,0 +1,3770 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "discover_originals_and_boundary_controls",
+  "source": "Pinned original Discover candidates and boundary controls with rulings; explicitly synthetic generic controls verify continuation/payment and are never counted as pinned gains.",
+  "cards": [
+    {
+      "oracle_id": "f0554a8f-32de-4069-9f47-5e06ceb3f09d",
+      "name": "Aloy, Savior of Meridian",
+      "mana_cost": "{3}{G}{U}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Warrior",
+      "oracle_text": "Vigilance, reach\nIn You, All Things Are Possible — Whenever one or more artifact creatures you control attack, discover X, where X is the greatest power among them. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "3",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Reach",
+        "Vigilance",
+        "Discover",
+        "In You, All Things Are Possible"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-10-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "name": "Boom // Bust",
+      "mana_cost": "{1}{R} // {5}{R}",
+      "cmc": 8.0,
+      "type_line": "Sorcery // Sorcery",
+      "oracle_text": "Boom: Destroy target land you control and target land you don't control.\n//\nBust: Destroy all lands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{1}{R}",
+          "name": "Boom",
+          "oracle_text": "Destroy target land you control and target land you don't control.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{5}{R}",
+          "name": "Bust",
+          "oracle_text": "Destroy all lands.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ]
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "name": "Brass's Tunnel-Grinder // Tecutlan, the Searing Rift",
+      "mana_cost": "{2}{R} // ",
+      "cmc": 3.0,
+      "type_line": "Legendary Artifact // Legendary Land — Cave",
+      "oracle_text": "Brass's Tunnel-Grinder: When Brass's Tunnel-Grinder enters, discard any number of cards, then draw that many cards plus one.\nAt the beginning of your end step, if you descended this turn, put a bore counter on Brass's Tunnel-Grinder. Then if there are three or more bore counters on it, remove those counters and transform it. (You descended if a permanent card was put into your graveyard from anywhere.)\n//\nTecutlan, the Searing Rift: (Transforms from Brass's Tunnel-Grinder.)\n{T}: Add {R}.\nWhenever you cast a permanent spell using mana produced by Tecutlan, discover X, where X is that spell's mana value.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Transform",
+        "Discover"
+      ],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "transform",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "R"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}",
+          "name": "Brass's Tunnel-Grinder",
+          "oracle_text": "When Brass's Tunnel-Grinder enters, discard any number of cards, then draw that many cards plus one.\nAt the beginning of your end step, if you descended this turn, put a bore counter on Brass's Tunnel-Grinder. Then if there are three or more bore counters on it, remove those counters and transform it. (You descended if a permanent card was put into your graveyard from anywhere.)",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Artifact"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Tecutlan, the Searing Rift",
+          "oracle_text": "(Transforms from Brass's Tunnel-Grinder.)\n{T}: Add {R}.\nWhenever you cast a permanent spell using mana produced by Tecutlan, discover X, where X is that spell's mana value.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Legendary Land — Cave"
+        }
+      ]
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "name": "Buried Treasure",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact — Treasure",
+      "oracle_text": "{T}, Sacrifice this artifact: Add one mana of any color.\n{5}, Exile this card from your graveyard: Discover 5. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 5 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "name": "Caparocti Sunborn",
+      "mana_cost": "{2}{R}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Soldier",
+      "oracle_text": "Whenever Caparocti Sunborn attacks, you may tap two untapped artifacts and/or creatures you control. If you do, discover 3. (Exile cards from the top of your library until you exile a nonland card with mana value 3 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2f5bf099-2e01-4e1c-9ebf-0ce0ac66939e",
+      "name": "Centaur Courser",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Centaur Warrior",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-07-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "119d9671-61ba-4629-89b1-f94bdec5cb74",
+      "name": "Chimil, the Inner Sun",
+      "mana_cost": "{6}",
+      "cmc": 6.0,
+      "type_line": "Legendary Artifact",
+      "oracle_text": "Spells you control can't be countered.\nAt the beginning of your end step, discover 5. (Exile cards from the top of your library until you exile a nonland card with mana value 5 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "name": "Contest of Claws",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Target creature you control deals damage equal to its power to another target creature. If excess damage was dealt this way, discover X, where X is that excess damage. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "name": "Curator of Sun's Creation",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Artificer",
+      "oracle_text": "Whenever you discover, discover again for the same value. This ability triggers only once each turn.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "name": "Daring Discovery",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Up to three target creatures can't block this turn.\nDiscover 4. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "name": "Dead // Gone",
+      "mana_cost": "{R} // {2}{R}",
+      "cmc": 4.0,
+      "type_line": "Instant // Instant",
+      "oracle_text": "Dead: Dead deals 2 damage to target creature.\n//\nGone: Return target creature you don't control to its owner's hand.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "split",
+      "released_at": "2021-03-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{R}",
+          "name": "Dead",
+          "oracle_text": "Dead deals 2 damage to target creature.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}",
+          "name": "Gone",
+          "oracle_text": "Return target creature you don't control to its owner's hand.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "name": "Digsite Conservator",
+      "mana_cost": "{2}",
+      "cmc": 2.0,
+      "type_line": "Artifact Creature — Gnome",
+      "oracle_text": "Sacrifice this creature: Exile up to four target cards from a single graveyard. Activate only as a sorcery.\nWhen this creature dies, you may pay {4}. If you do, discover 4. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "2",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "name": "Dinosaur Egg",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Dinosaur Egg",
+      "oracle_text": "Evolve (Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a +1/+1 counter on this creature.)\nWhen this creature dies, you may discover X, where X is its toughness.",
+      "power": "0",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Evolve",
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "name": "Ellie and Alan, Paleontologists",
+      "mana_cost": "{2}{G}{W}{U}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Scientist",
+      "oracle_text": "{T}, Exile a creature card from your graveyard: Discover X, where X is the mana value of the exiled card. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "2",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7a51780a-fa28-4ee0-94c7-4330800ca9cb",
+      "name": "Endless One",
+      "mana_cost": "{X}",
+      "cmc": 0.0,
+      "type_line": "Creature — Eldrazi",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "name": "Etali's Favor",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature you control\nWhen this Aura enters, discover 3. (Exile cards from the top of your library until you exile a nonland card with mana value 3 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)\nEnchanted creature gets +1/+1 and has trample.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover",
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
+    },
+    {
+      "oracle_id": "af20f452-5cb9-47cc-9a81-71f23204ddd0",
+      "name": "Franklin Richards, Ascendant",
+      "mana_cost": "{5}{R}",
+      "cmc": 6.0,
+      "type_line": "Legendary Creature — Mutant Hero",
+      "oracle_text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, discover 6. (Exile cards from the top of your library until you exile a nonland card with mana value 6 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "70000000-0000-4000-8000-000000000004",
+      "name": "Generic Discover Cast X",
+      "mana_cost": "{X}{R}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Discover X.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "70000000-0000-4000-8000-000000000003",
+      "name": "Generic Discover Double Cost",
+      "mana_cost": "{1}{B}",
+      "cmc": 2,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice two artifacts.\nDestroy target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "70000000-0000-4000-8000-000000000001",
+      "name": "Generic Discover Followup",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Discover 4. Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "70000000-0000-4000-8000-000000000005",
+      "name": "Generic Discover Public Quantity",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Discover X, where X is the number of artifacts you control.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "70000000-0000-4000-8000-000000000002",
+      "name": "Generic Discover Zero",
+      "mana_cost": "{R}",
+      "cmc": 1,
+      "type_line": "Sorcery",
+      "oracle_text": "Discover 0. Draw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-01",
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "name": "Geological Appraiser",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Artificer",
+      "oracle_text": "When this creature enters, if you cast it, discover 3. (Exile cards from the top of your library until you exile a nonland card with mana value 3 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "banned",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "494c819d-7d73-432b-8c96-4cb9dcd31094",
+      "name": "Grasp of Darkness",
+      "mana_cost": "{B}{B}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Target creature gets -4/-4 until end of turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "name": "Hidden Cataract",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Cave",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{4}{U}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [
+        "U"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "name": "Hidden Courtyard",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Cave",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W}.\n{4}{W}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "name": "Hidden Necropolis",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Cave",
+      "oracle_text": "This land enters tapped.\n{T}: Add {B}.\n{4}{B}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [
+        "B"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "name": "Hidden Nursery",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Cave",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G}.\n{4}{G}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "name": "Hidden Volcano",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land — Cave",
+      "oracle_text": "This land enters tapped.\n{T}: Add {R}.\n{4}{R}, {T}, Sacrifice this land: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "name": "Hill Giant",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Giant",
+      "oracle_text": "",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-07-13",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "name": "Hit the Mother Lode",
+      "mana_cost": "{4}{R}{R}{R}",
+      "cmc": 7.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Discover 10. If the discovered card's mana value is less than 10, create a number of tapped Treasure tokens equal to the difference. (To discover 10, exile cards from the top of your library until you exile a nonland card with mana value 10 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Treasure",
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "name": "Hurl into History",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target artifact or creature spell. Discover X, where X is that spell's mana value. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "name": "Long-Range Sensor",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "Whenever you attack a player, put a charge counter on this artifact.\n{1}, Remove two charge counters from this artifact: Discover 4. Activate only as a sorcery. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "name": "Monstrous Vortex",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Whenever you cast a creature spell with power 5 or greater, discover X, where X is that spell's mana value. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-06-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "name": "Pantlaza, Sun-Favored",
+      "mana_cost": "{2}{R}{G}{W}",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Dinosaur",
+      "oracle_text": "Whenever Pantlaza or another Dinosaur you control enters, you may discover X, where X is that creature's toughness. Do this only once each turn. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "name": "Primordial Gnawer",
+      "mana_cost": "{4}{B}",
+      "cmc": 5.0,
+      "type_line": "Creature — Insect Horror",
+      "oracle_text": "When this creature dies, discover 3. (Exile cards from the top of your library until you exile a nonland card with mana value 3 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "5",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "name": "Quintorius Kand",
+      "mana_cost": "{3}{R}{W}",
+      "cmc": 5.0,
+      "type_line": "Legendary Planeswalker — Quintorius",
+      "oracle_text": "Whenever you cast a spell from exile, Quintorius Kand deals 2 damage to each opponent and you gain 2 life.\n+1: Create a 3/2 red and white Spirit creature token.\n−3: Discover 4.\n−6: Exile any number of target cards from your graveyard. Add {R} for each card exiled this way. You may play those cards this turn.",
+      "power": null,
+      "toughness": null,
+      "loyalty": "4",
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "name": "Swashbuckler's Whip",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature has reach, \"{2}, {T}: Tap target artifact or creature,\" and \"{8}, {T}: Discover 10.\" (Exile cards from the top of your library until you exile a nonland card with mana value 10 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)\nEquip {1}",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Discover",
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "name": "Trumpeting Carnosaur",
+      "mana_cost": "{4}{R}{R}",
+      "cmc": 6.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "Trample\nWhen this creature enters, discover 5.\n{2}{R}, Discard this card: It deals 3 damage to target creature or planeswalker.",
+      "power": "7",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "name": "Walk with the Ancestors",
+      "mana_cost": "{4}{G}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Return up to one target permanent card from your graveyard to your hand. Discover 4. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "name": "Zoetic Glyph",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant artifact\nEnchanted artifact is a Golem creature with base power and toughness 5/4 in addition to its other types.\nWhen this Aura is put into a graveyard from the battlefield, discover 3.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Discover",
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the target spell has {X} in its mana cost, use the value chosen for X when calculating that spell's mana value."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "016718df-2eb5-499f-adea-18231c0375b3",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You \"discover\" when you finish the process of revealing cards, exiling an appropriate nonland card, casting that card or putting it into your hand, and putting the remaining exiled cards on the bottom of your library in a random order, even if one or more of those actions were impossible for some reason."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "0e636c98-67c7-4f02-b909-5d43e276fa41",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the exiled card has {X} in its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "0f4d513e-100d-4cbb-b919-09249cef5fad",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "119d9671-61ba-4629-89b1-f94bdec5cb74",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell or ability that counters spells can still target spells that can't be countered. When that spell or ability resolves, the uncounterable spell won't be countered, but any additional effects of the countering spell or ability will still happen."
+    },
+    {
+      "oracle_id": "119d9671-61ba-4629-89b1-f94bdec5cb74",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Chimil, the Inner Sun's first ability applies only while it's on the battlefield. While it's a spell, it can be countered."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "1a26e2d6-6bfc-4cdc-9bd6-8b37a9be2961",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Effects that modify a creature's power and/or toughness, such as the ones created by Giant Growth, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch power and toughness."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the artifact was already a creature, its base power and toughness will become 5/4. This overwrites any previous effects that set the creature's base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Zoetic Glyph becomes attached to the artifact will overwrite this effect."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the creature Zoetic Glyph would enchant is an illegal target as Zoetic Glyph tries to resolve, it won't resolve. It's put into your graveyard from the stack, not the battlefield, so its last ability won't trigger."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The resulting artifact creature will be able to attack on your turn if it's been under your control continuously since the turn began. That is, it doesn't matter how long it's been a creature, just how long it's been on the battlefield."
+    },
+    {
+      "oracle_id": "1c21efcf-1007-45bb-ba21-ac33c2a8d751",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The artifact retains any types, subtypes, or supertypes it has. Notably, an Equipment that becomes an artifact creature usually can't be attached to another creature. If it was attached to a creature, it becomes unattached."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If you can’t cast the discovered card (perhaps because there are no legal targets for the spell), you’ll put it into your hand."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "Long-Range Sensor’s first ability will trigger once for each player you attack."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect’s discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect’s discover value) but not both halves."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If you cast a spell “without paying its mana cost,” you can’t choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "358297cd-4a9f-48e2-aaa5-131b0849f8dc",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "56f5ed8d-ef53-4766-9ef3-1e24a10e267b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "5cdb69e5-9395-4ef6-be18-71e3dd70df66",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine™ with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "6e27956e-ba2f-41a9-8e39-ec54424591b6",
+      "published_at": "2024-06-07",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If Caparocti Sunborn is untapped as its ability is resolving (for example, if it has vigilance), it can be tapped for its own ability."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You can tap any two untapped artifacts and/or creatures you control, including creatures you haven't controlled continuously since the beginning of your most recent turn, for Caparocti Sunborn's ability."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "7f87a770-af47-4345-8dc1-0a1e8bae75c5",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "80ca6596-9763-4310-b30b-7153ade9f567",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You must follow all normal timing rules for a card you play with Quintorius Kand's last ability and, if it's a spell, you must pay its costs to cast it."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "91babc5f-ebeb-4894-8c35-b0f60249cb80",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "927979d7-9b5c-4448-aef0-baf2907a89f1",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Geological Appraiser's triggered ability triggers if you cast it from any zone. It doesn't trigger if you put Geological Appraiser onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "a1c7cd7a-0795-4135-b787-effeb981d95b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You won't create any Treasure tokens until you finish discovering. For example, if the card you discover has \"As an additional cost to cast this spell, sacrifice an artifact,\" you can't sacrifice one of the Treasures from Hit the Mother Lode to pay that additional cost."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "a49900b3-cc34-428f-806d-71861dc8059d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You can cast Daring Discovery with no targets and just discover 4. However, if you choose any targets, and all of those targets are illegal by the time Daring Discovery tries to resolve, it won't resolve and none of its effects will happen. You won't discover 4. As long as one target remains legal, any legal targets won't be able to block this turn, any illegal targets won't be affected, and you'll discover 4."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "a9564593-b5a6-4a83-be1e-2af8caf647d7",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Whenever a creature enters the battlefield under your control, check its power and toughness against the power and toughness of the creature with evolve. If neither stat of the new creature is greater, evolve won't trigger at all."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If multiple creatures enter the battlefield at the same time, evolve may trigger multiple times, although the stat comparison will take place each time one of those abilities tries to resolve. For example, if you control a 2/2 creature with evolve and two 3/3 creatures enter the battlefield, evolve will trigger twice. The first ability will resolve and put a +1/+1 counter on the creature with evolve. When the second ability tries to resolve, neither the power nor the toughness of the new creature is greater than that of the creature with evolve, so that ability does nothing."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Multiple instances of evolve trigger separately and, similar to above, the stat comparison takes place for each one independently as they try to resolve."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When comparing the stats of the two creature for evolve, you always compare power to power and toughness to toughness."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When comparing the stats as the evolve ability resolves, it's possible that the stat that's greater changes from power to toughness or vice versa. If this happens, the ability will still resolve and you'll put a +1/+1 counter on the creature with evolve. For example, if you control a 2/2 creature with evolve and a 1/3 creature enters the battlefield under your control, its toughness is greater so evolve will trigger. In response, the 1/3 creature gets +2/-2. When the evolve trigger tries to resolve, its power is greater. You'll put a +1/+1 counter on the creature with evolve."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If evolve triggers, the stat comparison will happen again when the ability tries to resolve. If neither stat of the new creature is greater, the ability will do nothing. If the creature that entered the battlefield leaves the battlefield before evolve tries to resolve, use its last known power and toughness to compare the stats."
+    },
+    {
+      "oracle_id": "ac4d5a97-6177-4eac-b0f2-cf10531ad879",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some cards refer to the number of times a player descended this turn. Those cards care about the number of permanent cards put into that player's graveyard from anywhere this turn."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A permanent card is an artifact, battle, creature, enchantment, land, or planeswalker card. Tokens are not cards, and while tokens are put into the graveyard before ceasing to exist, that action doesn't count as a player having descended."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "In either case, it doesn't matter if those cards are still in that player's graveyard."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some cards refer to a player who has \"descended this turn.\" This means that a permanent card has been put into that player's graveyard from anywhere this turn."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You choose how many cards to discard as the first ability of Brass's Tunnel-Grinder resolves. You may choose to discard no cards and just draw a card."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If a permanent spell cast using mana produced by Tecutlan, the Searing Rift has {X} in its mana cost, use the value chosen for X when calculating that spell's mana value."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Abilities that begin with \"At the beginning of your end step, if you descended this turn\" will trigger only once during your end step, no matter how many times you descended this turn. However, if you haven't descended this turn as your end step begins, the ability won't trigger at all. It's not possible to put a permanent card into your graveyard during the end step in time to have the ability trigger."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Tecutlan, the Searing Rift's triggered ability will resolve before the spell that caused it to trigger."
+    },
+    {
+      "oracle_id": "af1553eb-4f9f-4335-9078-56649bd8d8fc",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Multiple cards have abilities that begin with \"At the beginning of your end step, if you descended this turn.\" These cards don't need to have been under your control at the time you descended. For example, if a permanent card is put into your graveyard during your first main phase and you cast Stalactite Stalker your second main phase, its ability will trigger at the beginning of your end step."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Once you decide to discover using Pantlaza's ability, that ability will stop triggering for the duration of that turn."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The value of X is calculated only once, as the ability resolves. If the creature has left the battlefield, use its toughness as it last existed on the battlefield."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "b828ba28-e98d-498b-9ab4-d4aa7143e407",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "ce657a2e-461b-45fd-ab98-35b5c8512777",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Digsite Conservator's triggered ability will trigger if it dies for any reason, not only because you sacrificed it due to its activated ability."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "ced2ae56-988a-4c60-93d0-85a2261be72c",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "df98b93b-0aa6-4bea-9d8d-798ebc795b0b",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "e19d5071-4ea1-4883-b067-a21e553f96e0",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Excess damage has been dealt to a creature if the damage dealt to it is greater than lethal damage. Usually, this means damage greater than its toughness, although damage already marked on the creature is taken into account."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "e30d5114-40d7-4dc5-8067-9c5e9625e097",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "f2ef8bda-373d-4387-900d-0f1b6ccf72e9",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "f780ee53-62b0-4c32-b5b7-047651f48e5f",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If one of Boom's targets becomes an illegal target, the other is still destroyed."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Each split card is a single card. For example, if you discard a split card, you've discarded one card, not two. If an effect counts the number of sorcery cards in your graveyard, Assault // Battery counts once, not twice."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Split cards have two card faces on a single card. The characteristics of the half you didn't cast are ignored while the spell is on the stack."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A split card's characteristics are a combination of its two halves while it is not on the stack. For example, Assault // Battery has a mana value of 5 while it is in your library. If an effect allows you to search your library for a card with mana value 4 or less, you can't find Assault // Battery."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one of those names, but not both."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you copy a spell that's half of a split card, the copy copies that same half. For example, if you copy Assault, the copy is also Assault, not Battery."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with certain characteristics, consider only the characteristics of the half you're casting. For example, if an effect allows you to cast a sorcery spell with mana value 2 or less from among cards in your graveyard, you could cast Assault this way, but not Battery."
+    },
+    {
+      "oracle_id": "514fdac0-95f4-4034-b891-283fe0fb6da6",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "To cast a split card, choose one of its halves to cast. There's no way to cast both halves of this split card."
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Split cards have two card faces on a single card. The characteristics of the half you didn't cast are ignored while the spell is on the stack."
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Each split card is a single card. For example, if you discard a split card, you've discarded one card, not two. If an effect counts the number of sorcery cards in your graveyard, Assault // Battery counts once, not twice."
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you copy a spell that's half of a split card, the copy copies that same half. For example, if you copy Assault, the copy is also Assault, not Battery."
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "To cast a split card, choose one of its halves to cast. There's no way to cast both halves of this split card."
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one of those names, but not both."
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast a spell with certain characteristics, consider only the characteristics of the half you're casting. For example, if an effect allows you to cast a sorcery spell with mana value 2 or less from among cards in your graveyard, you could cast Assault this way, but not Battery."
+    },
+    {
+      "oracle_id": "86790a10-c564-44b7-a177-1e66ab9afe77",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A split card's characteristics are a combination of its two halves while it is not on the stack. For example, Assault // Battery has a mana value of 5 while it is in your library. If an effect allows you to search your library for a card with mana value 4 or less, you can't find Assault // Battery."
+    }
+  ]
+}

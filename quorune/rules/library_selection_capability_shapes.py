@@ -87,6 +87,11 @@ def fixed_library_selection_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    if type(effect.get('schema_version')) is int and effect['schema_version']==3:
+        from ..library_battlefield_model import library_battlefield_payload_dependencies
+        try:required=library_battlefield_payload_dependencies(effect)
+        except (TypeError,ValueError,KeyError):return ()
+        return required if effect.get('player')=='$controller' else ()
     version_two=effect.get('schema_version')==2 and type(effect.get('schema_version')) is int
     expected=_EFFECT_FIELDS|{'schema_version','selected_destination'} if version_two else _EFFECT_FIELDS
     if set(effect) != expected or version_two and (effect.get('selected_destination')!='library_top'

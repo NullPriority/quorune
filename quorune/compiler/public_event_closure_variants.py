@@ -1,11 +1,14 @@
 from __future__ import annotations
 from .received_damage_bindings import RECEIVED_PERMANENT_VARIANTS
 from .designation_event_bindings import DESIGNATION_EVENT_VARIANTS
+from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT
 
 """Finite public event variants admitted by the shared result composer."""
 
 PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        'source_attacks_unblocked',
+        DAMAGE_PERMANENT_VARIANT,
         'source_damage_death_history',
         'public_anywhere_graveyard_card',
         'singular_qualified_attack',

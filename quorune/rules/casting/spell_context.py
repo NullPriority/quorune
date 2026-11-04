@@ -8,6 +8,7 @@ from ..action_proposals import thaw_json
 from ...evoke import EVOKE_PAYMENT_FIELD
 from ...kicker import KICKER_MECHANIC_ID
 from ...morph import MORPH_CAST_METHOD
+from ...mutate_model import MUTATE_PAYMENT_FIELD
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from .multikicker_costs import multikicker_cast_context
 from .replicate_costs import replicate_cast_context
@@ -61,6 +62,8 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         "granted_improvise": used_improvise,
         "cost_option": proposal.cost_option_id,
         'kicked': selected_option.get('kind') == KICKER_MECHANIC_ID,
+        **({MUTATE_PAYMENT_FIELD:copy.deepcopy(selected_option[MUTATE_PAYMENT_FIELD])}
+            if MUTATE_PAYMENT_FIELD in selected_option else {}),
         **characteristic_stack_context(details),
         **lifecycle_context,
         **_fixed_cast_lifecycle_cost_context(costs),

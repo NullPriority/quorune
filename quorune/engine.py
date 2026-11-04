@@ -3,7 +3,6 @@ from .characteristic_read_frames import characteristic_read_method
 
 from .target_source import stack_targeting_source
 from .entry_copy import copiable_oracle_id
-from .carddb_characteristics import copiable_card_characteristics
 from .rules.enlist import enlist_offer_rows,prepare_enlist_costs,commit_enlist_costs,enlist_trigger_items
 from .rules.exert import exert_offer_rows,prepare_exert_costs,commit_exert_costs
 
@@ -809,6 +808,9 @@ class CommanderEngine(
         )
 
     def _assert_invariants(self) -> None:
+        from .composition_storage import validate_composition_membership
+        try:validate_composition_membership(self.state)
+        except ValueError as exc:raise StateInvariantError(str(exc)) from exc
         membership: dict[str, list[tuple[str, str]]] = {}
         for seat, player in self.state.players.items():
             for zone, ids in player.zones.items():
@@ -944,20 +946,6 @@ class CommanderEngine(
 
     def display_name(self, object_id: str) -> str:
         return str(self._effective_card_data(object_id).get("name") or self.state.cards[object_id].printed_name)
-
-    def _copyable_characteristics(
-        self, card: CardInstance
-    ) -> dict[str, Any]:
-        from .face_down_copy import current_face_down_copy_values
-        values=current_face_down_copy_values(self,card)
-        if values is not None:return values
-        record = self.card_record(card)
-        base = self._compiled_base_characteristics(
-            card,
-            record,
-            error_type=GameRuleError,
-        )
-        return copiable_card_characteristics(card, record, base)
 
     def _resolve_object(
         self,
@@ -1295,6 +1283,8 @@ class CommanderEngine(
         transition_kinds: Mapping[
             str, ZoneTransitionKind
         ] | None = None,
+        tapped: bool | None = None,
+        destination_controllers: Mapping[str,str] | None = None,
     ) -> list[CardInstance]:
         """Compatibility facade for one simultaneous zone transaction."""
 
@@ -1304,6 +1294,7 @@ class CommanderEngine(
             log=log,
             replacement_selections=replacement_selections,
             transition_kinds=transition_kinds,
+            tapped=tapped,destination_controllers=destination_controllers,
         )
 
     def shuffle_library(self, seat: str, *, reason: str = "shuffle") -> None:
@@ -3411,7 +3402,7 @@ class CommanderEngine(
                 self,
                 program,
                 source=source,
-                context=item.context,
+                context=item.context,controller=item.controller,source_object_id=item.source_object_id,
             )
             if not condition_holds:
                 self.state.stack.remove(item)
@@ -3570,12 +3561,14 @@ class CommanderEngine(
         ref = self._next_ref("O")
         object_id = self._stable_runtime_id("copy-object", ref)
         copied_values = copy.deepcopy(dict(characteristics))
-        from .face_down_copy import copy_object_identity
-        name,oracle_id,active_face=copy_object_identity(self,source,copied_values,ref)
+        from .token_copy_faces import copied_object_name,copied_object_oracle_id
+        name = copied_object_name(self,source,copied_values)
+        oracle_id = copied_object_oracle_id(self,source,copied_values,ref)
         public = zone in PUBLIC_ZONES or zone in {
             "battlefield",
             "stack",
         }
+        from .token_copy_faces import copied_object_active_face,copied_object_annotations
         card = CardInstance(
             object_id=object_id,
             ref=ref,
@@ -3586,17 +3579,8 @@ class CommanderEngine(
             zone=zone,
             object_kind=object_kind,
             zone_timestamp=self._next_zone_timestamp(),
-            active_face=active_face,
-            annotations={
-                "copy_overrides": copied_values,
-                **(
-                    {"copied_from": source.object_id}
-                    if source is not None
-                    else {
-                        "token_characteristics": copied_values,
-                    }
-                ),
-            },
+            active_face=copied_object_active_face(self,source,copied_values,object_kind=object_kind,zone=zone),
+            annotations=copied_object_annotations(self,source,copied_values,object_kind=object_kind,zone=zone),
             known_to=(
                 list(self.seats) if public else [controller]
             ),
@@ -3604,7 +3588,8 @@ class CommanderEngine(
                 list(self.seats) if public else []
             ),
         )
-        self.state.cards[object_id] = card
+        from .game_object_store import GameObjectStore
+        GameObjectStore(self).commit(upserts=(card,))
         if zone != "stack":
             self.state.players[controller].zones[zone].append(
                 object_id
@@ -3664,7 +3649,7 @@ class CommanderEngine(
         original_card = self.state.cards.get(target.card_object_id or "")
         original_data = (
             dict(copiable_characteristics) if copiable_characteristics is not None
-            else self._copyable_characteristics(original_card) if original_card is not None else {}
+            else self._spell_copy_characteristics(original_card) if original_card is not None else {}
         )
         original_types, _, _ = self._type_parts(
             str(original_data.get("type_line") or "")
@@ -6907,66 +6892,10 @@ class CommanderEngine(
         reason: str = "emblem effect",
     ) -> str:
         """Create a public noncard, nonpermanent command-zone object."""
+        from .emblems import create_emblem as create_emblem_object
 
-        self._require_seat(owner, in_game=True)
-        normalized_abilities = [
-            str(ability).strip() for ability in abilities
-        ]
-        if (
-            not normalized_abilities
-            or any(not ability for ability in normalized_abilities)
-        ):
-            raise GameRuleError(
-                "An emblem must have at least one nonempty ability"
-            )
-        ref = self._next_ref("E")
-        object_id = self._stable_runtime_id("emblem-object", ref)
-        emblem = CardInstance(
-            object_id=object_id,
-            ref=ref,
-            oracle_id=(
-                "custom-emblem:"
-                + self._stable_runtime_id("emblem-oracle", ref)
-            ),
-            printed_name=str(display_label or "Emblem"),
-            owner=owner,
-            controller=owner,
-            zone="command",
-            object_kind="emblem",
-            zone_timestamp=self._next_zone_timestamp(),
-            annotations={
-                "display_label": str(display_label or "Emblem"),
-                "emblem_abilities": normalized_abilities,
-                "emblem_semantic_key": semantic_key,
-                "object_characteristics": {
-                    "type_line": "",
-                    "oracle_text": "\n".join(normalized_abilities),
-                    "colors": [],
-                    "keywords": [],
-                },
-            },
-            known_to=list(self.seats),
-            revealed_to=list(self.seats),
-        )
-        self.state.cards[object_id] = emblem
-        self.state.players[owner].zones["command"].append(object_id)
-        self.state.players[owner].stats["emblem_objects_v1"] = True
-        self._log(
-            owner,
-            "emblem.create",
-            f"{owner} created {emblem.printed_name}.",
-            {
-                "object": ref,
-                "label": emblem.printed_name,
-                "abilities": list(normalized_abilities),
-                "semantic_key": semantic_key,
-                "reason": reason,
-            },
-            importance=3,
-            changed_objects=[object_id],
-            changed_players=[owner],
-        )
-        return ref
+        return create_emblem_object(self, owner, abilities=abilities,
+            display_label=display_label, semantic_key=semantic_key, reason=reason)
 
     def create_token(
         self,

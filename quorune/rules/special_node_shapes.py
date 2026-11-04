@@ -59,6 +59,9 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC,FACE_UP_EFFECT_OPERATION,face_up_node_capabilities
+    if FACE_UP_EFFECT_MECHANIC in mechanics or any(effect.get('op')==FACE_UP_EFFECT_OPERATION for effect in effects):
+        return face_up_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics)
     if 'all-kind-counter-doubling' in mechanics and 'any-number-target-set' not in mechanics:
         from .all_kind_counter_shapes import all_kind_counter_node_capabilities
         return all_kind_counter_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)

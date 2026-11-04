@@ -1,0 +1,2466 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "source_entry_cast_originals",
+  "source": "Pinned source-condition cohort and actual reanimation/entry-copy controls, reusing the canonical entry-copy record; source/proxy counts are not support.",
+  "cards": [
+    {
+      "oracle_id": "8b1e6b7c-892d-4058-b183-9121cdd623f0",
+      "name": "Angel of the Dire Hour",
+      "mana_cost": "{5}{W}{W}",
+      "cmc": 7.0,
+      "type_line": "Creature — Angel",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, if you cast it from your hand, exile all attacking creatures.",
+      "power": "5",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "858067f9-eb1f-4569-9831-30441cba5f90",
+      "name": "Annie Flash, the Veteran",
+      "mana_cost": "{3}{R}{G}{W}",
+      "cmc": 6.0,
+      "type_line": "Legendary Creature — Human Rogue",
+      "oracle_text": "Flash\nWhen Annie Flash enters, if you cast it, return target permanent card with mana value 3 or less from your graveyard to the battlefield tapped.\nWhenever Annie Flash becomes tapped, exile the top two cards of your library. You may play those cards this turn.",
+      "power": "4",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "name": "Arcane Proxy",
+      "mana_cost": "{7}",
+      "cmc": 7.0,
+      "type_line": "Artifact Creature — Wizard",
+      "oracle_text": "Prototype {1}{U}{U} — 2/1 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\nWhen this creature enters, if you cast it, exile target instant or sorcery card with mana value less than or equal to this creature's power from your graveyard. Copy that card. You may cast the copy without paying its mana cost.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Prototype"
+      ],
+      "produced_mana": [],
+      "layout": "prototype",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0fb9a8a2-4331-4259-9460-a37397554962",
+      "name": "Bringer of the Last Gift",
+      "mana_cost": "{6}{B}{B}",
+      "cmc": 8.0,
+      "type_line": "Creature — Vampire Demon",
+      "oracle_text": "Flying\nWhen this creature enters, if you cast it, each player sacrifices all other creatures they control. Then each player returns all creature cards from their graveyard that weren't put there this way to the battlefield.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1f6056be-67c8-40a9-86ef-1606961644eb",
+      "name": "Cacophony Unleashed",
+      "mana_cost": "{5}{B}{B}",
+      "cmc": 7.0,
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, if you cast it, destroy all nonenchantment creatures.\nWhenever this enchantment or another enchantment you control enters, until end of turn, this enchantment becomes a legendary 6/6 Nightmare God creature with menace and deathtouch. It's still an enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7f3f7fb0-da18-467b-bf57-2ded458fda4d",
+      "name": "Coal Stoker",
+      "mana_cost": "{3}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "When this creature enters, if you cast it from your hand, add {R}{R}{R}.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2023-01-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ed7ba558-5341-4c7b-a9c5-b382dee88a13",
+      "name": "Crackling Spellslinger",
+      "mana_cost": "{3}{R}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Human Wizard",
+      "oracle_text": "Flash\nWhen this creature enters, if you cast it, the next instant or sorcery spell you cast this turn has storm. (When you cast that spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "name": "Cresting Mosasaurus",
+      "mana_cost": "{6}{U}{U}",
+      "cmc": 8.0,
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "Emerge {6}{U} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen this creature enters, if you cast it, return each non-Dinosaur creature to its owner's hand.",
+      "power": "4",
+      "toughness": "8",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Emerge"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "1d34e78e-4fe9-44e1-88d3-a98fd64555a9",
+      "name": "Dread Cacodemon",
+      "mana_cost": "{7}{B}{B}{B}",
+      "cmc": 10.0,
+      "type_line": "Creature — Demon",
+      "oracle_text": "When this creature enters, if you cast it from your hand, destroy all creatures your opponents control, then tap all other creatures you control.",
+      "power": "8",
+      "toughness": "8",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c0a18a53-d520-4795-9b3b-0f93bcf35848",
+      "name": "Eon Frolicker",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Creature — Elemental Otter",
+      "oracle_text": "Flying\nWhen this creature enters, if you cast it, target opponent takes an extra turn after this one. Until your next turn, you and planeswalkers you control gain protection from that player. (You and planeswalkers you control can't be targeted, dealt damage, or enchanted by anything controlled by that player.)",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "13d92af9-a6e2-4847-b2e9-179fe0cc840e",
+      "name": "Furnace Dragon",
+      "mana_cost": "{6}{R}{R}{R}",
+      "cmc": 9.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nFlying\nWhen this creature enters, if you cast it from your hand, exile all artifacts.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Affinity"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2004-02-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "name": "Geological Appraiser",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Artificer",
+      "oracle_text": "When this creature enters, if you cast it, discover 3. (Exile cards from the top of your library until you exile a nonland card with mana value 3 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Discover"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "banned",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "62855d00-4a6b-45a5-a1c0-2e7699e821cb",
+      "name": "Herald of the Forgotten",
+      "mana_cost": "{6}{W}{W}",
+      "cmc": 8.0,
+      "type_line": "Creature — Cat Beast",
+      "oracle_text": "Flying\nWhen this creature enters, if you cast it, return any number of target permanent cards with cycling abilities from your graveyard to the battlefield.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ce09c5b0-9dd4-4f73-9f3f-dfbd829813e4",
+      "name": "Iridescent Tiger",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Cat",
+      "oracle_text": "When this creature enters, if you cast it, add {W}{U}{B}{R}{G}.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "36396a14-9d0b-4670-bf8a-5c346fdda197",
+      "name": "King Solomon's Frogs",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Artifact",
+      "oracle_text": "Flash\nWhen King Solomon's Frogs enters, if you cast it, for each opponent, exile up to one target permanent that player controls with mana value 3 or greater. For each permanent exiled this way, its controller draws a card.\n{3}, {T}, Exile King Solomon's Frogs: You become the monarch.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "name": "Lutri, the Spellchaser",
+      "mana_cost": "{1}{U/R}{U/R}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Elemental Otter",
+      "oracle_text": "Companion — Each nonland card in your starting deck has a different name. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)\nFlash\nWhen Lutri enters, if you cast it, copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Companion",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-04-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "banned",
+        "commander": "legal",
+        "competitivebrawl": "banned",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "096eac52-00c2-4439-b2f3-ff555d15ec88",
+      "name": "Marina Vendrell's Grimoire",
+      "mana_cost": "{5}{U}",
+      "cmc": 6.0,
+      "type_line": "Legendary Artifact — Book",
+      "oracle_text": "When Marina Vendrell's Grimoire enters, if you cast it, draw five cards.\nYou have no maximum hand size and don't lose the game for having 0 or less life.\nWhenever you gain life, draw that many cards.\nWhenever you lose life, discard that many cards. Then if you have no cards in hand, you lose the game.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7275fb8c-571a-4c4c-889a-829419332e51",
+      "name": "Mirror Image",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of a creature you control.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-07-13",
+      "faces": [],
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b408c345-b308-4920-8494-4f204d856aa3",
+      "name": "North Wind Avatar",
+      "mana_cost": "{2}{U}{U}{R}",
+      "cmc": 5.0,
+      "type_line": "Creature — Dragon Spirit Avatar",
+      "oracle_text": "Flying\nWhen this creature enters, if you cast it, you may put a card you own from outside the game into your hand.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-03-06",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "name": "Retriever Phoenix",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Phoenix",
+      "oracle_text": "Flying, haste\nWhen this creature enters, if you cast it, learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)\nAs long as this card is in your graveyard, if you would learn, you may instead return this card to the battlefield.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Flying",
+        "Haste",
+        "Learn"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-04-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "41c765a4-a9c9-4169-a9f1-74ededeb793c",
+      "name": "Rocco, Cabaretti Caterer",
+      "mana_cost": "{X}{R}{G}{W}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Elf Druid",
+      "oracle_text": "When Rocco enters, if you cast it, you may search your library for a creature card with mana value X or less, put it onto the battlefield, then shuffle.",
+      "power": "3",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-04-29",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "name": "Scion of Vitu-Ghazi",
+      "mana_cost": "{3}{W}{W}",
+      "cmc": 5.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "When this creature enters, if you cast it from your hand, create a 1/1 white Bird creature token with flying, then populate. (Create a token that's a copy of a creature token you control.)",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Populate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-05-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "14bc9e20-a6ad-4eca-8c5c-5459ce078d9a",
+      "name": "Sigardian Savior",
+      "mana_cost": "{3}{W}{W}",
+      "cmc": 5.0,
+      "type_line": "Creature — Angel",
+      "oracle_text": "Flying\nWhen this creature enters, if you cast it, return up to two target creature cards with mana value 2 or less from your graveyard to the battlefield.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-09-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "name": "Skitterbeam Battalion",
+      "mana_cost": "{9}",
+      "cmc": 9.0,
+      "type_line": "Artifact Creature — Construct",
+      "oracle_text": "Prototype {3}{R}{R} — 2/2 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\nTrample, haste\nWhen this creature enters, if you cast it, create two tokens that are copies of it.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Haste",
+        "Trample",
+        "Prototype"
+      ],
+      "produced_mana": [],
+      "layout": "prototype",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "c01b221f-3993-43ab-8cde-b42fb344e2a7",
+      "name": "Sunderflock",
+      "mana_cost": "{7}{U}{U}",
+      "cmc": 9.0,
+      "type_line": "Creature — Elemental",
+      "oracle_text": "This spell costs {X} less to cast, where X is the greatest mana value among Elementals you control.\nFlying\nWhen this creature enters, if you cast it, return all non-Elemental creatures to their owners' hands.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a14d89b6-23eb-4337-8dee-93c39b0efbf1",
+      "name": "Territory Forge",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Artifact",
+      "oracle_text": "When this artifact enters, if you cast it, exile target artifact or land.\nThis artifact has all activated abilities of the exiled card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "name": "The One Ring",
+      "mana_cost": "{4}",
+      "cmc": 4.0,
+      "type_line": "Legendary Artifact",
+      "oracle_text": "Indestructible\nWhen The One Ring enters, if you cast it, you gain protection from everything until your next turn.\nAt the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.\n{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Indestructible"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-06-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "banned",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f00e4df1-13fb-4514-8abb-92954068689a",
+      "name": "Tiamat",
+      "mana_cost": "{2}{W}{U}{B}{R}{G}",
+      "cmc": 7.0,
+      "type_line": "Legendary Creature — Dragon God",
+      "oracle_text": "Flying\nWhen Tiamat enters, if you cast it, search your library for up to five Dragon cards not named Tiamat that each have different names, reveal them, put them into your hand, then shuffle.",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-07-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e83a629e-2d74-48e2-ad4d-f390067cc51a",
+      "name": "Transcendent Dragon",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Creature — Dragon",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.",
+      "power": "4",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "08af6751-5848-47fb-95f5-57215e899460",
+      "name": "Weftwalking",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Enchantment",
+      "oracle_text": "When this enchantment enters, if you cast it, shuffle your hand and graveyard into your library, then draw seven cards.\nThe first spell each player casts during each of their turns may be cast without paying its mana cost.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "name": "Woodcaller Automaton",
+      "mana_cost": "{10}",
+      "cmc": 10.0,
+      "type_line": "Artifact Creature — Construct",
+      "oracle_text": "Prototype {2}{G}{G} — 3/3 (You may cast this spell with different mana cost, color, and size. It keeps its abilities and types.)\nWhen this creature enters, if you cast it, untap target land you control. It becomes a Treefolk creature with haste and base power and toughness equal to this creature's power and toughness. It's still a land.",
+      "power": "8",
+      "toughness": "8",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Prototype"
+      ],
+      "produced_mana": [],
+      "layout": "prototype",
+      "released_at": "2022-11-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0c3d86b6-5dcd-4016-9b4a-d4f66b1e963f",
+      "name": "Yathan Roadwatcher",
+      "mana_cost": "{1}{W}{B}{G}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Scout",
+      "oracle_text": "When this creature enters, if you cast it, mill four cards. When you do, return target creature card with mana value 3 or less from your graveyard to the battlefield.",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "W"
+      ],
+      "keywords": [
+        "Mill"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "23270e4a-a222-4ffb-a946-d0e20d665187",
+      "name": "Zacama, Primal Calamity",
+      "mana_cost": "{6}{R}{G}{W}",
+      "cmc": 9.0,
+      "type_line": "Legendary Creature — Elder Dinosaur",
+      "oracle_text": "Vigilance, reach, trample\nWhen Zacama enters, if you cast it, untap all lands you control.\n{2}{R}: Zacama deals 3 damage to target creature.\n{2}{G}: Destroy target artifact or enchantment.\n{2}{W}: You gain 3 life.",
+      "power": "9",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "Reach",
+        "Vigilance",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "bb95db4d-5017-4121-bf79-d68476602d8c",
+      "name": "Zombify",
+      "mana_cost": "{3}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "08af6751-5848-47fb-95f5-57215e899460",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If you cast a spell “without paying its mana cost,” you can’t choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the spell has any mandatory additional costs, such as that of Embrace Oblivion, those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "096eac52-00c2-4439-b2f3-ff555d15ec88",
+      "published_at": "2024-09-20",
+      "source": "wotc",
+      "comment": "You have no maximum hand size regardless of what your life total is."
+    },
+    {
+      "oracle_id": "0c3d86b6-5dcd-4016-9b4a-d4f66b1e963f",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "You don’t choose a target for Yathan Roadwatcher’s ability at the time it triggers. Rather, a second “reflexive” ability triggers when you mill four cards this way. You choose a target for that ability as it goes on the stack. Each player may respond to this triggered ability as normal."
+    },
+    {
+      "oracle_id": "0fb9a8a2-4331-4259-9460-a37397554962",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Bringer of the Last Gift's last ability triggers if you cast it from any zone. It doesn't trigger if you put Bringer of the Last Gift onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Use Woodcaller Automaton's power and toughness at the time its triggered ability resolves to determine the base power and toughness of the Treefolk creature land. If Woodcaller Automaton is no longer on the battlefield, use the power and toughness it had the last time it was on the battlefield."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "A prototype card is a colorless card in every zone except the stack or the battlefield, as well as while on the stack or the battlefield if not cast as a prototyped spell. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Blitz Automaton is a colorless creature card with mana value 7. It can't be the target of Recommission, a spell that targets an artifact or creature card with mana value 3 or less in your graveyard."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Regardless of how it was cast, a prototype card always has the same name, abilities, types, and so on. Only the mana cost, mana value, color, power, and toughness change depending on whether the card was cast as a prototyped spell."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If an effect copies a prototyped spell, that copy (as well as the token it becomes on the battlefield) will have the same characteristics as the prototyped spell. Similarly, if an effect creates a token that's a copy of a prototyped permanent or causes another permanent to become a copy of it, the copy would have the same characteristics as the prototyped permanent."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When casting a prototyped spell, use only its prototype characteristics to determine whether it's legal to cast it. For example, if Blitz Automaton is exiled with the last ability of Chandra, Dressed to Kill, you would be able to cast it for {2}{R} (because it's a red spell), even though you wouldn't be able to cast it as a colorless spell for its normal cost."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When cast as a prototyped spell, that spell has the mana cost, power, and toughness characteristics shown in its colored, secondary text box rather than the normal values of those characteristics. Its color and mana value are determined by that mana cost. The permanent that spell becomes as it resolves has the same characteristics. If the spell leaves the stack in any other way, or the permanent it becomes leaves the battlefield, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a prototyped spell isn't the same as casting it for an alternative cost, and an alternative cost may be applied to a spell cast this way. For example, if an effect allows you to cast an artifact card without paying its mana cost, you could either cast Blitz Automaton normally, or as a prototyped spell."
+    },
+    {
+      "oracle_id": "124c3af4-8545-479a-b44c-446da1c8b535",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The prototype ability functions in any zone that the spell could be cast from. For example, if an effect allows you to cast artifact spells from your graveyard, you could cast a prototyped Blitz Automaton from your graveyard."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The companion ability has no effect if the card is in your starting deck and creates no restriction on putting a card with a companion ability into your starting deck. For example, Zirda may be in your starting deck even if your other permanent cards don't all have activated abilities."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The companion's other abilities apply only if the creature is on the battlefield. They have no effect while the companion is outside the game."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Before shuffling your deck to become your library, you may reveal one card from outside the game to be your companion if your starting deck meets the requirements of the companion ability. You can't reveal more than one. It remains revealed outside the game as the game begins."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If you reveal a companion outside the game, for as long as it remains there, you may pay {3} any time you could cast a sorcery (that is, you have priority during your main phase and the stack is empty). Once you do, you put it into your hand and behaves like any other card you've brought into the game. For example, if it's discard, countered, or destroyed, it's put into your graveyard, remaining in the game. This is a change from previous rules."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Paying {3} to put your companion into your hand is a special action. It doesn't use the stack and players can't respond to it. Once you take this action, you may cast that card if it's legal to do so before any other player can take actions."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The requirements of the companion ability apply only to your starting deck. They do not apply to your sideboard."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The controller of a copy can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Lutri's ability can copy any instant or sorcery spell you control, not just one with targets."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. It will resolve before the original spell does."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal)."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Your companion begins the game outside the game. In tournament play, this means your sideboard. In casual play, it's simply a card you own that's not in your starting deck."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "You may have one companion in the Commander variant. Your deck, including your commander, must meet its companion requirement. Your companion is not one of your one hundred cards."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If more than one player wishes to reveal a companion, the starting player does so first, and players proceed in turn order. Once a player has chosen not to reveal a companion, that player can't change their mind."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "If the spell has damage divided as it was cast (like Mythos of Vadrok), the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-06-01",
+      "source": "wotc",
+      "comment": "Paying {3} to put your companion into your hand is a special action. It doesn't use the stack and players can't respond to it. Once you take this action, you may cast that card if it's legal to do so before any other player can take actions."
+    },
+    {
+      "oracle_id": "158a6225-a246-4fd6-aa57-0df8067b4383",
+      "published_at": "2020-06-01",
+      "source": "wotc",
+      "comment": "If you reveal a companion outside the game, for as long as it remains there, you may pay {3} any time you could cast a sorcery (that is, you have priority during your main phase and the stack is empty). Once you do, you put it into your hand and behaves like any other card you've brought into the game. For example, if it's discarded, countered, or destroyed, it's put into your graveyard, remaining in the game. This is a change from previous rules."
+    },
+    {
+      "oracle_id": "1f6056be-67c8-40a9-86ef-1606961644eb",
+      "published_at": "2023-07-28",
+      "source": "wotc",
+      "comment": "A noncreature permanent that turns into a creature can attack, and its {T} abilities can be activated, only if its controller has continuously controlled that permanent since the beginning of their most recent turn. It doesn't matter how long the permanent has been a creature."
+    },
+    {
+      "oracle_id": "1f6056be-67c8-40a9-86ef-1606961644eb",
+      "published_at": "2023-07-28",
+      "source": "wotc",
+      "comment": "You can't cast an Aura with \"enchant creature\" targeting Cacophony Unleashed unless it's already a creature before you cast that Aura.  When Cacophony Unleashed stops being a creature, any such auras will be put into their owners' graveyards."
+    },
+    {
+      "oracle_id": "23270e4a-a222-4ffb-a946-d0e20d665187",
+      "published_at": "2018-01-19",
+      "source": "wotc",
+      "comment": "Zacama's triggered ability triggers if you cast it from any zone. It doesn't trigger if you put Zacama onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "23270e4a-a222-4ffb-a946-d0e20d665187",
+      "published_at": "2023-07-28",
+      "source": "wotc",
+      "comment": "Zacama's damage-dealing ability can be activated during combat, perhaps targeting a creature blocking it. If all creatures blocking Zacama are destroyed, its combat damage is assigned to the player, planeswalker, or battle it's attacking because of trample. If the blocking creatures are dealt nonlethal damage, that damage is considered when assigning trample damage."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If Retriever Phoenix somehow dies with its triggered ability on the stack, you may return it to the battlefield with that triggered ability."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Retriever Phoenix must be in your graveyard at the moment you're instructed to learn if you want to use the last ability to return it to the battlefield."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If instructed to learn, you may do nothing. Discarding a card and putting a Lesson card into your hand are both optional."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If a card is brought into the game from outside the game, it will stay in the game until it ends or until its owner leaves the game, whichever comes first."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Constructed tournament (or a Constructed game played under tournament conditions), you may select only a card from your sideboard. In casual Constructed games, the card comes from your collection."
+    },
+    {
+      "oracle_id": "279e573d-b7a3-4e62-a708-3ec992d97972",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you bring a card into the game from outside the game in a Sealed Deck or Booster Draft event, you may select only a card that is in the card pool that you built your deck from."
+    },
+    {
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If a player has protection from everything, it means three things: 1) All damage that would be dealt to that player is prevented. 2) Auras can't be attached to that player. 3) That player can't be the target of spells or abilities."
+    },
+    {
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Gaining protection from everything causes a spell or ability on the stack to have an illegal target if it targets you. As a spell or ability tries to resolve, if all its targets are illegal, that spell or ability doesn't resolve and none of its effects happen, including effects unrelated to the target. If at least one target is still legal, the spell or ability does as much as it can to the remaining legal targets, and its other effects still happen."
+    },
+    {
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Nothing other than the specified events are prevented or illegal. An effect that doesn't target you could still cause you to discard cards, for example. Creatures can still attack you while you have protection from everything, although combat damage that they would deal to you will be prevented."
+    },
+    {
+      "oracle_id": "3aa83ed2-f48b-4ce6-a614-2c54ddf50538",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "Protection from everything will usually prevent damage if it would be dealt to you, but some damage can't be prevented. In this case, that damage reduces your life total as normal."
+    },
+    {
+      "oracle_id": "41c765a4-a9c9-4169-a9f1-74ededeb793c",
+      "published_at": "2022-04-29",
+      "source": "wotc",
+      "comment": "If an effect allows you to cast Rocco without paying its mana cost, X is 0."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "You cast the copy while the ability is resolving and still on the stack. You can't wait to cast it later in the turn."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you don't want to cast the copy, you can choose not to; the copy ceases to exist the next time state-based actions are checked."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When cast as a prototyped spell, that spell has the mana cost, power, and toughness characteristics shown in its colored, secondary text box rather than the normal values of those characteristics. Its color and mana value are determined by that mana cost. The permanent that spell becomes as it resolves has the same characteristics. If the spell leaves the stack in any other way, or the permanent it becomes leaves the battlefield, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The prototype ability functions in any zone that the spell could be cast from. For example, if an effect allows you to cast artifact spells from your graveyard, you could cast a prototyped Blitz Automaton from your graveyard."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "A prototype card is a colorless card in every zone except the stack or the battlefield, as well as while on the stack or the battlefield if not cast as a prototyped spell. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Blitz Automaton is a colorless creature card with mana value 7. It can't be the target of Recommission, a spell that targets an artifact or creature card with mana value 3 or less in your graveyard."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a prototyped spell isn't the same as casting it for an alternative cost, and an alternative cost may be applied to a spell cast this way. For example, if an effect allows you to cast an artifact card without paying its mana cost, you could either cast Blitz Automaton normally, or as a prototyped spell."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Regardless of how it was cast, a prototype card always has the same name, abilities, types, and so on. Only the mana cost, mana value, color, power, and toughness change depending on whether the card was cast as a prototyped spell."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If the spell you cast has {X} in its mana cost, you must choose 0 as the value of X."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When casting a prototyped spell, use only its prototype characteristics to determine whether it's legal to cast it. For example, if Blitz Automaton is exiled with the last ability of Chandra, Dressed to Kill, you would be able to cast it for {2}{R} (because it's a red spell), even though you wouldn't be able to cast it as a colorless spell for its normal cost."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If an effect copies a prototyped spell, that copy (as well as the token it becomes on the battlefield) will have the same characteristics as the prototyped spell. Similarly, if an effect creates a token that's a copy of a prototyped permanent or causes another permanent to become a copy of it, the copy would have the same characteristics as the prototyped permanent."
+    },
+    {
+      "oracle_id": "792f8235-f23b-4858-bdd4-c7a186b7a470",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If another effect causes Arcane Proxy's power to be less than the mana value of the target card as the ability tries to resolve, the target is illegal. The card won't be exiled, and you won't get to cast a copy."
+    },
+    {
+      "oracle_id": "858067f9-eb1f-4569-9831-30441cba5f90",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Annie Flash's second ability triggers if you cast it from any zone. It doesn't trigger if you put Annie Flash onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "858067f9-eb1f-4569-9831-30441cba5f90",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "A permanent card is an artifact, battle, creature, enchantment, land, or planeswalker card."
+    },
+    {
+      "oracle_id": "858067f9-eb1f-4569-9831-30441cba5f90",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If the mana cost of a card in your graveyard includes {X}, X is 0 for the purpose of determining its mana value."
+    },
+    {
+      "oracle_id": "858067f9-eb1f-4569-9831-30441cba5f90",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If you return an Aura this way, you choose what the Aura will enchant just before it enters the battlefield. An Aura returning to the battlefield this way doesn't target the player or permanent it will enchant, so players or permanents with hexproof may be chosen; however, the chosen recipient must be able to legally be enchanted by the Aura, so a player or permanent with protection from one of the Aura's qualities can't be chosen this way. If there's nothing legal for the Aura to enchant, it stays in the graveyard."
+    },
+    {
+      "oracle_id": "858067f9-eb1f-4569-9831-30441cba5f90",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "You pay all costs and follow all normal timing rules for cards played from exile with Annie Flash's last ability. For example, if the exiled card is a land card, you may play it only during your main phase while the stack is empty."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost\", you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the spell has any mandatory additional costs, you must pay those to cast it."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If the discovered card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "When you discover, you must exile cards. The only optional part of the ability is whether you cast the exiled card or put it into your hand."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "The mana value of a split card is determined by the combined mana cost of its two halves. If discover allows you to cast a split card, you may cast either half (as long as its mana value is less than or equal to the effect's discover value) but not both halves."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "A spell's mana value is determined only by its mana cost. Ignore any alternative costs, additional costs, cost increases, or cost reductions."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you can't cast the discovered card (perhaps because there are no legal targets for the spell), you'll put it into your hand."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "If you discover an adventurer card, split card, or modal double-faced card, you might be able to cast that card with either set of characteristics depending on the effect's discover value. For example, if you discover 4 and reveal Galvanic Giant (an adventurer card from Wilds of Eldraine with a mana value of 4), you could cast Galvanic Giant, but not Storm Reading (its Adventure, which has a mana value of 7). If you discover 7 and reveal Galvanic Giant, you could cast either Galvanic Giant or Storm Reading."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Geological Appraiser's triggered ability triggers if you cast it from any zone. It doesn't trigger if you put Geological Appraiser onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "You exile the cards face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "a0a1cd2b-ed7c-4cce-8497-4873e1e5e3df",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Some spells and abilities that cause you to discover may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve and you won't discover."
+    },
+    {
+      "oracle_id": "a14d89b6-23eb-4337-8dee-93c39b0efbf1",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Territory Forge gains only activated abilities. It doesn't gain triggered abilities or static abilities. Activated abilities contain a colon. They're generally written \"[Cost]: [Effect].\" Some keywords are activated abilities and may have colons in their reminder text."
+    },
+    {
+      "oracle_id": "a14d89b6-23eb-4337-8dee-93c39b0efbf1",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "If an activated ability of the exiled card references the card it's printed on by name, treat Territory Forge's version of that ability as though it referenced Territory Forge instead. For example, if the exiled card is Bandit's Haul (which has the ability \"{2}, {T}, Remove two loot counters from Bandit's Haul: Draw a card.), you would treat Territory Forge's version of the ability as though it said \"{2}, {T}, Remove two loot counters from Territory Forge: Draw a card.\""
+    },
+    {
+      "oracle_id": "b408c345-b308-4920-8494-4f204d856aa3",
+      "published_at": "2026-01-27",
+      "source": "wotc",
+      "comment": "In a casual game, a card you choose from outside the game comes from your personal collection. In a tournament event, a card you choose from outside the game must come from your sideboard. In Limited events, your sideboard also includes an arbitrary number of basic lands. You may look at your sideboard at any time."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2023-11-10",
+      "source": "wotc",
+      "comment": "Cresting Mosasaurus's last ability triggers if you cast it from any zone. It doesn't trigger if you put Cresting Mosasaurus onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "The mana value of a creature spell with emerge isn’t affected by whether its emerge cost is paid. For example, if you cast Decimator of the Provinces for its emerge cost and sacrifice a creature whose mana value is 3, Decimator of the Provinces’s mana value remains 10."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Emerge represents two static abilities that function while the spell with emerge is on the stack. “Emerge [cost]” means “You may cast this spell by paying [cost] and sacrificing a creature rather than paying its mana cost” and “If you chose to pay this spell’s emerge cost, its total cost is reduced by an amount of generic mana equal to the sacrificed creature’s mana value.”"
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Once you begin to cast a spell with emerge, no player may take actions until you’re done. Notably, opponents can’t try to remove the creature you wish to sacrifice."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You may sacrifice a creature with mana value greater than or equal to the emerge cost. If you do, you’ll pay only the colored mana component of the emerge cost."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "The mana value of the back face of a double-faced card is the mana value of its front face. The mana value of a melded permanent is the sum of the mana values of its front faces. A creature that’s a copy of either has a mana value of 0."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "A creature’s mana value is determined solely by the mana symbols printed in its upper right corner (unless that creature is the back face of a double-faced card, is a melded permanent, or is copying something else; see below). If the mana cost includes {X}, X is 0. If it’s a single-faced card with no mana symbols in its upper right corner (because it’s an animated land, for example), its mana value is 0. Ignore any alternative costs or additional costs (such as kicker) that were paid as the creature was cast."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If you sacrifice a creature with {X} in its mana cost, that X is 0."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "The creature chosen to be sacrificed is still on the battlefield as the cost of the emerge spell is determined and as you activate mana abilities to cast the emerge spell. Its abilities may affect the spell’s cost, be activated to generate mana, and so on. However, if it has an ability that triggers when a spell is cast, it will have been sacrificed before that ability can trigger."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "Colored mana components of emerge costs can’t be reduced with emerge."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "You may sacrifice a creature with a mana value of 0, such as a token creature that’s not a copy of another permanent, to cast a spell for its emerge cost. You’ll just pay the full emerge cost with no reduction."
+    },
+    {
+      "oracle_id": "bf245433-8e3b-47d7-b628-3cdae93c384d",
+      "published_at": "2025-01-24",
+      "source": "wotc",
+      "comment": "If you cast a spell for another cost “rather than paying its mana cost,” such as an emerge cost, you can’t choose to cast it for any other alternative costs. You can, however, pay additional costs, such as kicker costs. If the spell has any mandatory additional costs, those must be paid to cast it."
+    },
+    {
+      "oracle_id": "c01b221f-3993-43ab-8cde-b42fb344e2a7",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "To determine Sunderflock's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases, then apply any cost reductions. Sunderflock's mana value remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "c01b221f-3993-43ab-8cde-b42fb344e2a7",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Once you announce you're casting a spell, no player may take actions until the spell has been paid for. Notably, opponents can't try to remove Elementals you control from the battlefield at that time."
+    },
+    {
+      "oracle_id": "c01b221f-3993-43ab-8cde-b42fb344e2a7",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "If an Elemental on the battlefield has {X} in its mana cost, X is 0 for the purpose of determining its mana value."
+    },
+    {
+      "oracle_id": "c01b221f-3993-43ab-8cde-b42fb344e2a7",
+      "published_at": "2025-11-17",
+      "source": "wotc",
+      "comment": "Once you determine the cost to cast Sunderflock, you may activate mana abilities to pay that cost. If the greatest mana value among Elementals you control changes while activating mana abilities (probably because you sacrificed one or more Elementals), the cost to cast Sunderflock remains what you previously determined."
+    },
+    {
+      "oracle_id": "c0a18a53-d520-4795-9b3b-0f93bcf35848",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Protection from a player means that you and each planeswalker you control have protection from each object controlled by that player. If an object has no controller (such as a card in a graveyard), its owner is considered its controller for this purpose."
+    },
+    {
+      "oracle_id": "c0a18a53-d520-4795-9b3b-0f93bcf35848",
+      "published_at": "2020-04-17",
+      "source": "wotc",
+      "comment": "Creatures that player controls can still attack you or planeswalkers you control, but the damage they would deal will be prevented."
+    },
+    {
+      "oracle_id": "ce09c5b0-9dd4-4f73-9f3f-dfbd829813e4",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Iridescent Tiger’s ability isn’t a mana ability. It uses the stack and can be responded to."
+    },
+    {
+      "oracle_id": "ce09c5b0-9dd4-4f73-9f3f-dfbd829813e4",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "Iridescent Tiger’s ability triggers if you cast it from any zone. It doesn’t trigger if you put Iridescent Tiger onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "e83a629e-2d74-48e2-ad4d-f390067cc51a",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If a spell has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "e83a629e-2d74-48e2-ad4d-f390067cc51a",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If you wish to cast the exiled card, you do so as part of the resolution of Transcendent Dragon’s last ability. You can’t wait to cast it later. Timing permissions based on the card’s type are ignored."
+    },
+    {
+      "oracle_id": "e83a629e-2d74-48e2-ad4d-f390067cc51a",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If you cast a spell “without paying its mana cost,” you can’t choose to cast it for any alternative costs. You can, however, pay additional costs, such as kicker costs. If the spell has any mandatory additional costs those must be paid to cast the spell."
+    },
+    {
+      "oracle_id": "ed7ba558-5341-4c7b-a9c5-b382dee88a13",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Crackling Spellslinger’s second ability triggers if you cast it from any zone. It doesn’t trigger if you put Crackling Spellslinger onto the battlefield without casting it."
+    },
+    {
+      "oracle_id": "ed7ba558-5341-4c7b-a9c5-b382dee88a13",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "The copies of a spell with storm created by its storm ability are put directly onto the stack. They aren’t cast and won’t be counted by other spells with storm cast later in the turn."
+    },
+    {
+      "oracle_id": "ed7ba558-5341-4c7b-a9c5-b382dee88a13",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "A copy of a spell can be countered like any other spell, but it must be countered individually. Countering a spell with storm won’t affect the copies."
+    },
+    {
+      "oracle_id": "ed7ba558-5341-4c7b-a9c5-b382dee88a13",
+      "published_at": "2024-04-12",
+      "source": "wotc",
+      "comment": "Spells cast from zones other than a player’s hand and spells that were countered or otherwise failed to resolve are counted by the storm ability."
+    },
+    {
+      "oracle_id": "f00e4df1-13fb-4514-8abb-92954068689a",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "A Dragon card is a card with the creature type Dragon in its type line. A card that has “Dragon” in the name (such as Dragon's Disciple) isn't a Dragon card unless it also has the Dragon creature type."
+    },
+    {
+      "oracle_id": "f00e4df1-13fb-4514-8abb-92954068689a",
+      "published_at": "2021-07-23",
+      "source": "wotc",
+      "comment": "Tiamat's enters-the-battlefield ability will trigger if you cast Tiamat from any zone, not just from your hand. Still thinking command zone over here."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Regardless of how it was cast, a prototype card always has the same name, abilities, types, and so on. Only the mana cost, mana value, color, power, and toughness change depending on whether the card was cast as a prototyped spell."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When cast as a prototyped spell, that spell has the mana cost, power, and toughness characteristics shown in its colored, secondary text box rather than the normal values of those characteristics. Its color and mana value are determined by that mana cost. The permanent that spell becomes as it resolves has the same characteristics. If the spell leaves the stack in any other way, or the permanent it becomes leaves the battlefield, it immediately resumes using its normal characteristics."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "A prototype card is a colorless card in every zone except the stack or the battlefield, as well as while on the stack or the battlefield if not cast as a prototyped spell. Ignore its alternative characteristics in those cases. For example, while it's in your graveyard, Blitz Automaton is a colorless creature card with mana value 7. It can't be the target of Recommission, a spell that targets an artifact or creature card with mana value 3 or less in your graveyard."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The prototype ability functions in any zone that the spell could be cast from. For example, if an effect allows you to cast artifact spells from your graveyard, you could cast a prototyped Blitz Automaton from your graveyard."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "If an effect copies a prototyped spell, that copy (as well as the token it becomes on the battlefield) will have the same characteristics as the prototyped spell. Similarly, if an effect creates a token that's a copy of a prototyped permanent or causes another permanent to become a copy of it, the copy would have the same characteristics as the prototyped permanent."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "The copies will have the same mana cost, mana value, color, power, and toughness as Skitterbeam Battalion, which vary depending on whether it was cast as a prototyped spell."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "When casting a prototyped spell, use only its prototype characteristics to determine whether it's legal to cast it. For example, if Blitz Automaton is exiled with the last ability of Chandra, Dressed to Kill, you would be able to cast it for {2}{R} (because it's a red spell), even though you wouldn't be able to cast it as a colorless spell for its normal cost."
+    },
+    {
+      "oracle_id": "ff1dd9c1-d1e5-49dd-b8b2-df3e4a41d3e5",
+      "published_at": "2022-10-14",
+      "source": "wotc",
+      "comment": "Casting a prototyped spell isn't the same as casting it for an alternative cost, and an alternative cost may be applied to a spell cast this way. For example, if an effect allows you to cast an artifact card without paying its mana cost, you could either cast Blitz Automaton normally, or as a prototyped spell."
+    },
+    {
+      "oracle_id": "13d92af9-a6e2-4847-b2e9-179fe0cc840e",
+      "published_at": "2013-09-20",
+      "source": "wotc",
+      "comment": "If a creature (such as Clone) enters the battlefield as a copy of this creature, the copy’s “enters-the-battlefield” ability will still trigger as long as you cast that creature spell from your hand."
+    },
+    {
+      "oracle_id": "1d34e78e-4fe9-44e1-88d3-a98fd64555a9",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If you put Dread Cacodemon directly onto the battlefield from your hand, perhaps because of Kaalia of the Vast’s ability, its ability won’t trigger."
+    },
+    {
+      "oracle_id": "1d34e78e-4fe9-44e1-88d3-a98fd64555a9",
+      "published_at": "2013-09-20",
+      "source": "wotc",
+      "comment": "If a creature (such as Clone) enters the battlefield as a copy of this creature, the copy’s “enters-the-battlefield” ability will still trigger as long as you cast that creature spell from your hand."
+    },
+    {
+      "oracle_id": "7f3f7fb0-da18-467b-bf57-2ded458fda4d",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If a token is created that's a copy of Coal Stoker, the token wasn't cast, and Coal Stoker's ability won't trigger. Similarly, if an effect copies Coal Stoker while it's on the stack, the copy becomes a token, but the copy was created on the stack and not cast from your hand, so the ability won't trigger in that case either."
+    },
+    {
+      "oracle_id": "7f3f7fb0-da18-467b-bf57-2ded458fda4d",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Coal Stoker's ability isn't a mana ability. It uses the stack and can be responded to."
+    },
+    {
+      "oracle_id": "7f3f7fb0-da18-467b-bf57-2ded458fda4d",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If a nontoken creature enters the battlefield as a copy of this creature, the copy's enters-the-battlefield ability will still trigger as long as you cast the spell that became that nontoken creature from your hand."
+    },
+    {
+      "oracle_id": "8b1e6b7c-892d-4058-b183-9121cdd623f0",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "If you cast Angel of the Dire Hour outside of combat, its triggered ability will trigger but have no effect."
+    },
+    {
+      "oracle_id": "8b1e6b7c-892d-4058-b183-9121cdd623f0",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "If a spell or ability instructs you to put Angel of the Dire Hour onto the battlefield from your hand, that means you won’t have cast it, so its triggered ability won’t trigger."
+    },
+    {
+      "oracle_id": "8b1e6b7c-892d-4058-b183-9121cdd623f0",
+      "published_at": "2014-11-07",
+      "source": "wotc",
+      "comment": "Creatures that were declared as attackers or entered the battlefield attacking continue to be attacking creatures until the combat phase ends. It’s possible to exile all attacking creatures after they’ve dealt combat damage if you cast Angel of the Dire Hour during the combat damage step or end of combat step."
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "published_at": "2013-09-20",
+      "source": "wotc",
+      "comment": "If a creature (such as Clone) enters the battlefield as a copy of this creature, the copy's \"enters-the-battlefield\" ability will still trigger as long as you cast that creature spell from your hand."
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "The new token doesn't copy whether the original token is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any noncopy effects that have changed its power, toughness, color, and so on."
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Populate doesn't target the creature token you're copying. You choose that creature token as you're taking the populate action. You can choose any creature token you control. If a spell or ability causes you to create a creature token and then instructs you to populate, you may choose to copy the token you just created, or you may choose to copy another creature token you control."
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "Any enters-the-battlefield abilities of the copied token will trigger when the new token enters the battlefield. Any \"as [this creature] enters the battlefield\" or \"[this creature] enters the battlefield with\" abilities of the copied token will also work."
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you choose to copy a creature token that's a copy of another creature, the new creature token will copy the characteristics of whatever the original token is copying."
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "If you control no creature tokens when you populate, nothing will happen."
+    },
+    {
+      "oracle_id": "a34c4d5c-6ecb-4da2-8734-a2f3d35cfe8b",
+      "published_at": "2024-01-12",
+      "source": "wotc",
+      "comment": "The new creature token copies the characteristics of the original token as stated by the effect that created the original token."
+    }
+  ]
+}

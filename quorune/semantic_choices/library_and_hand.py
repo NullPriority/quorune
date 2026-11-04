@@ -17,6 +17,7 @@ from ..semantic_runtime.intents import (
     ZoneMoveIntent,
 )
 from ..zone_trigger_events import ZoneTransitionKind
+from ..semantic_runtime.explore import explored_object_types
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
     AutoContinue,
@@ -106,6 +107,7 @@ class ExploreChoiceHandler:
                         ),
                         result="empty_library",
                         reason=context.stack_label,
+                        explorer_types=explored_object_types(context.query, explorer.ref, explorer_logical_object_id),
                     ),
                 ),
                 auto_continue=AutoContinue(reason="library is empty"),
@@ -146,6 +148,7 @@ class ExploreChoiceHandler:
                         result="land_revealed",
                         reason=context.stack_label,
                         revealed_card_ref=top.ref,
+                        explorer_types=explored_object_types(context.query, explorer.ref, explorer_logical_object_id),
                     ),
                 ),
                 auto_continue=AutoContinue(reason="explore revealed a land"),
@@ -232,6 +235,8 @@ class ExploreChoiceHandler:
                 ),
                 reason=str(effect["_stack_label"]),
                 revealed_card_ref=top_ref,
+                explorer_types=explored_object_types(query, str(effect['_explorer_ref']),
+                    str(effect['_explorer_logical_object_id'])),
             )
         )
         return SemanticChoiceCompletion(intents=tuple(intents))

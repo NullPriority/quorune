@@ -1,7 +1,10 @@
 from __future__ import annotations
+from .composition_intent import ResumeCompositionOrderIntent
+from .mutate_intent import SelectMutateMergeIntent
 from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
+from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 from .life_batch_intent import LifeLossBatchIntent
 from .counter_movement_intent import MoveCountersIntent
 from .exploit_intent import ExploitSacrificeIntent
@@ -20,7 +23,7 @@ from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
 from .stack_execution import STACK_INTENT_TYPES, execute_stack_intent
-from .ring_execution import RING_INTENT_TYPES, execute_ring_intent
+from .creation_execution import CREATION_INTENT_TYPES,execute_creation_intent
 from .champion_execution import CHAMPION_INTENT_TYPES, execute_champion_intent
 
 from dataclasses import dataclass
@@ -84,6 +87,7 @@ from .intents import (
     LibrarySelectionIntent,
     MoveObjectsSimultaneouslyIntent,
     MadnessChoiceIntent,
+    MiracleCastChoiceIntent,
     MovePublicZoneSetIntent,
     MoveLibraryCardsToBottomIntent,
     MillCardsIntent,
@@ -380,6 +384,8 @@ def prepare_draw_resolution(
 
 
 PermanentObjectIntent = (
+    SelectMutateMergeIntent |
+    ResumeCompositionOrderIntent |
     PairSoulbondIntent | GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | EncodeCipherIntent
@@ -393,6 +399,8 @@ PermanentObjectIntent = (
     | ReturnGraveyardCardToOwnerHandIntent
 )
 PERMANENT_OBJECT_INTENT_TYPES = (
+    SelectMutateMergeIntent,
+    ResumeCompositionOrderIntent,
     EncodeCipherIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
@@ -413,6 +421,12 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent,SelectMutateMergeIntent):
+        from ..rules.mutate_resolution import commit_mutate_merge
+        return intent.actor,commit_mutate_merge(sink,intent)
+    if isinstance(intent,ResumeCompositionOrderIntent):
+        from ..composition_ordering import resume_composition_order
+        return intent.actor,resume_composition_order(sink,intent)
     if isinstance(intent, EncodeCipherIntent):
         from ..rules.cipher import encode_cipher
         return 'cipher', encode_cipher(sink, intent)
@@ -746,6 +760,23 @@ def _execute_tap_state_intent(
     return intent.actor, result
 
 
+def _execute_resolving_cast_choice(sink, intent):
+    if isinstance(intent,DiscoverCastIntent):
+        from ..discover_casting import execute_discover_cast
+        execute_discover_cast(sink,intent)
+        return intent.actor
+    if isinstance(intent,DiscoverCleanupIntent):
+        from ..discover_cleanup import execute_discover_cleanup
+        execute_discover_cleanup(sink,intent)
+        return intent.actor
+    if isinstance(intent, MiracleCastChoiceIntent):
+        from ..drawing.miracle_casting import execute_miracle_cast_choice
+        execute_miracle_cast_choice(sink, intent)
+    else:
+        sink.madness_choice_intent(intent)
+    return intent.source.card_ref or intent.actor
+
+
 def _synchronize_instruction_observers(sink):
     from ..rules.city_blessing import synchronize_citys_blessing
     synchronize_citys_blessing(sink, reason='semantic instruction committed')
@@ -763,8 +794,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
         )
     results: list[tuple[str, object]] = []
     for intent in plan.intents:
-        if isinstance(intent, RING_INTENT_TYPES):
-            results.append(execute_ring_intent(sink, intent))
+        if isinstance(intent,CREATION_INTENT_TYPES):
+            results.append(execute_creation_intent(sink,intent))
             continue
         if isinstance(intent,AscendIntent):
             from ..rules.city_blessing import award_citys_blessing
@@ -837,9 +868,8 @@ def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
             result = sink.move_objects_simultaneously_intent(intent)
             results.append((intent.actor, result))
             continue
-        if isinstance(intent, MadnessChoiceIntent):
-            sink.madness_choice_intent(intent)
-            results.append((intent.source.card_ref or intent.actor, None))
+        if isinstance(intent, (MadnessChoiceIntent,MiracleCastChoiceIntent,DiscoverCastIntent,DiscoverCleanupIntent)):
+            results.append((_execute_resolving_cast_choice(sink,intent),None))
             continue
         if isinstance(intent, LIBRARY_INTENT_TYPES):
             results.append(_execute_library_intent(sink, intent))

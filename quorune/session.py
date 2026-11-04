@@ -34,7 +34,7 @@ from .record import (
     utc_now,
     write_record,
 )
-from .record_trust import resolved_semantic_execution_provenance_rows
+from .record_trust import capture_stack_resolution_inputs,resolved_semantic_execution_provenance_rows
 from .review_artifacts import write_review_artifacts
 from .semantics import SemanticRegistry
 
@@ -683,7 +683,7 @@ class CommanderSession:
         step = self.state.step
         cursor = self.cursors.get(principal)
         before_event_sequence = self.state.event_sequence
-        before_stack_items = {item.ref: item for item in self.state.stack}
+        before_stack_items = capture_stack_resolution_inputs(self.state)
         before_hash = authoritative_state_hash(self.state)
         before_shuffles = {
             seat: int(player.stats.get("shuffle_count", 0))

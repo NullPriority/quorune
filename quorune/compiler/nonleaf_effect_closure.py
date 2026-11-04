@@ -56,6 +56,11 @@ def nonleaf_effect_program_is_closed(program,*,recognizers=()):
     if fixed_overload_program_is_closed(program):return True
     from ..rules.stack_spell_copy_shapes import fixed_stack_spell_copy_program_is_closed
     if fixed_stack_spell_copy_program_is_closed(program):return True
+    from ..face_up_effect_model import face_up_node_capabilities
+    from ..card_programs.admission import program_has_declared_complete_source_admission
+    face_up=face_up_node_capabilities(effects=program.effects,target_schema=program.target_schema,
+        mechanics=set(program.coverage)-{'generated_oracle_ir','spell_resolution','activated_ability'})
+    if face_up and program_has_declared_complete_source_admission(program) and set(face_up).issubset(program.capability_dependencies):return True
     from ..rules.paid_entry_copy_shapes import is_closed_paid_entry_copy_program
     if is_closed_paid_entry_copy_program(program):return True
     from ..rules.city_blessing_shapes import ascend_program_is_closed

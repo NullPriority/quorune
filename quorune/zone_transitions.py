@@ -93,18 +93,45 @@ class ZoneTransitionOwner:
         self.state.timestamp_sequence += 1
         return self.state.timestamp_sequence
 
-    def turn_face_up(self,card:CardInstance,*,viewers:tuple[str,...])->None:
+    def turn_face_up(self,card:CardInstance,*,viewers:tuple[str,...])->bool:
+        if not isinstance(card,CardInstance) or self.state.cards.get(card.object_id) is not card:
+            raise GameRuleError('Turning face up requires its exact current object')
+        if card.permanent_composition is not None:
+            from .continuous_effect_model import ContinuousObjectIdentity
+            from .rules.composition_faces import prepare_composition_face_up
+            prepared=prepare_composition_face_up(self.host,
+                ContinuousObjectIdentity(card.object_id,card.logical_object_id))
+            if prepared is None or prepared.viewers!=viewers:
+                raise GameRuleError('Composed face-up viewers or state changed')
+            self.commit_composition_face_up(prepared)
+            return prepared.can_turn_face_up
+        if card.zone=='battlefield' and card.face_down and not card.phased_out and not card.is_token and card.object_kind=='card':
+            from .rules.composition_faces import _physical_turn_up_face
+            _face,type_line=_physical_turn_up_face(self.host,card,is_token=False)
+            if {'instant','sorcery'}.intersection(self.host._type_parts(type_line)[0]):
+                self.reveal_face_up_refusal(card,viewers=viewers,components=(
+                    {'object':card.ref,'oracle_id':card.oracle_id,'card':card.printed_name},))
+                return False
+        self._turn_face_up_status(card,viewers=viewers)
+        return True
+
+    def reveal_face_up_refusal(self,card,*,viewers,components):
+        if (self.state.cards.get(card.object_id) is not card or card.zone!='battlefield' or not card.face_down
+                or not isinstance(viewers,tuple) or viewers!=tuple(self.host.seats)):
+            raise GameRuleError('Refused face-up reveal requires its exact facedown object and public viewers')
+        card.known_to=sorted(set(card.known_to).union(viewers))
+        self.host._log(card.controller,'card.reveal','A face-down permanent was revealed and remained face down.',
+            {'player':card.controller,'object':card.ref,'components':list(components),'reason':'face_up_refused'},
+            changed_objects=[card.object_id],changed_players=[card.controller],importance=1)
+
+    def _turn_face_up_status(self,card:CardInstance,*,viewers:tuple[str,...])->None:
         """Validate the planned face timestamp before publishing any face-up observers."""
-        from .face_status_timestamp_model import face_status_timestamp_version
+        from .face_status_timestamp_model import planned_face_up_timestamp
         from .zone_object_state import turn_card_face_up
         if not isinstance(card,CardInstance) or self.state.cards.get(card.object_id) is not card:
             raise GameRuleError('Turning face up requires its exact current object')
-        try:version=face_status_timestamp_version(getattr(self.state,'face_status_timestamp_version',None))
+        try:timestamp=planned_face_up_timestamp(self.state)
         except ValueError as error:raise GameRuleError(str(error)) from error
-        clock=self.state.timestamp_sequence
-        if version==1 and (type(clock) is not int or clock<0):
-            raise GameRuleError('Turning face up requires the canonical timestamp clock')
-        timestamp=clock+1 if version==1 else None
         turn_card_face_up(card,viewers=viewers,timestamp=timestamp)
         if timestamp is not None and self.next_timestamp()!=timestamp:
             raise StateInvariantError('Face-up timestamp changed during commitment')
@@ -188,6 +215,58 @@ class ZoneTransitionOwner:
         if card.zone != "outside":
             raise StateInvariantError(f"Could not remove {card.ref} from {card.zone}")
 
+    def _depart_stack_object(self,card:CardInstance,*,preserve_resolving:bool=True)->None:
+        from .rules.event_spell_copy import pin_event_spell_copy_departure
+        from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
+        for item in tuple(self.state.stack):
+            if item.card_object_id==card.object_id:
+                pin_event_spell_copy_departure(self.host,item)
+        for item in tuple(self.state.stack):
+            if item.card_object_id==card.object_id:
+                cleanup_stack_cost_hand_reveals(self.host,item)
+        if not preserve_resolving or not any(item.card_object_id==card.object_id
+                and item.context.get('currently_resolving') for item in self.state.stack):
+            self.state.stack[:]=[item for item in self.state.stack if item.card_object_id!=card.object_id]
+
+    def commit_composition_merge(self,prepared):
+        """Commit physical storage only; the resolving rule owns permission and semantics."""
+        from .rules.composition_merge import PreparedCompositionMerge,prepare_composition_merge
+        if not isinstance(prepared,PreparedCompositionMerge):raise GameRuleError('Physical merge preparation is missing')
+        with self.host.transaction():
+            current=prepare_composition_merge(self.host,target=prepared.root_identity,
+                source=prepared.incoming.identity,stack_ref=prepared.incoming.stack_ref,position=prepared.position)
+            if current!=prepared:raise GameRuleError('Physical merge preparation is stale')
+            root=self.state.cards[prepared.root_identity.object_id]
+            incoming=self.state.cards[prepared.incoming.identity.object_id]
+            storage=prepared.storage
+            if self.next_timestamp()!=prepared.timestamp:raise StateInvariantError('Merge timestamp changed during commitment')
+            self._depart_stack_object(incoming,preserve_resolving=False)
+            from .game_object_store import GameObjectStore
+            GameObjectStore(self.host).commit(removals=(incoming.object_id,))
+            root.permanent_composition=storage
+            root.is_token=storage.topology.is_token
+            root.object_kind='token' if root.is_token else 'card'
+            root.is_commander=storage.topology.is_commander
+            root.face_down=storage.parts[0].card_state['face_down']
+            root.active_face=None
+            storage.validate_carrier(root)
+            self.host._log(prepared.chooser,'composition.merge',f'{root.ref} incorporated another physical part.',
+                {'object':root.ref,'part':incoming.ref,'position':prepared.position.value},
+                changed_objects=[root.object_id],importance=1)
+            return storage
+
+    def commit_composition_transform(self,prepared):
+        from .composition_face_changes import commit_composition_transform
+        return commit_composition_transform(self,prepared)
+
+    def commit_composition_face_up(self,prepared):
+        from .composition_face_changes import commit_composition_face_up
+        return commit_composition_face_up(self,prepared)
+
+    def depart_composition(self,object_id,destination,**kwargs):
+        from .composition_departure_commit import depart_composition
+        return depart_composition(self,object_id,destination,**kwargs)
+
     def reset_zone_change(
         self,
         card: CardInstance,
@@ -195,6 +274,8 @@ class ZoneTransitionOwner:
         *,
         zone_timestamp: int | None = None,
     ) -> None:
+        if card.permanent_composition is not None:
+            raise GameRuleError('Composed-permanent reset requires its complete physical group transaction')
         origin = card.zone
         creates_new_object = (
             origin != destination or origin in {EXILE_ZONE, "command"}
@@ -262,6 +343,12 @@ class ZoneTransitionOwner:
             destination,
             transition_kind,
         )
+        if card.permanent_composition is not None:
+            from .composition_ordering import resolve_composition_departure
+            moved=resolve_composition_departure(self,object_id,destination,reason=reason,position=position,
+                replacement_selections=replacement_selections,transition_kind=transition_kind,
+                prepared_replacement=prepared_replacement)
+            return next((member for member in moved if member.object_id==object_id),card)
         if type(manifest_entry) is not bool or manifest_entry and (card.zone != 'library' or destination != 'battlefield' or card.object_kind != 'card'):
             raise GameRuleError('Manifest entry requires one library card entering the battlefield')
         plan_or_card = self._prepare_move(
@@ -550,8 +637,12 @@ class ZoneTransitionOwner:
         aura_target_ref: str | None,
         zone_timestamp: int | None,
         reveal_to: tuple[str, ...],
+        already_detached: bool = False,
     ) -> None:
         card = plan.card
+        if type(already_detached) is not bool:raise StateInvariantError('Detached membership flag must be boolean')
+        if already_detached and any(card.object_id in ids for player in self.state.players.values() for ids in player.zones.values()):
+            raise StateInvariantError('Detached physical object still has live zone membership')
         if departure.origin == 'hand' and plan.destination != 'hand':
             from .forecast import end_forecast_reveal
             end_forecast_reveal(self.host, card)
@@ -564,23 +655,8 @@ class ZoneTransitionOwner:
             except LifeStateError as exc:
                 raise GameRuleError(str(exc)) from exc
         if departure.origin == "stack":
-            from .rules.event_spell_copy import pin_event_spell_copy_departure
-            for departing in tuple(self.state.stack):
-                if departing.card_object_id==card.object_id:pin_event_spell_copy_departure(self.host,departing)
-            from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
-            for item in tuple(self.state.stack):
-                if item.card_object_id==card.object_id:cleanup_stack_cost_hand_reveals(self.host,item)
-            if not any(
-                item.card_object_id == card.object_id
-                and item.context.get("currently_resolving")
-                for item in self.state.stack
-            ):
-                self.state.stack[:] = [
-                    item
-                    for item in self.state.stack
-                    if item.card_object_id != card.object_id
-                ]
-        else:
+            self._depart_stack_object(card)
+        elif not already_detached:
             self.remove_from_zone(card)
         self.reset_zone_change(
             card,
@@ -969,7 +1045,12 @@ class ZoneTransitionOwner:
             paid_entry_copy=departure.paid_entry_copy if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             multikicker_paid=departure.multikicker_paid if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             declared_cast_costs=departure.declared_cast_costs if departure.origin == 'stack' and card.zone == 'battlefield' else None,
+            source_entry_cast_information=self._source_entry_cast_information(card,departure),
         )
+
+    def _source_entry_cast_information(self,card,departure):
+        from .rules.entry_cast_information import information_for_committed_entry
+        return information_for_committed_entry(self.host,card,departure)
 
     def move_cards_simultaneously(
         self,
@@ -987,6 +1068,11 @@ class ZoneTransitionOwner:
         entry_faces: Mapping[str,str] | None = None,
         publish_events: bool = True,
     ) -> list[CardInstance]:
+        if any(self.state.cards.get(object_id) is not None
+                and self.state.cards[object_id].permanent_composition is not None for object_id,_ in changes):
+            from .composition_ordering import resolve_composition_departure_batch
+            return resolve_composition_departure_batch(self,changes,reason=reason,replacement_selections=replacement_selections,
+                transition_kinds=transition_kinds,prepared_replacements=prepared_replacements)
         kinds = normalized_transition_kind_map(changes, transition_kinds)
         controllers = dict(destination_controllers or {})
         aura_targets = dict(aura_target_refs or {})
@@ -1222,6 +1308,7 @@ class ZoneTransitionOwner:
         owner: str,
         randomization_key: str,
         reason: str,
+        replacement_selections: Sequence[str | Mapping[str,Any]]=(),
     ) -> tuple[CardInstance, ...]:
         """Move one public exile group to its owner's library bottom at random."""
 
@@ -1262,6 +1349,7 @@ class ZoneTransitionOwner:
                 [(object_id, LIBRARY_ZONE) for object_id in ordered],
                 reason=reason,
                 log=False,
+                replacement_selections=replacement_selections,
             )
         )
         library = self.state.players[owner].zones[LIBRARY_ZONE]

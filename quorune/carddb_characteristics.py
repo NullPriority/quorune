@@ -6,15 +6,17 @@ from typing import Any, Mapping
 from .carddb import CardRecord
 from .model import CardInstance
 from .rules.face_characteristic_values import printed_face_mana_value,printed_face_colors,current_face_mana_value
+from .defined_token_faces import (
+    DEFINED_TOKEN_FACES_FIELD, DEFINED_TOKEN_IDENTITY_FIELD, defined_token_characteristic_values,
+    defined_token_current_characteristics, defined_token_copiable_characteristics,
+)
 
 
 def _custom_object_characteristics(card: CardInstance) -> Mapping[str, Any]:
-    return dict(
-        card.annotations.get("object_characteristics")
-        or card.annotations.get("token_characteristics")
-        or card.annotations.get("copy_overrides")
-        or {}
-    )
+    values = dict(defined_token_characteristic_values(card))
+    if DEFINED_TOKEN_FACES_FIELD in values:
+        return defined_token_current_characteristics(card, values)
+    return values
 
 
 def separate_custom_display_text(
@@ -50,6 +52,8 @@ def custom_copyable_characteristics(card: CardInstance) -> dict[str, Any]:
     result = copy.deepcopy(
         dict(card.annotations.get("token_characteristics") or {})
     )
+    if DEFINED_TOKEN_FACES_FIELD in result:
+        result = defined_token_current_characteristics(card)
     result.setdefault("name", card.printed_name)
     result.setdefault("mana_cost", "")
     result.setdefault("mana_value", 0)
@@ -69,6 +73,8 @@ def copiable_card_characteristics(card, record, base):
     from .card_program_faces import selected_face_id
     result = dict(base)
     result.update(copy.deepcopy(dict(card.annotations.get('copy_overrides') or {})))
+    if DEFINED_TOKEN_FACES_FIELD in result or DEFINED_TOKEN_IDENTITY_FIELD in card.annotations:
+        result = defined_token_copiable_characteristics(card, result)
     if record is not None and record.faces:
         from .entry_copy import COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD
         result.setdefault(COPIABLE_ORACLE_FIELD, record.oracle_id)
@@ -97,7 +103,7 @@ def base_card_characteristics(
             )
         )
         return {
-            "name": "" if card.object_kind == "emblem" else card.printed_name,
+            "name": "" if card.object_kind == "emblem" else values.get('name',card.printed_name) if DEFINED_TOKEN_FACES_FIELD in values or DEFINED_TOKEN_IDENTITY_FIELD in card.annotations else card.printed_name,
             "mana_cost": str(
                 values.get("mana_cost", record.mana_cost if record else "")
             ),

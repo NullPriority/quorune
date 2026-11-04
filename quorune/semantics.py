@@ -192,6 +192,7 @@ VALID_EFFECT_OPERATIONS = {
     "put_card_from_hand",
     "control_next_turn",
     "create_emblem",
+    "create_compiled_emblem",
     "daretti_exchange",
     "destroy_selected_and_reward_source",
     "discard_draw_up_to",

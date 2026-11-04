@@ -86,12 +86,23 @@ def _event_player_reference_is_closed(program,player):
         for event,condition in occurrences)
 
 
+def _source_combat_player_scope(condition):
+    from collections.abc import Mapping
+    if not isinstance(condition,Mapping):return False
+    if condition=={'field':'card','op':'eq','value':'$source.ref'}:return True
+    if set(condition)=={'all'} and isinstance(condition['all'],(list,tuple)):return any(_source_combat_player_scope(child) for child in condition['all'])
+    if set(condition)=={'any'} and isinstance(condition['any'],(list,tuple)) and condition['any']:return all(_source_combat_player_scope(child) for child in condition['any'])
+    return False
+
+
 def _occurrence_player_reference_is_closed(event,condition,coverage,player):
     if player=='$context.player':return event in {'spell.cast','card.drawn','player.scried','player.surveilled'}
     if player=='$context.previous_controller':return event in {'card.discarded','creature.dies','creature.dies.self'}
     if player=='$context.controller':return event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}
     from ..compiler.event_player_results import _damage_guarantees_player
     if player=='$context.target':return event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(condition)
+    if player=='$context.defending_player' and event in {'creature.becomes_blocked','creature.unblocked'}:
+        return _source_combat_player_scope(condition) and 'one_or_more_event_batch'not in coverage
     return (player=='$context.defending_player' and event=='creature.attacks'
         and bool({'trigger-event-normalized-public-action','trigger-event-normalized-self-attack'} & set(coverage))
         and 'one_or_more_event_batch' not in coverage)

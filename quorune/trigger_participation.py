@@ -17,6 +17,7 @@ class TriggerMultiplierPredicate(str, Enum):
 
     ARTIFACT_OR_CREATURE_ENTERS = "artifact_or_creature_enters"
     ANOTHER_CREATURE_OF_CHOSEN_TYPE = "another_creature_of_chosen_type"
+    TYPED_SOURCE_EVENT = 'typed_source_event'
 
 
 _MULTIPLIER_CAPABILITIES = {
@@ -43,9 +44,11 @@ class TriggerMultiplierSpec:
     additional_count: int = 1
     exclude_self: bool = False
     schema_version: int = 1
+    rule: str | None = None
+    subtype: str | None = None
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
             raise TriggerParticipationError(
                 "Unsupported trigger-multiplier schema version"
             )
@@ -61,6 +64,15 @@ class TriggerMultiplierSpec:
             raise TriggerParticipationError(
                 "Trigger-multiplier exclude_self must be a boolean"
             )
+        if self.schema_version==2:
+            from .trigger_participation_query_model import trigger_participation_rule
+            if self.predicate is not TriggerMultiplierPredicate.TYPED_SOURCE_EVENT or self.exclude_self or self.additional_count!=1:
+                raise TriggerParticipationError('Typed participation has an exact schema-two shape')
+            try:trigger_participation_rule(self.rule,self.subtype)
+            except (TypeError,ValueError) as exc:raise TriggerParticipationError(str(exc)) from exc
+            return
+        if self.rule is not None or self.subtype is not None or self.predicate is TriggerMultiplierPredicate.TYPED_SOURCE_EVENT:
+            raise TriggerParticipationError('Typed participation requires schema two')
         required_exclusion = (
             self.predicate
             is TriggerMultiplierPredicate.ANOTHER_CREATURE_OF_CHOSEN_TYPE
@@ -72,10 +84,17 @@ class TriggerMultiplierSpec:
 
     @property
     def capability_id(self) -> str:
+        if self.schema_version==2:
+            from .trigger_participation_query_model import trigger_participation_rule,TRIGGER_PREDICATE_CAPABILITY,TRIGGER_PROHIBITION_CAPABILITY
+            return (TRIGGER_PROHIBITION_CAPABILITY if trigger_participation_rule(self.rule,self.subtype).outcome=='prevent'
+                else TRIGGER_PREDICATE_CAPABILITY)
         return _MULTIPLIER_CAPABILITIES[self.predicate]
 
     @property
     def rule_ids(self) -> tuple[str, ...]:
+        if self.schema_version==2:
+            from .trigger_participation_query_model import trigger_participation_rule
+            return ('101.2','603.2','603.10') if trigger_participation_rule(self.rule,self.subtype).outcome=='prevent' else ('603.2d','603.10')
         return ("603.2d",)
 
     @property
@@ -86,6 +105,8 @@ class TriggerMultiplierSpec:
         )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version==2:
+            return {'schema_version':2,'predicate':self.predicate.value,'rule':self.rule,'subtype':self.subtype}
         return {
             "schema_version": self.schema_version,
             "predicate": self.predicate.value,
@@ -101,6 +122,7 @@ class TriggerMultiplierSpec:
             "additional_count",
             "exclude_self",
         }
+        if isinstance(value,Mapping) and value.get('schema_version')==2:expected={'schema_version','predicate','rule','subtype'}
         if not isinstance(value, Mapping) or set(value) != expected:
             raise TriggerParticipationError(
                 "Trigger-multiplier fragments have a closed schema"
@@ -114,8 +136,9 @@ class TriggerMultiplierSpec:
         return cls(
             schema_version=value["schema_version"],
             predicate=predicate,
-            additional_count=value["additional_count"],
-            exclude_self=value["exclude_self"],
+            additional_count=value.get('additional_count',1),
+            exclude_self=value.get('exclude_self',False),
+            rule=value.get('rule'),subtype=value.get('subtype'),
         )
 
 

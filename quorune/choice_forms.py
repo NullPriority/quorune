@@ -602,6 +602,13 @@ def build_action_form(
         ),
     }
     if variants is not None:
+        schema = action.get("choice_schema")
+        condition = schema.get("cast_options_when") if isinstance(schema, Mapping) else None
+        if condition is not None:
+            if (not isinstance(condition, Mapping) or set(condition) != {"field", "value"}
+                    or any(type(condition[key]) is not str or not condition[key] for key in condition)):
+                return None
+            variants["when"] = copy.deepcopy(dict(condition))
         result["variants"] = variants
     return result
 

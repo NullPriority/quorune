@@ -229,6 +229,19 @@ def damage_player_discard_result(binding, body: str):
     ), False
 
 
+def defending_player_discard_result(binding,body):
+    from .event_player_results import _event_player
+    match=re.fullmatch(r'defending player discards? (?P<body>.+)',body,re.I)
+    if match is None:return None
+    player=_event_player(binding,'defending player')
+    if player is None:return None
+    template=fixed_controller_discard_effect_template('Discard '+match['body'])
+    if template is None or template.count>3:return None
+    effect=deepcopy(dict(template.effects[0]));effect['players']=[player]
+    return ('fixed-defending-player-discard-v1',(effect,),None,
+        (*template.mechanics,FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC)),False
+
+
 __all__ = [
     "AffectedPlayerDiscardSubject",
     "FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY",

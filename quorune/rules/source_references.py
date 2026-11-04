@@ -16,6 +16,9 @@ from ..util import normalize_card_name
 
 
 SOURCE_REFERENCE_SCHEMA_VERSION = 2
+# New cycling-damage programs bind the post-discard object; old records retain
+# their original source-frame interpretation when this marker is absent.
+CYCLED_SOURCE_DAMAGE_COVERAGE = 'fixed-cycled-source-damage'
 
 
 _SOURCE_SELF_PERMANENT_TYPES = {
@@ -134,6 +137,7 @@ class SourceReferenceSpec:
 
 __all__ = [
     "SOURCE_REFERENCE_SCHEMA_VERSION",
+    "CYCLED_SOURCE_DAMAGE_COVERAGE",
     "SourceReferenceError",
     "SourceReferenceSpec",
     "source_self_permanent_type",

@@ -51,9 +51,9 @@ class LimitedEventTriggerCompilerTests(unittest.TestCase):
     def test_unsupported_action_limits_and_departures_remain_residual(self):
         for text in (
             'Whenever you gain life, draw a card. Do this only once each turn.',
-            'Whenever a creature dies, draw a card. This ability triggers only once each turn.',
-            'When you sacrifice this creature, draw a card. This ability triggers only once each turn.',
-            'Whenever a player sacrifices a permanent, draw a card. This ability triggers only once each turn.',
+            'Whenever a creature dies, draw a card. This ability triggers only twice each turn.',
+            'Whenever a creature dies or you gain life, draw a card. This ability triggers only once each turn.',
+            'Whenever a spell you control is countered, draw a card. This ability triggers only once each turn.',
             'Whenever you gain life, you win the game. This ability triggers only once each turn.',
             'Whenever you gain life, draw a card. This ability triggers only once during your turn.',
         ):
@@ -63,13 +63,22 @@ class LimitedEventTriggerCompilerTests(unittest.TestCase):
     def test_missing_usage_capability_keeps_trigger_residual(self):
         from quorune.rules.capabilities import CapabilityRegistry
         raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
-        raw['capabilities']=[c for c in raw['capabilities'] if c['id']!='trigger.usage.once_per_turn']
+        next(c for c in raw['capabilities'] if c['id']=='trigger.usage.once_per_turn').update(
+            status='blocked',blockers=['Ordinary trigger usage authority withdrawn'])
         registry=CapabilityRegistry(raw)
-        registry.mark_evidence_verified(load_default_capability_registry().evidence_fingerprint)
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
+        index=build_index(registry_value=raw,
+            declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
         text='Whenever one or more +1/+1 counters are put on this creature, draw a card. This ability triggers only once each turn.'
         ir=compile_oracle_card(query_record(text),capability_registry=registry)
         self.assertNotEqual('exact',ir.status)
         self.assertTrue(any('trigger.usage.once_per_turn' in str(r.blockers) for r in ir.material_residuals))
+        self.assertEqual('exact',compile_oracle_card(query_record('When this creature enters, draw a card.'),
+            capability_registry=registry).status)
 
     def test_codec_rejects_malformed_limit_and_preserves_old_shape(self):
         for value in ({'schema_version':True,'kind':'once_per_turn'}, {'schema_version':2,'kind':'once_per_turn'},
@@ -128,7 +137,7 @@ class LimitedEventTriggerRuntimeTests(unittest.TestCase):
         result=session.act(session.pending_principals()[0],{'action_id':action['id'],'targets':list(targets),'pay':'auto'})
         self.assertTrue(result.ok,result.summary)
 
-    def test_limited_sacrifice_departure_cards_fail_whole_program_admission(self):
+    def test_limited_sacrifice_departure_cards_require_explicit_event_incarnation_admission(self):
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.card_programs import bind_card_program_runtime
         for name in ('Generic Limited Self Sacrifice Observer', 'Generic Limited External Sacrifice Observer'):
@@ -136,14 +145,15 @@ class LimitedEventTriggerRuntimeTests(unittest.TestCase):
                 record = self.db.lookup(name)
                 ir = compile_oracle_card(record, capability_registry=self.registry,
                     capability_profile='commander_review')
-                self.assertNotEqual('exact', ir.status)
-                self.assertTrue(ir.material_residuals)
+                self.assertEqual('exact', ir.status,ir.material_residuals)
+                limits=[node.trigger_limit for face in ir.faces for node in face.nodes if node.trigger_limit is not None]
+                self.assertEqual([{'schema_version':2,'kind':'once_per_turn','source_scope':'event_incarnation'}],limits)
                 program = compile_best_available_card_program(self.db, record,
                     semantic_registry=SemanticRegistry(), capability_registry=self.registry, capability_profile='commander_review')
                 binding = bind_card_program_runtime(program, capability_registry=self.registry,
                     profile='commander_review')
-                self.assertFalse(binding['strict_capability_ready'])
-                self.assertTrue(binding['blockers'])
+                self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+                self.assertFalse(binding['blockers'])
 
     def test_actual_counter_events_draw_once_and_replay(self):
         session=self.session(301001);engine=session.engine

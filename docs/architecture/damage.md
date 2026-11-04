@@ -45,6 +45,14 @@ Current facts are read at the individual damage instruction after any paid
 prefix. Once a damage proposal is sealed, replacement-choice resumption retains
 that proposal's source facts.
 
+Marked source-specific Cycling damage binds the card in its committed
+post-discard zone under CR 702.29c. The original hand snapshot still selects the
+eligible printed ability, while its new stack frame retains the resulting
+incarnation and source facts. A later move pins that frame's immediate last
+known information through the ordinary zone owner. Unmarked historical frames
+retain their prior interpretation. This does not change the separately queued
+Cycling draw or the timing of target announcement and optional acceptance.
+
 Closed event-player damage instructions retain that source contract while
 addressing the sealed occurrence player. A draw or cast participant is not
 replaced with the trigger controller. The instruction creates no target

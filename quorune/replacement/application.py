@@ -65,6 +65,7 @@ _NUMERIC_FIELDS = {
     "zone.change": {"entry_life_payment"},
 }
 _SEQUENCE_FIELDS = {
+    'zone.change':{'commander_component_returns'},
     "token.create": {"tokens", "created_types", "created_subtypes"},
 }
 
@@ -425,13 +426,21 @@ def _retarget_zone_counter_children(
 def _shared_token_creation_status(tokens):
     """Keep instruction status distinct from the replaced token definition."""
     status={}
-    for field,default in (('tapped',False),('temporary_keywords',())):
+    for field,default in (('tapped',False),('temporary_keywords',()),('effect_entry_counters',())):
         values=[]
         for token in tokens:
             if not isinstance(token,Mapping):raise ReplacementEffectError('Token creation specification must be an object')
             value=token.get(field,default)
             if field=='tapped':
                 if type(value) is not bool:raise ReplacementEffectError('Token tapped status must be boolean')
+            elif field=='effect_entry_counters':
+                from ..entry_counter_model import EffectEntryCounter
+                if not isinstance(value,(list,tuple)):
+                    raise ReplacementEffectError('Token entry counters must be an array')
+                try:
+                    value=tuple(EffectEntryCounter.from_dict(raw).to_dict() for raw in value)
+                except ValueError as exc:
+                    raise ReplacementEffectError(str(exc)) from exc
             else:
                 if not isinstance(value,(list,tuple)) or any(type(keyword) is not str for keyword in value):
                     raise ReplacementEffectError('Token temporary keywords must be an array of strings')
@@ -439,7 +448,7 @@ def _shared_token_creation_status(tokens):
             values.append(value)
         if values and any(value!=values[0] for value in values[1:]):
             raise ReplacementEffectError('Mixed token creation status requires an explicit per-definition scope')
-        if values and values[0]!=default:status[field]=list(values[0]) if field=='temporary_keywords' else values[0]
+        if values and values[0]!=default:status[field]=values[0] if field=='tapped' else list(values[0])
     return status
 
 
@@ -559,6 +568,11 @@ def _apply_operation(
 ) -> EntryReplacementScope | None:
     if isinstance(operation, SetField):
         _require_field(event, operation.field, _SET_FIELDS, operation="set")
+        if operation.field=='destination' and 'commander_components' in payload and payload.get('destination')!=operation.value:
+            from ..composition_commander_replacement_model import payload_commander_components,EPOCH_FIELD
+            try:payload_commander_components(payload)
+            except ValueError as exc:raise ReplacementEffectError(str(exc)) from exc
+            payload[EPOCH_FIELD]=payload.get(EPOCH_FIELD,0)+1
         payload[operation.field] = thaw_value(operation.value)
         if operation.field == "destination":
             _retarget_zone_counter_children(event, payload, children)
@@ -593,6 +607,12 @@ def _apply_operation(
             "Damage redirection requires subject-aware replacement application"
         )
     if isinstance(operation, (AppendValues, UnionValues)):
+        if operation.field=='commander_component_returns':
+            from ..composition_commander_replacement_model import validate_commander_component_returns
+            if not isinstance(operation,UnionValues) or payload.get('destination') not in {'hand','library'}:
+                raise ReplacementEffectError('Commander component return requires a hand/library union')
+            try:validate_commander_component_returns(payload,operation.values)
+            except ValueError as exc:raise ReplacementEffectError(str(exc)) from exc
         _require_field(
             event, operation.field, _SEQUENCE_FIELDS, operation="sequence"
         )
@@ -708,6 +728,27 @@ def _apply_effect_operations(
     operations: Sequence[Any],
     *,objects: tuple[str,...] | None = None,
 ) -> ReplaceableEvent:
+    from .composition_scope import COMPONENTS_FIELD,RESULT_FIELD,card_component_event,card_only_replacement
+    if COMPONENTS_FIELD in event.payload or RESULT_FIELD in event.payload:
+        from dataclasses import replace
+        try:group=card_component_event(event)
+        except (ValueError,TypeError,KeyError) as exc:raise ReplacementEffectError(str(exc)) from exc
+        if group is None:raise ReplacementEffectError('Card-component replacement scope is missing')
+        changed_group=_apply_effect_operations(group,effect,operations,objects=objects)
+        if card_only_replacement(effect):
+            payload=thaw_value(event.payload)
+            payload[RESULT_FIELD]=changed_group.to_dict()
+            chooser_history=dict(payload.get('replacement_choosers') or {})
+            chooser_history[effect.effect_id]=event.chooser
+            payload['replacement_choosers']=chooser_history
+            return event.with_payload(payload,applied_effect=effect.effect_id)
+        payload=thaw_value(event.payload)
+        payload.pop(COMPONENTS_FIELD);payload.pop(RESULT_FIELD,None)
+        changed=_apply_effect_operations(replace(event,payload=payload),effect,operations,objects=objects)
+        payload=thaw_value(changed.payload)
+        payload[COMPONENTS_FIELD]=thaw_value(event.payload[COMPONENTS_FIELD])
+        payload[RESULT_FIELD]=changed_group.to_dict()
+        return replace(changed,payload=payload)
     payload = thaw_value(event.payload)
     children = list(event.children)
     entry_scope = event.entry_scope

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 from dataclasses import replace
+from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD,defined_token_current_characteristics
 
 
 def prospective_face_view(record: Any, card: Any, prospective_name: str | None) -> Any:
@@ -29,7 +30,10 @@ def selected_face_id(
         elif prospective_name == str(getattr(record, "name", "")):
             return "front"
     active_face = str(getattr(card, "active_face", None) or "")
-    copied_face = (getattr(card, 'annotations', {}) or {}).get('copy_overrides', {}).get('_copiable_face_id')
+    copied_values = (getattr(card, 'annotations', {}) or {}).get('copy_overrides', {})
+    if DEFINED_TOKEN_FACES_FIELD in copied_values:
+        copied_values=defined_token_current_characteristics(card,copied_values)
+    copied_face = copied_values.get('_copiable_face_id')
     if copied_face:
         active_face = copied_face
     if active_face:

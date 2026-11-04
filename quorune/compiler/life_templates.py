@@ -103,6 +103,9 @@ def fixed_life_effect_template(
     """Lower closed fixed controller, target-player, and opponent changes."""
 
     normalized = " ".join(text.strip().split())
+    from .life_total_setting_templates import life_total_setting_template
+    setting=life_total_setting_template(normalized)
+    if setting is not None:return setting
     actual=fixed_actual_life_transfer_template(normalized)
     if actual is not None:return actual
     match = re.fullmatch(

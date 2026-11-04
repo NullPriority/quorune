@@ -11,6 +11,7 @@ from .direct_target import (
     direct_permanent_target_spec,
 )
 from .fixed_numbers import fixed_number
+from ..rules.source_references import SourceReferenceSpec
 
 
 _COUNT = r"a|an|one|two|three|four|five|six|seven|eight|nine|ten|\d+"
@@ -25,6 +26,10 @@ _REMOVAL = re.compile(
 )
 _ALL_REMOVAL = re.compile(
     r"remove all counters from (?P<subject>.+?)\.?",
+    re.IGNORECASE,
+)
+_ALL_NAMED_REMOVAL = re.compile(
+    rf'remove all (?P<counter>{_COUNTER_NAME}) counters from (?P<subject>.+?)\.?',
     re.IGNORECASE,
 )
 
@@ -176,9 +181,54 @@ def all_counter_removal_effect_template(
     return AllCounterRemovalTemplate(target_spec=target)
 
 
+def fixed_source_counter_removal_effect_template(
+    text: str, *, card_name: str, allow_source_pronoun: bool = False,
+):
+    """Bind one mandatory removal to the same battlefield source incarnation."""
+    if type(text) is not str:
+        return None
+    match = _REMOVAL.fullmatch(text.strip())
+    if match is None:
+        return None
+    count = fixed_number(match['count'])
+    if count <= 0 or (match['plural'].casefold() == 'counter') != (count == 1):
+        return None
+    subject = match['subject']
+    if not (re.fullmatch(r'this (?:creature|artifact|enchantment|land|permanent|planeswalker|Equipment|Vehicle)', subject, re.I)
+            or SourceReferenceSpec(card_name).matches(subject)
+            or allow_source_pronoun and subject.casefold() in {'it', 'him', 'her'}):
+        return None
+    return ('remove-fixed-counter-source-incarnation-v1', ({
+        'op': 'remove_counters', 'card': '$source.zone_object',
+        'counter': ' '.join(match['counter'].casefold().split()),
+        'amount': count, 'source': '$source',
+    },), None, ('cr-122-counters',))
+
+
+def all_named_source_counter_removal_effect_template(
+    text: str, *, card_name: str, allow_source_pronoun: bool = False,
+):
+    """Select one named kind, without a numeric amount or a target."""
+    match = _ALL_NAMED_REMOVAL.fullmatch(text.strip()) if type(text) is str else None
+    if match is None:
+        return None
+    subject = match['subject']
+    if not (re.fullmatch(r'this (?:creature|artifact|enchantment|land|permanent|planeswalker|Equipment|Vehicle)', subject, re.I)
+            or SourceReferenceSpec(card_name).matches(subject)
+            or allow_source_pronoun and subject.casefold() in {'it', 'him', 'her'}):
+        return None
+    return ('remove-all-named-counter-source-incarnation-v2', ({
+        'op': 'remove_all_counters', 'schema_version': 2,
+        'card': '$source.zone_object', 'counter': ' '.join(match['counter'].casefold().split()),
+        'source': '$source',
+    },), None, ('cr-122-counters',))
+
+
 __all__ = [
     "all_counter_removal_effect_template",
     "AllCounterRemovalTemplate",
     "FixedCounterRemovalTemplate",
     "fixed_counter_removal_effect_template",
+    "fixed_source_counter_removal_effect_template",
+    "all_named_source_counter_removal_effect_template",
 ]

@@ -160,6 +160,19 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
 
 
+def source_scalar_effect_amount_template(text,*,source_name,event,compile_fixed):
+    """Bind source information before wrapping an optional atomic result."""
+    def scalar(body):
+        return scalar_effect_amount_template(body,source_name=source_name,event=event,
+            source_event=True,compile_fixed=compile_fixed)
+    result=scalar(text)
+    if result is not None:return result
+    from .optional_effect_templates import fixed_optional_effect_template
+    optional=fixed_optional_effect_template(text,
+        compile_effect=lambda body:scalar(body) or (None,(),None,()))
+    return optional.compiled() if optional is not None else None
+
+
 def scalar_amount_shape_context(effects, mechanics):
     """Project only validated result slots, retaining the original fixed owner."""
     count = 0

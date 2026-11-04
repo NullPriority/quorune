@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from ..target_source import TargetingSource, stack_targeting_source
+from ..characteristic_read_frames import characteristic_read_method
 
 import copy
 from typing import Any, Mapping, Protocol, Sequence
@@ -266,6 +267,7 @@ class TargetSelectionOwnerMixin:
             return value == controller
         return value is not None and value != controller
 
+    @characteristic_read_method
     def _target_candidate_rows(
         self,
         controller: str,
@@ -414,11 +416,11 @@ class TargetSelectionOwnerMixin:
             and str(row.get("controller")) != group.controller_seat
         ):
             return False
-        if not self._relation_matches(
-            str(row.get("owner")),
-            controller,
-            group.owner_relation,
-        ):
+        if group.owner_relation=='spell_owner':
+            from ..rules.spell_owner_targets import target_has_spell_owner
+            if not target_has_spell_owner(acting_source,row.get('owner'),row.get('category')):
+                return False
+        elif not self._relation_matches(str(row.get('owner')),controller,group.owner_relation):
             return False
         if row["category"] == "player" and not self._relation_matches(
             str(row["ref"]),
@@ -884,8 +886,8 @@ class TargetSelectionOwnerMixin:
         if "target_schema_override" in item.context:
             schema=dict(item.context["target_schema_override"])
         else:
-            from ..rules.blocking_requirements import bound_defending_controller_schema
-            schema=bound_defending_controller_schema(program.target_schema,item.context) if program is not None else None
+            from ..rules.event_player_targets import bound_event_player_controller_schema
+            schema=bound_event_player_controller_schema(program.target_schema,item.context) if program is not None else None
         if schema is None:return None
         from ..target_cardinality import bind_any_number_target_schema
         return bind_any_number_target_schema(schema,
@@ -1005,6 +1007,8 @@ class TargetSelectionOwnerMixin:
         if continuation_payload.get("trigger_creation"):
             from ..rules.target_announcements import dispatch_target_announcements
             dispatch_target_announcements(self, item)
+            from ..rules.crime import record_crime_for_stack_placement
+            record_crime_for_stack_placement(self,item)
             item.context.pop("trigger_target_selection_pending", None)
             item.context["targets_chosen_at_creation"] = True
             self._grant_priority(self.state.active_player)
@@ -1096,6 +1100,12 @@ class TargetSelectionOwnerMixin:
         item.context["target_groups_current"] = current_groups
         item.context["targets_revalidated"] = True
         if selected_count and valid_count == 0:
+            from ..rules.mutate_resolution import mutating_spell_spec
+            if mutating_spell_spec(item) is not None:
+                self._log(item.controller,'mutate.target.illegal',
+                    f'{item.ref} lost its Mutate target and will resolve as a creature.',
+                    {'stack':item.ref},importance=2)
+                return True
             if item.context.get("cost_option") == "bestow":
                 self._log(
                     item.controller,

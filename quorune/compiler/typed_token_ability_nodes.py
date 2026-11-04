@@ -7,7 +7,7 @@ from dataclasses import replace
 import re
 from typing import Any, Callable, Mapping, Sequence
 
-from ..ability_fragments import ability_fragment_to_dict
+from ..ability_fragments import ability_fragment_to_dict, canonical_ability_fragments
 from ..declaration_fragments import DeclarationRestrictionTemplate,DeclarationRequirementTemplate
 from ..characteristic_evaluation import type_parts
 from ..fixed_token_production import TYPED_TOKEN_ABILITY_MECHANIC_ID
@@ -450,11 +450,21 @@ def _decorate_outer_nodes(
     capability_registry: CapabilityRegistry,
     capability_profile: str,
 ) -> tuple[OracleNode, ...] | None:
+    # These intrinsic restrictions already have a closed fixed-definition
+    # representation. Keep its legacy capability shape when adding no child
+    # program or broader static fragment.
+    intrinsic_declarations = bool(fragments) and all(
+        isinstance(fragment, DeclarationRestrictionTemplate)
+        and fragment.template_id in {
+            "intrinsic-block-prohibition-v1", "intrinsic-unblockable-v1"
+        }
+        for fragment in canonical_ability_fragments(fragments)
+    )
     mechanics = tuple(
         dict.fromkeys(
             (
                 *(mechanic for node in outer_nodes for mechanic in node.mechanics),
-                TYPED_TOKEN_ABILITY_MECHANIC_ID,
+                *(() if intrinsic_declarations else (TYPED_TOKEN_ABILITY_MECHANIC_ID,)),
                 *direct_mechanics,
             )
         )

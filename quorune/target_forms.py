@@ -3,6 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+EVENT_PLAYER_TARGET_REFERENCES = frozenset({
+    '$context.defending_player', '$context.target', '$context.player',
+})
+
 
 def _values(value: Any, *, field_name: str) -> tuple[str, ...]:
     if not isinstance(value, (list, tuple)) or any(

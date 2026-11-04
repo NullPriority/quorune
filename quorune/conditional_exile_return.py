@@ -57,6 +57,11 @@ def defer_conditional_cost_returns():
 
 
 def finish_conditional_cost_returns(host: Any, waiting: Sequence[Any]) -> bool:
+    parent=_DEFERRED_RETURNS.get()
+    if parent is not None:
+        if parent is waiting:raise GameRuleError('A current cost-return capture cannot finish itself')
+        parent.extend(waiting)
+        return bool(waiting)
     bindings = tuple(binding for captured, _departures in waiting for binding in captured)
     departures = tuple(dict.fromkeys(source for _captured, departed in waiting for source in departed))
     if not bindings:

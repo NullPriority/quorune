@@ -1,5 +1,5 @@
 {
-  "baseline_commit": "0bb137fc2b8d10c1e92f3d33cf5b23d0fa028686",
+  "baseline_commit": "8863afd31d2f9981190f528171117783ffd1f00f",
   "card_named_helpers": [
     {
       "file": "quorune/engine.py",
@@ -8,12 +8,24 @@
     }
   ],
   "direct_game_state_write_classification_counts": {
-    "canonical_mutation_owner_write": 16,
+    "canonical_mutation_owner_write": 20,
     "compatibility_adapter_write": 11,
-    "grandfathered_engine_debt": 47,
+    "grandfathered_engine_debt": 42,
     "orchestration_root_replacement": 1
   },
   "direct_game_state_write_identities": [
+    {
+      "file": "quorune/emblems.py",
+      "kind": "assignment",
+      "state_path": "players.stats",
+      "symbol": "_commit_emblem_object"
+    },
+    {
+      "file": "quorune/emblems.py",
+      "kind": "mutating_call:append",
+      "state_path": "players.zones",
+      "symbol": "_commit_emblem_object"
+    },
     {
       "file": "quorune/engine.py",
       "kind": "assignment",
@@ -67,12 +79,6 @@
       "kind": "mutating_call:append",
       "state_path": "stack",
       "symbol": "_copy_stack_item"
-    },
-    {
-      "file": "quorune/engine.py",
-      "kind": "assignment",
-      "state_path": "cards",
-      "symbol": "_create_copy_object"
     },
     {
       "file": "quorune/engine.py",
@@ -244,24 +250,6 @@
     },
     {
       "file": "quorune/engine.py",
-      "kind": "assignment",
-      "state_path": "cards",
-      "symbol": "create_emblem"
-    },
-    {
-      "file": "quorune/engine.py",
-      "kind": "assignment",
-      "state_path": "players.stats",
-      "symbol": "create_emblem"
-    },
-    {
-      "file": "quorune/engine.py",
-      "kind": "mutating_call:append",
-      "state_path": "players.zones",
-      "symbol": "create_emblem"
-    },
-    {
-      "file": "quorune/engine.py",
       "kind": "augmented_assignment",
       "state_path": "revision",
       "symbol": "submit"
@@ -271,6 +259,18 @@
       "kind": "assignment",
       "state_path": "<state-root>",
       "symbol": "transaction"
+    },
+    {
+      "file": "quorune/game_object_store.py",
+      "symbol": "commit",
+      "kind": "mutating_call:pop",
+      "state_path": "cards"
+    },
+    {
+      "file": "quorune/game_object_store.py",
+      "symbol": "commit",
+      "kind": "mutating_call:update",
+      "state_path": "cards"
     },
     {
       "file": "quorune/permissions.py",
@@ -412,9 +412,9 @@
     },
     {
       "file": "quorune/zone_transitions.py",
+      "symbol": "_depart_stack_object",
       "kind": "assignment",
-      "state_path": "stack",
-      "symbol": "_commit_move"
+      "state_path": "stack"
     },
     {
       "file": "quorune/zone_transitions.py",
@@ -430,15 +430,17 @@
     }
   ],
   "direct_game_state_writes_by_file": {
-    "quorune/engine.py": 48,
+    "quorune/emblems.py": 2,
+    "quorune/engine.py": 43,
     "quorune/permissions.py": 8,
     "quorune/record.py": 11,
     "quorune/selection/storm.py": 3,
     "quorune/trigger_processing.py": 2,
-    "quorune/zone_transitions.py": 3
+    "quorune/zone_transitions.py": 3,
+    "quorune/game_object_store.py": 2
   },
   "engine": {
-    "logical_lines": 6916,
+    "logical_lines": 6560,
     "methods": [
       {
         "kind": "method",
@@ -1566,12 +1568,12 @@
         "visibility": "public"
       }
     ],
-    "physical_lines": 7416
+    "physical_lines": 7062
   },
   "exception_binding": {
-    "adr": "docs/adr/0123-combat-bound-blocking-requirements.md",
-    "allowance_fingerprint": "c37156888781cf644b39642ff69f10f80e58a73e2aafc8ae72436b502b258ada",
-    "exception_id": "ARCH-EXC-0060"
+    "exception_id": "ARCH-EXC-0062",
+    "adr": "docs/adr/0148-physical-composition-storage.md",
+    "allowance_fingerprint": "3670b275e1b5c96fc6f3094fda6aec609ac99440142fe7606254acc4b5ae2b66"
   },
   "legacy_card_specific_operations": [
     "daretti_exchange",
@@ -1659,11 +1661,6 @@
       "symbol": "CodexCliArenaRunner.run"
     },
     {
-      "file": "quorune/compiler/cast_cost_modifier_templates.py",
-      "logical_lines": 155,
-      "symbol": "_object_count_metric"
-    },
-    {
       "file": "quorune/declaration_costs.py",
       "logical_lines": 249,
       "symbol": "parse_declaration_cost_line"
@@ -1710,7 +1707,7 @@
     },
     {
       "file": "quorune/preflight.py",
-      "logical_lines": 302,
+      "logical_lines": 262,
       "symbol": "card_semantic_status"
     },
     {
@@ -1745,7 +1742,7 @@
     },
     {
       "file": "quorune/self_cast_reductions.py",
-      "logical_lines": 209,
+      "logical_lines": 208,
       "symbol": "CastReductionMetric.__post_init__"
     },
     {
@@ -1771,11 +1768,11 @@
     },
     {
       "file": "quorune/engine.py",
-      "logical_lines": 6916
+      "logical_lines": 6560
     },
     {
       "file": "quorune/record.py",
-      "logical_lines": 1596
+      "logical_lines": 1589
     },
     {
       "file": "quorune/report.py",
@@ -1823,6 +1820,7 @@
     "counter_stack_target",
     "counter_unless_pay",
     "create_attached_token",
+    "create_compiled_emblem",
     "create_damage_prevention_shield",
     "create_damage_redirection",
     "create_emblem",

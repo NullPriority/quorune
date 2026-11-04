@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "sanitized_historical_token_copy_provenance_recipe",
+  "engine_version": "0.9.0",
+  "accepted_commands": 6,
+  "runtime_trust_fingerprints": {
+    "capability_evidence_fingerprint": "27160b3dc2807389ea5d92a4b3b1208e974fd7c7eedfcd9b09f5601ff07fe101",
+    "capability_registry_fingerprint": "bf5776be0fc849ce80bb39807888c53dfb0e58a23ad5abfb11f5c9d823f71020",
+    "runtime_component_registry_fingerprint": "f6847eaa6f9aea5dca7b5b7536f7e5a202e0f3a3f7512d6e11b5b15613b254e6",
+    "schema_version": 1,
+    "semantic_handler_registry_fingerprint": "d6d04e3bcb859ff0ece14fb4b7963a145a8c3667255fd939231e110e89c52c7e"
+  },
+  "archive_file_sha256": {
+    "manifest.json": "e989565631a3e161b4416a87d872085dc2fc65f0c7c1988d0ec1b4883b33d9e9",
+    "initial-checkpoint.json.gz": "4acf5dad3b11510831b161bae58fba3ac4110549b7449e15e3683f53e655583b",
+    "commands.jsonl": "caccc75c3d0b72ab0579a5af189fcbc077139f4229bf608e5e8b236afe87f7cb",
+    "semantics.json": "f9ddf31fa33f846abe37e4fba7f2becf9b4f34fba5dd7a0181792260f2e65047"
+  },
+  "readable_checkpoint_preserves_hash": true,
+  "legacy_absence_expected_final_state_hash": "e1015e9b8f72fedb32c5de6727fd302f2ea3530a3a0c639c0067e2afad9fb950",
+  "legacy_copied_annotation_keys": [
+    "copied_from",
+    "copy_overrides",
+    "token_characteristics",
+    "until_end_of_turn"
+  ],
+  "current_pinned_replay_disposition": "Runtime trust provenance mismatch in record manifest",
+  "historical_execution_claim": "Original pinned archive is explicitly incompatible; a separate synthetic provenance-absence shape retains the original gameplay hashes and replays through historical copy mode."
+}

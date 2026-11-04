@@ -40,6 +40,9 @@ def fixed_life_node_capabilities(
         return ()
     effect = effects[0]
     operation = effect.get("op")
+    if operation=='set_life_total':
+        from .life_total_setting_shapes import life_total_setting_capabilities
+        return life_total_setting_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     if operation=='life_loss_then_gain_actual':
         from .actual_life_transfer import actual_life_transfer_capabilities
         return actual_life_transfer_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)

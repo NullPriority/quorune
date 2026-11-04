@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .source_entry_cast_information import source_entry_cast_runtime_coverage
 
 import hashlib
 import json
@@ -174,7 +175,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v681"
+ORACLE_COMPILER_VERSION = "oracle-ir-v682"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -684,7 +685,7 @@ def _keyword_nodes(
 
     multi_nodes = multi_keyword_nodes(**locals(), compile_single_keyword=_keyword_node_for_mechanics)
     if multi_nodes is not None: return multi_nodes
-    if mechanics in {("madness",), ("partner with",), ("learn",)}: return ()
+    if mechanics in {("madness",), ("miracle",), ("partner with",), ("learn",)}: return ()
 
     keyword_event_effect = fixed_keyword_event_effect_node(node_id=node_id, line=line, material_line=material_line, span=span, mechanics=mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     if keyword_event_effect is not None: return (keyword_event_effect,)
@@ -875,28 +876,24 @@ def _trigger_node(
         recognized = True
     elif trigger:
         event_phrase = trigger.group("event").casefold()
-        from .compiler.scalar_effect_amounts import scalar_effect_amount_template
-        source_bound_effect = scalar_effect_amount_template(trigger.group("body"), source_name=card_name,
-            event={"enters":"permanent.enter", "dies":"creature.dies", "leaves the battlefield":"permanent.leave"}[event_phrase],
-            source_event=True, compile_fixed=lambda text: effect_template(text, card_name=card_name)) or source_self_contextual_effect_template(
-            trigger.group("body"),
-            card_name=card_name,
-            event_phrase=event_phrase, compile_effect=effect_template,
-        )
-        template, effects, target_schema, mechanics = (
-            source_bound_effect
-            if source_bound_effect is not None
-            else effect_template(
-                trigger.group("body"),
-                card_name=card_name,
-            )
-        )
+        from .compiler.source_self_effect_templates import compile_source_self_zone_effect
+        template,effects,target_schema,mechanics,event_condition=compile_source_self_zone_effect(
+            trigger.group('body'),card_name=card_name,event_phrase=event_phrase,effect_template=effect_template)
         event = {
             "enters": "permanent.enter.self",
             "dies": "creature.dies.self",
             "leaves the battlefield": "permanent.leave.self",
         }[event_phrase]
         recognized = True
+    diagnostic_binding = None
+    if not recognized:
+        from .compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        diagnostic_binding = fixed_counter_trigger_binding(material_line, card_name=card_name)
+        if diagnostic_binding is not None:
+            event = diagnostic_binding.event.value
+            event_condition = diagnostic_binding.event_condition
+    diagnostic_body = trigger.group("body") if trigger is not None else diagnostic_binding.body if diagnostic_binding is not None else ""
+    event_known = (recognized or diagnostic_binding is not None) and not re.match(r"or\b", diagnostic_body, re.IGNORECASE)
     dependencies = (
         "cr-603-handling-triggered-abilities",
         *(
@@ -935,15 +932,15 @@ def _trigger_node(
         residual_ids = (
             _residual(
                 residuals,
-                kind="trigger",
+                kind="trigger_effect" if event_known else "trigger",
                 text=line,
                 span=span,
                 reason=(
                     "trigger effect has no exact generic template"
-                    if recognized
+                    if event_known
                     else "trigger condition/event binding is not exact"
                 ),
-                blockers=(
+                blockers=() if event_known else (
                     "normalized event binding",
                     "intervening-if and reflexive-trigger grammar",
                 ),
@@ -955,7 +952,7 @@ def _trigger_node(
         kind="triggered_ability",
         text=line,
         span=span,
-        active_zone="battlefield",
+        active_zone=diagnostic_binding.active_zone if diagnostic_binding is not None else "battlefield",
         event=event,
         lowerable=recognized and template is not None,
         exact=recognized and template is not None and not gate.blockers,
@@ -963,6 +960,7 @@ def _trigger_node(
         effects=effects,
         target_schema=target_schema,
         event_condition=event_condition,
+        runtime_coverage=source_entry_cast_runtime_coverage(event_condition),
         mechanics=dependencies,
         residual_ids=residual_ids,
         capability_dependencies=gate.capabilities,

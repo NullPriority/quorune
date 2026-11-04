@@ -16,6 +16,7 @@ from .replacement.immutable import (
     thaw_value,
 )
 from .util import stable_json
+from .composition_departure import CompositionZoneFact
 
 
 ZoneEventSourceTiming = Literal["before", "after"]
@@ -189,6 +190,8 @@ class ZoneChangeOccurrence:
     paid_entry_copy: Mapping[str, Any] | None = None
     multikicker_paid: Mapping[str, Any] | None = None
     declared_cast_costs: Mapping[str, Any] | None = None
+    source_entry_cast_information: Mapping[str,Any] | None = None
+    composition: CompositionZoneFact | Mapping[str,Any] | None = None
 
     def __post_init__(self) -> None:
         for field in (
@@ -218,6 +221,11 @@ class ZoneChangeOccurrence:
             raise ZoneTriggerEventError(
                 "zone_occurrence.transition_kind must be a supported typed value"
             )
+        if self.composition is not None:
+            fact=CompositionZoneFact.from_dict(self.composition) if isinstance(self.composition,Mapping) else self.composition
+            if not isinstance(fact,CompositionZoneFact):raise ZoneTriggerEventError('Composition event facts must be typed')
+            fact.validate_occurrence(self)
+            object.__setattr__(self,'composition',fact)
         if self.read_ahead_chapter is not None and (
             type(self.read_ahead_chapter) is not int
             or self.read_ahead_chapter < 1
@@ -228,6 +236,7 @@ class ZoneChangeOccurrence:
         object.__setattr__(self, 'paid_entry_copy', _validated_cast_metadata(self))
         object.__setattr__(self, 'multikicker_paid', _validated_multikicker_metadata(self))
         object.__setattr__(self, 'declared_cast_costs', _validated_declared_cast_cost_metadata(self))
+        object.__setattr__(self,'source_entry_cast_information',_validated_source_entry_cast_information(self))
         if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise ZoneTriggerEventError(
                 "Unsupported zone-trigger occurrence schema version"
@@ -328,10 +337,13 @@ class ZoneChangeOccurrence:
             result['declared_cast_costs'] = thaw_value(self.declared_cast_costs)
         if self.multikicker_paid is not None:
             result['multikicker_paid'] = thaw_value(self.multikicker_paid)
+        if self.source_entry_cast_information is not None:
+            result['source_entry_cast_information']=thaw_value(self.source_entry_cast_information)
         if self.previous_copy_snapshot is not None:
             result["previous_copy_snapshot"] = thaw_value(self.previous_copy_snapshot)
         if self.current_copy_snapshot is not None:
             result["current_copy_snapshot"] = thaw_value(self.current_copy_snapshot)
+        if self.composition is not None:result['composition']=self.composition.to_dict()
         return result
 
     @property
@@ -339,6 +351,20 @@ class ZoneChangeOccurrence:
         return hashlib.sha256(
             stable_json(self.to_dict()).encode("utf-8")
         ).hexdigest()
+
+
+def _validated_source_entry_cast_information(occurrence):
+    value=occurrence.source_entry_cast_information
+    if value is None:return None
+    from .source_entry_cast_information import EntryCastInformation
+    from .continuous_effect_model import ContinuousObjectIdentity
+    info=EntryCastInformation.from_dict(value)
+    if (occurrence.destination!='battlefield' or info.source!=ContinuousObjectIdentity(
+            occurrence.object_id,occurrence.current_logical_object_id)
+            or info.cast is not None and (occurrence.origin!='stack'
+                or info.cast.stack_logical_object_id!=occurrence.previous_logical_object_id)):
+        raise ZoneTriggerEventError('Source-entry information differs from the actual committed entry')
+    return FrozenMap(info.to_dict())
 
 
 def _validated_declared_cast_cost_metadata(occurrence):
@@ -482,6 +508,8 @@ def normalized_zone_trigger_events(
     }
     if occurrence.cast_option is not None:
         common["cast_option"] = occurrence.cast_option
+    if occurrence.source_entry_cast_information is not None:
+        common['source_entry_cast_information']=thaw_value(occurrence.source_entry_cast_information)
     if occurrence.declared_cast_costs is not None:
         from .declared_cast_cost_model import DeclaredCastCostFacts
         common['declared_cast_cost_instances'] = list(DeclaredCastCostFacts.from_dict(occurrence.declared_cast_costs).chosen_instances())
@@ -491,7 +519,10 @@ def normalized_zone_trigger_events(
         common['paid_entry_copy_instance'] = occurrence.paid_entry_copy['instance_id']
         common['paid_entry_copy_count'] = occurrence.paid_entry_copy['count']
     result: list[NormalizedZoneTriggerEvent] = []
-    if occurrence.transition_kind is ZoneTransitionKind.SACRIFICE:
+    permanent=occurrence.composition is None or occurrence.composition.permanent_departure
+    physical=occurrence.composition is None or occurrence.composition.physical_arrival
+    if occurrence.composition is not None:common['composition']=occurrence.composition.to_dict()
+    if permanent and occurrence.transition_kind is ZoneTransitionKind.SACRIFICE:
         result.append(
             NormalizedZoneTriggerEvent(
                 "permanent.sacrificed", "before", FrozenMap(common)
@@ -509,7 +540,7 @@ def normalized_zone_trigger_events(
                     "card.graveyard", "after", FrozenMap(common)
                 )
             )
-    if occurrence.origin == "battlefield" and occurrence.destination != "battlefield":
+    if permanent and occurrence.origin == "battlefield" and occurrence.destination != "battlefield":
         departure = {
             **common,
             "controller": occurrence.previous_controller,
@@ -580,7 +611,7 @@ def normalized_zone_trigger_events(
                         f"{card_type}.enter", "after", FrozenMap(entered)
                     )
                 )
-    if (occurrence.card_object and not occurrence.token
+    if (physical and occurrence.card_object and not occurrence.token
             and occurrence.destination == 'graveyard' and occurrence.origin != 'graveyard'):
         entered_graveyard = {
             **common, **sealed_public_characteristic_facts(occurrence.current_characteristics),

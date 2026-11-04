@@ -33,8 +33,9 @@ def _fixed_target_fields(
     *,
     operation: str,
     replacements: bool,
+    additional_fields: tuple[str,...] = (),
 ) -> tuple[tuple[str, ...], int, str, tuple[Any, ...]]:
-    unknown = sorted(set(effect) - _COMMON_FIELDS)
+    unknown = sorted(set(effect) - _COMMON_FIELDS - set(additional_fields))
     if unknown:
         raise SemanticNodeError(
             "Fixed target-set effect has unknown fields: " + ", ".join(unknown)
@@ -179,6 +180,34 @@ class MoveFixedTargetSetHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class ReanimateFixedTargetSetHandler:
+    handler_id: str = 'generic.reanimate-target-set.v1'
+    family: str = 'effect.graveyard-reanimation-target-set'
+    operation: str = 'reanimate_targets'
+    schema_version: int = 1
+    capability_dependencies: tuple[str,...] = ('zone.reanimate.fixed_target_set',
+        'zone.reanimate.fixed_target',_FIXED_TARGET_SET_CAPABILITY)
+    rule_references: tuple[str,...] = ('400.6','400.7','603.6a','608.2b','614.12','614.12a')
+
+    def lower(self,effect:Mapping[str,Any],context:ReadOnlyHandlerContext)->IntentPlan:
+        from ..public_zone_moves import PublicBattlefieldController
+        if (type(effect.get('schema_version')) is not int or effect['schema_version']!=1
+                or type(effect.get('battlefield_tapped')) is not bool
+                or 'announced_target_count' in effect):
+            raise SemanticNodeError('Reanimation target sets require the closed fixed entry instruction')
+        try:controller=PublicBattlefieldController(effect.get('battlefield_controller'))
+        except (ValueError,TypeError) as exc:raise SemanticNodeError('Reanimation entry controller is unsupported') from exc
+        cards,maximum,reason,selections=_fixed_target_fields(effect,context,operation=self.operation,
+            replacements=True,additional_fields=('schema_version','battlefield_controller','battlefield_tapped'))
+        if maximum<2:raise SemanticNodeError('One-target reanimation retains its scalar owner')
+        context.query.require_known_seat(context.actor)
+        return _target_set_plan(self.operation,self.handler_id,cards,MoveObjectsSimultaneouslyIntent(
+            actor=context.actor,object_refs=cards,expected_zones=('graveyard',),destination='battlefield',reason=reason,
+            replacement_selections=selections,battlefield_controller=controller,
+            battlefield_tapped=effect['battlefield_tapped']))
+
+
+@dataclass(frozen=True, slots=True)
 class SetFixedTargetSetTappedHandler:
     handler_id: str
     operation: str
@@ -217,6 +246,7 @@ class SetFixedTargetSetTappedHandler:
 
 
 FIXED_TARGET_SET_HANDLERS = (
+    ReanimateFixedTargetSetHandler(),
     DestroyPermanentTargetSetHandler(),
     MoveFixedTargetSetHandler(
         handler_id="generic.exile-permanent-target-set.v1",
@@ -291,5 +321,6 @@ __all__ = [
     "DestroyPermanentTargetSetHandler",
     "FIXED_TARGET_SET_HANDLERS",
     "MoveFixedTargetSetHandler",
+    "ReanimateFixedTargetSetHandler",
     "SetFixedTargetSetTappedHandler",
 ]

@@ -9,7 +9,8 @@ import unittest
 from unittest.mock import patch
 
 from common import DB_PATH
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
+from quorune.oracle_ir import compile_oracle_card
 from quorune.compiler.unlock_frontier import (
     BASE_RESIDUAL_FAMILIES,
     MAX_BUNDLE_FAMILIES,
@@ -45,7 +46,75 @@ def _contracts() -> list[dict]:
     )
 
 
+def _trigger_diagnostic_record(text):
+    return CardRecord(
+        oracle_id='00000000-0000-4000-8000-00000000d603',name='Trigger Diagnostic Witness',
+        mana_cost='{2}{W}',mana_value=3.0,type_line='Creature — Wizard',oracle_text=text,
+        power='2',toughness='2',loyalty=None,defense=None,colors=('W',),color_identity=('W',),
+        keywords=(),produced_mana=(),layout='normal',released_at='2026-08-07',
+        legalities={'commander':'legal'},faces=(),raw={},
+    )
+
+
 class ResidualClassifierTests(unittest.TestCase):
+    def test_partial_or_event_prefix_does_not_claim_the_whole_event_is_bound(self):
+        ir=compile_oracle_card(_trigger_diagnostic_record(
+            'Whenever another creature dies, or a creature card leaves your graveyard, draw a card.'),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertNotEqual('exact',ir.status)
+        residual,=ir.material_residuals
+        self.assertEqual('trigger',residual.kind)
+        self.assertTrue(any(family.startswith('event_binding:') for family in canonical_residual_families(residual)))
+
+    def test_known_nonself_event_keeps_its_binding_when_only_the_result_is_unknown(self):
+        ir=compile_oracle_card(_trigger_diagnostic_record(
+            'Whenever you cast an instant or sorcery spell, return the sun to your pocket.'),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('spell.cast',node.event)
+        self.assertFalse(node.exact)
+        self.assertFalse(node.lowerable)
+        residual,=ir.material_residuals
+        self.assertEqual('trigger_effect',residual.kind)
+        self.assertIn('effect_clause:return',canonical_residual_families(residual))
+        self.assertFalse(any(family.startswith('event_binding:') for family in canonical_residual_families(residual)))
+
+    def test_known_trigger_event_reports_result_blockers_without_admitting_body(self):
+        text=("When this creature enters, you may exile target creature if it attacked or blocked this turn. "
+              "Return that card to the battlefield under its owner's control at the beginning of the next end step.")
+        ir=compile_oracle_card(_trigger_diagnostic_record(text),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('permanent.enter.self',node.event)
+        self.assertFalse(node.exact)
+        self.assertFalse(node.lowerable)
+        self.assertNotEqual('exact',ir.status)
+        residual,=ir.material_residuals
+        self.assertEqual('trigger_effect',residual.kind)
+        self.assertEqual(text,residual.text)
+        self.assertEqual(text,text[residual.span.start:residual.span.end])
+        families=canonical_residual_families(residual)
+        self.assertIn('effect_clause:exile',families)
+        self.assertIn('effect_clause:return',families)
+        self.assertIn('effect_clause:ordered-effect-composition',families)
+        self.assertFalse(any(family.startswith('event_binding:') for family in families),families)
+
+    def test_unknown_event_keeps_event_blockers_and_exact_trigger_stays_exact(self):
+        registry=load_default_capability_registry()
+        unknown=compile_oracle_card(_trigger_diagnostic_record(
+            'Whenever this creature conquers an unexplored star, draw a card.'),
+            capability_registry=registry,capability_profile='commander_review')
+        self.assertNotEqual('exact',unknown.status)
+        residual,=unknown.material_residuals
+        self.assertEqual('trigger',residual.kind)
+        self.assertTrue(any(family.startswith('event_binding:')
+            for family in canonical_residual_families(residual)))
+        exact=compile_oracle_card(_trigger_diagnostic_record('When this creature enters, draw a card.'),
+            capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',exact.status)
+        self.assertFalse(exact.material_residuals)
+        self.assertEqual('permanent.enter.self',exact.faces[0].nodes[0].event)
+
     def test_fixed_mana_flashback_cost_literals_share_one_grammar_family(self):
         families = {
             canonical_residual_families(

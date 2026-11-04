@@ -18,6 +18,17 @@ from .model import (
 )
 from .optional_effect import _represented_effect
 
+_OBJECT_PAYMENT_KINDS=frozenset({'discard','sacrifice','exile','tap','source_sacrifice'})
+
+
+def _object_payment_zones(spec):
+    return ('battlefield',) if spec.kind=='source_sacrifice' else spec.predicate.zones
+
+
+def _source_sacrifice_payment_row(spec,actor,query):
+    row=query.object(spec.source_ref,zones=('battlefield',)) if spec.source_ref is not None else None
+    return row if row is not None and not row.phased_out and row.controller==actor else None
+
 
 def _validated(
     effect: Mapping[str, Any], actor: str, query: SemanticChoiceQuery,
@@ -48,7 +59,7 @@ def _validated(
     for nested in effects:
         if not isinstance(nested, Mapping) or nested.get('op') in {'offer_optional_effect', 'offer_optional_mana_payment'}:
             raise SemanticChoiceError('Fixed payments cannot nest')
-        _represented_effect(nested, actor=actor, query=query)
+        _represented_effect(nested, actor=actor, query=query, allow_event_player_results=True)
     return spec, tuple(FrozenMap(nested) for nested in effects)
 
 
@@ -93,25 +104,29 @@ def prepare_fixed_payment_cost(
                 'payable':payable,'cost':dict(spec.requirements)}))
         return replace(prepared,request=request)
     legal = ()
-    if spec.kind in {'discard', 'sacrifice', 'exile', 'tap'}:
-        candidates = context.query.objects(
-            zones=spec.predicate.zones,
-            owner=actor if spec.kind in {'discard','exile'} else None,
-            controller=actor if spec.kind in {'sacrifice','tap'} else None,
-        )
-        legal = tuple(sorted(
-            (row for row in candidates if object_matches_query(row, spec.predicate)),
-            key=lambda row: (row.ref, row.logical_object_id),
-        ))
+    if spec.kind in _OBJECT_PAYMENT_KINDS:
+        if spec.kind=='source_sacrifice':
+            source=_source_sacrifice_payment_row(spec,actor,context.query)
+            legal=(source,) if source is not None else ()
+        else:
+            candidates = context.query.objects(
+                zones=spec.predicate.zones,
+                owner=actor if spec.kind in {'discard','exile'} else None,
+                controller=actor if spec.kind in {'sacrifice','tap'} else None,
+            )
+            legal = tuple(sorted(
+                (row for row in candidates if object_matches_query(row, spec.predicate)),
+                key=lambda row: (row.ref, row.logical_object_id),
+            ))
         payable = len(legal) >= spec.amount
         choice = ObjectChoice(
             field_name='cards', legal_refs=tuple(row.ref for row in legal),
-            zones=spec.predicate.zones, minimum=0,
+            zones=_object_payment_zones(spec), minimum=0,
             maximum=spec.amount if payable else 0, optional=True,
             visibility='actor_private' if spec.kind == 'discard' else 'public',
             allowed_cardinalities=((0, spec.amount) if payable else (0,)) if spec.amount > 1 else None,
             owner_relation='actor' if spec.kind in {'discard','exile'} else 'any',
-            controller_relation='actor' if spec.kind in {'sacrifice','tap'} else 'any',
+            controller_relation='actor' if spec.kind in {'sacrifice','tap','source_sacrifice'} else 'any',
         )
     elif spec.kind=='remove_source_counter':
         source=_source_counter_payment_row(spec,context.query)
@@ -164,7 +179,7 @@ def complete_fixed_payment_cost(
     label = effect['_stack_label']
     if spec.kind=='mana_discard':
         return _complete_mana_discard_cost(spec,effect,response,query)
-    if spec.kind in {'discard', 'sacrifice', 'exile', 'tap'}:
+    if spec.kind in _OBJECT_PAYMENT_KINDS:
         unknown = set(response) - {'cards', 'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}
         if unknown:
             raise SemanticChoiceError('Fixed object payment response has unknown fields: ' + ','.join(sorted(unknown)))
@@ -185,14 +200,17 @@ def complete_fixed_payment_cost(
             raise SemanticChoiceError('Selected payment conflicts with decline')
         legal = {row['ref']: row['logical_object_id'] for row in effect['_legal_objects']}
         for ref in selected:
-            current = query.object(ref, zones=spec.predicate.zones)
-            if ref not in legal or current is None or current.logical_object_id != legal[ref] or not object_matches_query(current, spec.predicate):
+            current = (_source_sacrifice_payment_row(spec,actor,query) if spec.kind=='source_sacrifice'
+                else query.object(ref,zones=spec.predicate.zones))
+            if (ref not in legal or current is None or spec.kind=='source_sacrifice' and current.ref!=ref or current.logical_object_id != legal[ref]
+                    or spec.kind!='source_sacrifice' and not object_matches_query(current,spec.predicate)):
                 raise SemanticChoiceError('Fixed payment object is stale or ineligible')
         intent = SetPermanentsTappedIntent(actor=actor,object_refs=selected,tapped=True,reason=label) if spec.kind=='tap' else MoveObjectsSimultaneouslyIntent(
-            actor=actor, object_refs=selected, expected_zones=spec.predicate.zones,
+            actor=actor, object_refs=selected, expected_zones=_object_payment_zones(spec),
             destination='exile' if spec.kind=='exile' else 'graveyard', reason=label,
-            transition_kind={'discard':ZoneTransitionKind.DISCARD,'sacrifice':ZoneTransitionKind.SACRIFICE,'exile':ZoneTransitionKind.ORDINARY}[spec.kind],
-            owned_only=spec.kind in {'discard','exile'}, controlled_only=spec.kind == 'sacrifice',
+            transition_kind={'discard':ZoneTransitionKind.DISCARD,'sacrifice':ZoneTransitionKind.SACRIFICE,
+                'source_sacrifice':ZoneTransitionKind.SACRIFICE,'exile':ZoneTransitionKind.ORDINARY}[spec.kind],
+            owned_only=spec.kind in {'discard','exile'}, controlled_only=spec.kind in {'sacrifice','source_sacrifice'},
         )
     else:
         unknown = set(response) - {'pay', 'action', 'action_id', 'a', 'cap', 'reason', 'plan', 'next', 'choice_schema'}

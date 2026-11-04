@@ -250,9 +250,13 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         with patch('quorune.compiler.event_counter_results.public_event_source_counter_result', return_value=None):
             self.assertNotEqual('exact', compile_oracle_card(card, capability_registry=self.capabilities,
                                                             capability_profile='commander_review').status)
+        sequence=record('Whenever another creature you control leaves the battlefield, put a +1/+1 counter on this creature, then draw a card.',
+                        'Creature — Human Scout')
+        self.assertEqual('exact',compile_oracle_card(sequence,capability_registry=self.capabilities,
+            capability_profile='commander_review').status)
         for body in ('put a +1/+1 counter on that creature.',
                      'put X +1/+1 counters on this creature.',
-                     'put a +1/+1 counter on this creature, then draw a card.',
+                     'put a +1/+1 counter on this creature, then take an unrepresented action.',
                      'you may put a +1/+1 counter on this creature.'):
             with self.subTest(body=body):
                 boundary = record('Whenever another creature you control leaves the battlefield, '+body,
@@ -684,6 +688,9 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 self.assertEqual(text, text[node.span.start : node.span.end])
 
     def test_trigger_ability_word_boundary_fails_closed(self):
+        chosen = self.compile("Heroic — Whenever you cast a spell of the chosen color, draw a card.")
+        self.assertEqual("exact", chosen.status)
+        self.assertIn("trigger.event.spell_cast_chosen_color", chosen.faces[0].nodes[0].capability_dependencies)
         text = "Keen Senses — When this creature enters, draw a card."
         self.assertEqual("exact", self.compile(text).status)
         with patch(
@@ -695,7 +702,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         exclusions = (
             "Threshold — As long as seven cards are in your graveyard, this "
             "creature gets +1/+1.",
-            "Heroic — Whenever you cast a spell of the chosen color, draw a "
+            "Heroic — Whenever you cast a spell of a color chosen by an opponent, draw a "
             "card.",
             "I — Draw a card.",
         )
@@ -1125,13 +1132,17 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             self.assertIn(value, historic_condition)
 
     def test_dynamic_spell_cast_characteristic_variants_remain_material(self):
+        chosen = self.compile("Whenever you cast a spell of the chosen color, draw a card.")
+        self.assertEqual("exact", chosen.status)
+        self.assertIn({'field':'source_annotation.chosen_color','op':'in','value':'$context.colors'},
+                      chosen.faces[0].nodes[0].event_condition['all'])
         variants = (
             "Whenever you cast a spell with mana value 3, draw a card.",
             "Whenever you cast a spell that targets only a creature, draw a card.",
             "Whenever you cast or copy a Spirit spell, draw a card.",
             "Whenever you cast a Spirit spell, if a chosen player controls "
             "an artifact, draw a card.",
-            "Whenever you cast a spell of the chosen color, draw a card.",
+            "Whenever you cast a spell of a color chosen by an opponent, draw a card.",
             "Whenever you cast a spell with mana value greater than the "
             "number of counters on this artifact, draw a card.",
             "Whenever you play a land or cast a spell, draw a card.",
@@ -1514,6 +1525,15 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
 
     def test_fixed_source_event_near_misses_remain_material(self):
+        creature = self.compile("Whenever this creature deals damage to a creature, draw a card.",
+                                type_line="Creature — Fixture")
+        self.assertEqual("exact", creature.status)
+        node = creature.faces[0].nodes[0]
+        self.assertEqual("damage.dealt", node.event)
+        self.assertIn("trigger.event.damage_permanent_recipient", node.capability_dependencies)
+        self.assertIn({'field':'source_logical_object_id','op':'eq','value':'$source.logical_object_id'},
+                      node.event_condition['all'][0]['all'])
+        self.assertIn({'field':'target_kind','op':'eq','value':'permanent'},node.event_condition['all'])
         supported = self.compile(
             "Whenever this creature deals damage, draw a card.",
             type_line="Creature — Fixture",
@@ -1528,7 +1548,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "When this Vehicle leaves the battlefield, draw a card.",
             "When this creature is put into a graveyard from the battlefield, "
             "draw a card.",
-            "Whenever this creature deals damage to a creature, draw a card.",
+            "Whenever this creature deals damage to an attacking creature, draw a card.",
             "Whenever this creature deals damage, draw a card for each counter on it.",
             "Whenever equipped creature deals combat damage to two opponents, draw "
             "a card.",
@@ -2517,6 +2537,11 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertIn('trigger.usage.once_per_turn',node.capability_dependencies)
 
     def test_adjacent_event_and_effect_variants_remain_material(self):
+        removal = self.compile("At the beginning of your upkeep, remove a charge counter from this artifact.")
+        self.assertEqual("exact", removal.status)
+        self.assertEqual("step.begin", removal.faces[0].nodes[0].event)
+        self.assertEqual(({'op':'remove_counters','card':'$source.zone_object','counter':'charge','amount':1,
+                           'source':'$source'},),removal.faces[0].nodes[0].effects)
         variants = (
             "Whenever you cast or copy a noncreature spell, put a +1/+1 counter on this creature.",
             "Whenever an opponent casts or copies a noncreature spell, put a +1/+1 counter on this creature.",
@@ -2531,7 +2556,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "At the beginning of your upkeep, you may put a charge counter on this artifact, then gain 1 life.",
             "You may put a charge counter on this artifact.",
             "At the beginning of your upkeep, move a charge counter from this artifact onto target creature.",
-            "At the beginning of your upkeep, remove a charge counter from this artifact.",
+            "At the beginning of your upkeep, remove a charge counter from a permanent of an opponent's choice.",
             "Whenever one or more creatures die, put a +1/+1 counter on each of them.",
             "Whenever another creature of the chosen type you control enters or dies, put a +1/+1 counter on this creature.",
             "Whenever another creature of the chosen type you control leaves the battlefield, put a +1/+1 counter on this creature.",
@@ -3661,6 +3686,11 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertTrue(mutated.material_residuals)
 
     def test_source_combat_growth_triggers_compile_exactly_and_fail_closed(self):
+        qualified = self.compile("Whenever this creature blocks a creature without flying, this creature gets +3/+0 until end of turn.",
+                                 type_line="Creature — Test")
+        self.assertEqual("exact", qualified.status)
+        self.assertIn("trigger.event.block_counterpart_characteristics",qualified.faces[0].nodes[0].capability_dependencies)
+        self.assertEqual(['flying'],qualified.faces[0].nodes[0].event_condition['all'][2]['query']['keywords_none'])
         cases = (
             (
                 "Whenever this creature attacks, it gets +2/+0 until end of turn.",
@@ -3737,7 +3767,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever this creature attacks, put X +1/+1 counters on it.",
             "Whenever this creature attacks, put a charge counter on it for each creature that attacked this way.",
             "Whenever a creature deals damage to an opponent, put a +1/+1 counter on it.",
-            "Whenever this creature blocks a creature without flying, this creature gets +3/+0 until end of turn.",
+            "Whenever this creature blocks a creature with greater power than this creature, this creature gets +3/+0 until end of turn.",
         )
         for text in exclusions:
             with self.subTest(excluded=text):

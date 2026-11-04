@@ -15,6 +15,10 @@ from .aura import (
 )
 from .card_overrides import normalize_game_record_v3_runtime_handler
 from .model import CardInstance
+from .token_creation_identity import (
+    TokenCreationError, token_copy_snapshot, _copied_token_identity,
+    _new_token_identity, _preview_token_object,
+)
 from .control_history import record_battlefield_acquisition
 from .counter_placement import (
     commit_prepared_counter_placements,
@@ -26,6 +30,7 @@ from .entry_counters import (
     mark_intrinsic_entry_counters_initialized,
     validate_battle_entry_protector,
 )
+from .entry_counter_model import EffectEntryCounter
 from .replacement_effects import (
     ReplacementChoiceRequired,
 )
@@ -37,6 +42,7 @@ from .semantic_runtime import (
 )
 from .trigger_processing import enqueue_trigger_batch
 from .standard_token_abilities import standard_token_characteristics
+from .defined_token_faces import DEFINED_TOKEN_ACTIVE_FACE_FIELD
 from .zone_trigger_events import sealed_public_characteristic_facts
 from .semantic_runtime.zone_replacements import (
     capture_zone_change_replacement_snapshot,
@@ -44,10 +50,6 @@ from .semantic_runtime.zone_replacements import (
     log_applied_zone_replacements,
 )
 from .semantic_runtime.zone_replacement_model import PreparedZoneChange
-
-
-class TokenCreationError(ValueError):
-    pass
 
 
 class TokenCreationHost(Protocol):
@@ -160,26 +162,6 @@ class GroupedTokenCreation:
     grouped_refs: tuple[tuple[str, str], ...]
 
 
-def token_copy_snapshot(
-    host: TokenCreationHost,
-    source: CardInstance,
-) -> dict[str, Any]:
-    """Capture one public copiable-value snapshot for later token creation."""
-
-    copyable = copy.deepcopy(dict(host._copyable_characteristics(source)))
-    from .face_down_copy import token_snapshot_identity
-    oracle_id,printed_name=token_snapshot_identity(host,source,copyable)
-    return {
-        "oracle_id": oracle_id,
-        "printed_name": printed_name,
-        "annotations": {
-            "copied_from": source.object_id,
-            "copy_overrides": copyable,
-        },
-        "characteristics": copyable,
-    }
-
-
 @dataclass(frozen=True, slots=True)
 class PreparedTokenObject:
     """One prospective token identity pinned before counter replacement."""
@@ -196,6 +178,7 @@ class PreparedTokenObject:
     temporary_keywords: tuple[str, ...]
     aura_target_ref: str | None
     replacement_component: FrozenMap | None
+    effect_entry_counters: tuple[EffectEntryCounter, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -223,6 +206,7 @@ def _token_specification_inputs(
     characteristics: Mapping[str, Any] | None,
     temporary_keywords: Sequence[str],
     aura_target_ref: str | None,
+    effect_entry_counters: Sequence[EffectEntryCounter] = (),
 ) -> tuple[
     tuple[Mapping[str, Any], ...],
     set[str],
@@ -264,6 +248,8 @@ def _token_specification_inputs(
         ),
         "temporary_keywords": list(temporary_keywords),
         "aura_target_ref": aura_target_ref,
+        **({'effect_entry_counters':[counter.to_dict() for counter in effect_entry_counters]}
+           if effect_entry_counters else {}),
     }
     groups = tuple(attacking_groups)
     if groups:
@@ -570,168 +556,6 @@ def _resolved_token_specs(
     )
 
 
-def _copied_token_identity(
-    host: TokenCreationHost,
-    controller: str,
-    *,
-    copy_of: Any,
-    name: str,
-    characteristics: Mapping[str, Any],
-    ref: str,
-    copy_source_zone: str = "battlefield",
-    copy_snapshot: Mapping[str, Any] | None = None,
-) -> tuple[str, str, str, dict[str, Any]]:
-    if copy_snapshot is not None:
-        if set(copy_snapshot) != {
-            "oracle_id",
-            "printed_name",
-            "annotations",
-            "characteristics",
-        }:
-            raise TokenCreationError("Token copy snapshot fields are closed")
-        annotations = copy.deepcopy(dict(copy_snapshot["annotations"]))
-        overrides = dict(copy_snapshot["characteristics"])
-        if name:
-            overrides["name"] = name
-        overrides.update(characteristics)
-        annotations["copy_overrides"] = overrides
-        return (
-            ref,
-            str(copy_snapshot["oracle_id"]),
-            name or str(copy_snapshot["printed_name"]),
-            annotations,
-        )
-    original = host._resolve_object(
-        controller,
-        str(copy_of),
-        zones={copy_source_zone},
-    )
-    from .face_down_characteristics_model import face_down_characteristics_mode
-    if original.face_down and face_down_characteristics_mode(host)==1:
-        return _copied_token_identity(host,controller,copy_of=copy_of,name=name,characteristics=characteristics,
-            ref=ref,copy_source_zone=copy_source_zone,copy_snapshot=token_copy_snapshot(host,original))
-    annotations = copy.deepcopy(original.annotations)
-    annotations["copied_from"] = original.object_id
-    overrides = dict(annotations.get("copy_overrides") or {})
-    if name:
-        overrides["name"] = name
-    overrides.update(characteristics)
-    annotations["copy_overrides"] = overrides
-    return (
-        ref,
-        original.oracle_id,
-        name or host.display_name(original.object_id),
-        annotations,
-    )
-
-
-def _new_token_identity(
-    host: TokenCreationHost,
-    *,
-    name: str,
-    characteristics: Mapping[str, Any],
-    ref: str,
-) -> tuple[str, str, str, dict[str, Any]]:
-    try:
-        record = host.card_db.lookup(name)
-        oracle_id = record.oracle_id
-        printed_name = record.name
-    except KeyError:
-        oracle_id = (
-            "custom-token:"
-            + host._stable_runtime_id("token-oracle", ref)
-        )
-        printed_name = name
-    annotations = {
-        "token_characteristics": copy.deepcopy(dict(characteristics))
-    }
-    if characteristics:
-        annotations["copy_overrides"] = copy.deepcopy(
-            dict(characteristics)
-        )
-    return ref, oracle_id, printed_name, annotations
-
-
-def _preview_token_object(
-    host: TokenCreationHost,
-    controller: str,
-    token_spec: Mapping[str, Any],
-) -> CardInstance:
-    """Build a nonauthoritative token object for entry preflight.
-
-    No runtime IDs or refs are allocated here.  In particular, an Aura token
-    prohibited by CR 303.4g must not consume object identity before the engine
-    knows whether it can legally enter attached.
-    """
-
-    spec = dict(token_spec)
-    characteristics = dict(spec.get("characteristics") or {})
-    copy_of = spec.get("copy_of")
-    raw_name = spec.get("name")
-    name = str(raw_name) if raw_name is not None else ""
-    if copy_of:
-        snapshot = spec.get("copy_snapshot")
-        original = (
-            None
-            if isinstance(snapshot, Mapping)
-            else host._resolve_object(
-                controller,
-                str(copy_of),
-                zones={str(spec.get("copy_source_zone") or "battlefield")},
-            )
-        )
-        oracle_id = (
-            str(snapshot["oracle_id"])
-            if isinstance(snapshot, Mapping)
-            else original.oracle_id
-        )
-        printed_name = name or (
-            str(snapshot["printed_name"])
-            if isinstance(snapshot, Mapping)
-            else host.display_name(original.object_id)
-        )
-        annotations = (
-            copy.deepcopy(dict(snapshot["annotations"]))
-            if isinstance(snapshot, Mapping)
-            else copy.deepcopy(original.annotations)
-        )
-        overrides = dict(annotations.get("copy_overrides") or {})
-        if name:
-            overrides["name"] = name
-        overrides.update(characteristics)
-        annotations["copy_overrides"] = overrides
-    else:
-        if not name:
-            name = "Token"
-        try:
-            record = host.card_db.lookup(name)
-            oracle_id = record.oracle_id
-            printed_name = record.name
-        except KeyError:
-            oracle_id = "custom-token:aura-entry-preview"
-            printed_name = name
-        annotations = {
-            "token_characteristics": copy.deepcopy(characteristics),
-        }
-        if characteristics:
-            annotations["copy_overrides"] = copy.deepcopy(
-                characteristics
-            )
-    return CardInstance(
-        object_id="aura-entry-preview",
-        ref="aura-entry-preview",
-        oracle_id=oracle_id,
-        printed_name=printed_name,
-        owner=controller,
-        controller=controller,
-        zone="outside",
-        is_token=True,
-        annotations=annotations,
-        known_to=list(host.seats),
-        revealed_to=list(host.seats),
-    )
-
-
 def _preflight_aura_token_specs(
     host: TokenCreationHost,
     controller: str,
@@ -818,6 +642,7 @@ def _card_from_token_plan(
         controller=controller,
         zone="battlefield",
         is_token=True,
+        active_face=(plan.annotations.get('copy_overrides') or {}).get(DEFINED_TOKEN_ACTIVE_FACE_FIELD),
         zone_timestamp=plan.zone_timestamp,
         tapped=plan.tapped,
         temporary_keywords=list(plan.temporary_keywords),
@@ -843,7 +668,8 @@ def _commit_token_object(
             "Prospective token identity changed before commit"
         )
     card = _card_from_token_plan(host, controller, plan)
-    host.state.cards[card.object_id] = card
+    from .game_object_store import GameObjectStore
+    GameObjectStore(host).commit(upserts=(card,))
     host.state.players[controller].zones["battlefield"].append(card.object_id)
     host._refresh_world_supertype_timestamp(
         card,
@@ -945,6 +771,8 @@ def _prepare_token_objects(
                         else None
                     ),
                     replacement_component=frozen_component,
+                    effect_entry_counters=tuple(EffectEntryCounter.from_dict(value)
+                        for value in spec.get('effect_entry_counters', ())),
                 )
             )
     return tuple(plans)
@@ -979,6 +807,7 @@ def _prepare_token_entry_counters(
         entry_characteristics=characteristics,
         prospective_objects=objects,
         requested_tapped={plan.object_id: plan.tapped for plan in plans},
+        effect_entry_counters={plan.object_id:plan.effect_entry_counters for plan in plans},
         error_type=TokenCreationError,
     )
     prepared = prepare_zone_change_replacement_snapshot(
@@ -1112,7 +941,8 @@ def _record_and_dispatch_token_creation(
         "tokens_created_by_turn", {}
     )
     turn_key = str(host.state.turn_sequence)
-    tracker[turn_key] = int(tracker.get(turn_key, 0)) + len(created)
+    previous_quantity=int(tracker.get(turn_key, 0))
+    tracker[turn_key] = previous_quantity + len(created)
     host._log(
         controller,
         "token.create",
@@ -1195,6 +1025,11 @@ def _record_and_dispatch_token_creation(
                     context,
                     trigger_batch=trigger_batch,
                 )
+    if created:
+        from .token_creation_batch_model import TokenCreationBatchFact,TOKEN_CREATION_BATCH_EVENT
+        fact=TokenCreationBatchFact(controller,len(created),
+            sum('creature' in context['types'] for context in entry_contexts),previous_quantity)
+        host._dispatch_semantic_event(TOKEN_CREATION_BATCH_EVENT,fact.to_context(),trigger_batch=trigger_batch)
     enqueue_trigger_batch(host, trigger_batch)
 
 
@@ -1324,9 +1159,13 @@ def create_tokens(
     replacement_selections: Sequence[
         str | None | Mapping[str, Any]
     ] = (),
+    effect_entry_counters: Sequence[EffectEntryCounter] = (),
 ) -> list[str]:
     """Resolve creation replacements, commit tokens, and emit enter events."""
 
+    if not isinstance(effect_entry_counters,(list,tuple)) or any(
+            not isinstance(value,EffectEntryCounter) for value in effect_entry_counters):
+        raise TokenCreationError('Token entry counters require typed effect instructions')
     host._require_seat(controller, in_game=True)
     if copy_source_zone not in {"battlefield", "exile", "graveyard"}:
         raise TokenCreationError("Token-copy source zone is unsupported")
@@ -1361,6 +1200,7 @@ def create_tokens(
             characteristics=characteristics,
             temporary_keywords=temporary_keywords,
             aura_target_ref=aura_target_ref,
+            effect_entry_counters=effect_entry_counters,
         )
     )
     replacement_effects = _token_replacement_effects(

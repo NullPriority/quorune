@@ -1,0 +1,898 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "source-counter-removal-cards",
+  "source": "Exact original records and rulings from the pinned Commander snapshot.",
+  "cards": [
+    {
+      "oracle_id": "011371f0-a7f1-47a5-9883-22a14cfe4de9",
+      "name": "Shrewd Hatchling",
+      "mana_cost": "{3}{U/R}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "This creature enters with four -1/-1 counters on it.\n{U/R}: Target creature can't block this creature this turn.\nWhenever you cast a blue spell, remove a -1/-1 counter from this creature.\nWhenever you cast a red spell, remove a -1/-1 counter from this creature.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-05-22",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "08e95b6c-9f4c-42d9-ad64-2d905d781d49",
+      "name": "Sturdy Hatchling",
+      "mana_cost": "{3}{G/U}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "This creature enters with four -1/-1 counters on it.\n{G/U}: This creature gains shroud until end of turn. (It can't be the target of spells or abilities.)\nWhenever you cast a green spell, remove a -1/-1 counter from this creature.\nWhenever you cast a blue spell, remove a -1/-1 counter from this creature.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "36072943-7823-434d-b898-f0a2c4e00af2",
+      "name": "Noxious Hatchling",
+      "mana_cost": "{3}{B/G}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "This creature enters with four -1/-1 counters on it.\nWither (This deals damage to creatures in the form of -1/-1 counters.)\nWhenever you cast a black spell, remove a -1/-1 counter from this creature.\nWhenever you cast a green spell, remove a -1/-1 counter from this creature.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Wither"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "7bd4e504-541e-4b2c-9f1d-3c67957aef2e",
+      "name": "Belligerent Hatchling",
+      "mana_cost": "{3}{R/W}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "First strike\nThis creature enters with four -1/-1 counters on it.\nWhenever you cast a red spell, remove a -1/-1 counter from this creature.\nWhenever you cast a white spell, remove a -1/-1 counter from this creature.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "keywords": [
+        "First strike"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "eab5eb29-bed6-456b-8929-5b9b820aa5a3",
+      "name": "Voracious Hatchling",
+      "mana_cost": "{3}{W/B}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "Lifelink\nThis creature enters with four -1/-1 counters on it.\nWhenever you cast a white spell, remove a -1/-1 counter from this creature.\nWhenever you cast a black spell, remove a -1/-1 counter from this creature.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Lifelink"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "6025ce2f-d527-457c-866c-cb5c119d0bf4",
+      "name": "Karstoderm",
+      "mana_cost": "{2}{G}{G}",
+      "type_line": "Creature — Beast",
+      "oracle_text": "This creature enters with five +1/+1 counters on it.\nWhenever an artifact enters, remove a +1/+1 counter from this creature.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2004-02-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "ac5c2069-0706-4b85-a811-a522db016e3e",
+      "name": "Magmaroth",
+      "mana_cost": "{3}{R}",
+      "type_line": "Creature — Elemental",
+      "oracle_text": "At the beginning of your upkeep, put a -1/-1 counter on this creature.\nWhenever you cast a noncreature spell, remove a -1/-1 counter from this creature.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-07-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "0158a440-6573-4f12-958b-a5f0cf190d5b",
+      "name": "Divine Intervention",
+      "mana_cost": "{6}{W}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "This enchantment enters with two intervention counters on it.\nAt the beginning of your upkeep, remove an intervention counter from this enchantment.\nWhen you remove the last intervention counter from this enchantment, the game is a draw.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2009-09-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 8.0
+    },
+    {
+      "oracle_id": "153cd93c-7bba-4482-893c-55a602c4439b",
+      "name": "Stream Hopper",
+      "mana_cost": "{U/R}",
+      "type_line": "Creature — Goblin",
+      "oracle_text": "{U/R}: This creature gains flying until end of turn.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
+    },
+    {
+      "oracle_id": "37b7f044-f57b-4d13-82be-46fd01f1dba6",
+      "name": "Witherscale Wurm",
+      "mana_cost": "{4}{G}{G}",
+      "type_line": "Creature — Wurm",
+      "oracle_text": "Whenever this creature blocks or becomes blocked by a creature, that creature gains wither until end of turn. (It deals damage to creatures in the form of -1/-1 counters.)\nWhenever this creature deals damage to an opponent, remove all -1/-1 counters from it.",
+      "power": "9",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-05-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 6.0
+    },
+    {
+      "oracle_id": "655ae8e7-372b-4d8d-b33f-4aca46831abb",
+      "name": "Force Bubble",
+      "mana_cost": "{2}{W}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "If damage would be dealt to you, put that many depletion counters on this enchantment instead.\nWhen there are four or more depletion counters on this enchantment, sacrifice it.\nAt the beginning of each end step, remove all depletion counters from this enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2003-05-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "ace532a3-fa6e-479d-b169-1fb24c3d0f8c",
+      "name": "Blood Hound",
+      "mana_cost": "{2}{R}",
+      "type_line": "Creature — Dog",
+      "oracle_text": "Whenever you're dealt damage, you may put that many +1/+1 counters on this creature.\nAt the beginning of your end step, remove all +1/+1 counters from this creature.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1999-10-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "bcb2f489-9d58-424d-96c1-a124a8d25a14",
+      "name": "Energy Vortex",
+      "mana_cost": "{3}{U}{U}",
+      "type_line": "Enchantment",
+      "oracle_text": "As this enchantment enters, choose an opponent.\nAt the beginning of your upkeep, remove all vortex counters from this enchantment.\nAt the beginning of the chosen player's upkeep, this enchantment deals 3 damage to that player unless they pay {1} for each vortex counter on this enchantment.\n{X}: Put X vortex counters on this enchantment. Activate only during your upkeep.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-10-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
+      "oracle_id": "c2f6ddc2-86bc-43da-9bdd-0c2af79c62fd",
+      "name": "Ammit Eternal",
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Zombie Crocodile Demon",
+      "oracle_text": "Afflict 3 (Whenever this creature becomes blocked, defending player loses 3 life.)\nWhenever an opponent casts a spell, put a -1/-1 counter on this creature.\nWhenever this creature deals combat damage to a player, remove all -1/-1 counters from it.",
+      "power": "5",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Afflict"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-07-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "ce785306-eaf5-42b3-9840-884cd690ae0a",
+      "name": "Discordant Spirit",
+      "mana_cost": "{2}{B}{R}",
+      "type_line": "Creature — Spirit",
+      "oracle_text": "At the beginning of each end step, if it's an opponent's turn, put a +1/+1 counter on this creature for each 1 damage dealt to you this turn.\nAt the beginning of your end step, remove all +1/+1 counters from this creature.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "1996-10-08",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "011371f0-a7f1-47a5-9883-22a14cfe4de9",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If you cast a spell that’s both of the listed colors, both abilities will trigger. You’ll remove a total of two -1/-1 counters from the Hatchling."
+    },
+    {
+      "oracle_id": "011371f0-a7f1-47a5-9883-22a14cfe4de9",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If there are no -1/-1 counters on it when the triggered ability resolves, the ability does nothing. There is no penalty for not being able to remove a counter."
+    },
+    {
+      "oracle_id": "08e95b6c-9f4c-42d9-ad64-2d905d781d49",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If you cast a spell that's both of the listed colors, both abilities will trigger. You'll remove a total of two -1/-1 counters from the Hatchling."
+    },
+    {
+      "oracle_id": "08e95b6c-9f4c-42d9-ad64-2d905d781d49",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If there are no -1/-1 counters on it when the triggered ability resolves, the ability does nothing. There is no penalty for not being able to remove a counter."
+    },
+    {
+      "oracle_id": "36072943-7823-434d-b898-f0a2c4e00af2",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If there are no -1/-1 counters on it when the triggered ability resolves, the ability does nothing. There is no penalty for not being able to remove a counter."
+    },
+    {
+      "oracle_id": "36072943-7823-434d-b898-f0a2c4e00af2",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If you cast a spell that’s both of the listed colors, both abilities will trigger. You’ll remove a total of two -1/-1 counters from the Hatchling."
+    },
+    {
+      "oracle_id": "7bd4e504-541e-4b2c-9f1d-3c67957aef2e",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If you cast a spell that's both of the listed colors, both abilities will trigger. You'll remove a total of two -1/-1 counters from the Hatchling."
+    },
+    {
+      "oracle_id": "7bd4e504-541e-4b2c-9f1d-3c67957aef2e",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If there are no -1/-1 counters on it when the triggered ability resolves, the ability does nothing. There is no penalty for not being able to remove a counter."
+    },
+    {
+      "oracle_id": "eab5eb29-bed6-456b-8929-5b9b820aa5a3",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If you cast a spell that's both of the listed colors, both abilities will trigger. You'll remove a total of two -1/-1 counters from the Hatchling."
+    },
+    {
+      "oracle_id": "eab5eb29-bed6-456b-8929-5b9b820aa5a3",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If there are no -1/-1 counters on it when the triggered ability resolves, the ability does nothing. There is no penalty for not being able to remove a counter."
+    },
+    {
+      "oracle_id": "ac5c2069-0706-4b85-a811-a522db016e3e",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Magmaroth’s second ability resolves before the spell that caused it to trigger. The ability will resolve even if that spell is countered."
+    },
+    {
+      "oracle_id": "0158a440-6573-4f12-958b-a5f0cf190d5b",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "In a multiplayer game played with the limited range of influence option, Divine Intervention won’t necessarily end the entire game when its third ability resolves. All players within range of Divine Intervention will leave the game. They’ll neither win nor lose; as far as they’re concerned, the result of the game is a draw. All other players will continue playing."
+    },
+    {
+      "oracle_id": "0158a440-6573-4f12-958b-a5f0cf190d5b",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "Divine Intervention’s third ability triggers only if its controller removes the last intervention counter from it. It doesn’t matter how that happens. For example, if you control Divine Intervention and the last intervention counter is removed as a result of a Clockspinning you control, the ability will trigger. On the other hand, if the last intervention counter is removed as a result of a Clockspinning another player controls, the ability won’t trigger (and won’t ever be able to)."
+    },
+    {
+      "oracle_id": "0158a440-6573-4f12-958b-a5f0cf190d5b",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "When Divine Intervention’s third ability resolves, the game ends immediately. The game is a draw, meaning neither player wins and neither player loses."
+    },
+    {
+      "oracle_id": "37b7f044-f57b-4d13-82be-46fd01f1dba6",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Witherscale Wurm’s second ability triggers when it deals any damage to an opponent, not just combat damage."
+    },
+    {
+      "oracle_id": "37b7f044-f57b-4d13-82be-46fd01f1dba6",
+      "published_at": "2008-05-01",
+      "source": "wotc",
+      "comment": "Witherscale Wurm’s first ability does *not* give Witherscale Wurm wither."
+    },
+    {
+      "oracle_id": "655ae8e7-372b-4d8d-b33f-4aca46831abb",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "The effect does not prevent damage, it replaces it so the damage is neither dealt or prevented."
+    },
+    {
+      "oracle_id": "655ae8e7-372b-4d8d-b33f-4aca46831abb",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you take 6 damage at once, it will replace all 6 damage and put 6 counters on it. Then the second ability will trigger. Any additional damage you take before this ability resolves also results in counters, but once the ability resolves, this card is sacrificed."
+    },
+    {
+      "oracle_id": "655ae8e7-372b-4d8d-b33f-4aca46831abb",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "If you control more than one, each time you take damage you can decide which one replaces the damage, and that one replaces all of the damage. You can’t split the damage between them. You decide each time you take damage. Note that damage from multiple sources that happens at one time (such as combat damage) gives one choice, not one per source."
+    },
+    {
+      "oracle_id": "bcb2f489-9d58-424d-96c1-a124a8d25a14",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Does a flat 3 damage, not 3 damage per counter."
+    },
+    {
+      "oracle_id": "c2f6ddc2-86bc-43da-9bdd-0c2af79c62fd",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Afflict causes the defending player to lose life; it's not damage or combat damage."
+    },
+    {
+      "oracle_id": "c2f6ddc2-86bc-43da-9bdd-0c2af79c62fd",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Ammit Eternal's middle ability will resolve before the spell that caused it to trigger. The ability will resolve even if that spell is countered."
+    },
+    {
+      "oracle_id": "c2f6ddc2-86bc-43da-9bdd-0c2af79c62fd",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "Afflict resolves before combat damage is dealt. If this loss of life brings a player to 0 life or less, that player loses the game immediately. A blocking creature with lifelink won't deal combat damage in time to save that player."
+    },
+    {
+      "oracle_id": "c2f6ddc2-86bc-43da-9bdd-0c2af79c62fd",
+      "published_at": "2017-07-14",
+      "source": "wotc",
+      "comment": "If multiple creatures block a creature with afflict, afflict triggers only once."
+    },
+    {
+      "oracle_id": "c2f6ddc2-86bc-43da-9bdd-0c2af79c62fd",
+      "published_at": "2023-07-28",
+      "source": "wotc",
+      "comment": "If a creature is attacking a planeswalker, that planeswalker's controller is the defending player. If a creature is attacking a battle, that battle's protector is the defending player."
+    },
+    {
+      "oracle_id": "ce785306-eaf5-42b3-9840-884cd690ae0a",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "This will not count damage that was prevented."
+    },
+    {
+      "oracle_id": "ce785306-eaf5-42b3-9840-884cd690ae0a",
+      "published_at": "2006-05-01",
+      "source": "wotc",
+      "comment": "In Two-Headed Giant, triggers only once per end of turn, not once for each player."
+    }
+  ]
+}

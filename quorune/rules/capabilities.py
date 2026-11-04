@@ -14,8 +14,10 @@ from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
 from ..qualified_hexproof import QUALIFIED_HEXPROOF_KEYWORDS,QUALIFIED_HEXPROOF_CAPABILITY
+from ..face_up_effect_model import FACE_UP_EFFECT_CAPABILITY,FACE_UP_EFFECT_MECHANIC
 from .source_protection_choice_shapes import source_protection_choice_capabilities
 from .source_fixed_protection_shapes import source_fixed_protection_capabilities
+from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
 from .affected_player_choice_coverage import (
     affected_player_choice_covered_mechanics as _affected_player_choice_covered_mechanics,
 )
@@ -185,6 +187,7 @@ from ..compiler.delayed_draw_templates import (
     FIXED_NEXT_TURN_DRAW_CAPABILITY,
     FIXED_NEXT_TURN_DRAW_MECHANIC,
 )
+from ..delayed_object_model import DELAYED_OBJECT_CAPABILITY,DELAYED_OBJECT_MECHANIC
 from ..compiler.monarch_templates import MONARCH_MECHANIC
 from ..ring_model import RING_MECHANIC, RING_TEMPTATION_CAPABILITY
 from ..champion_model import CHAMPION_MECHANIC, CHAMPION_CAPABILITY
@@ -307,6 +310,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'temporary-cast-prohibition': ('casting.prohibition.resolution_until_end_of_turn',),
     'temporary-library-search-prohibition': ('library.search.prohibition.resolution_until_end_of_turn',),
     'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
+    'own-graveyard-return-choice': ('zone.return.own_graveyard_choice',),
     'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'any-number-target-set': ('target.cardinality.any_number',),
@@ -365,6 +369,13 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'public-quantity-mana': ('mana.production.public_quantity',),
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
     'created-token-counter-followup':('token.creation.post_creation_counter',),
+    'incubate':('token.creation.incubate',),
+    'discover':('library.discover.controller',),
+    'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
+    'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
+    'fixed-target-reanimation-set':('zone.reanimate.fixed_target_set',),
+    'variable-library-selection':('library.select.variable_controller',),
+    'reveal-until-library-selection':('library.select.reveal_until_controller',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
     'whole-hand-discard': ('zone.discard.whole_hand',),
     'whole-hand-discard-result': ('zone.discard.whole_hand_result',),
@@ -483,6 +494,9 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     "fixed-typed-event-effect-trigger": (
         "trigger.effect.fixed_event",
     ),
+    CYCLED_SOURCE_DAMAGE_COVERAGE: (
+        "damage.source.stack_current_or_lki",
+    ),
     "optional-fixed-counter-event-trigger": (
         "counter.producer.optional_fixed_event_trigger",
     ),
@@ -515,6 +529,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     FIXED_NEXT_TURN_DRAW_MECHANIC: (
         FIXED_NEXT_TURN_DRAW_CAPABILITY,
     ),
+    DELAYED_OBJECT_MECHANIC: (DELAYED_OBJECT_CAPABILITY,),
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
@@ -527,6 +542,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'temporary-cast-prohibition',
         'temporary-library-search-prohibition',
         'random-own-graveyard-return',
+        'own-graveyard-return-choice',
         'commander-learn',
         'paid-entry-copy-offspring',
         'paid-entry-copy-squad',
@@ -561,7 +577,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         CLOSED_EFFECT_PROGRAM_MECHANIC, "bound-effect-program",
         FIXED_CHOOSE_ONE_MODAL_MECHANIC,
         FIXED_NONREPEATING_MODAL_MECHANIC,
-        FIXED_NEXT_TURN_DRAW_MECHANIC, "temporary-target-interaction",
+        FIXED_NEXT_TURN_DRAW_MECHANIC, DELAYED_OBJECT_MECHANIC, "temporary-target-interaction",
         IMPULSE_ACCESS_MECHANIC_ID, PARTNER_WITH_SEARCH_MECHANIC_ID,
         "adapt",
         "monstrosity",
@@ -1296,6 +1312,7 @@ def capability_dependencies_for_node(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
+        FACE_UP_EFFECT_CAPABILITY: FACE_UP_EFFECT_MECHANIC,
         PREPARED_POWER_DAMAGE_CAPABILITY: PREPARED_POWER_DAMAGE_MECHANIC,
         'library.order.fixed_controller':'fixed-controller-top-order',
         'permanent.untap.fixed_land_choice':'fixed-untargeted-land-untap',
@@ -1461,9 +1478,9 @@ def capability_covered_mechanics(
         covered.add("cr-615-prevention-effects")
     if "counter.placement.quantity_replacement" in supplied:
         covered.add("cr-122-counters")
-    if "counter.removal.fixed_effect" in supplied:
+    if supplied.intersection({'counter.removal.fixed_effect', 'counter.removal.fixed_source_effect'}):
         covered.add("cr-122-counters")
-    if "counter.removal.all_effect" in supplied:
+    if supplied.intersection({'counter.removal.all_effect', 'counter.removal.all_named_source_effect'}):
         covered.add("cr-122-counters")
     covered.update(counter_placement_covered_mechanics(supplied))
     if "counter.producer.support" in supplied:

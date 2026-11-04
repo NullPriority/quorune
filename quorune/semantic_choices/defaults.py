@@ -3,7 +3,14 @@ from __future__ import annotations
 from functools import lru_cache
 
 from .registry import SemanticChoiceRegistry
+from .composition_order import CompositionOrderHandler
+from .mutate import MutateMergeChoiceHandler
 from .created_token_counters import CREATED_TOKEN_COUNTER_HANDLERS
+from .incubate import INCUBATE_HANDLERS
+from .discover import DiscoverScanHandler
+from .discover_cast import DiscoverCastChoiceHandler
+from .variable_library_selection import VariableLibrarySelectionHandler
+from .reveal_until_library_selection import RevealUntilLibrarySelectionHandler
 from .extort import ExtortChoiceHandler
 from .actual_life_transfer import ActualLifeTransferHandler
 from .artifact_exchange import ARTIFACT_EXCHANGE_CHOICE_HANDLERS
@@ -42,6 +49,7 @@ from .graft import GraftCounterMovementHandler
 from .amass import AMASS_CHOICE_HANDLERS
 from .apnap_commit import APNAP_COMMIT_CHOICE_HANDLERS
 from .madness import MADNESS_CHOICE_HANDLERS
+from .miracle import MiracleCastChoiceHandler
 from .attacking_tokens import ATTACKING_TOKEN_CHOICE_HANDLERS
 from .hand_inspection import HAND_INSPECTION_CHOICE_HANDLERS
 from .connive import FixedConniveChoiceHandler
@@ -51,6 +59,7 @@ from .ring import RingTemptationChoiceHandler
 from .champion import ChampionExileChoiceHandler, ChampionReturnChoiceHandler
 from .cipher import CipherEncodingChoiceHandler
 from .discard_results import DiscardResultDrawHandler
+from .graveyard_return import GraveyardReturnChoiceHandler
 
 
 @lru_cache(maxsize=1)
@@ -58,9 +67,19 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
     return SemanticChoiceRegistry(
         (
             ExtortChoiceHandler(),
+            CompositionOrderHandler(),
+            MutateMergeChoiceHandler(),
             ActualLifeTransferHandler(),
             DiscardResultDrawHandler(),
+            GraveyardReturnChoiceHandler(),
             *CREATED_TOKEN_COUNTER_HANDLERS,
+            *INCUBATE_HANDLERS,
+            DiscoverScanHandler(),
+            DiscoverScanHandler('discover_step','choice.library.discover-step.v1'),
+            DiscoverCastChoiceHandler(),
+            DiscoverCastChoiceHandler('discover_finish','choice.library.discover-finish.v1'),
+            VariableLibrarySelectionHandler(),
+            RevealUntilLibrarySelectionHandler(),
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,
             *SCALAR_CHOICE_HANDLERS,
             *OBJECT_SELECTION_HANDLERS,
@@ -91,6 +110,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *AMASS_CHOICE_HANDLERS,
             *APNAP_COMMIT_CHOICE_HANDLERS,
             *MADNESS_CHOICE_HANDLERS,
+            MiracleCastChoiceHandler(),
             *ATTACKING_TOKEN_CHOICE_HANDLERS,
             *HAND_INSPECTION_CHOICE_HANDLERS,
             FixedConniveChoiceHandler(),

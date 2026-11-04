@@ -53,6 +53,7 @@ from .graveyard_copy_keyword import GraveyardCopyKeywordHandler
 from .player_speed import StartEnginesHandler
 from .city_blessing import AscendStaticHandler
 from .prototype import PrototypeAbilityHandler
+from .mutate import MutateAbilityHandler
 from .fuse import FuseAbilityHandler
 from .enlist import EnlistAbilityFragmentHandler
 from .exert import ExertAttackFragmentHandler
@@ -1025,12 +1026,15 @@ class TriggerMultiplierAbilityFragmentHandler:
     def validate(
         self, descriptor: Mapping[str, Any]
     ) -> TriggerMultiplierSpec:
-        return _fragment(
+        fragment = _fragment(
             descriptor,
             handler_id=self.handler_id,
             event=self.event,
             expected_type=TriggerMultiplierSpec,
         )
+        if self.handler_id==TRIGGER_MULTIPLIER_FRAGMENT_HANDLER_ID and fragment.schema_version!=1:
+            raise SemanticNodeError('Historical trigger multiplier handler requires schema one')
+        return fragment
 
     def lower(
         self,
@@ -1039,6 +1043,20 @@ class TriggerMultiplierAbilityFragmentHandler:
     ) -> tuple[StaticAbilityFragment, ...]:
         del context
         return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class TypedTriggerParticipationAbilityFragmentHandler(TriggerMultiplierAbilityFragmentHandler):
+    handler_id: str = 'ability.static.trigger-participation.v2'
+    family: str = 'ability.static.trigger_participation'
+    capability_dependencies: tuple[str,...] = ('trigger.participation.typed_source_event',)
+    rule_references: tuple[str,...] = ('101.2','603.2','603.2d','603.10')
+
+    def validate(self,descriptor):
+        fragment=super(TypedTriggerParticipationAbilityFragmentHandler,self).validate(descriptor)
+        if fragment.schema_version!=2:raise SemanticNodeError('Typed participation requires its schema-two fragment')
+        if fragment.capability_id not in self.capability_dependencies:raise SemanticNodeError('Trigger participation outcome disagrees with its handler')
+        return fragment
 
 
 @dataclass(frozen=True, slots=True)
@@ -1442,6 +1460,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DefenderPermissionAbilityFragmentHandler(),
             BlockCapacityAbilityFragmentHandler(),
             PrototypeAbilityHandler(),
+            MutateAbilityHandler(),
             FuseAbilityHandler(),
             EnlistAbilityFragmentHandler(),
             ExertAttackFragmentHandler(),
@@ -1483,6 +1502,9 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             StaticComponentScopeAbilityFragmentHandler(),
             TrainingAbilityFragmentHandler(),
             TriggerMultiplierAbilityFragmentHandler(),
+            TypedTriggerParticipationAbilityFragmentHandler(),
+            TypedTriggerParticipationAbilityFragmentHandler(handler_id='ability.static.trigger-prohibition.v2',
+                family='ability.static.trigger_prohibition',capability_dependencies=('trigger.participation.prohibition',)),
             ToxicAbilityFragmentHandler(),
             WardAbilityFragmentHandler(),
             WardNonmanaAbilityFragmentHandler(),

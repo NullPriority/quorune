@@ -211,6 +211,9 @@ def zone_change_snapshot_event(
             ),
         ),
         payload={
+            **({'composition_card_components':[row.to_dict() for row in subject.card_components]} if subject.card_components else {}),
+            **({'commander_components':[row.to_dict() for row in subject.commander_components],
+                'commander_component_returns':[],'commander_destination_epoch':0} if subject.commander_components else {}),
             "origin": subject.origin,
             "destination": subject.destination,
             "destination_controller": subject.destination_controller,

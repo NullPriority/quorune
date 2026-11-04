@@ -193,10 +193,46 @@
         "handlers": {"$ref": "#/$defs/objects"},
         "event_condition": {"$ref": "#/$defs/nullable_object"},
         "trigger_limit": {
-          "type": "object",
-          "properties": {"schema_version": {"const": 1}, "kind": {"const": "once_per_turn"}},
-          "required": ["schema_version", "kind"],
-          "additionalProperties": false
+          "oneOf": [
+            {
+              "type": "object",
+              "properties": {
+                "schema_version": {
+                  "type": "integer",
+                  "const": 1
+                },
+                "kind": {
+                  "const": "once_per_turn"
+                }
+              },
+              "required": [
+                "schema_version",
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "schema_version": {
+                  "type": "integer",
+                  "const": 2
+                },
+                "kind": {
+                  "const": "once_per_turn"
+                },
+                "source_scope": {
+                  "const": "event_incarnation"
+                }
+              },
+              "required": [
+                "schema_version",
+                "kind",
+                "source_scope"
+              ],
+              "additionalProperties": false
+            }
+          ]
         },
         "coverage": {"$ref": "#/$defs/strings"}
       }

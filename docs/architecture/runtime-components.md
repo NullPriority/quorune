@@ -152,8 +152,10 @@ LKI. Resolution uses the same public incarnation check as entry references.
 Fixed counters and committed scalar counts share ordinary counter placement;
 the triggering observer never substitutes for the attacker or damaging source.
 
-Source damage subscriptions may bind a complete fixed `put ... counters on it`
-instruction through the existing `$source.zone_object` leaf. This preserves
+Source-specific subscriptions, including mutation occurrences, may bind a complete
+fixed `put ... counters on it` instruction through the existing
+`$source.zone_object` leaf. The binding must establish the source antecedent
+before normalization; event-object pronouns retain their own recipient. This preserves
 source specificity and incarnation identity. Damage and state-based actions
 finish before trigger resolution; counters do not rescue a creature that already
 died, and a re-entered source cannot receive the old trigger's counters. Public
@@ -473,6 +475,15 @@ intent commits every selected member before discovering tap triggers. Tapping
 an attacking creature does not remove it from combat. Variable, linked and
 source-self tap costs remain residual.
 
+Cost schema 6 adds an incarnation-bound source exclusion to a single fixed
+sacrifice payment. The legal set contains only currently controlled permanents
+matching the compiled quality. Ownership does not restrict the payer: a
+borrowed permanent can pay and moves through the ordinary replacement-aware
+sacrifice owner to its owner's destination. The original source cannot pay;
+after it leaves and returns, the returned object is distinct. Declining leaves
+the result unapplied. Earlier sacrifice payloads retain schema 2, and ordinary
+conditional and reflexive results retain their separate target timing.
+
 Cost schema 4 adds fixed removal of one named counter from the original source
 permanent. Its explicit source reference resolves through `$source.zone_object`;
 leaving and returning cannot substitute new counters for the old object. The
@@ -499,6 +510,95 @@ existing decoding and timing.
 Source damage in these frames uses the shared current/last-known source owner;
 a departed source's controller and keywords remain independent of the
 controller of the reflexive ability.
+
+Fixed delayed object actions retain the original incarnation of their source,
+a sealed blocking counterpart or a damaged creature when the creating ability
+resolves. The existing delayed-trigger
+owner schedules one ordinary stack frame at the next end of combat or end step,
+retaining the creating controller and source even after that source leaves.
+Resolution checks the retained battlefield identity before delegating destruction,
+sacrifice or return to its owner's hand to their canonical owners. A returned
+object is distinct, and sacrifice still requires control by the delayed ability's
+controller. The recipient is not a target. Unsupported declaration-time
+qualities, new-zone objects, variable groups and arbitrary
+delayed instruction bodies remain outside this family. Closed block triggers
+accept both `When` and `Whenever` without changing their event or multiplicity.
+Delayed action schema 2 adds one fixed positive named-counter placement or
+removal on the original source incarnation. Its counter name, amount and
+creating source remain explicit until the future frame resolves. Primitive
+counter and keyword-counter capabilities remain required. The canonical owners
+apply counter replacements and remove only the counters still available;
+resolution does not turn the removal effect into a cost. A blinked source's
+new counters are unaffected. Counter actions on other event recipients remain
+unfinished. Schema 1 retains its movement-action encoding.
+
+Dealt-damage creature heads test source and recipient predicates separately
+against committed public damage facts. Combat-only heads require combat damage.
+Source-self heads require both the reference and logical incarnation, so a
+returned creature cannot inherit a trigger from an earlier object's damage.
+The damaged permanent's reference and incarnation remain separate from the
+damage source, including after either object leaves. Delayed results read that
+sealed recipient; they do not query a later object to reconstruct what was
+damaged. Runtime admission requires the represented source and creature-recipient
+predicates and the independently closed result body even when coverage metadata
+is absent or malformed. Zero dealt damage and player recipients cannot supply
+this creature role.
+
+Qualified blocking-pair heads use a closed `ObjectQuerySpec` over public
+characteristics sealed for every participant before trigger discovery. Color,
+type, subtype, keyword and represented power/toughness comparisons describe
+the counterpart when the relationship forms. The existing block transition
+proves the exact pair and both incarnations. Later characteristic changes do
+not cancel an already-created result; departure and reentry remain distinct.
+Single `blocks a creature` and `becomes blocked by a creature` heads retain
+per-pair multiplicity, while unqualified heads keep their prior encoding and
+collection rules. A single blocked-by body that explicitly refers to `that
+creature` uses the per-blocker relationship binding before the older source-only
+result path. One-or-more aggregation and context-relative qualities remain
+unfinished. `block_characteristics_version: 1` pins the additional event facts;
+historical absence preserves the earlier event shape.
+
+Unblocked-attacker events are produced when all blocker declarations finish,
+including declarations with no blocking pairs. The existing combat owner seals
+the current unblocked attacker identities and defending players, then merges
+their occurrences with ordinary blocker triggers through the shared APNAP
+batch. No event is produced at attack announcement or because a blocked
+creature's blockers later leave. Creatures put onto the battlefield attacking
+participate when they remain unblocked at this boundary. Source-self compiler
+heads retain both reference and incarnation. `unblocked_attacker_event_version:
+1` pins the new occurrence; historical absence emits none.
+
+An optional sacrifice of the ability source uses the existing fixed payment
+choice and canonical sacrifice intent. Its version-seven cost contains one
+bound source reference; preparation and completion check the original logical
+identity, battlefield presence, phase and current payer control. Another
+controlled permanent and a returned incarnation cannot replace the source.
+The zone owner preserves the permanent's owner destination and replacements
+before the result resumes. A paid result may address a sealed occurrence
+player through the existing private APNAP discard or public sacrifice owner;
+validation checks the locked actor and known, distinct players without reading
+their objects before payment. Other optional-effect callers retain their
+controller-only validation.
+
+Fixed results addressed to the defending player use the sealed attacker
+occurrence, independently from the trigger controller. Blocked events occur
+once per attacker even with several blockers. The existing life, mill and
+APNAP choice owners execute the result; only the affected principal receives
+a private discard choice. Runtime shape validation preserves the separately
+owned typed Afflict instruction and rejects ambiguous source scope.
+
+The same sealed defender can qualify a represented single permanent target.
+The existing `bound_event_player_controller_schema` resolves that relation for
+both trigger target offers and stack revalidation. A target that changes
+controller before resolution becomes illegal; the trigger's captured defender
+remains available after its attacker leaves or returns. Provoke keeps its
+separately validated complete keyword shape.
+
+`rules/event_player_targets.py` owns the shared controller binding. Its closed
+symbol set also includes a guaranteed damaged player and spell caster. Both
+target offers and stack revalidation resolve the same saved occurrence field;
+unavailable fields fail closed. The observer's controller never supplies a
+missing occurrence player.
 
 `ability.activated.mana.color-set.v1` binds a compiler-pinned relative object
 query to the activating seat and reads only matching public battlefield

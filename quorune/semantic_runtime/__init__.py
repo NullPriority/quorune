@@ -249,6 +249,7 @@ from .fixed_target_set_handlers import (
     DestroyPermanentTargetSetHandler,
     FIXED_TARGET_SET_HANDLERS,
     MoveFixedTargetSetHandler,
+    ReanimateFixedTargetSetHandler,
     SetFixedTargetSetTappedHandler,
 )
 from .impulse_access_handlers import (
@@ -300,6 +301,9 @@ from .intents import (
     LibrarySelectionIntent,
     MoveObjectsSimultaneouslyIntent,
     MadnessChoiceIntent,
+    MiracleCastChoiceIntent,
+    DiscoverCastIntent,
+    DiscoverCleanupIntent,
     MovePublicZoneSetIntent,
     MoveLibraryCardsToBottomIntent,
     ScryLibraryIntent,
@@ -394,8 +398,10 @@ from .zone_replacements import (
 
 @lru_cache(maxsize=1)
 def default_semantic_handler_registry() -> SemanticHandlerRegistry:
+    from .emblem_creation import CreateCompiledEmblemHandler
     registry = SemanticHandlerRegistry(
         (
+            CreateCompiledEmblemHandler(),
             *GENERIC_HANDLERS,
             FixedLibraryShuffleHandler(),
             AscendSpellHandler(),
@@ -592,6 +598,9 @@ __all__ = [
     "LibrarySelectionIntent",
     "MoveObjectsSimultaneouslyIntent",
     "MadnessChoiceIntent",
+    "MiracleCastChoiceIntent",
+    "DiscoverCastIntent",
+    "DiscoverCleanupIntent",
     "MoveLibraryCardsToBottomIntent",
     "ScryLibraryIntent",
     "SurveilLibraryIntent",

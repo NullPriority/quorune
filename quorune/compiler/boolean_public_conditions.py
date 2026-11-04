@@ -5,10 +5,13 @@ from __future__ import annotations
 import re
 
 from ..continuous_conditions import FixedPublicStateConditionKind,FixedPublicStateConditionSpec
+from ..external_entry_state_model import PERMANENT_CARD_TYPES
 
 
 def compose_public_conditions(text: str, *, compile_atomic, source_pattern: str):
-    pattern=rf'\s+(and|or)\s+(?=(?:you\b|your\b|an opponent\b|a player\b|there\b|enchanted\b|equipped\b|{source_pattern}\b))'
+    history_subject = '|'.join((*sorted(PERMANENT_CARD_TYPES), 'permanent', 'card'))
+    passive_history = rf'(?:a|an) (?:{history_subject}) (?:entered|died|left|was)\b'
+    pattern=rf'\s+(and|or)\s+(?=(?:you\b|your\b|an opponent\b|a player\b|there\b|enchanted\b|equipped\b|{passive_history}|{source_pattern}\b))'
     parts=re.split(pattern,text.strip().rstrip('.'),flags=re.I)
     if len(parts)==1:
         controlled=re.fullmatch(r'you control (?P<subjects>.+)',parts[0],re.I)

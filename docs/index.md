@@ -123,6 +123,9 @@ define rules authority or become a production runtime dependency.
 - [Generated-artifact finalization decision](adr/0042-canonical-generated-artifact-finalization.md)
 - [Face-status timestamp compatibility](adr/0150-versioned-face-status-timestamps.md)
 - [Face-down characteristic compatibility](adr/0151-versioned-face-down-characteristics.md)
+- [State-based physical departure ordering](adr/0152-state-based-physical-departure-order.md)
+- [Merged commander damage identities](adr/0153-merged-commander-damage-identities.md)
+- [Physical commander destination replacement](adr/0154-physical-commander-destination-replacement.md)
 - [Semantic-pack compatibility](history/semantic-packs.md)
 
 ## Maintenance rules

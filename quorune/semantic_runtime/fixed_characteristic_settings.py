@@ -106,9 +106,14 @@ class FixedCharacteristicSettingsHandler:
         projected = ObjectQuerySpec(zones=predicate.zones, types_all=predicate.types_all,
             excluded_types=predicate.excluded_types, subtypes_all=predicate.subtypes_all,
             excluded_subtypes=predicate.excluded_subtypes, supertypes_all=predicate.supertypes_all,
-            colors_all=predicate.colors_all, token=predicate.token, state_predicate=predicate.state_predicate)
+            colors_all=predicate.colors_all, token=predicate.token, state_predicate=predicate.state_predicate,
+            commander=predicate.commander)
         if projected != predicate:
             raise SemanticNodeError("Fixed setting predicate is outside the reviewed public grammar")
+        if (target['controller']=='source_owner' or predicate.commander is not None) and (
+                target['kind']!='fixed_query' or predicate.commander is not True
+                or predicate.types_all!=('creature',) or target['controller'] not in {'source_owner','source_controller'}):
+            raise SemanticNodeError('Owner-relative settings require designated commander creatures')
         allowed_types={'artifact','battle','creature','enchantment','land','planeswalker'}
         if not set((*predicate.types_all,*predicate.excluded_types))<=allowed_types:
             raise SemanticNodeError("Fixed setting subjects require actual permanent card types")
@@ -130,7 +135,7 @@ class FixedCharacteristicSettingsHandler:
                 raise SemanticNodeError("Attached settings cannot carry source-controller predicates")
             if predicate != ObjectQuerySpec(zones=('battlefield',),types_all=predicate.types_all) or len(predicate.types_all)>1 or not set(predicate.types_all)<={'artifact','battle','creature','enchantment','land','planeswalker'}:
                 raise SemanticNodeError("Attached settings require one ordinary permanent subject type")
-        elif target["controller"] not in {"any", "source_controller", "source_opponents"}:
+        elif target["controller"] not in {"any", "source_controller", "source_opponents", "source_owner"}:
             raise SemanticNodeError("Fixed setting controller relation is unsupported")
         node = fixed_setting_modifier_node(descriptor['modifier'])
         return target, predicate, node

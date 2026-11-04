@@ -4,16 +4,9 @@ from collections import ChainMap
 from collections.abc import Mapping
 from types import MappingProxyType
 from functools import partial
+from ...characteristic_read_frames import CharacteristicStateView as _StateView
 
 PUBLIC_SELF_COST_CAPABILITY='casting.cost.self_public_state_condition'
-
-
-@dataclass(frozen=True,slots=True)
-class _StateView:
-    original:object
-    cards:Mapping
-    players:Mapping
-    def __getattr__(self,name):return getattr(self.original,name)
 
 
 @dataclass(frozen=True,slots=True)

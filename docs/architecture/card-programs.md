@@ -294,6 +294,23 @@ ordinary copy semantics. Current ability loss and control changes preserve
 usage; a new logical object or global turn sequence renews the allowance.
 Historical payloads without this descriptor retain their original shape.
 
+Static trigger participation keeps its original schema-one fragment and handler.
+Explicit schema two separates ability-source predicates from causal event
+predicates and uses registered additional-instance or prohibition handlers.
+The actual fragment independently requires the corresponding capability.
+Discovery uses post-entry or canonical look-back source views, applies
+prohibitions before quotas, and places additional instances through ordinary
+APNAP and independent target selection. Equipment conditions use event-time
+attachment characteristics and exclude phased attachments. See
+[ADR 0159](../adr/0159-typed-trigger-source-and-event-participation.md).
+
+Schema-one limits retain their nondeparture contract. Explicit schema two uses
+`source_scope: event_incarnation` for represented single departure/death
+subscriptions. It reads immutable old usage and accepted pending-batch claims
+before collecting another trigger. A departed source cannot mark the fresh
+incarnation's annotations. Runtime binding independently requires the new scope
+capability. See [ADR 0158](../adr/0158-event-incarnation-trigger-usage.md).
+
 Own-turn source casting grants use a registered complete-source descriptor and
 the current static-ability applicability query. Each chosen price binds the
 source incarnation, ability, current turn and underlying casting method. The

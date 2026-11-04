@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+An unsupported trigger result keeps a material `trigger_effect` residual when
+its event is already exact. The frontier classifies its executable clause
+landmarks instead of attributing the failure to event binding. Unknown events
+retain their event-binding blockers. This diagnostic distinction preserves the
+original source text and span and does not promote an unsupported ability or
+change its executable effects.
+
 `compiler/state_trigger_nodes.py` lowers complete controlled-battlefield state
 conditions followed by mandatory source sacrifice. A versioned subscription
 reuses existing public count, source exclusion and numeric existence queries.
@@ -524,6 +531,20 @@ existing owners. Newly created token references, targeted anaphora, union-event
 subjects, and unrepresented complete bodies are not rebound to the source.
 Effects on the source itself carry the existing logical-object reference;
 damage source references retain their ordinary last known source information.
+The source-specific Cycling head also admits one optional positive fixed-damage
+result. Its source is the cycled card after the discard cost, even when that
+card is no longer in hand. The compiler marks this source contract explicitly
+before composing the existing optional and damage leaves. Targets are announced
+before optional acceptance; global Cycling subjects and variable damage remain
+outside this production.
+The closed source-self “blocks or becomes blocked by a creature” head uses
+per-creature subscriptions from [ADR 0141](../adr/0141-block-counterpart-references.md).
+Its fixed untargeted keyword and positive fixed-damage results refer to the
+exact opposite transition participant. Damage keeps the observing creature as
+its source, including source departure information, and omits a returned
+recipient incarnation. Aggregate blocked wording, attached observers, variable
+amounts, controller-damage siblings and delayed results retain their independent
+admission boundaries.
 When that bound result begins with a source pronoun, a possessive scalar such
 as “its power” retains that same source even if the damage instruction also
 has a target. An explicit target-led result keeps its target characteristic.
@@ -572,13 +593,27 @@ Each subscription
 retains its own source, controller and characteristic predicates; one shared
 result remains one ability. Event alias normalization retains a source-specific
 child's typed identity as well as its predicate; a controller-wide or global
-child does not acquire that source restriction. A printed once-per-turn limit
-requires every subscribed event to remain inside its supported nondeparture
-contract. Nested subscriptions, repeated normalized events,
+child does not acquire that source restriction. A schema-one printed
+once-per-turn limit requires every subscribed event to remain inside its
+supported nondeparture contract. Explicit schema two admits represented single
+departure/death events with an event-incarnation usage promise. It derives
+ordinary and departure usage capabilities independently of body capabilities;
+the old descriptor cannot acquire the new authority. See
+[ADR 0158](../adr/0158-event-incarnation-trigger-usage.md).
+Nested subscriptions, repeated normalized events,
 mixed active zones, and unrepresented prefixes remain residual. Qualified
 public subjects may similarly subscribe to entry and death or departure using
 two independently accepted zone predicates. The canonical predeparture
 snapshot supplies departing characteristics and controller.
+
+Typed static trigger participation separately matches the triggering ability's
+source and its causal event. Closed schema-two fragments represent source
+qualities, entering/dying/attacking/damaging/cast-copy predicates and trigger
+prohibitions. The compiler retains subtype and controller relations, self
+exclusions and source-name references as typed data. New additional-instance
+and prohibition handlers each require their own capability, independently
+inferred from the fragment. Unknown clauses and unowned companions remain
+residuals. See [ADR 0159](../adr/0159-typed-trigger-source-and-event-participation.md).
 
 Fixed positive Expend thresholds subscribe to the typed spell-mana payment
 event. Their predicates require the source controller and the exact crossing
@@ -755,10 +790,37 @@ the original parent frame and continues those remaining intents and effects;
 it does not recompute a consumed sacrifice or discard choice. Preparation uses
 the same boundary for retained automatic effects and prepared requests. Casting
 cost returns preserve the paid cost and parent spell before priority resumes.
+When that cast occurs inside another resolving instruction, nested return
+captures transfer to the enclosing completion owner. It retains the committed
+cast and waits for return entry choices before resuming the parent's remaining
+effects. An aborted inner payment publishes no captured returns.
+
 Retired exile incarnations and earlier source lifetimes do not reattach when a
 physical card reenters. Multiple original sources retain distinct instructions;
 simultaneous specified departures collect one owner-controlled return batch.
 Separate entry and leave triggers remain a linked-ability contract under CR 607.
+
+`source_entry_cast_information.py` defines immutable actual-caster/origin and
+original-entry values. A known noncast entry is distinct from missing
+information; the caster is independent of both origin ownership and a copied
+ability's controller. `rules/entry_cast_information.py` reads a current spell's
+receipt from the canonical stack and cast-history owners. Stack completion
+scopes it to the resolving entry; the zone owner emits sealed noncopiable entry
+information only when a trusted reader participates. Unrelated historical
+occurrences retain their existing shape.
+
+The self-zone effect compiler represents the exact self-entry “if you cast it”
+guard with `trigger.condition.source_entry_cast`. Its structural runtime minimum
+requires the complete entry/intervening contract. Trigger discovery checks the
+actual caster against the trigger controller; resolution uses the retained
+original entry and the ability's current controller, including copied abilities
+and a departed source. Direct entries and uncast spell copies do not qualify.
+The exact “from your hand” restriction adds an explicit origin predicate and
+`trigger.condition.source_entry_cast_hand`. Both checks require that the
+retained actual caster and the origin hand's owner match the ability controller.
+Exile casts continue to satisfy an unqualified cast guard, but cannot satisfy
+the hand restriction. Other origins, negative, compound and nonself guards,
+replacement-style entry counters and unrepresented result bodies remain material.
 
 `compiler/fixed_target_effect_sequences.py` owns the closed cross-sentence
 target-threading grammar. It is the only compiler authority for represented
@@ -987,8 +1049,23 @@ shared count and resolution-revalidation capability, and supports a single-
 graveyard constraint through target ownership. The same scalar leaves also feed
 the existing optional and closed-sequence compilers. Heterogeneous roles,
 divided or dynamic quantities, linked results, compound or conditional tails,
-other players' graveyards, non-owner-hand destinations, and unsupported
-characteristic dependencies remain source-spanned residuals.
+hand returns from other players' graveyards, destinations without a reviewed
+scalar owner, and unsupported characteristic dependencies remain source-spanned
+residuals.
+
+Fixed graveyard-to-battlefield sets with bounds from two through six also require
+`zone.reanimate.fixed_target_set` and the scalar reanimation capability. The
+schema-one `reanimate_targets` instruction carries the explicit actor-or-owner
+controller and tapped-entry policy. The focused
+`semantic_choices/simultaneous_movement.py` owner resolves the typed intent's
+references and explicit entry policy through the canonical zone port. The zone
+transaction prepares
+all entry replacements before committing any member; a pending choice leaves
+the complete set in its origin. Newcomers then participate in entry triggers
+together. Single-target and up-to-one forms retain the scalar `reanimate`
+payload. Total mana value, different-name constraints, variable counts,
+attachments and correlated follow-up instructions remain outside this lift.
+
 `compiler/any_number_target_sets.py` reuses these complete homogeneous results
 and the fixed temporary characteristic-set owner for “any number of targets”.
 Its version-two count parameter permits zero through the authoritative finite
@@ -1960,6 +2037,16 @@ v1 precedence when its old one-mana/one-effect shape closes. Runtime rechecks
 full resources, current predicates and object incarnations, commits through
 canonical payment or simultaneous zone intents, then resumes the typed result.
 CR 118.12 depends on chosen payment, not the final destination after replacement.
+The version-seven `source_sacrifice` cost leaf binds the original source zone
+object. The compiler opts into this cost in the existing `If you do` factory;
+other parser callers keep their prior cost grammar. Source names are explicit
+self references. `compiler/source_sacrifice_payments.py` normalizes a pronoun
+only when every subscribed event proves that the source is its antecedent.
+Equipped, other-creature and mixed-source subjects cannot borrow that proof.
+Source reflexive `When you do` costs remain outside this cost leaf's grammar.
+Closed event-player draw, life, damage, mill, discard and sacrifice leaves can
+sit behind the payment. Runtime inference checks their occurrence-player scope
+through enclosing effects as well as the direct payment wrapper.
 The version-five cost leaf composes one positive ordinary mana vector with one
 owned hand-card discard in that same optional decision. The advertised choice
 requires both resources. Completion validates both before canonical mana and
@@ -2183,6 +2270,29 @@ distinct shape-gated capabilities and the existing APNAP choice and zone owners.
 Random or qualified selections, variable quantities and linked discard costs
 remain outside this scope. An insufficient hand discards only available cards;
 an empty hand introduces no mandatory private choice.
+
+The shared occurrence-player binder also admits the defending player on a
+source-scoped becomes-blocked or post-declaration unblocked event. Existing
+fixed life, mill, discard and sacrifice leaves retain their separate result
+owners. `rules/combat_defending_players.py` independently checks the attacker
+scope and complete instruction shape; the original typed Afflict shape keeps
+its keyword owner. A blocker event, an unproved source relation, random discard
+and unmatched result siblings remain outside this grammar.
+
+`compiler/event_player_target_results.py` composes the same established player
+binder with a single direct-permanent target. It consumes one complete
+defending-player or proved occurrence-player controller qualifier and delegates the rest of the instruction
+to existing fixed result owners. The typed target schema retains its optional
+`controller_seat` relation; ordinary controller-relative schemas keep their
+existing encoding. Runtime inference requires a compatible attacker occurrence
+without relying on a compiler marker. Multiple qualified targets and unmatched
+result clauses remain residual.
+
+The shared relation also binds `that player` to a guaranteed player-damage
+recipient or spell caster. An ambiguous attack antecedent or damage to a
+permanent cannot supply that relation. The noncombat source-damage-to-player
+head uses the existing normalized source damage owner, including its logical
+incarnation predicate and captured identity during an intervening recheck.
 
 `compiler/hand_inspection_templates.py` owns the distinct targeted-hand
 inspection grammar. It preserves public reveal versus controller-only look in
@@ -2444,7 +2554,8 @@ and tapped or untapped entry. The emitted `reanimate` operation reuses the
 shared resolution-time target revalidation, typed Aura-entry, destination-
 replacement, and canonical zone-transition owners. Numeric graveyard targets
 use the same exact current-characteristic boundary as battlefield targeting;
-unrepresentable characteristic-defining or cyclic values fail closed. Mass,
+unrepresentable characteristic-defining or cyclic values fail closed. Fixed
+plural forms compose through the homogeneous target-set owner. Mass,
 untargeted non-source, delayed, linked-result, entry-rider, variable, copied,
 granted, hidden-origin, and compound forms remain material residuals.
 
@@ -2465,6 +2576,16 @@ characteristic, attachment-dependent entry, and multiple-destination forms
 remain source-spanned residuals. Commander-profile trust also requires the
 typed CR 903.9 owner choice; the compiler never excludes commanders from an
 otherwise universal Oracle instruction.
+
+One-card graveyard exile also accepts the closed `your graveyard` and
+`an opponent's graveyard` owner relations. They reuse the public-card type
+predicate and existing target plan for offers, choices, and resolution. The
+relation stays relative to the stacked spell or ability's controller after a
+source control change. Leaving the graveyard invalidates the selected
+incarnation. The existing homogeneous target-set owner retains this owner
+filter and revalidates each selected incarnation independently. The existing
+any-graveyard payload retains its meaning; linked
+copy, cast, and play permissions and unsupported qualifiers remain residual.
 
 Graveyard-to-hand sets include unqualified cards, permanent cards and explicit
 instant/sorcery unions. These new forms select physical cards and reuse the
@@ -2594,6 +2715,13 @@ nontoken color qualifiers, and nonbasic lands retain every query restriction;
 basic land subtypes do not substitute for the basic supertype. Runtime owners
 receive only the compiled descriptors.
 
+Adjacent permanent card-type nouns in public conditions require one object
+with every named type. A land creature is distinct from a separate land and
+creature. Boolean composition may include an independently validated passive
+history term, such as a land entering under the controller this turn. Static
+node lowering derives the history capability from those typed descriptors;
+discarding a declared dependency cannot remove the runtime minimum.
+
 Land-condition quantities reuse the canonical land-subtype vocabulary and
 the snow supertype. Explicit repeated articles in a controller disjunction
 form separate closed predicates, preserving source exclusion in each branch.
@@ -2715,8 +2843,14 @@ action family. It lowers one source Equipment entry attachment, one source Aura
 reattachment, fixed-mana Equip restricted to a creature token, commander,
 legendary creature, or one creature subtype, and the ordinary Living Weapon and
 For Mirrodin! and Job select entry triggers. Resolution revalidates the source incarnation and
-current target before delegating to the existing reciprocal attachment owner;
-the keyword triggers first use the replacement-aware token owner and attach the
+current target before delegating to the existing reciprocal attachment owner.
+Equipment entry targets can require or exclude a creature subtype through the
+shared closed permanent target predicates. The creature type remains required
+even when the printed target is a bare subtype; a noncreature Kindred permanent
+with that subtype is not eligible. Offers, choices, and resolution share that
+predicate, and an entry with no legal target leaves the Equipment unattached.
+These triggers do not pay or inherit the separate Equip activation cost.
+The keyword triggers first use the replacement-aware token owner and attach the
 source only to the original Germ, Rebel or 1/1 colorless Hero. Additional replacement-created
 tokens remain unattached. Multiple targets, other attachment source kinds,
 broader Equip restrictions, modified keyword token definitions, and
@@ -3018,6 +3152,35 @@ Convert instructions, explicit effects that set day or night, transform-into
 effects, copied or granted forms, and independently unsupported siblings
 remain material residuals.
 
+`compiler/emblem_nodes.py` lowers a complete emblem creator with independently
+closed, typeless command-source children. Characteristic static and triggered
+abilities retain source spans, distinct semantic references and complete
+capability minima. The existing SemanticRegistry remains authoritative; legacy
+emblem display text is not executable. The actual public command object supplies
+the abilities, independently of creator departure or control changes. Unsupported
+children and static owners without command-zone participation keep the parent
+residual. See [ADR 0143](../adr/0143-compiled-command-emblem-abilities.md).
+
+Printed `0` loyalty symbols lower to a zero loyalty delta. They preserve the
+ordinary loyalty timing, controller and per-permanent usage rules while placing
+or removing no counters. Braced `{0}` remains an ordinary mana activation cost.
+
+`compiler/source_animation_prevention.py` composes one fixed source planeswalker
+animation with a separate shield against damage to its original incarnation.
+The retained-type phrase preserves prior types and subtypes under CR 205.1b.
+The existing characteristic and prevention owners apply both instructions in
+printed order. A versioned source-subject shield validates before an unavailable
+source becomes a no-op. See
+[ADR 0144](../adr/0144-source-bound-animation-prevention.md).
+
+`compiler/incubate_templates.py` lowers a fixed Incubate count or an existing
+typed declared/scalar amount, including a printed second incubation. One
+instruction owns the resolved amount; its continuation creates the second token
+separately. Component capability inference retains the Incubate entry-counter
+and transforming-token dependencies inside a larger ordered effect. The
+independent runtime payload minimum requires the same owners. Amounts or source
+references without an existing closed producer retain material residuals.
+
 `compiler/token_templates.py` and
 `compiler/fixed_token_production_templates.py` own fixed-definition token creation across
 spell, triggered, and activated effects. The closed production emits a
@@ -3037,6 +3200,15 @@ while its temporary power/toughness bonus is not. Ability loss suppresses new
 triggers without cancelling instances already on the stack. Class self-entry
 wording uses the same source-incarnation binder as other permanent self-entry
 subjects. Independently unsupported creator clauses remain residual.
+Fixed creature definitions also retain each positive fixed Toxic value as a
+matching `ToxicSpec` beside its keyword label. Definition validation and the
+descriptor-owned runtime minimum require the existing Toxic damage-result
+capability. A quoted intrinsic block restriction composes with that fragment
+without replacing it or introducing a child-program requirement. The created
+token uses ordinary declaration legality and damage snapshots: Toxic adds
+poison only after combat damage to a player and preserves the damage's life
+loss. Variable values and unrepresented creator or token abilities remain
+residual.
 A predefined Blood definition additionally requires
 `token.ability.fixed_blood`: its explicit activation profile retains all four
 costs and delegates owned-hand selection, source departure and private draw to
@@ -4397,8 +4569,12 @@ source span and require immutable entry facts. Complete same-target result
 replacement and appended-keyword clauses reuse the existing condition owner;
 the classifier admits only the production that actually compiled. Role-token
 composition receives the same declaration context as ordinary entry results.
-Each child remains independently capability-bound. Unknown conditional targets,
-discounts and other sibling bodies keep the whole card residual. See the
+Each child remains independently capability-bound. A fixed generic self discount
+can bind to that printed Bargain instance through a separate source-spanned
+cast-cost node. Its typed declaration condition is evaluated before payment by
+the shared total-cost planner. Missing or different instances, colored or
+variable Bargain discounts, unknown conditional targets and other sibling bodies
+keep the whole card residual. See the
 [Bargain contract](../../mechanics/contracts/bargain.json).
 
 Forecast normalization retains its source reveal clause for presentation while
@@ -4430,3 +4606,12 @@ creature-power damage payload and a separate fixed-multiple capability. The
 ordinary direct-damage and Fight productions keep their prior payloads.
 Companion cost reductions remain independently compiled target or public-zone
 conditions; recognizing the damage clause alone does not close a card.
+
+`compiler/miracle_nodes.py` represents fixed ordinary-mana Miracle as two
+source-spanned nodes: the intrinsic as-drawn reveal and its linked hand trigger.
+Both require complete-card admission and the same lifecycle capability. The
+intrinsic declaration alone does not grant a casting method; its linked trigger
+uses the separately authorized resolving cast window.
+Variable costs, altered reminder text, granted declarations and unrepresented
+faces retain their material residuals. The [drawing owner](drawing.md) owns
+prospective-library and committed-hand identities.

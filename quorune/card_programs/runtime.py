@@ -235,6 +235,9 @@ class _FixedPublicStateSnapshotResolver:
 
         if fact is FixedPublicStateFact.ANY_CREATURE_DIED_THIS_TURN:
             return len(events("creature_died"))
+        if fact is FixedPublicStateFact.CONTROLLER_COMMITTED_CRIME_THIS_TURN:
+            if history.crime_history_version!=1:return None
+            return sum(event.actor==controller for event in events('crime_committed'))
         if fact is FixedPublicStateFact.CONTROLLER_ATTACKED_THIS_TURN:
             return sum(event.actor == controller for event in events("creature_attacked"))
         if fact is FixedPublicStateFact.CONTROLLER_PERMANENT_LEFT_THIS_TURN:
@@ -615,7 +618,13 @@ def _continuous_programs_for_source(
     maximum_layer: Layer | None = None,
     ability_source_participation: Callable[[Any,str],bool|None] | None = None,
     *, completed_layer_queries: bool = False,
+    command_program_trust=None,
+    copied_source_fragments=None,
 ) -> tuple["SemanticProgram", ...]:
+    if source.zone == 'command':
+        from ..emblem_programs import command_emblem_programs
+        return tuple(p for p in command_emblem_programs(semantics, source,
+            program_is_trusted=command_program_trust) if p.event == 'characteristics.evaluate')
     if source.zone == 'exile':
         from ..cipher_model import CIPHER_GRANT_HANDLER
         return tuple(p for p in semantics.runtime_handler_programs_for_oracle(source.oracle_id,
@@ -630,7 +639,8 @@ def _continuous_programs_for_source(
         programs = {program.key: program for program in _applicable_static_programs(
             semantics, source, static_component_resolver(source))}
         registry = default_continuous_effect_component_registry()
-        for program in _continuous_programs_for_source(semantics, source, None):
+        for program in _continuous_programs_for_source(semantics,source,None,
+                copied_source_fragments=copied_source_fragments):
             layer = min((registry.source_component_layer(descriptor) for descriptor in program.handlers),
                 default=Layer.ABILITY)
             if layer >= Layer.ABILITY:
@@ -651,6 +661,9 @@ def _continuous_programs_for_source(
             if program.key in early_static_component_resolver(source, layer):
                 programs[program.key] = program
         return tuple(programs[key] for key in sorted(programs))
+    if copied_source_fragments is not None:
+        return _applicable_static_programs(semantics,source,static_component_keys(copied_source_fragments,
+            source_designations=permanent_numeric_designations(source)))
     copy_overrides = (getattr(source, "annotations", {}) or {}).get(
         "copy_overrides"
     )
@@ -751,14 +764,20 @@ def _descriptor_public_type_objects(source,descriptor,*,state,resolver):
     return tuple(resolver._public_object(card) for card in sorted(objects,key=lambda card:card.object_id))
 
 
-def _continuous_program_instances(semantics, source, programs, granted_resolver):
-    if granted_resolver is None:
+def _continuous_program_instances(semantics,source,programs,granted_resolver,copied_resolver=None,copied_instances=None):
+    if (granted_resolver is None and copied_resolver is None and copied_instances is None) or source.zone == 'command':
         return tuple((program, None, None) for program in programs)
     from ..rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed
     result = [(program, None, None) for program in programs
         if not (program.provenance.get('granted_only') and program.ability_id.startswith('static:granted:')
             and program.event == 'characteristics.evaluate')]
-    for ordinal, (key, timestamp) in enumerate(granted_resolver(source)):
+    copied=copied_instances if copied_instances is not None else copied_resolver(source) if copied_resolver is not None else ()
+    by_key={program.key:program for program in programs}
+    copied_keys={key for key,_timestamp in copied}
+    result=[entry for entry in result if entry[0].key not in copied_keys]
+    result.extend((by_key[key],timestamp,f'copy:{ordinal}') for ordinal,(key,timestamp) in enumerate(copied)
+        if key in by_key)
+    for ordinal, (key, timestamp) in enumerate(granted_resolver(source) if granted_resolver is not None else ()):
         program = semantics.get(key)
         if (program is None or program.provenance.get('granted_only') is not True
                 or program.active_zone != 'battlefield' or program.event != 'characteristics.evaluate'
@@ -767,6 +786,11 @@ def _continuous_program_instances(semantics, source, programs, granted_resolver)
             raise SemanticNodeError('Current granted characteristic references an unknown or different static child')
         result.append((program, timestamp, ordinal))
     return tuple(result)
+
+
+def _characteristic_occurrence_order(value):
+    timestamp,occurrence,key=value
+    return timestamp,(0,occurrence) if type(occurrence) is int else (1,occurrence),key
 
 
 def _granted_characteristic_timestamp_order(effects, grant_order):
@@ -778,12 +802,59 @@ def _granted_characteristic_timestamp_order(effects, grant_order):
         if not any(effect.effect_id in grant_order for effect in group):
             continue
         ordered = sorted(group, key=lambda effect: (effect.effect_id in grant_order,
-            grant_order.get(effect.effect_id, (0, 0, '')), effect.effect_id))
+            _characteristic_occurrence_order(grant_order.get(effect.effect_id,(0,0,''))),effect.effect_id))
         for previous, effect in zip(ordered, ordered[1:]):
             if effect.effect_id in grant_order:
                 replacements[effect.effect_id] = replace(effect,
                     depends_on=tuple(sorted({*effect.depends_on, previous.effect_id})))
     return tuple(replacements.get(effect.effect_id, effect) for effect in effects)
+
+
+def _continuous_component_source_context(
+    state: ContinuousRuntimeState, source: Any, program: "SemanticProgram",
+    descriptor: Mapping[str, Any], *, descriptor_index: int,
+    grant_timestamp: int | None, occurrence: int | str | None,
+    public_state: Any, resolved_quantity: Any,
+    public_state_resolver: _FixedPublicStateSnapshotResolver,
+) -> ContinuousEffectSourceContext:
+    """Prepare the typed current-source facts used by one registered component."""
+    from ..soulbond_model import SOULBOND_GRANT_HANDLER
+    paired_object = None
+    if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:
+        from ..soulbond_state import paired_object_identity
+        paired_object = paired_object_identity(state, source)
+    return ContinuousEffectSourceContext(
+        cipher_encoded_object=_cipher_encoded_object(state, source, descriptor),
+        enchanted_player=current_attached_player_seat(source,state.players),
+        source_object_id=source.object_id,
+        source_ref=source.ref,
+        source_controller=source.controller,
+        source_timestamp=max(
+            0, int(source.zone_timestamp), grant_timestamp if grant_timestamp is not None else 0
+        ),
+        component_id=(
+            f"{program.key}:{descriptor_index}" + (f':grant:{occurrence}' if occurrence is not None else '')
+        ),
+        source_logical_object_id=source.logical_object_id,
+        source_counters=FrozenMap(
+            getattr(source, "counters", {}) or {}
+        ),
+        source_designations=FrozenMap({
+            key: value
+            for key, value in (getattr(source, "annotations", {}) or {}).items()
+            if key in {"chosen_color", "chosen_creature_type"}
+        }),
+        public_state=public_state,
+        resolved_quantity=resolved_quantity,
+        paired_object=paired_object,
+        public_type_objects=_descriptor_public_type_objects(source,descriptor,state=state,
+                                                           resolver=public_state_resolver),
+        attached_object=(
+            attached_object_identity(state.cards, source)
+            if getattr(source, "attached_to", None)
+            else None
+        ),
+    )
 
 
 def collect_card_program_continuous_effects(
@@ -801,6 +872,8 @@ def collect_card_program_continuous_effects(
     early_static_component_resolver: Callable[[Any, Layer], Sequence[str]] | None = None,
     static_component_presence_only: bool = False,
     granted_characteristic_resolver: Callable[[Any], Sequence[tuple[str, int]]] | None = None,
+    copied_characteristic_resolver: Callable[[Any], Sequence[tuple[str,int]]] | None = None,
+    copied_static_source_resolver: Callable[[Any], Sequence[Any] | None] | None = None,
     ability_source_participation: Callable[[Any,str],bool|None] | None = None,
     generated_effect_sources: dict[str,tuple[str,str]] | None = None,
 ) -> tuple[ContinuousEffect, ...]:
@@ -827,7 +900,8 @@ def collect_card_program_continuous_effects(
 
     for seat in state.turn_order:
         player = state.players[seat]
-        for object_id in [*player.zones['battlefield'], *player.zones['graveyard'], *player.zones['exile']]:
+        for object_id in [*player.zones['battlefield'], *player.zones['graveyard'], *player.zones['exile'],
+                          *(oid for oid in player.zones['command'] if state.cards[oid].object_kind == 'emblem')]:
             source = state.cards[object_id]
             if metrics is not None and source.zone == 'battlefield':
                 metrics.battlefield_objects_inspected += 1
@@ -840,15 +914,21 @@ def collect_card_program_continuous_effects(
             if source.zone == 'graveyard':
                 from ..continuous_conditions import OwnerRelativeConditionSource
                 source = OwnerRelativeConditionSource(source)
+            copied_fragments=copied_static_source_resolver(source) if copied_static_source_resolver is not None else None
             programs = () if getattr(source, 'face_down', False) else _continuous_programs_for_source(
                 semantics, source, static_component_resolver, early_static_component_resolver, maximum_layer,
                 ability_source_participation,
                 completed_layer_queries=completed_layer_queries,
+                command_program_trust=program_is_trusted,
+                copied_source_fragments=copied_fragments,
             )
             if metrics is not None:
                 metrics.card_program_lookups += 1
+            from ..composition_characteristics import copied_static_component_instances
+            copied_instances=(copied_static_component_instances(copied_fragments,static_component_keys(copied_fragments))
+                if copied_fragments is not None else None)
             for program, grant_timestamp, occurrence in _continuous_program_instances(
-                    semantics, source, programs, granted_characteristic_resolver):
+                    semantics,source,programs,granted_characteristic_resolver,copied_characteristic_resolver,copied_instances):
                 if not program_is_trusted(program):
                     continue
                 for descriptor_index, descriptor in enumerate(
@@ -869,43 +949,10 @@ def collect_card_program_continuous_effects(
                         continue
                     resolved_quantity = _descriptor_characteristic_quantity(source,descriptor,
                         quantity_resolver=quantity_resolver,maximum_layer=maximum_layer)
-                    from ..soulbond_model import SOULBOND_GRANT_HANDLER
-                    paired_object = None
-                    if descriptor.get('handler_id') == SOULBOND_GRANT_HANDLER:
-                        from ..soulbond_state import paired_object_identity
-                        paired_object = paired_object_identity(state, source)
-                    context = ContinuousEffectSourceContext(
-                        cipher_encoded_object=_cipher_encoded_object(state, source, descriptor),
-                        enchanted_player=current_attached_player_seat(source,state.players),
-                        source_object_id=source.object_id,
-                        source_ref=source.ref,
-                        source_controller=source.controller,
-                        source_timestamp=max(
-                            0, int(source.zone_timestamp), grant_timestamp if grant_timestamp is not None else 0
-                        ),
-                        component_id=(
-                            f"{program.key}:{descriptor_index}" + (f':grant:{occurrence}' if occurrence is not None else '')
-                        ),
-                        source_logical_object_id=source.logical_object_id,
-                        source_counters=FrozenMap(
-                            getattr(source, "counters", {}) or {}
-                        ),
-                        source_designations=FrozenMap({
-                            key: value
-                            for key, value in (getattr(source, "annotations", {}) or {}).items()
-                            if key in {"chosen_color", "chosen_creature_type"}
-                        }),
-                        public_state=public_state,
-                        resolved_quantity=resolved_quantity,
-                        paired_object=paired_object,
-                        public_type_objects=_descriptor_public_type_objects(source,descriptor,state=state,
-                                                                           resolver=public_state_resolver),
-                        attached_object=(
-                            attached_object_identity(state.cards, source)
-                            if getattr(source, "attached_to", None)
-                            else None
-                        ),
-                    )
+                    context = _continuous_component_source_context(state,source,program,descriptor,
+                        descriptor_index=descriptor_index,grant_timestamp=grant_timestamp,occurrence=occurrence,
+                        public_state=public_state,resolved_quantity=resolved_quantity,
+                        public_state_resolver=public_state_resolver)
                     lowered = registry.lower(descriptor, context)
                     if maximum_layer is not None:
                         lowered = tuple(

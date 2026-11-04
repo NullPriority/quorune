@@ -25,6 +25,35 @@ import test_spree_mode_costs as spree
 
 
 class PublicConditionSurfaceCompilerTests(unittest.TestCase):
+    def test_permanent_card_type_intersections_and_passive_history_boolean_terms(self):
+        for phrase, types in (('a land creature', ('creature','land')),
+                              ('an artifact creature', ('artifact','creature')),
+                              ('an enchantment creature', ('creature','enchantment'))):
+            with self.subTest(phrase=phrase):
+                condition = fixed_public_state_condition('you control '+phrase, source_name='Surface Observer')
+                self.assertIsNotNone(condition)
+                self.assertEqual(types, condition.quantity.query.types_all)
+                self.assertEqual((), condition.quantity.query.types_any)
+                self.assertEqual(condition.to_dict(), FixedPublicStateConditionSpec.from_dict(condition.to_dict()).to_dict())
+        condition = fixed_public_state_condition(
+            'you control a land creature or a land entered the battlefield under your control this turn',
+            source_name='Surface Observer')
+        self.assertIsNotNone(condition)
+        self.assertEqual('any', condition.kind.value)
+        self.assertEqual(('creature','land'), condition.terms[0].quantity.query.types_all)
+        self.assertEqual('permanent_entered', condition.terms[1].history_query.event)
+        self.assertEqual(('land',), condition.terms[1].history_query.types_all)
+        ordinary_union = fixed_public_state_condition(
+            'you control an artifact or an enchantment', source_name='Surface Observer')
+        self.assertIsNotNone(ordinary_union)
+        self.assertEqual('any', ordinary_union.kind.value)
+        self.assertEqual((('artifact',),('enchantment',)), tuple(
+            term.quantity.query.types_all for term in ordinary_union.terms))
+        for text in ('creature creature','instant creature','land permanent','land mystery'):
+            self.assertIsNone(fixed_condition_subject_extension(text))
+        self.assertIsNone(fixed_public_state_condition(
+            'you control a land creature or an unrepresented event happened this turn',source_name='Surface Observer'))
+
     def test_aliases_reuse_exact_existing_typed_conditions_and_legacy_codecs(self):
         pairs = (("there's a Lesson card in your graveyard", 'there is a Lesson card in your graveyard'),
             ('there’s a Lesson card in your graveyard', 'there is a Lesson card in your graveyard'),
@@ -144,6 +173,73 @@ class PublicConditionSurfaceRuntimeTests(unittest.TestCase):
             if row.get('action')=='activate' and row.get('source')==land.ref)
         result=session.act('pilot:'+actor,{'action_id':action['id']})
         self.assertTrue(result.ok,result.summary)
+
+    def test_actual_wrestlers_distinguish_one_land_creature_from_split_types_and_land_history(self):
+        session = self.session(61135108)
+        source = self.add(session.engine, 'Earth Rumble Wrestlers')
+        self.assert_closed(session, source)
+        from quorune.card_programs import bind_semantic_program_runtime
+        conditional = next(program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                           if program.handlers)
+        history_capability = 'condition.history.fixed_public_query'
+        self.assertIn(history_capability, conditional.capability_dependencies)
+        dependencies = tuple(cap for cap in conditional.capability_dependencies if cap != history_capability)
+        stripped = replace(conditional, coverage=[], capability_dependencies=dependencies,
+                           capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+        binding = bind_semantic_program_runtime(stripped, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict'])
+        self.assertIn('capability:undeclared_runtime_dependency:'+history_capability, binding['blockers'])
+        self.add(session.engine, 'Generic Bound Body', ref='creature-only-negative')
+        self.add(session.engine, 'Forest', ref='land-only-negative')
+        foreign = self.add(session.engine, 'Dryad Arbor', seat='B', ref='foreign-land-creature-negative')
+        self.assertEqual(('3','4'), self.stats(session, source))
+        self.assertNotIn('trample', session.engine._combat_keywords(source))
+        living_land = self.add(session.engine, 'Dryad Arbor', ref='own-land-creature-positive')
+        self.assert_closed(session, living_land)
+        self.assertEqual(('4','4'), self.stats(session, source))
+        self.assertIn('trample', session.engine._combat_keywords(source))
+        bounce = self.add(session.engine, 'Boomerang', zone='hand')
+        land = self.add(session.engine, 'Forest', zone='hand', ref='actual-history-land')
+        private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand', ref='condition-private-negative')
+        self.prepare(session, mana={'U':2})
+        self.checkpoint(session)
+        self.reject(session, 'cast:'+bounce.ref, 'B', targets=[living_land.ref], pay='auto')
+        self.cast(session, bounce, (living_land.ref,))
+        self.assertEqual('hand', session.state.cards[living_land.object_id].zone)
+        self.assertEqual(('3','4'), self.stats(session, source))
+        self.assertNotIn('trample', session.engine._combat_keywords(session.state.cards[source.object_id]))
+        session = self.replay(session, load=True)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        offered = next(row for row in actions if row['id']=='play-land:'+land.ref)
+        self.reject(session, offered['id'], 'D')
+        result = session.act('pilot:A', {'action_id':offered['id']})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('battlefield', session.state.cards[land.object_id].zone)
+        self.assertEqual(('4','4'), self.stats(session, source))
+        self.assertIn('trample', session.engine._combat_keywords(session.state.cards[source.object_id]))
+        self.assertEqual('battlefield', session.state.cards[foreign.object_id].zone)
+        turn = session.state.turn_sequence
+        for _ in range(64):
+            if session.state.turn_sequence != turn:
+                break
+            decision = session.state.pending_decision
+            principal = session.pending_principals()[0]
+            if decision.kind == 'priority': command={'action_id':'pass'}
+            elif decision.kind == 'combat.attackers': command={'action_id':'attack','attackers':{}}
+            elif decision.kind == 'combat.blockers': command={'action_id':'block','blocks':{}}
+            elif decision.kind == 'cleanup.discard':
+                ctx=session.packet(principal,full=True)['decision']['ctx']
+                command={'a':'discard','cards':[row['id'] for row in ctx['hand'][:ctx['count']]]}
+            else: self.fail('Unexpected public-condition decision '+decision.kind)
+            result=session.act(principal,command)
+            self.assertTrue(result.ok,result.summary)
+        self.assertGreater(session.state.turn_sequence, turn)
+        self.assertEqual(('3','4'), self.stats(session, source))
+        self.assertNotIn('trample', session.engine._combat_keywords(session.state.cards[source.object_id]))
+        self.assertIn('reach', session.engine._combat_keywords(session.state.cards[source.object_id]))
+        for actor in 'ABD': self.assertNotIn(private.ref, json.dumps(session.packet('pilot:'+actor,full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet('pilot:C',full=True)))
+        self.replay(session, load=True)
 
     def test_actual_skyshroud_elite_distinguishes_basic_supertype_from_basic_land_types(self):
         session = self.session(61135101)

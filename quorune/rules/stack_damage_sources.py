@@ -11,6 +11,7 @@ from ..damage_source import DamageError, DamageSourceSnapshot
 from ..entry_copy import copiable_oracle_id
 from ..trigger_batches import PendingTriggerBatch
 from .damage_snapshots import source_snapshot
+from .source_references import CYCLED_SOURCE_DAMAGE_COVERAGE
 
 
 SOURCE_DAMAGE_CONTEXT = 'source_damage_snapshot'
@@ -31,6 +32,21 @@ def needs_stack_damage_source(value):
         return (value.get('op') in _OPERATIONS and value.get('source') == '$source') or any(
             needs_stack_damage_source(child) for child in value.values())
     return isinstance(value, (list, tuple)) and any(needs_stack_damage_source(child) for child in value)
+
+
+def cycled_damage_trigger_source(host, source, program, event, active_zone, characteristics):
+    """CR 702.29c: this trigger's source is the card after its cycling discard."""
+    if CYCLED_SOURCE_DAMAGE_COVERAGE not in program.coverage:
+        return source, active_zone, characteristics
+    if (event != 'card.cycled' or program.event != 'card.cycled.self'
+            or program.active_zone != 'hand' or active_zone != 'hand'
+            or not needs_stack_damage_source(program.effects)):
+        raise DamageError('Cycled damage requires its own represented source event')
+    current = host.state.cards.get(source.object_id)
+    if (current is None or current.ref != source.ref
+            or current.logical_object_id == source.logical_object_id):
+        raise DamageError('Cycled damage requires the committed post-discard source')
+    return current, current.zone, host._effective_card_data(current)
 
 
 def fixed_damage_source_context(host, source, effects, *, characteristics=None):

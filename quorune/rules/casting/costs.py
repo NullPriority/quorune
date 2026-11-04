@@ -32,6 +32,7 @@ from .base_cost_options import _flashback_base_options, _zone_cast_base_options
 from .emerge_costs import emerge_base_options, reduce_emerge_total, finalize_emerge_selection
 from .disturb_costs import disturb_back_cast_permission,disturb_base_options
 from ...compiled_bestow import compiled_fixed_mana_bestow_spec
+from .mutate_costs import with_mutate_cost_schema
 from ...convoke import (
     CONVOKE_PAYMENT_SYMBOLS,
     ConvokeCandidate,
@@ -354,6 +355,7 @@ def _cast_schema_and_mechanics(
         with_multikicker_cost_schema,
         with_replicate_cost_schema,
         _with_bestow_cost,
+        with_mutate_cost_schema,
         with_fixed_public_alternative_costs,
     ):
         schema = augment(
@@ -488,7 +490,7 @@ def _initial_options(
         cast_without_mana=cast_without_mana,
         force_without_mana_cost=force_without_mana_cost,
         alternative_base=alternative_base,
-        suppress_source_costs=suppress_source_costs,
+        suppress_source_costs=suppress_source_costs or alternative_base is not None,
     )
     base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
         enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
@@ -496,7 +498,7 @@ def _initial_options(
     base.extend(battlefield_alternative_base_options(host,seat,card,cast_type_line=cast_type_line,
         enabled=not(cast_without_mana or suppress_source_costs or alternative_base is not None or intrinsic_disturb),
         has_mana_x=has_x,x_value=x_value,commander_tax=commander_tax,temporary_permission=temporary_permission))
-    for raw in [] if cast_without_mana else schema.get("alternate_costs", []):
+    for raw in [] if cast_without_mana or alternative_base is not None else schema.get("alternate_costs", []):
         alternative = dict(raw)
         if (
             alternative.get("source_zone") is not None

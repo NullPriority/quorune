@@ -38,8 +38,9 @@ class FixedCounterRemovalHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        unavailable = effect.get('card', '') is None
         fields = validate_direct_target_effect(
-            effect,
+            {**effect, 'card': '$source.zone_object'} if unavailable else effect,
             context,
             operation=self.operation,
             reference_field="card",
@@ -62,6 +63,9 @@ class FixedCounterRemovalHandler:
             raise SemanticNodeError(
                 "Counter removal requires one nonempty source reference"
             )
+        if unavailable:
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id,
+                              intents=(), result_shape='by_player')
         try:
             intent = RemoveCountersIntent(
                 actor=context.actor,
@@ -104,8 +108,21 @@ class AllCounterRemovalHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        named = 'schema_version' in effect or 'counter' in effect
+        unavailable = named and effect.get('card', '') is None
+        counter_name = None
+        if named:
+            from ..counter_names import normalized_counter_name
+            counter_name = effect.get('counter')
+            if (type(effect.get('schema_version')) is not int or effect['schema_version'] != 2
+                    or type(counter_name) is not str or not counter_name.strip()
+                    or normalized_counter_name(counter_name) != counter_name):
+                raise SemanticNodeError('Named-kind counter removal requires its version and canonical name')
+            descriptor = {key: value for key, value in effect.items() if key not in {'schema_version', 'counter'}}
+        else:
+            descriptor = effect
         fields = validate_direct_target_effect(
-            effect,
+            {**descriptor, 'card': '$source.zone_object'} if unavailable else descriptor,
             context,
             operation=self.operation,
             reference_field="card",
@@ -118,12 +135,16 @@ class AllCounterRemovalHandler:
             raise SemanticNodeError(
                 "All-counter removal requires one nonempty source reference"
             )
+        if unavailable:
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id,
+                              intents=(), result_shape='by_player')
         try:
             intent = RemoveAllCountersIntent(
                 actor=context.actor,
                 object_ref=fields.object_ref,
                 reason=fields.reason,
                 source_ref=source_ref,
+                counter_name=counter_name,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

@@ -35,39 +35,9 @@ def _empty_vector() -> dict[str, int]:
 
 
 def fixed_mana_variants(cost_text: str) -> tuple[FrozenMap, ...]:
-    if type(cost_text) is not str or re.fullmatch(_FIXED_COST, cost_text) is None:
-        raise EvokeError("Evoke cost must use fixed ordinary or colored-hybrid mana")
-    variants = [_empty_vector()]
-    for raw_symbol in parse_mana_symbols(cost_text):
-        symbol = raw_symbol.upper()
-        if symbol.isdigit():
-            for variant in variants:
-                variant["GENERIC"] += int(symbol)
-            continue
-        if symbol in "WUBRGC" and len(symbol) == 1:
-            for variant in variants:
-                variant[symbol] += 1
-            continue
-        hybrid = symbol.split("/")
-        if len(hybrid) != 2 or any(
-            value not in "WUBRGC" or len(value) != 1 for value in hybrid
-        ):
-            raise EvokeError("Evoke supports only fixed colored-hybrid symbols")
-        variants = [
-            FrozenMap({**variant, color: variant[color] + 1})
-            for variant in variants
-            for color in hybrid
-        ]
-        variants = [dict(thaw_value(variant)) for variant in variants]
-    unique: list[FrozenMap] = []
-    seen: set[tuple[int, ...]] = set()
-    for variant in variants:
-        identity = tuple(variant[field] for field in _MANA_FIELDS)
-        if identity in seen:
-            continue
-        seen.add(identity)
-        unique.append(FrozenMap(variant))
-    return tuple(unique)
+    from .fixed_mana_model import FixedManaCostError,fixed_mana_variants as shared_variants
+    try:return shared_variants(cost_text)
+    except FixedManaCostError as exc:raise EvokeError(str(exc).replace('Fixed mana','Evoke')) from exc
 
 
 @dataclass(frozen=True, slots=True)

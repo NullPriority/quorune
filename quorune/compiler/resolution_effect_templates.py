@@ -192,6 +192,9 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .graveyard_return_choice_templates import graveyard_return_choice_template
+    returned = graveyard_return_choice_template(text)
+    if returned is not None:return returned
     independent = _source_independent_resolution_template(text)
     if independent is not None:
         return independent

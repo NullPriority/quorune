@@ -69,10 +69,12 @@ def source_snapshot(
     if toxic_value != 0 and "toxic" not in keywords:
         keywords = tuple(sorted({*keywords, "toxic"}))
     from ..semantic_runtime.damage_permissions import source_has_unpreventable_damage
+    from ..commander import physical_commander_damage_identities
     scope_facts = current_damage_scope_facts(host,source,data)
     if source_has_unpreventable_damage(host,data):
         scope_facts = canonical_damage_scope_facts((*scope_facts,UNPREVENTABLE_SOURCE_FACT))
     return DamageSourceSnapshot(
+        physical_commander_identities=physical_commander_damage_identities(source),
         ref=source.ref,
         object_id=source.object_id,
         logical_object_id=source.logical_object_id,

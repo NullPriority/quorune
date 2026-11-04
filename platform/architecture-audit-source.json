@@ -1,41 +1,200 @@
 {
-  "schema_version": 3,
-  "program": {
-    "scope_note": "The architecture audit measures production ownership, dependency direction, mutation authority, runtime Oracle-text access, bounded card-identity flow, oversized symbols, semantic dispatch, and generated assurance. Current branch, main, certification, and worktree-slot facts are transport state and are reported live rather than copied into this hand-maintained source."
-  },
+  "card_named_helpers": [
+    {
+      "file": "quorune/engine.py",
+      "reason": "Implements a named token behavior for Mishra, Eminent One inside the universal engine.",
+      "symbol": "_create_mishra_warform"
+    }
+  ],
+  "card_specific_semantic_operations": [
+    "daretti_exchange",
+    "fomori_vault",
+    "remora_tax",
+    "springheart_landfall",
+    "sylvan_library_settle"
+  ],
+  "compiler_stages": [
+    {
+      "current_status": "interleaved",
+      "evidence_symbols": [
+        "_without_parenthetical_reminder",
+        "_source_lines"
+      ],
+      "id": "normalization"
+    },
+    {
+      "current_status": "interleaved",
+      "evidence_symbols": [
+        "_source_lines",
+        "_compile_face"
+      ],
+      "id": "segmentation"
+    },
+    {
+      "current_status": "not_a_distinct_stage",
+      "evidence_symbols": [],
+      "id": "lexing"
+    },
+    {
+      "current_status": "regex_and_helper_parsers_interleaved",
+      "evidence_symbols": [
+        "_effect_template",
+        "parse_activated_abilities"
+      ],
+      "id": "parsing"
+    },
+    {
+      "current_status": "not_a_distinct_stage",
+      "evidence_symbols": [],
+      "id": "binding"
+    },
+    {
+      "current_status": "partial_dataclass_ir",
+      "evidence_symbols": [
+        "OracleNode",
+        "OracleFaceIR",
+        "OracleCardIR"
+      ],
+      "id": "typing"
+    },
+    {
+      "current_status": "generated_abilities_extracted_and_aggregated_to_card_program_v2",
+      "evidence_symbols": [
+        "_compile_face",
+        "generated_programs",
+        "compile_card_program"
+      ],
+      "id": "lowering"
+    },
+    {
+      "current_status": "fine_grained_profile_scoped_closure_with_fail_closed_dependencies",
+      "evidence_symbols": [
+        "CapabilityRegistry",
+        "explicit_capability_gate",
+        "generated_programs"
+      ],
+      "id": "capability_closure"
+    },
+    {
+      "current_status": "implemented_interleaved",
+      "evidence_symbols": [
+        "_residual",
+        "oracle_corpus_coverage"
+      ],
+      "id": "residual_classification"
+    },
+    {
+      "current_status": "card_program_v2_schema_roundtrip_source_trust_and_fingerprint_validation",
+      "evidence_symbols": [
+        "CardProgram",
+        "canonical_program_fingerprint",
+        "register_generated_programs"
+      ],
+      "id": "validation"
+    }
+  ],
+  "engine_method_responsibilities": [
+    {
+      "id": "turn_priority_decisions",
+      "pattern": "turn|phase|step|priority|yield|decision|mulligan|pump"
+    },
+    {
+      "id": "casting_activation_and_costs",
+      "pattern": "cast|activate|ability|mana|cost|payment|land_play"
+    },
+    {
+      "id": "semantics_resolution_and_choices",
+      "pattern": "semantic|resolve|effect|trigger|target|choice|search|copy|replacement"
+    },
+    {
+      "id": "combat_and_damage",
+      "pattern": "combat|attack|block|damage"
+    },
+    {
+      "id": "zones_objects_and_state",
+      "pattern": "zone|move|draw|library|graveyard|exile|battlefield|object|state|card"
+    },
+    {
+      "id": "commander_and_multiplayer",
+      "pattern": "commander|monarch|eliminate|concede|multiplayer|apnap|seat"
+    },
+    {
+      "id": "persistence_logging_and_invariants",
+      "pattern": "save|load|record|log|invariant|transaction|history"
+    }
+  ],
   "historical_observations": [
     {
-      "observation_id": "damage-result-counter-owner-harvest-20260810",
       "baseline_main_commit": "d416230850dd68f7ddbb71e8978eb22f0bfce15d",
       "baseline_worktree_clean": true,
-      "observed_at": "2026-08-10",
-      "phase": "damage_result_counter_owner_harvest",
-      "scope_note": "The observed source tree delegated represented damage-result counter placement and removal to the existing typed transaction owners. Infect, Wither, and Toxic consumed resolved childless counter-placement leaves without rediscovering replacement effects, while Planeswalker loyalty and Battle defense used exact typed counter removal. This is retained as historical evidence and is not a claim about the current feature head.",
       "certification": {
-        "workflow": "PR",
-        "run_id": 31282459637,
-        "url": "https://github.com/MoellerJDev/quorune/actions/runs/31282459637",
-        "status": "pass",
+        "local_observed": {
+          "node": "24.18.0",
+          "npm": "11.16.0",
+          "python": "3.12.10"
+        },
+        "node_version": "24",
         "python_versions": [
           "3.12"
         ],
-        "node_version": "24",
-        "local_observed": {
-          "python": "3.12.10",
-          "node": "24.18.0",
-          "npm": "11.16.0"
-        }
-      }
+        "run_id": 31282459637,
+        "status": "pass",
+        "url": "https://github.com/MoellerJDev/quorune/actions/runs/31282459637",
+        "workflow": "PR"
+      },
+      "observation_id": "damage-result-counter-owner-harvest-20260810",
+      "observed_at": "2026-08-10",
+      "phase": "damage_result_counter_owner_harvest",
+      "scope_note": "The observed source tree delegated represented damage-result counter placement and removal to the existing typed transaction owners. Infect, Wither, and Toxic consumed resolved childless counter-placement leaves without rediscovering replacement effects, while Planeswalker loyalty and Battle defense used exact typed counter removal. This is retained as historical evidence and is not a claim about the current feature head."
     }
   ],
+  "program": {
+    "scope_note": "The architecture audit measures production ownership, dependency direction, mutation authority, runtime Oracle-text access, bounded card-identity flow, oversized symbols, semantic dispatch, and generated assurance. Current branch, main, certification, and worktree-slot facts are transport state and are reported live rather than copied into this hand-maintained source."
+  },
+  "required_documents": [
+    "docs/index.md",
+    "docs/architecture/context.md",
+    "docs/architecture/containers.md",
+    "docs/architecture/rules-kernel.md",
+    "docs/architecture/card-programs.md",
+    "docs/architecture/compiler.md",
+    "docs/architecture/semantic-handlers.md",
+    "docs/architecture/runtime-components.md",
+    "docs/architecture/reusable-rules-pieces.md",
+    "docs/architecture/drawing.md",
+    "docs/architecture/server-runtime.md",
+    "docs/architecture/replay.md",
+    "docs/architecture/visibility.md",
+    "docs/architecture/dependency-rules.md",
+    "docs/architecture/trust-closure.md",
+    "docs/extension/card-override.md",
+    "docs/extension/mechanic-capability.md",
+    "docs/extension/semantic-node.md",
+    "docs/extension/runtime-component.md",
+    "docs/testing/strategy.md",
+    "docs/testing/interaction-coverage.md",
+    "docs/testing/replay.md",
+    "docs/testing/privacy.md",
+    "docs/testing/mutation.md",
+    "docs/operations/local-app.md",
+    "docs/operations/hosted.md",
+    "docs/LEGAL_CONTENT_BOUNDARY.md",
+    "docs/THREAT_MODEL.md",
+    "docs/PLATFORM_IMPLEMENTATION_STATUS.md",
+    "docs/RULES_COMPLETENESS_STATUS.md",
+    "docs/COMPILER_COVERAGE_STATUS.md",
+    "docs/ARCHITECTURE_DEBT_STATUS.md"
+  ],
+  "schema_version": 3,
   "scope": {
+    "identity_flow_scope": "all production Python modules",
+    "production_files": [
+      "simctl.py"
+    ],
     "production_roots": [
       "quorune",
       "server",
       "web/src"
-    ],
-    "production_files": [
-      "simctl.py"
     ],
     "state_owner_modules": [
       "quorune/control_effects.py",
@@ -77,81 +236,36 @@
       "quorune/selection/searching.py",
       "quorune/selection/storm.py",
       "quorune/selection/targeting.py",
-      "quorune/impulse_access.py"
+      "quorune/impulse_access.py",
+      "quorune/game_object_store.py"
     ],
     "state_parameter_modules": [
       "quorune/record.py",
       "quorune/commander.py",
-      "quorune/state_based_actions.py"
-    ],
-    "identity_flow_scope": "all production Python modules"
+      "quorune/state_based_actions.py",
+      "quorune/emblems.py"
+    ]
   },
-  "thresholds": {
-    "module_logical_lines_review": 1500,
-    "function_logical_lines_review": 150
-  },
-  "engine_method_responsibilities": [
-    {
-      "id": "turn_priority_decisions",
-      "pattern": "turn|phase|step|priority|yield|decision|mulligan|pump"
-    },
-    {
-      "id": "casting_activation_and_costs",
-      "pattern": "cast|activate|ability|mana|cost|payment|land_play"
-    },
-    {
-      "id": "semantics_resolution_and_choices",
-      "pattern": "semantic|resolve|effect|trigger|target|choice|search|copy|replacement"
-    },
-    {
-      "id": "combat_and_damage",
-      "pattern": "combat|attack|block|damage"
-    },
-    {
-      "id": "zones_objects_and_state",
-      "pattern": "zone|move|draw|library|graveyard|exile|battlefield|object|state|card"
-    },
-    {
-      "id": "commander_and_multiplayer",
-      "pattern": "commander|monarch|eliminate|concede|multiplayer|apnap|seat"
-    },
-    {
-      "id": "persistence_logging_and_invariants",
-      "pattern": "save|load|record|log|invariant|transaction|history"
-    }
-  ],
   "subsystem_ownership": [
     {
       "id": "application_session",
-      "status": "dedicated_modules",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/service.py",
         "quorune/session.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "dedicated_modules"
     },
     {
-      "id": "turn_priority_and_decisions",
-      "status": "dedicated_typed_owners_with_engine_rule_callbacks",
-      "owners": [
-        "quorune/engine.py",
-        "quorune/permissions.py",
-        "quorune/turn_priority_model.py",
-        "quorune/turn_priority_owner.py",
-        "quorune/turn_step_owner.py",
-        "quorune/decision_completion.py"
-      ],
-      "missing_dedicated_owner": false,
       "context": {
-        "responsibility": "Own turn selection, phase and step progression, turn-based actions, priority, yield policy, and player-decision lifecycle.",
-        "public_ports_and_protocols": [
-          "server-issued decision packets",
-          "capability-scoped command submissions"
+        "adrs": [
+          "docs/adr/0060-typed-turn-priority-decision-owner.md"
         ],
-        "upstream_dependencies": [
-          "application_session",
-          "state_based_actions"
+        "compiler_cardprogram_representations": [],
+        "continuations": [
+          "mulligan, priority, cleanup, and yield decisions"
         ],
+        "current_debt": "TurnStepOwner owns normal and extra-turn selection, active-player and turn-start state, phase/step boundaries, cleanup iteration, and end-the-turn coordination. TurnPriorityDecisionOwner owns priority grants and passes, yield invalidation, meaningful-action opportunity journaling, and deterministic pumping. CapabilityManager remains the typed single-use decision credential owner. CommanderEngine retains narrow compatibility facades and step-specific rules callbacks.",
         "downstream_dependencies": [
           "casting_activation_and_costs",
           "combat",
@@ -164,43 +278,45 @@
         "events_produced": [
           "turn, phase, step, and priority boundaries"
         ],
-        "continuations": [
-          "mulligan, priority, cleanup, and yield decisions"
-        ],
-        "compiler_cardprogram_representations": [],
-        "replay_behavior": "Turn, priority, yield, and decision transitions participate in the authoritative command journal and save/load state.",
         "privacy_sensitivity": "Decision capabilities and private projected alternatives are principal scoped.",
-        "adrs": [
-          "docs/adr/0060-typed-turn-priority-decision-owner.md"
+        "public_ports_and_protocols": [
+          "server-issued decision packets",
+          "capability-scoped command submissions"
         ],
-        "current_debt": "TurnStepOwner owns normal and extra-turn selection, active-player and turn-start state, phase/step boundaries, cleanup iteration, and end-the-turn coordination. TurnPriorityDecisionOwner owns priority grants and passes, yield invalidation, meaningful-action opportunity journaling, and deterministic pumping. CapabilityManager remains the typed single-use decision credential owner. CommanderEngine retains narrow compatibility facades and step-specific rules callbacks.",
-        "removal_condition": "No missing-owner condition remains. Compatibility facades may be removed only after historical callers and Game Record v3 replay use the typed ports directly; future work must not restore turn, phase, priority, yield, or decision-capability mutation to engine-local scheduler code."
-      }
-    },
-    {
-      "id": "zones_and_object_identity",
-      "status": "dedicated_typed_owner_with_compatibility_adapters",
+        "removal_condition": "No missing-owner condition remains. Compatibility facades may be removed only after historical callers and Game Record v3 replay use the typed ports directly; future work must not restore turn, phase, priority, yield, or decision-capability mutation to engine-local scheduler code.",
+        "replay_behavior": "Turn, priority, yield, and decision transitions participate in the authoritative command journal and save/load state.",
+        "responsibility": "Own turn selection, phase and step progression, turn-based actions, priority, yield policy, and player-decision lifecycle.",
+        "upstream_dependencies": [
+          "application_session",
+          "state_based_actions"
+        ]
+      },
+      "id": "turn_priority_and_decisions",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/engine.py",
-        "quorune/model.py",
-        "quorune/zone_object_state.py",
-        "quorune/zone_transition_journal.py",
-        "quorune/zone_transition_model.py",
-        "quorune/zone_transitions.py",
-        "quorune/zone_trigger_events.py",
-        "quorune/zone_trigger_processing.py",
-        "quorune/face_status_timestamp_model.py",
-        "quorune/face_down_characteristics_model.py"
+        "quorune/permissions.py",
+        "quorune/turn_priority_model.py",
+        "quorune/turn_priority_owner.py",
+        "quorune/turn_step_owner.py",
+        "quorune/decision_completion.py"
       ],
-      "missing_dedicated_owner": false,
+      "status": "dedicated_typed_owners_with_engine_rule_callbacks"
+    },
+    {
       "context": {
-        "responsibility": "Own physical identity, logical incarnations, zone membership, destination replacement, LKI, attachment cleanup, and normalized zone events.",
-        "public_ports_and_protocols": [
-          "identity-pinned zone-transition request and result"
+        "adrs": [
+          "docs/adr/0059-typed-zone-transition-owner.md",
+          "docs/adr/0148-physical-composition-storage.md"
         ],
-        "upstream_dependencies": [
-          "replacement_and_prevention"
+        "compiler_cardprogram_representations": [
+          "typed zone-transition semantic intents"
         ],
+        "continuations": [
+          "destination replacement and command-zone choices",
+          "actor-private single-composition ordering through the existing semantic-choice envelope"
+        ],
+        "current_debt": "Canonical object registration, physical storage, repeated merge preparation and ordered split kernels exist. One resolving departure uses its destination ordering principal through the existing semantic-choice cursor. Represented whole-object destination replacements apply once, with fixed counter leaves projected onto each physical arrival. Nested counter modifiers/permissions, multi-object/cost/state-based/commander and linked-reference paths remain guarded. Top copy values, constituent activation catalogs and repeated triggered sources are represented; physical face handling and actual Mutate casting remain incomplete.",
         "downstream_dependencies": [
           "trigger_processing",
           "projection_and_protocol",
@@ -212,24 +328,50 @@
         "events_produced": [
           "normalized zone-change events and LKI"
         ],
-        "continuations": [
-          "destination replacement and command-zone choices"
-        ],
-        "compiler_cardprogram_representations": [
-          "typed zone-transition semantic intents"
-        ],
-        "replay_behavior": "Physical identity and logical incarnation transitions are serialized in Game Record v3 state and event journals.",
         "privacy_sensitivity": "Hand and library destinations require owner-scoped projection while public references preserve only legal continuity.",
-        "adrs": [
-          "docs/adr/0059-typed-zone-transition-owner.md"
+        "public_ports_and_protocols": [
+          "identity-pinned zone-transition request and result",
+          "validated current-object map edits and identity/zone/stack-bound physical merge preparation"
         ],
-        "current_debt": "ZoneTransitionOwner owns represented single and simultaneous zone-list mutation, CR 400.7 logical-incarnation reset, timestamp allocation, LKI capture, hidden-zone journaling, and normalized zone-event announcement. CommanderEngine retains narrow Game Record v3 compatibility facades; destination replacement, entry results, Aura legality, attachment legality, and trigger placement remain separate typed collaborators.",
-        "removal_condition": "No missing-owner condition remains. Compatibility facades may be removed only after historical callers use the typed transition port and exact Game Record v3 replay remains unchanged; future move producers must not restore direct engine zone-list mutation."
-      }
+        "removal_condition": "No missing-owner condition remains. Compatibility facades may be removed only after historical callers use the typed transition port and exact Game Record v3 replay remains unchanged; future move producers must not restore direct engine zone-list mutation.",
+        "replay_behavior": "Physical identity and logical incarnation transitions are serialized in Game Record v3 state and event journals.",
+        "responsibility": "Own physical identity, logical incarnations, zone membership, destination replacement, LKI, attachment cleanup, and normalized zone events.",
+        "upstream_dependencies": [
+          "replacement_and_prevention"
+        ]
+      },
+      "id": "zones_and_object_identity",
+      "missing_dedicated_owner": false,
+      "owners": [
+        "quorune/engine.py",
+        "quorune/model.py",
+        "quorune/zone_object_state.py",
+        "quorune/zone_transition_journal.py",
+        "quorune/zone_transition_model.py",
+        "quorune/zone_transitions.py",
+        "quorune/zone_trigger_events.py",
+        "quorune/zone_trigger_processing.py",
+        "quorune/face_status_timestamp_model.py",
+        "quorune/face_down_characteristics_model.py",
+        "quorune/game_object_store.py",
+        "quorune/permanent_composition.py",
+        "quorune/composition_snapshot.py",
+        "quorune/composition_storage.py",
+        "quorune/rules/composition_capture.py",
+        "quorune/rules/composition_merge.py",
+        "quorune/composition_departure.py",
+        "quorune/composition_departure_commit.py",
+        "quorune/composition_order_model.py",
+        "quorune/composition_ordering.py",
+        "quorune/composition_replacements.py",
+        "quorune/semantic_choices/composition_order.py",
+        "quorune/semantic_runtime/composition_intent.py"
+      ],
+      "status": "dedicated_typed_owner_with_compatibility_adapters"
     },
     {
       "id": "casting_activation_and_costs",
-      "status": "typed_proposal_query_and_commit_subsystems_with_engine_facades",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/engine.py",
         "quorune/abilities.py",
@@ -240,13 +382,17 @@
         "quorune/rules/action_catalog.py",
         "quorune/rules/casting",
         "quorune/rules/activation",
-        "quorune/activation_usage.py"
+        "quorune/activation_usage.py",
+        "quorune/mutate_model.py",
+        "quorune/semantic_runtime/mutate.py",
+        "quorune/compiler/mutate_nodes.py",
+        "quorune/fixed_mana_model.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "typed_proposal_query_and_commit_subsystems_with_engine_facades"
     },
     {
       "id": "semantic_effect_execution",
-      "status": "incremental_typed_handler_registry_with_legacy_engine_fallback",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/semantic_runtime",
         "quorune/destruction.py",
@@ -258,11 +404,46 @@
         "quorune/tap_state.py",
         "quorune/engine.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "incremental_typed_handler_registry_with_legacy_engine_fallback"
     },
     {
+      "context": {
+        "adrs": [
+          "docs/adr/0014-typed-semantic-choice-and-effect-ownership.md",
+          "docs/adr/0061-typed-search-target-choice-owner.md"
+        ],
+        "compiler_cardprogram_representations": [
+          "typed target schemas and object predicates"
+        ],
+        "continuations": [
+          "target, APNAP, search, ordering, distribution, and cost choices"
+        ],
+        "current_debt": "SelectionContinuation v1 is the shared immutable envelope for represented target, search, APNAP, Storm, legend, and Battle choices. Distinct operation owners preserve target, hidden-search, public-nontarget, and cost-selection contracts. Existing SemanticChoiceContinuation v2 remains the typed Game Record v3 handler payload for already-extracted semantic choice operations rather than being reinterpreted or duplicated. CommanderEngine retains high-level decision dispatch, domain-specific candidate calculation, and explicit historical continuation adapters.",
+        "downstream_dependencies": [
+          "semantic_effect_execution",
+          "trigger_processing"
+        ],
+        "events_consumed": [
+          "target, search, and selection requests"
+        ],
+        "events_produced": [
+          "identity-pinned validated selections"
+        ],
+        "privacy_sensitivity": "Hidden-zone candidates and private choice payloads must never cross principal projections.",
+        "public_ports_and_protocols": [
+          "typed target and choice schemas",
+          "seat-scoped decision capabilities"
+        ],
+        "removal_condition": "No missing-owner condition remains. Historical Game Record v3 adapters may be removed only after supported records no longer require their prior continuation shapes; future choices must use a typed contract and immutable operation payload without restoring engine-local begin/complete execution.",
+        "replay_behavior": "Choice actor, legal references, revision, source/stack identity, and completion are replay-critical.",
+        "responsibility": "Own targeting, nontarget public choices, hidden-zone searches, cost selections, ordering, distributions, and versioned continuations without conflating their rules contracts.",
+        "upstream_dependencies": [
+          "continuous_effects",
+          "zones_and_object_identity"
+        ]
+      },
       "id": "search_target_and_choice",
-      "status": "dedicated_typed_owners_with_record_v3_adapters",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/engine.py",
         "quorune/selection/model.py",
@@ -279,70 +460,28 @@
         "quorune/target_protection_engine_adapter.py",
         "quorune/targets.py",
         "quorune/choice_forms.py",
-        "quorune/library_selection_knowledge_model.py"
+        "quorune/library_selection_knowledge_model.py",
+        "quorune/reveal_until_library_selection_model.py",
+        "quorune/compiler/reveal_until_library_selection_templates.py",
+        "quorune/semantic_choices/reveal_until_library_selection.py",
+        "quorune/rules/reveal_until_library_selection_shapes.py",
+        "quorune/rules/spell_owner_targets.py"
       ],
-      "missing_dedicated_owner": false,
-      "context": {
-        "responsibility": "Own targeting, nontarget public choices, hidden-zone searches, cost selections, ordering, distributions, and versioned continuations without conflating their rules contracts.",
-        "public_ports_and_protocols": [
-          "typed target and choice schemas",
-          "seat-scoped decision capabilities"
-        ],
-        "upstream_dependencies": [
-          "continuous_effects",
-          "zones_and_object_identity"
-        ],
-        "downstream_dependencies": [
-          "semantic_effect_execution",
-          "trigger_processing"
-        ],
-        "events_consumed": [
-          "target, search, and selection requests"
-        ],
-        "events_produced": [
-          "identity-pinned validated selections"
-        ],
-        "continuations": [
-          "target, APNAP, search, ordering, distribution, and cost choices"
-        ],
-        "compiler_cardprogram_representations": [
-          "typed target schemas and object predicates"
-        ],
-        "replay_behavior": "Choice actor, legal references, revision, source/stack identity, and completion are replay-critical.",
-        "privacy_sensitivity": "Hidden-zone candidates and private choice payloads must never cross principal projections.",
-        "adrs": [
-          "docs/adr/0014-typed-semantic-choice-and-effect-ownership.md",
-          "docs/adr/0061-typed-search-target-choice-owner.md"
-        ],
-        "current_debt": "SelectionContinuation v1 is the shared immutable envelope for represented target, search, APNAP, Storm, legend, and Battle choices. Distinct operation owners preserve target, hidden-search, public-nontarget, and cost-selection contracts. Existing SemanticChoiceContinuation v2 remains the typed Game Record v3 handler payload for already-extracted semantic choice operations rather than being reinterpreted or duplicated. CommanderEngine retains high-level decision dispatch, domain-specific candidate calculation, and explicit historical continuation adapters.",
-        "removal_condition": "No missing-owner condition remains. Historical Game Record v3 adapters may be removed only after supported records no longer require their prior continuation shapes; future choices must use a typed contract and immutable operation payload without restoring engine-local begin/complete execution."
-      }
+      "status": "dedicated_typed_owners_with_record_v3_adapters"
     },
     {
-      "id": "trigger_processing",
-      "status": "dedicated_typed_owner_with_compatibility_adapters",
-      "owners": [
-        "quorune/engine.py",
-        "quorune/attack_counter_triggers.py",
-        "quorune/delayed_triggers.py",
-        "quorune/trigger_batches.py",
-        "quorune/trigger_discovery.py",
-        "quorune/player_result_events.py",
-        "quorune/trigger_processing.py",
-        "quorune/trigger_targeting.py",
-        "quorune/zone_trigger_events.py",
-        "quorune/zone_trigger_processing.py"
-      ],
-      "missing_dedicated_owner": false,
       "context": {
-        "responsibility": "Own normalized event subscription, immutable trigger occurrences, simultaneous collection, APNAP placement, target/mode selection, stack commitment, and pending batches.",
-        "public_ports_and_protocols": [
-          "normalized committed event to TriggerOccurrence pipeline"
+        "adrs": [
+          "docs/adr/0018-unified-trigger-batch-ownership.md",
+          "docs/adr/0058-typed-trigger-processing-owner.md"
         ],
-        "upstream_dependencies": [
-          "zones_and_object_identity",
-          "damage_results_life_and_counters"
+        "compiler_cardprogram_representations": [
+          "semantic trigger nodes and runtime trigger components"
         ],
+        "continuations": [
+          "APNAP trigger ordering and trigger target/mode placement"
+        ],
+        "current_debt": "TriggerProcessingOwner owns delayed scheduling and matching, immutable occurrence materialization, typed Ward discovery, APNAP batching, ordering, and pending-target coordination. CommanderEngine retains narrow compatibility adapters and high-level stabilization calls; specialized combat, prevention, and zone producers remain separate typed event sources.",
         "downstream_dependencies": [
           "search_target_and_choice",
           "turn_priority_and_decisions"
@@ -353,36 +492,54 @@
         "events_produced": [
           "immutable trigger occurrences and ordinary stack items"
         ],
-        "continuations": [
-          "APNAP trigger ordering and trigger target/mode placement"
-        ],
-        "compiler_cardprogram_representations": [
-          "semantic trigger nodes and runtime trigger components"
-        ],
-        "replay_behavior": "Controller-at-trigger-time, LKI, occurrence identity, ordering, and pending batches are authoritative replay state.",
         "privacy_sensitivity": "Trigger placement choices are seat scoped; public occurrence facts must not reveal hidden source data.",
-        "adrs": [
-          "docs/adr/0018-unified-trigger-batch-ownership.md",
-          "docs/adr/0058-typed-trigger-processing-owner.md"
+        "public_ports_and_protocols": [
+          "normalized committed event to TriggerOccurrence pipeline"
         ],
-        "current_debt": "TriggerProcessingOwner owns delayed scheduling and matching, immutable occurrence materialization, typed Ward discovery, APNAP batching, ordering, and pending-target coordination. CommanderEngine retains narrow compatibility adapters and high-level stabilization calls; specialized combat, prevention, and zone producers remain separate typed event sources.",
-        "removal_condition": "No missing-owner condition remains. Future trigger work must migrate specialized producers through the normalized occurrence port without restoring runtime Oracle-text interpretation or moving decision authority out of the server-issued capability path."
-      }
+        "removal_condition": "No missing-owner condition remains. Future trigger work must migrate specialized producers through the normalized occurrence port without restoring runtime Oracle-text interpretation or moving decision authority out of the server-issued capability path.",
+        "replay_behavior": "Controller-at-trigger-time, LKI, occurrence identity, ordering, and pending batches are authoritative replay state.",
+        "responsibility": "Own normalized event subscription, immutable trigger occurrences, simultaneous collection, APNAP placement, target/mode selection, stack commitment, and pending batches.",
+        "upstream_dependencies": [
+          "zones_and_object_identity",
+          "damage_results_life_and_counters"
+        ]
+      },
+      "id": "trigger_processing",
+      "missing_dedicated_owner": false,
+      "owners": [
+        "quorune/engine.py",
+        "quorune/attack_counter_triggers.py",
+        "quorune/delayed_triggers.py",
+        "quorune/trigger_batches.py",
+        "quorune/trigger_discovery.py",
+        "quorune/player_result_events.py",
+        "quorune/trigger_processing.py",
+        "quorune/trigger_targeting.py",
+        "quorune/zone_trigger_events.py",
+        "quorune/zone_trigger_processing.py",
+        "quorune/rules/trigger_limits.py",
+        "quorune/compiler/trigger_limit_nodes.py",
+        "quorune/trigger_participation_query_model.py",
+        "quorune/rules/trigger_participation_queries.py",
+        "quorune/rules/trigger_participation_runtime.py"
+      ],
+      "status": "dedicated_typed_owner_with_compatibility_adapters"
     },
     {
       "id": "tokens_and_token_creation",
-      "status": "focused_mutation_owner_with_engine_orchestration",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/token_creation.py",
         "quorune/semantic_runtime/token_replacements.py",
         "quorune/engine.py",
-        "quorune/face_down_copy.py"
+        "quorune/face_down_copy.py",
+        "quorune/token_creation_identity.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "focused_mutation_owner_with_engine_orchestration"
     },
     {
       "id": "replacement_and_prevention",
-      "status": "split_immutable_model_typed_operations_and_incremental_engine_integration",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/replacement",
         "quorune/replacement_effects.py",
@@ -392,11 +549,11 @@
         "quorune/semantic_runtime/self_entry_counters.py",
         "quorune/engine.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "split_immutable_model_typed_operations_and_incremental_engine_integration"
     },
     {
       "id": "counter_placement",
-      "status": "typed_precommit_owner_with_resumable_producer_coordinators",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/counter_placement.py",
         "quorune/counter_doubling.py",
@@ -405,11 +562,11 @@
         "quorune/entry_counter_coordination.py",
         "quorune/turn_counter_coordination.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "typed_precommit_owner_with_resumable_producer_coordinators"
     },
     {
       "id": "damage_results_life_and_counters",
-      "status": "typed_delegated_result_owners_with_damage_coordinator",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/damage.py",
         "quorune/damage_results.py",
@@ -419,21 +576,24 @@
         "quorune/counter_state.py",
         "quorune/life_state.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "typed_delegated_result_owners_with_damage_coordinator"
     },
     {
       "id": "continuous_effects",
-      "status": "partial_dedicated_module_with_engine_integration",
+      "missing_dedicated_owner": false,
       "owners": [
+        "quorune/characteristic_query_boundary_model.py",
+        "quorune/composition_characteristics.py",
         "quorune/continuous_effects.py",
-        "quorune/engine.py",
-        "quorune/characteristic_query_boundary_model.py"
+        "quorune/copiable_program_source.py",
+        "quorune/copiable_static_instance.py",
+        "quorune/engine.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "partial_dedicated_module_with_engine_integration"
     },
     {
       "id": "state_based_actions",
-      "status": "dedicated_evaluator_with_engine_mutation",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/counter_names.py",
         "quorune/counter_maximums.py",
@@ -442,11 +602,11 @@
         "quorune/state_based_execution.py",
         "quorune/engine.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "dedicated_evaluator_with_engine_mutation"
     },
     {
       "id": "combat",
-      "status": "split_domain_helpers_with_engine_orchestration",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/combat.py",
         "quorune/combat_constraints.py",
@@ -463,191 +623,67 @@
         "quorune/rules/source_block_pairs.py",
         "quorune/source_block_pair_model.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "split_domain_helpers_with_engine_orchestration"
     },
     {
       "id": "commander_variant",
-      "status": "physical_identity_and_initial_state_extracted_with_engine_orchestration",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/commander.py",
         "quorune/engine.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "physical_identity_and_initial_state_extracted_with_engine_orchestration"
     },
     {
       "id": "projection_and_protocol",
-      "status": "dedicated_modules",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/projection.py",
         "quorune/protocol.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "dedicated_modules"
     },
     {
       "id": "record_and_replay",
-      "status": "dedicated_module",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/record.py",
         "quorune/record_trust.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "dedicated_module"
     },
     {
       "id": "oracle_compiler",
-      "status": "generated_program_stage_extracted_from_interleaved_ir_compiler",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/oracle_ir.py",
         "quorune/compiler/counter_maximum_templates.py",
         "quorune/compiler/program_generation.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "generated_program_stage_extracted_from_interleaved_ir_compiler"
     },
     {
       "id": "card_program_v2",
-      "status": "canonical_schema_adapters_registry_cli_and_replay_pinning",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/card_programs",
         "quorune/semantics.py",
         "quorune/record.py",
         "quorune/record_trust.py"
       ],
-      "missing_dedicated_owner": false
+      "status": "canonical_schema_adapters_registry_cli_and_replay_pinning"
     },
     {
       "id": "card_overrides",
-      "status": "isolated_reviewed_loop_shortcuts_and_game_record_v3_compatibility",
+      "missing_dedicated_owner": false,
       "owners": [
         "quorune/card_overrides"
       ],
-      "missing_dedicated_owner": false
+      "status": "isolated_reviewed_loop_shortcuts_and_game_record_v3_compatibility"
     }
   ],
-  "compiler_stages": [
-    {
-      "id": "normalization",
-      "current_status": "interleaved",
-      "evidence_symbols": [
-        "_without_parenthetical_reminder",
-        "_source_lines"
-      ]
-    },
-    {
-      "id": "segmentation",
-      "current_status": "interleaved",
-      "evidence_symbols": [
-        "_source_lines",
-        "_compile_face"
-      ]
-    },
-    {
-      "id": "lexing",
-      "current_status": "not_a_distinct_stage",
-      "evidence_symbols": []
-    },
-    {
-      "id": "parsing",
-      "current_status": "regex_and_helper_parsers_interleaved",
-      "evidence_symbols": [
-        "_effect_template",
-        "parse_activated_abilities"
-      ]
-    },
-    {
-      "id": "binding",
-      "current_status": "not_a_distinct_stage",
-      "evidence_symbols": []
-    },
-    {
-      "id": "typing",
-      "current_status": "partial_dataclass_ir",
-      "evidence_symbols": [
-        "OracleNode",
-        "OracleFaceIR",
-        "OracleCardIR"
-      ]
-    },
-    {
-      "id": "lowering",
-      "current_status": "generated_abilities_extracted_and_aggregated_to_card_program_v2",
-      "evidence_symbols": [
-        "_compile_face",
-        "generated_programs",
-        "compile_card_program"
-      ]
-    },
-    {
-      "id": "capability_closure",
-      "current_status": "fine_grained_profile_scoped_closure_with_fail_closed_dependencies",
-      "evidence_symbols": [
-        "CapabilityRegistry",
-        "explicit_capability_gate",
-        "generated_programs"
-      ]
-    },
-    {
-      "id": "residual_classification",
-      "current_status": "implemented_interleaved",
-      "evidence_symbols": [
-        "_residual",
-        "oracle_corpus_coverage"
-      ]
-    },
-    {
-      "id": "validation",
-      "current_status": "card_program_v2_schema_roundtrip_source_trust_and_fingerprint_validation",
-      "evidence_symbols": [
-        "CardProgram",
-        "canonical_program_fingerprint",
-        "register_generated_programs"
-      ]
-    }
-  ],
-  "card_specific_semantic_operations": [
-    "daretti_exchange",
-    "fomori_vault",
-    "remora_tax",
-    "springheart_landfall",
-    "sylvan_library_settle"
-  ],
-  "card_named_helpers": [
-    {
-      "file": "quorune/engine.py",
-      "symbol": "_create_mishra_warform",
-      "reason": "Implements a named token behavior for Mishra, Eminent One inside the universal engine."
-    }
-  ],
-  "required_documents": [
-    "docs/index.md",
-    "docs/architecture/context.md",
-    "docs/architecture/containers.md",
-    "docs/architecture/rules-kernel.md",
-    "docs/architecture/card-programs.md",
-    "docs/architecture/compiler.md",
-    "docs/architecture/semantic-handlers.md",
-    "docs/architecture/runtime-components.md",
-    "docs/architecture/reusable-rules-pieces.md",
-    "docs/architecture/drawing.md",
-    "docs/architecture/server-runtime.md",
-    "docs/architecture/replay.md",
-    "docs/architecture/visibility.md",
-    "docs/architecture/dependency-rules.md",
-    "docs/architecture/trust-closure.md",
-    "docs/extension/card-override.md",
-    "docs/extension/mechanic-capability.md",
-    "docs/extension/semantic-node.md",
-    "docs/extension/runtime-component.md",
-    "docs/testing/strategy.md",
-    "docs/testing/interaction-coverage.md",
-    "docs/testing/replay.md",
-    "docs/testing/privacy.md",
-    "docs/testing/mutation.md",
-    "docs/operations/local-app.md",
-    "docs/operations/hosted.md",
-    "docs/LEGAL_CONTENT_BOUNDARY.md",
-    "docs/THREAT_MODEL.md",
-    "docs/PLATFORM_IMPLEMENTATION_STATUS.md",
-    "docs/RULES_COMPLETENESS_STATUS.md",
-    "docs/COMPILER_COVERAGE_STATUS.md",
-    "docs/ARCHITECTURE_DEBT_STATUS.md"
-  ]
+  "thresholds": {
+    "function_logical_lines_review": 150,
+    "module_logical_lines_review": 1500
+  }
 }

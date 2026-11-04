@@ -53,9 +53,13 @@ def manifest_turn_up_spec(host: Any, seat: str, card: Any):
     if record is None or record.faces or record.layout != 'normal':
         return None
     effective = host._effective_card_data(card, ignore_face_down=True)
-    if 'creature' not in host._type_parts(str(effective.get('type_line') or ''))[0]:
-        return None
-    cost = str(effective.get('mana_cost') or '')
+    spec=_fixed_manifest_price(str(effective.get('type_line') or ''),str(effective.get('mana_cost') or ''),type_parts=host._type_parts)
+    if spec is None:return None
+    return spec if _manifest_source_is_complete(host,record.oracle_id) else None
+
+
+def _fixed_manifest_price(type_line,cost,*,type_parts):
+    if 'creature' not in type_parts(type_line)[0]:return None
     if not cost or re.fullmatch(r'(?:\{(?:[0-9]+|[WUBRGCX])\})+', cost, re.I) is None:
         return None
     # X in a permanent mana cost is zero outside the stack (CR 107.3g).
@@ -63,16 +67,33 @@ def manifest_turn_up_spec(host: Any, seat: str, card: Any):
     requirements, complex_symbols = mana_cost_to_vector(ordinary)
     if complex_symbols:
         return None
+    return ManifestTurnUpSpec(cost_text=ordinary,requirements_dict=requirements)
+
+
+def _manifest_source_is_complete(host,oracle_id):
     from .card_programs import bind_card_program_runtime
     from .rules.capabilities import load_default_capability_registry
     registry = load_default_capability_registry()
-    program = host.semantics.card_program_for_oracle(record.oracle_id)
+    program = host.semantics.card_program_for_oracle(oracle_id)
     if program is None:
-        return None
-    if not bind_card_program_runtime(program, capability_registry=registry,
-            profile=host.state.config.review_profile)['strict_capability_ready']:
-        return None
-    return ManifestTurnUpSpec(cost_text=ordinary, requirements_dict=requirements)
+        return False
+    return bind_card_program_runtime(program,capability_registry=registry,
+        profile=host.state.config.review_profile)['strict_capability_ready']
+
+
+def physical_manifest_turn_up_spec(host,card):
+    """Read the physical creature card's printed front, independently of copy/type effects."""
+    if card.is_token or card.object_kind!='card':return None
+    record=host.card_db.by_oracle_id(card.oracle_id)
+    if record is None:return None
+    if record.faces:
+        if record.layout not in {'transform','modal_dfc'} or len(record.faces)!=2:return None
+        face=record.faces[0];type_line=str(face.get('type_line') or '');cost=str(face.get('mana_cost') or '')
+    else:
+        if record.layout!='normal':return None
+        type_line=record.type_line;cost=record.mana_cost or ''
+    spec=_fixed_manifest_price(type_line,cost,type_parts=host._type_parts)
+    return spec if spec is not None and _manifest_source_is_complete(host,record.oracle_id) else None
 
 
 __all__ = ['MANIFEST_CAPABILITY', 'MANIFEST_DREAD_CAPABILITY', 'MANIFEST_MARKER',

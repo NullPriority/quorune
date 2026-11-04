@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Iterable, Protocol
 
 from .replacement_effects import ReplacementClass, ReplacementEffect
+from .composition_commander_replacement_model import CommanderZoneComponent,COMPONENTS_FIELD,RETURNS_FIELD,EPOCH_FIELD
 
 
 COMMANDER_ZONE_REPLACEMENT_CAPABILITY = "variant.commander.zone_return"
@@ -182,6 +183,40 @@ def commander_hand_library_replacement_effect(
             "command zone instead"
         ),
     )
+
+
+def capture_composed_commander_zone_components(card):
+    storage=getattr(card,'permanent_composition',None)
+    if storage is None:return ()
+    storage.validate_carrier(card)
+    values=[]
+    for component,part in zip(storage.topology.components,storage.parts):
+        if component.commander_designation_id is None:continue
+        raw=part.card_state
+        if raw['is_commander'] is not True or raw.get('commander_designation_id')!=component.commander_designation_id:
+            raise CommanderZoneError('Stored commander designation contradicts its physical card')
+        values.append(CommanderZoneComponent(component.identity.object_id,component.identity.logical_object_id,
+            raw['ref'],component.commander_designation_id,component.owner,raw['printed_name']))
+    return tuple(values)
+
+
+def commander_hand_library_replacement_effects(subject,*,maximum_destination_changes=0):
+    components=getattr(subject,'commander_components',())
+    if not components:
+        effect=commander_hand_library_replacement_effect(subject)
+        return () if effect is None else (effect,)
+    effects=[]
+    for component in components:
+        for epoch in range(maximum_destination_changes+1):
+            effects.append(ReplacementEffect(
+                effect_id=f'{COMMANDER_ZONE_REPLACEMENT_EFFECT_PREFIX}:{component.designation_id}:{subject.logical_object_id}:epoch:{epoch}',
+                source_id=f'rule:903.9b:{component.designation_id}',event_kind='zone.change',
+                replacement_class=ReplacementClass.OTHER,
+                conditions={'object_ref':{'eq':subject.object_ref},'logical_object_id':{'eq':subject.logical_object_id},
+                    'destination':{'in':['hand','library']},RETURNS_FIELD:{'contains_none':[component.designation_id]},EPOCH_FIELD:{'eq':epoch}},
+                operations=({'op':'union','field':RETURNS_FIELD,'values':[component.designation_id]},),optional=True,
+                label=f'{component.owner}: put commander {component.printed_name} ({component.ref}) into command instead'))
+    return tuple(effects)
 
 
 def commit_commander_zone_choice_decline(

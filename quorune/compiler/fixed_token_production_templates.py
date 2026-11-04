@@ -57,7 +57,7 @@ _FIXED_POSTPOSED_COLOR_TOKEN = re.compile(
     re.IGNORECASE,
 )
 _FIXED_TOKEN_DECLARATION = re.compile(
-    r'^(?P<body>Create .+? creature tokens?) with "(?P<ability>'
+    r'^(?P<body>Create .+? creature tokens?(?: with [A-Za-z0-9 ,\'-]+)?) (?:with|and) "(?P<ability>'
     r"This token can't (?:block|be blocked)\.)\"\.?$",
 )
 
@@ -220,6 +220,7 @@ def _fixed_declaration_token_template(
         return None
     characteristics = dict(inner.effect.get("characteristics") or {})
     characteristics["ability_fragments"] = [
+        *characteristics.get("ability_fragments", []),
         ability_fragment_to_dict(parsed.template)
     ]
     return _copy_template(

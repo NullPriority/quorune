@@ -36,6 +36,7 @@ from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from ..permanent_transform import commit_transform_batch
 from ..util import unique_preserving_order
 from ..trigger_processing import schedule_delayed_trigger
+from ..delayed_object_actions import apply_delayed_object_action
 from ..token_creation import TokenCreationError, create_token_batch
 from .temporary_target_interactions import (
     temporary_keyword_operations, temporary_target_condition_matches,
@@ -654,7 +655,8 @@ def _apply_copy_until_end_of_turn(
         until_end["copy_overrides_previous"] = copy.deepcopy(
             source.annotations.get("copy_overrides")
         )
-    characteristics = host._copyable_characteristics(target)
+    from ..defined_token_faces import single_face_copy_values
+    characteristics = single_face_copy_values(host._copyable_characteristics(target))
     if effect.get("except_nonlegendary"):
         type_line = str(
             characteristics.get("type_line") or ""
@@ -1316,7 +1318,13 @@ def _apply_transform(
     return results[0].card_ref if results else None
 
 
+def _apply_turn_face_up(host,effect,**context):
+    from .face_up import apply_targeted_face_up
+    return apply_targeted_face_up(host,effect,**context)
+
+
 HANDLERS = {
+    'turn_face_up': _apply_turn_face_up,
     'add_subtype': _apply_add_subtype,
     'add_subtype_until_end_of_turn': _apply_add_subtype_until_end_of_turn,
     'add_type': _apply_add_type,
@@ -1332,6 +1340,8 @@ HANDLERS = {
     'create_token_batch': _apply_create_token_batch,
     'create_token_if_no_controlled_subtype': _apply_create_token_if_no_controlled_subtype,
     'delayed_trigger': _apply_delayed_trigger,
+    'schedule_fixed_object_action': apply_delayed_object_action,
+    'resolve_fixed_object_action': apply_delayed_object_action,
     'grant_cast_permission': _apply_grant_cast_permission,
     'grant_keyword_until_end_of_turn': _apply_grant_keyword_until_end_of_turn,
     'grant_play_without_mana_cost': _apply_grant_play_without_mana_cost,

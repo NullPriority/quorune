@@ -110,6 +110,10 @@ def _resolve_typed_semantic_value(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get('op')=='schedule_fixed_object_action':
+        from ..delayed_object_actions import bind_delayed_object_instruction
+        try:return bind_delayed_object_instruction(host,value,item)
+        except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value.get('op')=='create_token_then_counters':
         from ..created_token_counter_model import validate_created_token_counter
         try:validate_created_token_counter(value)
@@ -200,10 +204,10 @@ def resolve_semantic_value(
         ):
             return None
         return source.ref
-    if value in {'$event.entry_object','$event.counter_object','$event.permanent_object'}:
-        from ..event_counter_reference import resolve_entry_event_counter_recipient,resolve_event_counter_recipient
-        try:return (resolve_entry_event_counter_recipient if value=='$event.entry_object' else resolve_event_counter_recipient)(host,item)
-        except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+    from ..event_counter_reference import resolve_sealed_event_object_value
+    try:matched, reference = resolve_sealed_event_object_value(host, item, value)
+    except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+    if matched:return reference
     if value == "$source.transform_count":
         count = getattr(item, "context", {}).get("source_transform_count")
         if type(count) is not int or count < 0:

@@ -9,6 +9,8 @@ from ..drawing.restrictions import drawn_this_turn
 from ..rules.capabilities import load_default_capability_registry
 from .component_registry import RuntimeComponentRegistry, exact_fields
 from .context import SemanticNodeError
+from .intrinsic_draw_reveals import MiracleIntrinsicRevealHandler, MiracleCastTriggerHandler
+from ..drawing.miracle_model import FixedMiracleCost
 
 
 DRAW_REVEAL_FIRST_HANDLER_ID = "action.draw.reveal-first.v1"
@@ -277,14 +279,14 @@ class DrawRevealFirstHandler:
 
 
 class DrawRevealRegistry(
-    RuntimeComponentRegistry[DrawRevealSourceContext, DrawRevealPolicy]
+    RuntimeComponentRegistry[DrawRevealSourceContext, DrawRevealPolicy | FixedMiracleCost]
 ):
     pass
 
 
 @lru_cache(maxsize=1)
 def default_draw_reveal_registry() -> DrawRevealRegistry:
-    registry = DrawRevealRegistry((DrawRevealFirstHandler(),))
+    registry = DrawRevealRegistry((DrawRevealFirstHandler(), MiracleIntrinsicRevealHandler(), MiracleCastTriggerHandler()))
     registry.require_registered_capabilities(
         load_default_capability_registry()
     )
@@ -318,8 +320,7 @@ def collect_draw_reveal_policies(
             if not host.semantic_program_is_current_trusted(program):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
-                policies.extend(
-                    registry.lower(
+                lowered = registry.lower(
                         descriptor,
                         DrawRevealSourceContext(
                             source_object_id=source.object_id,
@@ -339,7 +340,9 @@ def collect_draw_reveal_policies(
                             ),
                         ),
                     )
-                )
+                if any(not isinstance(policy, DrawRevealPolicy) for policy in lowered):
+                    raise SemanticNodeError("Battlefield reveal received an intrinsic declaration")
+                policies.extend(lowered)
     return tuple(sorted(policies, key=lambda value: value.policy_id))
 
 

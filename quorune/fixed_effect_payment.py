@@ -14,6 +14,8 @@ from .replacement.immutable import FrozenMap, thaw_value
 FIXED_EFFECT_PAYMENT_MECHANIC = "fixed-optional-mana-payment"
 FIXED_EFFECT_PAYMENT_CAPABILITY = "effect.choice.optional_fixed_mana_payment"
 MANA_DISCARD_PAYMENT_CAPABILITY = 'effect.choice.optional_mana_discard_payment'
+ANOTHER_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.another_fixed_resolution'
+SOURCE_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.fixed_source_resolution'
 _MANA_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
 
 
@@ -45,13 +47,19 @@ class FixedEffectPaymentSpec:
     source_ref: str | None = None
 
     def __post_init__(self) -> None:
-        version=5 if self.kind=='mana_discard' else 4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
+        another=self.kind=='sacrifice' and type(self.schema_version) is int and self.schema_version==6
+        version=7 if self.kind=='source_sacrifice' else 6 if another else 5 if self.kind=='mana_discard' else 4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
         if type(self.schema_version) is not int or self.schema_version != version:
             raise ValueError("Fixed effect payment version does not match its cost kind")
-        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap", "remove_source_counter", "mana_discard"}:
+        if self.kind not in {"mana", "life", "discard", "sacrifice", "energy", "exile", "tap", "remove_source_counter", "mana_discard", "source_sacrifice"}:
             raise ValueError("Fixed effect payment kind is unsupported")
         if type(self.amount) is not int or self.amount <= 0:
             raise ValueError("Fixed effect payment amount must be positive")
+        if self.kind=='source_sacrifice':
+            if (self.amount!=1 or self.counter_name is not None or self.predicate is not None or self.requirements is not None
+                    or self.source_ref is not None and (type(self.source_ref) is not str or not self.source_ref)):
+                raise ValueError('Source sacrifice requires one bound source without another cost or predicate')
+            return
         if self.kind=='mana_discard':
             if self.amount!=1 or self.counter_name is not None or self.source_ref is not None:
                 raise ValueError('Compound mana/discard cost requires exactly one ordinary hand card')
@@ -86,7 +94,8 @@ class FixedEffectPaymentSpec:
                 colors_any=self.predicate.colors_any, excluded_types=self.predicate.excluded_types,
                 subtypes_all=self.predicate.subtypes_all, subtypes_any=self.predicate.subtypes_any,
                 supertypes_all=self.predicate.supertypes_all,token=self.predicate.token,
-                known_to_actor=self.predicate.known_to_actor)
+                known_to_actor=self.predicate.known_to_actor,
+                exclude_ref=self.predicate.exclude_ref if another else None)
             if self.predicate != allowed or not set((*allowed.types_all, *allowed.types_any)) <= {
                 "artifact", "battle", "creature", "enchantment", "instant", "land", "planeswalker", "sorcery"
             } or any(color not in "WUBRG" for color in (*allowed.colors_all, *allowed.colors_any)):
@@ -108,12 +117,14 @@ class FixedEffectPaymentSpec:
         return {"schema_version":self.schema_version, "kind":self.kind, "amount":self.amount,
                 "requirements":thaw_value(self.requirements) if self.requirements is not None else None,
                 "predicate":self.predicate.to_dict() if self.predicate is not None else None,
-                **({'counter_name':self.counter_name,'source_ref':self.source_ref} if self.kind=='remove_source_counter' else {})}
+                **({'counter_name':self.counter_name,'source_ref':self.source_ref} if self.kind=='remove_source_counter' else {}),
+                **({'source_ref':self.source_ref} if self.kind=='source_sacrifice' else {})}
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "FixedEffectPaymentSpec":
         fields={"schema_version", "kind", "amount", "requirements", "predicate"}
         if isinstance(value,Mapping) and value.get('kind')=='remove_source_counter':fields|={'counter_name','source_ref'}
+        if isinstance(value,Mapping) and value.get('kind')=='source_sacrifice':fields|={'source_ref'}
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError("Fixed effect payment fields are malformed")
         return cls(kind=value["kind"], amount=value["amount"], schema_version=value["schema_version"],
@@ -130,8 +141,10 @@ class FixedEffectPaymentSpec:
                  'exile':('cost.exile.owned_graveyard_resolution','zone.change.destination_replacement'),
                  'tap':('cost.tap.controlled_untapped_resolution',),
                  'remove_source_counter':('cost.counter.source_fixed_resolution',)}
+        costs['source_sacrifice']=(SOURCE_SACRIFICE_PAYMENT_CAPABILITY,'choice.affected_player.fixed_sacrifice','zone.change.destination_replacement')
         costs['mana_discard']=(MANA_DISCARD_PAYMENT_CAPABILITY,'choice.affected_player.fixed_discard','zone.change.destination_replacement')
-        return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind])
+        return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind],
+            *((ANOTHER_SACRIFICE_PAYMENT_CAPABILITY,) if self.kind=='sacrifice' and self.schema_version==6 else ()))
 
 
 def compound_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:

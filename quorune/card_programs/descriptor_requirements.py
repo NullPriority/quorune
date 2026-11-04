@@ -69,6 +69,16 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *resolution_mana_choice_dependencies(value))
         from ..created_token_counter_model import created_token_counter_payload_dependencies
         own = (*own, *created_token_counter_payload_dependencies(value))
+        from ..incubate_model import incubate_payload_dependencies
+        own = (*own,*incubate_payload_dependencies(value))
+        from ..discover_model import discover_payload_dependencies
+        own = (*own,*discover_payload_dependencies(value))
+        from ..variable_library_selection_model import variable_library_selection_payload_dependencies
+        own = (*own,*variable_library_selection_payload_dependencies(value))
+        from ..reveal_until_library_selection_model import reveal_until_selection_payload_dependencies
+        own = (*own,*reveal_until_selection_payload_dependencies(value))
+        from ..library_battlefield_model import library_battlefield_payload_dependencies
+        own = (*own,*library_battlefield_payload_dependencies(value))
         from ..public_zone_quantity_model import public_zone_quantity_dependencies
         own = (*own, *public_zone_quantity_dependencies(value))
         from ..prevention_recipient_sets import prevention_recipient_set_dependencies
@@ -83,6 +93,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *designation_predicate_dependencies(value))
         from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
         own = (*own, *token_definition_payload_dependencies(value,mechanics))
+        from ..source_prevention import source_prevention_dependencies
+        own = (*own, *source_prevention_dependencies(value))
         from ..conditional_recipient_model import conditional_recipient_capabilities
         own = (*own, *conditional_recipient_capabilities(value))
         from ..public_zone_condition_model import public_zone_condition_capabilities

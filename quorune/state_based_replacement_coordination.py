@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping, Sequence
 from contextvars import ContextVar
+from contextlib import contextmanager
 
 from .replacement.immutable import thaw_value
 from .replacement.model import ReplacementEffectError
@@ -28,11 +29,21 @@ def prepare_state_based_execution_or_choice(host: Any, batch: Any):
     _CURRENT_SELECTIONS.set(())
     _CURRENT_ZONE_SELECTIONS.set(())
     try:
-        return prepare_state_based_execution(host, batch, replacement_selections=selected,
+        execution=prepare_state_based_execution(host, batch, replacement_selections=selected,
                                              zone_replacement_selections=zone_selected)
+        from .composition_state_based_order import prepare_state_based_compositions
+        return prepare_state_based_compositions(host,execution,selected,zone_selected)
     except ReplacementChoiceRequired as required:
         issue_state_based_replacement_choice(host, required, selected, zone_selected)
         return None
+
+
+@contextmanager
+def state_based_replacement_selections(destruction,zone):
+    token=_CURRENT_SELECTIONS.set(tuple(destruction));zone_token=_CURRENT_ZONE_SELECTIONS.set(tuple(zone))
+    try:yield
+    finally:
+        _CURRENT_SELECTIONS.reset(token);_CURRENT_ZONE_SELECTIONS.reset(zone_token)
 
 
 def prepare_state_based_zone_replacements(host, destruction, companions, saga_ids, selections):

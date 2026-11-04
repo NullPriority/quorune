@@ -45,6 +45,7 @@ from .block_capacity_model import BlockCapacitySpec
 from .landwalk_permission_model import LandwalkBlockPermission
 from .enlist_model import EnlistSpec
 from .exert_model import ExertAttackSpec
+from .mutate_model import MutateSpec
 from .as_unblocked import AsUnblockedAssignmentPermission
 from .toughness_assignment_model import ToughnessAssignmentSpec
 from .umbra_armor_model import UmbraArmorSpec
@@ -59,6 +60,8 @@ from .static_component_scope import (
 )
 from .util import stable_json
 from .all_colors import AllColorsCharacteristicDefinitionSpec
+from .copiable_program_source import CopiableProgramSourceSpec
+from .copiable_static_instance import CopiableStaticInstanceSpec
 
 
 class ProtectionQualityKind(str, Enum):
@@ -762,6 +765,8 @@ class StaticComponentSpec:
 
 StaticAbilityFragment: TypeAlias = (
     SimpleEnchantSpec
+    | CopiableProgramSourceSpec
+    | CopiableStaticInstanceSpec
     | TypedEnchantSpec
     | LinkedGraveyardCreatureEnchantSpec
     | ProtectionSpec
@@ -793,6 +798,7 @@ StaticAbilityFragment: TypeAlias = (
     | LandwalkBlockPermission
     | EnlistSpec
     | ExertAttackSpec
+    | MutateSpec
     | AsUnblockedAssignmentPermission
     | ToughnessAssignmentSpec
     | UmbraArmorSpec
@@ -806,7 +812,11 @@ StaticAbilityFragment: TypeAlias = (
 def ability_fragment_to_dict(
     fragment: StaticAbilityFragment,
 ) -> dict[str, Any]:
-    if isinstance(fragment, SimpleEnchantSpec):
+    if isinstance(fragment,CopiableStaticInstanceSpec):
+        kind = 'copiable_static_instance'
+    elif isinstance(fragment, CopiableProgramSourceSpec):
+        kind = 'copiable_program_source'
+    elif isinstance(fragment, SimpleEnchantSpec):
         kind = "enchant"
     elif isinstance(fragment, TypedEnchantSpec):
         kind = "enchant_typed"
@@ -870,6 +880,8 @@ def ability_fragment_to_dict(
         kind = 'enlist'
     elif isinstance(fragment, ExertAttackSpec):
         kind = 'exert_as_attacks'
+    elif isinstance(fragment, MutateSpec):
+        kind = 'mutate'
     elif isinstance(fragment, AsUnblockedAssignmentPermission):
         kind = "as_unblocked_assignment"
     elif isinstance(fragment,ToughnessAssignmentSpec):kind='toughness_assignment_rule'
@@ -904,6 +916,10 @@ def ability_fragment_from_dict(
         raise AbilityFragmentError(
             "Ability fragment kind must be a string and value an object"
         )
+    if value['kind']=='copiable_static_instance':
+        return CopiableStaticInstanceSpec.from_dict(value['value'])
+    if value['kind']=='copiable_program_source':
+        return CopiableProgramSourceSpec.from_dict(value['value'])
     if value["kind"] == "enchant":
         return SimpleEnchantSpec.from_dict(value["value"])
     if value["kind"] == "enchant_typed":
@@ -998,6 +1014,7 @@ def ability_fragment_from_dict(
             raise AbilityFragmentError(str(exc)) from exc
     if value['kind']=='enlist':return EnlistSpec.from_dict(dict(value['value']))
     if value['kind']=='exert_as_attacks':return ExertAttackSpec.from_dict(dict(value['value']))
+    if value['kind']=='mutate':return MutateSpec.from_dict(value['value'])
     if value["kind"] == "as_unblocked_assignment":
         return AsUnblockedAssignmentPermission.from_dict(value["value"])
     if value['kind']=='toughness_assignment_rule':return ToughnessAssignmentSpec.from_dict(value['value'])
@@ -1034,6 +1051,8 @@ def canonical_ability_fragments(
             value,
             (
                 SimpleEnchantSpec,
+                CopiableProgramSourceSpec,
+                CopiableStaticInstanceSpec,
                 TypedEnchantSpec,
                 LinkedGraveyardCreatureEnchantSpec,
                 ProtectionSpec,
@@ -1065,6 +1084,7 @@ def canonical_ability_fragments(
                 LandwalkBlockPermission,
                 EnlistSpec,
                 ExertAttackSpec,
+                MutateSpec,
                 AsUnblockedAssignmentPermission,
                 ToughnessAssignmentSpec,
                 UmbraArmorSpec,

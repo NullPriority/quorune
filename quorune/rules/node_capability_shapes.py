@@ -979,6 +979,23 @@ def fixed_source_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed source characteristic effect."""
 
+    if any(effect.get('card') == '$event.block_counterpart' for effect in effects):
+        from ..compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+        if target_schema is not None or len(effects) != 1:
+            return ()
+        keywords = effects[0].get('keywords')
+        if not isinstance(keywords, list) or len(keywords) != 1:
+            return ()
+        try:
+            template = FixedSourceCharacteristicsTemplate(source_kind='block-counterpart', keywords=tuple(keywords))
+        except ValueError:
+            return ()
+        if effects[0] != {**template.effects[0], 'card': '$event.block_counterpart'}:
+            return ()
+        required = fixed_source_characteristics_node_capabilities(
+            effects=template.effects, target_schema=None, mechanic_ids=mechanic_ids)
+        return (*required, 'trigger.event.block_pair_counterpart') if required else ()
+
     if any(effect.get('schema_version')==11 and effect.get('op')=='apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .temporary_keyword_removal import temporary_keyword_removal_capabilities
         return temporary_keyword_removal_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
@@ -1156,7 +1173,7 @@ def temporary_declaration_restriction_node_capabilities(
         set(effect) != {"op", "card", "restriction"}
         or effect.get("op")
         != "grant_declaration_restriction_until_end_of_turn"
-        or effect.get("card") not in {"$source", "$target.0"}
+        or effect.get("card") not in {"$source", SOURCE_ZONE_OBJECT, "$target.0"}
         or kind not in TEMPORARY_DECLARATION_RESTRICTION_KINDS
     ):
         return ()

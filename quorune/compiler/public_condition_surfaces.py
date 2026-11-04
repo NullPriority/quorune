@@ -9,6 +9,7 @@ from ..creature_subtypes import canonical_creature_subtype, canonical_creature_s
 from ..basic_land_types import LAND_SUBTYPES
 from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..rules.source_references import source_self_permanent_type
+from ..external_entry_state_model import PERMANENT_CARD_TYPES
 
 
 def normalize_public_condition_surface(text: str) -> str:
@@ -24,6 +25,13 @@ def normalize_public_condition_surface(text: str) -> str:
 
 
 def fixed_condition_subject_extension(text: str, *, noncreature_subtypes: Collection[str] = ()) -> tuple[ObjectQuerySpec, bool] | None:
+    types = '|'.join(sorted(PERMANENT_CARD_TYPES))
+    intersection = re.fullmatch(rf'(?P<other>other )?(?P<left>{types}) (?P<right>{types})s?', text, re.I)
+    if intersection is not None:
+        required = (intersection['left'].casefold(), intersection['right'].casefold())
+        if required[0] == required[1]:
+            return None
+        return ObjectQuerySpec(zones=('battlefield',), types_all=tuple(sorted(required))), bool(intersection['other'])
     union = fixed_condition_subtype_union(text, noncreature_subtypes=noncreature_subtypes)
     if union is not None:
         return union

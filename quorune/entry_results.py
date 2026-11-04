@@ -55,7 +55,9 @@ def commit_prepared_copy_values(prepared,card,*,error_type):
         card.annotations['copy_overrides'] = thaw_value(copy_values)
 
         from .entry_copy import COPIABLE_FACE_FIELD
-        card.active_face=card.annotations['copy_overrides'].get(COPIABLE_FACE_FIELD)
+        from .defined_token_faces import defined_token_definition
+        if defined_token_definition(card) is None:
+            card.active_face=card.annotations['copy_overrides'].get(COPIABLE_FACE_FIELD)
 
 
 def commit_prepared_entry_results(

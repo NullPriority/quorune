@@ -17,10 +17,14 @@ class TargetingSource:
     card_types: frozenset[str] | None=None
     subtypes: frozenset[str] | None=None
     source_controller: str | None=None
+    spell_owner: str | None=None
 
     def __post_init__(self):
         if self.kind not in {'spell','ability'}:raise ValueError('Targeting source kind must be explicit')
         if self.source_controller is not None and (type(self.source_controller) is not str or not self.source_controller):raise ValueError('Targeting source controller must be a seat or unavailable')
+        if self.spell_owner is not None and (self.kind!='spell' or type(self.spell_owner) is not str
+                or not self.spell_owner or self.spell_owner.strip()!=self.spell_owner):
+            raise ValueError('Spell ownership requires an explicit canonical spell owner')
         for name in ('colors','card_types','subtypes'):
             value=getattr(self,name)
             if value is not None and (type(value) is not frozenset or any(type(v) is not str or not v for v in value)):
@@ -30,9 +34,9 @@ class TargetingSource:
             raise ValueError('Targeting types must be canonical')
 
     @classmethod
-    def from_characteristics(cls,kind,value,*,controller=None):
+    def from_characteristics(cls,kind,value,*,controller=None,spell_owner=None):
         types,subtypes,_=type_parts(str(value.get('type_line') or ''))
-        return cls(kind,frozenset(str(v).upper() for v in value.get('colors',())),frozenset(types),frozenset(subtypes),controller)
+        return cls(kind,frozenset(str(v).upper() for v in value.get('colors',())),frozenset(types),frozenset(subtypes),controller,spell_owner)
 
 
 @dataclass(frozen=True,slots=True)
@@ -75,7 +79,8 @@ def capture_targeting_source(host,source,*,characteristics=None,zone=None):
 
 
 def spell_targeting_source(host,card):
-    return TargetingSource.from_characteristics('spell',host._effective_card_data(card),controller=card.controller)
+    return TargetingSource.from_characteristics('spell',host._effective_card_data(card),
+        controller=card.controller,spell_owner=card.owner)
 
 
 def ability_targeting_source(host,card):

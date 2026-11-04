@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, MutableMapping
 from typing import Any
+from ..explore_action_model import CREATURE_EXPLORE_EVENT
 
 
 _LKI_CONTROLLER_KEY = "explore_source_lki_controller"
@@ -87,7 +88,53 @@ def explore_source_controller(item: Any, cards: Mapping[str, Any]) -> str:
     )
 
 
+def materialize_explore_source_types(host, item, effect):
+    """Reuse the canonical ability current/LKI snapshot without new saved data."""
+    if item is None or effect.get('op') != 'explore' or item.kind not in {'activated_ability', 'triggered_ability'}:
+        return None
+    from ..target_source import stack_targeting_source
+    types = stack_targeting_source(host, item).card_types
+    return tuple(sorted(types)) if types is not None else None
+
+
+def explored_object_types(query, ref, logical_object_id):
+    """Read this incarnation, falling back only to that same source's LKI."""
+    explorer = query.object(ref)
+    if (explorer is not None and explorer.zone == 'battlefield' and not explorer.phased_out
+            and explorer.logical_object_id == logical_object_id):
+        return tuple(sorted(set(explorer.types)))
+    source = getattr(query, 'resolution_source', None)
+    if source is not None and source.card_ref == ref and source.logical_object_id == logical_object_id:
+        return getattr(query, 'explore_source_types', None)
+    return None
+
+
+def commit_explore_completion(host, intent):
+    """Publish legacy completion and the qualified event in one trigger batch."""
+    from ..trigger_processing import enqueue_trigger_batch
+    explorer = next((card for card in host.state.cards.values() if card.ref == intent.explorer_ref), None)
+    changed_objects = ([explorer.object_id] if explorer is not None
+        and explorer.logical_object_id == intent.explorer_logical_object_id else [])
+    details = {'player': intent.player, 'explorer': intent.explorer_ref,
+        'explorer_logical_object_id': intent.explorer_logical_object_id,
+        'result': intent.result, 'reason': intent.reason}
+    if intent.revealed_card_ref is not None:
+        details['revealed_card'] = intent.revealed_card_ref
+    host._log(intent.actor, 'explore.complete', f'{intent.explorer_ref} explored for {intent.player}.',
+        details, importance=2, changed_objects=changed_objects, changed_players=[intent.player])
+    batch = []
+    host._dispatch_semantic_event('permanent.explores', details, trigger_batch=batch)
+    if intent.explorer_types is not None and 'creature' in intent.explorer_types:
+        host._dispatch_semantic_event(CREATURE_EXPLORE_EVENT,
+            {**details, 'controller': intent.player, 'card': intent.explorer_ref,
+             'types': list(intent.explorer_types)}, trigger_batch=batch)
+    enqueue_trigger_batch(host, batch)
+
+
 __all__ = [
     "capture_explore_source_departure",
     "explore_source_controller",
+    "materialize_explore_source_types",
+    "explored_object_types",
+    "commit_explore_completion",
 ]

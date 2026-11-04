@@ -35,6 +35,26 @@ def bargain_static_node(*, record, node_id, line, material_line, span, capabilit
         capability_profile=capability_profile, residuals=residuals)
 
 
+def bargain_reduction_node(*, record, node_id, line, material_line, span, capability_registry, capability_profile, residuals):
+    from ..declared_cast_cost_model import DeclaredCastCostKind
+    from ..declared_cost_conditions import DeclaredCastCostCondition
+    from ..declared_cost_reductions import DECLARED_COST_REDUCTION_HANDLER, DECLARED_COST_REDUCTION_EVENT, DeclaredCostReductionSpec
+    match=re.fullmatch(r"This spell costs \{(?P<amount>[1-9][0-9]*)\} less to cast if it's bargained\.",material_line.strip(),re.I)
+    if match is None:return None
+    spec=printed_bargain_spec(record)
+    if spec is None:return None
+    reduction=DeclaredCostReductionSpec(DeclaredCastCostCondition(DeclaredCastCostKind.BARGAIN,spec.instance_id),int(match['amount']))
+    descriptor={'handler_id':DECLARED_COST_REDUCTION_HANDLER,'schema_version':1,
+        'event':DECLARED_COST_REDUCTION_EVENT,REQUIRES_COMPLETE_CARD_PROGRAM_FIELD:True,'reduction':reduction.to_dict()}
+    return runtime_handler_node(node_id=node_id,line=line,span=span,
+        compiled=('linked-declared-cost-generic-reduction-v1',descriptor,
+            ('casting.cost.self_public_reduction',DECLARED_CAST_COST_CAPABILITY,BARGAIN_CAPABILITY)),
+        kind='static_ability',event=DECLARED_COST_REDUCTION_EVENT,active_zone='all',
+        runtime_coverage=('self_cast_cost_reduction','source_linked_declared_cost_reduction'),
+        dependency_reason='Announced linked optional costs qualify generic reductions before payment',
+        capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+
+
 def bargain_entry_trigger_node(*, bargain_spec, node_id, line, material_line, span, card_name, effect_template,
         trusted_mechanics, capability_registry, capability_profile, residuals):
     if bargain_spec is None:return None

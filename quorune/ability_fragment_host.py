@@ -8,7 +8,7 @@ from .ability_fragments import (
     canonical_ability_fragments,
     static_keyword_scope_keywords,
 )
-from .carddb_characteristics import base_card_characteristics
+from .carddb_characteristics import base_card_characteristics,copiable_card_characteristics
 from .compiled_ability_fragments import (
     compiled_ability_fragment_dicts,
     compiled_enchant_spec,
@@ -22,6 +22,22 @@ from .enchant_spec import EnchantSpec
 
 class AbilityFragmentHostMixin:
     """Narrow runtime facade for trusted compiled ability fragments."""
+
+    def _copyable_characteristics(self,card):
+        from .continuous_effect_model import Layer
+        from .errors import GameRuleError
+        from .face_down_copy import current_face_down_copy_values
+        status_values=current_face_down_copy_values(self,card)
+        if status_values is not None:return status_values
+        if card.permanent_composition is not None:
+            return self._effective_card_data(card,maximum_layer=Layer.COPY)
+        record=self.card_record(card)
+        base=self._compiled_base_characteristics(card,record,error_type=GameRuleError)
+        return copiable_card_characteristics(card,record,base)
+
+    def _spell_copy_characteristics(self,card):
+        from .token_copy_faces import spell_copy_characteristics
+        return spell_copy_characteristics(self,card)
 
     def _compiled_ability_fragments(
         self,
@@ -87,6 +103,9 @@ class AbilityFragmentHostMixin:
         *,
         error_type: type[Exception] | None = None,
     ) -> dict[str, Any]:
+        if getattr(card,'permanent_composition',None) is not None:
+            from .composition_characteristics import composition_copiable_values
+            return composition_copiable_values(card.permanent_composition)
         base = base_card_characteristics(card, record)
         from .rules.station_symbols import compiled_station_symbols
         if compiled_station_symbols(self, card) is not None:

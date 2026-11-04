@@ -211,6 +211,10 @@ class SemanticChoiceCoordinationMixin:
         effect: Mapping[str, Any],
         source_ref: str | None,
     ) -> tuple[str, ...]:
+        from ..rules.graveyard_return_choices import OPERATION, graveyard_return_candidates
+        if effect.get('op') == OPERATION:
+            try:return graveyard_return_candidates(self, actor, effect)
+            except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
         if effect.get("op") == "offer_soulbond_pair":
             from ..soulbond_model import SoulbondOpportunity
             from ..soulbond_state import opportunity_candidates
@@ -438,7 +442,17 @@ class SemanticChoiceCoordinationMixin:
         actor: str,
         effect: Mapping[str, Any],
         source_ref: str | None,
+        stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
+        if effect.get('op')=='discover_cast_choice':
+            from ..discover_casting import discover_cast_options
+            return discover_cast_options(self,item=stack_item,actor=actor,effect=effect)
+        if effect.get('op') == 'miracle_cast_choice':
+            from ..drawing.miracle_casting import miracle_cast_options
+            try:
+                return miracle_cast_options(self,item=stack_item,actor=actor,effect=effect)
+            except (ValueError, TypeError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         if (
             str(effect.get("op") or "") != "madness_cast_choice"
             or source_ref is None
@@ -549,11 +563,13 @@ class SemanticChoiceCoordinationMixin:
                 raise SemanticChoiceError(str(exc)) from exc
         from ..rules.library_search_rules import optional_search_permissions
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
+        from ..semantic_runtime.explore import materialize_explore_source_types
         return SnapshotSemanticChoiceQuery(
             resolution_source_is_physical_card=(
                 (self.state.cards[stack_item.card_object_id].object_kind == 'card')
                 if stack_item is not None and stack_item.card_object_id in self.state.cards else False),
             explore_action_version=getattr(self.state, 'explore_action_version', None),
+            explore_source_types=materialize_explore_source_types(self, stack_item, choice_effect),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             counter_permissions=collect_counter_permissions(self),
@@ -590,6 +606,7 @@ class SemanticChoiceCoordinationMixin:
                     actor,
                     choice_effect,
                     source_ref,
+                    stack_item=stack_item,
                 )
             ),
             canonical_names=self._semantic_choice_canonical_names(response),
@@ -702,6 +719,8 @@ class SemanticChoiceCoordinationMixin:
         registry = default_semantic_choice_registry()
         try:
             effect = bind_connive_instruction(self, item, effect)
+            from ..drawing.miracle_casting import bind_miracle_cast_instruction
+            effect = bind_miracle_cast_instruction(item, effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         handler = registry.handler_for_operation(str(effect.get("op") or ""))

@@ -395,9 +395,15 @@ class FixedEffectClauseSequenceCompilerTests(unittest.TestCase):
                     ),
                 )
 
+        ordered = fixed_effect_clause_sequence_template(
+            "Destroy target creature, then you gain 3 life.", compile_clause=compile_clause,
+        )
+        self.assertIsNotNone(ordered)
+        self.assertEqual(template.effects, ordered.effects)
+        self.assertEqual(template.target_schema, ordered.target_schema)
         composed = (
             "Destroy target creature. Draw a card. Scry 1.",
-            "Destroy target creature, then you gain 3 life.",
+            "Destroy target creature, then its controller gains 3 life.",
         )
         for text in composed:
             with self.subTest(leaf_text=text):

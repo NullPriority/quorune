@@ -9,10 +9,37 @@ maintenance: "hand-maintained"
 
 # Target legality and protection
 
+The target-language owner relation `spell_owner` reads the acting spell's explicit
+owner, independently of the spell controller and target controller. Live spell
+copies use their existing noncard object ownership; unavailable ownership rejects
+instead of becoming the current controller. The fact is ephemeral and leaves the
+version-one serialized ability-source binding unchanged. Runtime dependency
+inference requires `target.object.same_spell_owner` for this relation even when
+annotations omit it. Human and Changeling targets remain excluded from Mutate.
+Changing a spell's controller preserves its owner. A copy receives its own owner
+from the player under whose control it is created.
+
+Intrinsic Mutate cost metadata uses the existing ability-fragment registry and
+the shared fixed ordinary/hybrid mana expansion. Its copied fragment contains
+only the closed mana-cost value and version, not an Oracle line for runtime
+parsing. `rules/casting/mutate_costs.py` binds a complete, current face before
+adding typed alternatives to the ordinary cost pipeline. The chosen cost pins
+its target schema and payment marker into the existing stack context.
+`casting.mutate.fixed_mana` owns the declared alternative, target, physical merge
+and ordinary-creature fallback. Copies retain the declared alternative and use
+the existing copy object's owner when their targets are revalidated. Every other
+material ability still requires complete-card admission; metadata alone does not
+admit an otherwise partial original.
+
 Quorune uses one server-side target predicate for offer generation, submitted
 command validation, and resolution-time revalidation. A client receives only
 the legal public references in its current action schema and cannot substitute
 an authoritative object identifier or bypass the same predicate at commit.
+The shared compiler grammar accepts the control qualifier before or after one
+supported `with`/`without` keyword qualifier. Both orders lower to the same typed
+conjunction. Offers, submitted targets and resolution revalidation require both
+current control and the current keyword fact; unknown or compound keyword tails
+remain outside the closed grammar.
 
 Printed Protection lists with repeated `from` clauses compile to independent
 typed qualities, including comma-separated color and creature-subtype lists.

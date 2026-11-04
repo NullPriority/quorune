@@ -77,6 +77,16 @@ structural host protocols rather than the engine class and are authorized by
 [ADR 0030](../adr/0030-typed-stack-counter.md), and
 [ADR 0053](../adr/0053-typed-own-graveyard-return-to-hand.md).
 
+`quorune/emblems.py` owns preparation and creation of public noncard command-zone
+emblems under [ADR 0142](../adr/0142-typed-emblem-creation-owner.md). The engine
+constructor delegates to this owner. It validates the complete request before
+allocating identity or writing object, zone, compatibility-marker or journal
+state. Display abilities remain display data; generic compiled emblem execution
+uses the independently validated command-child contract in
+[ADR 0143](../adr/0143-compiled-command-emblem-abilities.md). `object.emblem.creation`
+owns this construction boundary, and the existing Ring instruction requires
+that shared capability.
+
 Represented zone-destination replacements use an additional narrow split.
 `semantic_runtime/zone_replacement_model.py` owns immutable affected-object,
 source-effect, and prepared-move values. `zone_replacements.py` owns read-only

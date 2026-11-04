@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .control_capability_shapes import fixed_control_node_capabilities
+from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .temporary_cast_restrictions import temporary_cast_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
@@ -33,6 +34,10 @@ from .fixed_controller_effect_shapes import fixed_life_node_capabilities
 from .fixed_resolution_mana_shapes import fixed_resolution_mana_choice_capabilities, fixed_resolution_mana_capabilities
 from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
 from .created_token_counter_shapes import created_token_counter_node_capabilities
+from .incubate_capability_shapes import incubate_node_capabilities
+from .discover_capability_shapes import discover_node_capabilities
+from .variable_library_selection_shapes import variable_library_selection_node_capabilities
+from .reveal_until_library_selection_shapes import reveal_until_library_selection_node_capabilities
 from .linked_exile_return_shapes import linked_exile_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
     fixed_resolution_characteristic_set_node_capabilities,
@@ -120,10 +125,15 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    graveyard_return_choice_node_capabilities,
     fixed_land_untap_choice_capabilities,
     fixed_library_order_capabilities,
     fixed_stack_spell_copy_node_capabilities,
     created_token_counter_node_capabilities,
+    incubate_node_capabilities,
+    discover_node_capabilities,
+    variable_library_selection_node_capabilities,
+    reveal_until_library_selection_node_capabilities,
     fixed_resolution_mana_choice_capabilities,
     fixed_resolution_mana_capabilities,
     all_kind_counter_component_capabilities,

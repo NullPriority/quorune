@@ -481,6 +481,8 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
             "quorune.compiler.effect_template_composition.fixed_effect_payment_template", return_value=None,
         ), mock.patch(
             "quorune.compiler.effect_template_composition.fixed_effect_payment_with_mandatory_prefix", return_value=None,
+        ), mock.patch(
+            "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template", return_value=None,
         ):
             mutant = self.compile(text)
         self.assertNotEqual("exact", mutant.status)

@@ -114,6 +114,9 @@ class SemanticChoiceQuery(
     @property
     def explore_action_version(self) -> int | None: ...
 
+    @property
+    def explore_source_types(self) -> tuple[str, ...] | None: ...
+
     def player_life(self, seat: str) -> int: ...
 
     def player_counter(self, seat: str, counter: str) -> int: ...
@@ -190,6 +193,7 @@ class SnapshotSemanticChoiceQuery:
     ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
     resolution_source: SemanticSourceContext | None = None
     explore_action_version: int | None = None
+    explore_source_types: tuple[str, ...] | None = None
     resolution_source_is_physical_card: bool | None = None
     apnap_order: tuple[str, ...] = ()
     discard_hand_inputs: FrozenMap | None = None
@@ -200,6 +204,13 @@ class SnapshotSemanticChoiceQuery:
         if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:
             raise ValueError('Physical resolving-card facts must be boolean or absent')
         explore_action_version(self.explore_action_version)
+        if self.explore_source_types is not None and (
+            type(self.explore_source_types) is not tuple
+            or any(type(value) is not str or not value or value != value.casefold()
+                   for value in self.explore_source_types)
+            or len(set(self.explore_source_types)) != len(self.explore_source_types)
+        ):
+            raise ValueError('Explore source types require immutable canonical terms or unavailable')
         if self.resolution_source is not None and not isinstance(self.resolution_source, SemanticSourceContext):
             raise ValueError('Choice resolution source requires an immutable typed snapshot')
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):

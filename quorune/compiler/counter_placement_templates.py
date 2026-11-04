@@ -791,6 +791,10 @@ def fixed_counter_placement_effect_template(
             permanent_type=attached.group("kind").casefold(),
             attachment_relation=relation,
         )
+    excluded=re.fullmatch(r'(?P<target>target .+?) other than (?P<source>.+)',subject,re.I)
+    if excluded is not None:
+        if not SourceReferenceSpec(card_name).matches(excluded['source']):return None
+        subject='another '+excluded['target']
     target = direct_permanent_target_spec(subject)
     if target is None:
         return None

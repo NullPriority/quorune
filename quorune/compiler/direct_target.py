@@ -20,7 +20,7 @@ from ..target_numeric import (
     TargetNumericComparison,
 )
 from .creature_subtypes import canonical_creature_subtype
-from ..target_forms import TargetCharacteristicForm
+from ..target_forms import TargetCharacteristicForm, EVENT_PLAYER_TARGET_REFERENCES
 from .mixed_target_forms import canonicalize_mixed_direct_forms,mixed_permanent_target_fields
 
 
@@ -648,6 +648,10 @@ def _validate_direct_target_flags(
         )
     if spec.controller_relation not in {"any", "you", "opponent"}:
         raise ValueError("Direct permanent target controller relation is unsupported")
+    if spec.controller_seat is not None and (
+        spec.controller_seat not in EVENT_PLAYER_TARGET_REFERENCES or spec.controller_relation != 'any'
+    ):
+        raise ValueError('Direct permanent occurrence controller requires a sealed event player')
     if type(spec.source_exclusion) is not bool:
         raise ValueError("Direct permanent target source exclusion must be boolean")
     if spec.commander is not None and (
@@ -704,6 +708,7 @@ class DirectPermanentTargetSpec:
     numeric_characteristic: TargetNumericCharacteristicSpec | None = None
     state_predicate: PermanentStatePredicateSpec | None = None
     controller_relation: str = "any"
+    controller_seat: str | None = None
     source_exclusion: bool = False
     token: bool | None = None
     commander: bool | None = None
@@ -808,6 +813,8 @@ class DirectPermanentTargetSpec:
         predicate = self.characteristic_slug
         if self.controller_relation != "any":
             predicate += f"-{self.controller_relation}"
+        if self.controller_seat is not None:
+            predicate += '-' + self.controller_seat.removeprefix('$context.').replace('_', '-')
         if self.source_exclusion:
             predicate += "-another"
         if self.state_predicate is not None:
@@ -906,6 +913,8 @@ class DirectPermanentTargetSpec:
             schema["state_predicate"] = self.state_predicate.to_dict()
         if self.controller_relation != "any":
             schema["controller_relation"] = self.controller_relation
+        if self.controller_seat is not None:
+            schema['controller_seat'] = self.controller_seat
         if self.source_exclusion:
             schema["source_exclusion"] = True
         if self.token is not None:
@@ -955,6 +964,7 @@ class DirectPermanentTargetSpec:
             "numeric_characteristic",
             "state_predicate",
             "controller_relation",
+            "controller_seat",
             "source_exclusion",
             "token",
             "combat_state",
@@ -1011,6 +1021,7 @@ class DirectPermanentTargetSpec:
             ),
             state_predicate=state_predicate,
             controller_relation=schema.get("controller_relation", "any"),
+            controller_seat=schema.get('controller_seat'),
             source_exclusion=source_exclusion,
             token=schema.get("token"),
             commander=schema.get("commander"),
@@ -1069,6 +1080,13 @@ def _strip_public_state_predicate(phrase: str) -> tuple[str, PermanentStatePredi
     return phrase, state_predicate
 
 
+def _normalize_controlled_keyword_subject(phrase: str) -> str:
+    """Place two explicit conjunctive qualities in the established parse order."""
+    match=re.fullmatch(r"(?P<body>.+?) (?P<control>you control|an opponent controls|you don't control) "
+        r"(?P<quality>(?:with|without) (?:defender|flying|horsemanship|islandwalk|shadow))",phrase)
+    return f"{match['body']} {match['quality']} {match['control']}" if match is not None else phrase
+
+
 def direct_permanent_target_spec(
     subject: str,
 ) -> DirectPermanentTargetSpec | None:
@@ -1101,6 +1119,7 @@ def direct_permanent_target_spec(
         return None
     phrase, state_predicate = public_state
 
+    phrase=_normalize_controlled_keyword_subject(phrase)
     relation = "any"
     for suffix, candidate in (
         (" an opponent controls", "opponent"),

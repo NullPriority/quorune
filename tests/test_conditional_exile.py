@@ -21,6 +21,30 @@ def exiled_card(object_id='held', ref='HELD', owner='B'):
 
 
 class ConditionalExileModelTests(unittest.TestCase):
+    def test_nested_cost_returns_are_transferred_to_the_enclosing_completion_owner(self):
+        from unittest.mock import patch
+        from quorune.conditional_exile_return import defer_conditional_cost_returns,finish_conditional_cost_returns
+        binding=self.binding();host=object();captured=((binding,),(binding.source,))
+        with patch('quorune.conditional_exile_return.return_after_source_departures') as returned:
+            with defer_conditional_cost_returns() as parent:
+                with defer_conditional_cost_returns() as child:child.append(captured)
+                self.assertTrue(finish_conditional_cost_returns(host,child))
+                self.assertEqual([captured],parent);returned.assert_not_called()
+            self.assertFalse(finish_conditional_cost_returns(host,parent))
+            returned.assert_called_once_with(host,(binding,),(binding.source,))
+
+    def test_aborted_inner_capture_does_not_publish_returns_and_current_capture_cannot_finish_itself(self):
+        from quorune.conditional_exile_return import defer_conditional_cost_returns,finish_conditional_cost_returns
+        from quorune.errors import GameRuleError
+        binding=self.binding();captured=((binding,),(binding.source,))
+        with defer_conditional_cost_returns() as parent:
+            with self.assertRaisesRegex(RuntimeError,'aborted payment'):
+                with defer_conditional_cost_returns() as child:
+                    child.append(captured);raise RuntimeError('aborted payment')
+            self.assertEqual([],parent)
+            with self.assertRaises(GameRuleError):finish_conditional_cost_returns(object(),parent)
+        self.assertFalse(finish_conditional_cost_returns(object(),parent))
+
     def binding(self, card=None, source=None, binding_id='until:1'):
         card = card or exiled_card()
         return ConditionalExileBinding(binding_id, source or ContinuousObjectIdentity('source', 'source@0'),

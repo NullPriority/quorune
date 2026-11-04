@@ -65,5 +65,11 @@ capability-bound. Invalid or missing linked instances fail closed before a
 result executes. Old event payloads and cost codecs retain their existing
 representation. New metadata adds no game-state mode or checkpoint field.
 Whole-card support requires native evidence for both casting and ordinary
-results; unknown bodies, discounts, conditional targets and unrepresented
+results. Fixed generic self discounts now use a separate immutable
+`DeclaredCostReductionSpec` and component in the existing cast registry. The
+compiler links the same printed instance, and total-cost determination reads
+the server-generated declared choice before ordinary payment. This preserves
+generic-only reduction, colored obligations and printed mana value without
+introducing another cast-state field. Unknown bodies, variable or colored
+discounts, conditional targets and unrepresented
 multiple/granted instances remain explicit unfinished support.

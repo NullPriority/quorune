@@ -1,5 +1,6 @@
 from __future__ import annotations
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent
+from ..discover_model import DiscoverCastIntent
 from ..semantic_runtime.champion_intent import CHAMPION_INTENT_TYPES
 
 from typing import Any, Mapping, Protocol, Sequence
@@ -46,6 +47,7 @@ from .model import (
     SemanticChoiceError,
 )
 from .destruction_intent_identity import DESTRUCTION_INTENT_TYPES
+from ..composition_order_model import CompositionOrderChoiceRequired
 
 
 _PILOT_ROLE = "pilot"
@@ -66,6 +68,7 @@ class SemanticCounterCoordinationHost(Protocol):
         response: Mapping[str, Any] | None = None,
         effect: Mapping[str, Any] | None = None,
         source_ref: str | None = None,
+        stack_item: Any | None = None,
     ) -> Any: ...
 
     def _continue_resolution(
@@ -245,6 +248,9 @@ def continue_semantic_completion(
                 from .completed_choice import encode_remaining_completion,finish_choice_intent_returns
                 saved=encode_remaining_completion(continuation,actor,response,completion,index+1)
                 if finish_choice_intent_returns(host,waiting,saved):return False
+        except CompositionOrderChoiceRequired as required:
+            from ..composition_ordering import suspend_composition_completion
+            return suspend_composition_completion(host,item,continuation,completion,index,intent,required)
         except ReplacementChoiceRequired as required:
             if isinstance(intent, PlaceCountersIntent):
                 _issue_counter_replacement_choice(
@@ -262,6 +268,7 @@ def continue_semantic_completion(
                 (
                     *DESTRUCTION_INTENT_TYPES,
                     *CHAMPION_INTENT_TYPES,
+                    DiscoverCastIntent,
                     PlaceCountersOnSetIntent,
                     MoveCountersIntent,
                     LifeChangeIntent,
@@ -408,7 +415,7 @@ def resume_semantic_intent_completion(
         actor = restored.semantic_choice_actor
         if restored.completed_choice is None:
             completion = handler.complete(continuation,response,host._semantic_choice_query(
-                actor,response=response,effect=continuation.effect,source_ref=_source_ref(host,item)))
+                actor,response=response,effect=continuation.effect,source_ref=_source_ref(host,item),stack_item=item))
         else:
             from .completed_choice import validated_remaining_completion
             completion=validated_remaining_completion(thaw_value(restored.completed_choice),

@@ -10,6 +10,11 @@ from .permanent_predicate_capability_shapes import direct_permanent_target_schem
 def fixed_prevention_component_capabilities(*,effects,target_schema,mechanic_ids):
     if 'cr-615-prevention-effects' not in set(mechanic_ids) or len(effects)!=1:return ()
     effect=effects[0]
+    if isinstance(effect, Mapping) and 'source_subject_version' in effect:
+        from ..source_prevention import source_prevention_dependencies
+        if target_schema is not None:return ()
+        try:return source_prevention_dependencies(effect)
+        except (TypeError, ValueError):return ()
     direct_fields={'op','source','subject','mode','duration'}
     if (isinstance(effect,Mapping) and effect.get('op')=='create_damage_prevention_shield'
             and effect.get('source')=='$source' and effect.get('mode')=='all'

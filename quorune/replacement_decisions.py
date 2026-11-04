@@ -247,11 +247,17 @@ def apply_effect_with_replacement_choice(
     """Execute one legacy or typed effect, suspending at replacement choice."""
 
     remaining, destination, note, instruction_pointer = continuation
+    from .composition_order_model import CompositionOrderChoiceRequired
+    from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
     try:
-        if plan is None:
-            host.apply_effect(effect, actor=item.controller, as_cost=False)
-        else:
-            execute_intent_plan(host, plan)
+        with composition_resolution_actor(item.controller):
+            if plan is None:
+                host.apply_effect(effect, actor=item.controller, as_cost=False)
+            else:
+                execute_intent_plan(host, plan)
+    except CompositionOrderChoiceRequired as required:
+        issue_composition_order_choice(host,item,required,effect,remaining,destination,note,instruction_pointer)
+        return False
     except ReplacementChoiceRequired as required:
         from .conditional_exile_return import ConditionalReturnChoiceRequired
         if isinstance(required, ConditionalReturnChoiceRequired):

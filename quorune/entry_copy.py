@@ -11,6 +11,7 @@ from .target_numeric import TargetNumericCharacteristic, TargetNumericComparison
 from .token_copy_recipes import TokenCopyExceptionSpec
 from .entry_copy_predicates import EntryCopyPredicate
 from .conditional_copy_model import ConditionalCopyException
+from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD,defined_token_current_characteristics
 
 ENTRY_COPY_HANDLER = 'replacement.zone.entry-copy.v1'
 ENTRY_COPY_QUERY_HANDLER = 'replacement.zone.entry-copy.v2'
@@ -27,6 +28,8 @@ def copiable_oracle_id(card: Any, characteristics: Mapping[str, Any] | None = No
     values = characteristics
     if values is None:
         values = (getattr(card, 'annotations', {}) or {}).get('copy_overrides')
+        if isinstance(values,Mapping) and DEFINED_TOKEN_FACES_FIELD in values:
+            values=defined_token_current_characteristics(card,values)
     if isinstance(values, Mapping) and COPIABLE_ORACLE_FIELD in values:
         value = values[COPIABLE_ORACLE_FIELD]
         if type(value) is not str or not value:

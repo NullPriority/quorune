@@ -10,9 +10,16 @@ from .object_predicate import ObjectQuerySpec
 from .fixed_mana_abilities import FixedManaMode
 from .replacement.immutable import FrozenMap
 from .util import normalize_mana_bundle
+from .defined_token_faces import (
+    DEFINED_TOKEN_FACES_FIELD, DEFINED_TOKEN_ACTIVE_FACE_FIELD, DEFINED_TOKEN_TRANSFORM_KEY,
+    DEFINED_TOKEN_COPY_EXCEPTIONS_FIELD, INCUBATOR_TRANSFORM_PROFILE,
+    DEFINED_TOKEN_UNIFORM_COPY_FIELD, validate_uniform_copy_values,
+    DefinedTransformingToken,
+)
 
 
 class StandardTokenAbilityProfile(str, Enum):
+    TWO_TRANSFORM_SOURCE = INCUBATOR_TRANSFORM_PROFILE
     TAP_SAC_ANY_COLOR_MANA = "tap_sac_any_color_mana_v1"
     TWO_TAP_SAC_GAIN_THREE_LIFE = "two_tap_sac_gain_three_life_v1"
     TWO_SAC_DRAW_CARD = "two_sac_draw_card_v1"
@@ -27,6 +34,14 @@ class StandardTokenAbilityProfile(str, Enum):
 
 
 TOKEN_ABILITY_PROFILE_FIELD = "activated_ability_profile"
+
+
+def _transform_source() -> ActivatedAbility:
+    return ActivatedAbility(
+        ability_id='ab1',line_index=0,oracle_line='{2}: Transform this token.',
+        cost_text='{2}',effect_text='Transform this token.',zones=('battlefield',),
+        mana={'GENERIC':2},builtin_semantic_key=DEFINED_TOKEN_TRANSFORM_KEY,
+    )
 
 
 def _any_color_mana() -> ActivatedAbility:
@@ -187,6 +202,7 @@ def _junk_impulse_one() -> ActivatedAbility:
 
 
 _STANDARD_TOKEN_ABILITIES = {
+    StandardTokenAbilityProfile.TWO_TRANSFORM_SOURCE: (_transform_source(),),
     StandardTokenAbilityProfile.TAP_SAC_ANY_COLOR_MANA: (
         _any_color_mana(),
     ),
@@ -215,23 +231,46 @@ _STANDARD_TOKEN_ABILITIES = {
 
 def standard_token_characteristics(
     characteristics: Mapping[str, Any] | None,
+    *, active_face: str | None = None,
 ) -> dict[str, Any]:
     """Lower an explicit typed profile without inspecting a token name."""
 
     result = dict(characteristics or {})
+    copy_exceptions = ()
+    if DEFINED_TOKEN_FACES_FIELD in result:
+        definition = DefinedTransformingToken.from_dict(result[DEFINED_TOKEN_FACES_FIELD])
+        face = definition.current_face(active_face if active_face is not None
+                                       else result.get(DEFINED_TOKEN_ACTIVE_FACE_FIELD))
+        owned = set(definition.front.characteristics()) | set(definition.back.characteristics())
+        for field in owned | {'activated_abilities','ability_fragments',TOKEN_ABILITY_PROFILE_FIELD}:
+            result.pop(field, None)
+        result.update(face.characteristics())
+        result[DEFINED_TOKEN_ACTIVE_FACE_FIELD] = face.name
+        if definition.schema_version==1:
+            result['activated_abilities'] = []
+            result['ability_fragments'] = []
+        copy_exceptions = result.get(DEFINED_TOKEN_COPY_EXCEPTIONS_FIELD, ())
+        if not isinstance(copy_exceptions, (list, tuple)):
+            raise ValueError('Defined token copy exceptions must be an array')
     raw_profile = result.pop(TOKEN_ABILITY_PROFILE_FIELD, None)
-    if raw_profile is None:
-        return result
-    if "activated_abilities" in result:
+    if raw_profile is not None and "activated_abilities" in result and DEFINED_TOKEN_FACES_FIELD not in result:
         raise ValueError(
             "Token ability profiles cannot compete with explicit abilities"
         )
-    try:
-        profile = StandardTokenAbilityProfile(raw_profile)
-    except (TypeError, ValueError) as exc:
-        raise ValueError("Unsupported token ability profile") from exc
-    abilities = _STANDARD_TOKEN_ABILITIES[profile]
-    result["activated_abilities"] = [ability.to_dict() for ability in abilities]
+    if raw_profile is not None:
+        try:
+            profile = StandardTokenAbilityProfile(raw_profile)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Unsupported token ability profile") from exc
+        result["activated_abilities"] = [ability.to_dict() for ability in _STANDARD_TOKEN_ABILITIES[profile]]
+    if DEFINED_TOKEN_UNIFORM_COPY_FIELD in result:
+        result.update(validate_uniform_copy_values(result[DEFINED_TOKEN_UNIFORM_COPY_FIELD]))
+    if copy_exceptions:
+        from .token_copy_recipes import TokenCopyExceptionSpec, apply_copy_exception
+        definition = result.pop(DEFINED_TOKEN_FACES_FIELD)
+        for raw in copy_exceptions:
+            result = apply_copy_exception(result, TokenCopyExceptionSpec.from_dict(raw))
+        result[DEFINED_TOKEN_FACES_FIELD] = definition
     return result
 
 

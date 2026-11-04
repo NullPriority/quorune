@@ -32,6 +32,9 @@ _LIBRARY_DEFINITION = re.compile(
 )
 _X = re.compile(r"\bX\b")
 _RESULT_FIELDS = {
+    'discover': ('amount',),
+    'variable_library_selection': ('look_count',),
+    'incubate': ('amount',),
     'create_token_then_counters': ('amount',),
     'return_random_graveyard_cards': ('count',),
     "damage": ("amount",), "damage_fixed_set": ("amount",),

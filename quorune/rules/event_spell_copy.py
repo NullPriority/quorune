@@ -7,6 +7,17 @@ from ..event_spell_copy_model import (EventSpellCopySource,EVENT_SPELL_COPY_CONT
 from ..replacement.immutable import thaw_value
 
 
+def decode_event_spell_copy_source(value):
+    """Validate nested physical data at the rules-owned source boundary."""
+    from ..defined_token_faces import DEFINED_TOKEN_FACES_FIELD,DEFINED_TOKEN_ACTIVE_FACE_FIELD,defined_token_creation_identity
+    source=EventSpellCopySource.from_dict(value)
+    if DEFINED_TOKEN_FACES_FIELD in source.characteristics:
+        defined_token_creation_identity(source.characteristics)
+    elif DEFINED_TOKEN_ACTIVE_FACE_FIELD in source.characteristics:
+        raise ValueError('Copied spell orientation requires its complete physical faces')
+    return source
+
+
 def capture_event_spell_copy_source(host,item,*,departed=False):
     card=host.state.cards.get(item.card_object_id or '')
     if item.kind not in {'spell','spell_copy'} or card is None or card.zone!='stack':raise ValueError('Referenced copy source is not a current spell')
@@ -19,7 +30,8 @@ def capture_event_spell_copy_source(host,item,*,departed=False):
     for key in ('semantic_frame','currently_resolving','declared_scalar_amounts','targets_revalidated','target_groups_current'):
         context.pop(key,None)
     raw['context']=context
-    return EventSpellCopySource(raw,host._copyable_characteristics(card),host._stack_target_schema(item,program),card.logical_object_id,departed)
+    from ..token_copy_faces import spell_copy_characteristics
+    return EventSpellCopySource(raw,spell_copy_characteristics(host,card),host._stack_target_schema(item,program),card.logical_object_id,departed)
 
 
 def event_spell_copy_trigger_context(host,program,event,context):
@@ -35,7 +47,7 @@ def event_spell_copy_trigger_context(host,program,event,context):
 def resolve_event_spell_copy_source(host,effect):
     if 'copy_source' not in effect:return None
     raw=effect.get('copy_source')
-    source=EventSpellCopySource.from_dict(raw);item=source.item()
+    source=decode_event_spell_copy_source(raw);item=source.item()
     if effect.get('stack')!=item.ref:raise ValueError('Event spell-copy source reference changed')
     live=next((i for i in host.state.stack if i.ref==item.ref),None)
     if live is not None:
@@ -46,7 +58,7 @@ def resolve_event_spell_copy_source(host,effect):
     for pending in host.state.stack:
         raw=pending.context.get(EVENT_SPELL_COPY_CONTEXT)
         if raw is None:continue
-        known=EventSpellCopySource.from_dict(raw)
+        known=decode_event_spell_copy_source(raw)
         if known.item().ref==item.ref and known.logical_object_id==source.logical_object_id and known.departed:return known
     raise ValueError('Referenced spell departure information is unavailable')
 
@@ -56,7 +68,7 @@ def pin_event_spell_copy_departure(host,target):
     for pending in host.state.stack:
         raw=pending.context.get(EVENT_SPELL_COPY_CONTEXT)
         if raw is None:continue
-        source=EventSpellCopySource.from_dict(raw)
+        source=decode_event_spell_copy_source(raw)
         if source.item().ref==target.ref:selected.append((pending,source))
     batches=[]
     for index,batch in enumerate(getattr(host.state,'pending_trigger_batches',())):
@@ -65,7 +77,7 @@ def pin_event_spell_copy_departure(host,target):
             for pending in group.items:
                 raw=pending.payload.get('context',{}).get(EVENT_SPELL_COPY_CONTEXT)
                 if raw is None:continue
-                source=EventSpellCopySource.from_dict(raw)
+                source=decode_event_spell_copy_source(raw)
                 if source.item().ref==target.ref:
                     matching.add(pending.ref);selected.append((None,source))
         if matching:batches.append((index,batch,matching))

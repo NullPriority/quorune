@@ -404,45 +404,8 @@ class SemanticChoiceIntentHostMixin:
         )
 
     def complete_explore_intent(self, intent: ExploreCompletedIntent) -> None:
-        explorer = next(
-            (
-                card
-                for card in self.state.cards.values()
-                if card.ref == intent.explorer_ref
-            ),
-            None,
-        )
-        changed_objects = (
-            [explorer.object_id]
-            if explorer is not None
-            and explorer.logical_object_id
-            == intent.explorer_logical_object_id
-            else []
-        )
-        details = {
-            "player": intent.player,
-            "explorer": intent.explorer_ref,
-            "explorer_logical_object_id": (
-                intent.explorer_logical_object_id
-            ),
-            "result": intent.result,
-            "reason": intent.reason,
-        }
-        if intent.revealed_card_ref is not None:
-            details["revealed_card"] = intent.revealed_card_ref
-        self._log(
-            intent.actor,
-            "explore.complete",
-            f"{intent.explorer_ref} explored for {intent.player}.",
-            details,
-            importance=2,
-            changed_objects=changed_objects,
-            changed_players=[intent.player],
-        )
-        self._dispatch_semantic_event(
-            "permanent.explores",
-            details,
-        )
+        from ..semantic_runtime.explore import commit_explore_completion
+        commit_explore_completion(self, intent)
 
     def complete_connive_intent(self, intent: ConniveCompletedIntent) -> None:
         retained = intent.conniver
@@ -564,30 +527,8 @@ class SemanticChoiceIntentHostMixin:
         self,
         intent: MoveObjectsSimultaneouslyIntent,
     ) -> tuple[str, ...]:
-        cards = tuple(
-            self._resolve_object(
-                intent.actor,
-                ref,
-                zones=set(intent.expected_zones),
-                owned_only=intent.owned_only,
-                controlled_only=intent.controlled_only,
-            )
-            for ref in intent.object_refs
-        )
-        self._move_cards_simultaneously(
-            [
-                (card.object_id, intent.destination)
-                for card in cards
-            ],
-            reason=intent.reason,
-            log=False,
-            replacement_selections=intent.replacement_selections,
-            transition_kinds={
-                card.object_id: intent.transition_kind
-                for card in cards
-            },
-        )
-        return tuple(card.ref for card in cards)
+        from .simultaneous_movement import commit_simultaneous_movement
+        return commit_simultaneous_movement(self,intent)
 
     def choose_one_rest_bottom_random_intent(
         self,
@@ -1074,6 +1015,7 @@ class SemanticChoiceIntentHostMixin:
                     object_id=card.object_id,
                     expected_zone="battlefield",
                     expected_logical_object_id=card.logical_object_id,
+                    counter_name=intent.counter_name,
                 ),
             )
         except CounterRemovalError as exc:

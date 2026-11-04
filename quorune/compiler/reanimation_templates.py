@@ -13,6 +13,8 @@ from ..targets import TargetGroup
 
 FIXED_TARGET_REANIMATION_CAPABILITY = "zone.reanimate.fixed_target"
 FIXED_TARGET_REANIMATION_MECHANIC = "fixed-target-reanimation"
+FIXED_TARGET_REANIMATION_SET_CAPABILITY = "zone.reanimate.fixed_target_set"
+FIXED_TARGET_REANIMATION_SET_MECHANIC = "fixed-target-reanimation-set"
 
 _PERMANENT_TYPES = (
     "artifact",

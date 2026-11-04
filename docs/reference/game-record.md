@@ -10,6 +10,18 @@ concern: "game-record"
 
 # Game Record v3
 
+`unblocked_attacker_event_version: 1` independently pins post-blocker-declaration
+unblocked occurrences. Historical absence emits no new occurrence and remains
+absent on serialization. Unknown, boolean and manifest/checkpoint-mismatched
+versions reject through the same strict state-provenance owner.
+
+Current checkpoints and format provenance independently carry
+`block_characteristics_version: 1`. Block relationships seal public counterpart
+qualities before trigger discovery. Historical absence retains the earlier
+event shape and remains absent on serialization. Unknown, boolean and
+manifest/checkpoint-mismatched versions reject; existing runtime-trust checks
+retain their separate contract.
+
 Current games pin `characteristic_query_boundary_version: 1` in authoritative
 checkpoints and format provenance. Bounded public characteristic reads include
 their completed requested layer, including color changes used by later conditional
@@ -18,6 +30,132 @@ their existing owners. Historical absence preserves the former cutoff and remain
 absent on serialization. Unknown or boolean state versions and mismatched format
 provenance reject; declared runtime provenance retains its separate strict check.
 See [ADR 0160](../adr/0160-versioned-completed-characteristic-queries.md).
+
+Static trigger-participation schema two retains a closed rule and optional
+canonical subtype in the existing fragment family. Its new handler identifies
+additional instances or a prohibition; the fragment independently requires the
+same capability. Modifier and ability-source facts use the normalized event's
+current or look-back view. Additional instances retain ordinary pending-batch
+target choices, while prohibitions consume no quota. Historical schema-one
+fragments and contexts retain their exact shape; no global checkpoint field is
+introduced. See [ADR 0159](../adr/0159-typed-trigger-source-and-event-participation.md).
+
+The optional `turn_history.crime_history_version` is `1` for complete initial
+action crime recording. Historical absence stays absent and does not add facts
+during replay. The mode survives journal reset and turn rollover. A
+`crime_committed` event binds one player to one completed stack identity; its
+target fields identify that action rather than a later incarnation of a target.
+Malformed versions and crime facts without the declared mode reject. Copies,
+later target changes and ordinary battlefield target announcements retain
+their separate contracts. Declared runtime provenance remains exact; absence
+compatibility does not authorize rewriting a mismatched manifest.
+
+An optional per-card `permanent_composition` value has its own schema-one
+codec. It retains the current object identity, ordered physical snapshots and
+merge history while the battlefield has one live object. Nested physical
+snapshots use the canonical card codec and cannot recursively contain another
+live composition. Carrier identity, ownership, token/commander status, part
+uniqueness and step order are validated. Ordinary cards omit the field, retaining
+their existing serialized shape. These authoritative physical records are
+separate from principal projection and casting authority. The current physical
+kernel does not admit Mutate gameplay; see
+[ADR 0148](../adr/0148-physical-composition-storage.md) for lifecycle boundaries.
+
+Copied composition abilities can include a schema-one `copiable_program_source`
+fragment containing an Oracle source and face identity. Its closed codec retains
+repeated instances. These references select existing compiled programs subject
+to their ordinary trust checks; they contain no physical topology or mutation
+history. Existing cards and fragments retain their prior shapes.
+
+A schema-one `copiable_static_instance` fragment retains one compiled static
+key and a nonnegative creation timestamp. Copiable layer application rebuilds
+these instances from the current copied static components, retaining duplicate
+abilities and rebasing their creation times. Current applicability still uses
+the ordinary static-component keys; instance data cannot restore a removed
+component. Ordinary absence-shaped copy values and static-component payloads
+retain their existing codecs.
+
+Copy evaluation keeps ephemeral instance tracking across multiple copy effects,
+including an intervening empty ability catalog. That flag is not constructor,
+checkpoint or public snapshot data. Explicit copied program keys retain the
+current source after replacement of the earlier Oracle source. Static candidate
+queries read a separate layer-one view rather than restoring abilities from a
+final layer-six snapshot.
+
+Serialized zone occurrences can add a schema-one `composition` fact identifying
+the retained pre-departure parent, physical member count and permanent/component
+role. The permanent role contributes one leave/death event; physical roles
+contribute destination-card arrivals. Scope validation rejects contradictory
+parent incarnations or per-component sacrifice claims. Ordinary occurrences
+omit the fact and preserve their existing fingerprints and normalization.
+
+A physical commander restored by a composed graveyard or exile departure keeps
+its own designation and new logical incarnation. It uses the existing
+`state.commander_zone` selection frame; returning that card does not move the
+other components. Declining records only that incarnation, and later command
+casting retains the existing cast-count ledger. No new commander choice schema
+or record-trust exception is introduced by physical restoration.
+
+A merged damage source can carry `physical_commander_identities`, a closed
+schema-one object containing unique physical designation/Oracle pairs. Its
+replacement-event and final damage context field is
+`source_physical_commander_identities`. These immutable facts survive source
+departure and do not assign a designation to the retained noncommander root.
+Unknown, duplicate or contradictory data rejects. Ordinary source snapshots
+and damage contexts omit the new field, retaining their prior shape and scalar
+identity behavior. Legacy identity-version absence continues to select Oracle
+ledger keys; declared runtime provenance remains exact.
+
+Composition ordering uses the existing semantic-choice continuation with
+the version-one `choice.composition.departure-order.v1` handler. Its private
+effect retains the exact root/store request and original resolving effect; the
+parent semantic frame retains stack, program and cursor identity. Completion
+checks the effect against that current trusted instruction before retrying it.
+Unknown response fields and changed delivered choice schemas reject. Physical
+ordering options are issued only to the destination's ordering principal, and
+unknown face-down library parts keep masked labels.
+
+State-based physical ordering uses `permanent.composition_order` with a closed
+schema-one `composition_state_based_order` continuation. It records every
+departing subject and physical incarnation, resolved destination, ordering actor,
+live APNAP order, replacement selections, public state-based frame and collected
+permutations. Owners order whole destination groups, including ordinary cards.
+Pending load retains all choices without moving any subject. Completion checks
+the current frame, issued payload, principal, full permutation and recomputed
+state-based batch before the existing zone owner commits it. The retained turn
+anchor may be departed; only surviving ordering participants receive authority.
+This frame contains no fabricated stack program or semantic instruction cursor;
+see [ADR 0152](../adr/0152-state-based-physical-departure-order.md).
+
+Plain ordering requests retain their schema-one fields and serialized shape.
+Schema-two requests additionally bind the resolved destination and its ordering
+actor when a replacement changes that contract. The original effect actor
+remains separately bound to the resolution frame. On retry, the canonical
+replacement owner validates saved selections; only the derived
+`_replacement_selections` field is excluded from comparison with the compiled
+instruction. Represented fixed counter results are projected onto each new
+physical incarnation while retaining their source and placing player.
+
+Composed commander hand/library events retain closed `commander_components`
+source facts, selected `commander_component_returns` designations and a
+nonnegative `commander_destination_epoch`. These fields are absent from ordinary
+events. A destination-changing replacement advances the composed epoch, allowing
+the rule to be offered again for that changed event. Schema-three physical
+ordering requests additionally retain `component_destinations`; only the
+remaining destination cards enter the owner's permutation. Completion rebuilds
+the full physical commitment order and uses the same replacement selections.
+Earlier ordering request shapes remain unchanged.
+
+Token-parent zone events can retain closed `composition_card_components`
+identities and a `composition_card_event` result for the physical cards. The
+result is a scoped value within the original replacement event, sharing its
+applied-effect history and affected controller; it is not a second independently
+ordered replacement batch. Ordinary events omit both fields. Whole-permanent
+replacements update both scopes, and fixed counter leaves retain their actual
+scope. Schema-four physical ordering requests bind the existing departure batch
+and previously collected group permutations. Each issued order belongs to the
+current destination's principal, and no component moves before all groups are
+ordered. Earlier request schemas retain their codecs.
 
 Cipher records retain a version-one typed `cipher_encoding` link on the
 physical exiled card, including both original incarnations. A committed encoded
@@ -82,6 +220,23 @@ absence preserves the former bookkeeping and stays absent on serialization.
 Unknown, boolean and manifest/checkpoint mismatches reject. This marker does not
 alter declared runtime-trust checks; see
 [ADR 0156](../adr/0156-versioned-library-order-knowledge.md).
+
+Controller reveal-until instructions retain a closed schema-one stop count,
+characteristic predicate and complete result. Their prefix bridge delegates to
+existing identity-pinned reveal, selection, entry and remainder continuations.
+It adds no state or checkpoint marker and does not change historical fixed
+selection choices. See [ADR 0157](../adr/0157-controller-reveal-until-partitions.md).
+
+Trigger-limit schema two adds the explicit `event_incarnation` source scope for
+represented departure/death subscriptions. Schema one retains its exact two-field
+shape and nondeparture validation. A new pending trigger's closed
+`event_source_trigger_usage` fact identifies the event-time source object,
+logical incarnation, semantic key, ability and turn sequence. The existing batch
+retains the accepted claim without changing captured LKI or a fresh incarnation.
+No global state or checkpoint field is added, and earlier trigger contexts omit
+the fact. Unknown scopes, malformed claims and missing authority reject; declared
+runtime provenance remains exact. See
+[ADR 0158](../adr/0158-event-incarnation-trigger-usage.md).
 
 The `permanent.timestamp_order` decision retains a schema-one closed transform
 request and continuation. Current subjects, expected transform counts, turn/step
@@ -153,6 +308,21 @@ resolves a semantic program and needs its binding-provenance row. Actions with
 no such resolution retain their existing command and decision records without
 constructing an unused binding registry. A later semantic resolution validates
 fresh registry and evidence inputs; no action-level snapshot is retained.
+The session retains references to actual pre-command physical spell sources for
+that command's execution-provenance lookup. A resolving merge may detach its
+source from the live object map before the row is recorded. The lookup accepts
+only the captured matching physical object and never recreates live membership.
+These references are ephemeral; manifest fields and trust validation stay
+unchanged.
+
+An intrinsic `draw.miracle_reveal` continuation retains the exact prospective
+library object, turn facts, source program, resolved draw journal and remaining
+instruction actions. Its schema is separate from battlefield-source reveals.
+Acceptance commits the draw before a linked trigger records the new hand
+incarnation. Copies retain that subject and the original reveal-scope identity;
+their current controller owns the resolving cast choice. Saved casting choices
+revalidate the live trigger, complete source and current cost options before
+delegating mutation to the ordinary casting owner.
 
 An `opening.hand` decision records a versioned private continuation containing
 turn order, remaining final-hand source incarnations and the current chooser.
@@ -268,6 +438,34 @@ copy identity. The copiable `_prepare_spell` value stores alternative spell
 characteristics separately from the noncopiable designation. Copies cast from
 exile retain their link through stack creation so the accepted cast consumes
 the original designation once. Ordinary records omit these annotations.
+
+Defined transforming-token records retain a closed `defined_token_faces`
+annotation established at creation. `active_face` and `transform_count` describe
+physical orientation independently of `copy_overrides`. Copiable face transport
+uses `defined_transforming_token`, `defined_token_active_face`, optional typed
+`defined_token_copy_exceptions`, and optional resolved
+`defined_token_uniform_copy_values`. An entry or ongoing copy effect freezes one
+face and drops that transport metadata. Token-copy creation reconstructs physical
+identity from the authoritative copiable snapshot, omitting source cleanup,
+designation and counter state. Records without defined faces omit these values.
+
+New games pin `token_copy_value_version: 1` in GameState and record format
+provenance. New tokens carry the same noncopiable annotation for characteristic
+read precedence. Canonical snapshots isolate source cleanup and use current
+copiable names. Historical absence omits the marker and preserves the prior
+direct-copy payload, label and original-definition precedence. Unknown or
+Boolean versions and manifest/checkpoint disagreement reject. The existing
+runtime-trust check still rejects a differently pinned runtime before commands;
+readable historical data does not bypass it. See
+[ADR 0147](../adr/0147-versioned-token-copy-values.md).
+The independent `face_down_characteristics_version` remains authoritative for
+face-down values and anonymous identity in either general copy-value mode.
+
+An Incubate replacement continuation uses semantic intent kind `incubate` and a
+closed version-one identity containing actor, controller, resolved amount,
+source reference and reason. The replacement selection queue remains separate.
+A second incubation retains the same resolved amount in its following effect;
+pending load and replay resume only the uncommitted entry transaction.
 
 Object-selecting replacement journals may carry an optional `objects` array of
 distinct selected references. The selected typed operation validates that set

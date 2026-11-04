@@ -116,6 +116,7 @@ class FixedPublicStateFact(StrEnum):
         "controller_artifacts_entered_this_turn"
     )
     CONTROLLER_LIFE_GAINED_THIS_TURN = "controller_life_gained_this_turn"
+    CONTROLLER_COMMITTED_CRIME_THIS_TURN = 'controller_committed_crime_this_turn'
     CONTROLLER_LIFE_LOST_THIS_TURN = "controller_life_lost_this_turn"
     CONTROLLER_PERMANENTS_SACRIFICED_THIS_TURN = (
         "controller_permanents_sacrificed_this_turn"
@@ -298,6 +299,9 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.SOURCE_RENOWNED and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Renowned state requires one current source designation fact')
+    if fact is FixedPublicStateFact.CONTROLLER_COMMITTED_CRIME_THIS_TURN and (
+            schema_version!=4 or amount!=1 or parameter is not None):
+        raise FixedPublicStateConditionError('Crime qualification requires one current-turn history boolean')
     if schema_version not in {3, 4}:
         if (schema_version != 7 or fact is not FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON
                 or amount != 1 or type(parameter) is not str or parameter not in 'WUBRG' or len(parameter) != 1):
