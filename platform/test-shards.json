@@ -1092,6 +1092,7 @@
       "test_shared_modal_target_resolution",
       "test_source_attack_alone",
       "test_source_characteristic_compositions",
+      "test_source_counter_quantity_sequences",
       "test_source_damage_death_triggers",
       "test_source_maintenance",
       "test_source_sacrifice_native",

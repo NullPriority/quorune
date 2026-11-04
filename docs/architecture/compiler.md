@@ -4269,6 +4269,15 @@ Each explicit definition keeps its own instruction binding. A later quantity
 reads after earlier instructions and their replacements commit; suspended
 state actions do not repeat the earlier life change. Unknown clauses and
 ambiguous cross-instruction object references remain residual.
+`compiler/source_counter_quantity_sequences.py` preserves a narrower source
+context through this composition: one fixed counter placement on the original
+source followed by one nontargeted scalar result. A closed self-event may bind
+the prefix's source pronoun; a later named-counter pronoun inherits only that
+already proven source reference. The later quantity reads after actual counter
+replacement. If the source leaves, the prefix skips the old incarnation and
+the scalar owner retains its ordinary immediate last-known facts. Token
+definitions with fixed keywords remain under the token owner. Unknown linked
+subjects, extra clauses and independently unsupported results stay residual.
 Source attacks, blocks, and becomes-blocked results may use a source pronoun
 with a complete fixed keyword/modifier body or an independently closed public
 characteristic scalar. The child result retains its original source span and

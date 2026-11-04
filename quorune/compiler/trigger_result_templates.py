@@ -30,9 +30,9 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .delayed_object_templates import delayed_object_result
     delayed=delayed_object_result(binding,body,card_name=card_name)
     if delayed is not None:return delayed
-    from .source_self_effect_templates import source_characteristics_declaration_sequence
-    source_sequence = source_characteristics_declaration_sequence(body, card_name=card_name, compile_effect=effect_template)
-    if source_sequence is not None:return source_sequence, True
+    from .source_counter_quantity_sequences import source_bound_sequence_result
+    source_sequence=source_bound_sequence_result(binding,body,card_name=card_name,effect_template=effect_template)
+    if source_sequence is not None:return source_sequence
     from .source_self_effect_templates import source_cycled_optional_damage_result
     cycled_damage = source_cycled_optional_damage_result(binding, body) if _allow_optional and _allow_payment else None
     if cycled_damage is not None:

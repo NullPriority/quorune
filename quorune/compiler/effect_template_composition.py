@@ -146,6 +146,9 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .source_counter_quantity_sequences import source_counter_quantity_sequence
+    source_quantity=source_counter_quantity_sequence(text,card_name=source_name,compile_fixed=compile_fixed)
+    if source_quantity is not None:return source_quantity
     from .target_player_sequences import fixed_target_player_sequence_template
     player_sequence=fixed_target_player_sequence_template(text)
     if player_sequence is not None:return player_sequence

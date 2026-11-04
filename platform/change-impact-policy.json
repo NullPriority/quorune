@@ -11749,6 +11749,24 @@
         "test_ravenous_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-counter-then-scalar-result",
+      "patterns": [
+        "quorune/compiler/source_counter_quantity_sequences.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/compiler/effect_template_composition.py",
+        "tests/test_source_counter_quantity_sequences.py",
+        "tests/fixtures/source-counter-quantity-cards.json"
+      ],
+      "test_modules": [
+        "test_source_counter_quantity_sequences",
+        "test_scalar_effect_amounts",
+        "test_closed_effect_programs",
+        "test_fixed_source_effect_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

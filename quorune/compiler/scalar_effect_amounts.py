@@ -91,6 +91,10 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     normalized = normalized_target_hand_damage(text.strip(),source_name)
     tokens=re.fullmatch(r'Create a number of (?P<definition>[^.]+? tokens?) equal to (?P<value>[^.]+?)\.?',normalized,re.I)
     if tokens is not None:normalized=f"Create X {tokens['definition']}, where X is {tokens['value']}."
+    token_counter=re.fullmatch(r'Create (?:a|an|one) (?P<definition>[^.]+? token(?: with [^.]+?)?) for each (?P<value>[^.]+? counters? on [^.]+?)\.',normalized,re.I)
+    if token_counter is not None:
+        definition=re.sub(r'\btoken\b','tokens',token_counter['definition'],count=1,flags=re.I)
+        normalized=f"Create X {definition}, where X is the number of {token_counter['value']}."
     definition = re.fullmatch(r"(?P<body>[^.]+?), where X is (?:equal to )?(?P<value>.+?)\.?", normalized, re.I)
     producer = None
     multiplier = 1
