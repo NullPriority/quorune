@@ -8,8 +8,10 @@ _RESOLVING=ContextVar('resolving_ravenous_entry_x',default=None)
 
 
 def ravenous_reader_present(host):
-    return any(program.event_condition.get('field')==ENTRY_X_CONDITION and host.semantic_program_is_current_trusted(program)
-        for program in host.semantics.programs_for_event('permanent.enter.self') if isinstance(program.event_condition,Mapping))
+    from ..entry_x_amount_model import entry_x_amount_dependencies
+    return any((isinstance(program.event_condition,Mapping) and program.event_condition.get('field')==ENTRY_X_CONDITION
+        or entry_x_amount_dependencies(program.effects)) and host.semantic_program_is_current_trusted(program)
+        for program in host.semantics.programs_for_event('permanent.enter.self'))
 
 
 @contextmanager

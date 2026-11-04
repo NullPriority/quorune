@@ -53102,6 +53102,98 @@
     {
       "applicability": {
         "exclusions": [
+          "nonentry events",
+          "unrepresented local X definitions",
+          "new distribution,target-cardinality or search predicates",
+          "unsupported printed siblings"
+        ],
+        "inputs": [
+          "versioned committed-entry incarnation and X",
+          "existing fixed result-slot projection",
+          "ordinary trigger target/effect ownership"
+        ],
+        "outputs": [
+          "counter-independent result amount",
+          "copied spell X retained without casting",
+          "uncast entry zero",
+          "queued source departure preserves original value"
+        ],
+        "summary": "Use sealed original entry X in independently closed result slots of an X-cost permanent self-entry trigger."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.declared_effect_amount",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "Verified entry-X authority withdrawal rejects new entry amounts while ordinary spell X and plain entry damage remain exact; executable descriptor infers authority without annotations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.source_entry_x",
+      "implementation_components": [
+        "quorune.entry_x_amount_model.EntryXAmountSpec",
+        "quorune.entry_x_amount_model.resolve_entry_x_amount",
+        "quorune.entry_x_amount_model.entry_x_amount_runtime_dependencies",
+        "quorune.compiler.entry_x_results.entry_x_trigger_effect_compiler",
+        "quorune.compiler.declared_effect_amounts.declared_amount_shape_context",
+        "quorune.rules.ravenous.ravenous_entry_information"
+      ],
+      "implementation_mutation_rationale": "Substituting the queued ability stack X for its sealed original entry X fails the independent amount assertions.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_zoanthrope_retains_entry_x_after_source_return_and_counter_replacement",
+        "test_actual_zoanthrope_spell_copy_and_original_use_the_same_announced_x",
+        "test_actual_treefolk_stats_and_uncast_gadwick_entry_use_sealed_x_and_zero",
+        "test_actual_meathook_negative_entry_x_changes_whole_set_before_death_triggers"
+      ],
+      "multiplayer_tests": [
+        "test_actual_zoanthrope_retains_entry_x_after_source_return_and_counter_replacement",
+        "test_actual_zoanthrope_spell_copy_and_original_use_the_same_announced_x",
+        "test_actual_treefolk_stats_and_uncast_gadwick_entry_use_sealed_x_and_zero",
+        "test_actual_meathook_negative_entry_x_changes_whole_set_before_death_triggers"
+      ],
+      "negative_tests": [
+        "test_unbound_other_events_locally_defined_x_and_new_target_grammar_do_not_gain_entry_x",
+        "test_verified_entry_x_withdrawal_keeps_ordinary_spell_x_and_plain_entry_damage",
+        "test_codec_and_projection_reject_coercion_unknown_fields_and_nonresult_slots"
+      ],
+      "official_rules": [
+        "107.3m",
+        "400.7",
+        "608.2b",
+        "608.2c",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_entry_x_lowers_only_existing_result_slots"
+      ],
+      "privacy_tests": [
+        "test_actual_zoanthrope_retains_entry_x_after_source_return_and_counter_replacement"
+      ],
+      "replay_tests": [
+        "test_actual_zoanthrope_retains_entry_x_after_source_return_and_counter_replacement",
+        "test_actual_zoanthrope_spell_copy_and_original_use_the_same_announced_x",
+        "test_actual_treefolk_stats_and_uncast_gadwick_entry_use_sealed_x_and_zero",
+        "test_actual_meathook_negative_entry_x_changes_whole_set_before_death_triggers"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "source-entry or past-permanent payment facts",
           "arbitrary target cardinality and unrepresented result predicates",
           "copied payment spending, colorless as a color and client-authored payment history"
@@ -77794,7 +77886,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 687,
+  "registry_version": 688,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

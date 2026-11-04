@@ -16,6 +16,7 @@ from ..query_effect_amount_model import (
 )
 from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
+from ..entry_x_amount_model import ENTRY_X_AMOUNT_KIND,EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,ENTRY_X_AMOUNT_CAPABILITY
 
 
 DECLARED_EFFECT_AMOUNT_MECHANIC = "declared-effect-amount"
@@ -161,7 +162,7 @@ def declared_effect_amount_template(
 
 def contains_declared_effect_amount(value: Any) -> bool:
     if isinstance(value, Mapping):
-        return (value.get("kind") == "scalar_effect_amount" and value.get("binding_id") is not None) or value.get("kind") == CAST_X_AMOUNT_KIND or (
+        return (value.get("kind") == "scalar_effect_amount" and value.get("binding_id") is not None) or value.get("kind") in {CAST_X_AMOUNT_KIND,ENTRY_X_AMOUNT_KIND} or (
             value.get("kind") == PUBLIC_QUERY_AMOUNT_KIND and value.get("schema_version") == 2
         ) or any(contains_declared_effect_amount(child) for child in value.values())
     return isinstance(value, (list,tuple)) and any(contains_declared_effect_amount(child) for child in value)
@@ -234,7 +235,7 @@ def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:
 
 def declared_amount_dependencies(mechanics: set[str]) -> set[str]:
     from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY, SCALAR_AMOUNT_MECHANIC
-    return ({DECLARED_AMOUNT_CAPABILITY} if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics else set()) | ({SCALAR_AMOUNT_CAPABILITY} if SCALAR_AMOUNT_MECHANIC in mechanics else set())
+    return ({DECLARED_AMOUNT_CAPABILITY} if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics else set()) | ({SCALAR_AMOUNT_CAPABILITY} if SCALAR_AMOUNT_MECHANIC in mechanics else set()) | ({ENTRY_X_AMOUNT_CAPABILITY} if ENTRY_X_AMOUNT_MECHANIC in mechanics else set())
 
 
 def is_closed_declared_amount_program(program: Any, *, required_dependencies: Sequence[str],
@@ -263,10 +264,12 @@ def declared_amount_shape_context(
     count = 0
     def project(value: Any, operation: str, path: tuple[str,...]) -> Any:
         nonlocal count
-        if isinstance(value, Mapping) and value.get("kind") in {CAST_X_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_KIND}:
+        if isinstance(value, Mapping) and value.get("kind") in {CAST_X_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_KIND,ENTRY_X_AMOUNT_KIND}:
             if not _result_slot(operation,path):
                 raise PublicQueryAmountError("Declared amount is outside a result slot")
-            if value["kind"] == CAST_X_AMOUNT_KIND:
+            if value['kind']==ENTRY_X_AMOUNT_KIND:
+                spec=EntryXAmountSpec.from_dict(value)
+            elif value["kind"] == CAST_X_AMOUNT_KIND:
                 spec = CastXAmountSpec.from_dict(value)
             else:
                 if "public-query-effect-amount" not in mechanics:
@@ -288,4 +291,4 @@ def declared_amount_shape_context(
         fixed = tuple(project(effect,str(effect.get("op") or ""),()) for effect in effects)
     except PublicQueryAmountError:
         return None
-    return (fixed, mechanics - {DECLARED_EFFECT_AMOUNT_MECHANIC,"public-query-effect-amount"}) if count else None
+    return (fixed, mechanics - {DECLARED_EFFECT_AMOUNT_MECHANIC,"public-query-effect-amount",ENTRY_X_AMOUNT_MECHANIC}) if count else None

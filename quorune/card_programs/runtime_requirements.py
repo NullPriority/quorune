@@ -111,6 +111,9 @@ def _event_query_runtime_requirements(program):
     from ..source_entry_cast_information import source_entry_cast_program_dependencies
     from ..rules.graveyard_return_choices import graveyard_return_choice_runtime_dependencies
     required,blockers=set(),set()
+    from ..entry_x_amount_model import entry_x_amount_runtime_dependencies
+    try:required.update(entry_x_amount_runtime_dependencies(program))
+    except (ValueError,TypeError) as exc:blockers.add(f'runtime_entry_x_amount:invalid:{exc}')
     from ..ravenous_model import ravenous_runtime_dependencies
     try:required.update(ravenous_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_ravenous:invalid:{exc}')

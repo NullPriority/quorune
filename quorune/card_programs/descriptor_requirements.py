@@ -7,6 +7,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..entry_x_amount_model import entry_x_amount_dependencies
+        if value.get('kind')=='source_entry_x_amount':return entry_x_amount_dependencies(value)
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies
         returned=graveyard_self_return_dependencies(value)
         if returned:return returned

@@ -456,6 +456,7 @@
     "tests/fixtures/entry-designation-cards.json",
     "tests/fixtures/entry-keyword-counter-choice-cards.json",
     "tests/fixtures/entry-value-consumer-cards.json",
+    "tests/fixtures/entry-x-result-cards.json",
     "tests/fixtures/escaped-entry-counter-cards.json",
     "tests/fixtures/event-card-return.json",
     "tests/fixtures/event-player-fixed-damage-cards.json",

@@ -11767,6 +11767,25 @@
         "test_fixed_source_effect_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "self-entry-x-result-amounts",
+      "patterns": [
+        "quorune/entry_x_amount_model.py",
+        "quorune/compiler/entry_x_results.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/rules/ravenous.py",
+        "quorune/rules/fixed_resolution_characteristic_shapes.py",
+        "tests/test_entry_x_results.py",
+        "tests/fixtures/entry-x-result-cards.json"
+      ],
+      "test_modules": [
+        "test_entry_x_results",
+        "test_ravenous_rules",
+        "test_declared_effect_amounts",
+        "test_gain_and_get_sets",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

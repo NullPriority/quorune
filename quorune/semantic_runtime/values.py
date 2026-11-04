@@ -89,6 +89,10 @@ def _resolve_attachment_reference(
 
 def _resolve_typed_semantic_value(host, value, item):
     """Delegate typed amounts and public predicates to their narrow owners."""
+    if value['kind']=='source_entry_x_amount':
+        from ..entry_x_amount_model import resolve_entry_x_amount
+        try:return resolve_entry_x_amount(value,item)
+        except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value['kind'] in {'source_entry_designation_predicate','source_entry_designation_scope'}:
         from ..designation_prevention import resolve_designation_predicate
         try:return resolve_designation_predicate(value,item)
@@ -170,7 +174,7 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
         return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)

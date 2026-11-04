@@ -371,6 +371,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-resolution-mana':('mana.production.fixed_resolution',),
     'variable-resolution-mana-choice':('mana.production.variable_resolution_choice',),
     'ravenous':('keyword.ravenous.entry_x_and_draw',),
+    'source-entry-x-result-amount':('quantity_expression.source_entry_x',),
     'created-token-counter-followup':('token.creation.post_creation_counter',),
     'incubate':('token.creation.incubate',),
     'discover':('library.discover.controller',),

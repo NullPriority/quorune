@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .compiler.entry_x_results import entry_x_trigger_node_compiler
 from .source_entry_cast_information import source_entry_cast_runtime_coverage
 
 import hashlib
@@ -1163,7 +1164,7 @@ def _compile_face(
      source_attachment_relation) = _face_type_context(type_line)
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
-    contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
+    contextual_trigger_node = entry_x_trigger_node_compiler(record,trigger_node=_trigger_node,ordinary_effect=contextual_trigger_effect_template,match_source=_source_self_zone_trigger_match)
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
     from .compiler import station_context_nodes as station_context_owner
     material_rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, material_rows)

@@ -881,6 +881,17 @@ counter count, so counter replacements do not change the threshold. The queued
 draw retains its original entry fact after source departure. Malformed keyword
 parameters, noncreatures and unrepresented printed siblings remain residual.
 
+`compiler/entry_x_results.py` also binds ordinary self-entry instructions on
+X-cost permanent cards to that sealed entry fact under CR 107.3m. Its versioned
+`source_entry_x_amount` expression requires
+`quantity_expression.source_entry_x` and the original self-entry envelope.
+The existing declared-amount projection admits only independently closed result
+slots; target cardinalities, predicates, distributions and unknown grammar do
+not become amounts. Damage, draw, fixed token definitions and resolution-set
+stat changes keep their own runtime authority. Copied spells retain X; uncast
+entries use zero; later source departure does not change the queued value.
+Locally defined X and other event kinds retain their separate owners.
+
 The self-zone effect compiler represents the exact self-entry “if you cast it”
 guard with `trigger.condition.source_entry_cast`. Its structural runtime minimum
 requires the complete entry/intervening contract. Trigger discovery checks the

@@ -10,6 +10,13 @@ concern: "game-record"
 
 # Game Record v3
 
+Represented self-entry X results retain `source_entry_x_information` in their
+zone occurrence and queued trigger context. Its closed version-one value pins
+the entered incarnation and the resolving spell's X, including copied spells;
+uncast entries retain zero. New result descriptors consume this sealed value
+after source departure. Records without an entry-X reader preserve their
+earlier event shape; malformed or mismatched identities reject.
+
 `permanent_event_state_version: 1` pins sealed public state used by represented
 zone and damage occurrences. Departure facts describe the old permanent;
 after-events use only the new object's current facts. Damage proposals retain
