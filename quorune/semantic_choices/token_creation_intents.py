@@ -103,4 +103,3 @@ def execute_token_creation_intent(
             once=True,
         )
     return created_refs
-

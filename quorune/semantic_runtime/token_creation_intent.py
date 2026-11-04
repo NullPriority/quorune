@@ -102,4 +102,3 @@ class CreateTokenIntent:
                 family="Token creation",
             ),
         )
-

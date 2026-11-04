@@ -48,5 +48,3 @@ class MutateSpec:
             'target_schema':self.target_schema(),
             'effects':[{'op':'mutate_merge','target':'$target.0'}]}
             for index,requirements in enumerate(variants,start=1))
-
-

@@ -2773,4 +2773,3 @@ class CompositionReplacementProjectionTests(unittest.TestCase):
         prepared=self.prepared();child=replace(prepared.counter_events[0],applied_effects=('double',))
         prepared.counter_events=(child,);prepared.event=replace(prepared.event,children=(child,))
         with self.assertRaises(GameRuleError):validate_composition_replacements(prepared)
-

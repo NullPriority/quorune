@@ -1144,6 +1144,26 @@ class GeneratedArtifactFinalizationTests(unittest.TestCase):
             <= set(observed)
         )
 
+    def test_finalizer_rejects_staged_and_unstaged_whitespace_before_publication(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(["git", "init", "--quiet", str(root)], check=True, capture_output=True)
+            path = root/"source.py"
+            path.write_text("value = 1\n\n", encoding="utf-8", newline="\n")
+            subprocess.run(["git", "add", "source.py"], cwd=root, check=True, capture_output=True)
+
+            def runner(_check_id, command):
+                if command[0] != "git":
+                    return 0
+                return subprocess.run(command, cwd=root, capture_output=True).returncode
+
+            self.assertEqual(["staged-diff-hygiene"], [row["check"] for row in check_all((), runner=runner)])
+            path.write_text("value = 1\n", encoding="utf-8", newline="\n")
+            subprocess.run(["git", "add", "source.py"], cwd=root, check=True, capture_output=True)
+            self.assertEqual((), check_all((), runner=runner))
+            path.write_text("value = 1\n\n", encoding="utf-8", newline="\n")
+            self.assertEqual(["diff-hygiene"], [row["check"] for row in check_all((), runner=runner)])
+
     def test_generated_hook_installer_is_idempotent_and_preserves_foreign_policy(self):
         with TemporaryDirectory() as raw:
             root = Path(raw)

@@ -196,5 +196,3 @@ class MiracleRevealedHand:
         if value['kind'] != 'revealed_hand':
             raise MiracleModelError('Miracle revealed hand has the wrong role')
         return cls(**{k:FixedMiracleCost.from_dict(v) if k=='cost' else v for k,v in value.items() if k!='kind'})
-
-

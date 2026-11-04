@@ -492,7 +492,7 @@ generators and their downstream automatic or derived-only consumers until a
 bounded pass changes nothing. A requested database-backed corpus rebuild occurs
 only on the first pass because the DAG already orders all of its consumers
 afterward. It then runs all freshness checks, documentation validation, and
-diff hygiene. Pass `--db <path>` or set
+staged and unstaged diff hygiene. Pass `--db <path>` or set
 `MTG_CARD_DB` when a card-data-backed frontier or full reusable-piece rebuild is
 required. The manifest owns the full/Commander Oracle and CardProgram census
 before the card-unlock frontier, so the frontier cannot compare current source

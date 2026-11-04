@@ -193,4 +193,3 @@ class FixedToxicTokenRuntimeTests(unittest.TestCase):
         with patch('quorune.compiler.token_templates.ToxicSpec', side_effect=lambda *, value: ToxicSpec(value=value + 1)):
             with self.assertRaises(AssertionError):
                 self.run_original_mite_creation_and_combat_scenario()
-

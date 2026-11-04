@@ -59,4 +59,3 @@ def trigger_participation_rule(name,subtype=None):
     if name=='prevent_creature_enters_dies':return TriggerParticipationRule((*entering,*leaving),event_queries=(creature,),source_relation='any',outcome='prevent')
     if name=='prevent_opponent_permanent_enters':return TriggerParticipationRule(entering,(permanent,),source_relation='opponent',outcome='prevent')
     raise ValueError('Trigger participation rule is not represented')
-

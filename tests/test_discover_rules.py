@@ -653,4 +653,3 @@ class DiscoverNativeTests(unittest.TestCase):
         self.assertEqual(('command','library','hand','hand'),tuple(engine.state.cards[card.object_id].zone for card in cards))
         self.assertEqual(1,sum(event.code=='library.discover' for event in engine.state.events))
         H.replay(self,session,load=True)
-
