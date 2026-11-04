@@ -11901,6 +11901,24 @@
         "test_public_query_action_registration",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "public-set-quantity-and-source-counter-modifiers",
+      "patterns": [
+        "quorune/compiler/public_query_effect_amounts.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/compiler/source_counter_modifiers.py",
+        "tests/test_public_set_quantity_results.py",
+        "tests/fixtures/public-set-quantity-cards.json"
+      ],
+      "test_modules": [
+        "test_public_set_quantity_results",
+        "test_leading_duration_quantities",
+        "test_public_query_effect_amounts",
+        "test_scalar_effect_amounts",
+        "test_public_scalar_stat_definitions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

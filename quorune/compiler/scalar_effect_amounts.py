@@ -87,6 +87,10 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
+    from .source_counter_modifiers import source_counter_modifier_template
+    counter=source_counter_modifier_template(text,source_name=source_name,compile_fixed=compile_fixed,
+        compile_scalar=scalar_effect_amount_template,event=event,source_event=source_event)
+    if counter is not None:return counter
     from .created_token_cleanup_templates import scalar_created_token_cleanup_template
     cleanup = scalar_created_token_cleanup_template(text, compile_inner=scalar_effect_amount_template,
         source_name=source_name, compile_fixed=compile_fixed, event=event, source_event=source_event)

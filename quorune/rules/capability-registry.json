@@ -52464,6 +52464,7 @@
         "quorune.compiler.noncreature_quantity_subtypes._plural",
         "quorune.compiler.noncreature_quantity_subtypes.noncreature_quantity_subtype_fields",
         "quorune.compiler.program_generation._is_closed_public_query_amount_program",
+        "quorune.compiler.public_query_effect_amounts._fixed_shape_effects",
         "quorune.compiler.public_query_effect_amounts._query_characteristic_candidate",
         "quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template",
         "quorune.dynamic_characteristics.query_characteristic_count",
@@ -52719,11 +52720,12 @@
         "quorune.compiler.scalar_effect_amounts._characteristic",
         "quorune.compiler.scalar_effect_amounts.scalar_amount_shape_context",
         "quorune.compiler.scalar_effect_amounts.scalar_effect_amount_template",
+        "quorune.compiler.scalar_effect_amounts.source_scalar_effect_amount_template",
+        "quorune.compiler.source_counter_modifiers.source_counter_modifier_template",
         "quorune.scalar_effect_amount_model.ScalarEffectAmountSpec",
         "quorune.scalar_effect_amounts.pin_scalar_characteristic_departures",
         "quorune.scalar_effect_amounts.resolve_scalar_effect_amount",
-        "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.compiler.scalar_effect_amounts.source_scalar_effect_amount_template"
+        "quorune.semantic_runtime.values.resolve_semantic_value"
       ],
       "implementation_mutation_rationale": "The new-incarnation characteristic-read mutant fails the immediate-departure LKI assertion; falsely identifying an unrelated departing object as the scalar reference exposes the independently prohibited future evaluation. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary. Restoring target precedence for a bound source-led possessive is killed by distinct source and target origin assertions; actual unequal-power native cases independently verify current and departure reads.",
       "implementation_mutation_status": "killed",
@@ -78094,7 +78096,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 695,
+  "registry_version": 696,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

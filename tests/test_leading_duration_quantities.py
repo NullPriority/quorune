@@ -34,10 +34,11 @@ class LeadingDurationQuantityCompilerTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIsNone(_reviewed_effect_template(text,card_name='Leading duration fixture')[0])
 
-    def test_unrepresented_global_quantity_result_keeps_its_boundary(self):
-        self.assertIsNone(_reviewed_effect_template(
-            'Until end of turn, creatures you control gain trample and get +1/+1 for each basic land type among lands you control.',
-            card_name='Leading duration fixture')[0])
+    def test_global_quantity_result_requires_composition_over_the_fixed_leaf(self):
+        from quorune.compiler.fixed_public_characteristic_sets import fixed_public_characteristic_set_effect_template
+        text='Until end of turn, creatures you control gain trample and get +1/+1 for each basic land type among lands you control.'
+        self.assertIsNone(fixed_public_characteristic_set_effect_template(text))
+        self.assertIsNotNone(_reviewed_effect_template(text,card_name='Leading duration fixture')[0])
 
     def test_normal_complete_program_requires_the_existing_public_quantity_owner(self):
         import json

@@ -470,6 +470,20 @@ fixed until cleanup; a keyword grant is not multiplied by that quantity.
 This grammar does not admit unrepresented global quantity results, new
 durations, conditions or quantity references.
 
+Per-object public quantities also compose with the existing resolution-locked
+creature-set result. Its fixed subject validator owns affected identities;
+the amount owner supplies only signed numeric result fields. Zero counts keep
+ordinary keyword grants, and creatures entering after resolution remain
+outside the fixed set. Existing declared-X global instructions retain their
+instruction-scoped amount owner and payload.
+
+`compiler/source_counter_modifiers.py` lowers complete per-source-counter
+temporary modifiers through the existing scalar definition owner. It retains
+the printed counter name, source identity, each field's coefficient, target
+schema and ordinary keyword grant. A distinct instruction identity preserves
+different coefficient forms. Ambiguous references and unrepresented scalar
+coefficients remain residual.
+
 Scalar token-quantity lowering accepts the complete “create a number of …
 tokens equal to …” form by normalizing only its quantity to the existing
 declared-X result. Fixed token characteristics, tapped entry and abilities
