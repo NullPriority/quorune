@@ -24730,7 +24730,8 @@
           "recipient-bound typed declaration legality, activation, or trigger discovery without runtime prose parsing",
           "typed static-component addition or removal applicability",
           "reattachment timestamp ordering",
-          "immediate detach, source-departure, phasing, and granting-ability-removal expiration"
+          "immediate detach, source-departure, phasing, and granting-ability-removal expiration",
+          "noncreature subtype quantity nouns correlate with the existing pinned card-type/subtype vocabulary, preserving zone, controller and printed token restrictions"
         ],
         "summary": "Apply closed type, subtype, color, supported ability (including five fixed basic landwalk variants and Horsemanship), fixed or typed public-query power/toughness, base power/toughness, one separately exact typed quoted ability, or one exact declaration requirement or restriction to the logical object currently attached to a phased-in battlefield source. Grant already-represented fixed combat or spell-cast keyword trigger fragments with exact label, instance and consumer dependencies. Versioned recipient-relative attachment quantities count current reciprocal Aura/Equipment membership at the shared layer-5 query boundary, independent of controller and with union members counted once. Complete attached fixed additive otherwise clauses compose an unconditional otherwise modifier with a current recipient-condition correction in layer 7c; the components share source and attachment lifetime. A quoted terminal list comma is assigned to the independently validated outer conjunction while inner punctuation, source spans and complete child behavior remain intact. Closed ability-plus-additive-type compositions do not require a P/T term. Standalone enchanted-object keyword grants also cover ordinary noncreature permanent types or an unqualified permanent, without changing the older creature, Equipment or Fortification modifier productions. Runtime binding independently derives represented keyword and typed-fragment owner minima from the validated descriptor. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported. Fixed ability lists may combine ordinary keywords and independently typed Protection fragments with the same current attached modifier."
       },
@@ -24749,6 +24750,7 @@
         "quorune.attachments.attached_object_identity",
         "quorune.card_programs.runtime.collect_card_program_continuous_effects",
         "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
+        "quorune.compiler.attached_ability_templates._attached_granted_abilities",
         "quorune.compiler.attached_granted_ability_nodes._ordinary_granted_inner",
         "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
         "quorune.compiler.collection_quantity_templates.recipient_attachment_quantity",
@@ -24756,8 +24758,12 @@
         "quorune.compiler.continuous_templates.attached_fixed_characteristics_handler",
         "quorune.compiler.continuous_templates.attached_quoted_ability_handler",
         "quorune.compiler.declaration_nodes.fixed_static_declaration_grant_handler",
+        "quorune.compiler.noncreature_quantity_subtypes._plural",
+        "quorune.compiler.noncreature_quantity_subtypes.noncreature_quantity_subtype_fields",
         "quorune.compiler.otherwise_characteristic_templates.attached_otherwise_stat_handler",
         "quorune.compiler.query_characteristic_templates.query_characteristic_quantity",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query",
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.declaration_fragments.DeclarationRequirementTemplate",
         "quorune.declaration_fragments.DeclarationRestrictionTemplate",
@@ -24766,12 +24772,9 @@
         "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.keyword_abilities.triggered_keyword_grant",
         "quorune.rules.activation.query.activated_abilities",
-        "quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
-        "quorune.trigger_discovery._event_programs_for_source",
         "quorune.rules.attached_keyword_requirements.attached_keyword_runtime_dependencies",
-        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
-        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query",
-        "quorune.compiler.attached_ability_templates._attached_granted_abilities"
+        "quorune.semantic_runtime.attached_continuous.AttachedFixedCharacteristicsHandler",
+        "quorune.trigger_discovery._event_programs_for_source"
       ],
       "implementation_mutation_rationale": "test_attached_characteristic_relation_mutant_is_killed removes the typed lowering and the exact relation-bound characteristic assertions reject the survivor; focused quoted-grant tests reject lost fragment identity, recipient binding, multiplicity, lifetime, offer/commit parity, or replay. Omitting either the otherwise base or the conditional correction preserves complete admission but changes the actual Aura stat consequence and is killed by its native witness. The canonical grant-plan omission is killed by actual combat with distinct Equipment and recipient controllers, including source removal before the private draw resolves. New full-original noncreature keyword production, current lowering and independent owner-requirement omissions are killed by fresh gameplay/minimum witnesses.",
       "implementation_mutation_status": "killed",
@@ -24899,7 +24902,11 @@
         "113.7a",
         "113.8",
         "301.5d",
-        "603.3a"
+        "603.3a",
+        "205.3a",
+        "205.3b",
+        "205.3c",
+        "608.2h"
       ],
       "positive_tests": [
         "test_ability_and_type_without_stats_keeps_the_independent_exact_child",
@@ -25022,7 +25029,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 19
+      "version": 20
     },
     {
       "applicability": {
@@ -27333,7 +27340,8 @@
           "cycle-safe layer-5 characteristic predicate",
           "ordinary layer-6 keyword and layer-7c power/toughness effects",
           "copiable executable fragment",
-          "hidden-identity-free hand count"
+          "hidden-identity-free hand count",
+          "noncreature subtype quantity nouns correlate with the existing pinned card-type/subtype vocabulary, preserving zone, controller and printed token restrictions"
         ],
         "summary": "Apply copied typed self modifiers in layers 6 and 7c from closed layer-5 public quantities, including explicit distinct values, mana-value reductions, colored mana symbols, fixed nonnegative arithmetic and two leaf sums. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Existing explicit collection values also lower complete where-X self modifiers, union card predicates and printed each-collection sums without counting a dual-type card twice in one union. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported."
       },
@@ -27348,15 +27356,17 @@
         "quorune.characteristic_fragments.QueryCharacteristicModifierSpec",
         "quorune.compiler.collection_quantity_templates.collection_quantity",
         "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
+        "quorune.compiler.noncreature_quantity_subtypes._plural",
+        "quorune.compiler.noncreature_quantity_subtypes.noncreature_quantity_subtype_fields",
         "quorune.compiler.query_characteristic_templates._self_collection_quantity",
         "quorune.compiler.query_characteristic_templates.query_self_characteristics_handler",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query",
         "quorune.compiler.shared_characteristic_queries.shared_characteristic_quantity",
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.public_quantity_reductions.reduce_public_quantity",
-        "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler",
-        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
-        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query"
+        "quorune.semantic_runtime.ability_fragments.QueryCharacteristicModifierAbilityFragmentHandler"
       ],
       "implementation_mutation_rationale": "Focused compiler and runtime mutations remove or redirect the quantity relation, threshold, layer-5 type feed, layer-6 keyword grant, or layer-7c modifier; exact four-player, copy, projection, replay, and ordering assertions reject each survivor.",
       "implementation_mutation_status": "killed",
@@ -27417,7 +27427,11 @@
         "613.1e",
         "613.1f",
         "613.1g",
-        "613.4b"
+        "613.4b",
+        "205.3a",
+        "205.3b",
+        "205.3c",
+        "608.2h"
       ],
       "positive_tests": [
         "test_actual_debris_crusher_entry_damage_stat_growth_and_new_incarnation_are_distinct",
@@ -27477,7 +27491,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 8
+      "version": 9
     },
     {
       "applicability": {
@@ -27499,7 +27513,8 @@
           "cycle-safe layer-5 characteristic predicate",
           "all-zone characteristic-defining layer-7a power and/or toughness setting",
           "copiable executable fragment",
-          "hidden-identity-free hand count"
+          "hidden-identity-free hand count",
+          "noncreature subtype quantity nouns correlate with the existing pinned card-type/subtype vocabulary, preserving zone, controller and printed token restrictions"
         ],
         "summary": "Define one or both printed power/toughness fields in all zones from closed layer-5 public quantities. Versioned reductions preserve distinctness, mana-value and colored-symbol meaning, fixed arithmetic, two independent leaf sums and separate paired-field offsets. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Closed scalar arithmetic uses unfiltered public hand size and named source counters; singular instant/sorcery graveyard card definitions use the existing all-zone owner. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner. Closed public characteristic quantities compose the existing flat earlier-layer type/subtype union and count each current object once under the quantity source relation; unresolved branch-local references remain unsupported."
       },
@@ -27514,14 +27529,16 @@
         "quorune.characteristic_fragments.QueryPowerToughnessDefinitionSpec",
         "quorune.compiler.collection_quantity_templates.collection_quantity",
         "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
+        "quorune.compiler.noncreature_quantity_subtypes._plural",
+        "quorune.compiler.noncreature_quantity_subtypes.noncreature_quantity_subtype_fields",
         "quorune.compiler.query_characteristic_templates.query_power_toughness_definition_handler",
+        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
+        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query",
         "quorune.compiler.shared_characteristic_queries.shared_characteristic_quantity",
         "quorune.continuous_effects.evaluate_continuous_effects",
         "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.public_quantity_reductions.reduce_public_quantity",
-        "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler",
-        "quorune.compiler.receiver_union_queries.characteristic_quantity_union",
-        "quorune.compiler.receiver_union_queries.relative_characteristic_quantity_query"
+        "quorune.semantic_runtime.ability_fragments.QueryPowerToughnessDefinitionAbilityFragmentHandler"
       ],
       "implementation_mutation_rationale": "Focused compiler and runtime mutations remove a defined field, redirect the quantity relation or layer, or expose hidden identity; exact all-zone, controller, copy, layer-ordering, projection, and replay assertions reject each survivor. Fresh native witnesses also kill omission of the shared negative-supertype producer.",
       "implementation_mutation_status": "killed",
@@ -27579,7 +27596,11 @@
         "613.4a",
         "205.4a",
         "205.4b",
-        "205.4c"
+        "205.4c",
+        "205.3a",
+        "205.3b",
+        "205.3c",
+        "608.2h"
       ],
       "positive_tests": [
         "test_actual_duggan_reads_resolution_hand_count_and_once_usage_survives_untap",
@@ -27639,7 +27660,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 9
+      "version": 10
     },
     {
       "applicability": {
@@ -52042,7 +52063,8 @@
           "hidden-identity-free hand count",
           "mandatory Mill through the unchanged fixed-subject zone-transition owner",
           "existing independent opponent-loss/gain instruction uses one typed result amount; the printed gain is not multiplied by opponents or actual losses",
-          "source-excluding applied instruction compares captured source logical identity; a returned new object is eligible, while an already frozen declaration keeps its value"
+          "source-excluding applied instruction compares captured source logical identity; a returned new object is eligible, while an already frozen declaration keeps its value",
+          "noncreature subtype quantity nouns correlate with the existing pinned card-type/subtype vocabulary, preserving zone, controller and printed token restrictions"
         ],
         "summary": "Resolve a closed current public quantity into an existing typed numeric result owner. Versioned quantities add distinct basic/card types and colors, maximum/total mana value, colored mana symbols, fixed positive multipliers and nonnegative offsets, or exactly two independent public leaf counts; instruction-scoped declarations retain one value. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Complete-value token counts and compiler-bound mandatory controller-scoped doubling compose through the existing token transaction; new source descriptors retain current ability applicability. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner."
       },
@@ -52058,6 +52080,8 @@
         "quorune.compiler.collection_quantity_templates.collection_quantity",
         "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
         "quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+        "quorune.compiler.noncreature_quantity_subtypes._plural",
+        "quorune.compiler.noncreature_quantity_subtypes.noncreature_quantity_subtype_fields",
         "quorune.compiler.program_generation._is_closed_public_query_amount_program",
         "quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template",
         "quorune.dynamic_characteristics.query_characteristic_count",
@@ -52173,7 +52197,10 @@
         "119.9",
         "608.2c",
         "400.7",
-        "113.7a"
+        "113.7a",
+        "205.3a",
+        "205.3b",
+        "205.3c"
       ],
       "positive_tests": [
         "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
@@ -52271,7 +52298,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 18
+      "version": 19
     },
     {
       "applicability": {
@@ -76921,7 +76948,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 677,
+  "registry_version": 678,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

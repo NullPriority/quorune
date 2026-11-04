@@ -1058,6 +1058,7 @@
       "test_library_search_dispatch_native",
       "test_mutate_cast_metadata",
       "test_mutate_cast_native",
+      "test_noncreature_subtype_quantities",
       "test_occurrence_player_target_native",
       "test_occurrence_player_targets",
       "test_opening_hand_battlefield",

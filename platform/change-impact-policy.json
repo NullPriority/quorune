@@ -11541,6 +11541,25 @@
         "test_card_program_trust",
         "test_live_battlefield_quantities"
       ]
+    },
+    {
+      "id": "noncreature-subtype-quantities",
+      "patterns": [
+        "quorune/compiler/noncreature_quantity_subtypes.py",
+        "quorune/compiler/query_characteristic_templates.py",
+        "quorune/type_subtype_vocabulary.py",
+        "tests/test_noncreature_subtype_quantities.py",
+        "tests/fixtures/noncreature-subtype-quantity-cards.json"
+      ],
+      "test_modules": [
+        "test_noncreature_subtype_quantities",
+        "test_query_power_toughness_definitions",
+        "test_public_query_effect_amounts",
+        "test_typed_query_self_characteristics",
+        "test_public_quantity_mana",
+        "test_variable_independent_life",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

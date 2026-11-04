@@ -72,6 +72,17 @@ nonnegative life, opponent-poison, and attached-object references; earlier
 quantity encodings retain their fields. These new references do not define
 characteristic values in layer seven a.
 
+`compiler/noncreature_quantity_subtypes.py` supplies closed quantity nouns
+from the existing pinned card-type/subtype vocabulary. Singular and plural
+forms such as Shrine, Bobblehead, Clue, and Cave retain their correlated card
+types. Spell subtypes use the represented graveyard card domain and can match
+either instant or sorcery. The shared query descriptor preserves controller,
+zone, and printed token restrictions; a name containing a subtype word and a
+Changeling's creature types do not supply a different card type's subtype.
+The existing public-result, static-characteristic, and mana owners still
+validate their complete quantity and result shapes. Unknown nouns and
+unconsumed qualifications remain residual.
+
 The quantified anthem production validates its creature subject through the
 existing fixed-query anthem owner. An “other” quantity proves that every
 affected recipient belongs to the counted set before excluding one member.
