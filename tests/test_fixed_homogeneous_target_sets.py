@@ -1154,6 +1154,8 @@ class EmptyFixedTargetBatchModelTests(unittest.TestCase):
         for handler in FIXED_TARGET_SET_HANDLERS:
             for refs in ([], ['B1']):
                 effect = {'op':handler.operation, 'cards':refs, 'maximum_targets':2}
+                if handler.operation == 'reanimate_targets':
+                    effect.update(schema_version=1,battlefield_controller='actor',battlefield_tapped=False)
                 plan = handler.lower(effect, context)
                 self.assertEqual(int(bool(refs)), len(plan.intents), handler.operation)
                 self.assertEqual(handler.operation, plan.operation)
@@ -1163,6 +1165,8 @@ class EmptyFixedTargetBatchModelTests(unittest.TestCase):
             seats='ABCD', active_seats='ABCD', apnap_order='ABCD')
         for handler in FIXED_TARGET_SET_HANDLERS:
             source = {'op':handler.operation, 'cards':[], 'maximum_targets':2}
+            if handler.operation == 'reanimate_targets':
+                source.update(schema_version=1,battlefield_controller='actor',battlefield_tapped=False)
             for change in ({'unknown':1}, {'op':'invented'}, {'maximum_targets':True},
                     {'maximum_targets':0}, {'cards':['B1','B1']}, {'reason':False}):
                 with self.assertRaises(SemanticNodeError): handler.lower({**source,**change}, context)

@@ -146,7 +146,20 @@ class DeliveryInteractionBoundaryTests(unittest.TestCase):
             for face in ir.faces for node in face.nodes))
         self.assertNotEqual('exact',ir.status)
         blockers={blocker for residual in ir.material_residuals for blocker in residual.blockers}
-        self.assertTrue({'replacement applicability','self-replacement and prevention ordering'} <= blockers)
+        self.assertTrue({'ordinary Saga chapter event binding','exact typed chapter effect body'} <= blockers)
+        from high_risk_interaction_support import _record as boundary_record
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.semantics import SemanticRegistry
+        boundary=boundary_record('resolution-mana-replacement-boundary')
+        boundary_ir=compile_oracle_card(boundary,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertTrue(any(capability in node.capability_dependencies for face in boundary_ir.faces for node in face.nodes))
+        self.assertTrue({'replacement applicability','self-replacement and prevention ordering'} <=
+            {blocker for residual in boundary_ir.material_residuals for blocker in residual.blockers})
+        boundary_program=compile_best_available_card_program(self.db,boundary,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile='commander_review')
+        boundary_binding=bind_card_program_runtime(boundary_program,capability_registry=self.registry,profile='commander_review')
+        self.assertFalse(boundary_binding['strict_capability_ready']);self.assertFalse(boundary_binding['compatible_ready'])
         self.assertFalse(self.binding(s,source)['strict_capability_ready'])
         self.assertIn('trust_basis:unresolved',self.binding(s,source)['blockers'])
         self.assertTrue(self.binding(s,control)['strict_capability_ready'])

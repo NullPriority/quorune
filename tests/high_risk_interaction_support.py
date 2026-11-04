@@ -925,6 +925,12 @@ _WITNESSES = {
         "Generic Land Untap Replacement Boundary", "Artifact",
         "Skip your draw step.\n{1}: Untap up to three lands you control.", "{3}",
     ),
+    "resolution-mana-replacement-boundary": _Witness(
+        "Generic Resolution Mana Replacement Boundary", "Creature — Human",
+        "When this creature enters, add {R}{R}.\n"
+        "When this creature enters, add one mana of any color.\nSkip your draw step.",
+        "{3}", power="2", toughness="2",
+    ),
 }
 
 

@@ -171,6 +171,15 @@ def build_plan(
                 ),
             )
         )
+        if {'quorune/compiler/target_player_sequences.py',
+                'quorune/compiler/bound_effect_programs.py',
+                'quorune/compiler/effect_template_composition.py'}.intersection(paths):
+            steps.append(QuickStep(
+                "target-player-sequence-owner-contract",
+                (python, "-m", "unittest",
+                 "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests",
+                 "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests"),
+            ))
         if {'quorune/compiler/target_effect_corpus_assurance.py',
                 'quorune/compiler/overload_spell_faces.py', 'quorune/compiler/cleave_spell_faces.py',
                 'quorune/compiler/paired_spell_faces.py'}.intersection(paths):

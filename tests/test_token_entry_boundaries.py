@@ -327,7 +327,7 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
                       oracle_id="generic:" + key, printed_name="Generic token",
                       owner="A", controller="A", zone="battlefield", is_token=True)
                      for key in created}
-            rows, seen = [], []
+            rows, seen, batches = [], [], []
             data = {"type_line": "Creature — Wizard", "keywords": ["Vigilance"], "mana_value": 0}
             host = SimpleNamespace(
                 state=SimpleNamespace(cards=cards, turn_sequence=4,
@@ -340,6 +340,10 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
             )
             def dispatch(kind, context, **kwargs):
                 self.assertEqual(len(created), len(rows), "Complete committed history precedes every discovery")
+                from quorune.token_creation_batch_model import TOKEN_CREATION_BATCH_EVENT
+                if kind == TOKEN_CREATION_BATCH_EVENT:
+                    batches.append(context)
+                    return
                 seen.append((kind, context["card_object_identity"], tuple(context["keywords"])))
             host._dispatch_semantic_event = dispatch
             dispatch_creation(host, "A", created, name="Generic", base_quantity=len(created),
@@ -347,6 +351,8 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
             self.assertEqual(len(created), len(rows))
             self.assertEqual({c.logical_object_id for c in cards.values()}, {r[1]["object_incarnation"] for r in rows})
             self.assertEqual(len(created) * 3, len(seen))
+            from quorune.token_creation_batch_model import TokenCreationBatchFact
+            self.assertEqual([TokenCreationBatchFact('A',len(created),len(created),0).to_context()] if created else [],batches)
             self.assertTrue(all(r[1]["actor"] == "A" and r[1]["types"] == ("creature",) for r in rows))
 
     def test_zero_single_reversed_groups_have_complete_nonduplicate_history(self):

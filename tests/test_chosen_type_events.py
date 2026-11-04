@@ -145,7 +145,8 @@ class ChosenTypeEventNativeTests(InheritedNativeFixture,unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'chosen-type-events.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/chosen-type-event-cards.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/chosen-type-event-cards.json',
+            ROOT/'tests/fixtures/changeling-characteristics-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Chosen type events',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),DeckEntry('Generic Bound Plains',20)],['Isamaru, Hound of Konda'])
 
@@ -197,6 +198,33 @@ class ChosenTypeEventNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.cast(s,'A',counter,[target]);self.assertIsNone(self.settle(s))
         self.assertEqual(40,s.state.players['D'].life)
         self.assertEqual(hand+1,len(s.state.players['B'].zones['hand']))
+        self.replay(s,load=True)
+
+    def test_actual_pretender_chosen_entry_counts_another_controlled_changeling_only(self):
+        s=self.session(205603104)
+        source=self.add(s.engine,'Bloodline Pretender',zone='hand',ref='pretender-source')
+        own=self.add(s.engine,'Universal Automaton',zone='hand',ref='pretender-own-changeling')
+        foreign=self.add(s.engine,'Universal Automaton',seat='B',zone='hand',ref='pretender-foreign-changeling')
+        wrong=self.add(s.engine,'Elite Vanguard',zone='hand',ref='pretender-other-type')
+        self.add(s.engine,'Vedalken Orrery',seat='B')
+        private=self.add(s.engine,'Counterspell',seat='C',zone='hand',ref='pretender-private')
+        for card in (source,own,foreign,wrong):self.assert_closed(s,card)
+        s.state.players['B'].mana_pool.update({'C':1})
+        self.prepare(s,mana={'C':5,'W':1});self.checkpoint(s)
+        self.cast(s,'A',source,[])
+        self.assertEqual('replacement.order',self.resolve(s).kind)
+        self.assertEqual('stack',s.state.cards[source.object_id].zone)
+        s=self.replay(s,load=True)
+        self.entry_type(s,'A','elf');self.assertIsNone(self.settle(s))
+        self.assertEqual('elf',s.state.cards[source.object_id].annotations['chosen_creature_type'])
+        self.assertEqual({},s.state.cards[source.object_id].counters)
+        self.cast(s,'A',own,[]);self.assertIsNone(self.settle(s))
+        self.assertEqual(1,s.state.cards[source.object_id].counters.get('+1/+1',0))
+        self.cast(s,'A',wrong,[]);self.assertIsNone(self.settle(s))
+        self.cast(s,'B',foreign,[]);self.assertIsNone(self.settle(s))
+        self.assertEqual(1,s.state.cards[source.object_id].counters.get('+1/+1',0))
+        self.assertEqual(3,s.engine._numeric_stat(source.object_id,'power'))
+        for viewer in 'ABD':self.assertNotIn(private.ref,json.dumps(s.packet('pilot:'+viewer,full=True)))
         self.replay(s,load=True)
 
     def test_actual_specialist_simultaneous_death_uses_old_choice_after_reentry(self):

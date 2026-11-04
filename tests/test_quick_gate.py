@@ -6,11 +6,29 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from scripts.quick_gate import build_plan
 
 
 class QuickGatePlanTests(unittest.TestCase):
+    @patch('scripts.quick_gate.validate_partition')
+    def test_player_sequence_changes_select_existing_compiler_consumers_before_census(self, _partition_validation):
+        # This unit checks routing. Real partition validation remains covered by
+        # the manifest owner and the normal/pre-corpus integration check below.
+        sources=('quorune/compiler/target_player_sequences.py',
+            'quorune/compiler/bound_effect_programs.py',
+            'quorune/compiler/effect_template_composition.py')
+        for source in sources:
+            for phase in ('normal','pre-corpus'):
+                with self.subTest(source=source,phase=phase):
+                    plan=build_plan((source,),phase=phase)
+                    step,=[row for row in plan['steps'] if row.name=='target-player-sequence-owner-contract']
+                    self.assertEqual(('tests.test_bound_effect_programs.BoundEffectProgramCompilerTests',
+                        'tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests'),step.command[-2:])
+        unrelated=build_plan(('docs/index.md',),phase='pre-corpus')
+        self.assertNotIn('target-player-sequence-owner-contract',[row.name for row in unrelated['steps']])
+
     def test_normal_inventory_contains_the_same_pre_corpus_obligations(self):
         paths=("quorune/compiler/collection_quantity_templates.py", "tests/test_quick_gate.py")
         pre=build_plan(paths,phase="pre-corpus")

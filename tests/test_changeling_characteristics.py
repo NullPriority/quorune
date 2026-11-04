@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import replace
 import json
 from pathlib import Path
 import tempfile
@@ -217,6 +218,8 @@ class ChangelingCompilerTests(unittest.TestCase):
 
 
     def test_original_changeling_entry_keeps_chosen_trigger_unavailable(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
         registry = load_default_capability_registry()
         record = self.db.lookup("Bloodline Pretender")
         ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
@@ -224,10 +227,24 @@ class ChangelingCompilerTests(unittest.TestCase):
         self.assertTrue(entry.exact)
         self.assertEqual(entry.text, record.oracle_text[entry.span.start:entry.span.end])
         self.assertIn("zone.entry.public_designation", entry.capability_dependencies)
-        blockers = {blocker for residual in ir.material_residuals for blocker in residual.blockers}
-        self.assertLessEqual({"normalized event binding", "intervening-if and reflexive-trigger grammar"}, blockers)
-        program = compile_card_program(self.db, record, capability_registry=registry, capability_profile="commander_review", trust_level="provisional")
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=registry, capability_profile="commander_review")
         binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")
+        self.assertTrue(binding['strict_capability_ready'])
+        self.assertTrue(binding['compatible_ready'])
+        # Preserve the event-binding boundary after the original single-entry
+        # chosen-type trigger gained a complete typed producer.
+        boundary=replace(record,oracle_id='fixture:chosen-type-aggregate-boundary',name='Generic Aggregate Chosen Type Boundary',
+            oracle_text=record.oracle_text.replace(
+            'Whenever another creature you control of the chosen type enters,',
+            'Whenever two or more creatures you control of the chosen type enter,'))
+        ir=compile_oracle_card(boundary,capability_registry=registry,capability_profile='commander_review')
+        blockers={blocker for residual in ir.material_residuals for blocker in residual.blockers}
+        self.assertLessEqual({'normalized event binding','intervening-if and reflexive-trigger grammar'},blockers)
+        program=compile_best_available_card_program(self.db,boundary,semantic_registry=SemanticRegistry(),
+            capability_registry=registry,capability_profile='commander_review')
+        binding=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
         self.assertFalse(binding["strict_capability_ready"])
         self.assertFalse(binding["compatible_ready"])
 

@@ -678,6 +678,13 @@ class AuraTargetingEntryEngineTests(unittest.TestCase):
         @contextmanager
         def compiled_record():
             record = aura_record("fixture:simple-aura")
+            original_lookup = engine.card_db.by_oracle_id
+
+            def lookup_fixture(oracle_id):
+                if oracle_id == record.oracle_id:
+                    return record
+                return original_lookup(oracle_id)
+
             original_trust = (
                 engine_type.semantic_program_is_current_trusted
             )
@@ -691,6 +698,8 @@ class AuraTargetingEntryEngineTests(unittest.TestCase):
 
             with patch.object(
                 engine_type, "card_record", new=record_for
+            ), patch.object(
+                engine.card_db, "by_oracle_id", new=lookup_fixture
             ), patch.object(
                 engine_type,
                 "semantic_program_is_current_trusted",

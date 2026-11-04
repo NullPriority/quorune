@@ -31,11 +31,17 @@ class AttackingTokenResultCompilerTests(unittest.TestCase):
                 self.assertIn('fixed-attacking-token-result', mechanics)
 
     def test_new_result_does_not_consume_specified_recipients_copies_or_delayed_riders(self):
+        _,effects,_,_=_reviewed_effect_template(
+            "Create a 1/1 white Human creature token that's tapped and attacking. Sacrifice it at end of combat.",
+            card_name='Entry Result Fixture')
+        effect,=effects
+        self.assertEqual('choose_fixed_attacking_token_destinations',effect['op'])
+        self.assertEqual({'schema_version':1,'kind':'created_token_cleanup','action':'sacrifice','timing':'end_of_combat'},effect['token_cleanup'])
         for text in (
             "Create a 1/1 white Human creature token that's tapped and attacking that player.",
             "Create a token that's a copy of this creature that's tapped and attacking.",
             "Create a Treasure token that's tapped and attacking.",
-            "Create a 1/1 white Human creature token that's tapped and attacking. Sacrifice it at end of combat.",
+            "Create a 1/1 white Human creature token that's tapped and attacking. Sacrifice it at end of combat if it dealt damage to a player this turn.",
         ):
             with self.subTest(text=text):
                 _, effects, _, _ = _reviewed_effect_template(text, card_name='Entry Result Fixture')

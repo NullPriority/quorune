@@ -343,6 +343,7 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
         fragment: dict[str, object],
         power: str = "*",
         toughness: str = "*",
+        is_token: bool = False,
     ) -> CardInstance:
         card = CardInstance(
             object_id=f"definition-source:{suffix}",
@@ -352,6 +353,7 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
             owner=seat,
             controller=seat,
             zone=zone,
+            is_token=is_token,
             known_to=list(engine.seats),
             revealed_to=list(engine.seats),
         )
@@ -487,6 +489,7 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
             seat="A",
             zone="battlefield",
             suffix="controller",
+            is_token=True,
             fragment=definition_fragment(
                 scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
                 types_all=("land",),

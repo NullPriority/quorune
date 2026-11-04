@@ -571,8 +571,9 @@ class DefinedTokenNativeTests(unittest.TestCase):
         self.assertEqual(2,len(engine.state.stack));self.assertEqual(0,engine.state.players['A'].mana_pool['C'])
         resumed=self.replay(session);self.resolve(resumed)
         current=resumed.engine.state.cards[card.object_id]
-        self.assertEqual(('Phyrexian Token',1,identity,timestamp),
-            (current.active_face,current.transform_count,current.logical_object_id,current.zone_timestamp))
+        self.assertEqual(('Phyrexian Token',1,identity),
+            (current.active_face,current.transform_count,current.logical_object_id))
+        self.assertGreater(current.zone_timestamp,timestamp)  # CR 613.7g: transforming gives a new timestamp.
         self.assertEqual({'+1/+1':3},current.counters)
         data=resumed.engine._effective_card_data(current)
         self.assertEqual(('0','0'),(data['power'],data['toughness']))

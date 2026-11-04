@@ -8582,7 +8582,7 @@
         "mana.production.fixed_resolution_choice"
       ],
       "interaction_order": 2,
-      "assertion": "The pinned Legend of Roku keeps its explicit replacement-applicability residual beside the exact chapter-II mana-choice fragment, so whole-source runtime binding remains unresolved. In the same game a normally compiled Quirion Sentinel casts, resolves its controller-only choice and produces the chosen mana. The known printed Avatar Roku activation cost can be paid, but trusted-only resolution pauses on the unchanged stack item before executing the unrepresented Dragon body: no token or other card is created and paid mana remains unchanged during the pause. Foreign commands reject, private projection and active/paused save-load replay remain intact. This is fail-closed rejection evidence, not successful unsupported Saga/replacement playability."
+      "assertion": "Original Avatar Roku retains exact resolution mana choice but its unrepresented Saga/chapter bodies reject whole-card admission and activation before mutation. An explicit constructed control preserves mana-choice plus replacement rejection. Actual Quirion Sentinel chooses mana through normal commands, with private projection, rejected-command rollback and replay."
     },
     {
       "evidence_class": "interaction",
@@ -8596,7 +8596,7 @@
         "mana.production.fixed_resolution_choice"
       ],
       "interaction_order": 2,
-      "assertion": "The pinned Legend of Roku keeps its explicit replacement-ordering residual beside the exact chapter-II mana-choice fragment, so whole-source runtime binding remains unresolved. In the same game a normally compiled Quirion Sentinel casts, resolves its controller-only choice and produces the chosen mana. The known printed Avatar Roku activation cost can be paid, but trusted-only resolution pauses on the unchanged stack item before executing the unrepresented Dragon body: no token or other card is created and paid mana remains unchanged during the pause. Foreign commands reject, private projection and active/paused save-load replay remain intact. This is fail-closed rejection evidence, not successful unsupported Saga/replacement playability."
+      "assertion": "Original Avatar Roku retains exact resolution mana choice but its unrepresented Saga/chapter bodies reject whole-card admission and activation before mutation. An explicit constructed control preserves mana-choice plus replacement rejection. Actual Quirion Sentinel chooses mana through normal commands, with private projection, rejected-command rollback and replay."
     },
     {
       "evidence_class": "interaction",
@@ -17232,7 +17232,7 @@
         "continuous.characteristics.query_count_modifier"
       ],
       "interaction_order": 2,
-      "assertion": "The typed hand- and land-count characteristic modifiers on the creature backs of transforming Sagas compile independently, while their unsupported transformation replacement applicability remains material and keeps both complete CardPrograms unavailable at strict or compatible runtime admission."
+      "assertion": "Transforming query-modifier Saga fixtures retain the exact query component while their actual Saga/chapter residuals reject whole-program admission. A separate constructed query-modifier plus skipped-draw control retains replacement-applicability and ordering rejection. Strict and compatible binding remain unavailable for every residual program."
     },
     {
       "evidence_class": "interaction",
@@ -17246,7 +17246,7 @@
         "continuous.characteristics.query_count_modifier"
       ],
       "interaction_order": 2,
-      "assertion": "The typed query-characteristic ability does not lower or bypass either transforming Saga's unsupported self-replacement and CR 616 ordering boundary, so the residual interaction remains fail closed at runtime admission."
+      "assertion": "Transforming query-modifier Saga fixtures retain the exact query component while their actual Saga/chapter residuals reject whole-program admission. A separate constructed query-modifier plus skipped-draw control retains replacement-applicability and ordering rejection. Strict and compatible binding remain unavailable for every residual program."
     },
     {
       "evidence_class": "interaction",
@@ -19553,7 +19553,7 @@
         "mana.production.fixed_resolution"
       ],
       "interaction_order": 2,
-      "assertion": "Original Urabrask, Cabal Ritual, Valki and Esper Origins retain fixed-resolution mana beside replacement residuals. Lake of the Dead retains typed selected-sacrifice activated mana beside its unsupported entry replacement. Each original whole CardProgram rejects strict and compatible admission; no unsupported replacement execution is claimed."
+      "assertion": "Original mana carriers retain their exact leaf and actual remaining material siblings. Urabrask/The Great Work and Esper Origins retain Saga/chapter boundaries; an explicit constructed entry-trigger control separately preserves fixed-resolution mana with skipped-draw replacement rejection. Normal strict and compatible admission distinguish the supported original from residual records."
     },
     {
       "evidence_class": "interaction",
@@ -19567,7 +19567,7 @@
         "mana.production.fixed_resolution"
       ],
       "interaction_order": 2,
-      "assertion": "Original Urabrask, Cabal Ritual, Valki and Esper Origins retain fixed-resolution mana beside replacement residuals. Lake of the Dead retains typed selected-sacrifice activated mana beside its unsupported entry replacement. Each original whole CardProgram rejects strict and compatible admission; no unsupported replacement execution is claimed."
+      "assertion": "Original mana carriers retain their exact leaf and actual remaining material siblings. Urabrask/The Great Work and Esper Origins retain Saga/chapter boundaries; an explicit constructed entry-trigger control separately preserves fixed-resolution mana with skipped-draw replacement rejection. Normal strict and compatible admission distinguish the supported original from residual records."
     },
     {
       "evidence_class": "interaction",
@@ -21913,6 +21913,53 @@
       ],
       "interaction_order": 4,
       "assertion": "Original Invasion of Karsus and Invasion of Kaldheim retain their exact source-damage leaves and unrepresented Siege/static and entry-event contracts. Normal complete-program strict and compatible admission reject both; a separate constructed control preserves replacement-family coverage."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_actual_pretender_chosen_entry_counts_another_controlled_changeling_only",
+      "piece_ids": [
+        "capability.continuous.characteristics.changeling",
+        "capability.counter.producer.fixed_event_trigger",
+        "capability.zone.entry.public_designation"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.changeling",
+        "counter.producer.fixed_event_trigger",
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 3,
+      "assertion": "Actual Bloodline Pretender enters through its public creature-type choice and receives no self-entry counter. Another controlled Changeling matches the chosen type and adds exactly one source counter; a controlled wrong type and an opposing Changeling do not. Wrong-principal rollback, private projection, pending save/load and exact replay remain asserted."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.effect_clause.exact-typed-chapter-effect-body"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original Urabrask/The Great Work and Esper Origins retain fixed-resolution mana while typed Saga/chapter residuals reject normal complete-program strict and compatible admission without construction failure. The separate constructed entry-trigger control retains all original replacement pairs."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "pair_derived",
+      "test_id": "test_exact_resolution_mana_fragment_does_not_admit_unowned_saga_and_replacement",
+      "piece_ids": [
+        "capability.mana.production.fixed_resolution_choice",
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.effect_clause.exact-typed-chapter-effect-body"
+      ],
+      "capability_ids": [
+        "mana.production.fixed_resolution_choice"
+      ],
+      "interaction_order": 3,
+      "assertion": "Original The Legend of Roku/Avatar Roku retains an exact mana-choice leaf while ordinary Saga/chapter residuals keep the complete program unresolved. Its advertised and submitted activation stays unavailable before payment; actual Quirion Sentinel retains normal mana choice, private projection, rollback and replay."
     }
   ],
   "schema_version": 2

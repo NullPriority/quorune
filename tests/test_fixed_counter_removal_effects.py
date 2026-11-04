@@ -205,12 +205,23 @@ class FixedCounterRemovalCompilerTests(unittest.TestCase):
             'Whenever another creature enters, remove a charge counter from it.',
             'Whenever you cast a blue spell, you may remove a charge counter from this creature.',
             'Whenever you cast a blue spell, you may pay {1}. If you do, remove a charge counter from this creature.',
-            'Whenever this creature attacks, remove all charge counters from it.',
+            'Whenever this creature attacks, remove all but one charge counter from it.',
             'Whenever this creature attacks, remove X charge counters from it.',
         ):
             with self.subTest(text=text):
                 self.assertNotEqual('exact', compile_oracle_card(source_counter_removal_record(text),
                     capability_registry=self.capabilities).status)
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+        record=source_counter_removal_record('Whenever this creature attacks, remove all charge counters from it.')
+        ir=compile_oracle_card(record,capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertIn('counter.removal.all_named_source_effect',ir.faces[0].nodes[0].capability_dependencies)
+        program=compile_best_available_card_program(self.db,record,semantic_registry=SemanticRegistry(),
+            capability_registry=self.capabilities,capability_profile='commander_review')
+        self.assertTrue(bind_card_program_runtime(program,capability_registry=self.capabilities,
+            profile='commander_review')['strict_capability_ready'])
 
     def test_source_counter_removal_parser_and_dependency_mutations_fail_closed(self):
         from quorune.rules.capabilities import CapabilityRegistry
@@ -1440,8 +1451,10 @@ class FixedSourceCounterRemovalActionTests(unittest.TestCase):
                 program = compile_best_available_card_program(self.db, source, semantic_registry=semantics,
                     capability_registry=self.registry, capability_profile='commander_review')
                 binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                self.assertEqual(name == 'Ammit Eternal', binding['strict_capability_ready'], binding['blockers'])
-                if name != 'Ammit Eternal':
+                ready=name in {'Ammit Eternal','Witherscale Wurm'}
+                self.assertEqual(ready, binding['strict_capability_ready'], binding['blockers'])
+                self.assertEqual(ready, binding['compatible_ready'], binding['blockers'])
+                if not ready:
                     ir = compile_oracle_card(source, capability_registry=self.registry,
                                              capability_profile='commander_review')
                     self.assertTrue(ir.material_residuals)
