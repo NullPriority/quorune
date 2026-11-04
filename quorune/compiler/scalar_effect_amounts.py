@@ -87,6 +87,10 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
+    from .created_token_cleanup_templates import scalar_created_token_cleanup_template
+    cleanup = scalar_created_token_cleanup_template(text, compile_inner=scalar_effect_amount_template,
+        source_name=source_name, compile_fixed=compile_fixed, event=event, source_event=source_event)
+    if cleanup is not None:return cleanup
     from .target_hand_amount_templates import normalized_target_hand_damage
     normalized = normalized_target_hand_damage(text.strip(),source_name)
     tokens=re.fullmatch(r'Create a number of (?P<definition>[^.]+? tokens?) equal to (?P<value>[^.]+?)\.?',normalized,re.I)

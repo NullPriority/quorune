@@ -729,7 +729,30 @@ def fixed_token_creation_covered_mechanics(
     return tuple(sorted(covered))
 
 
+def token_creation_component_mechanics(effects, parent_mechanics):
+    """Reconstruct only the independently validated token leaf's mechanics."""
+    effect = effects[0] if len(effects) == 1 else {}
+    characteristics = effect.get('characteristics')
+    keywords = characteristics.get('keywords', ()) if isinstance(characteristics, Mapping) else ()
+    mechanics = {'cr-111-tokens', *(str(keyword).casefold() for keyword in keywords if isinstance(keyword, str))}
+    if len(effects) == 1 and ('copy_spec' in effect or effect.get('op') == 'populate'):
+        return parent_mechanics
+    try:
+        if effect.get('op') == 'choose_fixed_attacking_token_destinations':
+            from .attacking_token_results import attacking_token_result_closure, ATTACKING_TOKEN_MECHANIC
+            _required, owned = attacking_token_result_closure(effect)
+            mechanics.update(owned);mechanics.add(ATTACKING_TOKEN_MECHANIC)
+        if 'token_cleanup' in effect:
+            from ..created_token_cleanup_model import CreatedTokenCleanupSpec, TOKEN_CLEANUP_MECHANIC
+            CreatedTokenCleanupSpec.from_dict(effect['token_cleanup'])
+            mechanics.add(TOKEN_CLEANUP_MECHANIC)
+    except (TypeError, ValueError, KeyError):
+        return set()
+    return mechanics
+
+
 __all__ = [
     "fixed_token_creation_covered_mechanics",
     "fixed_token_creation_node_capabilities",
+    "token_creation_component_mechanics",
 ]

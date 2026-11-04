@@ -252,26 +252,8 @@ def closed_effect_component_capabilities(
     for resolver in _COMPONENT_RESOLVERS:
         component_mechanics = mechanics
         if resolver is fixed_token_creation_node_capabilities:
-            characteristics = (
-                effects[0].get("characteristics")
-                if len(effects) == 1
-                else None
-            )
-            keywords = (
-                characteristics.get("keywords", ())
-                if isinstance(characteristics, Mapping)
-                else ()
-            )
-            component_mechanics = {
-                "cr-111-tokens",
-                *(
-                    str(keyword).casefold()
-                    for keyword in keywords
-                    if isinstance(keyword, str)
-                ),
-            }
-            if len(effects) == 1 and ("copy_spec" in effects[0] or effects[0].get("op") == "populate"):
-                component_mechanics = mechanics
+            from .token_creation_capability_shapes import token_creation_component_mechanics
+            component_mechanics = token_creation_component_mechanics(effects, mechanics)
         elif resolver is self_regeneration_node_capabilities:
             component_mechanics = {
                 "regenerate",

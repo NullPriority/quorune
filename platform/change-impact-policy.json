@@ -11852,6 +11852,26 @@
         "test_fixed_combat_entry_keyword_lifecycles",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "scalar-cleanup-and-owned-token-components",
+      "patterns": [
+        "quorune/compiler/created_token_cleanup_templates.py",
+        "quorune/compiler/scalar_effect_amounts.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/created_token_cleanup.py",
+        "tests/test_quantity_token_cleanup.py",
+        "tests/fixtures/quantity-token-cleanup-cards.json"
+      ],
+      "test_modules": [
+        "test_quantity_token_cleanup",
+        "test_ordinary_token_cleanup",
+        "test_source_counter_quantity_sequences",
+        "test_scalar_effect_amounts",
+        "test_fixed_effect_clause_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

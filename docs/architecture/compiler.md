@@ -9,6 +9,20 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Scalar token-result definitions may precede a printed cleanup sentence. The
+cleanup adapter delegates the creation clause to the existing scalar owner,
+preserving its producer, result slots and source context, then attaches the
+already-closed cleanup instruction. This admits no new amount origin, query,
+target cardinality or copy recipe. Runtime validation accepts materialized
+integer token stats in their canonical numeric representation and continues to
+reject booleans, unknown fields and malformed definitions.
+
+Closed effect components reconstruct token-specific mechanics through the
+canonical token descriptor owner. Validated attacking and cleanup markers keep
+their required capabilities even when an outer counter sequence or optional
+payment has unrelated mechanics. Missing runtime declarations still reject;
+the audit supplies the actual leaf requirements rather than widening trust.
+
 `compiler/created_token_cleanup_templates.py` recognizes one complete printed
 cleanup clause over an independently closed ordinary token producer. The new
 version-one cleanup instruction distinguishes sacrifice from exile and the

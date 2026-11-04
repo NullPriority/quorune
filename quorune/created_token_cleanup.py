@@ -99,6 +99,9 @@ def apply_fixed_token_cleanup_creation(host, effect, *, actor, reason):
     if type(quantity) is not int or quantity < 0 or public.get('controller') != actor:
         raise ValueError('Temporary token creation has invalid quantity or controller')
     validation = {**public, 'controller': '$controller', 'quantity': max(1, quantity)}
+    if isinstance(validation.get('characteristics'), Mapping):
+        validation['characteristics'] = {key: str(value) if key in {'power', 'toughness'} and type(value) is int else value
+            for key, value in validation['characteristics'].items()}
     created_token_cleanup_closure(validation)
     raw_source = effect.get('_runtime_source')
     if not isinstance(raw_source, Mapping) or set(raw_source) != {'stack_ref', 'object_id', 'logical_object_id', 'card_ref'}:

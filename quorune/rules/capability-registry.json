@@ -55320,14 +55320,15 @@
       "dependency_fail_closed_status": "passed",
       "id": "resolution.effect_program.closed_components",
       "implementation_components": [
+        "CommanderEngine._continue_resolution",
         "quorune.compiler.closed_effect_programs.ClosedEffectProgramTemplate",
         "quorune.compiler.closed_effect_programs.closed_effect_program_template",
-        "quorune.rules.closed_effect_program_shapes.closed_effect_program_node_capabilities",
-        "CommanderEngine._continue_resolution",
-        "quorune.compiler.query_counter_sequences.ordered_quantity_sequence_template",
         "quorune.compiler.multisentence_effect_components.multisentence_effect_program",
         "quorune.compiler.query_counter_sequences._fixed_quantity_component",
-        "quorune.rules.closed_effect_program_shapes.closed_effect_program_runtime_dependencies"
+        "quorune.compiler.query_counter_sequences.ordered_quantity_sequence_template",
+        "quorune.rules.closed_effect_program_shapes.closed_effect_program_node_capabilities",
+        "quorune.rules.closed_effect_program_shapes.closed_effect_program_runtime_dependencies",
+        "quorune.rules.token_creation_capability_shapes.token_creation_component_mechanics"
       ],
       "implementation_mutation_rationale": "test_parser_shape_and_compiler_fail_closed removes the composition production and proves the exact source returns to a material residual with different semantic and CardProgram fingerprints. Fresh original-card fallback, early quantity and group commit omissions, plus ordered-owner runtime omission, are killed by the new family witnesses.",
       "implementation_mutation_status": "killed",
@@ -61658,12 +61659,13 @@
       "id": "token.creation.fixed_attacking_definition",
       "implementation_components": [
         "quorune.compiler.attacking_token_results.fixed_attacking_token_template",
-        "quorune.rules.attacking_token_results.attacking_token_result_closure",
         "quorune.rules.attacking_token_results.attacking_token_payload_dependencies",
+        "quorune.rules.attacking_token_results.attacking_token_result_closure",
+        "quorune.rules.token_creation_capability_shapes.token_creation_component_mechanics",
         "quorune.semantic_choices.fixed_attacking_tokens.FixedAttackingTokenDestinationHandler",
-        "quorune.semantic_choices.token_destination_plans.prepare_attacking_destinations",
+        "quorune.semantic_choices.token_creation_queries.semantic_choice_token_creation_preview",
         "quorune.semantic_choices.token_destination_plans.complete_attacking_destinations",
-        "quorune.semantic_choices.token_creation_queries.semantic_choice_token_creation_preview"
+        "quorune.semantic_choices.token_destination_plans.prepare_attacking_destinations"
       ],
       "implementation_mutation_rationale": "Inheriting Mobilize sacrifice makes the independent no-unprinted-sacrifice assertions fail.",
       "implementation_mutation_status": "killed",
@@ -62268,13 +62270,15 @@
       "dependency_fail_closed_status": "passed",
       "id": "token.creation.fixed_definition_cleanup",
       "implementation_components": [
-        "quorune.created_token_cleanup_model.CreatedTokenCleanupSpec",
+        "quorune.compiler.created_token_cleanup_templates.created_token_cleanup_template",
+        "quorune.compiler.created_token_cleanup_templates.scalar_created_token_cleanup_template",
         "quorune.created_token_cleanup.CreatedTokenCleanupPlan",
+        "quorune.created_token_cleanup.apply_fixed_token_cleanup_creation",
         "quorune.created_token_cleanup.capture_created_token_cleanup",
         "quorune.created_token_cleanup.schedule_created_token_cleanup",
-        "quorune.created_token_cleanup.apply_fixed_token_cleanup_creation",
-        "quorune.compiler.created_token_cleanup_templates.created_token_cleanup_template",
+        "quorune.created_token_cleanup_model.CreatedTokenCleanupSpec",
         "quorune.rules.created_token_cleanup_shapes.created_token_cleanup_closure",
+        "quorune.rules.token_creation_capability_shapes.token_creation_component_mechanics",
         "quorune.semantic_choices.token_creation_intents.execute_token_creation_intent"
       ],
       "implementation_mutation_rationale": "Collapsing cleanup conditions to an unconditional next end step fails the independent creator-step and combat-step expectations.",
@@ -78088,7 +78092,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 692,
+  "registry_version": 693,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
