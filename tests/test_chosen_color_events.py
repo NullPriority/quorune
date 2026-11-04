@@ -63,7 +63,7 @@ class ChosenColorEventTests(unittest.TestCase):
         self.assertEqual((CHOSEN_COLOR_CAST_CAPABILITY,), chosen_color_cast_dependencies(program))
         program.event = 'spell.cast_or_copy'
         self.assertEqual((), chosen_color_cast_dependencies(program))
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         for capability in (CHOSEN_COLOR_CAST_CAPABILITY, 'zone.entry.public_designation'):
             changed = deepcopy(raw)
             next(r for r in changed['capabilities'] if r['id'] == capability).update(

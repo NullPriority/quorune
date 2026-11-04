@@ -219,6 +219,6 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
             values = dict(base)
             values.update(deepcopy(dict(card.annotations.get('copy_overrides') or {})))
             return values
-        with mock.patch('quorune.engine.copiable_card_characteristics', side_effect=old_snapshot):
+        with mock.patch('quorune.ability_fragment_host.copiable_card_characteristics', side_effect=old_snapshot):
             with self.assertRaises(AssertionError):
                 self.test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value()

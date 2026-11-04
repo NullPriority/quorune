@@ -44,8 +44,8 @@ class DepartureTriggerLimitOwnerTests(unittest.TestCase):
         self.assertEqual(new,TriggerLimitSpec.from_dict(new).to_dict())
         self.assertEqual((TRIGGER_ONCE_PER_TURN_CAPABILITY,),trigger_limit_capabilities(old))
         self.assertEqual((TRIGGER_ONCE_PER_TURN_CAPABILITY,DEPARTURE_TRIGGER_LIMIT_CAPABILITY),trigger_limit_capabilities(new))
-        fragments=[json.loads((ROOT/'schemas/semantic-program.schema.json').read_text())['properties']['trigger_limit'],
-            json.loads((ROOT/'schemas/card-program-v2.schema.json').read_text())['$defs']['runtime']['properties']['trigger_limit']]
+        fragments=[json.loads((ROOT/'schemas/semantic-program.schema.json').read_text(encoding="utf-8"))['properties']['trigger_limit'],
+            json.loads((ROOT/'schemas/card-program-v2.schema.json').read_text(encoding="utf-8"))['$defs']['runtime']['properties']['trigger_limit']]
         for fragment in fragments:
             validator=Draft202012Validator(fragment)
             validator.validate(old);validator.validate(new)
@@ -141,7 +141,7 @@ class DepartureTriggerLimitOwnerTests(unittest.TestCase):
         ir=compile_oracle_card(death,capability_registry=registry,capability_profile='commander_review')
         self.assertEqual('exact',ir.status,ir.material_residuals)
         self.assertEqual(2,ir.faces[0].nodes[0].trigger_limit['schema_version'])
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(row for row in raw['capabilities'] if row['id']==DEPARTURE_TRIGGER_LIMIT_CAPABILITY).update(
             status='blocked',blockers=['Departure incarnation authority withdrawn'])
         blocked=CapabilityRegistry(raw)

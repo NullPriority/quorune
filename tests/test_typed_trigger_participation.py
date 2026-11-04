@@ -153,7 +153,7 @@ class TypedTriggerParticipationOwnerTests(unittest.TestCase):
         from scripts.update_capability_evidence import build_index,discover_tests
         from quorune.card_programs.binding import bind_semantic_program_runtime
         from quorune.semantics import SemanticProgram
-        registry=load_default_capability_registry();raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        registry=load_default_capability_registry();raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');discovered=set(discover_tests(ROOT).values())
         control=replace(query_record('Draw a card.'),type_line='Sorcery',power=None,toughness=None)
         for text,capability in (

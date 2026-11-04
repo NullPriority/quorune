@@ -249,6 +249,11 @@ selection. Before push, inspect what CI will select:
 .\.venv\Scripts\python.exe scripts/quick_gate.py --dry-run
 ```
 
+The normal inventory includes the same bounded pre-corpus source and contract
+checks as the publication hook, including explicit text encodings and complete
+test routing. These obligations are visible before generated finalization;
+the broader affected behavioral set remains a public CI responsibility.
+
 `platform/change-impact-policy.json` is the versioned many-to-many path/check
 policy consumed by `scripts/change_impact.py`, `scripts/quick_gate.py`, and
 `scripts/ci_plan.py`. It maps normalized paths to the manifest in

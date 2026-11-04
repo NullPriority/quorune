@@ -128,7 +128,7 @@ class ExploreEventOwnerTests(unittest.TestCase):
         registry = load_default_capability_registry()
         self.assertEqual('exact',compile_oracle_card(record(line,'Creature — Human'),
             capability_registry=registry,capability_profile='commander_review').status)
-        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         for capability in (CREATURE_EXPLORE_CAPABILITY,'keyword_action.explore.single','target.ability_source.current_or_lki'):
             changed = deepcopy(raw)
             next(row for row in changed['capabilities'] if row['id']==capability).update(status='blocked',blockers=['explore event owner withdrawn'])

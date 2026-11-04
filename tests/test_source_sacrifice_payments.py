@@ -88,7 +88,7 @@ class SourceSacrificePaymentOwnerTests(unittest.TestCase):
         current=load_default_capability_registry()
         ir=compile_oracle_card(record(text,'Creature — Human'),capability_registry=current)
         self.assertEqual('exact',ir.status,ir.material_residuals)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id']=='cost.sacrifice.fixed_source_resolution').update(status='blocked',blockers=['Source cost withdrawn'])
         registry=CapabilityRegistry(raw)
         index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),

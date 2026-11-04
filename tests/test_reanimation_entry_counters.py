@@ -48,7 +48,7 @@ class ReanimationEntryCounterCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id']=='zone.reanimate.entry_counters').update(status='blocked',blockers=['Entry counter authority withdrawn'])
         registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
         registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))

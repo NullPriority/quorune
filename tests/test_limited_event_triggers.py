@@ -301,7 +301,7 @@ class LimitedEventTriggerRuntimeTests(unittest.TestCase):
         spells=[self.add(engine,'Generic Counter Event Two',zone='hand',ref='counter-'+str(i)) for i in range(2)]
         self.ready(session,spells[0],{})
         self.cast(session,spells[0],targets=[observer.ref]);self.resolve(session)
-        with patch('quorune.trigger_discovery.trigger_usage_available',return_value=True),patch('quorune.trigger_discovery.commit_trigger_usage'):
+        with patch('quorune.activation_usage.trigger_usage_available',return_value=True),patch('quorune.trigger_discovery.commit_trigger_usage'):
             before=len(session.state.players['A'].zones['hand'])
             self.cast(session,spells[1],targets=[observer.ref]);self.resolve(session)
             with self.assertRaises(AssertionError):self.assertEqual(before-1,len(session.state.players['A'].zones['hand']))

@@ -10909,7 +10909,12 @@
         "test_chosen_color_mana",
         "test_entry_color_composition",
         "test_fixed_counter_event_triggers",
-        "test_fixed_typed_event_triggers",
+        "test_fixed_counter_player_cast_triggers",
+        "test_fixed_counter_zone_triggers",
+        "test_fixed_entry_return_triggers",
+        "test_fixed_source_combat_growth_triggers",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_token_entry_boundaries",
         "test_card_program_trust"
       ]
     },

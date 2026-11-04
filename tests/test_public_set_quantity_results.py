@@ -81,7 +81,7 @@ class PublicSetQuantityCompilerTests(unittest.TestCase):
             'continuous.resolution.fixed_characteristics_until_end_of_turn'),
             ('Other Elves you control get +1/+1 until end of turn for each lore counter on this artifact.',
             'quantity_expression.scalar_effect_amount'))
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         known=set(discover_tests(ROOT).values());registry=load_default_capability_registry()
         for index,(text,cap) in enumerate(texts):

@@ -55,7 +55,7 @@ class MyriadKeywordCompositionCompilerTests(unittest.TestCase):
             with self.subTest(text=text):
                 record=replace(query_record(text),type_line='Creature — Squirrel',keywords=('Flying','Myriad'))
                 self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=registry).status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id']=='combat.entry.lifecycle.fixed_public').update(
             status='blocked',blockers=['Myriad lifecycle owner withdrawn'])
         blocked=CapabilityRegistry(raw)

@@ -149,7 +149,7 @@ class RevealUntilSelectionOwnerTests(unittest.TestCase):
         self.assertIn('library.select.reveal_until_controller',activated_ir.faces[0].nodes[0].capability_dependencies)
         declarations = read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         discovered = set(discover_tests(ROOT).values())
-        baseline = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        baseline = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         for dependency in ('library.select.reveal_until_controller','library.select.fixed_controller'):
             raw = deepcopy(baseline)
             next(row for row in raw['capabilities'] if row['id']==dependency).update(

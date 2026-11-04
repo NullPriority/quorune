@@ -55,7 +55,7 @@ class LeadingDurationQuantityCompilerTests(unittest.TestCase):
             capability_profile='commander_review',trust_level='trusted')
         bound=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
         self.assertTrue(bound['strict_capability_ready'],bound)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         cap='quantity_expression.public_query_effect_amount'
         next(row for row in raw['capabilities'] if row['id']==cap).update(status='blocked',blockers=['quantity producer withdrawn'])
         blocked=CapabilityRegistry(raw)

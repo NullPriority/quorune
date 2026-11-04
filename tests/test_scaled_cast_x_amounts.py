@@ -73,7 +73,7 @@ class ScaledCastXCompilerTests(unittest.TestCase):
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
         from quorune.query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY, cast_x_runtime_dependencies
-        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id'] == DECLARED_AMOUNT_CAPABILITY).update(
             status='blocked', blockers=['Declared amount authority withdrawn'])
         registry = CapabilityRegistry(raw)

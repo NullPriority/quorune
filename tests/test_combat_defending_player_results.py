@@ -16,7 +16,7 @@ class CombatDefendingPlayerCompilerTests(unittest.TestCase):
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
         card=record('Whenever this creature becomes blocked, defending player discards a card.','Creature — Human')
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id']=='trigger.result.fixed_context_player_discard').update(
             status='blocked',blockers=['Affected-player result withdrawn'])
         registry=CapabilityRegistry(raw)

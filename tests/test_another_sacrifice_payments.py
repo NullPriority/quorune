@@ -59,7 +59,7 @@ class AnotherSacrificePaymentOwnerTests(unittest.TestCase):
         positive=compile_oracle_card(record(text,'Creature — Ogre'),capability_registry=current,capability_profile='commander_review')
         self.assertEqual('exact',positive.status,positive.material_residuals)
         self.assertIn('cost.sacrifice.another_fixed_resolution',positive.faces[0].nodes[0].capability_dependencies)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         raw=deepcopy(raw);next(cap for cap in raw['capabilities'] if cap['id']=='cost.sacrifice.another_fixed_resolution').update(status='blocked',blockers=['source exclusion withdrawn'])
         registry=CapabilityRegistry(raw)
         index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))

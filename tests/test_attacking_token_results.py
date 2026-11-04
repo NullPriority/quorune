@@ -50,7 +50,7 @@ class AttackingTokenResultCompilerTests(unittest.TestCase):
         from scripts.update_capability_evidence import build_index, discover_tests
         from test_qualified_zone_event_queries import query_record
         from quorune.oracle_ir import compile_oracle_card
-        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id'] == 'token.creation.fixed_attacking_definition').update(
             status='blocked', blockers=['Attacking entry owner withdrawn'])
         registry = CapabilityRegistry(raw)

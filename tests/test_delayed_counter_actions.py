@@ -73,7 +73,7 @@ class DelayedCounterOwnerTests(unittest.TestCase):
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
         from test_granted_skulk import record
-        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         for capability,body in (('counter.removal.fixed_effect','remove a +1/+1 counter from it at end of combat.'),
                 ('counter.producer.fixed_effect','put a -1/-1 counter on it at end of combat.'),

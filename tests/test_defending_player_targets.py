@@ -19,7 +19,7 @@ class DefendingPlayerTargetCompilerTests(unittest.TestCase):
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
         card=record('Whenever this creature attacks, tap target creature defending player controls.','Creature — Human')
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id']=='target.revalidate_resolution').update(
             status='blocked',blockers=['Target authority withdrawn'])
         registry=CapabilityRegistry(raw)

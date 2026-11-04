@@ -36,7 +36,7 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
         from scripts.update_capability_evidence import build_index,discover_tests
         record=self.db.lookup('Dreamtail Heron');unrelated=self.db.lookup('Grizzly Bears')
         self.assertEqual('exact',compile_oracle_card(record,capability_registry=self.registry).status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         known=set(discover_tests(ROOT).values())
         for capability in ('casting.mutate.fixed_mana','target.object.same_spell_owner',

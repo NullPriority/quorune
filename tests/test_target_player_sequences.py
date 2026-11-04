@@ -80,7 +80,7 @@ class TargetPlayerSequenceCompilerTests(unittest.TestCase):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id']==CAPABILITY).update(status='blocked',blockers=['Shared player sequence withdrawn'])
         registry=CapabilityRegistry(raw);declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json')
         index=build_index(registry_value=raw,declaration_source=declarations,discovered_test_ids=set(discover_tests(ROOT).values()))

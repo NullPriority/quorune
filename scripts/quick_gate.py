@@ -96,7 +96,7 @@ def build_plan(
             ),
         ),
     ]
-    if phase == "pre-corpus":
+    if phase in {"normal", "pre-corpus"}:
         steps.extend(
             (
                 QuickStep("explicit-text-encoding", (python, "scripts/quick_gate.py", "--validate-text-io", "--changed-files-stdin"),

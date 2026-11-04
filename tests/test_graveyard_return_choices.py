@@ -120,7 +120,7 @@ class GraveyardReturnChoiceTests(unittest.TestCase):
             'You may return two creature cards from your graveyard to your hand.',
             'You may return a creature card from a graveyard to your hand.'):
             self.assertIsNone(graveyard_return_choice_template(text))
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(r for r in raw['capabilities'] if r['id']==CAPABILITY).update(status='blocked',blockers=['choice owner withdrawn'])
         blocked=CapabilityRegistry(raw)
         from quorune.rules.evidence import validate_capability_evidence_index

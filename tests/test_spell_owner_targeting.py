@@ -70,7 +70,7 @@ class SpellOwnerTargetingTests(unittest.TestCase):
         for key in ('controller_relation','player_relation'):
             with self.subTest(key=key),self.assertRaises(ValueError):
                 target_plan({**old,key:'spell_owner'})
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(row for row in raw['capabilities'] if row['id']==TARGET_SPELL_OWNER_CAPABILITY).update(
             status='blocked',blockers=['Spell ownership authority withdrawn'])
         gate=explicit_capability_gate(TARGET_SPELL_OWNER_CAPABILITY,

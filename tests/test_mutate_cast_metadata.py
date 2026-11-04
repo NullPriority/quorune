@@ -103,9 +103,9 @@ class MutateCastMetadataTests(unittest.TestCase):
         self.assertEqual((),compiled_mutate_specs(host,card))
 
     def test_every_pinned_mutate_cost_lowers_but_blocked_integration_never_admits_it(self):
-        records=json.loads(FIXTURE.read_text())['cards'];originals=[r for r in records if 'Mutate' in r['keywords']]
+        records=json.loads(FIXTURE.read_text(encoding="utf-8"))['cards'];originals=[r for r in records if 'Mutate' in r['keywords']]
         self.assertEqual(34,len(originals))
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(row for row in raw['capabilities'] if row['id']==MUTATE_CAPABILITY).update(
             status='blocked',blockers=['Mutate executable authority withdrawn'])
         registry=CapabilityRegistry(raw)

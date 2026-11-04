@@ -11,6 +11,16 @@ from scripts.quick_gate import build_plan
 
 
 class QuickGatePlanTests(unittest.TestCase):
+    def test_normal_inventory_contains_the_same_pre_corpus_obligations(self):
+        paths=("quorune/compiler/collection_quantity_templates.py", "tests/test_quick_gate.py")
+        pre=build_plan(paths,phase="pre-corpus")
+        normal=build_plan(paths,phase="normal")
+        inventory={step.name:step for step in normal["steps"]}
+        self.assertIn("explicit-text-encoding",inventory)
+        for step in pre["steps"]:
+            with self.subTest(step=step.name):
+                self.assertEqual(step,inventory[step.name])
+
     def test_pre_corpus_text_encoding_uses_bounded_command_and_exact_input(self):
         paths=('tests/test_quick_gate.py',)*1200+('docs/index.md',)
         plan=build_plan(paths,phase='pre-corpus')

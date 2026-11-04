@@ -34,7 +34,7 @@ class QualifiedDestructionCompilerTests(unittest.TestCase):
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
         from quorune.rules.capabilities import capability_dependencies_for_node
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         template=mass_destruction_effect_template('Destroy all nonwhite creatures.')
         self.assertIn('permanent.destroy.qualified_fixed_set',capability_dependencies_for_node(

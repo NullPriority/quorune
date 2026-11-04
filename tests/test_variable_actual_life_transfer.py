@@ -48,7 +48,7 @@ class VariableActualLifeTransferCompilerTests(unittest.TestCase):
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index,discover_tests
         from quorune.query_effect_amount_model import DECLARED_AMOUNT_CAPABILITY,PUBLIC_QUERY_AMOUNT_CAPABILITY
-        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        original=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         declarations=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json');known=set(discover_tests(ROOT).values())
         for missing,text in ((DECLARED_AMOUNT_CAPABILITY,'Each opponent loses X life. You gain life equal to the life lost this way.'),
                 (PUBLIC_QUERY_AMOUNT_CAPABILITY,'Each opponent loses X life, where X is your devotion to black. You gain life equal to the life lost this way.')):

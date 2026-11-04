@@ -28,7 +28,7 @@ class PerPlayerTargetSetOwnerTests(unittest.TestCase):
         from test_granted_skulk import record
         text='For each opponent, destroy up to one target artifact or enchantment that player controls.'
         self.assertEqual('exact',compile_oracle_card(record(text,'Sorcery'),capability_registry=load_default_capability_registry()).status)
-        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text())
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding="utf-8"))
         next(c for c in raw['capabilities'] if c['id']=='target.set.one_per_player').update(status='blocked',blockers=['Per-player target authority withdrawn'])
         registry=CapabilityRegistry(raw);index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
         registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
