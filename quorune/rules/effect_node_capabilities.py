@@ -73,6 +73,7 @@ def effect_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanics: set[str],
 ) -> set[str]:
+    from .per_player_target_sets import per_player_target_node_capabilities
     from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
     from .temporary_cast_restrictions import temporary_cast_node_capabilities
     from .library_search_rule_shapes import temporary_library_search_node_capabilities
@@ -86,6 +87,7 @@ def effect_node_capabilities(
     except AttachmentReferenceError:
         return set()
     for resolver in (
+        per_player_target_node_capabilities,
         block_counterpart_zone_capabilities,
         compiled_emblem_node_capabilities,
         fixed_land_untap_choice_capabilities,

@@ -59742,6 +59742,98 @@
       "version": 4
     },
     {
+      "id": "target.set.one_per_player",
+      "version": 1,
+      "official_rules": [
+        "115.7d",
+        "115.7e",
+        "115.9b",
+        "601.2c",
+        "603.3d",
+        "608.2b",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "applicability": {
+        "summary": "An optional represented permanent target set chooses at most one current permanent per relevant player and retains each selected controller for resolution. Existing announced-count and simultaneous effect owners execute the set.",
+        "inputs": [
+          "Closed optional announced homogeneous target set",
+          "All-player or opponent controller domain",
+          "Distinct-controller selection and recorded-controller revalidation"
+        ],
+        "outputs": [
+          "Shared legal offers and accepted target sets",
+          "Original target count/identity retention for copies",
+          "Partial or zero-target resolution through existing primitive owners"
+        ],
+        "exclusions": [
+          "Mandatory per-player target counts",
+          "Unrepresented result siblings or target domains",
+          "Control, correlated quantities and source-linked exile without their own set owner"
+        ]
+      },
+      "dependencies": [
+        "target.cardinality.any_number",
+        "resolution.effect.fixed_homogeneous_target_set",
+        "target.revalidate_resolution"
+      ],
+      "implementation_components": [
+        "quorune.compiler.per_player_target_sets.per_player_target_set_template",
+        "quorune.rules.per_player_target_sets.per_player_target_node_capabilities",
+        "quorune.rules.per_player_target_sets.per_player_target_runtime_dependencies",
+        "quorune.selection.target_validation.validate_grouped_target_assignment",
+        "quorune.selection.target_validation.target_controller_matches_snapshot",
+        "quorune.selection.copy_targets.prepare_copy_targets"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified per-player capability withdrawal leaves ordinary announced sets exact. Actual flags/domain/primitive imply the fine authority independently of a coverage marker.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the distinct-controller shared validation allows two targets from one player and fails its owner witness.",
+      "status": "trusted",
+      "blockers": [],
+      "positive_tests": [
+        "test_optional_set_accepts_zero_and_distinct_players_but_rejects_two_from_one_player",
+        "test_compiler_lowering_uses_existing_announced_sets_and_infers_fine_authority",
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_optional_zero_targets_resolves_without_target_or_effect_mutation"
+      ],
+      "negative_tests": [
+        "test_recorded_controller_revalidation_and_strict_flag_types",
+        "test_verified_per_player_withdrawal_preserves_ordinary_announced_sets",
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "interaction_tests": [
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "multiplayer_tests": [
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "privacy_tests": [
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "replay_tests": [
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller",
+        "test_actual_optional_zero_targets_resolves_without_target_or_effect_mutation"
+      ]
+    },
+    {
       "applicability": {
         "exclusions": [
           "extra-cost and target-dependent timing",
@@ -76346,7 +76438,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 667,
+  "registry_version": 668,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

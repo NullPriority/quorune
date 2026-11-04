@@ -11337,6 +11337,31 @@
         "test_source_damage_death_triggers",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "per-player-permanent-target-sets",
+      "patterns": [
+        "quorune/compiler/per_player_target_sets.py",
+        "quorune/rules/per_player_target_sets.py",
+        "quorune/rules/any_number_target_shapes.py",
+        "quorune/rules/special_node_shapes.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/targets.py",
+        "quorune/selection/target_validation.py",
+        "quorune/selection/targeting.py",
+        "tests/test_per_player_target_sets.py",
+        "tests/test_per_player_target_native.py",
+        "tests/fixtures/per-player-target-cards.json",
+        "quorune/compiler/effect_template_composition.py"
+      ],
+      "test_modules": [
+        "test_per_player_target_sets",
+        "test_per_player_target_native",
+        "test_fixed_homogeneous_target_sets",
+        "test_any_number_targets",
+        "test_targeted_activation_costs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

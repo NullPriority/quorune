@@ -617,6 +617,8 @@ class TargetSelectionOwnerMixin:
                 own = selected.setdefault(group.group_id, [])
                 if group.distinct and not group.allow_reuse and ref in own:
                     continue
+                if group.distinct_controllers and any(self._target_snapshot(ref).get('controller')==self._target_snapshot(other).get('controller') for other in own):
+                    continue
                 if plan.globally_distinct and ref in globally_used:
                     continue
                 if any(
@@ -1068,7 +1070,9 @@ class TargetSelectionOwnerMixin:
                         original_snapshot,
                     )
                 )
-                if ref in legal and identity_matches:
+                from .target_validation import target_controller_matches_snapshot
+                controller_matches=target_controller_matches_snapshot(self,group,ref,original_snapshot)
+                if ref in legal and identity_matches and controller_matches:
                     current.append(ref)
                     updated.append(ref)
                     valid_count += 1

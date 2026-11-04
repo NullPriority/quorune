@@ -207,6 +207,24 @@ it does not expose hidden zones or create a general relational-target grammar.
 
 ## Copied target decisions
 
+Optional one-per-player permanent selections use the existing announced target
+count and one simultaneous homogeneous result. `distinct_controllers: true`
+requires selected permanents to have different controllers at announcement;
+`retain_controller: true` revalidates each selected permanent against its
+recorded controller. A change to another opponent's control makes that target
+illegal even when it still meets the ordinary opponent predicate. Other legal
+targets resolve, and an initially empty selection remains a legal choice.
+Both flags are strict booleans and require `target.set.one_per_player`, inferred
+from the actual schema independently of capability annotations. Ordinary target
+groups omit these flags and retain their existing serialized shape.
+
+Copies retain the original chosen count and snapshots. Keeping all original
+targets may retain illegal targets; newly chosen targets satisfy the copy
+controller's current domain and the distinct-controller relation. Departed
+original incarnations do not become new targets through reference reuse.
+Mandatory selections for every player and result bodies without an existing
+closed homogeneous owner remain residual.
+
 Copied spells and abilities retain their selected modes and original target
 count in each group. `selection/copy_targets.py` binds those decisions to the
 captured original target groups and identity snapshots. Storm and generic copy

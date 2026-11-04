@@ -1062,6 +1062,8 @@
       "test_optional_spell_copy_followups",
       "test_ordinary_crew",
       "test_paid_event_spell_copy",
+      "test_per_player_target_native",
+      "test_per_player_target_sets",
       "test_permanent_composition",
       "test_priced_mana_sources",
       "test_public_self_replacement_results",

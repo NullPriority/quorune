@@ -222,10 +222,18 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
                 self.assertEqual(text, text[node.span.start : node.span.end])
 
     def test_fixed_homogeneous_target_set_grammar_stays_closed(self):
+        composed = "Return two target creatures to their owners' hands, then draw a card."
+        self.assertIsNone(fixed_homogeneous_target_set_effect_template(composed))
+        ir = self.compile(composed)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(["return_permanent_targets_to_owner_hand", "draw"],
+                         [effect["op"] for effect in node.effects])
+        self.assertIn(FIXED_HOMOGENEOUS_TARGET_SET_CAPABILITY, node.capability_dependencies)
         unsupported = (
             "Destroy target creature and target land.",
             "Exile up to X target cards from a graveyard.",
-            "Return two target creatures to their owners' hands, then draw a card.",
+            "Return two target creatures to their owners' hands, then rewrite history.",
             "Return up to three target creature cards with total mana value 3 or less from your graveyard to the battlefield.",
             "Destroy two targets.",
             "Tap seven target creatures.",

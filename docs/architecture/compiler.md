@@ -1074,6 +1074,16 @@ The result's typed maximum reads the original chosen target roles, including
 targets that later become illegal. Unknown result siblings, divided quantities,
 and aggregate target constraints remain residual.
 
+`compiler/per_player_target_sets.py` composes the same announced cardinality
+with an optional permanent selection for each player or opponent. The target
+schema adds independently owned distinct-controller and retained-controller
+constraints; no player-count constant or runtime Oracle parsing determines the
+selection. `rules/per_player_target_sets.py` proves both constraints and the
+complete existing result primitive before admission. The cardinality owner
+delegates constrained schemas to this proof, including runtime dependency
+inference. Mandatory per-player selections, linked exile returns and other
+unrepresented follow-up results remain outside this composition.
+
 `compiler/target_count_cost_nodes.py` lowers a complete fixed ordinary-mana
 sentence that charges for each target beyond the first. Strive is an ability
 word; the sentence defines its mandatory price. The existing cast-cost component

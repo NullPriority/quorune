@@ -610,6 +610,7 @@
     "tests/fixtures/paid-mana-resolution-cards.json",
     "tests/fixtures/paired-typecycling-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",
+    "tests/fixtures/per-player-target-cards.json",
     "tests/fixtures/permanent-additional-costs.json",
     "tests/fixtures/persist-undying-cards.json",
     "tests/fixtures/persistent-hand-visibility-cards.json",

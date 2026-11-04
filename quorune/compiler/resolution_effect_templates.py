@@ -255,6 +255,9 @@ def typed_resolution_effect_template(
     )
     if affected_player_discard is not None:
         return affected_player_discard.compiled()
+    from .per_player_target_sets import per_player_target_set_template
+    per_player=per_player_target_set_template(text)
+    if per_player is not None:return per_player
     fixed_homogeneous_target_set = (
         fixed_homogeneous_target_set_effect_template(text)
     )

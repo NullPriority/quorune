@@ -1206,6 +1206,7 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 
 def _closed_effect_recognizers():
+    from ..rules.per_player_target_sets import is_closed_per_player_target_program
     from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
     from ..rules.library_order_shapes import is_closed_fixed_library_order_program
@@ -1215,6 +1216,7 @@ def _closed_effect_recognizers():
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     return (
+        is_closed_per_player_target_program,
         is_closed_compiled_emblem_program,
         is_closed_fixed_land_untap_choice_program,
         is_closed_all_kind_counter_program,

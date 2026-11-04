@@ -59,6 +59,12 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    from collections.abc import Mapping
+    from ..compiler.per_player_target_sets import PER_PLAYER_TARGET_MECHANIC
+    if (PER_PLAYER_TARGET_MECHANIC in mechanics or isinstance(target_schema,Mapping)
+            and {'distinct_controllers','retain_controller'}.intersection(target_schema)):
+        from .per_player_target_sets import per_player_target_node_capabilities
+        return per_player_target_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC,FACE_UP_EFFECT_OPERATION,face_up_node_capabilities
     if FACE_UP_EFFECT_MECHANIC in mechanics or any(effect.get('op')==FACE_UP_EFFECT_OPERATION for effect in effects):
         return face_up_node_capabilities(effects=effects,target_schema=target_schema,mechanics=mechanics)
