@@ -462,6 +462,14 @@ The precise Connive shape excludes internal continuation fields, open result
 tails and ambiguous event-object pronouns. Its capability closes through the
 existing draw, typed discard, destination replacement and counter owners.
 
+Temporary query-scaled target and source modifiers accept a leading
+“Until end of turn” duration through the existing characteristic result owner.
+The complete subject, quantity and keyword clauses must close independently.
+The numeric quantity is read at resolution and the resulting modifier remains
+fixed until cleanup; a keyword grant is not multiplied by that quantity.
+This grammar does not admit unrepresented global quantity results, new
+durations, conditions or quantity references.
+
 Scalar token-quantity lowering accepts the complete “create a number of …
 tokens equal to …” form by normalizing only its quantity to the existing
 declared-X result. Fixed token characteristics, tapped entry and abilities

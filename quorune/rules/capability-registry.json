@@ -52464,6 +52464,7 @@
         "quorune.compiler.noncreature_quantity_subtypes._plural",
         "quorune.compiler.noncreature_quantity_subtypes.noncreature_quantity_subtype_fields",
         "quorune.compiler.program_generation._is_closed_public_query_amount_program",
+        "quorune.compiler.public_query_effect_amounts._query_characteristic_candidate",
         "quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template",
         "quorune.dynamic_characteristics.query_characteristic_count",
         "quorune.effect_runtime.objects_stack_and_tokens._apply_modify_stats_until_end_of_turn",
@@ -78093,7 +78094,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 694,
+  "registry_version": 695,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

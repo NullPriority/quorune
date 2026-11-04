@@ -562,6 +562,7 @@
     "tests/fixtures/land-condition-quantity-cards.json",
     "tests/fixtures/land-search-view-cards.json",
     "tests/fixtures/landwalk-as-though-cards.json",
+    "tests/fixtures/leading-duration-quantity-cards.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-other-remainder-cards.json",
     "tests/fixtures/library-search-dispatch-cards.json",

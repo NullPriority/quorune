@@ -11887,6 +11887,20 @@
         "test_attacking_token_results",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "leading-duration-public-quantity-characteristics",
+      "patterns": [
+        "quorune/compiler/public_query_effect_amounts.py",
+        "tests/test_leading_duration_quantities.py",
+        "tests/fixtures/leading-duration-quantity-cards.json"
+      ],
+      "test_modules": [
+        "test_leading_duration_quantities",
+        "test_public_query_effect_amounts",
+        "test_public_query_action_registration",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

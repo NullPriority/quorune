@@ -101,6 +101,16 @@ _COUNTER_FOR_EACH = re.compile(
 )
 _QUERY_CHARACTERISTIC_PATTERNS = (
     (
+        "per-object",
+        re.compile(
+            r"^Until end of turn, (?P<subject>.+?) "
+            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets) "
+            r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) for each "
+            r"(?P<quantity>.+?)(?P<suffix_keywords> and gains? .+?)?\.?$",
+            re.IGNORECASE,
+        ),
+    ),
+    (
         "where-x",
         re.compile(
             r"^(?P<subject>.+?) "
