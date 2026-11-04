@@ -591,6 +591,7 @@
     "tests/fixtures/multisentence-effect-cards.json",
     "tests/fixtures/mutate-casting-cards.json",
     "tests/fixtures/myrel-composition-cards.json",
+    "tests/fixtures/myriad-composition-cards.json",
     "tests/fixtures/named-source-result-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
     "tests/fixtures/noncreature-subtype-quantity-cards.json",

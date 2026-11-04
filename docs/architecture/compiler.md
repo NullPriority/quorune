@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Compound printed keyword lists preserve each Myriad instance as a separate
+source-spanned node and registered ability identity. Ordinary sibling keywords
+retain their independent owner. Single Myriad declarations keep their existing
+complete IR payload; unknown siblings and parameters remain residual. The
+compiler composition changes no copy, destination, trigger-placement or delayed
+cleanup policy. Each Myriad trigger independently uses those existing owners.
+
 `compiler/attacking_token_results.py` recognizes a complete ordinary attacking
 rider over an independently closed fixed creature-token definition. Each
 replacement-expanded token receives its own public defending-player,

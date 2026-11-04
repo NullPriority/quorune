@@ -135,7 +135,7 @@ _DEVOID_MECHANIC = DEVOID_MECHANIC_ID
 _AFTERLIFE_MECHANIC = AFTERLIFE_MECHANIC_ID
 _FACE_DOWN_METHOD_MECHANICS = frozenset(FACE_DOWN_CAST_METHODS)
 _TOXIC_MECHANIC = "toxic"
-_GROUPED_SPLIT_MECHANICS = (
+_GROUPED_SPLIT_MECHANICS = ('myriad',
     'extort',
     _AFFINITY_MECHANIC,
     _BLOODTHIRST_MECHANIC,
@@ -159,7 +159,7 @@ _PARAMETERIZED_SPLIT_MECHANICS = frozenset(
         *FIXED_KEYWORD_ENTRY_MECHANICS,
     }
 )
-_INSTANCE_PART_MECHANICS = (
+_INSTANCE_PART_MECHANICS = ('myriad',
     'increment',
     'extort',
     'split second',
@@ -235,7 +235,7 @@ def keyword_node_plans(
         grouped
         for grouped in _GROUPED_SPLIT_MECHANICS
         for mechanic in mechanics
-        if mechanic == grouped
+        if mechanic == grouped and (grouped != 'myriad' or len(mechanics) > 1)
     ) + tuple(
         mechanic
         for mechanic in mechanics

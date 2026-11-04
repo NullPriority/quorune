@@ -11813,6 +11813,21 @@
         "test_attack_transitions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "myriad-keyword-composition",
+      "patterns": [
+        "quorune/compiler/keyword_nodes.py",
+        "quorune/compiler/generated_program_identity.py",
+        "tests/test_myriad_keyword_composition.py",
+        "tests/fixtures/myriad-composition-cards.json"
+      ],
+      "test_modules": [
+        "test_myriad_keyword_composition",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_cascade_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

@@ -1,0 +1,294 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Fog",
+      "oracle_id": "27e9db49-7af7-4bef-ad4c-bf5dfb92030d",
+      "oracle_text": "Prevent all combat damage that would be dealt this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2016-06-10",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land \u2014 Forest"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Dog"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Myriad"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Scurry of Squirrels",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "oracle_text": "Myriad, myriad (Whenever this creature attacks, for each opponent other than defending player, you may create a token that's a copy of this creature that's tapped and attacking that player or a planeswalker they control. Then do it again. Exile the tokens at end of combat.)\nWhenever this creature deals combat damage to a player, put a +1/+1 counter on target creature you control.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-08-02",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Squirrel Scout"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Although the tokens enter attacking, they were never declared as attackers. Abilities that trigger whenever a creature attacks won't trigger, including the myriad ability of the tokens. If there are any costs to have a creature attack, those costs won't apply to the tokens.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any \"enters\" abilities of the copied creature will trigger when the tokens enter. Any \"as [this permanent] enters\" or \"[this permanent] enters with\" abilities of the copied creature will also work.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each token copies exactly what was printed on the original creature and nothing else. It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, and so on.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an instance of myriad creates more than one token for any given player (due to an effect such as the one Doubling Season creates), you may choose separately for each token whether it's attacking the player or a planeswalker they control.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the defending player is your only opponent, no tokens are put onto the battlefield.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "The term \"defending player\" in the myriad rules (or any other ability of an attacking creature) refers to the player the creature with myriad was attacking, the controller of the planeswalker it was attacking, or the protector of the battle it was attacking at the time the ability resolves. If that creature is no longer attacking, it refers to the appropriate player based on who or what the creature was last attacking.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "The tokens created by a single instance of myriad all enter at the same time.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose whether each token is attacking the player or a planeswalker they control as the token is created. If it's attacking a planeswalker, you choose which one. You can't have any of the tokens attack a battle.",
+      "oracle_id": "3beed054-a099-4887-b1bd-39cf9e514e94",
+      "published_at": "2024-07-26",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}
