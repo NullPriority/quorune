@@ -37095,6 +37095,109 @@
       "version": 3
     },
     {
+      "id": "counter.rule.finality",
+      "version": 1,
+      "status": "trusted",
+      "blockers": [],
+      "applicability": {
+        "summary": "A positive finality counter creates an ordinary replacement of that permanent original-incarnation battlefield-to-graveyard movement with exile.",
+        "inputs": [
+          "current active permanent and canonical positive finality counter quantity",
+          "sealed logical incarnation and proposed zone movement",
+          "existing affected-player replacement choice and commander movement owners"
+        ],
+        "outputs": [
+          "one mandatory ordinary destination replacement independent of printed abilities",
+          "existing atomic replacement ordering,pending continuation,physical movement and commander aftermath"
+        ],
+        "exclusions": [
+          "other origins or destinations and old logical incarnations",
+          "new generic counter-placement or zone-commit mechanisms",
+          "a self-replacement priority grant or named-card behavior"
+        ]
+      },
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal withholds finality-producing source admission and leaves ordinary lifelink entry counters available; actual counter descriptors infer the rule without coverage annotations.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting counter-derived effect collection fails the original-incarnation exile witness; ordinary-priority and unrelated-destination boundaries are independently asserted.",
+      "implementation_components": [
+        "quorune.rules.finality_counters.finality_counter_replacement",
+        "quorune.rules.finality_counters.finality_counter_dependencies",
+        "quorune.rules.finality_counters.finality_counter_runtime_dependencies",
+        "quorune.semantic_runtime.zone_replacements.collect_zone_change_replacement_effects",
+        "quorune.rules.reanimation_entry_counters.reanimation_entry_counter_node_capabilities",
+        "quorune.compiler.replacement_residual_nodes.unowned_replacement_node"
+      ],
+      "official_rules": [
+        "122.1h",
+        "122.2",
+        "400.7",
+        "614.1a",
+        "614.15",
+        "616.1",
+        "616.1a",
+        "616.1e",
+        "616.1f",
+        "903.9a"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "positive_tests": [
+        "test_counter_rule_is_collected_without_any_printed_ability_and_exiles_only_its_original_departure",
+        "test_finality_entry_requires_both_the_entry_owner_and_the_intrinsic_counter_rule",
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_replacement_words_in_reminders_do_not_replace_material_source_classification",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ],
+      "negative_tests": [
+        "test_removed_counter_other_origins_destinations_and_returned_incarnations_do_not_match",
+        "test_actual_counter_payloads_require_finality_without_coverage_annotations",
+        "test_verified_finality_withdrawal_keeps_other_entry_counters_available",
+        "test_finality_collection_omission_mutation_is_killed",
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_replacement_words_in_reminders_do_not_replace_material_source_classification",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ],
+      "interaction_tests": [
+        "test_finality_competes_with_other_replacements_and_does_not_gain_self_replacement_priority",
+        "test_existing_unearth_self_replacement_keeps_its_priority_over_finality",
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ],
+      "multiplayer_tests": [
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ],
+      "privacy_tests": [
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ],
+      "replay_tests": [
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ]
+    },
+    {
       "applicability": {
         "exclusions": [
           "variable amount evaluation",
@@ -75613,14 +75716,14 @@
     },
     {
       "id": "zone.reanimate.entry_counters",
-      "version": 1,
+      "version": 2,
       "status": "trusted",
       "blockers": [],
       "applicability": {
         "summary": "One fixed targeted graveyard return carries effect-generated numeric or ordinary keyword counters through the existing proposed battlefield entry.",
         "inputs": [
           "one closed scalar graveyard target and destination controller",
-          "fixed one-through-ten +1/+1,-1/-1 or ordinary keyword counters",
+          "fixed one-through-ten +1/+1,-1/-1,ordinary keyword or independently owned finality counters",
           "original announced target snapshot and stack source"
         ],
         "outputs": [
@@ -75629,7 +75732,7 @@
           "existing counter replacement ordering and serialization"
         ],
         "exclusions": [
-          "finality,shield,stun and unknown counter rules",
+          "shield,stun,unknown counter rules or a keyword without its closed gameplay owner",
           "variable or conditional amounts,plural reanimation and linked result riders",
           "a new incarnation substituted for the original selected target"
         ]
@@ -76565,7 +76668,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 671,
+  "registry_version": 672,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

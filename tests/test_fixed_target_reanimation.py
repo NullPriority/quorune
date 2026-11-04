@@ -224,12 +224,17 @@ class FixedTargetReanimationCompilerTests(unittest.TestCase):
             )
 
     def test_reanimation_unsupported_and_malformed_shapes_fail_closed(self):
+        from quorune.rules.capabilities import load_default_capability_registry
+        promoted='Return target creature card from your graveyard to the battlefield with a finality counter on it.'
+        self.assertIsNone(fixed_target_reanimation_effect_template(promoted))
+        self.assertEqual('exact',compile_oracle_card(card_record(promoted),
+            capability_registry=load_default_capability_registry()).status)
         unsupported = (
             "Return a creature card from your graveyard to the battlefield.",
             "Return all Aura cards from your graveyard to the battlefield.",
             "Return target instant card from your graveyard to the battlefield.",
             "Return target creature card with mana value X or less from your graveyard to the battlefield.",
-            "Return target creature card from your graveyard to the battlefield with a finality counter on it.",
+            "Return target creature card from your graveyard to the battlefield with a shield counter on it.",
             "Return target creature card from your graveyard to the battlefield. It gains haste.",
             "Put target creature card from a graveyard onto the battlefield.",
         )

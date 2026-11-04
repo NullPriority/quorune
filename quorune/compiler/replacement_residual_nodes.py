@@ -11,10 +11,21 @@ from .kicked_self_replacement_templates import is_fixed_spell_self_replacement
 _REPLACEMENT_MARKERS=re.compile(r'\b(instead|as .+ enters|enters .+ with|skip)\b',re.I)
 
 
+def _balanced_reminder_delimiters(line):
+    depth=0
+    for character in line:
+        if character=='(':depth+=1
+        elif character==')':
+            if not depth:return False
+            depth-=1
+    return depth==0
+
+
 def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
         spell,permanent,has_faces,compile_effect,residuals,bargain_available=False):
-    if not _REPLACEMENT_MARKERS.search(line):
-        return None
+    if not _REPLACEMENT_MARKERS.search(material_line):
+        if not _REPLACEMENT_MARKERS.search(line) or _balanced_reminder_delimiters(line):
+            return None
     if spell and bargain_available and compile_effect(material_line,card_name=source_name,bargain_available=True)[0]=='linked-bargain-same-target-v1':
         return None
     if spell and is_fixed_spell_self_replacement(material_line,source_name,

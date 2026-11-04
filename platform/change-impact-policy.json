@@ -11419,6 +11419,30 @@
         "test_external_entry_counters",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "finality-counter-rule-and-material-reminder-dispatch",
+      "patterns": [
+        "quorune/rules/finality_counters.py",
+        "quorune/semantic_runtime/zone_replacements.py",
+        "quorune/reanimation_entry_counters.py",
+        "quorune/rules/reanimation_entry_counters.py",
+        "quorune/compiler/replacement_residual_nodes.py",
+        "tests/test_finality_counters.py",
+        "tests/fixtures/finality-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_finality_counters",
+        "test_reanimation_entry_counters",
+        "test_fixed_target_reanimation",
+        "test_unearth_rules",
+        "test_zone_replacement_compiler",
+        "test_oracle_ir",
+        "test_card_program_trust",
+        "test_composition_commander_departure",
+        "test_composition_commander_replacement",
+        "test_mutate_cast_native"
+      ]
     }
   ],
   "risk_rules": [

@@ -46,6 +46,7 @@ from ..turn_history import opponent_was_dealt_damage_this_turn
 from ..flashback import flashed_back_subject_replacements
 from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
+from ..rules.finality_counters import finality_counter_replacement
 from ..zone_trigger_events import ZoneTransitionKind
 from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -593,9 +594,8 @@ def collect_zone_change_replacement_effects(
             or source.controller not in host.active_seats
         ):
             continue
-        unearth_replacement = unearthed_leave_replacement(source)
-        if unearth_replacement is not None:
-            effects.append(unearth_replacement)
+        for replacement in (unearthed_leave_replacement(source),finality_counter_replacement(source)):
+            if replacement is not None:effects.append(replacement)
         record = host.card_record(source)
         if record is None:
             continue

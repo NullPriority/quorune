@@ -2591,7 +2591,12 @@ The entering controller places the counters unless the instruction specifies
 otherwise. `zone.reanimate.entry_counters` is inferred from the actual effect
 shape independently of annotations; keyword counters additionally require
 their characteristic and gameplay owners. Ordinary scalar instructions and
-version-two event-bound returns retain their encodings. Finality, shield,
+version-two event-bound returns retain their encodings. A finality counter
+additionally requires `counter.rule.finality`. Its ordinary destination
+replacement is collected from the permanent's current counter state and
+original logical identity, independently of printed abilities. Counter
+removal ends that rule; battlefield-to-graveyard movement becomes exile, then
+the existing commander owner-choice rules apply. Shield,
 stun, variable counts, plural returns and other unrepresented riders remain
 outside this composition.
 

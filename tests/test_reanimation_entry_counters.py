@@ -25,7 +25,7 @@ class ReanimationEntryCounterCompilerTests(unittest.TestCase):
 
     def test_unrepresented_counter_rules_variable_counts_and_linked_riders_remain_residual(self):
         registry=load_default_capability_registry();prefix='Return target creature card from your graveyard to the battlefield with '
-        for suffix in ('a finality counter on it.','X additional +1/+1 counters on it.',
+        for suffix in ('a shield counter on it.','X additional +1/+1 counters on it.',
                 'two additional +1/+1 counter on it.','a lifelink counters on it.',
                 'a lifelink counter on it. Rewrite history.','a quantum counter on it.',
                 'two additional +1/+1 counters on it and it gains an undefined ability.'):
@@ -71,7 +71,7 @@ class ReanimationEntryCounterCompilerTests(unittest.TestCase):
         self.assertEqual(3,intent.expected_zone_change_counter);self.assertEqual('B',intent.new_controller)
         self.assertEqual(('B','STACK',2),tuple(getattr(intent.effect_entry_counters[0],k) for k in ('placing_player','source_ref','amount')))
         for change in ({'schema_version':True},{'schema_version':1},{'source':'CARD'},
-                {'entry_counter':{'counter_name':'finality','amount':1}},
+                {'entry_counter':{'counter_name':'shield','amount':1}},
                 {'entry_counter':{'counter_name':'decayed','amount':1}},
                 {'entry_counter':{'counter_name':'+1/+1','amount':True}}):
             with self.subTest(change=change),self.assertRaises(ValueError):

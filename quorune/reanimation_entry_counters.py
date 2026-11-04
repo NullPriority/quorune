@@ -13,7 +13,7 @@ def fixed_reanimation_entry_counter(value):
     if not isinstance(value,Mapping) or set(value)!={'counter_name','amount'}:
         raise ValueError('Reanimation entry counter fields are incomplete or unknown')
     name,amount=value['counter_name'],value['amount']
-    if (type(name)is not str or name not in {'+1/+1','-1/-1',*KEYWORD_COUNTER_MECHANICS}
+    if (type(name)is not str or name not in {'+1/+1','-1/-1','finality',*KEYWORD_COUNTER_MECHANICS}
             or type(amount)is not int or not 1<=amount<=10):
         raise ValueError('Reanimation requires one closed fixed counter and amount')
     return name,amount

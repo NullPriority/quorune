@@ -1039,6 +1039,7 @@
       "test_entry_keyword_counter_choices",
       "test_exact_deck_interactions",
       "test_external_entry_counters",
+      "test_finality_counters",
       "test_fixed_cleave",
       "test_fixed_counter_placement_sets",
       "test_fixed_counter_removal_effects",

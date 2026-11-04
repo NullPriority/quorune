@@ -15,6 +15,8 @@ def reanimation_entry_counter_node_capabilities(*,effects,target_schema,mechanic
     owned=fixed_target_reanimation_node_capabilities(effects=(base,),target_schema=target_schema,mechanic_ids=mechanic_ids)
     if not owned:return ()
     required={*owned,REANIMATION_ENTRY_COUNTER_CAPABILITY,'counter.producer.effect_entry'}
+    from .finality_counters import finality_counter_dependencies
+    required.update(finality_counter_dependencies(effect))
     keyword=keyword_counter_mechanic(effect['entry_counter']['counter_name'])
     if keyword:
         from .capabilities import MECHANIC_CAPABILITY_DEPENDENCIES

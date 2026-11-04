@@ -197,4 +197,7 @@ def effect_node_capabilities(
                 mechanic_ids=mechanics,
             )
         )
+    if dependencies:
+        from .finality_counters import finality_counter_dependencies
+        dependencies.update(finality_counter_dependencies(effects))
     return dependencies

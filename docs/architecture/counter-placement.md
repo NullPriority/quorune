@@ -789,6 +789,18 @@ specific Flying, Haste, Trample, Hexproof, Indestructible, or other mechanic
 capability. Parameterized keyword variants and same-layer dependency cases
 outside the current continuous-effect model fail closed.
 
+Finality is a separate CR 122.1h counter rule. `rules/finality_counters.py`
+collects one ordinary destination replacement for a permanent with a positive
+finality count, independently of its printed abilities. It matches only that
+logical incarnation moving from battlefield to graveyard and redirects the
+movement to exile through the existing replacement tree and zone owner.
+Other applicable ordinary replacements remain an affected-player choice;
+existing self-replacement priority applies first. Removing the final counter
+ends this effect, and counters do not follow a card into a new zone. Commander
+exile retains the existing post-movement owner choice. Actual counter-producing
+descriptors require `counter.rule.finality` even when their annotations omit
+it; the counter is not treated as an ordinary keyword counter.
+
 The interaction inventory treats the counter-to-keyword boundary as
 high-risk wherever it crosses another rules owner. Current focused composition
 evidence covers replacement-aware placement before the ability appears,
