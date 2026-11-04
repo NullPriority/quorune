@@ -1077,7 +1077,13 @@ def fixed_counter_trigger_binding(
     *,
     card_name: str | None = None,
     _source_normalized: bool = False,
+    _graveyard_self_return: bool = True,
 ) -> FixedCounterTriggerBinding | None:
+    if _graveyard_self_return:
+        from .graveyard_self_return import graveyard_self_return_binding
+        returned=graveyard_self_return_binding(material_line,card_name=card_name,compile_binding=lambda text:
+            fixed_counter_trigger_binding(text,card_name=card_name,_source_normalized=_source_normalized,_graveyard_self_return=False))
+        if returned is not None:return returned
     normalized = normalized_source_event_line(material_line, source_name=card_name, named_only=True) if not _source_normalized and card_name else None
     if normalized is not None:
         source_binding = fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True)

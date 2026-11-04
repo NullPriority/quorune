@@ -51,6 +51,7 @@ from .hand_inspection_capability_shapes import fixed_hand_inspection_node_capabi
 from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
 from .surveil_capability_shapes import fixed_surveil_node_capabilities
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
+from .graveyard_self_return import graveyard_self_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
 from .optional_counter_capability_shapes import optional_fixed_counter_event_trigger_node_capabilities
 from .graft_capability_shapes import graft_node_capabilities
@@ -170,6 +171,7 @@ def effect_node_capabilities(
         fixed_scry_node_capabilities,
         fixed_surveil_node_capabilities,
         fixed_self_return_node_capabilities,
+        graveyard_self_return_node_capabilities,
         fixed_resolution_characteristic_set_node_capabilities,
         single_explore_node_capabilities,
         single_proliferate_node_capabilities,

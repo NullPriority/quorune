@@ -110,6 +110,9 @@ def _event_query_runtime_requirements(program):
     from ..source_entry_cast_information import source_entry_cast_program_dependencies
     from ..rules.graveyard_return_choices import graveyard_return_choice_runtime_dependencies
     required,blockers=set(),set()
+    from ..rules.graveyard_self_return import graveyard_self_return_runtime_dependencies
+    try:required.update(graveyard_self_return_runtime_dependencies(program))
+    except (ValueError,TypeError,KeyError) as exc:blockers.add(f'runtime_graveyard_source_return:invalid:{exc}')
     from ..rules.spell_owner_targets import spell_owner_target_dependencies
     try:required.update(spell_owner_target_dependencies(getattr(program,'target_schema',None)))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_owner_target:invalid:{exc}')

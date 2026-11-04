@@ -77199,6 +77199,101 @@
     {
       "applicability": {
         "exclusions": [
+          "new event heads",
+          "Aura enchanted-object departure exception",
+          "battlefield return",
+          "another card",
+          "unsupported intervening-if"
+        ],
+        "inputs": [
+          "graveyard-only source ability",
+          "owner-relative existing event predicates",
+          "pinned physical and logical source identity"
+        ],
+        "outputs": [
+          "principal-correct optional choice",
+          "ordinary canonical source zone movement or stale-source no-op"
+        ],
+        "summary": "An existing represented event may offer its owner return of the same source card from graveyard to hand."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.self_move.activated",
+        "effect.choice.optional_fixed"
+      ],
+      "dependency_fail_closed_rationale": "Verified return-owner withdrawal rejects source return and retains ordinary upkeep draw; descriptor infers authority independently of annotations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.return.triggered_self_graveyard_hand",
+      "implementation_components": [
+        "quorune.compiler.graveyard_self_return.graveyard_self_return_binding",
+        "quorune.compiler.graveyard_self_return.graveyard_self_return_result",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_dependencies",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_node_capabilities",
+        "quorune.rules.graveyard_self_return.graveyard_self_return_runtime_dependencies",
+        "quorune.semantic_runtime.self_zone_move.SelfZoneMoveEffectHandler.lower",
+        "quorune.self_zone_move.resolve_self_zone_move",
+        "quorune.compiled_ability_fragments.compiled_static_ability_fragments"
+      ],
+      "implementation_mutation_rationale": "Substituting the current logical identity for the pinned source causes the new-incarnation model witness to fail by assertion.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
+        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
+        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
+      ],
+      "multiplayer_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
+        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
+        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
+      ],
+      "negative_tests": [
+        "test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract",
+        "test_verified_return_authority_withdrawal_keeps_ordinary_upkeep_draw",
+        "test_marker_codec_is_closed_and_descriptor_owns_authority",
+        "test_typed_existing_move_skips_a_new_incarnation"
+      ],
+      "official_rules": [
+        "108.4a",
+        "113.6m",
+        "113.8",
+        "400.7",
+        "603.3a",
+        "608.2c"
+      ],
+      "positive_tests": [
+        "test_existing_event_heads_keep_owner_relative_predicates_and_graveyard_zone",
+        "test_printed_graveyard_current_component_is_zone_scoped_and_requires_trust"
+      ],
+      "privacy_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard"
+      ],
+      "replay_tests": [
+        "test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard",
+        "test_actual_entry_trigger_cannot_return_a_source_exiled_in_response",
+        "test_two_queued_entry_triggers_do_not_return_a_new_graveyard_incarnation",
+        "test_actual_upkeep_owner_and_intervening_condition_recheck_after_opponent_draw"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "targeted, mass, optional, delayed, transformed, or controller-relative movement",
           "multiple objects or destinations",
           "unsupported source-form predicates",
@@ -77418,7 +77513,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 683,
+  "registry_version": 684,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

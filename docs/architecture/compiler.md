@@ -781,6 +781,19 @@ serialized binding; the prefilter never promotes grammar or supplies runtime
 authority. This avoids compiling a distinct name-bearing pattern for unrelated
 Oracle lines while preserving full source spans and residual boundaries.
 
+`compiler/graveyard_self_return.py` binds an existing upkeep, spell-cast or
+singular entry head to an optional return of its own card from graveyard to
+hand. CR 113.6m scopes the ability to the graveyard; owner-relative predicates
+and the trigger controller follow CR 108.4a and 113.8. The marked instruction
+requires `zone.return.triggered_self_graveyard_hand` independently of compiler
+annotations and reuses the existing optional-choice and source-zone move owners.
+The queued logical source identity prevents a later trigger from moving a new
+graveyard incarnation. Existing intervening-if conditions retain both checks.
+Graveyard current-ability requirements receive trusted printed fragments in
+that zone; off-battlefield ability modifications still fail closed through the
+existing applicability boundary. Aura departure exceptions, aggregate heads,
+new event vocabularies, reanimation and another-card returns remain residual.
+
 `compiler/linked_exile_return_templates.py` lowers a closed battlefield exile
 followed by an immediate return or next-end-step return. It shares direct
 permanent predicates, optional resolution choices, modal scoping, and ordinary

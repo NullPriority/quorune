@@ -24,6 +24,9 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
 
 
 def _binding_result_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .graveyard_self_return import graveyard_self_return_result
+    returned=graveyard_self_return_result(binding,body,card_name=card_name)
+    if returned is not None:return returned
     from .delayed_object_templates import delayed_object_result
     delayed=delayed_object_result(binding,body,card_name=card_name)
     if delayed is not None:return delayed

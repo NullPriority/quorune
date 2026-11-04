@@ -106,6 +106,7 @@ from .node_capability_shapes import (
     fixed_source_effect_sequence_node_capabilities,
 )
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
+from .graveyard_self_return import graveyard_self_return_node_capabilities
 from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
@@ -185,6 +186,7 @@ _COMPONENT_RESOLVERS = (
     fixed_scry_node_capabilities,
     fixed_surveil_node_capabilities,
     fixed_self_return_node_capabilities,
+    graveyard_self_return_node_capabilities,
     fixed_mill_node_capabilities,
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,

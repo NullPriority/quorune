@@ -2432,8 +2432,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 "Invasion of Moag // Bloomwielder Dryads",
                 "As a Siege enters",
                 {
-                    "replacement applicability",
-                    "self-replacement and prevention ordering",
+                    "continuous-effect layers and dependencies",
                 },
             ),
         )
@@ -3318,6 +3317,10 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
                 )
 
     def test_fixed_multi_event_trigger_near_misses_remain_material(self):
+        promoted='Whenever a creature you control of the chosen type enters or attacks, draw a card.'
+        self.assertEqual('exact',self.compile(promoted,type_line='Creature — Fixture').status)
+        from quorune.compiler.fixed_public_multi_event_bindings import fixed_public_multi_event_binding_spec
+        self.assertIsNone(fixed_public_multi_event_binding_spec(promoted))
         cases = (
             "Whenever your commander enters or attacks, draw a card.",
             "When you cycle this card and when this creature dies, draw a card.",
@@ -3327,7 +3330,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever another creature you control with an unrepresented quality enters or dies, draw a card.",
             "Whenever this creature enters or becomes renowned, draw a card.",
             "Whenever this creature enters, attacks, or blocks, draw a card.",
-            "Whenever a creature you control of the chosen type enters or "
+            "Whenever a creature you control of the remembered type enters or "
             "attacks, draw a card.",
         )
         for text in cases:

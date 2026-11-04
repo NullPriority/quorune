@@ -11658,6 +11658,27 @@
         "test_mass_destruction_effect_clauses",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "triggered-graveyard-source-return",
+      "patterns": [
+        "quorune/compiler/graveyard_self_return.py",
+        "quorune/rules/graveyard_self_return.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/semantic_runtime/self_zone_move.py",
+        "quorune/compiled_ability_fragments.py",
+        "tests/test_graveyard_self_return_triggers.py",
+        "tests/fixtures/graveyard-self-return-cards.json"
+      ],
+      "test_modules": [
+        "test_graveyard_self_return_triggers",
+        "test_self_zone_move_rules",
+        "test_fixed_counter_event_triggers",
+        "test_fixed_optional_effect_choices",
+        "test_typed_ability_fragments",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

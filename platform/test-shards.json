@@ -1053,6 +1053,7 @@
       "test_fixed_zone_change_additional_costs",
       "test_global_alternative_costs",
       "test_granted_static_costs",
+      "test_graveyard_self_return_triggers",
       "test_independent_target_clauses",
       "test_intrinsic_mana_ability_loss",
       "test_kicker_rules",
