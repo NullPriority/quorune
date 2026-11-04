@@ -92,13 +92,15 @@ def _sorted_strings(values: Iterable[str]) -> list[str]:
 
 
 def load_json(path: str | Path) -> dict[str, Any]:
+    from quorune.frontier_storage import unpack_frontier_document
+
     candidate = Path(path)
     try:
         if candidate.suffix == ".gz":
             raw = gzip.decompress(candidate.read_bytes()).decode("utf-8")
         else:
             raw = candidate.read_text(encoding="utf-8")
-        value = json.loads(raw)
+        value = unpack_frontier_document(json.loads(raw))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"Invalid JSON artifact: {candidate}") from exc
     if not isinstance(value, dict):

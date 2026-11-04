@@ -11941,6 +11941,24 @@
         "test_source_sacrifice_payments",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "frontier-lossless-component-storage",
+      "patterns": [
+        "quorune/frontier_storage.py",
+        "scripts/update_card_unlock_frontier.py"
+      ],
+      "test_modules": [
+        "test_card_unlock_frontier",
+        "test_rules_scheduler",
+        "test_reusable_pieces",
+        "test_generated_artifacts"
+      ],
+      "checks": [
+        "generated-finalization",
+        "architecture",
+        "repository"
+      ]
     }
   ],
   "risk_rules": [

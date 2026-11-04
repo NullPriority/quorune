@@ -523,6 +523,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/work_selection.py",
         "quorune/work_selection_bundles.py",
         "quorune/work_selection_common.py",
+        "quorune/frontier_storage.py",
         "quorune/work_selection_evidence.py",
         "quorune/work_selection_measurement.py",
         "quorune/saga_lifecycle.py",
@@ -1104,6 +1105,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/work_selection.py",
         "quorune/work_selection_bundles.py",
         "quorune/work_selection_common.py",
+        "quorune/frontier_storage.py",
         "quorune/work_selection_evidence.py",
         "quorune/work_selection_measurement.py",
     }:

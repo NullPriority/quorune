@@ -2063,7 +2063,8 @@ class RulesSchedulerTests(unittest.TestCase):
                 check=True,
                 stdout=subprocess.PIPE,
             ).stdout
-            value = json.loads(gzip.decompress(raw))
+            from quorune.frontier_storage import unpack_frontier_document
+            value = unpack_frontier_document(json.loads(gzip.decompress(raw)))
             expected = _semantic_report_sha256(
                 "coverage/card-unlock-frontier.json.gz",
                 raw,
@@ -4140,8 +4141,9 @@ class RulesSchedulerTests(unittest.TestCase):
             if before==after:
                 continue
             raw=subprocess.check_output(['git','cat-file','blob',before],cwd=ROOT)
-            original=json.loads(gzip.decompress(raw))
-            current=json.loads(gzip.decompress(subprocess.check_output(['git','cat-file','blob',after],cwd=ROOT)))
+            from quorune.frontier_storage import unpack_frontier_document
+            original=unpack_frontier_document(json.loads(gzip.decompress(raw)))
+            current=unpack_frontier_document(json.loads(gzip.decompress(subprocess.check_output(['git','cat-file','blob',after],cwd=ROOT))))
             if original['fingerprint']!=current['fingerprint']:
                 return entry,original,raw
         self.fail('Expected an immutable conservative main-frontier advance in the journal')
@@ -4387,7 +4389,8 @@ class RulesSchedulerTests(unittest.TestCase):
             check=True,
             stdout=subprocess.PIPE,
         ).stdout
-        expected = json.loads(gzip.decompress(raw))["fingerprint"]
+        from quorune.frontier_storage import unpack_frontier_document
+        expected = unpack_frontier_document(json.loads(gzip.decompress(raw)))["fingerprint"]
 
         self.assertEqual(
             expected,
