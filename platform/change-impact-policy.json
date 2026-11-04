@@ -11377,6 +11377,25 @@
         "test_library_search_dispatch_native",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "actual-life-transfer-sentence-composition",
+      "patterns": [
+        "quorune/compiler/life_templates.py",
+        "quorune/rules/actual_life_transfer.py",
+        "quorune/semantic_choices/actual_life_transfer.py",
+        "tests/test_actual_life_transfer_native.py",
+        "tests/fixtures/actual-life-transfer-cards.json",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/rules/effect_node_capabilities.py"
+      ],
+      "test_modules": [
+        "test_actual_life_transfer_native",
+        "test_opening_hand_reveal",
+        "test_fixed_player_life_effects",
+        "test_life_change",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

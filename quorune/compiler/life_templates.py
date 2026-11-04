@@ -88,7 +88,7 @@ def _player_target_schema(relation: str) -> dict[str, Any]:
 
 def fixed_actual_life_transfer_template(text: str):
     from ..rules.actual_life_transfer import ACTUAL_LIFE_TRANSFER_OPERATION
-    match=re.fullmatch(rf'each opponent loses (?P<count>{FIXED_COUNT_PATTERN}) life(?:, then|\. Then) you gain life equal to the life lost this way\.?',text,re.I)
+    match=re.fullmatch(rf'each (?:opponent|other player) loses (?P<count>{FIXED_COUNT_PATTERN}) life(?:, then|\.(?: Then)?) you gain life equal to the life lost this way\.?',text,re.I)
     if match is None:return None
     count=fixed_number(match['count'])
     if count<=0:return None

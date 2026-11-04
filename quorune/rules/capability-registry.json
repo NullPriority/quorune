@@ -45780,21 +45780,31 @@
         "quorune.compiler.life_templates.fixed_actual_life_transfer_template",
         "quorune.rules.actual_life_transfer.actual_life_transfer_capabilities",
         "quorune.semantic_choices.actual_life_transfer.ActualLifeTransferHandler",
-        "quorune.semantic_choices.life_intent_commit.apply_life_loss_batch_intent"
+        "quorune.semantic_choices.life_intent_commit.apply_life_loss_batch_intent",
+        "quorune.compiler.activated_mana_nodes._activated_effect_dependency_gate",
+        "quorune.rules.effect_node_capabilities.effect_node_capabilities"
       ],
       "implementation_mutation_rationale": "Replacing actual resolved gain with the fixed loss amount fails the native four-player stopped-loss witness. Malformed result binding is rejected and gain-replacement reload preserves previously committed losses.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
-        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped"
+        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
+        "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
       ],
       "multiplayer_tests": [
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
-        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped"
+        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
+        "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
       ],
       "negative_tests": [
         "test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct",
-        "test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed"
+        "test_reveal_and_result_dependency_omissions_and_closed_result_mutants_are_killed",
+        "test_actual_life_transfer_sentence_grammar_keeps_fixed_gain_and_unknown_amounts_distinct",
+        "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
+        "test_actual_life_transfer_uses_the_same_closed_owner_in_activated_bodies",
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
       ],
       "official_rules": [
         "119.3",
@@ -45804,12 +45814,21 @@
       "positive_tests": [
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
         "test_actual_life_transfer_and_top_exile_results_have_reusable_closed_templates",
-        "test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct"
+        "test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct",
+        "test_actual_life_transfer_sentence_grammar_keeps_fixed_gain_and_unknown_amounts_distinct",
+        "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
+        "test_actual_life_transfer_uses_the_same_closed_owner_in_activated_bodies",
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
       ],
-      "privacy_tests": [],
+      "privacy_tests": [
+        "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
+      ],
       "replay_tests": [
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
-        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped"
+        "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
+        "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
       ],
       "required_evidence": [
         "positive",
@@ -45824,7 +45843,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -76450,7 +76469,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 669,
+  "registry_version": 670,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

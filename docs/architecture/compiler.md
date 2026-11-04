@@ -914,8 +914,20 @@ excluding players who left before resolution. The existing quantity producer
 may supply one shared global count; each player's separate relative quantity
 remains unrepresented. Ordered private discard and public sacrifice choices
 continue before state-based stabilization, even for participants at zero life.
+Fixed opponent loss followed by life gain equal to the life lost uses
+`life.transfer.actual_opponent_loss`. A sentence boundary preserves the same
+ordered result as an explicit `then`. Within supported free-for-all matches,
+`each other player` addresses the same participants. The existing life batch
+returns the actual loss total before one replacement-aware gain event; it does
+not multiply a guessed loss amount by the number of opponents. State-based
+departure follows resolution. A fixed printed gain retains its separate
+semantics, independently of the actual losses. Dynamic loss amounts and
+damage-correlated gain remain outside this fixed transfer production.
+Activated bodies use the same exact result-shape owner; their mana, tap and
+discard costs retain the ordinary activation cost authority.
+Fixed life-total setting uses its separately owned typed instruction.
 Unrepresented dynamic amounts, target-player drains that could affect the controller,
-life-total setting, exchanges, and unequal drains remain
+exchanges, and unequal drains remain
 source-spanned residuals.
 
 `compiler/mill_templates.py` owns one mandatory positive fixed-count Mill

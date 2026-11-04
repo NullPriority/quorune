@@ -306,6 +306,7 @@
     "tests/fixtures/activation-result-views-cards.json",
     "tests/fixtures/activation-target-view-cards.json",
     "tests/fixtures/activation-view-equivalence-cards.json",
+    "tests/fixtures/actual-life-transfer-cards.json",
     "tests/fixtures/additional-conditional-modifier-cards.json",
     "tests/fixtures/additional-continuous-carriers-cards.json",
     "tests/fixtures/additional-draw-step-cards.json",
