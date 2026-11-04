@@ -1083,6 +1083,7 @@
       "test_qualified_destruction_queries",
       "test_quantified_target_keywords",
       "test_random_graveyard_returns",
+      "test_ravenous_rules",
       "test_reanimation_entry_counters",
       "test_resolution_mana_compositions",
       "test_scaled_cast_x_amounts",

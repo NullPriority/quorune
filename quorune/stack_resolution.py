@@ -116,7 +116,8 @@ def trusted_generic_empty_resolution(
 def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackItem,
         destination: str | None,prepared_replacement: PreparedZoneChange | None) -> None:
     from .rules.entry_cast_information import resolving_entry_cast_information
-    with resolving_entry_cast_information(host,item):
+    from .rules.ravenous import resolving_ravenous_entry
+    with resolving_entry_cast_information(host,item),resolving_ravenous_entry(host,item):
         _complete_stack_resolution(host,item=item,destination=destination,prepared_replacement=prepared_replacement)
 
 

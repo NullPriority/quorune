@@ -413,6 +413,10 @@ def _semantic_condition_actual(
     field = str(condition.get("field") or "")
     if not field:
         raise GameRuleError("Semantic event condition requires a field")
+    if field=='ravenous_entry_x_at_least':
+        from .rules.ravenous import ravenous_condition_value
+        try:return ravenous_condition_value(condition,source,context)
+        except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
     if field=='source_entry_cast_by_controller':
         from .rules.entry_cast_information import source_entry_cast_value
         from .source_entry_cast_information import validate_source_entry_cast_condition
@@ -712,6 +716,15 @@ def semantic_intervening_condition_matches(
 ) -> bool:
     """Recheck one intervening-if program at its trigger-owner boundary."""
 
+    if 'ravenous_entry_x' in program.coverage:
+        from .ravenous_model import EntryXInformation,ENTRY_X_FIELD,validate_ravenous_condition
+        try:
+            validate_ravenous_condition(program.event_condition)
+            info=EntryXInformation.from_dict(context.get(ENTRY_X_FIELD))
+            if info.object_id!=source_object_id or info.logical_object_id!=context.get('source_logical_object_id'):
+                raise ValueError('Ravenous recheck changed its original entry identity')
+            return info.amount>=5
+        except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
     if 'source_entry_cast_intervening' in program.coverage:
         from .rules.entry_cast_information import source_entry_cast_value
         from .source_entry_cast_information import validate_source_entry_cast_condition

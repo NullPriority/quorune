@@ -10,6 +10,14 @@ CAPABILITY='zone.return.triggered_self_graveyard_hand'
 
 
 class GraveyardSelfReturnCompilerTests(unittest.TestCase):
+    def test_optional_mana_prefix_is_preserved_and_unknown_prefix_cannot_be_discarded(self):
+        paid='Whenever a land you control enters, you may pay {2}{G}. If you do, return this card from your graveyard to your hand.'
+        ir=compile_oracle_card(query_record(paid),capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual('graveyard',ir.faces[0].nodes[0].active_zone)
+        self.assertEqual('offer_optional_mana_payment',ir.faces[0].nodes[0].effects[0]['op'])
+        unknown='Whenever a land you control enters, if the remembered prophecy is true, return this card from your graveyard to your hand.'
+        self.assertNotEqual('exact',compile_oracle_card(query_record(unknown),capability_registry=load_default_capability_registry(),capability_profile='commander_review').status)
     def test_verified_return_authority_withdrawal_keeps_ordinary_upkeep_draw(self):
         import json
         from common import ROOT

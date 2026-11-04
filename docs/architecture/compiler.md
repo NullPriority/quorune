@@ -795,6 +795,9 @@ requires `zone.return.triggered_self_graveyard_hand` independently of compiler
 annotations and reuses the existing optional-choice and source-zone move owners.
 The queued logical source identity prevents a later trigger from moving a new
 graveyard incarnation. Existing intervening-if conditions retain both checks.
+An optional fixed mana payment remains around the return instruction; the event
+header parser never discards a preceding condition or payment phrase. Unknown
+prefixes stay residual.
 Graveyard current-ability requirements receive trusted printed fragments in
 that zone; off-battlefield ability modifications still fail closed through the
 existing applicability boundary. Aura departure exceptions, aggregate heads,
@@ -860,6 +863,15 @@ receipt from the canonical stack and cast-history owners. Stack completion
 scopes it to the resolving entry; the zone owner emits sealed noncopiable entry
 information only when a trusted reader participates. Unrelated historical
 occurrences retain their existing shape.
+
+`compiler/ravenous_nodes.py` lowers the complete Ravenous keyword into the
+existing dynamic X entry-counter component and one ordinary private draw
+trigger. A versioned entry-X fact binds the entered incarnation to the spell
+that became it, including a copied spell. Uncast entries supply zero. The draw
+threshold uses that value under CR 107.3m and 702.156 rather than the resulting
+counter count, so counter replacements do not change the threshold. The queued
+draw retains its original entry fact after source departure. Malformed keyword
+parameters, noncreatures and unrepresented printed siblings remain residual.
 
 The self-zone effect compiler represents the exact self-entry “if you cast it”
 guard with `trigger.condition.source_entry_cast`. Its structural runtime minimum

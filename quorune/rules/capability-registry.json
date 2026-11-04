@@ -42451,6 +42451,98 @@
     {
       "applicability": {
         "exclusions": [
+          "unsupportedRavenousparameters",
+          "noncreatureornonXcost",
+          "unsupportedprintedabilitysiblings"
+        ],
+        "inputs": [
+          "printedRavenouscreaturewithXcost",
+          "resolvingspellXorzeroformoveentry",
+          "versionedentryincarnationfacts"
+        ],
+        "outputs": [
+          "canonicalentrycounterreplacement",
+          "oneordinaryprivatedrawatXatleastfive",
+          "Xindependentofactualcounterquantity"
+        ],
+        "summary": "BothRavenouscomponents:existingcastXentrycountersandindependentfive-or-moreentryXdrawtrigger."
+      },
+      "blockers": [],
+      "dependencies": [
+        "counter.producer.dynamic_self_entry",
+        "counter.placement.quantity_replacement",
+        "zone.draw.library_to_hand",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "VerifiedcompoundauthoritywithdrawalrejectsRavenouswhileordinarydynamicXentrycounterremainsclosed.",
+      "dependency_fail_closed_status": "passed",
+      "id": "keyword.ravenous.entry_x_and_draw",
+      "implementation_components": [
+        "quorune.compiler.ravenous_nodes.ravenous_keyword_nodes",
+        "quorune.ravenous_model.EntryXInformation",
+        "quorune.ravenous_model.ravenous_runtime_dependencies",
+        "quorune.rules.ravenous.ravenous_entry_information",
+        "quorune.rules.ravenous.ravenous_condition_value",
+        "quorune.zone_trigger_events._validated_source_entry_x_information"
+      ],
+      "implementation_mutation_rationale": "SubstitutingcountercountforcastXfailstheindependentthresholdassertions.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_x_threshold_is_not_doubled_entry_counter_count_and_replays",
+        "test_actual_blink_uses_zero_x_but_old_draw_survives_source_departure",
+        "test_actual_permanent_spell_copy_retains_x_without_being_cast",
+        "test_actual_hormagaunt_return_requires_printed_optional_payment"
+      ],
+      "multiplayer_tests": [
+        "test_actual_x_threshold_is_not_doubled_entry_counter_count_and_replays",
+        "test_actual_blink_uses_zero_x_but_old_draw_survives_source_departure",
+        "test_actual_permanent_spell_copy_retains_x_without_being_cast",
+        "test_actual_hormagaunt_return_requires_printed_optional_payment"
+      ],
+      "negative_tests": [
+        "test_noncreature_and_unrepresented_keyword_parameter_remain_residual",
+        "test_verified_ravenous_withdrawal_rejects_both_components_and_keeps_plain_x_entry",
+        "test_entry_x_codec_threshold_and_runtime_envelope_are_closed",
+        "test_zone_occurrence_validates_entry_x_identity_and_keeps_legacy_absence"
+      ],
+      "official_rules": [
+        "107.3m",
+        "702.156a",
+        "603.4",
+        "614.12"
+      ],
+      "positive_tests": [
+        "test_keyword_lowers_both_generic_components_with_source_span"
+      ],
+      "privacy_tests": [
+        "test_actual_x_threshold_is_not_doubled_entry_counter_count_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_x_threshold_is_not_doubled_entry_counter_count_and_replays",
+        "test_actual_blink_uses_zero_x_but_old_draw_survives_source_departure",
+        "test_actual_permanent_spell_copy_retains_x_without_being_cast",
+        "test_actual_hormagaunt_return_requires_printed_optional_payment"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Adapt 0 or variable Adapt values",
           "compound instructions containing Adapt",
           "effects that modify an Adapt amount",
@@ -77440,7 +77532,8 @@
         "test_battlefield_other_card_and_aura_departure_exceptions_do_not_gain_this_contract",
         "test_verified_return_authority_withdrawal_keeps_ordinary_upkeep_draw",
         "test_marker_codec_is_closed_and_descriptor_owns_authority",
-        "test_typed_existing_move_skips_a_new_incarnation"
+        "test_typed_existing_move_skips_a_new_incarnation",
+        "test_optional_mana_prefix_is_preserved_and_unknown_prefix_cannot_be_discarded"
       ],
       "official_rules": [
         "108.4a",
@@ -77701,7 +77794,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 686,
+  "registry_version": 687,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

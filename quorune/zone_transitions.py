@@ -1047,11 +1047,16 @@ class ZoneTransitionOwner:
             multikicker_paid=departure.multikicker_paid if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             declared_cast_costs=departure.declared_cast_costs if departure.origin == 'stack' and card.zone == 'battlefield' else None,
             source_entry_cast_information=self._source_entry_cast_information(card,departure),
+            source_entry_x_information=self._source_entry_x_information(card,departure),
         )
 
     def _source_entry_cast_information(self,card,departure):
         from .rules.entry_cast_information import information_for_committed_entry
         return information_for_committed_entry(self.host,card,departure)
+
+    def _source_entry_x_information(self,card,departure):
+        from .rules.ravenous import ravenous_entry_information
+        return ravenous_entry_information(self.host,card,departure)
 
     def move_cards_simultaneously(
         self,

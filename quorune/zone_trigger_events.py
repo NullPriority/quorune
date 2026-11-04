@@ -191,6 +191,7 @@ class ZoneChangeOccurrence:
     multikicker_paid: Mapping[str, Any] | None = None
     declared_cast_costs: Mapping[str, Any] | None = None
     source_entry_cast_information: Mapping[str,Any] | None = None
+    source_entry_x_information: Mapping[str,Any] | None = None
     composition: CompositionZoneFact | Mapping[str,Any] | None = None
 
     def __post_init__(self) -> None:
@@ -237,6 +238,7 @@ class ZoneChangeOccurrence:
         object.__setattr__(self, 'multikicker_paid', _validated_multikicker_metadata(self))
         object.__setattr__(self, 'declared_cast_costs', _validated_declared_cast_cost_metadata(self))
         object.__setattr__(self,'source_entry_cast_information',_validated_source_entry_cast_information(self))
+        object.__setattr__(self,'source_entry_x_information',_validated_source_entry_x_information(self))
         if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise ZoneTriggerEventError(
                 "Unsupported zone-trigger occurrence schema version"
@@ -339,6 +341,7 @@ class ZoneChangeOccurrence:
             result['multikicker_paid'] = thaw_value(self.multikicker_paid)
         if self.source_entry_cast_information is not None:
             result['source_entry_cast_information']=thaw_value(self.source_entry_cast_information)
+        if self.source_entry_x_information is not None:result['source_entry_x_information']=thaw_value(self.source_entry_x_information)
         if self.previous_copy_snapshot is not None:
             result["previous_copy_snapshot"] = thaw_value(self.previous_copy_snapshot)
         if self.current_copy_snapshot is not None:
@@ -364,6 +367,17 @@ def _validated_source_entry_cast_information(occurrence):
             or info.cast is not None and (occurrence.origin!='stack'
                 or info.cast.stack_logical_object_id!=occurrence.previous_logical_object_id)):
         raise ZoneTriggerEventError('Source-entry information differs from the actual committed entry')
+    return FrozenMap(info.to_dict())
+
+
+def _validated_source_entry_x_information(occurrence):
+    if occurrence.source_entry_x_information is None:return None
+    from .ravenous_model import EntryXInformation
+    try:info=EntryXInformation.from_dict(occurrence.source_entry_x_information)
+    except (ValueError,TypeError) as exc:raise ZoneTriggerEventError(str(exc)) from exc
+    if (occurrence.destination!='battlefield' or info.object_id!=occurrence.object_id
+            or info.logical_object_id!=occurrence.current_logical_object_id
+            or occurrence.origin!='stack' and info.amount!=0):raise ZoneTriggerEventError('Entry X differs from the committed incarnation')
     return FrozenMap(info.to_dict())
 
 
@@ -525,6 +539,7 @@ def normalized_zone_trigger_events(
         common["cast_option"] = occurrence.cast_option
     if occurrence.source_entry_cast_information is not None:
         common['source_entry_cast_information']=thaw_value(occurrence.source_entry_cast_information)
+    if occurrence.source_entry_x_information is not None:common['source_entry_x_information']=thaw_value(occurrence.source_entry_x_information)
     if occurrence.declared_cast_costs is not None:
         from .declared_cast_cost_model import DeclaredCastCostFacts
         common['declared_cast_cost_instances'] = list(DeclaredCastCostFacts.from_dict(occurrence.declared_cast_costs).chosen_instances())

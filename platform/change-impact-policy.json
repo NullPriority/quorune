@@ -11715,6 +11715,26 @@
         "test_resolution_mana_compositions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ravenous-entry-x-keyword",
+      "patterns": [
+        "quorune/ravenous_model.py",
+        "quorune/rules/ravenous.py",
+        "quorune/compiler/ravenous_nodes.py",
+        "quorune/compiler/entry_keyword_nodes.py",
+        "tests/test_ravenous_rules.py",
+        "tests/fixtures/ravenous-cards.json"
+      ],
+      "test_modules": [
+        "test_ravenous_rules",
+        "test_devour",
+        "test_graveyard_self_return_triggers",
+        "test_fixed_keyword_entry_counters",
+        "test_copied_self_entry_counters",
+        "test_zone_trigger_events",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

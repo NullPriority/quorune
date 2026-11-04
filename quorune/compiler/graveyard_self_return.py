@@ -12,8 +12,11 @@ def _return_body(body,card_name,*,optional):
 
 
 def graveyard_self_return_binding(text,*,card_name,compile_binding):
-    split=re.fullmatch(r'(?P<head>.+), (?P<body>(?:you may )?return .+)',text,re.I)
-    if split is None or _return_body(split['body'],card_name,optional=True) is None:return None
+    split=re.fullmatch(r'(?P<head>.+?), (?P<body>.+)',text,re.I)
+    if split is None:return None
+    body=split['body']
+    paid=re.fullmatch(r'you may pay (?P<mana>(?:\{(?:0|[1-9][0-9]*|[WUBRGC])\})+)\. If you do, (?P<result>return .+)',body,re.I)
+    if _return_body(paid['result'] if paid else body,card_name,optional=paid is None) is None:return None
     if 'one or more' in split['head'].casefold():return None
     base=compile_binding(split['head']+', draw a card.')
     if base is None or base.public_state_condition is not None:return None

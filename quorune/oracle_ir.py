@@ -669,10 +669,10 @@ def _keyword_nodes(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> tuple[OracleNode, ...]:
-    from .compiler.devour_nodes import devour_keyword_nodes
-    devour=devour_keyword_nodes(node_id=node_id,line=line,material_line=material_line,span=span,
+    from .compiler.entry_keyword_nodes import compound_entry_keyword_nodes
+    entry_keyword=compound_entry_keyword_nodes(record=record,node_id=node_id,line=line,material_line=material_line,span=span,printed_card_types=printed_card_types,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    if devour is not None:return devour
+    if entry_keyword is not None:return entry_keyword
     chapter_nodes = ordinary_saga_chapter_nodes(node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name, printed_subtypes=printed_subtypes, declared_chapters=saga_chapters, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals, effect_template=effect_template)
     if chapter_nodes is not None: return chapter_nodes
 
@@ -682,6 +682,9 @@ def _keyword_nodes(
     ) or fixed_keyword_event_effect_mechanics(material_line, keywords)
     if mechanics is None:
         return ()
+    if 'ravenous' in mechanics:
+        from .compiler.ravenous_nodes import unsupported_ravenous_node
+        return (unsupported_ravenous_node(node_id=node_id,line=line,span=span,mechanics=mechanics,residuals=residuals),)
 
     multi_nodes = multi_keyword_nodes(**locals(), compile_single_keyword=_keyword_node_for_mechanics)
     if multi_nodes is not None: return multi_nodes
