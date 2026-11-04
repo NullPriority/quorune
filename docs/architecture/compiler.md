@@ -9,6 +9,22 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+`compiler/created_token_cleanup_templates.py` recognizes one complete printed
+cleanup clause over an independently closed ordinary token producer. The new
+version-one cleanup instruction distinguishes sacrifice from exile and the
+next end step, the creator's next end step, and end of combat. The canonical
+creation transaction captures the full replacement-expanded batch and schedules
+identity-pinned public movement through the existing delayed-trigger owner.
+Sacrifice requires the original delayed controller still to control each
+affected permanent. Exile retains its ordinary movement authority.
+
+The resolving source and creator remain distinct from the created token
+identities. Attacking definitions use an explicit version-two continuation;
+ordinary version-one attacking definitions retain their earlier form. Existing
+copy aftercare delegates to the same scheduling composition while preserving its
+prior encoded delayed records and event journal. Unknown conditions, copy
+recipes, postcreation grants and unrepresented siblings remain residual.
+
 Compound printed keyword lists preserve each Myriad instance as a separate
 source-spanned node and registered ability identity. Ordinary sibling keywords
 retain their independent owner. Single Myriad declarations keep their existing

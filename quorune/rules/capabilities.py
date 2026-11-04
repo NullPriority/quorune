@@ -373,6 +373,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'ravenous':('keyword.ravenous.entry_x_and_draw',),
     'source-entry-x-result-amount':('quantity_expression.source_entry_x',),
     'fixed-attacking-token-result':('token.creation.fixed_attacking_definition',),
+    'ordinary-created-token-cleanup':('token.creation.fixed_definition_cleanup',),
     'created-token-counter-followup':('token.creation.post_creation_counter',),
     'incubate':('token.creation.incubate',),
     'discover':('library.discover.controller',),

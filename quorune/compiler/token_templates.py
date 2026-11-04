@@ -488,8 +488,10 @@ def fixed_token_creation_effect_template(
     """
 
     from .attacking_token_results import fixed_attacking_token_template
+    from .created_token_cleanup_templates import created_token_cleanup_template
+    cleanup = created_token_cleanup_template(text, compile_inner=fixed_token_creation_effect_template)
     attacking = fixed_attacking_token_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
-    return attacking or _single_fixed_token_creation_effect_template(
+    return cleanup or attacking or _single_fixed_token_creation_effect_template(
         text
     ) or _fixed_token_batch_creation_effect_template(text)
 

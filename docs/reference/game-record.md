@@ -10,6 +10,20 @@ concern: "game-record"
 
 # Game Record v3
 
+Marked ordinary token cleanup uses `created_token_cleanup` version one, with
+explicit action and timing. Replacement-capable intents retain a closed
+`created_token_cleanup_plan` containing the resolving source and its optional
+captured characteristics. The scheduled instruction pins the actual created
+incarnations and original delayed controller. A marked creation with no tokens
+still creates its unconditional delayed ability, which resolves without moving
+objects. The earlier copy-aftercare encoding remains unchanged.
+
+Attacking-token continuations with printed cleanup use
+`token_entry_version: 2` and retain their cleanup source. Version one continues
+to reject cleanup fields. Unmarked token-intent identities preserve their
+existing shapes; unknown versions, changed source identities and mixed legacy
+lifecycle flags reject before mutation.
+
 `battle_cry_resolution_version: 1` selects current other attacking creature
 incarnations when Battle Cry resolves, including creatures that entered
 attacking. Historical absence retains the earlier declared-set and rejection

@@ -349,6 +349,8 @@ def _create_token_intent_identity(
         identity["copy_snapshot"] = thaw_value(intent.copy_snapshot)
     if intent.attacking_groups:
         identity["attacking_groups"] = list(intent.attacking_groups)
+    if intent.token_cleanup is not None:
+        identity['token_cleanup'] = intent.token_cleanup.to_dict()
     return identity
 
 
@@ -1133,6 +1135,17 @@ def _validate_proliferate_intent_identity(
 def _validate_create_token_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if isinstance(value, Mapping) and 'token_cleanup' in value:
+        from ..created_token_cleanup import CreatedTokenCleanupPlan
+        try:
+            plan = CreatedTokenCleanupPlan.from_dict(value['token_cleanup'])
+            base = _validate_create_token_intent_identity({key: child for key, child in value.items() if key != 'token_cleanup'})
+            if (base['copy_of'] is not None or base.get('copy_snapshot') is not None
+                    or any(base.get(key, False) for key in ('sacrifice_at_end_step', 'sacrifice_on_controller_end_step', 'exile_at_end_of_combat'))):
+                raise ValueError('Typed cleanup conflicts with a legacy token lifecycle')
+            return {**base, 'token_cleanup': plan.to_dict()}
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError('Token cleanup intent identity is malformed') from exc
     if not isinstance(value, Mapping) or set(value) not in {
         frozenset(_CREATE_TOKEN_FIELDS_V1),
         frozenset(_CREATE_TOKEN_FIELDS),

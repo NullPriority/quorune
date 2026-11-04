@@ -39,7 +39,6 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
 
 
 def finish_copy_aftercare(host: Any, controller: str, created: Sequence[str]) -> None:
-    from .trigger_processing import schedule_delayed_trigger
     groups: dict[str, tuple[Mapping[str, Any], list[Any]]] = {}
     for object_id in created:
         card = host.state.cards[object_id]
@@ -60,15 +59,10 @@ def finish_copy_aftercare(host: Any, controller: str, created: Sequence[str]) ->
                 duration=ContinuousEffectDuration(metadata["keyword_duration"]))
         if metadata["cleanup"] == "none":
             continue
-        sacrifice = metadata["cleanup"] == "sacrifice_next_end_step"
         if metadata["cleanup"] not in {"sacrifice_next_end_step", "exile_next_end_step"}:
             raise TokenCopyRecipeError("Copy aftercare lifecycle is unsupported")
-        movement = {"op": "move_if_in_zone", "cards": [{"card": card.ref,
-            "expected_zone_change_counter": card.zone_change_counter,
-            "expected_object_identity": card.logical_object_id} for card in cards],
-            "from": "battlefield", "destination": "graveyard" if sacrifice else "exile",
-            **({"transition_kind": "sacrifice", "required_controller": controller} if sacrifice else {})}
-        schedule_delayed_trigger(host, controller=controller, label="Copied token cleanup",
-            event_kind="step.begin", condition={"phase": "ending", "step": "end_step"},
-            stack_template={"label": "Copied token cleanup", "context": {"dynamic_effects": [movement]}},
-            referred_object_ids=tuple(card.object_id for card in cards), once=True)
+        from .created_token_cleanup_model import CreatedTokenCleanupSpec
+        from .created_token_cleanup import schedule_created_token_cleanup
+        schedule_created_token_cleanup(host, controller, cards,
+            CreatedTokenCleanupSpec('sacrifice' if metadata['cleanup'] == 'sacrifice_next_end_step' else 'exile', 'next_end_step'),
+            label='Copied token cleanup')

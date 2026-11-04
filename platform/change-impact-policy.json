@@ -11828,6 +11828,30 @@
         "test_cascade_rules",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "ordinary-created-token-cleanup",
+      "patterns": [
+        "quorune/created_token_cleanup_model.py",
+        "quorune/created_token_cleanup.py",
+        "quorune/compiler/created_token_cleanup_templates.py",
+        "quorune/rules/created_token_cleanup_shapes.py",
+        "quorune/semantic_runtime/token_creation_intent.py",
+        "quorune/semantic_choices/token_creation_intents.py",
+        "quorune/token_copy_runtime.py",
+        "tests/test_ordinary_token_cleanup.py",
+        "tests/fixtures/ordinary-token-cleanup-cards.json"
+      ],
+      "test_modules": [
+        "test_ordinary_token_cleanup",
+        "test_fixed_token_creation_effects",
+        "test_attacking_token_results",
+        "test_token_copy_values",
+        "test_created_token_counters",
+        "test_semantic_choice_model",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

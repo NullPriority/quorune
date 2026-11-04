@@ -353,10 +353,13 @@ def _apply_create_token(
     operation: str,
     reason: str,
 ) -> Any:
+    if 'token_cleanup' in effect:
+        from ..created_token_cleanup import apply_fixed_token_cleanup_creation
+        try:return apply_fixed_token_cleanup_creation(host, effect, actor=actor, reason=reason)
+        except (TypeError, ValueError, KeyError) as exc:raise GameRuleError(str(exc)) from exc
     if '_role_order' in effect:
         from ..role_token_creation import create_ordered_role_token
         return create_ordered_role_token(host, effect, actor=actor, reason=reason)
-    op = operation
     if "copy_spec" in effect:
         from ..token_copy_runtime import apply_copy_recipe
         return apply_copy_recipe(host, effect, actor=actor, reason=reason)

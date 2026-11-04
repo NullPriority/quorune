@@ -9,11 +9,12 @@ ATTACKING_TOKEN_MECHANIC = 'fixed-attacking-token-result'
 def attacking_token_result_closure(effect):
     from .token_creation_capability_shapes import _fixed_token_effect_closure
     from ..replacement.immutable import FrozenMap, thaw_value
-    if (not isinstance(effect, Mapping) or set(effect) != {
-            'op', 'player', 'quantity', 'name', 'characteristics', 'tapped', 'token_entry_version'}
+    version = effect.get('token_entry_version') if isinstance(effect, Mapping) else None
+    expected = {'op', 'player', 'quantity', 'name', 'characteristics', 'tapped', 'token_entry_version'} | ({'token_cleanup'} if version == 2 else set())
+    if (not isinstance(effect, Mapping) or set(effect) != expected
             or effect.get('op') != ATTACKING_TOKEN_OPERATION
             or effect.get('player') != '$controller'
-            or type(effect.get('token_entry_version')) is not int or effect['token_entry_version'] != 1
+            or type(version) is not int or version not in {1, 2}
             or type(effect.get('tapped')) is not bool):
         raise ValueError('Fixed attacking token result is malformed')
     effect = thaw_value(FrozenMap(effect))
@@ -23,7 +24,9 @@ def attacking_token_result_closure(effect):
     closed = _fixed_token_effect_closure(fixed)
     if closed is None or 'creature' not in str(effect['characteristics'].get('type_line', '')).casefold().split(' — ')[0].split():
         raise ValueError('Attacking token requires an independently closed creature definition')
-    return tuple(sorted({ATTACKING_TOKEN_CAPABILITY, *closed[0]})), closed[1]
+    from ..created_token_cleanup_model import CreatedTokenCleanupSpec, TOKEN_CLEANUP_CAPABILITY
+    if version == 2: CreatedTokenCleanupSpec.from_dict(effect['token_cleanup'])
+    return tuple(sorted({ATTACKING_TOKEN_CAPABILITY, *closed[0], *({TOKEN_CLEANUP_CAPABILITY} if version == 2 else set())})), closed[1]
 
 
 def attacking_token_payload_dependencies(value):

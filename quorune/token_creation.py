@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .created_token_cleanup import CreatedTokenCleanupPlan, capture_created_token_cleanup, schedule_created_token_cleanup
 from .entry_copy import copiable_oracle_id
 
 import copy
@@ -1084,6 +1085,7 @@ def _commit_resolved_token_specs(
     base_quantity: int,
     reason: str,
     role_timestamp_order: Sequence[int] | None = None,
+    token_cleanup: CreatedTokenCleanupPlan | None = None,
 ) -> list[str]:
     resolved_specs = _preflight_aura_token_specs(
         host,
@@ -1136,6 +1138,9 @@ def _commit_resolved_token_specs(
     # A separate subsequent grant is not an entry modification. Discovery
     # remains deferred; this does not introduce priority or an SBA checkpoint.
     finish_copy_aftercare(host, controller, created)
+    if token_cleanup is not None:
+        schedule_created_token_cleanup(host, controller, (host.state.cards[oid] for oid in created), token_cleanup.spec,
+            label='Token cleanup', source=token_cleanup.source, source_binding=token_cleanup.source_binding)
     return [host.state.cards[object_id].ref for object_id in created]
 
 
@@ -1160,6 +1165,7 @@ def create_tokens(
         str | None | Mapping[str, Any]
     ] = (),
     effect_entry_counters: Sequence[EffectEntryCounter] = (),
+    token_cleanup: CreatedTokenCleanupPlan | None = None,
 ) -> list[str]:
     """Resolve creation replacements, commit tokens, and emit enter events."""
 
@@ -1167,6 +1173,9 @@ def create_tokens(
             not isinstance(value,EffectEntryCounter) for value in effect_entry_counters):
         raise TokenCreationError('Token entry counters require typed effect instructions')
     host._require_seat(controller, in_game=True)
+    if token_cleanup is not None:
+        try:token_cleanup = capture_created_token_cleanup(host, token_cleanup, controller=controller)
+        except (ValueError,TypeError) as exc:raise TokenCreationError(str(exc)) from exc
     if copy_source_zone not in {"battlefield", "exile", "graveyard"}:
         raise TokenCreationError("Token-copy source zone is unsupported")
     if copy_source_zone == "graveyard" and copy_snapshot is None:
@@ -1239,6 +1248,7 @@ def create_tokens(
         base_name=name,
         base_quantity=quantity,
         reason=reason,
+        token_cleanup=token_cleanup,
     )
 
 

@@ -62238,6 +62238,110 @@
     {
       "applicability": {
         "exclusions": [
+          "new copy recipes",
+          "conditional cleanup",
+          "unrepresented postcreation ability grants",
+          "new target or distribution grammars",
+          "unsupported printed siblings"
+        ],
+        "inputs": [
+          "closed version-one cleanup instruction",
+          "authoritative resolving source and creator",
+          "replacement-aware created object incarnations"
+        ],
+        "outputs": [
+          "next end-step,creator-next-end-step or end-combat cleanup",
+          "source/controller-retaining delayed ability",
+          "sacrifice restricted to original controller",
+          "exile without sacrifice ownership restriction"
+        ],
+        "summary": "Create an independently closed ordinary token definition and schedule its captured created batch for printed delayed sacrifice or exile."
+      },
+      "blockers": [],
+      "dependencies": [
+        "token.creation.fixed_definition",
+        "zone.move.fixed_public_set",
+        "trigger.delayed.fixed_object_action",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "Descriptors infer cleanup ownership independently from coverage and reject unknown schema,source or mixed legacy lifecycle forms. New cleanup remains independently gated from ordinary unmarked token creation.",
+      "dependency_fail_closed_status": "passed",
+      "id": "token.creation.fixed_definition_cleanup",
+      "implementation_components": [
+        "quorune.created_token_cleanup_model.CreatedTokenCleanupSpec",
+        "quorune.created_token_cleanup.CreatedTokenCleanupPlan",
+        "quorune.created_token_cleanup.capture_created_token_cleanup",
+        "quorune.created_token_cleanup.schedule_created_token_cleanup",
+        "quorune.created_token_cleanup.apply_fixed_token_cleanup_creation",
+        "quorune.compiler.created_token_cleanup_templates.created_token_cleanup_template",
+        "quorune.rules.created_token_cleanup_shapes.created_token_cleanup_closure",
+        "quorune.semantic_choices.token_creation_intents.execute_token_creation_intent"
+      ],
+      "implementation_mutation_rationale": "Collapsing cleanup conditions to an unconditional next end step fails the independent creator-step and combat-step expectations.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_hungry_for_more_doubled_batch_sacrifices_after_lifelink_combat",
+        "test_actual_tidal_wave_cleanup_cannot_sacrifice_token_controlled_by_an_opponent",
+        "test_actual_geist_attacking_angel_exiles_at_combat_end_and_keeps_original_source",
+        "test_actual_reverberate_copy_and_original_create_independent_source_correct_cleanup"
+      ],
+      "multiplayer_tests": [
+        "test_actual_hungry_for_more_doubled_batch_sacrifices_after_lifelink_combat",
+        "test_actual_tidal_wave_cleanup_cannot_sacrifice_token_controlled_by_an_opponent",
+        "test_actual_geist_attacking_angel_exiles_at_combat_end_and_keeps_original_source",
+        "test_actual_reverberate_copy_and_original_create_independent_source_correct_cleanup"
+      ],
+      "negative_tests": [
+        "test_cleanup_does_not_swallow_extra_instructions_conditions_or_postcreation_grants",
+        "test_withdrawn_cleanup_owner_keeps_unmarked_token_creation_available",
+        "test_closed_cleanup_specs_distinguish_action_and_applicable_step",
+        "test_plan_and_intent_codecs_retain_source_and_do_not_reinterpret_legacy_identities",
+        "test_v1_attacking_tokens_and_legacy_lifecycle_flags_remain_separate"
+      ],
+      "official_rules": [
+        "111.2",
+        "111.8",
+        "400.7",
+        "603.7",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "614.16",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_complete_cleanup_clauses_retain_action_timing_and_token_definition"
+      ],
+      "privacy_tests": [
+        "test_actual_hungry_for_more_doubled_batch_sacrifices_after_lifelink_combat"
+      ],
+      "replay_tests": [
+        "test_actual_hungry_for_more_doubled_batch_sacrifices_after_lifelink_combat",
+        "test_actual_tidal_wave_cleanup_cannot_sacrifice_token_controlled_by_an_opponent",
+        "test_actual_geist_attacking_angel_exiles_at_combat_end_and_keeps_original_source",
+        "test_actual_reverberate_copy_and_original_create_independent_source_correct_cleanup"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented source material",
           "arbitrary face abilities",
           "client-selected quantities or physical identities"
@@ -77984,7 +78088,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 691,
+  "registry_version": 692,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

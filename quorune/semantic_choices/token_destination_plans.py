@@ -42,7 +42,7 @@ def prepare_attacking_destinations(effect, context, *, operation, label, prefix)
             '_stack_label': context.stack_label, '_preview_specs': preview}))
 
 
-def complete_attacking_destinations(effect, response, query, *, name, tapped, sacrifice, label):
+def complete_attacking_destinations(effect, response, query, *, name, tapped, sacrifice, label, token_cleanup=None):
     raw = response.get('attacking')
     if not isinstance(raw, Mapping):
         raise SemanticChoiceError(f'{label} assignments must be an object map')
@@ -59,5 +59,5 @@ def complete_attacking_destinations(effect, response, query, *, name, tapped, sa
         characteristics=FrozenMap(dict(effect.get('characteristics') or {})), tapped=tapped,
         attacking_assignments=tuple(decisions[token_id] for token_id in token_ids),
         attacking_groups=tuple('any' for _ in range(int(effect.get('quantity', 0)))),
-        sacrifice_at_end_step=sacrifice, reason=str(effect.get('_stack_label') or label),
+        sacrifice_at_end_step=sacrifice, token_cleanup=token_cleanup, reason=str(effect.get('_stack_label') or label),
         replacement_selections=tuple(effect.get('_replacement_selections', ()))),))

@@ -30,7 +30,7 @@ class FixedAttackingTokenDestinationHandler:
     capability_dependencies: tuple[str, ...] = (ATTACKING_TOKEN_CAPABILITY,)
     continuation_fields: tuple[str, ...] = ('player', 'quantity', 'name', 'characteristics',
         'tapped', 'token_entry_version', '_choice_actor', '_token_ids', '_destinations',
-        '_stack_label', '_preview_specs', '_outside_combat')
+        '_stack_label', '_preview_specs', '_outside_combat', 'token_cleanup', '_token_cleanup_plan')
     private_data: tuple[str, ...] = ()
     projected_fields: tuple[str, ...] = ('prompt', 'destinations',
         'legal_actions.choice_schema.legal_refs', 'legal_actions.choice_schema.legal_values')
@@ -40,6 +40,14 @@ class FixedAttackingTokenDestinationHandler:
 
     def prepare(self, effect, context):
         _validate_effect(effect, context.actor)
+        if effect.get('token_entry_version') == 2:
+            from ..created_token_cleanup import CreatedTokenCleanupPlan
+            from ..created_token_cleanup_model import CreatedTokenCleanupSpec
+            source = context.query.resolution_source
+            if source is None or source.stack_ref != context.stack_ref:
+                raise SemanticChoiceError('Temporary attacking tokens require their resolving source')
+            plan = CreatedTokenCleanupPlan(CreatedTokenCleanupSpec.from_dict(effect['token_cleanup']), source)
+            effect = {**dict(effect), '_token_cleanup_plan': plan.to_dict()}
         if not context.query.attacking_token_entry_allowed:
             return SemanticChoicePreparation(request=None,
                 continuation_effect=FrozenMap({**dict(effect), '_choice_actor': context.actor,
@@ -56,15 +64,27 @@ class FixedAttackingTokenDestinationHandler:
             raise SemanticChoiceError('Fixed attacking token continuation has unknown fields or principal')
         base = {key: value for key, value in effect.items() if not key.startswith('_')}
         _validate_effect(base, actor)
+        plan = None
+        if effect.get('token_entry_version') == 2:
+            from ..created_token_cleanup import CreatedTokenCleanupPlan
+            try:
+                plan = CreatedTokenCleanupPlan.from_dict(effect.get('_token_cleanup_plan'))
+                if (plan.spec.to_dict() != dict(effect['token_cleanup']) or plan.source.stack_ref != continuation.stack_ref
+                        or query.resolution_source is None or plan.source.to_dict() != query.resolution_source.to_dict()):
+                    raise ValueError('Cleanup source or instruction changed during continuation')
+            except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
+        elif '_token_cleanup_plan' in effect:
+            raise SemanticChoiceError('Version-one attacking tokens do not contain typed cleanup')
         if effect.get('_outside_combat') is True:
             if query.attacking_token_entry_allowed or not isinstance(response, Mapping) or response:
                 raise SemanticChoiceError('Noncombat token continuation is stale or malformed')
             return SemanticChoiceCompletion(intents=(CreateTokenIntent(actor=actor, controller=actor,
                 name=effect['name'], quantity=effect['quantity'], tapped=effect['tapped'],
+                token_cleanup=plan,
                 characteristics=FrozenMap(effect['characteristics']),
                 reason=str(effect.get('_stack_label') or 'Token creation'),
                 replacement_selections=tuple(effect.get('_replacement_selections', ()))),))
         if not query.attacking_token_entry_allowed:
             raise SemanticChoiceError('Attacking token continuation is outside combat')
         return complete_attacking_destinations(effect, response, query, name=effect['name'],
-            tapped=effect['tapped'], sacrifice=False, label='Entering')
+            tapped=effect['tapped'], sacrifice=False, label='Entering', token_cleanup=plan)

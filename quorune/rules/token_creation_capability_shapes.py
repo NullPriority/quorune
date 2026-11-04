@@ -545,6 +545,10 @@ def fixed_token_creation_node_capabilities(
         return role_token_node_capabilities(effects=effects, target_schema=target_schema, mechanics=set(mechanic_ids))
     """Recognize a compiler-owned fixed token creation instruction."""
 
+    from .created_token_cleanup_shapes import created_token_cleanup_node_capabilities
+    cleanup = created_token_cleanup_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
+    if cleanup:
+        return cleanup
     from .attacking_token_results import attacking_token_node_capabilities
     attacking = attacking_token_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if attacking:
