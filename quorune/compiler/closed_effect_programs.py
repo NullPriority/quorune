@@ -26,6 +26,7 @@ _NESTED_SEQUENCE_MECHANICS = frozenset(
         "fixed-effect-clause-sequence",
         "fixed-source-effect-sequence",
         "fixed-target-effect-sequence",
+        "fixed-target-player-effect-sequence",
     }
 )
 _UNSAFE_LINKAGE = re.compile(

@@ -1062,6 +1062,17 @@ Source-name conditions use the ordinary compile-time self-reference model.
 Archaic played-by subjects, intrinsic turn-number conditions, and unrepresented
 subject predicates retain material residuals.
 
+`compiler/target_player_sequences.py` lowers two through four
+fixed draw, discard, mill, life or player-counter clauses that share one
+announced player target. Elided subjects retain that target; an explicit “you”
+life clause retains the controller. Each child must satisfy its existing
+closed shape. The sequence requires
+`resolution.effect.fixed_target_player_sequence`, resolves in printed order,
+and retains the remaining instructions across a private discard choice.
+Target revalidation applies to the whole sequence, including independent
+controller life gain. Linked amounts, independent targets and unknown siblings
+remain residual; no new mutation or choice owner is introduced.
+
 `compiler/fixed_effect_clause_sequences.py` owns the general closed
 two-sentence composition boundary. It accepts exactly two top-level,
 period-separated clauses when each clause independently lowers to

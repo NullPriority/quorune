@@ -54004,6 +54004,107 @@
     {
       "applicability": {
         "exclusions": [
+          "variable or linked amounts",
+          "independent targets",
+          "unrepresentedverbs or siblings",
+          "new hand or zone mechanics"
+        ],
+        "inputs": [
+          "one player/opponent target schema",
+          "closed existing draw,mill,discard,life and player-counter leaves",
+          "explicit controller life sibling"
+        ],
+        "outputs": [
+          "one retained target",
+          "existing atomic mutation and private continuation owners",
+          "wholeinstructiontargetrevalidation"
+        ],
+        "summary": "Resolve two through four fixed atomic instructions sharing one announced player target in printed order."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution",
+        "zone.draw.library_to_hand",
+        "zone.mill.fixed",
+        "life.change.effect",
+        "choice.affected_player.fixed_discard",
+        "counter.producer.fixed_player_effect"
+      ],
+      "dependency_fail_closed_rationale": "Verified sequence withdrawal rejects composite instructions and retains standalone targeted draw;everychildmustmatchitscanonicalclosedshape.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.effect.fixed_target_player_sequence",
+      "implementation_components": [
+        "quorune.compiler.target_player_sequences.fixed_target_player_sequence_template",
+        "quorune.rules.target_player_sequences.target_player_sequence_node_capabilities",
+        "quorune.rules.target_player_sequences.target_player_sequence_runtime_dependencies",
+        "quorune.rules.target_player_sequences.is_closed_target_player_sequence_program",
+        "quorune.compiler.effect_template_composition.reviewed_effect_template_composition"
+      ],
+      "implementation_mutation_rationale": "Replacing the announced mill player with the controller fails the independent shared-target assertion.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_discard_continuation_precedes_mill_and_life_and_replays",
+        "test_actual_draw_life_poison_sequence_keeps_target_and_private_draws",
+        "test_departed_sole_target_cancels_all_clauses_including_controller_life_gain",
+        "test_short_hand_discards_available_card_and_continues_fixed_siblings",
+        "test_generated_activation_keeps_shared_player_after_source_leaves"
+      ],
+      "multiplayer_tests": [
+        "test_actual_discard_continuation_precedes_mill_and_life_and_replays",
+        "test_actual_draw_life_poison_sequence_keeps_target_and_private_draws",
+        "test_departed_sole_target_cancels_all_clauses_including_controller_life_gain",
+        "test_short_hand_discards_available_card_and_continues_fixed_siblings",
+        "test_generated_activation_keeps_shared_player_after_source_leaves"
+      ],
+      "negative_tests": [
+        "test_linked_variable_and_independent_targets_remain_residual",
+        "test_verified_sequence_withdrawal_keeps_standalone_draw",
+        "test_closed_child_shapes_reject_changed_targets_and_unknown_siblings"
+      ],
+      "official_rules": [
+        "608.2b",
+        "608.2c",
+        "121.1",
+        "121.2",
+        "122.1f"
+      ],
+      "positive_tests": [
+        "test_fixed_player_subject_is_shared_and_order_is_printed",
+        "test_activated_and_triggered_shells_use_the_same_closed_sequence"
+      ],
+      "privacy_tests": [
+        "test_actual_discard_continuation_precedes_mill_and_life_and_replays",
+        "test_actual_draw_life_poison_sequence_keeps_target_and_private_draws",
+        "test_departed_sole_target_cancels_all_clauses_including_controller_life_gain",
+        "test_short_hand_discards_available_card_and_continues_fixed_siblings",
+        "test_generated_activation_keeps_shared_player_after_source_leaves"
+      ],
+      "replay_tests": [
+        "test_actual_discard_continuation_precedes_mill_and_life_and_replays",
+        "test_actual_draw_life_poison_sequence_keeps_target_and_private_draws",
+        "test_departed_sole_target_cancels_all_clauses_including_controller_life_gain",
+        "test_short_hand_discards_available_card_and_continues_fixed_siblings",
+        "test_generated_activation_keeps_shared_player_after_source_leaves"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unknown source/amount dependencies",
           "unrepresented target-schema replacement or variable target count",
           "multiple conditional clauses or unclosed result siblings"
@@ -77513,7 +77614,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 684,
+  "registry_version": 685,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

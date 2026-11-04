@@ -1099,6 +1099,7 @@
       "test_state_trigger_predicates",
       "test_subtype_composite_grants",
       "test_target_player_hand_counts",
+      "test_target_player_sequences",
       "test_target_restrictions",
       "test_target_set_result_sequences",
       "test_targeted_destruction_effect_clauses",

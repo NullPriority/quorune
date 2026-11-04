@@ -146,6 +146,9 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .target_player_sequences import fixed_target_player_sequence_template
+    player_sequence=fixed_target_player_sequence_template(text)
+    if player_sequence is not None:return player_sequence
     from .target_set_result_sequences import target_set_result_sequence_template
     shared_set=target_set_result_sequence_template(text,compile_independent=compile_atomic)
     if shared_set is not None:return shared_set

@@ -11679,6 +11679,23 @@
         "test_typed_ability_fragments",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "fixed-shared-target-player-sequences",
+      "patterns": [
+        "quorune/compiler/target_player_sequences.py",
+        "quorune/rules/target_player_sequences.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/compiler/closed_effect_programs.py",
+        "tests/test_target_player_sequences.py",
+        "tests/fixtures/target-player-sequence-cards.json"
+      ],
+      "test_modules": [
+        "test_target_player_sequences",
+        "test_fixed_controller_effect_sequences",
+        "test_fixed_effect_clause_sequences",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
