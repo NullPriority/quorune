@@ -281,6 +281,8 @@ def _query_characteristic_candidate(
 
 
 _AMOUNT_FIELDS = {
+    "drain_opponent": "amount",
+    "drain_each_opponent": "amount",
     "life_loss_then_gain_actual": "amount",
     "life": "delta",
     "lose_life": "amount",

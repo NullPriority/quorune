@@ -11520,6 +11520,27 @@
         "test_quantified_counter_targets",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "typed-variable-independent-life",
+      "patterns": [
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/public_query_effect_amounts.py",
+        "tests/test_variable_independent_life.py",
+        "tests/fixtures/variable-independent-life-cards.json",
+        "quorune/semantic_runtime/query_effect_amounts.py",
+        "tests/test_live_battlefield_quantities.py"
+      ],
+      "test_modules": [
+        "test_variable_independent_life",
+        "test_fixed_player_life_effects",
+        "test_declared_effect_amounts",
+        "test_public_query_effect_amounts",
+        "test_scalar_effect_amounts",
+        "test_variable_actual_life_transfer",
+        "test_card_program_trust",
+        "test_live_battlefield_quantities"
+      ]
     }
   ],
   "risk_rules": [

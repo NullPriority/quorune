@@ -116,6 +116,55 @@ class LiveBattlefieldQuantityModelTests(unittest.TestCase):
             self.assertNotEqual(0, current_live_battlefield_count(host, 'A', spec))
 
 
+class LiveBattlefieldQuantitySourceTests(unittest.TestCase):
+    def setup_count(self, *, frozen=False):
+        from quorune.model import CardInstance
+        cards = [CardInstance(object_id=str(i), ref='C'+str(i), printed_name='Public Rat',
+            oracle_id='test:public-rat', owner=seat, controller=seat, zone='battlefield')
+            for i, seat in ((1, 'A'), (2, 'A'), (3, 'B'))]
+        host = SimpleNamespace(state=SimpleNamespace(players={'A': object(), 'B': object()},
+            cards={c.object_id: c for c in cards}),
+            _effective_card_data=lambda c: {'type_line': 'Creature — Rat', 'keywords': [], 'power': '1', 'toughness': '1'},
+            _type_parts=lambda text: ({'creature'}, {'rat'}, set()))
+        item = SimpleNamespace(ref='stack:count', controller='A', source_object_id='1', card_object_id=None,
+            context={'source_logical_object_id': cards[0].logical_object_id})
+        quantity = LiveBattlefieldQuantitySpec('source_controller',
+            ObjectQuerySpec(zones=('battlefield',), subtypes_any=('rat', 'squirrel')), exclude_source=True)
+        spec = PublicQueryAmountSpec(quantity, schema_version=2 if frozen else 1,
+            binding_id='scope:one' if frozen else None)
+        return host, cards[0], item, spec.to_dict()
+
+    def test_source_exclusion_uses_the_original_logical_object(self):
+        from quorune.semantic_runtime.query_effect_amounts import resolve_public_query_amount
+        host, source, item, amount = self.setup_count()
+        self.assertEqual(1, resolve_public_query_amount(host, amount, item))
+        source.zone_change_counter += 2
+        self.assertEqual(2, resolve_public_query_amount(host, amount, item))
+        del host.state.cards[source.object_id]
+        self.assertEqual(1, resolve_public_query_amount(host, amount, item))
+
+    def test_source_identity_validation_precedes_counting_and_frozen_values_stay_frozen(self):
+        from quorune.semantic_runtime.query_effect_amounts import resolve_public_query_amount
+        for invalid in (None, '', True, 1):
+            host, source, item, amount = self.setup_count()
+            item.context['source_logical_object_id'] = invalid
+            with self.subTest(invalid=invalid), self.assertRaises(ValueError):
+                resolve_public_query_amount(host, amount, item)
+        host, source, item, amount = self.setup_count(frozen=True)
+        self.assertEqual(1, resolve_public_query_amount(host, amount, item))
+        source.zone_change_counter += 2
+        self.assertEqual(1, resolve_public_query_amount(host, amount, item))
+
+    def test_physical_source_exclusion_mutant_is_killed(self):
+        def physical(host, item, quantity):
+            return quantity, host.state.cards[item.source_object_id].ref
+        with patch('quorune.semantic_runtime.query_effect_amounts._live_quantity_source', side_effect=physical):
+            result = unittest.TestResult()
+            LiveBattlefieldQuantitySourceTests('test_source_exclusion_uses_the_original_logical_object').run(result)
+        self.assertFalse(result.errors, result.errors)
+        self.assertTrue(result.failures)
+
+
 class LiveBattlefieldQuantityActionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

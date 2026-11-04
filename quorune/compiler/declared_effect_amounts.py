@@ -33,6 +33,8 @@ _LIBRARY_DEFINITION = re.compile(
 _X = re.compile(r"\bX\b")
 _SCALED_X = re.compile(r"\b(?P<scale>twice|two times|three times) X\b", re.I)
 _RESULT_FIELDS = {
+    'drain_opponent': ('amount',),
+    'drain_each_opponent': ('amount',),
     'life_loss_then_gain_actual': ('amount',),
     'discover': ('amount',),
     'variable_library_selection': ('look_count',),

@@ -3872,6 +3872,19 @@ runtime amount owner multiplies the canonical stack X, including zero and
 copied X; it does not choose a second value or change the price. Public
 definitions with scaled X, other arithmetic, and variable target cardinalities
 outside their separate target owner remain residual.
+The existing independent `drain_opponent` and `drain_each_opponent`
+instructions also accept these typed amount slots, including a closed public
+definition or source scalar definition. Both loss and gain consume the same
+declared value. A printed gain of X remains X even when several opponents
+lose life; the distinct actual-life-transfer instruction owns gains based on
+the aggregate life actually lost. Quantity, target, and fixed life-operation
+closure are all required, and the fixed numeric payloads remain unchanged.
+An applied live battlefield quantity that excludes its source uses the stack
+item's captured logical source identity. The same physical card returning to
+the battlefield is a new object and can qualify for the count. Its first
+evaluation rejects a missing or malformed source identity; a declaration
+already evaluated keeps its frozen value. Immediate public mana quantities retain their existing
+current-source path.
 Creature-token definitions accept the singular articles `a` and `an` as a
 count of one. This also preserves the literal projections used to validate an
 `X/X` definition without changing the original source span. Resolved power and

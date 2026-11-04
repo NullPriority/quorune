@@ -51037,7 +51037,8 @@
           "one public definition value retained across sibling results and replacement resumption",
           "zero, copy-controller, and principal-correct behavior",
           "separate values for independent declaration scopes",
-          "version-two signed coefficient two or three; version-one signed unit encoding is unchanged"
+          "version-two signed coefficient two or three; version-one signed unit encoding is unchanged",
+          "existing independent opponent-loss/gain instruction uses one typed result amount; the printed gain is not multiplied by opponents or actual losses"
         ],
         "summary": "Bind a signed ordinary announced spell-cost or ordinary activation-cost X or one explicitly scoped public X definition to closed numeric result slots without changing the existing target, payment, or result owners."
       },
@@ -51066,6 +51067,7 @@
       "implementation_mutation_rationale": "Existing evidence retained. Fresh original casts kill omitted represented-price X context, runtime target binding, actual result promotion, typed-X minimum dependency and per-signature exact target bound. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
         "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
@@ -51080,6 +51082,8 @@
         "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
@@ -51106,6 +51110,7 @@
         "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "multiplayer_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
         "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
@@ -51120,6 +51125,8 @@
         "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
@@ -51167,10 +51174,12 @@
         "test_undefined_ambiguous_and_unrepresented_price_x_remains_residual",
         "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
+        "test_unknown_correlations_and_quantities_do_not_borrow_a_valid_amount",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
         "test_unowned_arithmetic_target_counts_and_public_definitions_stay_residual",
         "test_unresolved_discover_amount_has_a_closed_type_and_cannot_reach_the_scan",
         "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_verified_quantity_withdrawals_preserve_fixed_independent_drain",
         "test_versions_keep_legacy_encoding_and_reject_malformed_coefficients"
       ],
       "official_rules": [
@@ -51182,9 +51191,12 @@
         "602.2b",
         "107.3i",
         "608.2c",
-        "707.10"
+        "707.10",
+        "119.3",
+        "119.9"
       ],
       "positive_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
         "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
@@ -51199,16 +51211,20 @@
         "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
         "test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
+        "test_announced_public_and_source_scalar_amounts_reuse_independent_gain",
         "test_announced_spell_x_uses_existing_result_families",
         "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
         "test_cast_x_and_public_amounts_keep_their_distinct_values_through_casting_and_costs",
         "test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
         "test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+        "test_fixed_independent_drain_encoding_is_unchanged",
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_mandatory_public_land_count_uses_existing_quantity_and_preserves_surface",
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
@@ -51233,6 +51249,7 @@
         "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "privacy_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
@@ -51245,6 +51262,8 @@
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
@@ -51270,6 +51289,7 @@
         "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "replay_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
         "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
@@ -51284,6 +51304,8 @@
         "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
         "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
         "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
@@ -51326,7 +51348,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 9
+      "version": 10
     },
     {
       "applicability": {
@@ -51431,7 +51453,8 @@
           "optional physical source exclusion"
         ],
         "outputs": [
-          "nonnegative current object count through existing effect and mana owners"
+          "nonnegative current object count through existing effect and mana owners",
+          "source-excluding applied instruction compares captured source logical identity; a returned new object is eligible, while an already frozen declaration keeps its value"
         ],
         "summary": "Current public battlefield object counts at resolution and mana production, separate from layer-safe static quantities."
       },
@@ -51441,12 +51464,13 @@
       "dependency_fail_closed_status": "passed",
       "id": "quantity_expression.live_battlefield_count",
       "implementation_components": [
-        "quorune.live_battlefield_quantity_model.LiveBattlefieldQuantitySpec",
-        "quorune.live_battlefield_quantities.current_live_battlefield_count",
+        "quorune.characteristic_fragments.characteristic_quantity_capabilities",
         "quorune.compiler.live_battlefield_quantities.resolution_quantity",
-        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+        "quorune.live_battlefield_quantities.current_live_battlefield_count",
+        "quorune.live_battlefield_quantity_model.LiveBattlefieldQuantitySpec",
         "quorune.public_quantity_mana_runtime.public_quantity_mana_amount",
-        "quorune.characteristic_fragments.characteristic_quantity_capabilities"
+        "quorune.semantic_runtime.query_effect_amounts._live_quantity_source",
+        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount"
       ],
       "implementation_mutation_rationale": "Removing query filtering breaks current keyword/controller and empty-state contrasts.",
       "implementation_mutation_status": "killed",
@@ -51471,7 +51495,9 @@
         "506.4",
         "508.1k",
         "608.2h",
-        "613.1f"
+        "613.1f",
+        "400.7",
+        "113.7a"
       ],
       "positive_tests": [
         "test_counted_token_definition_retains_trailing_keywords",
@@ -51502,7 +51528,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -52014,7 +52040,9 @@
           "copy-controller-correct and multiplayer-correct result",
           "current direct-target revalidation and granted-ability applicability",
           "hidden-identity-free hand count",
-          "mandatory Mill through the unchanged fixed-subject zone-transition owner"
+          "mandatory Mill through the unchanged fixed-subject zone-transition owner",
+          "existing independent opponent-loss/gain instruction uses one typed result amount; the printed gain is not multiplied by opponents or actual losses",
+          "source-excluding applied instruction compares captured source logical identity; a returned new object is eligible, while an already frozen declaration keeps its value"
         ],
         "summary": "Resolve a closed current public quantity into an existing typed numeric result owner. Versioned quantities add distinct basic/card types and colors, maximum/total mana value, colored mana symbols, fixed positive multipliers and nonnegative offsets, or exactly two independent public leaf counts; instruction-scoped declarations retain one value. Bare creature-subtype queries include Kindred objects; explicit Creature card-type predicates remain separate. Complete-value token counts and compiler-bound mandatory controller-scoped doubling compose through the existing token transaction; new source descriptors retain current ability applicability. Fixed nonlegendary-creature and nonbasic-land public descriptions preserve absence of a supertype, independently of subtype, token state and Commander designation, through the existing query owner."
       },
@@ -52024,29 +52052,33 @@
       "dependency_fail_closed_status": "passed",
       "id": "quantity_expression.public_query_effect_amount",
       "implementation_components": [
-        "quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
-        "quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template",
-        "quorune.compiler.program_generation._is_closed_public_query_amount_program",
-        "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
-        "quorune.query_effect_amount_model.PublicQueryAmountSpec",
-        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
-        "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies",
         "quorune.characteristic_evaluation_host.CharacteristicEvaluationHostMixin",
-        "quorune.effect_runtime.objects_stack_and_tokens._apply_modify_stats_until_end_of_turn",
-        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.compiler.attached_granted_ability_nodes.attached_granted_ability_plan",
         "quorune.compiler.collection_quantity_templates.collection_quantity",
         "quorune.compiler.collection_quantity_templates.fixed_quantity_arithmetic",
-        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
+        "quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+        "quorune.compiler.program_generation._is_closed_public_query_amount_program",
+        "quorune.compiler.public_query_effect_amounts.public_query_effect_amount_template",
+        "quorune.dynamic_characteristics.query_characteristic_count",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_modify_stats_until_end_of_turn",
+        "quorune.public_quantity_reductions.reduce_public_quantity",
+        "quorune.query_effect_amount_model.PublicQueryAmountSpec",
+        "quorune.semantic_runtime.query_effect_amounts._live_quantity_source",
+        "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
+        "quorune.semantic_runtime.values.resolve_semantic_value"
       ],
       "implementation_mutation_rationale": "Focused compiler and resolver mutations remove the typed descriptor, change its coefficient, subject, controller relation, target revalidation, or layer-5 query; exact compiler, runtime characteristic, copy-controller, multiplayer, projection, cleanup, and replay assertions reject each survivor. Fresh native mill witnesses also detect omission of the existing scalar or public-quantity producer. Fresh native witnesses also kill omission of the shared negative-supertype producer. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
         "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_crash_the_party_counts_before_creating_tapped_tokens",
@@ -52070,11 +52102,14 @@
         "test_zero_query_amount_and_stale_target_use_existing_target_owner"
       ],
       "multiplayer_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
         "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_crash_the_party_counts_before_creating_tapped_tokens",
@@ -52111,8 +52146,10 @@
         "test_real_departed_myrel_trigger_resolves_and_excludes_its_departed_soldier",
         "test_source_scalar_adaptation_consumes_all_fixed_components",
         "test_tapped_public_quantity_hidden_domain_dependencies_and_omission_fail_closed",
+        "test_unknown_correlations_and_quantities_do_not_borrow_a_valid_amount",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
         "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_verified_quantity_withdrawals_preserve_fixed_independent_drain",
         "test_zero_public_count_creates_no_choice_or_scry_surveil_event"
       ],
       "official_rules": [
@@ -52130,14 +52167,24 @@
         "701.25c",
         "205.4a",
         "205.4b",
-        "205.4c"
+        "205.4c",
+        "107.3i",
+        "119.3",
+        "119.9",
+        "608.2c",
+        "400.7",
+        "113.7a"
       ],
       "positive_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
         "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
+        "test_announced_public_and_source_scalar_amounts_reuse_independent_gain",
         "test_compiler_lowers_public_query_amounts_across_contexts",
         "test_compiler_lowers_query_scaled_characteristics_across_contexts",
         "test_complete_public_phrases_reuse_versioned_supertype_exclusion_and_preserve_boundaries",
@@ -52146,6 +52193,7 @@
         "test_existing_public_quantity_spell_shapes_are_promotable",
         "test_existing_query_draw_is_current_trusted_and_casts_with_exact_replay",
         "test_existing_query_source_self_activation_is_trusted_and_replays",
+        "test_fixed_independent_drain_encoding_is_unchanged",
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_number_of_tokens_complete_value_keeps_definition_and_quantity_authority",
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
@@ -52166,10 +52214,13 @@
         "test_tapped_public_quantity_keeps_fixed_current_state_and_full_result"
       ],
       "privacy_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
         "test_original_crash_the_party_counts_before_creating_tapped_tokens",
         "test_original_knotvine_counts_untapped_friends_after_attack_taps_source_and_expires",
@@ -52183,11 +52234,14 @@
         "test_trusted_query_scaled_activation_uses_real_action_path_and_replays"
       ],
       "replay_tests": [
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
         "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
         "test_actual_glimmerpost_counts_current_loci_across_seats_at_resolution",
         "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
         "test_actual_public_nonbasic_mill_reads_zero_after_real_sacrifice_and_excludes_basic_forest",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_original_cerebral_download_surveys_current_artifact_count_then_draws_and_replays",
         "test_original_chaplain_counts_current_defenders_and_creates_flying_birds",
         "test_original_copperhoof_and_tapped_quantity_draw_track_actual_tap_actions_replay",
@@ -52217,7 +52271,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 17
+      "version": 18
     },
     {
       "applicability": {
@@ -52240,7 +52294,8 @@
           "sealed actual event amounts",
           "known zero distinct from unavailable information",
           "instruction-scoped declaration persistence",
-          "ordinary negative amounts normalized to zero before signed result coefficients"
+          "ordinary negative amounts normalized to zero before signed result coefficients",
+          "existing independent opponent-loss/gain instruction uses one typed result amount; the printed gain is not multiplied by opponents or actual losses"
         ],
         "summary": "Resolve a typed referenced characteristic, committed trigger amount, or represented current-turn quantity through the existing numeric result boundary. Version-two source counter counts share current-incarnation reads and predeparture scalar snapshots, preserving old version-one descriptors."
       },
@@ -52266,6 +52321,7 @@
       "interaction_tests": [
         "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
         "test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
@@ -52300,8 +52356,10 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_shrine_counts_own_upkeep_and_red_cast_but_not_foreign_or_blue_casts",
         "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
@@ -52317,14 +52375,15 @@
         "test_declaration_freezes_once_but_independent_reads_remain_live",
         "test_departure_pin_does_not_read_or_cache_unrelated_references",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
         "test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
-        "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline"
+        "test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays"
       ],
       "multiplayer_tests": [
         "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
         "test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
@@ -52357,8 +52416,10 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_shrine_counts_own_upkeep_and_red_cast_but_not_foreign_or_blue_casts",
         "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
@@ -52371,8 +52432,8 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
-        "test_trusted_scalar_actions_controller_privacy_and_replay",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline"
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
+        "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "negative_tests": [
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
@@ -52395,6 +52456,7 @@
         "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_surrakar_optional_counter_then_combat_draw_reads_departed_source_counter_lki",
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
+        "test_amount_capabilities_and_optional_source_binding_withdrawal_fail_closed",
         "test_bound_optional_event_quantity_and_source_copy_keep_owned_children",
         "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
         "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
@@ -52411,6 +52473,7 @@
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
         "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_own_phased_reference_remains_explicitly_unavailable",
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
         "test_runtime_scalar_dependency_is_inferred_without_declaration",
@@ -52420,14 +52483,14 @@
         "test_source_damage_amount_dependency_and_scalar_handoff_fail_closed",
         "test_source_event_scalar_keeps_source_amount_and_target_roles_separate",
         "test_source_led_scalar_pronoun_never_reads_the_result_target",
+        "test_unknown_correlations_and_quantities_do_not_borrow_a_valid_amount",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
+        "test_unresolved_discover_amount_has_a_closed_type_and_cannot_reach_the_scan",
         "test_v2_counter_codec_keeps_v1_shape_and_rejects_ambiguous_origins",
         "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_verified_quantity_withdrawals_preserve_fixed_independent_drain",
         "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
-        "test_verified_scalar_withdrawal_keeps_fixed_source_damage",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
-        "test_unresolved_discover_amount_has_a_closed_type_and_cannot_reach_the_scan",
-        "test_amount_capabilities_and_optional_source_binding_withdrawal_fail_closed"
+        "test_verified_scalar_withdrawal_keeps_fixed_source_damage"
       ],
       "official_rules": [
         "107.1b",
@@ -52436,11 +52499,16 @@
         "113.7a",
         "400.7",
         "608.2h",
-        "613.4c"
+        "613.4c",
+        "107.3i",
+        "119.3",
+        "119.9",
+        "608.2c"
       ],
       "positive_tests": [
         "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
         "test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
@@ -52472,8 +52540,10 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_shrine_counts_own_upkeep_and_red_cast_but_not_foreign_or_blue_casts",
         "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
@@ -52484,17 +52554,20 @@
         "test_actual_time_bomb_upkeep_then_sacrifice_damages_every_player_and_creature",
         "test_actual_vicious_shadows_uses_target_current_hand_after_response_without_disclosing_cards",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
+        "test_announced_public_and_source_scalar_amounts_reuse_independent_gain",
         "test_bound_optional_event_quantity_and_source_copy_keep_owned_children",
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_complete_equal_to_source_mill_matches_explicit_definition_and_spans",
         "test_current_then_immediate_departure_lki_never_reads_new_incarnation",
         "test_explicit_counter_spelling_keeps_its_existing_descriptor",
         "test_explicit_source_and_activated_pronoun_counter_amounts_keep_original_span_and_roles",
+        "test_fixed_independent_drain_encoding_is_unchanged",
         "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_omitting_source_subject_proof_mutant_loses_the_new_explicit_form",
         "test_optional_scalar_projection_only_enters_one_closed_child_result",
         "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_referenced_and_sealed_quantities_lower_through_existing_results",
         "test_scalar_counter_pronoun_uses_the_fixed_incarnation_pinned_source_reference",
         "test_source_counter_amounts_preserve_typed_identity_and_span",
@@ -52502,12 +52575,12 @@
         "test_source_damage_amount_broad_recipient_and_combat_receive_contrasts",
         "test_source_damage_event_amount_keeps_subscription_identity_and_amount",
         "test_source_event_scalar_keeps_source_amount_and_target_roles_separate",
-        "test_source_led_scalar_pronoun_never_reads_the_result_target",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline"
+        "test_source_led_scalar_pronoun_never_reads_the_result_target"
       ],
       "privacy_tests": [
         "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
         "test_actual_clearwater_sunburst_counts_four_colors_and_optional_upkeep_gains_all_or_zero",
@@ -52531,7 +52604,9 @@
         "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_shrine_counts_own_upkeep_and_red_cast_but_not_foreign_or_blue_casts",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
         "test_actual_stifle_counters_the_entry_result_without_refunding_multikicker",
@@ -52543,12 +52618,13 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
-        "test_trusted_scalar_actions_controller_privacy_and_replay",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline"
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
+        "test_trusted_scalar_actions_controller_privacy_and_replay"
       ],
       "replay_tests": [
         "test_actual_aerie_ouphes_persist_new_source_does_not_replace_sacrificed_power",
         "test_actual_archon_and_orchard_optional_entry_values_use_buffed_departed_entrant_lki",
+        "test_actual_bladecrafter_uses_death_power_and_locked_controller_for_one_gain",
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_borrowed_sliver_grant_keeps_recipient_source_and_trigger_controller_after_departures",
         "test_actual_bounteous_optional_cast_value_distinguishes_arcane_spirit_and_foreign_or_ordinary_cast",
@@ -52581,9 +52657,11 @@
         "test_actual_radiant_flames_copy_zero_preserves_paid_damage_to_all_creatures_only",
         "test_actual_reckoner_distinguishes_two_damage_occurrences_from_marked_damage_total",
         "test_actual_roilmage_copy_zero_keeps_each_controller_scope_and_both_fixed_draws",
+        "test_actual_rotcaller_counts_a_union_once_and_a_returned_source_is_another_object",
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
         "test_actual_sacrifice_cost_preserves_original_counter_count",
         "test_actual_sharpshooter_reads_current_count_or_its_battlefield_lki",
+        "test_actual_shimmercreep_reads_current_distinct_own_public_colors",
         "test_actual_shrine_counts_own_upkeep_and_red_cast_but_not_foreign_or_blue_casts",
         "test_actual_sinstriker_grant_uses_recipient_controller_power_and_attacking_target",
         "test_actual_spell_copy_uses_zero_spent_colors_and_original_keeps_three",
@@ -52596,13 +52674,13 @@
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
         "test_brilliant_spectrum_zero_free_base_seam_and_four_colors_keep_fixed_private_discard",
         "test_original_committed_combat_damage_amount_draw_gain_and_receive_replay",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_paired_mill_keeps_trigger_controller_but_reads_current_recipient_after_control_change",
         "test_paired_mill_uses_boosted_departure_lki_instead_of_trigger_or_new_hand_incarnation",
         "test_trusted_scalar_actions_controller_privacy_and_replay",
         "test_trusted_scalar_source_departure_reentry_and_replay",
         "test_unrelated_phased_scalar_preserves_actual_group_blink_and_replay",
-        "test_unrelated_phased_scalar_preserves_actual_single_return_and_replay",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline"
+        "test_unrelated_phased_scalar_preserves_actual_single_return_and_replay"
       ],
       "required_evidence": [
         "positive",
@@ -52618,7 +52696,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 13
+      "version": 14
     },
     {
       "applicability": {
@@ -76843,7 +76921,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 676,
+  "registry_version": 677,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
