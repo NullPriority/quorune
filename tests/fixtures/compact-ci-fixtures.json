@@ -762,6 +762,7 @@
     "tests/fixtures/target-dependent-activation-cards.json",
     "tests/fixtures/target-player-hand-count-cards.json",
     "tests/fixtures/target-restriction-cards.json",
+    "tests/fixtures/target-set-result-sequence-cards.json",
     "tests/fixtures/targeted-owner-library-cards.json",
     "tests/fixtures/targeted-spell-cost-cards.json",
     "tests/fixtures/temporary-blocker-restriction-cards.json",

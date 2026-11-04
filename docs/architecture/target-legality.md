@@ -207,6 +207,14 @@ it does not expose hidden zones or create a general relational-target grammar.
 
 ## Copied target decisions
 
+An ordered same-set result program announces targets once. Its `them` or
+`those` follow-ups consume the same surviving original target incarnations;
+each instruction does not discover a fresh set. A returned card with the same
+public reference receives neither instruction for its departed incarnation.
+The initial optional empty choice still permits independent following
+instructions, while losing all chosen targets stops the spell. Copies use
+the existing fixed-count and new-target authority for that same shared set.
+
 Optional one-per-player permanent selections use the existing announced target
 count and one simultaneous homogeneous result. `distinct_controllers: true`
 requires selected permanents to have different controllers at announcement;

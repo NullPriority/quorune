@@ -146,6 +146,9 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .target_set_result_sequences import target_set_result_sequence_template
+    shared_set=target_set_result_sequence_template(text,compile_independent=compile_atomic)
+    if shared_set is not None:return shared_set
     from .prepared_creature_power_damage import prepared_creature_power_damage_template
     prepared_damage = prepared_creature_power_damage_template(
         text, source_name=source_name, compile_atomic=compile_atomic,

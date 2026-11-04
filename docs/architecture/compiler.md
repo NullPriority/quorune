@@ -1065,6 +1065,22 @@ hand returns from other players' graveyards, destinations without a reviewed
 scalar owner, and unsupported characteristic dependencies remain source-spanned
 residuals.
 
+`compiler/target_set_result_sequences.py` binds explicit `them` and `those`
+follow-ups to one bounded tap or untap target set. Each later counter or fixed
+characteristic result must close against the identical target schema; no new
+target occurrence or public-set query is synthesized. The flattened program
+uses the existing simultaneous target-set handlers in printed order and may
+end with independently closed Draw, Scry or Investigate instructions.
+`resolution.target_set.ordered_results` is inferred from the actual multiple
+target-set leaves independently of sequence annotations. Every leaf retains
+its own exact structural validator and capabilities. Initial zero targets
+permit independent following instructions; all chosen targets becoming
+illegal stop the whole spell. Copies retain their original chosen counts and
+bind both results to the copy's validated target choices. `Either of them`,
+divided results, new target occurrences, variable cardinality, per-player
+sets, zone movement and unrepresented following clauses remain outside this
+composition.
+
 Fixed graveyard-to-battlefield sets with bounds from two through six also require
 `zone.reanimate.fixed_target_set` and the scalar reanimation capability. The
 schema-one `reanimate_targets` instruction carries the explicit actor-or-owner

@@ -11443,6 +11443,26 @@
         "test_composition_commander_replacement",
         "test_mutate_cast_native"
       ]
+    },
+    {
+      "id": "shared-announced-target-set-result-sequences",
+      "patterns": [
+        "quorune/compiler/target_set_result_sequences.py",
+        "quorune/rules/target_set_result_sequences.py",
+        "quorune/compiler/effect_template_composition.py",
+        "quorune/rules/special_node_shapes.py",
+        "tests/test_target_set_result_sequences.py",
+        "tests/fixtures/target-set-result-sequence-cards.json"
+      ],
+      "test_modules": [
+        "test_target_set_result_sequences",
+        "test_fixed_homogeneous_target_sets",
+        "test_quantified_counter_targets",
+        "test_target_characteristic_sets",
+        "test_bound_effect_programs",
+        "test_closed_effect_programs",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

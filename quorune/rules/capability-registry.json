@@ -56120,6 +56120,102 @@
       "version": 3
     },
     {
+      "id": "resolution.target_set.ordered_results",
+      "version": 1,
+      "status": "trusted",
+      "blockers": [],
+      "applicability": {
+        "summary": "An ordered bounded program reuses one announced homogeneous public permanent target set for existing tap/untap,counter and fixed-characteristic leaves,with closed independent following draw,Scry or Investigate.",
+        "inputs": [
+          "one bounded original target set with fixed count or up-to bound through six",
+          "two or more independently closed same-schema target-set leaves",
+          "zero to two closed independent following leaves"
+        ],
+        "outputs": [
+          "one shared target announcement and legality authority",
+          "ordered existing mutation intents over surviving original incarnations",
+          "ordinary empty-set,all-illegal,copy count,private continuation and replay behavior"
+        ],
+        "exclusions": [
+          "new/either/one-of choices,split targeting or variable/per-player counts",
+          "zone movement,correlated quantities and unsupported following effects",
+          "nested optional/modal result composition without separate owner proof"
+        ]
+      },
+      "dependencies": [
+        "target.revalidate_resolution",
+        "resolution.effect.fixed_homogeneous_target_set"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal rejects the sequence while retaining its ordinary target-set leaf;actual multi-leaf shape infers the owner without sequence annotations.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Omitting the follow-up result fails independent source-grounded ordered-effect expectations.",
+      "implementation_components": [
+        "quorune.compiler.target_set_result_sequences.target_set_result_sequence_template",
+        "quorune.rules.target_set_result_sequences.target_set_result_sequence_capabilities",
+        "quorune.rules.target_set_result_sequences.target_set_result_sequence_runtime_dependencies",
+        "quorune.compiler.program_generation._closed_effect_recognizers",
+        "quorune.selection.targeting.TargetSelectionOwnerMixin"
+      ],
+      "official_rules": [
+        "115.6",
+        "601.2c",
+        "603.3d",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "704.4",
+        "707.10",
+        "707.10c"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "positive_tests": [
+        "test_same_set_counter_and_characteristic_results_are_ordered_and_fully_owned",
+        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations",
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+      ],
+      "negative_tests": [
+        "test_new_choices_variable_sets_and_unknown_followups_remain_residual",
+        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations",
+        "test_sequence_followup_omission_mutation_is_killed",
+        "test_verified_sequence_withdrawal_preserves_the_ordinary_target_set_leaf",
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+      ],
+      "interaction_tests": [
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+      ],
+      "multiplayer_tests": [
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+      ],
+      "privacy_tests": [
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load"
+      ],
+      "replay_tests": [
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+      ]
+    },
+    {
       "applicability": {
         "exclusions": [
           "Unrepresented cast predicates or result siblings",
@@ -76668,7 +76764,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 672,
+  "registry_version": 673,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
