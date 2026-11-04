@@ -47211,6 +47211,93 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresentedrestrictionsorretentiontails",
+          "newquantityproducers",
+          "newdelayedscheduling",
+          "reclassifyingnonmanaabilities"
+        ],
+        "inputs": [
+          "closedpublicqueryorscalaramount",
+          "canonicalcolorlist",
+          "lockedabilitycontrollerandsource"
+        ],
+        "outputs": [
+          "zeroamountnochoice",
+          "positiveamountcolorallocationwithoutfixedtenunitcap",
+          "ordinaryAddManaIntentandprovenance"
+        ],
+        "summary": "Evaluate existing public amount expressions at a resolution instruction and retain a sealed one-color or printed-color allocation choice."
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.production.public_quantity",
+        "mana.production.fixed_resolution_choice"
+      ],
+      "dependency_fail_closed_rationale": "Verifiedvariablechoicewithdrawalrejectsnewinstructionwhilefixedversiontwochoiceremainsclosed;descriptorrequiresauthorityindependentofannotations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.production.variable_resolution_choice",
+      "implementation_components": [
+        "quorune.variable_resolution_mana_model.VariableResolutionManaChoiceSpec",
+        "quorune.compiler.public_quantity_mana_effects.public_quantity_mana_effect_template",
+        "quorune.rules.public_quantity_mana_shapes.public_quantity_mana_node_capabilities",
+        "quorune.semantic_choices.resolution_mana.prepare_resolution_mana",
+        "quorune.semantic_choices.resolution_mana.complete_resolution_mana"
+      ],
+      "implementation_mutation_rationale": "Removing printed-color restrictions permitsblueallocationandfailstheindependentnegativeassertion.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_shrine_trigger_counts_at_resolution_and_seals_pending_one_color",
+        "test_generated_combination_retains_subset_amount_private_projection_and_replay",
+        "test_generated_zero_quantity_auto_continues_without_choice_or_mana"
+      ],
+      "multiplayer_tests": [
+        "test_actual_shrine_trigger_counts_at_resolution_and_seals_pending_one_color",
+        "test_generated_combination_retains_subset_amount_private_projection_and_replay",
+        "test_generated_zero_quantity_auto_continues_without_choice_or_mana"
+      ],
+      "negative_tests": [
+        "test_unrepresented_restriction_retention_and_quantity_do_not_widen",
+        "test_verified_variable_choice_withdrawal_keeps_fixed_choice",
+        "test_expression_and_sealed_amount_codecs_are_distinct_and_closed",
+        "test_version_two_encoding_and_fixed_limit_stay_unchanged"
+      ],
+      "official_rules": [
+        "106.3",
+        "106.4",
+        "605.1a",
+        "605.1b",
+        "608.2h"
+      ],
+      "positive_tests": [
+        "test_existing_public_amounts_lower_one_color_and_printed_color_combinations"
+      ],
+      "privacy_tests": [
+        "test_generated_combination_retains_subset_amount_private_projection_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_shrine_trigger_counts_at_resolution_and_seals_pending_one_color",
+        "test_generated_combination_retains_subset_amount_private_projection_and_replay",
+        "test_generated_zero_quantity_auto_continues_without_choice_or_mana"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "resource conversion",
           "arbitrary mana-type substitutions",
           "conditional/chosen/temporary spending grammar",
@@ -77614,7 +77701,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 685,
+  "registry_version": 686,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

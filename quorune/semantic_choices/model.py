@@ -357,13 +357,15 @@ class ManaBundleChoice:
     field_name: str
     colors: tuple[str, ...]
     amount: int
+    schema_version: int = 1
 
     def __post_init__(self):
         object.__setattr__(self,'colors',tuple(self.colors))
         _string(self.field_name,field_name='mana field_name')
         if (not self.colors or len(set(self.colors))!=len(self.colors)
                 or any(type(color) is not str or color not in ('W','U','B','R','G') for color in self.colors)
-                or type(self.amount) is not int or not 1<=self.amount<=10):
+                or type(self.schema_version) is not int or self.schema_version not in {1,2}
+                or type(self.amount) is not int or self.amount<1 or self.schema_version==1 and self.amount>10):
             raise SemanticChoiceError('Mana bundle choice requires fixed positive output in colors')
 
     def choice_schema(self):

@@ -15,9 +15,16 @@ def public_quantity_mana_node_capabilities(*, effects, target_schema, mechanic_i
     if target_schema is not None or len(effects) != 1 or 'public-quantity-mana' not in markers:
         return ()
     effect = effects[0]
-    if set(effect) != {'op','player','color','amount','source'} or effect['op'] != 'mana' or effect['player'] != '$controller' or effect['source'] != '$source':
+    choice=effect.get('op')=='choose_mana' and effect.get('schema_version')==3
+    if choice:
+        from ..variable_resolution_mana_model import VariableResolutionManaChoiceSpec,VARIABLE_RESOLUTION_MANA_CAPABILITY
+        from ..resolution_mana_model import RESOLUTION_MANA_CHOICE_CAPABILITY
+        try:VariableResolutionManaChoiceSpec.from_effect(effect)
+        except (ValueError,TypeError,KeyError):return ()
+    elif set(effect) != {'op','player','color','amount','source'} or effect['op'] != 'mana':
         return ()
-    if type(effect['color']) is not str or effect['color'] not in 'WUBRGC' or len(effect['color']) != 1:
+    if effect['player']!='$controller' or effect['source']!='$source':return ()
+    if not choice and (type(effect['color']) is not str or effect['color'] not in 'WUBRGC' or len(effect['color']) != 1):
         return ()
     value = effect['amount']
     if not isinstance(value, Mapping):
@@ -39,12 +46,13 @@ def public_quantity_mana_node_capabilities(*, effects, target_schema, mechanic_i
         return ()
     if marker not in markers:
         return ()
-    if markers - {'public-quantity-mana', marker, 'generated_oracle_ir', 'spell_resolution',
-                  'activated_ability', 'triggered_ability', 'cr-603-handling-triggered-abilities'}:
+    if markers - {'public-quantity-mana', marker, 'variable-resolution-mana-choice', 'generated_oracle_ir', 'spell_resolution',
+                  'activated_ability', 'triggered_ability', 'cr-603-handling-triggered-abilities','fixed-typed-event-effect-trigger'}:
         return ()
     producer = 'quantity_expression.public_query_effect_amount' if marker == 'public-query-effect-amount' else 'quantity_expression.scalar_effect_amount'
     trigger = ('trigger.placement.apnap',) if 'cr-603-handling-triggered-abilities' in markers else ()
-    return (PUBLIC_QUANTITY_MANA_CAPABILITY, producer,*characteristic_quantity_capabilities(value), *trigger)
+    return (PUBLIC_QUANTITY_MANA_CAPABILITY, producer,*characteristic_quantity_capabilities(value), *trigger,
+        *((RESOLUTION_MANA_CHOICE_CAPABILITY,VARIABLE_RESOLUTION_MANA_CAPABILITY) if choice else ()))
 
 
 def is_closed_public_quantity_mana_program(program):

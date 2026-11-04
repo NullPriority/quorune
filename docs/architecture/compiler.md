@@ -429,8 +429,14 @@ Firebending's duration-bearing red output retains its separate keyword owner;
 it does not use the ordinary fixed-bundle capability. Public-quantity activated
 mana declares the existing query producer dependencies, including the total
 of every counter kind on its source.
-Variable or restricted color choices, unknown conditional replacements, linked
-effects and unsupported spending clauses remain residuals.
+Existing public quantity and scalar amount expressions can also supply a
+version-three resolution color choice. The value is read when the instruction
+is reached and sealed before the chooser answers; saved continuations do not
+recount it. Printed color subsets constrain every allocated unit. Positive
+amounts can exceed the fixed-choice limit, while zero produces no mana and
+requires no choice. Version-two fixed descriptors retain their exact encoding
+and validation. Restricted color choices, unknown conditional replacements,
+linked effects and unsupported spending clauses remain residuals.
 
 `compiler/player_speed_nodes.py` lowers Start Your Engines to a current trusted
 static marker. Max Speed fixed characteristic bodies use the public-state

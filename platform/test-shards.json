@@ -1110,6 +1110,7 @@
       "test_unblocked_attacker_native",
       "test_variable_actual_life_transfer",
       "test_variable_independent_life",
+      "test_variable_resolution_mana",
       "test_zone_general_rules",
       "test_zone_trigger_events"
     ],

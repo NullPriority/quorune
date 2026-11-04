@@ -11696,6 +11696,25 @@
         "test_fixed_effect_clause_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "variable-resolution-mana-choices",
+      "patterns": [
+        "quorune/variable_resolution_mana_model.py",
+        "quorune/resolution_mana_model.py",
+        "quorune/compiler/public_quantity_mana_effects.py",
+        "quorune/rules/public_quantity_mana_shapes.py",
+        "quorune/semantic_choices/resolution_mana.py",
+        "tests/test_variable_resolution_mana.py",
+        "tests/fixtures/variable-resolution-mana-cards.json"
+      ],
+      "test_modules": [
+        "test_variable_resolution_mana",
+        "test_resolution_mana_choices",
+        "test_fixed_resolution_mana",
+        "test_resolution_mana_compositions",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [
