@@ -25,7 +25,8 @@ class QuickGatePlanTests(unittest.TestCase):
                     plan=build_plan((source,),phase=phase)
                     step,=[row for row in plan['steps'] if row.name=='target-player-sequence-owner-contract']
                     self.assertEqual(('tests.test_bound_effect_programs.BoundEffectProgramCompilerTests',
-                        'tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests'),step.command[-2:])
+                        'tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests',
+                        'tests.test_fixed_player_counter_placement_effects.FixedPlayerCounterPlacementCompilerTests'),step.command[-3:])
         unrelated=build_plan(('docs/index.md',),phase='pre-corpus')
         self.assertNotIn('target-player-sequence-owner-contract',[row.name for row in unrelated['steps']])
 

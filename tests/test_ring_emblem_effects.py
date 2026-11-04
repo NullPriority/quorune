@@ -286,6 +286,7 @@ class RingEmblemEngineAdapterTests(unittest.TestCase):
         self._declare_attack(engine, bearer)
         commit_engine_block_declaration(engine, controller='B',
                                         chosen=[(blocker, bearer) for blocker in blockers])
+        engine.state.combat.blockers_declared = True
         enqueue_block_transition_triggers(engine)
         self.assertEqual([], engine.state.stack)
         pending = [StackItem.from_dict(item.to_dict())

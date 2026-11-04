@@ -693,8 +693,9 @@ Pull-request CI remains check-only and authoritative.
 Keep generated-governance tests tied to identities from the canonical manifest
 or registry rather than separately maintained totals or copied identifier sets.
 Those literals turn every legitimate promotion into an unrelated CI repair.
-Shared target-player sequence changes select the existing bound-reference and
-affected-player discard compiler classes in both normal and pre-corpus plans.
+Shared target-player sequence changes select the existing bound-reference,
+affected-player discard and player-counter compiler classes in both normal
+and pre-corpus plans.
 These bounded checks catch changed producer ownership and dependency claims
 before corpus generation; native certification still runs in public CI.
 Compiler-only tests should construct their input `CardRecord` directly; only

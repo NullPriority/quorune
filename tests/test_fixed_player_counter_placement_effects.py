@@ -233,6 +233,16 @@ class FixedPlayerCounterPlacementCompilerTests(unittest.TestCase):
     def test_unsupported_fixed_player_counter_variants_remain_material_residuals(
         self,
     ):
+        compound='Target player gets a poison counter and draws a card.'
+        self.assertIsNone(fixed_player_counter_placement_effect_template(compound))
+        ir=self.compile(compound)
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=ir.faces[0].nodes[0]
+        leaf=self.compile('Target player gets a poison counter.').faces[0].nodes[0]
+        self.assertEqual(2,len(node.effects))
+        self.assertEqual(leaf.effects[0],node.effects[0])
+        self.assertEqual(('draw','$target.0',1),tuple(node.effects[1][key]for key in ('op','player','count')))
+        self.assertEqual(1,node.target_schema['count'])
         texts = (
             "Each opponent gets X poison counters.",
             "You may get an energy counter.",
@@ -240,7 +250,7 @@ class FixedPlayerCounterPlacementCompilerTests(unittest.TestCase):
             "Defending player gets a poison counter.",
             "You get {E}{TK}.",
             "You get two {E}{E} (two energy counters).",
-            "Target player gets a poison counter and draws a card.",
+            "Target player gets a poison counter and discards a card at random.",
             "If you would get one or more counters, you get that many plus one instead.",
         )
         for text in texts:

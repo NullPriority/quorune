@@ -178,7 +178,8 @@ def build_plan(
                 "target-player-sequence-owner-contract",
                 (python, "-m", "unittest",
                  "tests.test_bound_effect_programs.BoundEffectProgramCompilerTests",
-                 "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests"),
+                 "tests.test_fixed_affected_player_discards.FixedAffectedPlayerDiscardCompilerTests",
+                 "tests.test_fixed_player_counter_placement_effects.FixedPlayerCounterPlacementCompilerTests"),
             ))
         if {'quorune/compiler/target_effect_corpus_assurance.py',
                 'quorune/compiler/overload_spell_faces.py', 'quorune/compiler/cleave_spell_faces.py',
