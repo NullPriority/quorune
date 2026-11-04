@@ -3,11 +3,13 @@ from __future__ import annotations
 """Event-timed participation reads for the existing trigger-discovery owner."""
 
 from ..ability_fragments import canonical_ability_fragments
+from ..characteristic_read_frames import characteristic_read_method
 from ..trigger_participation import TriggerMultiplierSpec,StaticTriggerParticipation
 from ..trigger_participation_query_model import trigger_participation_rule
 from .trigger_participation_queries import participation_rule_matches
 
 
+@characteristic_read_method
 def typed_trigger_participations(host,*,source,controller,event,context,sources=None,
         source_characteristics=None,ability_characteristics=None,active_zone='battlefield'):
     candidates=sources if sources is not None else host._semantic_event_sources(zones={'battlefield'})

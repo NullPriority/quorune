@@ -113,6 +113,34 @@ class TypedTriggerParticipationOwnerTests(unittest.TestCase):
             context={'types':['creature']},sources=[modifier],ability_characteristics=data())
         self.assertEqual((),current)
 
+    def test_current_participation_read_scope_reuses_values_and_refreshes_after_ability_removal(self):
+        from quorune.characteristic_read_frames import memoized_characteristic_read
+        modifier=card('READ_SCOPE_MODIFIER')
+        fragment=ability_fragment_to_dict(spec('creature_dies'))
+        enabled=[True];reads=[]
+        host=SimpleNamespace(_semantic_event_sources=lambda **kwargs:[modifier],
+            _type_parts=lambda text:(set(),set(),set()))
+        def effective(source):
+            def read():
+                reads.append(source.object_id)
+                return data(ability_fragments=[fragment] if enabled[0] else [])
+            return memoized_characteristic_read(host,('participation-input',source.object_id),read,identity=source)
+        host._effective_card_data=effective
+        def collect(**kwargs):
+            return typed_trigger_participations(host,source=modifier,controller='A',event='creature.dies',
+                context={'types':['creature'],'controller':'A'},**kwargs)
+        extra,prevented=collect()
+        self.assertEqual((1,False),(len(extra),prevented))
+        self.assertEqual([modifier.object_id],reads)
+        enabled[0]=False
+        self.assertEqual(((),False),collect())
+        self.assertEqual([modifier.object_id]*2,reads)
+        captured=data(ability_fragments=[fragment]);before=deepcopy(captured)
+        extra,prevented=collect(source_characteristics={modifier.object_id:captured},ability_characteristics=captured)
+        self.assertEqual((1,False),(len(extra),prevented))
+        self.assertEqual(before,captured)
+        self.assertEqual([modifier.object_id]*2,reads)
+
     def test_prohibition_scope_beats_additions_and_preserves_opponent_relations(self):
         observer=card('OBSERVER');modifier=card('MODIFIER');orb=card('ORB','B')
         rows={modifier.object_id:data(ability_fragments=[ability_fragment_to_dict(spec('permanent_enters'))]),

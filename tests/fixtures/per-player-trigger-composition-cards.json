@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "constructed_typed_composition_control",
+  "source": "Constructed control exercising existing per-player spell, Cycling activation and separate cycle-trigger owners; not an original Oracle record or card-support gain.",
+  "cards": [
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000005414",
+      "name": "Generic Per-Player Cycling Mill Control",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "For each opponent, destroy up to one target artifact or enchantment that player controls.\nCycling {6}{W}{W} ({6}{W}{W}, Discard this card: Draw a card.)\nWhen you cycle this card, each opponent mills three cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Cycling"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": []
+}

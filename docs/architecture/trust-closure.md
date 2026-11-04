@@ -48,6 +48,22 @@ source-drifted, or unbound owners retain their blockers.
 
 ## Closure layers
 
+Implementation-component resolution caches immutable export names by exact
+decoded Python source in a bounded LRU. The capacity retains the registry's
+working set across repeated validation. A source edit, malformed replacement,
+unreadable file or deletion still changes the resolution result immediately;
+file size and timestamps do not establish trust. Default registry loads retain
+their existing capability and evidence validation scope.
+Compound base-characteristic reads pass their already-read card definition to
+the static-fragment, activation, Station and Prepare readers. The record is local
+to that read and is not retained across operations. Each reader still applies
+its current face, source and trust checks; standalone calls read the definition
+through the ordinary card-record owner.
+Typed trigger participation evaluates current characteristic inputs inside one
+existing read frame per collection pass. Explicit event-time source snapshots
+remain separate inputs. The frame ends before the caller resumes, so later
+ability removal, control changes and source departures receive fresh reads.
+
 The intrinsic layer is derived from the card's costs, targets, effects, event
 handlers, and runtime components. The format layer represents capabilities
 always active for the selected rules profile. Match closure conservatively

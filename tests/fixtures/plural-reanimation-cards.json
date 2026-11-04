@@ -4,6 +4,78 @@
   "source": "Pinned original plural reanimation cards and canonical entry, movement and target controls; source matches are not support gains.",
   "cards": [
     {
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "name": "Cremate",
+      "mana_cost": "{B}",
+      "type_line": "Instant",
+      "oracle_text": "Exile target card from a graveyard.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "cmc": 1.0,
+      "card_faces": []
+    },
+    {
+      "oracle_id": "59bfeacc-f80b-49fc-8a35-f7e1ad905161",
+      "name": "Graceful Restoration",
+      "mana_cost": "{3}{W}{B}",
+      "type_line": "Sorcery",
+      "oracle_text": "Choose one —\n• Return target creature card from your graveyard to the battlefield with an additional +1/+1 counter on it.\n• Return up to two target creature cards with power 2 or less from your graveyard to the battlefield.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 5.0
+    },
+    {
       "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
       "name": "Memnite",
       "mana_cost": "{0}",
@@ -510,6 +582,18 @@
       "published_at": "2018-07-13",
       "source": "wotc",
       "comment": "If the chosen creature is a token, Mirror Image copies the original characteristics of that token as stated by the effect that put the token onto the battlefield. Mirror Image doesn't become a token in this case."
+    },
+    {
+      "comment": "If the target card is no longer in the graveyard when Cremate tries to resolve, it won't resolve and none of its effects will happen. You won't draw a card.",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must be able to target a card in a graveyard to cast Cremate.",
+      "oracle_id": "c6a2e410-b182-48d1-aeb2-bc8de27e9cd2",
+      "published_at": "2012-10-01",
+      "source": "wotc"
     }
   ]
 }

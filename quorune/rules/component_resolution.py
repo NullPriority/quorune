@@ -5,7 +5,7 @@ from functools import lru_cache
 from pathlib import Path
 
 
-@lru_cache(maxsize=256)
+@lru_cache(maxsize=1024)
 def _module_exports(source: str) -> frozenset[str] | None:
     """Cache immutable exports by exact decoded source, never file metadata."""
 

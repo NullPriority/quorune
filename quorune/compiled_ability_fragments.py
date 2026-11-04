@@ -58,6 +58,7 @@ def compiled_static_ability_fragments(
     card: Any,
     *,
     face_name: str | None = None,
+    record: Any = None,
 ) -> tuple[StaticAbilityFragment, ...]:
     """Return trusted, face-pinned executable static ability fragments.
 
@@ -69,7 +70,8 @@ def compiled_static_ability_fragments(
     ``continuous``; the fragment still describes a typed static ability.
     """
 
-    record = host.card_record(card)
+    if record is None:
+        record = host.card_record(card)
     if record is None:
         return _custom_fragments(card)
     expected_face = _face_id(record, card, face_name)
@@ -211,6 +213,7 @@ def compiled_ability_fragment_dicts(
     *,
     face_name: str | None = None,
     error_type: type[Exception] | None = None,
+    record: Any = None,
 ) -> list[dict[str, Any]]:
     """Serialize the exact trusted fragments for characteristic evaluation."""
 
@@ -221,6 +224,7 @@ def compiled_ability_fragment_dicts(
                 host,
                 card,
                 face_name=face_name,
+                record=record,
             )
         ]
     except AbilityFragmentError as exc:

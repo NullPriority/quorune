@@ -2476,6 +2476,8 @@ class FixedQueryKeywordGrantRuntimeTests(unittest.TestCase):
 
 
 class TriggeredKeywordGrantRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+
     @classmethod
     def setUpClass(cls):
         from scripts.build_test_database import build_fixture_database

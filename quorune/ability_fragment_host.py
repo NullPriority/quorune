@@ -88,12 +88,14 @@ class AbilityFragmentHostMixin:
         *,
         face_name: str | None = None,
         error_type: type[Exception] | None = None,
+        record: Any = None,
     ) -> list[dict[str, Any]]:
         return compiled_ability_fragment_dicts(
             self,
             card,
             face_name=face_name,
             error_type=error_type,
+            record=record,
         )
 
     def _compiled_base_characteristics(
@@ -108,13 +110,13 @@ class AbilityFragmentHostMixin:
             return composition_copiable_values(card.permanent_composition)
         base = base_card_characteristics(card, record)
         from .rules.station_symbols import compiled_station_symbols
-        if compiled_station_symbols(self, card) is not None:
+        if compiled_station_symbols(self, card, record=record) is not None:
             # CR721.2: the P/T box belongs to the symbol's static effect,
             # rather than unconditional printed characteristics.
             base.update(power=None, toughness=None)
         from .preparation import compiled_prepare_spell
         from .preparation_model import PREPARE_SPELL_FIELD
-        prepare_spell=compiled_prepare_spell(self,card)
+        prepare_spell=compiled_prepare_spell(self,card,record=record)
         if prepare_spell is not None:base[PREPARE_SPELL_FIELD]=prepare_spell.to_dict()
         from .rules.prototype import prototype_characteristic_values
         base.update(prototype_characteristic_values(card))
@@ -125,6 +127,7 @@ class AbilityFragmentHostMixin:
         base["ability_fragments"] = self._compiled_ability_fragment_dicts(
             card,
             error_type=error_type,
+            record=record,
         )
         scoped_keywords = {
             keyword.casefold()
@@ -142,6 +145,7 @@ class AbilityFragmentHostMixin:
             self,
             card,
             error_type=error_type,
+            record=record,
         )
         return base
 

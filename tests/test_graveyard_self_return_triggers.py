@@ -138,6 +138,86 @@ class GraveyardSelfReturnNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertFalse(s.act('pilot:'+wrong,command).ok);self.assertEqual(before,authoritative_state_hash(s.state))
         result=s.act('pilot:'+seat,command);self.assertTrue(result.ok,result.summary)
 
+    def test_returned_original_cast_targets_players_and_revalidates_a_bounced_creature(self):
+        from quorune.turn_step_owner import TURN_STEPS
+
+        for target_kind, respond in (('player', False), ('creature', False), ('creature', True)):
+            with self.subTest(target=target_kind, response=respond):
+                seed = 113600211 + int(target_kind == 'creature') + int(respond)
+                s = self.session(seed)
+                source = self.add(s.engine, 'Rekindled Flame', zone='graveyard')
+                body = self.add(s.engine, 'Grizzly Bears', seat='B', ref='returned-spell-target')
+                bounce = self.add(s.engine, 'Unsummon', seat='B', zone='hand', ref='returned-spell-response')
+                private = self.add(s.engine, 'Counterspell', seat='C', zone='hand', ref='returned-spell-private')
+                lands = [self.add(s.engine, 'Mountain', ref='returned-spell-red-' + str(i)) for i in range(4)]
+                island = self.add(s.engine, 'Island', seat='B', ref='returned-spell-blue')
+                for card in (source, body, bounce, *lands, island):
+                    self.assert_closed(s, card)
+                source_counter = source.zone_change_counter
+                body_counter = body.zone_change_counter
+                for uid in tuple(s.state.players['D'].zones['hand']):
+                    s.engine.move_card(uid, 'library', log=False)
+                self.prepare(s, mana={})
+                s.engine.permissions.invalidate_current()
+                s.state.pending_decision = None
+                s.state.active_player = 'D'
+                s.state.last_normal_turn_player = 'D'
+                if s.state.current_turn is not None:
+                    s.state.current_turn = replace(s.state.current_turn, player='D')
+                s.state.phase_index = TURN_STEPS.index(('ending', 'end_step'))
+                s.state.phase, s.state.step = 'ending', 'end_step'
+                s.state.priority_passes = []
+                s.engine._grant_priority('D')
+                s.engine.pump()
+                self.checkpoint(s)
+                self.until(s, lambda game: game.state.active_player == 'A' and game.state.step == 'upkeep')
+                self.assertEqual('semantic.choice', self.resolve(s).kind)
+                self.optional(s, 'A', accept=True)
+                self.assertIsNone(self.resolve(s))
+                self.assertEqual('hand', s.state.cards[source.object_id].zone)
+                self.assertEqual(source_counter + 1, s.state.cards[source.object_id].zone_change_counter)
+                s = self.replay(s, load=True)
+                self.until(s, lambda game: game.state.active_player == 'A' and game.state.phase == 'precombat_main')
+                self.priority(s, 'A')
+                actions = s.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                action = next(row for row in actions if row['id'] == 'cast:' + source.ref)
+                legal = action['target_schema']['legal_refs']
+                self.assertIn('B', legal)
+                self.assertIn(body.ref, legal)
+                self.assertNotIn(lands[0].ref, legal)
+                target = 'B' if target_kind == 'player' else body.ref
+                command = {'action_id': action['id'], 'targets': [target], 'pay': 'auto'}
+                before = authoritative_state_hash(s.state)
+                self.assertFalse(s.act('pilot:B', command).ok)
+                self.assertFalse(s.act('pilot:A', {**command, 'targets': [lands[0].ref]}).ok)
+                self.assertEqual(before, authoritative_state_hash(s.state))
+                accepted = s.act('pilot:A', command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                if respond:
+                    self.priority(s, 'B')
+                    actions = s.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+                    response = next(row for row in actions if row['id'] == 'cast:' + bounce.ref)
+                    accepted = s.act('pilot:B', {
+                        'action_id': response['id'], 'targets': [body.ref], 'pay': 'auto',
+                    })
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.resolve_top(s)
+                    self.assertEqual('hand', s.state.cards[body.object_id].zone)
+                    self.assertEqual(body_counter + 1, s.state.cards[body.object_id].zone_change_counter)
+                s = self.replay(s, load=True)
+                self.assertIsNone(self.resolve(s))
+                self.assertEqual('graveyard', s.state.cards[source.object_id].zone)
+                self.assertEqual(source_counter + 3, s.state.cards[source.object_id].zone_change_counter)
+                self.assertEqual(36 if target_kind == 'player' else 40, s.state.players['B'].life)
+                self.assertEqual('hand' if respond else 'graveyard' if target_kind == 'creature' else 'battlefield',
+                    s.state.cards[body.object_id].zone)
+                self.assertEqual(4, sum(s.state.cards[land.object_id].tapped for land in lands))
+                self.assertEqual(respond, s.state.cards[island.object_id].tapped)
+                self.assertFalse(s.state.stack)
+                for viewer in 'ABD':
+                    self.assertNotIn(private.ref, json.dumps(s.packet('pilot:' + viewer, full=True)))
+                self.replay(s, load=True)
+
     def test_actual_owner_cast_trigger_returns_privately_and_decline_keeps_graveyard(self):
         s=self.session(113600201)
         source=self.add(s.engine,'Enigma Eidolon',seat='B',zone='graveyard')
