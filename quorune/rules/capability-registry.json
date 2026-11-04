@@ -45857,12 +45857,12 @@
       "applicability": {
         "exclusions": [
           "targets or noncontroller beneficiaries",
-          "variable loss amounts",
           "damage substituted for life loss",
-          "fixed gain independent of actual losses"
+          "fixed gain independent of actual losses",
+          "unowned variable amount producers,per-opponent differing quantities and unsupported coefficients"
         ],
         "inputs": [
-          "one fixed positive opponent-loss amount",
+          "one fixed positive amount or a closed declaredX/controller-battlefield quantity resolving to a nonnegative integer",
           "current controller and active opponents",
           "resolved life-loss batch result"
         ],
@@ -45870,7 +45870,7 @@
           "each opponent loses the represented amount subject to life rules",
           "controller gains the actual total lost subject to gain rules"
         ],
-        "summary": "Fixed loss by each current opponent followed by the actual aggregate life lost, committed through the existing replacement-aware life owners."
+        "summary": "One fixed or independently closed common quantity causes each active opponent to lose life,then the controller gains the actual aggregate loss through existing life owners."
       },
       "blockers": [],
       "dependencies": [
@@ -45885,7 +45885,10 @@
         "quorune.semantic_choices.actual_life_transfer.ActualLifeTransferHandler",
         "quorune.semantic_choices.life_intent_commit.apply_life_loss_batch_intent",
         "quorune.compiler.activated_mana_nodes._activated_effect_dependency_gate",
-        "quorune.rules.effect_node_capabilities.effect_node_capabilities"
+        "quorune.rules.effect_node_capabilities.effect_node_capabilities",
+        "quorune.compiler.life_templates._public_actual_life_transfer_template",
+        "quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
+        "quorune.compiler.public_query_effect_amounts.public_query_amount_shape_context"
       ],
       "implementation_mutation_rationale": "Replacing actual resolved gain with the fixed loss amount fails the native four-player stopped-loss witness. Malformed result binding is rejected and gain-replacement reload preserves previously committed losses.",
       "implementation_mutation_status": "killed",
@@ -45893,13 +45896,19 @@
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
         "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
         "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
-        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner",
+        "test_actual_exsanguinate_zero_and_positive_x_preserve_events_mana_privacy_and_pending_replay",
+        "test_actual_copied_exsanguinate_retains_x_and_transfers_to_the_copy_controller",
+        "test_actual_merchant_reads_current_ability_controller_devotion_after_source_control_changes"
       ],
       "multiplayer_tests": [
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
         "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
         "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
-        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner",
+        "test_actual_exsanguinate_zero_and_positive_x_preserve_events_mana_privacy_and_pending_replay",
+        "test_actual_copied_exsanguinate_retains_x_and_transfers_to_the_copy_controller",
+        "test_actual_merchant_reads_current_ability_controller_devotion_after_source_control_changes"
       ],
       "negative_tests": [
         "test_actual_life_transfer_binds_resolved_loss_and_keeps_fixed_gain_drain_distinct",
@@ -45907,12 +45916,23 @@
         "test_actual_life_transfer_sentence_grammar_keeps_fixed_gain_and_unknown_amounts_distinct",
         "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
         "test_actual_life_transfer_uses_the_same_closed_owner_in_activated_bodies",
-        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner",
+        "test_unknown_correlations_other_player_quantities_and_unowned_coefficients_remain_residual",
+        "test_nonintegral_negative_and_wrong_actor_resolved_amounts_remain_rejected",
+        "test_verified_quantity_withdrawals_keep_fixed_actual_transfer_available",
+        "test_actual_loss_amount_slot_omission_is_killed",
+        "test_actual_exsanguinate_zero_and_positive_x_preserve_events_mana_privacy_and_pending_replay"
       ],
       "official_rules": [
         "119.3",
         "119.9",
-        "608.2c"
+        "608.2c",
+        "107.1b",
+        "107.3",
+        "700.5",
+        "700.5a",
+        "704.4",
+        "707.10"
       ],
       "positive_tests": [
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
@@ -45921,24 +45941,35 @@
         "test_actual_life_transfer_sentence_grammar_keeps_fixed_gain_and_unknown_amounts_distinct",
         "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
         "test_actual_life_transfer_uses_the_same_closed_owner_in_activated_bodies",
-        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner",
+        "test_mana_x_and_known_public_quantities_close_the_entire_actual_gain_result",
+        "test_zero_resolved_quantity_creates_neither_loss_nor_gain_events",
+        "test_actual_exsanguinate_zero_and_positive_x_preserve_events_mana_privacy_and_pending_replay",
+        "test_actual_copied_exsanguinate_retains_x_and_transfers_to_the_copy_controller",
+        "test_actual_merchant_reads_current_ability_controller_devotion_after_source_control_changes"
       ],
       "privacy_tests": [
         "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
-        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner",
+        "test_actual_exsanguinate_zero_and_positive_x_preserve_events_mana_privacy_and_pending_replay",
+        "test_actual_merchant_reads_current_ability_controller_devotion_after_source_control_changes"
       ],
       "replay_tests": [
         "test_actual_dross_transfers_all_opponents_actual_losses_and_gain_replacements_resume_once",
         "test_actual_dross_uses_actual_loss_when_one_opponents_loss_is_stopped",
         "test_actual_blood_tithe_counts_full_loss_before_departure_and_gains_once_with_replacement",
-        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner"
+        "test_actual_scholar_activation_pays_its_cost_and_uses_the_same_loss_owner",
+        "test_actual_exsanguinate_zero_and_positive_x_preserve_events_mana_privacy_and_pending_replay",
+        "test_actual_copied_exsanguinate_retains_x_and_transfers_to_the_copy_controller",
+        "test_actual_merchant_reads_current_ability_controller_devotion_after_source_control_changes"
       ],
       "required_evidence": [
         "positive",
         "negative",
         "interaction",
         "multiplayer",
-        "replay"
+        "replay",
+        "privacy"
       ],
       "status": "trusted",
       "supported_profiles": [
@@ -45946,7 +45977,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -76788,7 +76819,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 674,
+  "registry_version": 675,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

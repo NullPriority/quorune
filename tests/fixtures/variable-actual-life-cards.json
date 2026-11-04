@@ -1,0 +1,725 @@
+{
+  "cards": [
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Act of Treason",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "oracle_text": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-01-12",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Ajani's Pridemate",
+      "oracle_id": "95e94dea-5ac0-4d6f-adec-ca147aee861f",
+      "oracle_text": "Whenever you gain life, put a +1/+1 counter on this creature.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Cat Soldier"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Counterspell",
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{X}{B}{B}",
+      "name": "Exsanguinate",
+      "oracle_id": "8164b1e8-3350-465e-8a17-75f57d326344",
+      "oracle_text": "Each opponent loses X life. You gain life equal to the life lost this way.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Gray Merchant of Asphodel",
+      "oracle_id": "38f3b157-0df4-409b-89cc-086e1531cd5b",
+      "oracle_text": "When this creature enters, each opponent loses X life, where X is your devotion to black. You gain life equal to the life lost this way. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Zombie"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature \u2014 Dog"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Protection"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{B}{B}",
+      "name": "Malakir Bloodwitch",
+      "oracle_id": "870e199e-1d54-44ec-8e24-f24af93ae9c5",
+      "oracle_text": "Flying, protection from white\nWhen this creature enters, each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2021-11-19",
+      "toughness": "4",
+      "type_line": "Creature \u2014 Vampire Shaman"
+    },
+    {
+      "oracle_id": "938b4e2c-88d9-4637-bc00-e228920c9a78",
+      "name": "Murder",
+      "mana_cost": "{1}{B}{B}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "faces": [],
+      "cmc": 3.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Phyrexian Arena",
+      "oracle_id": "ee579a32-a048-4335-b966-231ba731cdea",
+      "oracle_text": "At the beginning of your upkeep, you draw a card and you lose 1 life.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "name": "Reverberate",
+      "mana_cost": "{R}{R}",
+      "type_line": "Instant",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-07-13",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "First strike"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{B}{B}",
+      "name": "Vampire Hexmage",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "oracle_text": "First strike\nSacrifice this creature: Remove all counters from target permanent.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": "1",
+      "type_line": "Creature \u2014 Vampire Shaman"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}",
+      "name": "Vedalken Orrery",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "oracle_text": "You may cast spells as though they had flash.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Colorless and generic mana symbols ({C}, {0}, {1}, {2}, {X}, and so on) in mana costs of permanents you control don't count toward your devotion to any color.",
+      "oracle_id": "38f3b157-0df4-409b-89cc-086e1531cd5b",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Hybrid mana symbols, monocolored hybrid mana symbols, and Phyrexian mana symbols do count toward your devotion to their color(s).",
+      "oracle_id": "38f3b157-0df4-409b-89cc-086e1531cd5b",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an activated ability or triggered ability has an effect that depends on your devotion to a color, you count the number of mana symbols of that color among the mana costs of permanents you control as the ability resolves. The permanent with that ability will be counted if it's still on the battlefield at that time.",
+      "oracle_id": "38f3b157-0df4-409b-89cc-086e1531cd5b",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you put an Aura on an opponent's permanent, you still control the Aura, and mana symbols in its mana cost count towards your devotion.",
+      "oracle_id": "38f3b157-0df4-409b-89cc-086e1531cd5b",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Mana symbols in the text boxes of permanents you control don't count toward your devotion to any color.",
+      "oracle_id": "38f3b157-0df4-409b-89cc-086e1531cd5b",
+      "published_at": "2020-01-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The amount of life you gain is the total amount of life lost, not simply the value of X.",
+      "oracle_id": "38f3b157-0df4-409b-89cc-086e1531cd5b",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The controller of Vedalken Orrery can cast nonland artifact, creature, enchantment, and sorcery cards any time they could cast an instant. This includes on other players' turns and during the upkeep step, draw step, combat phase, and end step.",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2004-12-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\".",
+      "oracle_id": "60d640a4-032b-4279-ac75-8f200ca776fb",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can lose more life than they have. For example, say you're playing a multiplayer game in which one of your opponents has 3 life and your other opponent has 10 life. If you cast Exsanguinate with X of 4, your opponents will wind up at -1 life and 6 life, respectively. You'll gain 8 life.",
+      "oracle_id": "8164b1e8-3350-465e-8a17-75f57d326344",
+      "published_at": "2011-01-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, Ajani's Pridemate's ability will trigger twice. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, planeswalkers, and/or battles at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will trigger only once.",
+      "oracle_id": "95e94dea-5ac0-4d6f-adec-ca147aee861f",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Ajani's Pridemate is dealt lethal damage at the same time that you gain life, it won't receive a counter from its ability in time to save it.",
+      "oracle_id": "95e94dea-5ac0-4d6f-adec-ca147aee861f",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you gain an amount of life \"for each\" of something or \"equal to the number\" of something, that life is gained as one event and Ajani's Pridemate's ability triggers only once.",
+      "oracle_id": "95e94dea-5ac0-4d6f-adec-ca147aee861f",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won't cause Ajani's Pridemate's ability to trigger, even though it caused your team's life total to increase.",
+      "oracle_id": "95e94dea-5ac0-4d6f-adec-ca147aee861f",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability of Ajani's Pridemate triggers just once for each life-gaining event, whether it's 1 life from Dazzling Angel or 4 life from Apothecary Stomper.",
+      "oracle_id": "95e94dea-5ac0-4d6f-adec-ca147aee861f",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Act of Treason can target any creature, even one that's untapped or one you already control.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
+      "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
+      "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copy says that it affects \"you,\" it affects the controller of the copy, not the controller of the original spell. Similarly, if the copy says that it affects an \"opponent,\" it affects an opponent of the copy's controller, not an opponent of the original spell's controller.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell Reverberate copies has an X whose value was determined as it was cast (like Earthquake does), the copy has the same value of X.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell Reverberate copies is modal (that is, it says \"Choose one \u2014\" or the like), the copy will have the same mode. You can't choose a different one.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Reverberate can target (and copy) any instant or sorcery spell, not just one with targets. It doesn't matter who controls it.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal).",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When Reverberate resolves, it creates a copy of a spell. You control the copy. That copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will then resolve like a normal spell, after players get a chance to cast spells and activate abilities.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't choose to pay any additional costs for the copy. However, effects based on any additional costs that were paid for the original spell are copied as though those same costs were paid for the copy too. For example, if a player sacrifices a 3/3 creature to cast Fling, and you copy it with Reverberate, the copy of Fling will also deal 3 damage to its target.",
+      "oracle_id": "a1f55890-31c5-4ed4-a2cd-7a4a9f05f8ca",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any permanent can be targeted by the second ability, not just one with counters on it.",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vampire Hexmage's ability can't target a permanent card in a zone other than the battlefield, such as a suspended card.",
+      "oracle_id": "fcb2a95b-cef0-4b29-8b2b-538f380aff2b",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Scryfall Oracle/rulings subset for offline tests"
+}

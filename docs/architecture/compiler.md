@@ -921,8 +921,16 @@ ordered result as an explicit `then`. Within supported free-for-all matches,
 returns the actual loss total before one replacement-aware gain event; it does
 not multiply a guessed loss amount by the number of opponents. State-based
 departure follows resolution. A fixed printed gain retains its separate
-semantics, independently of the actual losses. Dynamic loss amounts and
-damage-correlated gain remain outside this fixed transfer production.
+semantics, independently of the actual losses.
+The same amount slot also accepts the existing declared mana-X value or one
+closed controller battlefield quantity, including current devotion and subtype
+counts. The quantity resolves once before the opponent-loss batch. Devotion
+uses the ability controller and current public state; changing the source's
+controller does not substitute another player's count. Resolved zero emits no
+loss or gain events and creates no dependency on an absent intent result.
+Copies retain announced X and use their own controller as beneficiary.
+Per-opponent differing quantities, unowned coefficients and other correlations
+remain residual.
 Activated bodies use the same exact result-shape owner; their mana, tap and
 discard costs retain the ordinary activation cost authority.
 Fixed life-total setting uses its separately owned typed instruction.

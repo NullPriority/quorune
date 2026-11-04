@@ -798,6 +798,7 @@
     "tests/fixtures/untap-selection-limit-cards.json",
     "tests/fixtures/untargeted-untap-cards.json",
     "tests/fixtures/vanishing-cards.json",
+    "tests/fixtures/variable-actual-life-cards.json",
     "tests/fixtures/variable-library-count-cards.json",
     "tests/fixtures/variable-library-selection-cards.json",
     "tests/fixtures/waterbend-cards.json",

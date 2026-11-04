@@ -281,6 +281,7 @@ def _query_characteristic_candidate(
 
 
 _AMOUNT_FIELDS = {
+    "life_loss_then_gain_actual": "amount",
     "life": "delta",
     "lose_life": "amount",
     "lose_life_each_opponent": "amount",
@@ -574,6 +575,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         fixed_target_characteristics_node_capabilities,
     )
     from ..rules.fixed_controller_effect_shapes import fixed_life_node_capabilities
+    from ..rules.actual_life_transfer import actual_life_transfer_capabilities
     from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
     from ..rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
     from ..rules.closed_effect_program_shapes import closed_effect_program_node_capabilities
@@ -607,6 +609,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         bool(dependencies:=resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics))
         and set(dependencies).issubset(program.capability_dependencies)
         for resolver in (
+            actual_life_transfer_capabilities,
             fixed_damage_node_capabilities,
             fixed_draw_node_capabilities,
             fixed_scry_node_capabilities,

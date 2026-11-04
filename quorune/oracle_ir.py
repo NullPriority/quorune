@@ -276,7 +276,7 @@ def _effect_template(
     draw_template = fixed_draw_effect_template(normalized)
     if draw_template is not None:
         return draw_template
-    player_result = fixed_player_result_template(normalized)
+    player_result = fixed_player_result_template(normalized,source_name=card_name)
     if player_result is not None:
         return player_result.compiled()
     mill_template = fixed_mill_effect_template(normalized)

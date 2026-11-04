@@ -32,6 +32,7 @@ _LIBRARY_DEFINITION = re.compile(
 )
 _X = re.compile(r"\bX\b")
 _RESULT_FIELDS = {
+    'life_loss_then_gain_actual': ('amount',),
     'discover': ('amount',),
     'variable_library_selection': ('look_count',),
     'incubate': ('amount',),

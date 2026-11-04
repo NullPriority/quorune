@@ -1100,6 +1100,7 @@
       "test_umbra_armor",
       "test_unblocked_attacker_events",
       "test_unblocked_attacker_native",
+      "test_variable_actual_life_transfer",
       "test_zone_general_rules",
       "test_zone_trigger_events"
     ],

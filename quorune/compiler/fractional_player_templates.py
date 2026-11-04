@@ -58,9 +58,9 @@ def fractional_player_result_template(text):
         (*base.mechanics, HALF_CHOICE_MECHANIC))
 
 
-def fixed_player_result_template(text):
+def fixed_player_result_template(text,*,source_name=None):
     if 'half' in text.casefold():
         fractional = fractional_player_result_template(text)
         if fractional is not None:
             return fractional
-    return fixed_life_effect_template(text)
+    return fixed_life_effect_template(text,source_name=source_name)
