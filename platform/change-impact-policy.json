@@ -11872,6 +11872,21 @@
         "test_fixed_effect_clause_sequences",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "named-token-grammar-case-and-state-boundary",
+      "patterns": [
+        "quorune/compiler/fixed_token_production_templates.py",
+        "tests/test_named_attacking_tokens.py",
+        "tests/fixtures/named-attacking-token-cards.json"
+      ],
+      "test_modules": [
+        "test_named_attacking_tokens",
+        "test_fixed_token_production",
+        "test_fixed_token_creation_effects",
+        "test_attacking_token_results",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

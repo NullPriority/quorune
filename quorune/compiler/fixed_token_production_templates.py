@@ -43,11 +43,11 @@ _FIXED_DELAYED_TOKEN = re.compile(
 )
 _FIXED_NAMED_TOKEN = re.compile(
     r"^(?P<body>Create .+?) named "
-    r"(?P<name>[A-Za-z][A-Za-z' -]*)\.?$",
+    r"(?P<name>[A-Za-z][A-Za-z' -]*)\.?$", re.IGNORECASE,
 )
 _FIXED_LEGENDARY_NAMED_TOKEN = re.compile(
     r"^Create (?P<name>[A-Za-z][A-Za-z' -]*), a legendary "
-    r"(?P<body>\d+/\d+ .+? creature token)\.?$",
+    r"(?P<body>\d+/\d+ .+? creature token)\.?$", re.IGNORECASE,
 )
 _FIXED_POSTPOSED_COLOR_TOKEN = re.compile(
     r"^Create (?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|"
@@ -267,6 +267,8 @@ def _fixed_named_token_template(
         )
     named = _FIXED_NAMED_TOKEN.fullmatch(normalized)
     if named is None:
+        return None
+    if re.search(r"\b(?:that's|that is|that are)\b", named.group('name'), re.IGNORECASE):
         return None
     inner = compile_inner(named.group("body") + ".")
     if inner is None or inner.target_schema is not None:

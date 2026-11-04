@@ -356,7 +356,6 @@ class FixedTokenProductionTests(unittest.TestCase):
             "Create a token that's a copy of the chosen creature you control.",
             "Create a token that's a copy of this creature.",
             "Create a token that's a copy of target creature, except it has an unrepresented ability.",
-            "Create a 1/1 red Warrior creature token tapped and attacking.",
             "Create an Unrepresented Role token attached to target creature.",
             "Create an Incubator token.",
             "Create a 1/1 blue Fish creature token with \"This token has hexproof.\"",
@@ -372,6 +371,12 @@ class FixedTokenProductionTests(unittest.TestCase):
         self.assertEqual(['creature'], outer.target_schema['types_any'])
         self.assertNotIn('controller_relation', outer.target_schema)
         self.assertIn('token.creation.predefined_role', outer.capability_dependencies)
+        attacking = self.compile(compiler_record('Generic Attacking Token Integration',
+            'Create a 1/1 red Warrior creature token tapped and attacking.', 365211004))
+        self.assertEqual('exact', attacking.status, attacking.material_residuals)
+        attacking_node = next(node for node in attacking.faces[0].nodes if node.kind == 'spell_ability')
+        self.assertEqual('choose_fixed_attacking_token_destinations', attacking_node.effects[0]['op'])
+        self.assertIn('token.creation.fixed_attacking_definition', attacking_node.capability_dependencies)
         base = compiler_record("Unsupported Production", unsupported[0], 1110900)
         for index, text in enumerate(unsupported):
             with self.subTest(text=text):
@@ -388,14 +393,23 @@ class FixedTokenProductionTests(unittest.TestCase):
             (FIXED_DELAYED_TOKEN_CAPABILITY_ID, compiler_record("Blocked Delay", "Create a 1/1 white Spirit creature token at the beginning of the next end step.", 1110953)),
             ("mana.activated.restricted_fixed_output", compiler_record("Blocked Mana", "{T}: Add one mana of any color. Spend this mana only to cast a creature spell.", 1110954, type_line="Artifact")),
         )
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+        declarations = read_evidence_document(ROOT / 'platform/capability-evidence-declarations.json')
+        known_tests = set(discover_tests(ROOT).values())
+        def verified_registry(value):
+            registry = CapabilityRegistry(value)
+            index = build_index(registry_value=value, declaration_source=declarations, discovered_test_ids=known_tests)
+            registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+            return registry
         for capability_id, record in mutations:
             with self.subTest(capability=capability_id):
                 value = deepcopy(self.registry_value)
                 row = next(item for item in value["capabilities"] if item["id"] == capability_id)
                 row["status"] = "blocked"
                 row["blockers"] = ["focused token-production mutation"]
-                registry = CapabilityRegistry(value)
-                registry.mark_evidence_verified("0" * 64)
+                registry = verified_registry(value)
                 compiled = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
                 self.assertNotEqual("exact", compiled.status)
 
@@ -442,8 +456,7 @@ class FixedTokenProductionTests(unittest.TestCase):
                 dependency["blockers"] = [
                     "focused token-production dependency mutation"
                 ]
-                registry = CapabilityRegistry(value)
-                registry.mark_evidence_verified("0" * 64)
+                registry = verified_registry(value)
                 compiled = compile_oracle_card(
                     records_by_capability[capability_id],
                     capability_registry=registry,

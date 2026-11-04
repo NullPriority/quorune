@@ -62038,19 +62038,20 @@
       "dependency_fail_closed_status": "not_applicable",
       "id": "token.creation.fixed_definition",
       "implementation_components": [
-        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
-        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities",
+        "CommanderEngine.create_token",
+        "quorune.compiled_activated_abilities.compiled_activated_abilities",
+        "quorune.compiler.fixed_token_production_templates._fixed_named_token_template",
         "quorune.compiler.program_generation.register_generated_programs",
+        "quorune.compiler.token_templates.fixed_token_creation_effect_template",
         "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token",
         "quorune.effect_runtime.objects_stack_and_tokens._apply_create_token_batch",
-        "quorune.token_creation.create_tokens",
-        "quorune.token_creation.create_token_batch",
-        "quorune.standard_token_abilities.standard_token_characteristics",
-        "quorune.compiled_activated_abilities.compiled_activated_abilities",
-        "CommanderEngine.create_token",
-        "quorune.rules.token_prowess_requirements.token_prowess_definition_dependencies",
+        "quorune.rules.token_creation_capability_shapes.fixed_token_creation_node_capabilities",
         "quorune.rules.token_creation_capability_shapes.token_definition_payload_dependencies",
-        "quorune.rules.token_creation_capability_shapes.token_toxic_definition_dependencies"
+        "quorune.rules.token_creation_capability_shapes.token_toxic_definition_dependencies",
+        "quorune.rules.token_prowess_requirements.token_prowess_definition_dependencies",
+        "quorune.standard_token_abilities.standard_token_characteristics",
+        "quorune.token_creation.create_token_batch",
+        "quorune.token_creation.create_tokens"
       ],
       "implementation_mutation_rationale": "Fixed-token grammar mutations remain killed; the isolated token history contract also kills discovery against an incomplete committed simultaneous group. test_created_mite_toxic_fragment_mutation_is_killed_by_normal_admission corrupts the produced typed Toxic value and the normal original-card admission assertion rejects the mismatched definition.",
       "implementation_mutation_status": "killed",
@@ -78092,7 +78093,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 693,
+  "registry_version": 694,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

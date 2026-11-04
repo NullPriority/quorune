@@ -9,6 +9,13 @@ maintenance: "hand-maintained"
 
 # Oracle compiler architecture
 
+Fixed named-token productions recognize grammatical verb casing independently
+from captured name data. `Create` and `create` yield the same definition while
+proper-name spelling and apostrophes remain exact. Entering-attacking and
+cleanup clauses keep their existing owners. An unconsumed `that's`/`that is`/
+`that are` state rider cannot become part of a token name; unsupported recipient
+or ability text remains residual.
+
 Scalar token-result definitions may precede a printed cleanup sentence. The
 cleanup adapter delegates the creation clause to the existing scalar owner,
 preserving its producer, result slots and source context, then attaches the
