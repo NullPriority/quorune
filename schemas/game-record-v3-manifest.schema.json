@@ -6,12 +6,11 @@
     "card_programs": {
       "additionalProperties": false,
       "properties": {
-        "unblocked_attacker_event_version": {
-          "enum": [0, 1],
-          "type": "integer"
-        },
         "block_characteristics_version": {
-          "enum": [0, 1],
+          "enum": [
+            0,
+            1
+          ],
           "type": "integer"
         },
         "fingerprints": {
@@ -59,6 +58,13 @@
             "type": "object"
           },
           "type": "object"
+        },
+        "unblocked_attacker_event_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
         }
       },
       "required": [
@@ -138,6 +144,13 @@
         },
         "name": {
           "const": "commander"
+        },
+        "permanent_event_state_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
         },
         "profile": {
           "enum": [

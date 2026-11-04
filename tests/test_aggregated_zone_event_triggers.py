@@ -54,7 +54,11 @@ class AggregatedZoneTriggerCompilerTests(unittest.TestCase):
         for change in ({'source_controller': 'C'}, {'source_subtypes': ['human']}, {'combat': False},
             {'target_kind': 'permanent'}, {'source_zone': 'stack'}, {'player': 'A'}):
             self.assertFalse(semantic_event_matches(host, program, source, 'damage.dealt', {**event, **change}), change)
-        for subject in ('chosen creature', 'modified creature', 'creature with flying', 'double-faced creature'):
+        state_binding=_qualified_damage_singular_spec(
+            'Whenever a modified creature you control deals combat damage to a player, draw a card.')
+        self.assertIsNotNone(state_binding)
+        self.assertIn('trigger.event.state_qualified_damage',state_binding.capabilities)
+        for subject in ('chosen creature', 'creature with flying', 'double-faced creature'):
             self.assertIsNone(_qualified_damage_singular_spec(
                 'Whenever a ' + subject + ' you control deals combat damage to a player, draw a card.'))
         raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
@@ -153,10 +157,14 @@ class AggregatedZoneTriggerCompilerTests(unittest.TestCase):
         self.assertIsNotNone(ir.faces[0].nodes[0].trigger_limit)
 
     def test_open_plural_references_and_unsupported_limiting_departures_stay_residual(self):
+        promoted='Whenever one or more other creatures die, draw a card. This ability triggers only once each turn.'
+        ir=compile_oracle_card(query_record(promoted),capability_registry=load_default_capability_registry())
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertIsNotNone(ir.faces[0].nodes[0].trigger_limit)
         for text in (
             'Whenever one or more creatures enter, put a +1/+1 counter on each of them.',
             'Whenever one or more cards are discarded, draw a card.',
-            'Whenever one or more other creatures die, draw a card. This ability triggers only once each turn.',
+            'Whenever one or more other creatures die, draw a card. This ability triggers only while the remembered condition holds.',
         ):
             self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=load_default_capability_registry()).status)
 

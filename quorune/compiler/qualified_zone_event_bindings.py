@@ -3,12 +3,14 @@ from __future__ import annotations
 """Closed public characteristic predicates over normalized zone occurrences."""
 
 import re
+from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..rules.source_references import SourceReferenceSpec
 from ..target_numeric import TargetNumericCharacteristic, TargetNumericComparison
 from .direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
+from ..object_predicate import PermanentStatePredicateSpec
 
 
 QUALIFIED_ZONE_CAPABILITY = "trigger.event.qualified_zone_change"
@@ -22,6 +24,14 @@ _ZONE_EVENT = re.compile(
 )
 
 
+@dataclass(frozen=True,slots=True)
+class QualifiedZoneStateSubject:
+    characteristic_subject: DirectPermanentTargetSpec
+    state_predicate: PermanentStatePredicateSpec
+
+    def __getattr__(self,name):return getattr(self.characteristic_subject,name)
+
+
 def _all(conditions: list[Mapping[str, Any]]) -> Mapping[str, Any] | None:
     return conditions[0] if len(conditions) == 1 else {"all": conditions} if conditions else None
 
@@ -30,9 +40,11 @@ def _field(field: str, op: str, value: Any) -> Mapping[str, Any]:
     return {"field": field, "op": op, "value": value}
 
 
-def _subject_query(target: str) -> tuple[DirectPermanentTargetSpec, bool | None] | None:
+def _subject_query(target: str,*,allow_event_state=False) -> tuple[DirectPermanentTargetSpec, bool | None] | None:
     """Normalize closed Oracle subject order into the shared query grammar."""
 
+    state_match=re.fullmatch(r'(?P<head>(?:another )?target) (?P<state>equipped|enchanted|modified|attacking|blocking|monstrous) (?P<body>creature.+|creature)',target,re.I) if allow_event_state else None
+    if state_match is not None:target=state_match['head']+' '+state_match['body']
     token = re.fullmatch(r"(?P<head>(?:another )?target) (?P<token>nontoken|token) (?P<body>.+)", target, re.IGNORECASE)
     if token is not None:
         target = token.group("head") + " " + token.group("body")
@@ -44,6 +56,9 @@ def _subject_query(target: str) -> tuple[DirectPermanentTargetSpec, bool | None]
     if spec is not None and token is not None:
         if spec.token is not None:
             return None
+    if spec is not None and state_match is not None:
+        if spec.state_predicate is not None or spec.combat_state is not None:return None
+        spec=QualifiedZoneStateSubject(spec,PermanentStatePredicateSpec(**{state_match['state'].casefold():True}))
     # Nontoken is already a closed normalized-event fact, but is intentionally
     # outside the narrower direct-target schema. Do not widen targeting here.
     return (spec, token.group("token").casefold() == "token" if token is not None else None) if spec is not None else None
@@ -70,7 +85,15 @@ def _subject_condition(spec: DirectPermanentTargetSpec) -> Mapping[str, Any] | N
     if spec.source_exclusion:
         conditions.append(_field("card", "ne", "$source.ref"))
     if spec.state_predicate is not None:
-        conditions.append(_field("counter_names", "contains_any", [spec.state_predicate.counter_name]))
+        state=spec.state_predicate
+        if state.counter_name is not None:
+            conditions.append(_field("counter_names", "contains_any", [state.counter_name]))
+        from ..permanent_event_state_model import PERMANENT_EVENT_STATE_PREFIX
+        names=('tapped','attacking','blocking','enchanted','equipped','modified','monstrous')
+        if any(getattr(state,name) is not None for name in names):
+            conditions.append(_field(PERMANENT_EVENT_STATE_PREFIX+'version','eq',1))
+            conditions.extend(_field(PERMANENT_EVENT_STATE_PREFIX+name,'eq',getattr(state,name))
+                for name in names if getattr(state,name) is not None)
     for value, op in ((spec.mana_value_min, "gte"), (spec.mana_value_max, "lte"), (spec.mana_value_equal, "eq")):
         if value is not None:
             conditions.append(_field("mana_value", op, value))
@@ -109,16 +132,14 @@ def qualified_public_zone_event_binding_spec(
     if article is None:
         return None
     target = ("another target " if article.group("article").casefold() == "another" else "target ") + article.group("query")
-    query = _subject_query(target)
+    query = _subject_query(target,allow_event_state=True)
     if query is None:
         return None
     spec, token = query
     state = spec.state_predicate
     if state is not None and (
-        state.counter_name is None or state.minimum_counter_count != 1
-        or state.entered_this_turn or any(getattr(state, name) is not None for name in (
-            "tapped", "attacking", "blocking", "enchanted", "equipped", "modified", "monstrous"
-        ))
+        state.counter_name is not None and state.minimum_counter_count != 1
+        or state.entered_this_turn or state.minimum_total_counter_count is not None
     ):
         return None
     if any((spec.commander, spec.combat_state,
@@ -143,8 +164,10 @@ def qualified_public_zone_event_binding_spec(
         event=event, variant=QUALIFIED_ZONE_VARIANT, body=match.group("body"),
         template_id="fixed-counter-public-zone-trigger-v1",
         mechanic="trigger-event-normalized-zone-change", condition=condition,
-        capabilities=(QUALIFIED_ZONE_CAPABILITY, COUNTER_QUALIFIED_ZONE_CAPABILITY)
-                     if state is not None else (QUALIFIED_ZONE_CAPABILITY,),
+        capabilities=(QUALIFIED_ZONE_CAPABILITY,
+            *((COUNTER_QUALIFIED_ZONE_CAPABILITY,) if state is not None and state.counter_name is not None else ()),
+            *(('trigger.event.state_qualified_zone_change',) if state is not None and any(
+                getattr(state,name) is not None for name in ('tapped','attacking','blocking','enchanted','equipped','modified','monstrous')) else ())),
     )
 
 

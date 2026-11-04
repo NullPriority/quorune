@@ -465,9 +465,11 @@ def sealed_public_characteristic_facts(
     characteristics: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Normalize public facts from one already-sealed characteristic view."""
+    from .permanent_event_state_model import sealed_permanent_state_context
 
     types, subtypes, supertypes = type_parts(str(characteristics.get("type_line") or ""))
     return {
+        **sealed_permanent_state_context(characteristics),
         "types": sorted(types),
         "subtypes": sorted(subtypes),
         "colors": _public_colors(characteristics),
@@ -477,6 +479,19 @@ def sealed_public_characteristic_facts(
         "keywords": sorted(str(value).casefold() for value in characteristics.get("keywords", ()) or ()),
         "mana_value": float(characteristics.get("mana_value", 0) or 0),
     }
+
+
+def _state_timed_zone_events(occurrence,events):
+    from .permanent_event_state_model import PERMANENT_EVENT_STATE_PREFIX,sealed_permanent_state_context
+    current=sealed_permanent_state_context(occurrence.current_characteristics)
+    result=[]
+    for event in events:
+        if event.source_timing=='after':
+            context={key:value for key,value in event.context.items() if not key.startswith(PERMANENT_EVENT_STATE_PREFIX)}
+            context.update(current)
+            event=NormalizedZoneTriggerEvent(event.kind,event.source_timing,FrozenMap(context))
+        result.append(event)
+    return tuple(result)
 
 
 def normalized_zone_trigger_events(
@@ -627,7 +642,7 @@ def normalized_zone_trigger_events(
                 name for name, count in occurrence.current_counters.items() if count > 0
             )
         result.append(NormalizedZoneTriggerEvent('card.enter_graveyard', 'after', FrozenMap(entered_graveyard)))
-    return tuple(result)
+    return _state_timed_zone_events(occurrence,result)
 
 
 __all__ = [

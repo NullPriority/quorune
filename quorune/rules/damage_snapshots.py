@@ -7,6 +7,7 @@ from ..damage_source import DamageSourceSnapshot,DamageError,represented_toxic_v
 from ..damage_values import DamageRecipientSnapshot
 from ..damage_scope_facts import current_damage_scope_facts,current_damage_combat_partners,canonical_damage_scope_facts
 from ..damage_prevention_permission import UNPREVENTABLE_SOURCE_FACT
+from .permanent_event_state import captured_permanent_event_state
 
 
 def _normalized_keywords(values):
@@ -74,6 +75,7 @@ def source_snapshot(
     if source_has_unpreventable_damage(host,data):
         scope_facts = canonical_damage_scope_facts((*scope_facts,UNPREVENTABLE_SOURCE_FACT))
     return DamageSourceSnapshot(
+        permanent_state=captured_permanent_event_state(host,source,data),
         physical_commander_identities=physical_commander_damage_identities(source),
         ref=source.ref,
         object_id=source.object_id,

@@ -4350,7 +4350,7 @@ a player or a planeswalker or battle; opponent noncombat damage; and exact
 one-or-more attack, combat-damage, token-entry, and graveyard-departure
 batches. These predicates consume only the existing attack, damage, Cycling,
 and cause-preserving zone occurrences. First-time, once-per-turn, aggregate
-sacrifice, source-token damage, chosen and modified forms remain residual.
+sacrifice, source-token damage, and unrepresented chosen forms remain residual.
 Controlled token entry keeps singular and one-or-more subjects distinct. Both
 read the same committed token and controller facts, including noncreature
 tokens. Only the one-or-more descriptor coalesces entries within a simultaneous
@@ -4361,8 +4361,11 @@ Singular source-qualified damage subjects reuse the sealed type, subtype union,
 supertype, and color predicates of the batch owner. Each qualifying source and
 player recipient yields its own trigger; the one-or-more descriptor alone
 coalesces that committed batch. Both retain combat and opponent restrictions
-and current observer ability checks. Unsupported source state, token, chosen,
-and ability-dependent qualifiers remain residual.
+and current observer ability checks. Singular represented permanent-state
+subjects additionally require `trigger.event.state_qualified_damage` and a
+versioned source snapshot sealed before replacement. Enchanted, equipped and
+modified remain distinct public predicates. One-or-more state aggregation,
+token, chosen, and ability-dependent damage qualifiers remain residual.
 Singular controlled attack subjects use closed public characteristic queries
 over a versioned declaration snapshot. The attack owner seals effective types,
 subtypes, colors, keywords, counters, token status and reviewed permanent state
@@ -4447,10 +4450,17 @@ before zone reset, while entries read the new incarnation after entry
 replacement and initialization. Version-one occurrences preserve their payload
 and omit these unknown facts; a counter-qualified subscription requires sealed
 facts rather than consulting the current object. Known-empty maps remain valid.
+Separately, `trigger.event.state_qualified_zone_change` binds singular tapped,
+attacking, blocking, enchanted, equipped, modified and monstrous subjects to
+versioned public permanent state. The canonical object query supplies these
+facts before departure or after entry initialization. After-events never inherit
+the departed incarnation's state when the current facts are unknown. Modified
+uses CR 700.9, including Aura-controller qualification and any counter type.
+Unknown historical facts remain absent rather than becoming false.
 The shared layer-6 ability query controls discovery and the existing APNAP,
 target, effect, replacement, and replay owners execute the resulting trigger.
-Aggregation, cross-zone card subjects, hidden or chosen information, other counter,
-combat-state, damage-history, relative and total-stat queries, and independently
+Aggregation, cross-zone card subjects, hidden or unrepresented chosen information,
+other counter, damage-history, relative and total-stat queries, and independently
 unsupported event or body forms remain residual. See
 [ADR 0090](../adr/0090-typed-public-event-effect-triggers.md).
 

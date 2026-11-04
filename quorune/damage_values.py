@@ -5,6 +5,7 @@ from typing import Literal
 
 from .deathtouch import source_has_deathtouch
 from .damage_source import DamageError, DamageSourceSnapshot
+from .permanent_event_state_model import damage_permanent_state_context
 from .replacement_effects import AffectedObject, ReplaceableEvent
 
 
@@ -107,6 +108,7 @@ class DamageProposal:
         if self.amount < 1:
             raise DamageError("Zero damage has no replaceable event")
         payload = {
+            **damage_permanent_state_context(self.source.permanent_state),
             **({'source_physical_commander_identities':self.source.physical_commander_identities.to_dict()}
                if self.source.physical_commander_identities is not None else {}),
             "source": self.source.ref,

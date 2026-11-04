@@ -11603,6 +11603,45 @@
         "test_qualified_attack_subjects",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "state-qualified-zone-events",
+      "patterns": [
+        "quorune/permanent_event_state_model.py",
+        "quorune/rules/permanent_event_state.py",
+        "quorune/compiler/qualified_zone_event_bindings.py",
+        "quorune/zone_trigger_events.py",
+        "quorune/zone_trigger_processing.py",
+        "quorune/zone_transitions.py",
+        "tests/test_state_qualified_zone_events.py",
+        "tests/fixtures/state-qualified-zone-cards.json"
+      ],
+      "test_modules": [
+        "test_state_qualified_zone_events",
+        "test_qualified_zone_event_queries",
+        "test_counter_qualified_zone_events",
+        "test_zone_trigger_events",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "state-qualified-damage-events",
+      "patterns": [
+        "quorune/permanent_event_state_model.py",
+        "quorune/rules/permanent_event_state.py",
+        "quorune/rules/damage_snapshots.py",
+        "quorune/damage_source.py",
+        "quorune/damage_values.py",
+        "quorune/damage.py",
+        "quorune/compiler/fixed_public_action_event_bindings.py"
+      ],
+      "test_modules": [
+        "test_state_qualified_zone_events",
+        "test_aggregated_zone_event_triggers",
+        "test_damage_source_identity",
+        "test_damage_replacement_model",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

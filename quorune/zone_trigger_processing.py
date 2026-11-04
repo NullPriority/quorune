@@ -115,7 +115,8 @@ def capture_departure_trigger_sources(
 
 def _damage_source_characteristics(host, source):
     from .rules.stack_damage_sources import capture_damage_source_characteristics
-    return capture_damage_source_characteristics(host, source)
+    from .rules.permanent_event_state import permanent_event_characteristics
+    return permanent_event_characteristics(host,source,capture_damage_source_characteristics(host, source))
 
 
 def dispatch_zone_change_occurrence(

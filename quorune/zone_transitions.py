@@ -37,6 +37,7 @@ from .life_state import (
 from .model import CardInstance, GameState, StackItem
 from .relative_power_target import pin_host_relative_power_source_departures
 from .zone_trigger_processing import _damage_source_characteristics
+from .rules.permanent_event_state import current_zone_event_characteristics
 from .scalar_effect_amounts import pin_scalar_characteristic_departures
 from .station import pin_host_station_departures
 from .semantic_runtime import (
@@ -1028,7 +1029,7 @@ class ZoneTransitionOwner:
             token=card.is_token,
             card_object=card.is_card_object,
             previous_characteristics=departure.characteristics,
-            current_characteristics=self.host._effective_card_data(card),
+            current_characteristics=current_zone_event_characteristics(self.host,card),
             previous_counters=departure.counters,
             current_counters=dict(card.counters) if departure.counters is not None else None,
             schema_version=2 if departure.counters is not None else 1,
@@ -1285,7 +1286,7 @@ class ZoneTransitionOwner:
                 controller=card.controller,
                 logical_object_id=card.logical_object_id,
                 conditional_returns=source_conditional_bindings(card) if card.zone == 'battlefield' else (),
-                characteristics=copy.deepcopy(self.host._effective_card_data(card)),
+                characteristics=copy.deepcopy(current_zone_event_characteristics(self.host,card)),
                 counters=dict(card.counters),
                 attachments=tuple(
                     self.state.cards[attachment_id].ref

@@ -67604,6 +67604,183 @@
     {
       "applicability": {
         "exclusions": [
+          "one-or-more aggregation",
+          "unknown or unrepresented subject qualifiers",
+          "runtime Oracle parsing"
+        ],
+        "inputs": [
+          "versioned typed source permanent facts",
+          "canonical damage transaction and source incarnation",
+          "existing singular source-qualified subscription"
+        ],
+        "outputs": [
+          "enchanted distinct from controller-relative modified",
+          "one occurrence per qualifying source and recipient",
+          "legacy absence remains unknown"
+        ],
+        "summary": "Match each committed singular damage occurrence against public permanent state sealed before damage replacement."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.qualified_damage_singular"
+      ],
+      "dependency_fail_closed_rationale": "Verified state-owner and base-damage withdrawal must reject state-qualified admission while ordinary source combat damage remains exact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.state_qualified_damage",
+      "implementation_components": [
+        "quorune.permanent_event_state_model.PermanentEventState",
+        "quorune.permanent_event_state_model.damage_permanent_state_context",
+        "quorune.permanent_event_state_model.permanent_state_from_damage_context",
+        "quorune.permanent_event_state_model.state_qualified_damage_runtime_dependencies",
+        "quorune.rules.permanent_event_state.captured_permanent_event_state",
+        "quorune.rules.damage_snapshots.source_snapshot",
+        "quorune.damage_source.DamageSourceSnapshot",
+        "quorune.damage_values.DamageProposal.event",
+        "quorune.damage.DamageEvent.semantic_context",
+        "quorune.damage._final_event",
+        "quorune.compiler.fixed_public_action_event_bindings._qualified_damage_match_spec"
+      ],
+      "implementation_mutation_rationale": "The final-event test requires every sealed fact; omitting state projection or changing an exact boolean fails its independent assertions.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_combat_damage_distinguishes_enchanted_modified_and_opposing_equipment"
+      ],
+      "multiplayer_tests": [
+        "test_actual_combat_damage_distinguishes_enchanted_modified_and_opposing_equipment"
+      ],
+      "negative_tests": [
+        "test_aggregate_unknown_and_unrepresented_damage_subjects_stay_residual",
+        "test_final_damage_keeps_sealed_facts_and_rejects_partial_or_coerced_payload",
+        "test_damage_minimum_requires_its_own_version_and_event",
+        "test_verified_damage_state_and_damage_owner_withdrawals_keep_plain_damage"
+      ],
+      "official_rules": [
+        "400.7",
+        "603.2",
+        "510.2",
+        "700.9"
+      ],
+      "positive_tests": [
+        "test_damage_subjects_require_versioned_source_state_and_the_actual_damage_domain"
+      ],
+      "privacy_tests": [
+        "test_actual_combat_damage_distinguishes_enchanted_modified_and_opposing_equipment"
+      ],
+      "replay_tests": [
+        "test_actual_combat_damage_distinguishes_enchanted_modified_and_opposing_equipment"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "one-or-more aggregation",
+          "unrepresented compound subjects or result siblings",
+          "damage-time state facts,which require their separate damage owner"
+        ],
+        "inputs": [
+          "versioned public tapped/combat/attachment/modification facts",
+          "canonical zone occurrence and existing last-known source view",
+          "controller-qualified fixed source-spanned event subject"
+        ],
+        "outputs": [
+          "known state independent of later object resets",
+          "correct owned Aura versus opposing Aura modification meaning",
+          "strict historical unknown-versus-false distinction",
+          "unchanged zone mutation,trigger placement and replay"
+        ],
+        "summary": "Match singular public zone occurrences against pre-departure or committed-entry permanent state facts captured by the canonical object query."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.qualified_zone_change"
+      ],
+      "dependency_fail_closed_rationale": "Descriptor-owned inference requires the state capability and versioned zone occurrence even when compiler annotations are omitted.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.state_qualified_zone_change",
+      "implementation_components": [
+        "quorune.compiler.qualified_zone_event_bindings.QualifiedZoneStateSubject",
+        "quorune.compiler.qualified_zone_event_bindings.qualified_public_zone_event_binding_spec",
+        "quorune.permanent_event_state_model.PermanentEventState",
+        "quorune.permanent_event_state_model.permanent_event_state_version",
+        "quorune.permanent_event_state_model.sealed_permanent_state_context",
+        "quorune.permanent_event_state_model.state_qualified_zone_runtime_dependencies",
+        "quorune.rules.permanent_event_state.permanent_event_characteristics",
+        "quorune.zone_transitions.ZoneTransitionOwner._simultaneous_departure",
+        "quorune.zone_trigger_events._state_timed_zone_events",
+        "quorune.zone_trigger_events.normalized_zone_trigger_events",
+        "quorune.zone_trigger_processing._damage_source_characteristics"
+      ],
+      "implementation_mutation_rationale": "Omitted equipped state is distinguished by sealed departure facts; native simultaneous death and Aura-controller/counter contrasts protect the canonical capture path.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_guardian_distinguishes_opponent_aura_current_controller_and_any_counter",
+        "test_actual_outfitter_simultaneous_death_keeps_equipment_and_old_controller"
+      ],
+      "multiplayer_tests": [
+        "test_actual_guardian_distinguishes_opponent_aura_current_controller_and_any_counter",
+        "test_actual_outfitter_simultaneous_death_keeps_equipment_and_old_controller"
+      ],
+      "negative_tests": [
+        "test_aggregate_and_unknown_state_qualifiers_stay_residual",
+        "test_runtime_minimum_requires_version_and_correct_event_without_annotations",
+        "test_sealed_facts_round_trip_and_unknown_is_distinct_from_false"
+      ],
+      "official_rules": [
+        "400.7",
+        "603.6",
+        "603.10",
+        "700.4",
+        "700.9"
+      ],
+      "positive_tests": [
+        "test_actual_guardian_distinguishes_opponent_aura_current_controller_and_any_counter",
+        "test_actual_outfitter_simultaneous_death_keeps_equipment_and_old_controller",
+        "test_equipped_modified_enchanted_and_combat_subjects_keep_state_at_occurrence",
+        "test_execution_marker_absence_and_malformed_values_follow_the_state_codec",
+        "test_normalized_departure_keeps_old_state_and_entry_uses_new_state"
+      ],
+      "privacy_tests": [
+        "test_actual_guardian_distinguishes_opponent_aura_current_controller_and_any_counter",
+        "test_actual_outfitter_simultaneous_death_keeps_equipment_and_old_controller"
+      ],
+      "replay_tests": [
+        "test_actual_guardian_distinguishes_opponent_aura_current_controller_and_any_counter",
+        "test_actual_outfitter_simultaneous_death_keeps_equipment_and_old_controller"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "token entry without creation",
           "unrepresented event subjects or quantity predicates",
           "unrepresented Blood-token combat animation",
@@ -77156,7 +77333,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 680,
+  "registry_version": 682,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

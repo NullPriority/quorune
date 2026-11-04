@@ -40,6 +40,9 @@ from .semantic_runtime.damage_permissions import collect_damage_prevention_permi
 from .deathtouch import DeathtouchError, deathtouch_damage_result_applies
 from .commander import CommanderIdentityError, commander_damage_keys
 from .commander_damage_identity_model import PhysicalCommanderDamageIdentities
+from .permanent_event_state_model import (
+    PermanentEventState, damage_permanent_state_context, permanent_state_from_damage_context,
+)
 from .combat_damage_events import (
     canonical_combat_assignment_values,
     combat_damage_event_identity,
@@ -221,8 +224,11 @@ class DamageEvent:
     source_zone: str = "unknown"
     source_supertypes: tuple[str, ...] = ()
     source_physical_commander_identities: PhysicalCommanderDamageIdentities | None = None
+    source_permanent_state: PermanentEventState | None = None
 
     def __post_init__(self) -> None:
+        if self.source_permanent_state is not None and not isinstance(self.source_permanent_state,PermanentEventState):
+            raise ValueError('Damage source permanent state must be typed')
         if self.source_physical_commander_identities is not None:
             if not isinstance(self.source_physical_commander_identities,PhysicalCommanderDamageIdentities):
                 raise ValueError('Physical commander damage identities must be typed')
@@ -266,6 +272,7 @@ class DamageEvent:
         """Return the stable normalized context consumed by trigger programs."""
 
         return {
+            **damage_permanent_state_context(self.source_permanent_state),
             **({'source_physical_commander_identities':self.source_physical_commander_identities.to_dict()}
                if self.source_physical_commander_identities is not None else {}),
             # ``card`` is the established self-event identity field used by
@@ -945,8 +952,10 @@ def _final_event(
     try:
         physical=(PhysicalCommanderDamageIdentities.from_dict(payload['source_physical_commander_identities'])
             if 'source_physical_commander_identities' in payload else None)
+        permanent_state=permanent_state_from_damage_context(payload)
     except (ValueError,TypeError) as exc:raise DamageError(str(exc)) from exc
     return DamageEvent(
+        source_permanent_state=permanent_state,
         source_physical_commander_identities=physical,
         source=str(payload.get("source") or ""),
         source_object_id=str(payload.get("source_object_id") or ""),

@@ -27,6 +27,15 @@ replaces these facts with the destination snapshot; it recomputes block-pair
 and shared-color relations instead of inheriting the former recipient's scope.
 Empty source and redirection extensions preserve their legacy serialized form.
 
+Current execution also seals typed public permanent state from the canonical
+object query. Singular source-qualified damage subscriptions distinguish
+enchanted, equipped, modified, tapped and combat state without reading the
+object again after replacement. Under CR 700.9, Equipment and any counters
+qualify as modifications; an Aura qualifies only when its controller matches
+the permanent's controller. The optional versioned snapshot survives damage
+proposal serialization, replacement choices and final semantic dispatch.
+Historical records omit unknown facts; partial or coerced facts reject.
+
 Newly compiled battlefield-static damage components require their own current
 layer-6 ability component. Amount replacements, fixed prevention and
 redirection stop while that ability is removed and return when it is restored.

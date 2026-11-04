@@ -1093,6 +1093,7 @@
       "test_source_sacrifice_native",
       "test_source_sacrifice_payments",
       "test_spell_owner_targeting",
+      "test_state_qualified_zone_events",
       "test_state_trigger_predicates",
       "test_subtype_composite_grants",
       "test_target_player_hand_counts",

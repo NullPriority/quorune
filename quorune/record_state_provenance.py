@@ -41,6 +41,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'token_copy_value_version':state.token_copy_value_version} if getattr(state,'token_copy_value_version',None) is not None else {}),
         **({'block_characteristics_version':state.block_characteristics_version} if getattr(state,'block_characteristics_version',None) is not None else {}),
         **({'unblocked_attacker_event_version':state.unblocked_attacker_event_version} if getattr(state,'unblocked_attacker_event_version',None) is not None else {}),
+        **({'permanent_event_state_version':state.permanent_event_state_version} if getattr(state,'permanent_event_state_version',None) is not None else {}),
     }
 
 
@@ -107,6 +108,11 @@ def validate_state_versions(
     from .characteristic_query_boundary_model import characteristic_query_boundary_version
     from .block_characteristic_model import block_characteristics_version
     from .unblocked_attacker_model import unblocked_attacker_event_version
+    from .permanent_event_state_model import permanent_event_state_version
+    permanent_state=format_value.get('permanent_event_state_version',0)
+    if (type(permanent_state) is not int or permanent_state not in {0,1}
+            or permanent_state!=(permanent_event_state_version(getattr(state,'permanent_event_state_version',None)) or 0)):
+        raise ValueError('Permanent event-state version disagrees with checkpoint')
     unblocked=format_value.get('unblocked_attacker_event_version',0)
     if (type(unblocked)is not int or unblocked not in {0,1}
             or unblocked!=(unblocked_attacker_event_version(getattr(state,'unblocked_attacker_event_version',None)) or 0)):

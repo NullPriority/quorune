@@ -22,6 +22,7 @@ from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
 from .ability_source_information import ability_source_information_version
 from .qualified_attack_model import qualified_attack_facts_version
+from .permanent_event_state_model import permanent_event_state_version
 from .block_characteristic_model import block_characteristics_version
 from .unblocked_attacker_model import unblocked_attacker_event_version
 from .cast_face_offers import cast_face_offers_version
@@ -1046,6 +1047,7 @@ class GameState:
     characteristic_query_boundary_version: int | None = 1
     token_copy_value_version: int | None = 1
     qualified_attack_facts_version: int | None = 1
+    permanent_event_state_version: int | None = 1
     block_characteristics_version: int | None = 1
     unblocked_attacker_event_version: int | None = 1
 
@@ -1064,6 +1066,7 @@ class GameState:
         characteristic_query_boundary_version(self.characteristic_query_boundary_version)
         token_copy_value_version(self.token_copy_value_version)
         qualified_attack_facts_version(self.qualified_attack_facts_version)
+        permanent_event_state_version(self.permanent_event_state_version)
         block_characteristics_version(self.block_characteristics_version)
         unblocked_attacker_event_version(self.unblocked_attacker_event_version)
         if self.tap_state_event_version is not None and (
@@ -1099,6 +1102,7 @@ class GameState:
             **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
             **({'qualified_attack_facts_version':self.qualified_attack_facts_version} if self.qualified_attack_facts_version is not None else {}),
+            **({'permanent_event_state_version':self.permanent_event_state_version} if self.permanent_event_state_version is not None else {}),
             **({'block_characteristics_version':self.block_characteristics_version} if self.block_characteristics_version is not None else {}),
             **({'unblocked_attacker_event_version':self.unblocked_attacker_event_version} if self.unblocked_attacker_event_version is not None else {}),
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
@@ -1200,6 +1204,7 @@ class GameState:
             ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
             cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
+            permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
             block_characteristics_version=block_characteristics_version(data.get('block_characteristics_version')),
             unblocked_attacker_event_version=unblocked_attacker_event_version(data.get('unblocked_attacker_event_version')),
             commander_damage_identity_version=(

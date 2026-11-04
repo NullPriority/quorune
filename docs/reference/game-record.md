@@ -10,6 +10,15 @@ concern: "game-record"
 
 # Game Record v3
 
+`permanent_event_state_version: 1` pins sealed public state used by represented
+zone and damage occurrences. Departure facts describe the old permanent;
+after-events use only the new object's current facts. Damage proposals retain
+their sealed source facts through replacement and final event dispatch.
+Historical absence preserves the
+earlier event shape and remains absent on serialization. Unknown, boolean,
+and manifest/checkpoint-mismatched versions reject before replay through the
+existing state-provenance owner.
+
 `unblocked_attacker_event_version: 1` independently pins post-blocker-declaration
 unblocked occurrences. Historical absence emits no new occurrence and remains
 absent on serialization. Unknown, boolean and manifest/checkpoint-mismatched
