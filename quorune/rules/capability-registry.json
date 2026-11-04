@@ -75612,6 +75612,102 @@
       "version": 3
     },
     {
+      "id": "zone.reanimate.entry_counters",
+      "version": 1,
+      "status": "trusted",
+      "blockers": [],
+      "applicability": {
+        "summary": "One fixed targeted graveyard return carries effect-generated numeric or ordinary keyword counters through the existing proposed battlefield entry.",
+        "inputs": [
+          "one closed scalar graveyard target and destination controller",
+          "fixed one-through-ten +1/+1,-1/-1 or ordinary keyword counters",
+          "original announced target snapshot and stack source"
+        ],
+        "outputs": [
+          "one pinned replacement-aware battlefield move with typed entry counters",
+          "counters available to entry observation and state-based stabilization",
+          "existing counter replacement ordering and serialization"
+        ],
+        "exclusions": [
+          "finality,shield,stun and unknown counter rules",
+          "variable or conditional amounts,plural reanimation and linked result riders",
+          "a new incarnation substituted for the original selected target"
+        ]
+      },
+      "dependencies": [
+        "zone.reanimate.fixed_target",
+        "counter.producer.effect_entry"
+      ],
+      "dependency_fail_closed_status": "passed",
+      "dependency_fail_closed_rationale": "Verified withdrawal of the entry-counter owner prevents admission while ordinary scalar reanimation remains exact. Actual schema infers the owner even without coverage annotations.",
+      "implementation_mutation_status": "killed",
+      "implementation_mutation_rationale": "Changing the printed counter amount from two to one fails source-grounded compiler expectations; native zero-toughness and replacement totals distinguish entry-time counters.",
+      "implementation_components": [
+        "quorune.reanimation_entry_counters.validate_reanimation_entry_effect",
+        "quorune.reanimation_entry_counters.reanimation_entry_counter_intent",
+        "quorune.compiler.reanimation_entry_counter_templates.fixed_reanimation_entry_counter_template",
+        "quorune.rules.reanimation_entry_counters.reanimation_entry_counter_node_capabilities",
+        "quorune.rules.reanimation_entry_counters.reanimation_entry_counter_runtime_dependencies",
+        "quorune.semantic_runtime.direct_target_fields.bound_graveyard_return_target_snapshot",
+        "quorune.semantic_runtime.effect_handlers.DomainEffectHandler",
+        "quorune.semantic_runtime.zone_move_intent.ZoneMoveIntent"
+      ],
+      "official_rules": [
+        "400.7",
+        "608.2b",
+        "614.1c",
+        "614.12",
+        "614.12a",
+        "616.1",
+        "122.1a",
+        "122.1b",
+        "122.6",
+        "122.6a",
+        "704.4"
+      ],
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "positive_tests": [
+        "test_complete_fixed_entry_counter_forms_require_their_reanimation_and_counter_owners",
+        "test_runtime_minimum_ignores_annotations_and_the_intent_pins_identity_and_counter_placer",
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
+        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
+      ],
+      "negative_tests": [
+        "test_unrepresented_counter_rules_variable_counts_and_linked_riders_remain_residual",
+        "test_runtime_minimum_ignores_annotations_and_the_intent_pins_identity_and_counter_placer",
+        "test_verified_entry_counter_authority_withdrawal_preserves_ordinary_reanimation",
+        "test_entry_counter_quantity_mutation_is_killed",
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks"
+      ],
+      "interaction_tests": [
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
+        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
+      ],
+      "multiplayer_tests": [
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
+        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
+      ],
+      "privacy_tests": [
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks"
+      ],
+      "replay_tests": [
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
+        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
+      ]
+    },
+    {
       "applicability": {
         "exclusions": [
           "untargeted, each-player, all-card, mass, random, linked-result, reflexive, delayed, self-return, or top-graveyard selection",
@@ -76469,7 +76565,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 670,
+  "registry_version": 671,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

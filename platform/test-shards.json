@@ -1076,6 +1076,7 @@
       "test_qualified_block_pairs",
       "test_quantified_target_keywords",
       "test_random_graveyard_returns",
+      "test_reanimation_entry_counters",
       "test_resolution_mana_compositions",
       "test_semantic_handlers",
       "test_shared_modal_target_resolution",

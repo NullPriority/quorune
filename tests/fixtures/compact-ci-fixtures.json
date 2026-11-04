@@ -676,6 +676,7 @@
     "tests/fixtures/random-discard-cards.json",
     "tests/fixtures/random-graveyard-return-cards.json",
     "tests/fixtures/read-ahead-saga-cards.json",
+    "tests/fixtures/reanimation-entry-counter-cards.json",
     "tests/fixtures/received-damage-cards.json",
     "tests/fixtures/recipient-modifier-cards.json",
     "tests/fixtures/recipient-result-cards.json",

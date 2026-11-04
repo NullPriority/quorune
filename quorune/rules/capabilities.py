@@ -533,6 +533,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'fixed-target-entry-counter-reanimation',
         'fixed-per-player-target-set',
         'fixed-controller-top-order',
         'fixed-untargeted-land-untap',
@@ -1313,6 +1314,7 @@ def capability_dependencies_for_node(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     mapping = {
+        'zone.reanimate.entry_counters':'fixed-target-entry-counter-reanimation',
         'target.set.one_per_player':'fixed-per-player-target-set',
         FACE_UP_EFFECT_CAPABILITY: FACE_UP_EFFECT_MECHANIC,
         PREPARED_POWER_DAMAGE_CAPABILITY: PREPARED_POWER_DAMAGE_MECHANIC,

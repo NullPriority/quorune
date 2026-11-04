@@ -51,6 +51,14 @@ class DomainEffectHandler:
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
             return IntentPlan(operation=operation, handler_id=self.handler_id, intents=(intent,))
+        if operation == 'reanimate' and effect.get('schema_version') == 3:
+            from ..reanimation_entry_counters import reanimation_entry_counter_intent
+            try:
+                intent=reanimation_entry_counter_intent(effect,actor=context.actor,reason=context.default_reason)
+                context.query.require_known_seat(intent.new_controller)
+            except (ValueError,TypeError,KeyError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(operation=operation,handler_id=self.handler_id,intents=(intent,))
         reason = str(effect.get("reason") or context.default_reason)
         if not reason:
             raise SemanticNodeError("A domain effect requires a reason")

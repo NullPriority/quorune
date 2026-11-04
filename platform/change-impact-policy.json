@@ -11396,6 +11396,29 @@
         "test_life_change",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "targeted-reanimation-entry-counter-composition",
+      "patterns": [
+        "quorune/reanimation_entry_counters.py",
+        "quorune/compiler/reanimation_entry_counter_templates.py",
+        "quorune/rules/reanimation_entry_counters.py",
+        "quorune/compiler/resolution_effect_templates.py",
+        "quorune/semantic_runtime/direct_target_fields.py",
+        "quorune/semantic_runtime/effect_handlers.py",
+        "quorune/entry_counter_model.py",
+        "quorune/rules/reanimation_capability_shapes.py",
+        "tests/test_reanimation_entry_counters.py",
+        "tests/fixtures/reanimation-entry-counter-cards.json"
+      ],
+      "test_modules": [
+        "test_reanimation_entry_counters",
+        "test_fixed_target_reanimation",
+        "test_intrinsic_entry_counters",
+        "test_fixed_keyword_entry_counters",
+        "test_external_entry_counters",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

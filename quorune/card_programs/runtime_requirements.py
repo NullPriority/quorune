@@ -94,6 +94,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.combat_defending_players import combat_defending_player_runtime_dependencies
     from ..rules.event_player_targets import event_player_target_runtime_dependencies
     from ..rules.per_player_target_sets import per_player_target_runtime_dependencies
+    from ..rules.reanimation_entry_counters import reanimation_entry_counter_runtime_dependencies
     from ..rules.fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
     from ..cast_event_amounts import cast_mana_value_runtime_dependencies
     from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
@@ -142,6 +143,7 @@ def _event_query_runtime_requirements(program):
         (combat_defending_player_runtime_dependencies,program,'combat_defending_player'),
         (event_player_target_runtime_dependencies,program,'event_player_target'),
         (per_player_target_runtime_dependencies,program,'per_player_targets'),
+        (reanimation_entry_counter_runtime_dependencies,program,'reanimation_entry_counters'),
         (fixed_payment_event_player_runtime_dependencies,program,'payment_event_player'),
         (cast_mana_value_runtime_dependencies,program,'cast_spell_mana_value'),
         (event_spell_copy_runtime_dependencies,program,'event_spell_copy'),

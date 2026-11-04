@@ -2578,8 +2578,22 @@ replacement, and canonical zone-transition owners. Numeric graveyard targets
 use the same exact current-characteristic boundary as battlefield targeting;
 unrepresentable characteristic-defining or cyclic values fail closed. Fixed
 plural forms compose through the homogeneous target-set owner. Mass,
-untargeted non-source, delayed, linked-result, entry-rider, variable, copied,
+untargeted non-source, delayed, linked-result, unrepresented entry-rider, variable, copied,
 granted, hidden-origin, and compound forms remain material residuals.
+
+`compiler/reanimation_entry_counter_templates.py` composes that scalar target
+with one fixed numeric or ordinary keyword counter instruction. Version-three
+`reanimate` retains the original announced target snapshot and supplies typed
+`EffectEntryCounter` values to the existing `ZoneMoveIntent`. The zone-entry
+replacement tree places the counters during entry, before entry observation
+and state-based actions, and retains them across a pending replacement choice.
+The entering controller places the counters unless the instruction specifies
+otherwise. `zone.reanimate.entry_counters` is inferred from the actual effect
+shape independently of annotations; keyword counters additionally require
+their characteristic and gameplay owners. Ordinary scalar instructions and
+version-two event-bound returns retain their encodings. Finality, shield,
+stun, variable counts, plural returns and other unrepresented riders remain
+outside this composition.
 
 `compiler/public_zone_move_templates.py` owns fixed public-origin movement as
 one shared grammar across spell, triggered, activated, and modal bodies. It
