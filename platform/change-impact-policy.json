@@ -11642,6 +11642,22 @@
         "test_damage_replacement_model",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "qualified-simultaneous-destruction",
+      "patterns": [
+        "quorune/compiler/qualified_destruction_queries.py",
+        "quorune/compiler/destruction_templates.py",
+        "quorune/rules/qualified_destruction.py",
+        "quorune/rules/destruction_regeneration_capability_shapes.py",
+        "tests/test_qualified_destruction_queries.py",
+        "tests/fixtures/qualified-destruction-cards.json"
+      ],
+      "test_modules": [
+        "test_qualified_destruction_queries",
+        "test_mass_destruction_effect_clauses",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

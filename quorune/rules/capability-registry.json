@@ -48306,6 +48306,91 @@
     {
       "applicability": {
         "exclusions": [
+          "variableX,mana-value,newqueryfields",
+          "chosenorhistory-dependentsets",
+          "attachmentrelationunions",
+          "unrepresentedfollowupresults"
+        ],
+        "inputs": [
+          "current public power/toughness,color,supertype,subtype,attachment state and commander designation",
+          "canonical APNAP affected-set snapshot"
+        ],
+        "outputs": [
+          "one immutable deduplicated selection",
+          "existing simultaneous destruction and replacement consequences"
+        ],
+        "summary": "Select fixed public qualified simultaneous destruction sets using existing typed characteristic and designation predicates."
+      },
+      "blockers": [],
+      "dependencies": [
+        "permanent.destroy.fixed_set"
+      ],
+      "dependency_fail_closed_rationale": "Descriptor-owned inference requires qualified-set authority even with omitted annotations; verified withdrawal leaves plain destruction exact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "permanent.destroy.qualified_fixed_set",
+      "implementation_components": [
+        "quorune.compiler.qualified_destruction_queries.qualified_destruction_query",
+        "quorune.rules.qualified_destruction.qualified_destruction_payload_dependencies",
+        "quorune.rules.qualified_destruction.qualified_destruction_capabilities",
+        "quorune.compiler.destruction_templates.fixed_affected_permanent_query",
+        "quorune.rules.destruction_regeneration_capability_shapes.mass_destruction_node_capabilities",
+        "quorune.destruction_sets.snapshot_destruction_set",
+        "quorune.destruction_sets.resolve_destruction_set"
+      ],
+      "implementation_mutation_rationale": "Removing commander exclusion includes the designated permanent and fails the independent exact selection assertion.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_threshold_reads_current_toughness_after_response_and_replays",
+        "test_actual_commander_exclusion_preserves_designation_and_destroys_ordinary_legendary",
+        "test_actual_aura_equipment_union_nonwhite_and_nonbasic_keep_distinct_public_facts"
+      ],
+      "multiplayer_tests": [
+        "test_actual_threshold_reads_current_toughness_after_response_and_replays",
+        "test_actual_commander_exclusion_preserves_designation_and_destroys_ordinary_legendary",
+        "test_actual_aura_equipment_union_nonwhite_and_nonbasic_keep_distinct_public_facts"
+      ],
+      "negative_tests": [
+        "test_unrepresented_siblings_and_open_queries_remain_residual",
+        "test_descriptor_owned_withdrawal_rejects_qualified_selection_and_keeps_plain_destroy"
+      ],
+      "official_rules": [
+        "701.8a",
+        "701.8b",
+        "701.8c",
+        "608.2h",
+        "903.3"
+      ],
+      "positive_tests": [
+        "test_fixed_existing_query_fields_lower_to_one_simultaneous_set",
+        "test_aura_equipment_union_retains_domains_and_plain_aura_is_not_all_enchantments"
+      ],
+      "privacy_tests": [
+        "test_actual_threshold_reads_current_toughness_after_response_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_threshold_reads_current_toughness_after_response_and_replays",
+        "test_actual_commander_exclusion_preserves_designation_and_destroys_ordinary_legendary",
+        "test_actual_aura_equipment_union_nonwhite_and_nonbasic_keep_distinct_public_facts"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "damage-linked or delayed regeneration prohibition",
           "conditional, optional, modal, qualified, dynamic, repeated, or additional-target riders",
           "linked results beyond the prohibition",
@@ -77333,7 +77418,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 682,
+  "registry_version": 683,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

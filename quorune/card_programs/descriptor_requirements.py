@@ -7,6 +7,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
+        destruction=qualified_destruction_payload_dependencies(value)
+        if destruction:return destruction
         from ..alternative_discard_model import alternative_discard_runtime_dependencies
         alternative=alternative_discard_runtime_dependencies(value)
         if alternative:return tuple(sorted({*alternative,*(cap for child in value.values()

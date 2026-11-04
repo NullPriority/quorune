@@ -1086,6 +1086,17 @@ queries retain their earlier decoding and admission behavior.
 The mandatory delayed-draw leaf retains its separate temporal scope and is not
 lifted into optional or closed multi-result programs by this component gate.
 
+`compiler/destruction_templates.py` lowers fixed public battlefield sets to one
+simultaneous destruction instruction. Its qualified-query helper adds fixed
+power or toughness bounds, negative color, nonbasic lands, non-Aura
+enchantments, Aura/Equipment unions and physical commander exclusion using
+existing typed query fields. The descriptor independently requires
+`permanent.destroy.qualified_fixed_set` and each applicable query capability.
+Resolution reads current effective characteristics and delegates replacement,
+Indestructible, regeneration and movement to the existing destruction owners.
+Variable bounds, mana-value queries, attachment-relative unions, chosen types
+and unrepresented follow-up instructions remain residual.
+
 `compiler/fixed_homogeneous_target_sets.py` lifts an existing reviewed scalar
 destroy, exile, tap, untap, battlefield-return, own-graveyard-return, or public-
 graveyard-exile clause into one interchangeable public target set. The grammar
