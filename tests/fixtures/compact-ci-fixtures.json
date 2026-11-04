@@ -556,6 +556,7 @@
     "tests/fixtures/landwalk-as-though-cards.json",
     "tests/fixtures/leveler-bands-cards.json",
     "tests/fixtures/library-other-remainder-cards.json",
+    "tests/fixtures/library-search-dispatch-cards.json",
     "tests/fixtures/library-search-qualifier-cards.json",
     "tests/fixtures/library-search-rules-cards.json",
     "tests/fixtures/library-selection-knowledge-cards.json",

@@ -34922,7 +34922,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Modularâ€”Sunburst",
+          "Modular\u00e2\u20ac\u201dSunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -36173,7 +36173,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modularâ€”Sunburst variable linkage",
+          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ],
         "inputs": [
@@ -43730,23 +43730,29 @@
         "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library",
         "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously",
         "quorune.semantic_choices.optional_effect._represented_effect",
-        "quorune.card_programs.reviewed_overlay.shadowed_reviewed_program_keys"
+        "quorune.card_programs.reviewed_overlay.shadowed_reviewed_program_keys",
+        "quorune.compiler.library_search_templates.fixed_library_search_effect_template"
       ],
       "implementation_mutation_rationale": "Compiler removal and altered shuffle/cardinality schema mutations withhold exact admission; actual printed search witnesses distinguish mandatory quantities, predicates and result order.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
         "test_printed_named_multi_search_moves_one_simultaneous_private_batch",
-        "test_printed_multi_search_commander_replacements_persist_per_card"
+        "test_printed_multi_search_commander_replacements_persist_per_card",
+        "test_original_mages_offer_the_complete_numeric_predicate_and_reveal_only_the_chosen_card",
+        "test_declining_search_does_not_shuffle_but_searching_and_finding_nothing_does"
       ],
       "multiplayer_tests": [
         "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
-        "test_printed_multi_search_commander_replacements_persist_per_card"
+        "test_printed_multi_search_commander_replacements_persist_per_card",
+        "test_original_mages_offer_the_complete_numeric_predicate_and_reveal_only_the_chosen_card"
       ],
       "negative_tests": [
         "test_counted_search_schema_dependencies_and_mutations_fail_closed",
         "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
-        "test_reviewed_search_precedence_requires_matching_trust_source_and_semantics"
+        "test_reviewed_search_precedence_requires_matching_trust_source_and_semantics",
+        "test_counted_numeric_search_dispatch_preserves_reveal_pronouns_and_the_complete_selector",
+        "test_original_mages_offer_the_complete_numeric_predicate_and_reveal_only_the_chosen_card"
       ],
       "official_rules": [
         "109.2a",
@@ -43765,19 +43771,25 @@
       "positive_tests": [
         "test_original_search_programs_are_strictly_capability_bound",
         "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
-        "test_printed_numeric_search_filters_x_zero_and_allows_failure_to_find"
+        "test_printed_numeric_search_filters_x_zero_and_allows_failure_to_find",
+        "test_counted_numeric_search_dispatch_preserves_reveal_pronouns_and_the_complete_selector",
+        "test_original_mages_offer_the_complete_numeric_predicate_and_reveal_only_the_chosen_card",
+        "test_declining_search_does_not_shuffle_but_searching_and_finding_nothing_does"
       ],
       "privacy_tests": [
         "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
         "test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
-        "test_printed_multi_search_commander_replacements_persist_per_card"
+        "test_printed_multi_search_commander_replacements_persist_per_card",
+        "test_original_mages_offer_the_complete_numeric_predicate_and_reveal_only_the_chosen_card"
       ],
       "replay_tests": [
         "test_printed_unqualified_search_requires_a_card_and_keeps_private_choices",
         "test_printed_top_search_excludes_found_card_from_shuffle_and_preserves_identity",
         "test_printed_named_multi_search_moves_one_simultaneous_private_batch",
         "test_printed_multi_search_commander_replacements_persist_per_card",
-        "test_persisted_reviewed_search_keeps_legacy_execution_and_replay"
+        "test_persisted_reviewed_search_keeps_legacy_execution_and_replay",
+        "test_original_mages_offer_the_complete_numeric_predicate_and_reveal_only_the_chosen_card",
+        "test_declining_search_does_not_shuffle_but_searching_and_finding_nothing_does"
       ],
       "required_evidence": [
         "positive",
@@ -43793,7 +43805,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -76438,7 +76450,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 668,
+  "registry_version": 669,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

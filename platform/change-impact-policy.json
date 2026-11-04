@@ -11362,6 +11362,21 @@
         "test_targeted_activation_costs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "counted-search-dispatch-contract",
+      "patterns": [
+        "quorune/compiler/library_search_templates.py",
+        "tests/test_library_search_dispatch_native.py",
+        "tests/fixtures/library-search-dispatch-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_library_searches",
+        "test_counted_library_searches",
+        "test_library_search_qualifiers",
+        "test_library_search_dispatch_native",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

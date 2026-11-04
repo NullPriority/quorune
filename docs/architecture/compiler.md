@@ -2655,10 +2655,18 @@ entry. Bounded multi-card battlefield support remains limited to land cards
 that all enter tapped, so the canonical zone owner can commit one simultaneous
 entry batch before the deterministic shuffle. Canonical `it`, `them`, `that
 card`, and `those cards` references preserve the same typed result identity.
-Unrestricted, named, dynamic, chosen, cross-field, multiple-card hand,
-different-name, attachment, linked-result, compound-tail, other-player,
-search-limiting replacement, and search- or shuffle-trigger forms remain
-source-spanned residuals or outside this capability's trust boundary.
+The separate counted-search production owns unqualified quantities, one
+literal card name and fixed mana-value predicates. Its version-two instruction
+supports one through ten hand results or one battlefield, graveyard or library
+top result. When the scalar production cannot close a quality, dispatch tries
+this complete counted production; a reveal reference cannot absorb and discard
+the numeric predicate. Optional searches retain an apply-or-decline choice:
+declining does not shuffle, while searching and finding nothing still follows
+the printed shuffle instruction.
+Dynamic or chosen quantities, different-name relations, other search zones or
+players, attachments, linked results and unrepresented compound tails remain
+residual. Search restrictions, replacements and search- or shuffle-trigger
+behavior require their separate capability owners.
 
 The same activated-effect owner admits closed fixed characteristic results
 through the existing resolution-created continuous-effect capability. It

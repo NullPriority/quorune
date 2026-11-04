@@ -25,7 +25,11 @@ def is_closed_per_player_target_program(program):
 
 def per_player_target_runtime_dependencies(program):
     schema=program.target_schema
-    if not isinstance(schema,Mapping) or not {'distinct_controllers','retain_controller'}&set(schema):return ()
+    def constrained(value):
+        if isinstance(value,Mapping):
+            return bool({'distinct_controllers','retain_controller'}&set(value)) or any(constrained(child) for child in value.values())
+        return isinstance(value,(list,tuple)) and any(constrained(child) for child in value)
+    if not constrained(schema):return ()
     inferred={ANY_NUMBER_TARGET_MECHANIC,FIXED_HOMOGENEOUS_TARGET_SET_MECHANIC,'cr-115-targets'}
     inferred.update(_OPERATION_MECHANICS[effect['op']] for effect in program.effects if effect.get('op') in _OPERATION_MECHANICS)
     required=per_player_target_node_capabilities(effects=program.effects,target_schema=schema,mechanic_ids=inferred)

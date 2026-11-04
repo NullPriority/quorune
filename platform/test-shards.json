@@ -1052,6 +1052,7 @@
       "test_intrinsic_mana_ability_loss",
       "test_kicker_rules",
       "test_leveler_bands",
+      "test_library_search_dispatch_native",
       "test_mutate_cast_metadata",
       "test_mutate_cast_native",
       "test_occurrence_player_target_native",

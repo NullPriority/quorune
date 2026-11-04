@@ -50,6 +50,8 @@ class PerPlayerTargetSetOwnerTests(unittest.TestCase):
             self.assertIn('target.set.one_per_player',capability_dependencies_for_node(effects=effects,target_schema=schema,mechanic_ids=mechanics))
             program=SimpleNamespace(effects=effects,target_schema=schema,coverage=())
             self.assertIn('target.set.one_per_player',per_player_target_runtime_dependencies(program))
+            with self.assertRaises(ValueError):
+                per_player_target_runtime_dependencies(SimpleNamespace(**{**vars(program),'target_schema':{'groups':[schema]}}))
             self.assertIn('target.set.one_per_player',announced_target_runtime_dependencies(SimpleNamespace(**{**vars(program),'coverage':mechanics})))
             for change in ({'distinct_controllers':False},{'retain_controller':False},{'controller_relation':'you'},{'up_to':6}):
                 with self.subTest(change=change),self.assertRaises(ValueError):

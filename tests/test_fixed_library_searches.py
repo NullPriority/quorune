@@ -65,6 +65,32 @@ def card_record(
 
 
 class FixedLibrarySearchCompilerTests(unittest.TestCase):
+    def test_counted_numeric_search_dispatch_preserves_reveal_pronouns_and_the_complete_selector(self):
+        from quorune.compiler.library_search_templates import fixed_counted_library_search_effect_template
+        from test_granted_skulk import record
+        registry = load_default_capability_registry()
+        for quantity, constraint in (("1 or less", {"maximum": 1}), ("2", {"equal": 2})):
+            text = ("Search your library for an artifact card with mana value " + quantity
+                    + ", reveal that card, put it into your hand, then shuffle.")
+            expected = fixed_counted_library_search_effect_template(text)
+            self.assertIsNotNone(expected)
+            actual = fixed_library_search_effect_template(text)
+            self.assertIsNotNone(actual)
+            self.assertEqual(expected.compiled(), actual.compiled())
+            effect = actual.compiled()[1][0]
+            self.assertEqual({"types": ["artifact"], "mana_value": constraint}, effect["selector"])
+            self.assertTrue(effect["reveal"])
+            for pronoun in ("that card", "it"):
+                source = text.replace("reveal that card", "reveal " + pronoun)
+                self.assertEqual("exact", compile_oracle_card(record(source, "Sorcery"), capability_registry=registry).status)
+                triggered = "When this creature enters, you may " + source[0].lower() + source[1:]
+                self.assertEqual("exact", compile_oracle_card(record(triggered, "Creature — Human Wizard"), capability_registry=registry).status)
+        for text in (
+                "Search your library for an artifact card with mana value 1 or less, reveal those cards, put it into your hand, then shuffle.",
+                "Search your library for an artifact card with mana value 1 or less, reveal that card, rewrite history, put it into your hand, then shuffle.",
+                "Search your library for an artifact card with mana value 1 or 2, reveal that card, put it into your hand, then shuffle."):
+            self.assertIsNone(fixed_library_search_effect_template(text))
+
     @classmethod
     def setUpClass(cls):
         cls.capabilities = load_default_capability_registry()
