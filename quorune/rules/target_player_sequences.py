@@ -36,8 +36,18 @@ def target_player_sequence_node_capabilities(*,effects,target_schema,mechanic_id
 
 def target_player_sequence_runtime_dependencies(program):
     if TARGET_PLAYER_SEQUENCE_MECHANIC not in program.coverage:return ()
-    required=target_player_sequence_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
-    if not required:raise ValueError('Shared player sequence lacks its closed child shapes and one target schema')
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+    scoped=composed_spell_family_runtime_dependencies(program,capability=TARGET_PLAYER_SEQUENCE_CAPABILITY,
+        mechanic=TARGET_PLAYER_SEQUENCE_MECHANIC)
+    if scoped is not None:return scoped
+    from .capabilities import capability_dependencies_for_node
+    # Runtime annotations are not printed mechanic inputs. The canonical owner
+    # projects amounts and decodes modal/conditional children in their own scope.
+    mechanics=set(program.coverage)-{'generated_oracle_ir','spell_resolution'}
+    required=capability_dependencies_for_node(effects=program.effects,target_schema=program.target_schema,
+        mechanic_ids=mechanics,cost_schema=getattr(program,'cost_schema',None))
+    if TARGET_PLAYER_SEQUENCE_CAPABILITY not in required:
+        raise ValueError('Shared player sequence lacks its closed child shapes and one target schema')
     return required
 
 

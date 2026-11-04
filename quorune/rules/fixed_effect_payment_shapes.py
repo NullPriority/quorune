@@ -33,8 +33,11 @@ def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],targe
             if result:return result
         return closed_effect_component_capabilities(effects,target_schema=target_schema,mechanics=mechanics)
     from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities
+    from .target_player_sequences import target_player_sequence_node_capabilities
+    from .target_set_result_sequences import target_set_result_sequence_capabilities
     for resolver in (fixed_controller_effect_sequence_node_capabilities,fixed_counter_controller_effect_sequence_node_capabilities,
-                     fixed_effect_clause_sequence_node_capabilities,closed_effect_program_node_capabilities):
+                     fixed_effect_clause_sequence_node_capabilities,target_player_sequence_node_capabilities,
+                     target_set_result_sequence_capabilities,closed_effect_program_node_capabilities):
         result=resolver(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
         if result:return result
     return ()

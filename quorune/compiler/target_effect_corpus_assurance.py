@@ -43,6 +43,7 @@ from .fixed_target_effect_sequences import (
     fixed_target_characteristics_effect_template,
     fixed_target_effect_sequence_template,
 )
+from .program_composition import DISTINCT_CLAUSE_TARGET_COVERAGE
 
 if TYPE_CHECKING:
     from .ir_model import OracleCardIR, OracleNode
@@ -50,7 +51,7 @@ if TYPE_CHECKING:
 
 
 ASSURANCE_SCHEMA_VERSION = 1
-ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v14"
+ASSURANCE_ALGORITHM_VERSION = "fixed-target-corpus-assurance-v15"
 STANDALONE_TEMPLATE_ID = (
     "fixed-target-characteristics-until-end-of-turn-v1"
 )
@@ -63,7 +64,7 @@ TARGET_TEMPLATE_IDS = frozenset(
 COMPOSING_TEMPLATE_IDS = frozenset(
     FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS
     | FIXED_TYPED_EVENT_EFFECT_TRIGGER_TEMPLATE_IDS
-    | {"fixed-source-exploit-result-v1", "fixed-expend-trigger-v1"}
+    | {"fixed-source-exploit-result-v1", "fixed-expend-trigger-v1", "public-query-characteristic-amount-v1", "linked-attack-exert-result-v1"}
 )
 SUPPORTED_CONTEXTS = (
     "activated_ability",
@@ -321,7 +322,8 @@ def rejected_target_effect_contracts() -> tuple[
         RejectedTargetEffectContract(
             "multi_target",
             "Target creature gets +1/+1 until end of turn. "
-            "Put a +1/+1 counter on target creature.",
+            "Another target creature gets -1/-1 until end of turn. "
+            "Another target creature gains flying until end of turn.",
         ),
     )
 
@@ -480,6 +482,13 @@ def synthetic_target_effect_contract(
 def grammar_source_fingerprint() -> str:
     """Fingerprint the exact parser and capability-shape implementation."""
 
+    from .declared_effect_amounts import declared_effect_amount_template
+    from .scalar_effect_amounts import scalar_effect_amount_template
+    from .public_query_effect_amounts import AMOUNT_MECHANIC_CAPABILITIES
+    from .public_query_effect_amounts import public_query_effect_amount_template
+    from .independent_target_rows import independent_target_source_rows
+    from .oracle_source_text import material_source_lines
+    from .exert_nodes import exert_attack_nodes
     values: Iterable[Any] = (
         FixedTargetCharacteristicsTemplate.__post_init__,
         FixedTargetCharacteristicsTemplate.compiled,
@@ -500,17 +509,27 @@ def grammar_source_fingerprint() -> str:
         variant_spec,
         _paired_spell_resolution_body,
         _resolution_body,
+        _independent_target_resolution_body,
         _compiled_template,
         _compiled_source_template,
+        declared_effect_amount_template,
+        scalar_effect_amount_template,
+        public_query_effect_amount_template,
+        independent_target_source_rows,
+        material_source_lines,
         announced_x_activation_cost,
         announced_x_activation_effect,
         activation_x_symbols,
         _required_capabilities,
         _composing_event_capabilities,
+        _exert_composition_capabilities,
+        exert_attack_nodes,
     )
     payload = {
         "algorithm_version": ASSURANCE_ALGORITHM_VERSION,
         "keywords": sorted(FIXED_TARGET_CHARACTERISTIC_KEYWORDS),
+        "amount_mechanic_capabilities": AMOUNT_MECHANIC_CAPABILITIES,
+        "distinct_clause_target_coverage": DISTINCT_CLAUSE_TARGET_COVERAGE,
         "sources": [inspect.getsource(value) for value in values],
     }
     return _sha256(payload)
@@ -582,6 +601,30 @@ def _paired_spell_resolution_body(record: CardRecord, node: OracleNode) -> str |
     return body
 
 
+def _independent_target_resolution_body(record, node, *, face_index, face_name):
+    """Recover a previous-clause reference only from its complete printed owner."""
+    from .independent_target_rows import independent_target_source_rows
+    from .oracle_source_text import material_source_lines
+    from ..characteristic_evaluation import type_parts
+    from ..oracle_ir import _reviewed_effect_template
+    raw=record.faces[face_index] if record.faces else {}
+    oracle_text=raw.get('oracle_text',record.oracle_text)
+    type_line=raw.get('type_line',record.type_line)
+    kinds=type_parts(type_line)[0]
+    if node.kind!='spell_ability' or not {'instant','sorcery'}.intersection(kinds):
+        raise TargetEffectAssuranceError('Previous-clause target context requires a printed spell source')
+    rows=list(material_source_lines(oracle_text,layout=record.layout,type_line=type_line))
+    expanded,distinct=independent_target_source_rows(rows,source_name=face_name or record.name,
+        compile_effect=lambda text,card_name:_reviewed_effect_template(text,card_name=card_name,
+            source_is_permanent=False,source_card_types=tuple(sorted(kinds)),
+            cast_x_available='{X}' in (raw.get('mana_cost',record.mana_cost) or '')))
+    key=(node.span.start,node.span.end)
+    matches=[material for line,material,span in expanded if (span.start,span.end)==key and line==node.text]
+    if key not in distinct or len(matches)!=1:
+        raise TargetEffectAssuranceError('Previous-clause target marker does not match its complete printed source')
+    return ' '.join(matches[0].split())
+
+
 def _resolution_body(
     record: CardRecord,
     node: OracleNode,
@@ -596,6 +639,8 @@ def _resolution_body(
         _without_parenthetical_reminder(node.text).strip().split()
     )
     if node.kind == "spell_ability":
+        if DISTINCT_CLAUSE_TARGET_COVERAGE in node.runtime_coverage:
+            return _independent_target_resolution_body(record,node,face_index=face_index,face_name=face_name)
         ability_word = _ABILITY_WORD.fullmatch(text)
         return ability_word.group("body") if ability_word else text
     if node.kind in {
@@ -639,9 +684,20 @@ def _compiled_template(
     )
     if sequence is not None:
         return sequence.compiled()
+    from .public_query_effect_amounts import public_query_effect_amount_template
+    base_template=[]
+    def compile_fixed(text):
+        compiled=_compiled_template(text,card_name=card_name)
+        if compiled is not None and compiled[0] in TARGET_TEMPLATE_IDS:base_template.append(compiled[0])
+        return compiled or (None,(),None,())
+    public=public_query_effect_amount_template(body,source_name=card_name,compile_fixed=compile_fixed)
+    if public is not None and base_template:
+        return base_template[-1],public[1],public[2],public[3]
     from .scalar_effect_amounts import scalar_effect_amount_template
-    return scalar_effect_amount_template(body, source_name=card_name,
-        compile_fixed=lambda text: _compiled_template(text, card_name=card_name) or (None, (), None, ()))
+    scalar=scalar_effect_amount_template(body,source_name=card_name,compile_fixed=compile_fixed)
+    if scalar is not None:return scalar
+    from .declared_effect_amounts import declared_effect_amount_template
+    return declared_effect_amount_template(body,source_name=card_name,compile_fixed=compile_fixed)
 
 
 def _compiled_source_template(body, *, record, node, face_index, face_name):
@@ -713,7 +769,7 @@ def _required_capabilities(
         if target_template_id == STANDALONE_TEMPLATE_ID
         else fixed_target_effect_sequence_node_capabilities
     )
-    from .public_query_effect_amounts import public_query_amount_shape_context, declared_amount_dependencies
+    from .public_query_effect_amounts import public_query_amount_shape_context, declared_amount_dependencies, AMOUNT_MECHANIC_CAPABILITIES
     variants = tuple(kind for kind in SpellTextVariantKind if kind.boundary in node.runtime_coverage)
     context = public_query_amount_shape_context(node.effects, set(node.mechanics) - {kind.value for kind in variants})
     if context is None:
@@ -724,12 +780,42 @@ def _required_capabilities(
         target_schema=node.target_schema,
         mechanic_ids=fixed_mechanics,
     )
-    return tuple(sorted(set(fixed) | declared_amount_dependencies(set(node.mechanics))
+    amounts={cap for mechanic,caps in AMOUNT_MECHANIC_CAPABILITIES.items() if mechanic in node.mechanics for cap in caps}
+    return tuple(sorted(set(fixed) | declared_amount_dependencies(set(node.mechanics)) | amounts
         | {kind.capability for kind in variants})) if fixed else ()
 
 
-def _composing_event_capabilities(node: OracleNode) -> tuple[str, ...]:
-    """A known Expend wrapper must preserve its complete printed binding."""
+def _exert_composition_capabilities(node, *, record, face_id, face_index, face_name):
+    from .exert_nodes import exert_attack_nodes
+    from .oracle_source_text import material_source_lines
+    from ..characteristic_evaluation import type_parts
+    from ..oracle_ir import _reviewed_effect_template
+    from ..rules.capabilities import load_default_capability_registry
+    raw=record.faces[face_index] if record.faces else {}
+    kinds=type_parts(raw.get('type_line',record.type_line))[0]
+    rows=material_source_lines(raw.get('oracle_text',record.oracle_text),layout=record.layout,
+        type_line=raw.get('type_line',record.type_line))
+    if (not node.node_id.endswith(':exert-result') or not any(line==node.text and span==node.span for line,_material,span in rows)):
+        raise TargetEffectAssuranceError('Composed Exert target effect lost its complete printed source')
+    rebuilt=exert_attack_nodes(record=record,face_id=face_id,node_id=node.node_id.removesuffix(':exert-result'),
+        line=node.text,material_line=_without_parenthetical_reminder(node.text),span=node.span,source_name=face_name or record.name,
+        effect_template=lambda text,card_name:_reviewed_effect_template(text,card_name=card_name,
+            source_is_permanent=not {'instant','sorcery'}.intersection(kinds),source_card_types=tuple(sorted(kinds))),
+        capability_registry=load_default_capability_registry(),capability_profile=node.capability_profile or 'commander_review',residuals=[])
+    if rebuilt is None:
+        raise TargetEffectAssuranceError('Composed Exert target effect has no closed printed binding')
+    expected=rebuilt[1]
+    if (node.kind!=expected.kind or node.event!=expected.event or node.active_zone!=expected.active_zone
+            or stable_json(node.event_condition)!=stable_json(expected.event_condition)
+            or not set(expected.runtime_coverage).issubset(node.runtime_coverage)):
+        raise TargetEffectAssuranceError('Composed Exert target effect lost its printed event binding')
+    return expected.capability_dependencies
+
+
+def _composing_event_capabilities(node: OracleNode, *, record, face_id, face_index, face_name) -> tuple[str, ...]:
+    """Known wrappers must preserve their complete printed event binding."""
+    if node.template_id=='linked-attack-exert-result-v1':
+        return _exert_composition_capabilities(node,record=record,face_id=face_id,face_index=face_index,face_name=face_name)
     if node.template_id != 'fixed-expend-trigger-v1':
         return ()
     from .fixed_public_action_event_bindings import fixed_public_action_event_binding_spec
@@ -787,7 +873,8 @@ def _observation(
         )
     if cost_capability is not None:
         required = tuple(sorted({*required, cost_capability}))
-    required = tuple(sorted({*required, *_composing_event_capabilities(node)}))
+    required = tuple(sorted({*required, *_composing_event_capabilities(node,record=record,
+        face_id=face_id,face_index=face_index,face_name=face_name)}))
     missing = sorted(set(required) - set(node.capability_dependencies))
     if missing:
         raise TargetEffectAssuranceError(

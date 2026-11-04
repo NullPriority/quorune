@@ -190,7 +190,11 @@ def temporary_target_interaction_node_capabilities(
         if operation == "regenerate":
             if set(effect) != {"op", "card"} or effect.get("card") != "$target.0":
                 return ()
-            dependencies.add("permanent.regeneration.fixed_effect")
+            from .destruction_regeneration_capability_shapes import self_regeneration_node_capabilities
+            owned=self_regeneration_node_capabilities(effects=(effect,),target_schema=target_schema,
+                mechanic_ids={'regenerate','cr-115-targets'})
+            if not owned:return ()
+            dependencies.update(owned)
             continue
         return ()
     return tuple(sorted(dependencies))

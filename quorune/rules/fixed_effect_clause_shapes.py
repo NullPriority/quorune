@@ -248,6 +248,11 @@ def closed_effect_component_capabilities(
     )
     if optional:
         return optional
+    from .target_player_sequences import target_player_sequence_node_capabilities
+    from .target_set_result_sequences import target_set_result_sequence_capabilities
+    for resolver in (target_player_sequence_node_capabilities,target_set_result_sequence_capabilities):
+        owned=resolver(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+        if owned:return owned
     dependencies: set[str] = set()
     for resolver in _COMPONENT_RESOLVERS:
         component_mechanics = mechanics

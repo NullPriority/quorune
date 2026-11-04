@@ -570,6 +570,11 @@ receipts plus the transition-measurement receipt are content identities with no
 feature-commit field. They survive squash, so review, merge, and the next
 selector pass require neither a merge-commit association nor a bookkeeping
 follow-up.
+A compiler correction within the same unpublished delivery keeps its bundle,
+candidate, and measurement identities. Update the compiler and transition
+identities to describe the corrected source. The history owner authenticates
+the original durable-main base before replacing the unpublished outcome;
+renaming the bundle would instead declare a different delivery.
 A prediction keeps its original measurement frontier when conservative main
 updates advance an unmerged delivery's outcome base. The producer recovers
 that exact frontier through validated non-harvest receipt links and checks its

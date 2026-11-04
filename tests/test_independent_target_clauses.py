@@ -7,6 +7,28 @@ from test_granted_skulk import record
 
 
 class IndependentTargetClauseCompilerTests(unittest.TestCase):
+    def test_independent_bounded_target_sets_do_not_become_one_shared_set(self):
+        from test_public_query_effect_amounts import query_amount_record,_NoRulingsDatabase
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        text=('Target opponent loses 1 life and you gain 1 life.\n'
+            'Up to one target creature gets +1/+1 until end of turn.\n'
+            'Up to one target creature gets -1/-1 until end of turn.')
+        registry=load_default_capability_registry()
+        program=compile_card_program(_NoRulingsDatabase(),query_amount_record(text,suffix=365211711),
+            capability_registry=registry,capability_profile='commander_review',trust_level='trusted')
+        self.assertEqual(3,len(program.abilities[0].target_schema['groups']))
+        bound=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
+        self.assertTrue(bound['strict_capability_ready'],bound['blockers'])
+        from copy import deepcopy
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        ability=program.abilities[0];effects=deepcopy(ability.effects)
+        self.assertIn('cards',effects[1]);self.assertIn('cards',effects[2])
+        effects[2]['cards']=effects[1]['cards']
+        bad=replace(ability,effects=effects)
+        bound=bind_semantic_program_runtime(bad,capability_registry=registry,profile='commander_review')
+        self.assertFalse(bound['strict']);self.assertTrue(any('component owners and target roles' in b for b in bound['blockers']))
+
     def program(self,text):
         registry=load_default_capability_registry();card=record(text,'Instant')
         ir=compile_oracle_card(card,capability_registry=registry)
@@ -28,6 +50,31 @@ class IndependentTargetClauseCompilerTests(unittest.TestCase):
         _ir,program=self.program(text)
         self.assertEqual(2,len(program.target_schema['groups']));self.assertFalse(program.target_schema.get('globally_distinct',False))
         self.assertEqual(['$target_group.clause_0.0','$target_group.clause_1.0'],[e['card'] for e in program.effects])
+
+    def test_target_source_audit_keeps_previous_clause_distinctness_and_rejects_forged_context(self):
+        from dataclasses import replace
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector,TargetEffectAssuranceError
+        from quorune.compiler.program_composition import DISTINCT_CLAUSE_TARGET_COVERAGE
+        text='Target creature gets +1/+1 until end of turn. Another target creature gets -1/-1 until end of turn.'
+        card=record(text,'Instant');ir,_program=self.program(text)
+        collector=TargetEffectCorpusCollector();collector.observe(card,ir);self.assertEqual(2,len(collector._observations))
+        face=ir.faces[0];first,second=face.nodes
+        changed=replace(second,runtime_coverage=tuple(v for v in second.runtime_coverage if v!=DISTINCT_CLAUSE_TARGET_COVERAGE))
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'differs from source lowering'):
+            TargetEffectCorpusCollector().observe(card,replace(ir,faces=(replace(face,nodes=(first,changed)),)))
+        changed=replace(first,runtime_coverage=(*first.runtime_coverage,DISTINCT_CLAUSE_TARGET_COVERAGE))
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'does not match its complete printed source'):
+            TargetEffectCorpusCollector().observe(card,replace(ir,faces=(replace(face,nodes=(changed,second)),)))
+
+    def test_stat_and_counter_source_keeps_leaf_rejection_and_complete_independent_composition(self):
+        from quorune.compiler.fixed_target_effect_sequences import fixed_target_effect_sequence_template,fixed_target_characteristics_effect_template
+        text='Target creature gets +1/+1 until end of turn. Put a +1/+1 counter on target creature.'
+        self.assertIsNone(fixed_target_characteristics_effect_template(text))
+        self.assertIsNone(fixed_target_effect_sequence_template(text,card_name='Generic Source'))
+        ir,program=self.program(text)
+        self.assertEqual(2,len(ir.faces[0].nodes));self.assertEqual(2,len(program.target_schema['groups']))
+        self.assertFalse(program.target_schema.get('globally_distinct',False))
+        self.assertEqual(2,len(program.effects));self.assertEqual((1,1),(program.effects[0]['power'],program.effects[0]['toughness']))
 
     def test_unrepresented_sibling_choices_and_ambiguous_another_chains_stay_residual(self):
         registry=load_default_capability_registry()

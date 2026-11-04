@@ -18,6 +18,86 @@ class NoncreatureSubtypeQuantityCompilerTests(unittest.TestCase):
     def quantity(self, text):
         return query_characteristic_quantity(text, source_name='Generic Source', definition_extensions=True)
 
+    def declared_target_fixture(self):
+        from dataclasses import replace
+        text=('When this creature enters, create a Blood token.\n'
+            '{T}, Sacrifice this creature: Target creature gets -X/-X until end of turn, '
+            'where X is twice the number of Blood tokens you control. Activate only as a sorcery.')
+        record=replace(generic_spell(text,mana_cost='{B}{R}'),name='Generic Declared Blood Quantity',
+            type_line='Creature — Vampire',power='2',toughness='2',keywords=())
+        ir=compile_oracle_card(record,capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        node=next(node for face in ir.faces for node in face.nodes if any(effect.get('op')=='modify_stats_until_end_of_turn' for effect in node.effects))
+        return record,ir,node
+
+    def test_declared_public_target_amount_is_audited_through_its_complete_source(self):
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector
+        record,ir,node=self.declared_target_fixture();collector=TargetEffectCorpusCollector();collector.observe(record,ir)
+        self.assertEqual(1,len(collector._observations))
+        amount=node.effects[0]['power'];query=amount['quantity']['query']
+        self.assertEqual((2,-1,2),(amount['schema_version'],amount['coefficient'],amount['quantity']['multiplier']))
+        self.assertEqual((['artifact'],['blood'],True),(query['types_all'],query['subtypes_all'],query['token']))
+
+    def test_declared_target_audit_rejects_changed_quantity_coefficient_and_source(self):
+        from copy import deepcopy
+        from dataclasses import replace
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector,TargetEffectAssuranceError
+        record,ir,node=self.declared_target_fixture()
+        def changed_ir(changed):
+            face=ir.faces[0]
+            return replace(ir,faces=(replace(face,nodes=tuple(changed if other.node_id==node.node_id else other for other in face.nodes)),))
+        effects=deepcopy(node.effects);effects[0]['power']['coefficient']=-2
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'differs from source lowering'):
+            TargetEffectCorpusCollector().observe(record,changed_ir(replace(node,effects=effects)))
+        effects=deepcopy(node.effects);effects[0]['power']['quantity']['query']['subtypes_all']=['treasure']
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'differs from source lowering'):
+            TargetEffectCorpusCollector().observe(record,changed_ir(replace(node,effects=effects)))
+        changed=replace(node,text=node.text.replace('Blood tokens you control','secrets you remember'))
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'outside the exact source grammar'):
+            TargetEffectCorpusCollector().observe(record,changed_ir(changed))
+
+    def test_declared_target_audit_requires_the_public_amount_dependency(self):
+        from dataclasses import replace
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector,TargetEffectAssuranceError
+        record,ir,node=self.declared_target_fixture();cap='quantity_expression.public_query_effect_amount'
+        self.assertIn(cap,node.capability_dependencies)
+        changed=replace(node,capability_dependencies=tuple(value for value in node.capability_dependencies if value!=cap))
+        face=ir.faces[0];mutated=replace(ir,faces=(replace(face,nodes=tuple(changed if other.node_id==node.node_id else other for other in face.nodes)),))
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'lost required capabilities'):
+            TargetEffectCorpusCollector().observe(record,mutated)
+
+    def test_public_target_quantity_wrapper_is_audited_without_changing_its_amount_kind(self):
+        from dataclasses import replace
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector
+        for text,kind in (('Target creature gets +X/+X until end of turn, where X is the number of Elves on the battlefield.','Sorcery'),
+                ('Whenever this creature attacks, target creature gets +X/+X until end of turn, where X is the number of Shrines you control.','Creature — Elf')):
+            card=replace(generic_spell(text,mana_cost='{2}{G}'),type_line=kind,
+                power='2' if 'Creature' in kind else None,toughness='2' if 'Creature' in kind else None)
+            ir=compile_oracle_card(card,capability_registry=self.registry,capability_profile='commander_review')
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            collector=TargetEffectCorpusCollector();collector.observe(card,ir);self.assertEqual(1,len(collector._observations))
+            node=next(n for f in ir.faces for n in f.nodes if any(e.get('op')=='modify_stats_until_end_of_turn' for e in n.effects))
+            self.assertEqual(1,node.effects[0]['power']['schema_version'])
+
+    def test_public_target_quantity_exert_wrapper_keeps_link_and_dependency_authority(self):
+        from dataclasses import replace
+        from copy import deepcopy
+        from quorune.compiler.target_effect_corpus_assurance import TargetEffectCorpusCollector,TargetEffectAssuranceError
+        text='You may exert this creature as it attacks. When you do, target creature gets +X/+X until end of turn, where X is the number of Shrines you control.'
+        card=replace(generic_spell(text,mana_cost='{2}{G}'),type_line='Creature — Elf',power='2',toughness='2')
+        ir=compile_oracle_card(card,capability_registry=self.registry,capability_profile='commander_review')
+        collector=TargetEffectCorpusCollector();collector.observe(card,ir);self.assertEqual(1,len(collector._observations))
+        face=ir.faces[0];node=next(n for n in face.nodes if n.template_id=='linked-attack-exert-result-v1')
+        condition=deepcopy(node.event_condition);condition['all'][1]['value']='unrelated:exert:key'
+        changed=replace(node,event_condition=condition)
+        mutated=replace(ir,faces=(replace(face,nodes=tuple(changed if n.node_id==node.node_id else n for n in face.nodes)),))
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'lost its printed event binding'):
+            TargetEffectCorpusCollector().observe(card,mutated)
+        changed=replace(node,capability_dependencies=tuple(v for v in node.capability_dependencies if v!='combat.attack.exert'))
+        mutated=replace(ir,faces=(replace(face,nodes=tuple(changed if n.node_id==node.node_id else n for n in face.nodes)),))
+        with self.assertRaisesRegex(TargetEffectAssuranceError,'lost required capabilities'):
+            TargetEffectCorpusCollector().observe(card,mutated)
+
     def test_canonical_subtypes_keep_card_type_zone_plural_and_token_semantics(self):
         for text, kinds, subtype, token, zone in (
             ('Shrines you control', ('enchantment',), 'shrine', None, 'battlefield'),

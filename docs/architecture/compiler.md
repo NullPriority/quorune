@@ -484,6 +484,21 @@ schema and ordinary keyword grant. A distinct instruction identity preserves
 different coefficient forms. Ambiguous references and unrepresented scalar
 coefficients remain residual.
 
+The target-source corpus audit reconstructs numeric wrappers through the
+same closed public and declared-amount owners, preserving their distinct
+binding schemas. Previous-clause target references require the complete
+printed independent-target context. Linked Exert results retain their exact
+printed event key and mandatory amount, target and Exert dependencies.
+
+Runtime ownership checks preserve the producer's scope. Symbolic amounts are
+projected through their existing amount owner; modal and conditional results
+use the canonical branch schemas. Composed spells validate their original
+component spans, target roles and complete primitive dependencies before a
+family is inferred. Independent bounded target sets do not form a shared-set
+sequence across component boundaries. Payment and reflexive bodies retain the
+owner of a complete shared-player or shared-set result, and regeneration in a
+temporary interaction declares the complete canonical regeneration primitive.
+
 Scalar token-quantity lowering accepts the complete “create a number of …
 tokens equal to …” form by normalizing only its quantity to the existing
 declared-X result. Fixed token characteristics, tapped entry and abilities

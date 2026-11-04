@@ -11919,6 +11919,28 @@
         "test_public_scalar_stat_definitions",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "batch-retained-result-ownership-scopes",
+      "patterns": [
+        "quorune/compiler/program_composition.py",
+        "quorune/rules/target_player_sequences.py",
+        "quorune/rules/target_set_result_sequences.py",
+        "quorune/rules/fixed_effect_clause_shapes.py",
+        "quorune/rules/fixed_effect_payment_shapes.py",
+        "quorune/rules/temporary_target_interaction_shapes.py",
+        "tests/test_batch_admission_retention.py",
+        "tests/fixtures/batch-admission-retention-cards.json"
+      ],
+      "test_modules": [
+        "test_batch_admission_retention",
+        "test_target_player_sequences",
+        "test_independent_target_clauses",
+        "test_temporary_target_interactions",
+        "test_reflexive_payments",
+        "test_source_sacrifice_payments",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

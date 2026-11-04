@@ -75,7 +75,7 @@ def _fixture(players: int, permanents: int, descriptors: int):
                 ),
             )
         player_rows[seat] = SimpleNamespace(
-            zones={"battlefield": battlefield,"graveyard":[],"exile":[]}
+            zones={"battlefield": battlefield,"graveyard":[],"exile":[],"command":[]}
         )
 
     class Semantics:

@@ -50,6 +50,17 @@ def target_set_result_sequence_runtime_dependencies(program):
     effects=program.effects
     target_leaves=[e for e in effects if isinstance(e,Mapping) and (e.get('op') in _TARGET_OPERATIONS-{CHARACTERISTICS}
         or e.get('op')==CHARACTERISTICS and (e.get('schema_version')==6 or 'maximum_targets' in e))]
+    if len(target_leaves)<2 and TARGET_SET_SEQUENCE_MECHANIC not in program.coverage:return ()
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+    scoped=composed_spell_family_runtime_dependencies(program,capability=TARGET_SET_SEQUENCE_CAPABILITY,
+        mechanic=TARGET_SET_SEQUENCE_MECHANIC)
+    if scoped is not None:return scoped
+    if TARGET_SET_SEQUENCE_MECHANIC in program.coverage:
+        from .capabilities import capability_dependencies_for_node
+        required=capability_dependencies_for_node(effects=effects,target_schema=program.target_schema,
+            mechanic_ids=set(program.coverage)-{'generated_oracle_ir','spell_resolution'},
+            cost_schema=getattr(program,'cost_schema',None))
+        if TARGET_SET_SEQUENCE_CAPABILITY in required:return required
     if len(target_leaves)<2:
         if TARGET_SET_SEQUENCE_MECHANIC in program.coverage:raise ValueError('Same-set sequence marker has no shared target results')
         return ()

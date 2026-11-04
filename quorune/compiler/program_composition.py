@@ -277,6 +277,20 @@ def is_closed_composed_spell_effect_program(
     )
 
 
+def composed_spell_family_runtime_dependencies(program, *, capability, mechanic):
+    """Respect validated component scopes before inferring a shared family."""
+    provenance=getattr(program,'provenance',None)
+    if not isinstance(provenance,Mapping) or provenance.get('template_id') != COMPOSED_SPELL_EFFECT_SEQUENCE:
+        return None
+    from .program_generation import _closed_effect_recognizers
+    if not is_closed_composed_spell_effect_program(program,
+            component_recognizers=_closed_effect_recognizers()):
+        raise ValueError('Composed effect scopes lack their exact component owners and target roles')
+    if mechanic in program.coverage and capability not in program.capability_dependencies:
+        raise ValueError('Composed effect scope lost its required family owner')
+    return (capability,) if capability in program.capability_dependencies else ()
+
+
 def _validated_group_identity(
     nodes: tuple[Any, ...],
     *,

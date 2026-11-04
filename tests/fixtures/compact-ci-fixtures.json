@@ -346,6 +346,7 @@
     "tests/fixtures/backup-cards.json",
     "tests/fixtures/banding-cards.json",
     "tests/fixtures/bargain-cards.json",
+    "tests/fixtures/batch-admission-retention-cards.json",
     "tests/fixtures/batch-interaction-recovery-cards.json",
     "tests/fixtures/batched-public-assurance-cards.json",
     "tests/fixtures/batched-support-assurance-cards.json",

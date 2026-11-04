@@ -30235,14 +30235,15 @@
       "dependency_fail_closed_status": "passed",
       "id": "continuous.resolution.temporary_target_interactions",
       "implementation_components": [
-        "quorune.compiler.temporary_target_interactions.temporary_target_interaction_effect_template",
         "quorune.compiler.temporary_target_interactions.restrict_temporary_interaction_context",
+        "quorune.compiler.temporary_target_interactions.temporary_target_interaction_effect_template",
+        "quorune.continuous_effect_state.create_resolution_continuous_effect",
         "quorune.effect_runtime.temporary_target_interactions.temporary_keyword_operations",
         "quorune.effect_runtime.temporary_target_interactions.temporary_target_condition_matches",
+        "quorune.rules.destruction_regeneration_capability_shapes.self_regeneration_node_capabilities",
         "quorune.rules.temporary_target_interaction_shapes.temporary_target_interaction_node_capabilities",
         "quorune.rules.temporary_target_interactions.TargetConditionSpec",
-        "quorune.semantic_choices.scalar.ChooseOptionHandler",
-        "quorune.continuous_effect_state.create_resolution_continuous_effect"
+        "quorune.semantic_choices.scalar.ChooseOptionHandler"
       ],
       "implementation_mutation_rationale": "The focused compiler mutation removes the complete temporary-target production, and exact descriptor, capability, action, and consequence assertions reject the missing production or malformed shape.",
       "implementation_mutation_status": "killed",
@@ -54315,11 +54316,13 @@
       "dependency_fail_closed_status": "passed",
       "id": "resolution.effect.fixed_target_player_sequence",
       "implementation_components": [
+        "quorune.compiler.effect_template_composition.reviewed_effect_template_composition",
+        "quorune.compiler.program_composition.composed_spell_family_runtime_dependencies",
         "quorune.compiler.target_player_sequences.fixed_target_player_sequence_template",
-        "quorune.rules.target_player_sequences.target_player_sequence_node_capabilities",
-        "quorune.rules.target_player_sequences.target_player_sequence_runtime_dependencies",
+        "quorune.rules.fixed_effect_payment_shapes.fixed_payment_result_capabilities",
         "quorune.rules.target_player_sequences.is_closed_target_player_sequence_program",
-        "quorune.compiler.effect_template_composition.reviewed_effect_template_composition"
+        "quorune.rules.target_player_sequences.target_player_sequence_node_capabilities",
+        "quorune.rules.target_player_sequences.target_player_sequence_runtime_dependencies"
       ],
       "implementation_mutation_rationale": "Replacing the announced mill player with the controller fails the independent shared-target assertion.",
       "implementation_mutation_status": "killed",
@@ -56885,10 +56888,11 @@
       "dependency_fail_closed_status": "passed",
       "id": "resolution.target_set.ordered_results",
       "implementation_components": [
+        "quorune.compiler.program_composition.composed_spell_family_runtime_dependencies",
+        "quorune.compiler.program_generation._closed_effect_recognizers",
         "quorune.compiler.target_set_result_sequences.target_set_result_sequence_template",
         "quorune.rules.target_set_result_sequences.target_set_result_sequence_capabilities",
         "quorune.rules.target_set_result_sequences.target_set_result_sequence_runtime_dependencies",
-        "quorune.compiler.program_generation._closed_effect_recognizers",
         "quorune.selection.targeting.TargetSelectionOwnerMixin"
       ],
       "implementation_mutation_rationale": "Omitting the follow-up result fails independent source-grounded ordered-effect expectations.",
@@ -78096,7 +78100,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 696,
+  "registry_version": 697,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

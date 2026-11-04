@@ -9,6 +9,64 @@ CAPABILITY='resolution.effect.fixed_target_player_sequence'
 
 
 class TargetPlayerSequenceCompilerTests(unittest.TestCase):
+    def test_nested_player_sequence_rejects_missing_owner_and_bad_sibling_target(self):
+        from copy import deepcopy
+        from types import SimpleNamespace
+        from test_public_query_effect_amounts import query_amount_record,_NoRulingsDatabase
+        from quorune.card_programs import compile_card_program
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.target_player_sequences import target_player_sequence_runtime_dependencies
+        text=('Choose one —\n• Target player draws two cards and loses 2 life.\n'
+            '• Target player draws three cards and loses 3 life.')
+        registry=load_default_capability_registry()
+        card=query_amount_record(text,suffix=365211712)
+        ability=compile_card_program(_NoRulingsDatabase(),card,capability_registry=registry,
+            capability_profile='commander_review',trust_level='trusted').abilities[0]
+        self.assertIn(CAPABILITY,ability.capability_dependencies)
+        dependencies=tuple(value for value in ability.capability_dependencies if value!=CAPABILITY)
+        missing=replace(ability,capability_dependencies=dependencies,
+            capability_closure=registry.closure(dependencies,profile='commander_review').to_dict())
+        bound=bind_semantic_program_runtime(missing,capability_registry=registry,profile='commander_review')
+        self.assertFalse(bound['strict']);self.assertTrue(any('undeclared_runtime_dependency:'+CAPABILITY in b for b in bound['blockers']))
+        schema=deepcopy(ability.target_schema)
+        list(schema['modes'].values())[-1]['effects'][1]['player']='$target.9'
+        bad=SimpleNamespace(effects=ability.effects,target_schema=schema,coverage=ability.coverage,
+            cost_schema=ability.cost_schema,provenance=ability.provenance,capability_dependencies=ability.capability_dependencies)
+        with self.assertRaises(ValueError):target_player_sequence_runtime_dependencies(bad)
+
+    def test_reflexive_sacrifice_keeps_the_shared_player_result_owner(self):
+        from test_public_query_effect_amounts import query_amount_record,_NoRulingsDatabase
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        text='When this creature enters, you may sacrifice a creature. When you do, target player draws two cards and loses 2 life.'
+        card=query_amount_record(text,suffix=365211710,type_line='Creature — Human')
+        registry=load_default_capability_registry()
+        ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        program=compile_card_program(_NoRulingsDatabase(),card,capability_registry=registry,
+            capability_profile='commander_review',trust_level='trusted')
+        bound=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
+        self.assertTrue(bound['strict_capability_ready'],bound['blockers'])
+
+    def test_symbolic_conditional_and_modal_player_sequences_bind_their_owned_child_scopes(self):
+        from test_public_query_effect_amounts import query_amount_record,_NoRulingsDatabase
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        registry=load_default_capability_registry()
+        cases=(
+            ('Target player draws X cards and loses X life.','{X}{B}{B}'),
+            ('Target player draws X cards and loses X life, where X is the number of artifacts you control.','{3}{B}{B}'),
+            ('Target player draws two cards and loses 2 life.\nAdamant — If at least three black mana was spent to cast this spell, create a Food token.','{2}{B}'),
+            ('Choose one —\n• Target player discards two cards.\n• Target player draws two cards and loses 2 life.','{2}{B}'),
+            ('Choose two —\n• Target creature gets +3/+3 and gains flying until end of turn.\n• Target player draws a card and loses 1 life.\n• Target opponent sacrifices a creature of their choice.','{2}{W}{B}'),
+            ('Spree\n+ {2} — Search your library for a card, then shuffle and put that card on top.\n+ {B}{B} — Target player draws three cards and loses 3 life.','{B}'),
+        )
+        for index,(text,cost) in enumerate(cases):
+            with self.subTest(text=text):
+                card=replace(query_amount_record(text,suffix=365211700+index),mana_cost=cost)
+                program=compile_card_program(_NoRulingsDatabase(),card,capability_registry=registry,
+                    capability_profile='commander_review',trust_level='trusted')
+                bound=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
+                self.assertTrue(bound['strict_capability_ready'],bound['blockers'])
+
     def test_activated_and_triggered_shells_use_the_same_closed_sequence(self):
         body='Target player mills two cards, draws two cards, and loses 2 life.'
         for text in ('{2}, {T}: '+body,'When this creature enters, '+body.lower()):
