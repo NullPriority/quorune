@@ -321,6 +321,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'commander-learn': ('keyword_action.learn.commander',),
     'half-current-player-life-loss': ('life.loss.half_current_player',),
     'half-affected-player-domain-choice': ('choice.affected_player.half_domain',),
+    'alternative-quality-discard': ('choice.affected_player.alternative_discard',),
     'fixed-token-typed-ability-definition': ('token.creation.typed_ability_definition',),
     'fixed-spree-mode-costs': ('casting.additional_cost.spree_fixed_modes',),
     'fixed-entwine-mode-costs': ('casting.additional_cost.entwine_fixed_modes',),
@@ -533,6 +534,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
 }
 _SHAPE_GATED_MECHANICS = frozenset(
     {
+        'alternative-quality-discard',
         'shared-target-set-result-sequence',
         'fixed-target-entry-counter-reanimation',
         'fixed-per-player-target-set',

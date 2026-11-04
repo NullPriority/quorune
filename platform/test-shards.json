@@ -1006,6 +1006,7 @@
       "test_activation_result_authority",
       "test_actual_life_transfer_native",
       "test_additional_token_definitions",
+      "test_alternative_private_discards",
       "test_announced_x_additional_costs",
       "test_another_sacrifice_native",
       "test_another_sacrifice_payments",

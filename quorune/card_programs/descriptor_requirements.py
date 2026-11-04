@@ -7,6 +7,10 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..alternative_discard_model import alternative_discard_runtime_dependencies
+        alternative=alternative_discard_runtime_dependencies(value)
+        if alternative:return tuple(sorted({*alternative,*(cap for child in value.values()
+            for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         if value.get('op') == 'creature_power_damage':
             from ..creature_power_damage_model import creature_power_damage_multiplier, CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY
             if creature_power_damage_multiplier(value) == 2:

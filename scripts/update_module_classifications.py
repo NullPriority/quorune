@@ -46,6 +46,7 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
+    if relative=='quorune/alternative_discard_model.py':return 'domain'
     if relative=='quorune/delayed_object_model.py':return 'domain'
     if relative=='quorune/block_characteristic_model.py':return 'domain'
     if relative=='quorune/unblocked_attacker_model.py':return 'domain'

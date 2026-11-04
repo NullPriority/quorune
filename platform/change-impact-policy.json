@@ -11560,6 +11560,29 @@
         "test_variable_independent_life",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "alternative-private-discard",
+      "patterns": [
+        "quorune/alternative_discard_model.py",
+        "quorune/compiler/alternative_discard_templates.py",
+        "quorune/compiler/fixed_controller_effect_sequences.py",
+        "quorune/rules/alternative_discard_shapes.py",
+        "quorune/selection/alternative_discard.py",
+        "quorune/selection/apnap.py",
+        "quorune/selection/fractional_counts.py",
+        "quorune/choice_forms.py",
+        "tests/test_alternative_private_discards.py",
+        "tests/fixtures/alternative-private-discard-cards.json"
+      ],
+      "test_modules": [
+        "test_alternative_private_discards",
+        "test_fixed_affected_player_discards",
+        "test_fixed_controller_effect_sequences",
+        "test_fractional_player_results",
+        "test_choice_forms",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

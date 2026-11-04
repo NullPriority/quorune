@@ -509,6 +509,17 @@ members, and destination replacements retain the sealed choice before the
 remaining instructions resume. Sacrifice uses its own transition cause and
 does not consume destruction or regeneration effects.
 
+Alternative-quality hand discards use a typed `alternative_discard_count`
+inside the same APNAP instruction. The affected player can discard one card
+matching the closed quality predicates or the available fallback subset.
+Having a matching card does not remove the fallback option. The private form
+offers separate matching and fallback branches, and command validation uses
+the same legal subsets. Draws printed before the discard finish before its
+hand is inspected; the discard still applies when those draws are prevented.
+Each player's selected cards stay hidden from other principals and remain in
+hand until the existing simultaneous discard commit. Ordinary fixed and
+fractional choice payloads retain their previous form and validation.
+
 The separate `discard_random_cards` instruction samples a fixed one-to-four
 card subset of each represented current hand without a client selection choice.
 Each player's complete hand is validated before sampling; empty and short hands

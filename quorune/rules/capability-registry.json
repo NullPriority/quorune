@@ -17125,6 +17125,116 @@
     {
       "applicability": {
         "exclusions": [
+          "unknown quality, random, variable or all-hand counts",
+          "unrepresented result-bound followups or material siblings",
+          "foreign choice over another player's hand"
+        ],
+        "inputs": [
+          "one complete quality-alternative discard with optional preceding fixed draw",
+          "typed hand-only query alternatives",
+          "bound affected players and stack controller",
+          "private current hand and authoritative source identity"
+        ],
+        "outputs": [
+          "all legal matching and fallback subsets offered through private form variants",
+          "draw before hand selection",
+          "APNAP collection without early movement or prior-choice disclosure",
+          "unchanged simultaneous replacement-aware discard and replay"
+        ],
+        "summary": "An affected player may discard one quality-matching hand card or the mandatory available fallback subset, through the canonical private APNAP collection and discard commit."
+      },
+      "blockers": [],
+      "dependencies": [
+        "choice.affected_player.fixed_discard"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing this capability or its canonical fixed-discard dependency blocks complete alternative instructions; descriptor-owned minimum remains when annotations are absent.",
+      "dependency_fail_closed_status": "passed",
+      "id": "choice.affected_player.alternative_discard",
+      "implementation_components": [
+        "quorune.alternative_discard_model.AlternativeDiscardCountSpec",
+        "quorune.alternative_discard_model.alternative_discard_runtime_dependencies",
+        "quorune.choice_forms.build_action_form",
+        "quorune.compiler.alternative_discard_templates.alternative_discard_effect_template",
+        "quorune.compiler.alternative_discard_templates.alternative_discard_quality",
+        "quorune.rules.alternative_discard_shapes.alternative_discard_node_capabilities",
+        "quorune.rules.alternative_discard_shapes.is_closed_alternative_discard_program",
+        "quorune.selection.alternative_discard.alternative_discard_options",
+        "quorune.selection.alternative_discard.decoded_alternative_discard_count",
+        "quorune.selection.alternative_discard.validate_alternative_discard_choice",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin"
+      ],
+      "implementation_mutation_rationale": "An omitted quality-subset guard is killed by exhaustive small-hand legal-option equivalence; native wrong-quality and wrong-principal submissions reject atomically.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_compulsive_research_still_discards_after_all_three_draws_are_prevented",
+        "test_actual_scholar_accepts_flying_creature_and_rejects_ground_creature_singletons",
+        "test_actual_thirst_offers_matching_and_fallback_after_draw_and_replays_privately",
+        "test_actual_wrench_uses_the_target_hand_and_falls_back_when_short"
+      ],
+      "multiplayer_tests": [
+        "test_actual_compulsive_research_still_discards_after_all_three_draws_are_prevented",
+        "test_actual_scholar_accepts_flying_creature_and_rejects_ground_creature_singletons",
+        "test_actual_thirst_offers_matching_and_fallback_after_draw_and_replays_privately",
+        "test_actual_wrench_uses_the_target_hand_and_falls_back_when_short"
+      ],
+      "negative_tests": [
+        "test_codec_rejects_malformed_counts_predicates_and_fields",
+        "test_payload_owned_minimum_rejects_changed_domain_without_annotations",
+        "test_unknown_qualities_and_ambiguous_subjects_remain_residual",
+        "test_verified_alternative_and_discard_withdrawals_preserve_fixed_draw"
+      ],
+      "official_rules": [
+        "101.4",
+        "118.12",
+        "402.1",
+        "608.2b",
+        "608.2c",
+        "608.2d",
+        "608.2e",
+        "609.3",
+        "701.9a",
+        "701.9c"
+      ],
+      "positive_tests": [
+        "test_actual_compulsive_research_still_discards_after_all_three_draws_are_prevented",
+        "test_actual_scholar_accepts_flying_creature_and_rejects_ground_creature_singletons",
+        "test_actual_thirst_offers_matching_and_fallback_after_draw_and_replays_privately",
+        "test_actual_wrench_uses_the_target_hand_and_falls_back_when_short",
+        "test_all_small_hands_offer_and_accept_exactly_the_independent_legal_subsets",
+        "test_branch_forms_keep_private_refs_and_authorize_the_same_choice_fields",
+        "test_complete_controller_target_and_opponent_alternatives_lower_typed_predicates"
+      ],
+      "privacy_tests": [
+        "test_actual_compulsive_research_still_discards_after_all_three_draws_are_prevented",
+        "test_actual_scholar_accepts_flying_creature_and_rejects_ground_creature_singletons",
+        "test_actual_thirst_offers_matching_and_fallback_after_draw_and_replays_privately",
+        "test_actual_wrench_uses_the_target_hand_and_falls_back_when_short"
+      ],
+      "replay_tests": [
+        "test_actual_compulsive_research_still_discards_after_all_three_draws_are_prevented",
+        "test_actual_scholar_accepts_flying_creature_and_rejects_ground_creature_singletons",
+        "test_actual_thirst_offers_matching_and_fallback_after_draw_and_replays_privately",
+        "test_actual_wrench_uses_the_target_hand_and_falls_back_when_short"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "random, qualified, linked-result or variable discards",
           "discard costs and cleanup",
           "arbitrary or unsealed context player expressions",
@@ -76948,7 +77058,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 678,
+  "registry_version": 679,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

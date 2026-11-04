@@ -577,6 +577,9 @@ def build_action_form(
 
     fields = _schema_fields(action.get("choice_schema"), context)
     variants = _variant_form(action.get("cost_options"), context)
+    if decision_kind=='choice.apnap' and 'discard_options' in context:
+        variants=_variant_form(context['discard_options'],context)
+        if variants is not None:variants.update(field='discard_mode',label='Discard option')
     if variants is None and isinstance(action.get("choice_schema"), Mapping):
         variants = _variant_form(
             action["choice_schema"].get("cast_options"), context

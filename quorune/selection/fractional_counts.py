@@ -6,10 +6,17 @@ from collections.abc import Mapping
 
 from ..errors import GameRuleError
 from ..fractional_quantity_model import HalfQuantitySpec
+from ..alternative_discard_model import alternative_discard_count
+from .alternative_discard import decoded_alternative_discard_count
 
 
 def validate_apnap_count(effect):
     count = effect.get('count', 1)
+    if alternative_discard_count(count):
+        decoded_alternative_discard_count(count)
+        if effect.get('then')!='discard' or effect.get('zone')!='hand' or effect.get('hidden') is not True:
+            raise GameRuleError('Alternative counts require a private discard instruction')
+        return
     if type(count) is int and count > 0:
         return
     try:
@@ -22,7 +29,7 @@ def validate_apnap_count(effect):
 
 def seal_fractional_counts(host, state):
     count = state['effect'].get('count', 1)
-    if type(count) is int:
+    if type(count) is int or alternative_discard_count(count):
         return
     fraction = HalfQuantitySpec.from_dict(count)
     domains = {seat: host._choice_options(seat, state['effect']) for seat in state['player_order']}
@@ -32,6 +39,8 @@ def seal_fractional_counts(host, state):
 
 def apnap_required_count(state, seat, options):
     count = state['effect'].get('count', 1)
+    if alternative_discard_count(count):
+        return min(decoded_alternative_discard_count(count).fallback_count,len(options))
     if type(count) is int:
         return min(count, len(options))
     try:

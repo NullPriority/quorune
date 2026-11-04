@@ -59,6 +59,10 @@ def special_result_trigger_runtime_dependencies(program):
 
 def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None):
     """Route independently owned special shapes before ordinary leaf composition."""
+    from ..alternative_discard_model import ALTERNATIVE_DISCARD_MECHANIC
+    if ALTERNATIVE_DISCARD_MECHANIC in mechanics:
+        from .alternative_discard_shapes import alternative_discard_node_capabilities
+        return alternative_discard_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
     from ..compiler.target_set_result_sequences import TARGET_SET_SEQUENCE_MECHANIC
     if TARGET_SET_SEQUENCE_MECHANIC in mechanics:
         from .target_set_result_sequences import target_set_result_sequence_capabilities

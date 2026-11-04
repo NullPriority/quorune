@@ -10,6 +10,8 @@ from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_choices.apnap_commit import APNAP_OBJECT_COMMIT_OPERATION
 from .apnap_contract import validate_apnap_choice_effect
 from .fractional_counts import seal_fractional_counts, apnap_required_count
+from .alternative_discard import alternative_discard_options,validate_alternative_discard_choice
+from ..alternative_discard_model import alternative_discard_count
 from .model import (
     SelectionContract,
     SelectionContinuation,
@@ -211,6 +213,7 @@ class ApnapChoiceOwnerMixin:
                     "count": count,
                     "options": options,
                     "prior_public_choices": dict(state["selected"]) if not effect.get("hidden") else {},
+                    **({'discard_options': alternative} if (alternative:=alternative_discard_options(self,effect,seat,options)) is not None else {}),
                 }
             },
             continuation={
@@ -302,7 +305,7 @@ class ApnapChoiceOwnerMixin:
         if "selection" in raw_continuation and tuple(options) != issued_options:
             raise GameRuleError("APNAP choice candidates changed")
         required = apnap_required_count(state, seat, options)
-        if len(values) != required:
+        if not alternative_discard_count(effect.get('count')) and len(values) != required:
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         refs: list[str] = []
         for value in values:
@@ -314,6 +317,8 @@ class ApnapChoiceOwnerMixin:
             if card.ref not in options or card.ref in refs:
                 raise GameRuleError("Invalid or duplicate APNAP choice")
             refs.append(card.ref)
+        if not validate_alternative_discard_choice(self,effect,seat,options,refs,response.get('discard_mode')) and len(refs)!=required:
+            raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         selected = dict(state["selected"])
         selected[seat] = refs
         queue = list(state["queue"])[1:]
