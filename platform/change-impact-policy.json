@@ -11583,6 +11583,26 @@
         "test_choice_forms",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "chosen-creature-type-events",
+      "patterns": [
+        "quorune/compiler/chosen_type_event_bindings.py",
+        "quorune/rules/chosen_type_events.py",
+        "quorune/compiler/tap_state_event_bindings.py",
+        "quorune/compiler/fixed_counter_trigger_nodes.py",
+        "quorune/trigger_discovery.py",
+        "tests/test_chosen_type_events.py",
+        "tests/fixtures/chosen-type-event-cards.json"
+      ],
+      "test_modules": [
+        "test_chosen_type_events",
+        "test_chosen_color_events",
+        "test_entry_designations",
+        "test_fixed_counter_event_triggers",
+        "test_qualified_attack_subjects",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

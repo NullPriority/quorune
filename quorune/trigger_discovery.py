@@ -528,6 +528,10 @@ def _semantic_condition_actual(
         except SpellHistoryTransformError as exc:
             raise GameRuleError(str(exc)) from exc
     if field.startswith("source_annotation."):
+        from .rules.chosen_type_events import CHOSEN_TYPE_FIELD,chosen_type_event_value
+        if field==CHOSEN_TYPE_FIELD:
+            try:return chosen_type_event_value(source)
+            except (TypeError,ValueError) as exc:raise GameRuleError(str(exc)) from exc
         return source.annotations.get(field.removeprefix("source_annotation."))
     if field == "source_active_face":
         if source.active_face:

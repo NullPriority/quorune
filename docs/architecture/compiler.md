@@ -92,6 +92,19 @@ descriptor extends the existing private APNAP discard owner; it does not
 create another selection or mutation mechanism. Unknown predicates and
 unrepresented follow-up conditions remain residual.
 
+`compiler/chosen_type_event_bindings.py` matches represented cast, entry,
+death, and entry-or-attack subjects against the existing per-object creature
+type designation. A creature-spell subject retains its Creature gate; a
+general spell of that type can also be Kindred. Entry and death use their
+sealed public subtype facts, while attack uses its versioned declared-attack
+snapshot. Multi-event containers validate those facts within each branch.
+The source's recorded choice is distinct from its owner and controller, and
+departure discovery uses the existing last-known source snapshot. A missing
+choice matches nothing; a malformed designation fails closed. Noncreature
+type choices, aggregation, linked self-type additions, and result bodies
+still require their separate owners; unsupported material siblings remain
+residual.
+
 The quantified anthem production validates its creature subject through the
 existing fixed-query anthem owner. An “other” quantity proves that every
 affected recipient belongs to the counted set before excluding one member.

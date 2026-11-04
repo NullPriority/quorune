@@ -164,6 +164,11 @@ class EntryDesignationTests(unittest.TestCase):
                     self.assertEqual("exact", ir.status, ir.material_residuals)
                     self.assertTrue(any("mana.production.source_chosen_color" in node.capability_dependencies for face in ir.faces for node in face.nodes))
                     self.assertTrue(binding["strict_capability_ready"], binding)
+                elif record.name == "Diamond Knight":
+                    self.assertEqual("exact",ir.status,ir.material_residuals)
+                    self.assertTrue(any('trigger.event.spell_cast_chosen_color' in node.capability_dependencies
+                        for face in ir.faces for node in face.nodes))
+                    self.assertTrue(binding["strict_capability_ready"],binding)
                 else:
                     self.assertFalse(binding["strict_capability_ready"])
                     self.assertFalse(binding["compatible_ready"])

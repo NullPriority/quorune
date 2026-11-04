@@ -52,6 +52,7 @@ from .tap_state_event_bindings import (
     public_trigger_binding_spec, tap_state_bound_result,
 )
 from .chosen_color_event_bindings import CHOSEN_COLOR_CAST_VARIANTS
+from .chosen_type_event_bindings import CHOSEN_TYPE_EVENT_VARIANTS
 from .explore_event_bindings import CREATURE_EXPLORE_VARIANT
 from .mutate_event_bindings import MUTATE_SOURCE_VARIANT,MUTATE_TRIGGER_TEMPLATE
 
@@ -149,6 +150,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         *TOKEN_CREATION_VARIANTS,
         *CRIME_VARIANTS,
         *CHOSEN_COLOR_CAST_VARIANTS,
+        *CHOSEN_TYPE_EVENT_VARIANTS,
         CREATURE_EXPLORE_VARIANT,
         MUTATE_SOURCE_VARIANT,
         'player_expend',

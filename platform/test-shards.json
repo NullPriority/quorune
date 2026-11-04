@@ -1017,6 +1017,7 @@
       "test_bound_static_declarations",
       "test_cast_creature_targets",
       "test_casualty_native",
+      "test_chosen_type_events",
       "test_class_lifecycle",
       "test_combat_defending_player_native",
       "test_combat_defending_player_results",

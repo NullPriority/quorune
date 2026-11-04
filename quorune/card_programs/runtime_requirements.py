@@ -115,6 +115,8 @@ def _event_query_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_owner_target:invalid:{exc}')
     from ..rules.chosen_color_events import chosen_color_cast_dependencies
     required.update(chosen_color_cast_dependencies(program))
+    from ..rules.chosen_type_events import chosen_type_event_dependencies
+    required.update(chosen_type_event_dependencies(program))
     from ..explore_action_model import CREATURE_EXPLORE_EVENT, CREATURE_EXPLORE_CAPABILITY
     if program.event == CREATURE_EXPLORE_EVENT:required.add(CREATURE_EXPLORE_CAPABILITY)
     from ..mutate_model import MUTATE_EVENT,MUTATE_CAPABILITY

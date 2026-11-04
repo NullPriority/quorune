@@ -63933,6 +63933,103 @@
     {
       "applicability": {
         "exclusions": [
+          "noncreature card/land type designations",
+          "unknown/ambiguous linked choices",
+          "one-or-more aggregation",
+          "independently unsupported bodies or siblings"
+        ],
+        "inputs": [
+          "canonical chosen_creature_type annotation or legitimate absence",
+          "sealed spell,entry,death and attack subtype facts",
+          "locked source controller and existing departure snapshots",
+          "single or existing fixed multi-event subscription"
+        ],
+        "outputs": [
+          "chosen-type membership independent of card name/color/owner",
+          "separate creature-spell gate from general chosen-type spell",
+          "last-known source annotation for departure triggers",
+          "unchanged trigger placement,privacy and replay"
+        ],
+        "summary": "Read an existing per-object public creature-type designation when a represented cast,entry,death or attack occurrence qualifies."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.entry.public_designation"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing this reader or the canonical entry-designation owner blocks the complete program; event-condition inference requires the reader even if compiler annotations are removed.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.chosen_creature_type",
+      "implementation_components": [
+        "quorune.compiler.chosen_type_event_bindings.chosen_type_event_binding_spec",
+        "quorune.rules.chosen_type_events.chosen_type_event_value",
+        "quorune.rules.chosen_type_events.chosen_type_event_dependencies",
+        "quorune.trigger_discovery.semantic_event_value",
+        "quorune.trigger_discovery.semantic_event_condition_matches"
+      ],
+      "implementation_mutation_rationale": "Removing subtype membership is distinguished by matching/nonmatching event facts; native sources retain controller and old-object qualification through countering,control change,departure and replay.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_cast_observers_keep_controller_creature_gate_and_countered_kindred_cast",
+        "test_actual_discovery_observes_entry_and_attack_but_not_countered_cast",
+        "test_actual_specialist_simultaneous_death_uses_old_choice_after_reentry"
+      ],
+      "multiplayer_tests": [
+        "test_actual_cast_observers_keep_controller_creature_gate_and_countered_kindred_cast",
+        "test_actual_discovery_observes_entry_and_attack_but_not_countered_cast",
+        "test_actual_specialist_simultaneous_death_uses_old_choice_after_reentry"
+      ],
+      "negative_tests": [
+        "test_ambiguous_aggregate_and_color_identity_subjects_remain_residual",
+        "test_malformed_public_designations_and_omitted_membership_are_distinguished",
+        "test_payload_dependency_is_present_without_compiler_annotations",
+        "test_verified_type_reader_and_entry_owner_withdrawals_keep_fixed_draw"
+      ],
+      "official_rules": [
+        "205.3m",
+        "400.7",
+        "603.2",
+        "603.3",
+        "603.6",
+        "603.10",
+        "707.2"
+      ],
+      "positive_tests": [
+        "test_actual_cast_observers_keep_controller_creature_gate_and_countered_kindred_cast",
+        "test_actual_discovery_observes_entry_and_attack_but_not_countered_cast",
+        "test_actual_specialist_simultaneous_death_uses_old_choice_after_reentry",
+        "test_cast_entry_death_and_entry_attack_keep_the_complete_chosen_type_subject",
+        "test_controller_type_domain_and_missing_choice_are_distinct",
+        "test_entry_attack_and_global_death_conditions_use_their_sealed_facts"
+      ],
+      "privacy_tests": [
+        "test_actual_cast_observers_keep_controller_creature_gate_and_countered_kindred_cast",
+        "test_actual_discovery_observes_entry_and_attack_but_not_countered_cast",
+        "test_actual_specialist_simultaneous_death_uses_old_choice_after_reentry"
+      ],
+      "replay_tests": [
+        "test_actual_cast_observers_keep_controller_creature_gate_and_countered_kindred_cast",
+        "test_actual_discovery_observes_entry_and_attack_but_not_countered_cast",
+        "test_actual_specialist_simultaneous_death_uses_old_choice_after_reentry"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Counter quantities other than minimum one",
           "No-counter and chosen-counter predicates",
           "Aggregation, combat or turn history and hidden subjects",
@@ -66676,7 +66773,8 @@
         ],
         "outputs": [
           "One trigger for each matching declared attacker",
-          "Source-independent queued results and ordinary target revalidation"
+          "Source-independent queued results and ordinary target revalidation",
+          "fixed multi-event containers validate each branch under its own event identity; attacker fields remain forbidden on nonattack branches"
         ],
         "summary": "Singular controlled attack subjects lower closed public type/subtype/color/keyword/counter and reviewed state predicates against sealed version1 public attacker facts. One matching declared attacker produces one occurrence; printed source ability, source controller and ordinary attacking-alone semantics remain authoritative."
       },
@@ -66769,7 +66867,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -77058,7 +77156,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 679,
+  "registry_version": 680,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
