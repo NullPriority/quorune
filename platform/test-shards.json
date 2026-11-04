@@ -1080,6 +1080,7 @@
       "test_random_graveyard_returns",
       "test_reanimation_entry_counters",
       "test_resolution_mana_compositions",
+      "test_scaled_cast_x_amounts",
       "test_semantic_handlers",
       "test_shared_modal_target_resolution",
       "test_source_attack_alone",

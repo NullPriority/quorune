@@ -3863,6 +3863,15 @@ target schemas, and dependencies; only supported result fields may vary. The
 original fixed template identity is retained for runtime admission. Public
 declarations carry explicit Oracle-node-scoped identities and persist their
 first execution-time value across sibling results and replacement resumption.
+Announced-X result fields also accept `twice X`, `two times X`, and
+`three times X`. The bounded expression is reduced before both fixed-value
+compilations; invariant target and cost schemas remain required. Cast-X
+amount version two carries a signed coefficient of two or three, while version
+one retains its signed unit coefficients and serialized fields. The existing
+runtime amount owner multiplies the canonical stack X, including zero and
+copied X; it does not choose a second value or change the price. Public
+definitions with scaled X, other arithmetic, and variable target cardinalities
+outside their separate target owner remain residual.
 Creature-token definitions accept the singular articles `a` and `an` as a
 count of one. This also preserves the literal projections used to validate an
 `X/X` definition without changing the original source span. Resolved power and

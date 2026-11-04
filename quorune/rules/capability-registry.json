@@ -30782,8 +30782,64 @@
       "version": 1
     },
     {
+      "applicability": {
+        "exclusions": [
+          "Other permanents or returned incarnations",
+          "Unproven it/him/her antecedents",
+          "Source When-you-do reflexive costs",
+          "Variable or compound source costs"
+        ],
+        "inputs": [
+          "Schema-seven source_sacrifice descriptor",
+          "Canonical source zone-object reference",
+          "Locked payer and current source controller",
+          "Independently closed If-you-do result"
+        ],
+        "outputs": [
+          "Existing optional source object choice",
+          "One replacement-aware controlled source sacrifice to owner destination",
+          "Result branch only after a completed payment"
+        ],
+        "summary": "One optional sacrifice of the original ability source during resolution, using the current controlled source incarnation and the existing If-you-do payment and canonical sacrifice owners."
+      },
+      "blockers": [],
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment",
+        "choice.affected_player.fixed_sacrifice",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "Verified source-cost withdrawal rejects its complete program while ordinary sacrifice stays exact; literal or missing static source references are not closed.",
+      "dependency_fail_closed_status": "passed",
       "id": "cost.sacrifice.fixed_source_resolution",
-      "version": 1,
+      "implementation_components": [
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_spec",
+        "quorune.compiler.source_sacrifice_payments.normalized_source_sacrifice_payment_text",
+        "quorune.semantic_choices.fixed_effect_payment._source_sacrifice_payment_row",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
+        "quorune.rules.fixed_effect_payment_shapes.fixed_payment_event_player_runtime_dependencies",
+        "quorune.semantic_choices.optional_effect._represented_payment_player_selection"
+      ],
+      "implementation_mutation_rationale": "Removing current payer control from the source eligibility owner fails the legal-payment and stale-choice witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+      ],
+      "multiplayer_tests": [
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
+        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
+      ],
+      "negative_tests": [
+        "test_returned_source_never_replaces_the_old_source_cost",
+        "test_source_pronouns_require_each_subscription_to_prove_the_source",
+        "test_static_payment_shape_requires_the_canonical_source_reference",
+        "test_verified_source_cost_withdrawal_keeps_ordinary_sacrifice",
+        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
+        "test_paid_event_player_result_retains_independent_occurrence_scope",
+        "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player"
+      ],
       "official_rules": [
         "118.3",
         "118.11",
@@ -30796,60 +30852,6 @@
         "113.7a",
         "120.1"
       ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "applicability": {
-        "summary": "One optional sacrifice of the original ability source during resolution, using the current controlled source incarnation and the existing If-you-do payment and canonical sacrifice owners.",
-        "inputs": [
-          "Schema-seven source_sacrifice descriptor",
-          "Canonical source zone-object reference",
-          "Locked payer and current source controller",
-          "Independently closed If-you-do result"
-        ],
-        "outputs": [
-          "Existing optional source object choice",
-          "One replacement-aware controlled source sacrifice to owner destination",
-          "Result branch only after a completed payment"
-        ],
-        "exclusions": [
-          "Other permanents or returned incarnations",
-          "Unproven it/him/her antecedents",
-          "Source When-you-do reflexive costs",
-          "Variable or compound source costs"
-        ]
-      },
-      "dependencies": [
-        "effect.choice.optional_fixed_mana_payment",
-        "choice.affected_player.fixed_sacrifice",
-        "zone.change.destination_replacement"
-      ],
-      "implementation_components": [
-        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
-        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_spec",
-        "quorune.compiler.source_sacrifice_payments.normalized_source_sacrifice_payment_text",
-        "quorune.semantic_choices.fixed_effect_payment._source_sacrifice_payment_row",
-        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
-        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost",
-        "quorune.rules.fixed_effect_payment_shapes.fixed_payment_event_player_runtime_dependencies",
-        "quorune.semantic_choices.optional_effect._represented_payment_player_selection"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Verified source-cost withdrawal rejects its complete program while ordinary sacrifice stays exact; literal or missing static source references are not closed.",
-      "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Removing current payer control from the source eligibility owner fails the legal-payment and stale-choice witness.",
-      "status": "trusted",
-      "blockers": [],
       "positive_tests": [
         "test_source_cost_codec_has_closed_version_reference_and_single_permanent",
         "test_only_the_controlled_original_source_can_pay_and_stale_choices_reject",
@@ -30859,30 +30861,28 @@
         "test_paid_event_player_result_retains_independent_occurrence_scope",
         "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player"
       ],
-      "negative_tests": [
-        "test_returned_source_never_replaces_the_old_source_cost",
-        "test_source_pronouns_require_each_subscription_to_prove_the_source",
-        "test_static_payment_shape_requires_the_canonical_source_reference",
-        "test_verified_source_cost_withdrawal_keeps_ordinary_sacrifice",
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_paid_event_player_result_retains_independent_occurrence_scope",
-        "test_runtime_paid_discard_keeps_actor_distinct_from_known_affected_player"
-      ],
-      "interaction_tests": [
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
-      ],
-      "multiplayer_tests": [
-        "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
-        "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
-      ],
       "privacy_tests": [
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations"
       ],
       "replay_tests": [
         "test_actual_source_payments_keep_private_victim_original_incarnation_and_owner_destinations",
         "test_actual_furnace_source_sacrifice_preserves_lki_for_its_following_damage"
-      ]
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
@@ -37095,12 +37095,12 @@
       "version": 3
     },
     {
-      "id": "counter.rule.finality",
-      "version": 1,
-      "status": "trusted",
-      "blockers": [],
       "applicability": {
-        "summary": "A positive finality counter creates an ordinary replacement of that permanent original-incarnation battlefield-to-graveyard movement with exile.",
+        "exclusions": [
+          "other origins or destinations and old logical incarnations",
+          "new generic counter-placement or zone-commit mechanisms",
+          "a self-replacement priority grant or named-card behavior"
+        ],
         "inputs": [
           "current active permanent and canonical positive finality counter quantity",
           "sealed logical incarnation and proposed zone movement",
@@ -37110,19 +37110,15 @@
           "one mandatory ordinary destination replacement independent of printed abilities",
           "existing atomic replacement ordering,pending continuation,physical movement and commander aftermath"
         ],
-        "exclusions": [
-          "other origins or destinations and old logical incarnations",
-          "new generic counter-placement or zone-commit mechanisms",
-          "a self-replacement priority grant or named-card behavior"
-        ]
+        "summary": "A positive finality counter creates an ordinary replacement of that permanent original-incarnation battlefield-to-graveyard movement with exile."
       },
+      "blockers": [],
       "dependencies": [
         "zone.change.destination_replacement"
       ],
-      "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Verified withdrawal withholds finality-producing source admission and leaves ordinary lifelink entry counters available; actual counter descriptors infer the rule without coverage annotations.",
-      "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting counter-derived effect collection fails the original-incarnation exile witness; ordinary-priority and unrelated-destination boundaries are independently asserted.",
+      "dependency_fail_closed_status": "passed",
+      "id": "counter.rule.finality",
       "implementation_components": [
         "quorune.rules.finality_counters.finality_counter_replacement",
         "quorune.rules.finality_counters.finality_counter_dependencies",
@@ -37130,6 +37126,30 @@
         "quorune.semantic_runtime.zone_replacements.collect_zone_change_replacement_effects",
         "quorune.rules.reanimation_entry_counters.reanimation_entry_counter_node_capabilities",
         "quorune.compiler.replacement_residual_nodes.unowned_replacement_node"
+      ],
+      "implementation_mutation_rationale": "Omitting counter-derived effect collection fails the original-incarnation exile witness; ordinary-priority and unrelated-destination boundaries are independently asserted.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_finality_competes_with_other_replacements_and_does_not_gain_self_replacement_priority",
+        "test_existing_unearth_self_replacement_keeps_its_priority_over_finality",
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ],
+      "multiplayer_tests": [
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
+      ],
+      "negative_tests": [
+        "test_removed_counter_other_origins_destinations_and_returned_incarnations_do_not_match",
+        "test_actual_counter_payloads_require_finality_without_coverage_annotations",
+        "test_verified_finality_withdrawal_keeps_other_entry_counters_available",
+        "test_finality_collection_omission_mutation_is_killed",
+        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
+        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
+        "test_replacement_words_in_reminders_do_not_replace_material_source_classification",
+        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
       ],
       "official_rules": [
         "122.1h",
@@ -37143,47 +37163,12 @@
         "616.1f",
         "903.9a"
       ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
       "positive_tests": [
         "test_counter_rule_is_collected_without_any_printed_ability_and_exiles_only_its_original_departure",
         "test_finality_entry_requires_both_the_entry_owner_and_the_intrinsic_counter_rule",
         "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
         "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
         "test_replacement_words_in_reminders_do_not_replace_material_source_classification",
-        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
-      ],
-      "negative_tests": [
-        "test_removed_counter_other_origins_destinations_and_returned_incarnations_do_not_match",
-        "test_actual_counter_payloads_require_finality_without_coverage_annotations",
-        "test_verified_finality_withdrawal_keeps_other_entry_counters_available",
-        "test_finality_collection_omission_mutation_is_killed",
-        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
-        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
-        "test_replacement_words_in_reminders_do_not_replace_material_source_classification",
-        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
-      ],
-      "interaction_tests": [
-        "test_finality_competes_with_other_replacements_and_does_not_gain_self_replacement_priority",
-        "test_existing_unearth_self_replacement_keeps_its_priority_over_finality",
-        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
-        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
-        "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
-      ],
-      "multiplayer_tests": [
-        "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
-        "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
         "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
       ],
       "privacy_tests": [
@@ -37195,7 +37180,22 @@
         "test_actual_finality_reanimation_exiles_on_death_and_real_counter_removal_restores_graveyard_death",
         "test_actual_finality_commander_departure_exiles_before_its_owner_command_zone_choice",
         "test_actual_finality_on_a_merged_commander_exiles_all_physical_cards_before_owner_choice"
-      ]
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
@@ -51017,7 +51017,7 @@
       "applicability": {
         "exclusions": [
           "undefined X, X-dependent target domains, and X-dependent target cardinalities",
-          "unrepresented variable activation costs, source or linked characteristics, arithmetic, division, and unrepresented quantities",
+          "unrepresented variable activation costs, source or linked characteristics, unrepresented arithmetic, division, and unrepresented quantities",
           "cost X defined by Oracle rather than announced through the supported cost owner",
           "hybrid, Phyrexian, snow, restricted, and otherwise nonordinary X mana costs",
           "nested declaration programs or independently unsupported effects, qualifications, and siblings"
@@ -51028,14 +51028,16 @@
           "canonical persisted stack X and locked controller",
           "explicit declaration identity scoped by its Oracle node",
           "invariant existing fixed operation, target schema, and dependency shapes",
-          "mandatory mill equal-to wording normalized to one existing public count definition"
+          "mandatory mill equal-to wording normalized to one existing public count definition",
+          "bounded twice X, two times X, or three times X result expressions over canonical announced X"
         ],
         "outputs": [
           "unchanged canonical cost choice and payment",
           "signed typed resolution amount",
           "one public definition value retained across sibling results and replacement resumption",
           "zero, copy-controller, and principal-correct behavior",
-          "separate values for independent declaration scopes"
+          "separate values for independent declaration scopes",
+          "version-two signed coefficient two or three; version-one signed unit encoding is unchanged"
         ],
         "summary": "Bind a signed ordinary announced spell-cost or ordinary activation-cost X or one explicitly scoped public X definition to closed numeric result slots without changing the existing target, payment, or result owners."
       },
@@ -51045,7 +51047,9 @@
       "dependency_fail_closed_status": "not_applicable",
       "id": "quantity_expression.declared_effect_amount",
       "implementation_components": [
+        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies",
         "quorune.compiler.declared_effect_amounts._additional_price_declares_x",
+        "quorune.compiler.declared_effect_amounts._fixed_x_projection",
         "quorune.compiler.declared_effect_amounts.closed_additional_cost_x_result",
         "quorune.compiler.declared_effect_amounts.declared_amount_shape_context",
         "quorune.compiler.declared_effect_amounts.declared_effect_amount_template",
@@ -51057,25 +51061,38 @@
         "quorune.query_effect_amount_model.scope_declared_amount_bindings",
         "quorune.semantic_runtime.query_effect_amounts.resolve_cast_x_amount",
         "quorune.semantic_runtime.query_effect_amounts.resolve_public_query_amount",
-        "quorune.semantic_runtime.values.resolve_semantic_value",
-        "quorune.card_programs.descriptor_requirements.typed_result_amount_runtime_dependencies"
+        "quorune.semantic_runtime.values.resolve_semantic_value"
       ],
       "implementation_mutation_rationale": "Existing evidence retained. Fresh original casts kill omitted represented-price X context, runtime target binding, actual result promotion, typed-X minimum dependency and per-signature exact target bound. Fresh combined-group owner withdrawal, descriptor stripping and actual producer/promotion/commit omission witnesses preserve this boundary.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+        "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_debt_zero_and_positive_x_use_original_cost_and_aggregate_loss",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
         "test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
         "test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
         "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_cast_x_and_public_amounts_keep_their_distinct_values_through_casting_and_costs",
         "test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
         "test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
         "test_explicit_public_binding_is_frozen_and_independent_expressions_are_not",
         "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
         "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
         "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
         "test_original_sands_mills_exact_x_for_only_the_chosen_player",
@@ -51086,25 +51103,26 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
-        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
-        "test_cast_x_and_public_amounts_keep_their_distinct_values_through_casting_and_costs"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "multiplayer_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+        "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_debt_zero_and_positive_x_use_original_cost_and_aggregate_loss",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
         "test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
         "test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
         "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
@@ -51112,6 +51130,7 @@
         "test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
         "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
         "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
         "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
         "test_original_sands_mills_exact_x_for_only_the_chosen_player",
@@ -51123,43 +51142,36 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
-        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "negative_tests": [
+        "test_amount_capabilities_and_optional_source_binding_withdrawal_fail_closed",
         "test_amount_versions_and_cast_values_reject_malformed_inputs",
+        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
         "test_canonically_verified_price_amount_and_target_owner_withdrawals_reject",
+        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
         "test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
         "test_declaration_source_scopes_and_cache_signatures_cannot_alias",
         "test_declared_amount_capability_and_result_dependencies_cannot_be_omitted",
+        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
+        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_nested_modal_declarations_remain_residual_until_instruction_scopes_are_owned",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
+        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_price_and_owned_result_are_required_separately_at_promotion_and_runtime",
         "test_public_count_mill_retains_fixed_subjects_and_quantity_dependencies",
         "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
+        "test_scaled_owner_withdrawal_and_stripped_dependency_fail_closed",
         "test_undefined_ambiguous_and_unrepresented_price_x_remains_residual",
         "test_undefined_x_dynamic_targets_and_open_definitions_remain_residual",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
         "test_unknown_quantity_antecedents_and_material_tails_remain_residual",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
-        "test_combined_runtime_requires_result_quantity_and_keyword_owners_and_closed_shapes",
-        "test_fresh_native_combined_results_kill_normalizer_promotion_and_commit_omissions",
-        "test_verified_owner_withdrawals_reject_combined_group_results",
-        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
-        "test_ordered_group_runtime_requires_sequence_quantity_and_result_authority",
-        "test_canonical_sequence_and_quantity_withdrawals_keep_full_originals_residual",
-        "test_fresh_native_results_kill_atomic_fallback_early_quantity_and_group_commit_omissions",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
+        "test_unowned_arithmetic_target_counts_and_public_definitions_stay_residual",
         "test_unresolved_discover_amount_has_a_closed_type_and_cannot_reach_the_scan",
-        "test_amount_capabilities_and_optional_source_binding_withdrawal_fail_closed"
+        "test_verified_owner_withdrawals_reject_combined_group_results",
+        "test_versions_keep_legacy_encoding_and_reject_malformed_coefficients"
       ],
       "official_rules": [
         "107.3a",
@@ -51167,23 +51179,42 @@
         "601.2b",
         "608.2h",
         "107.3k",
-        "602.2b"
+        "602.2b",
+        "107.3i",
+        "608.2c",
+        "707.10"
       ],
       "positive_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+        "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_debt_zero_and_positive_x_use_original_cost_and_aggregate_loss",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
         "test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
         "test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
         "test_announced_spell_x_uses_existing_result_families",
         "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_cast_x_and_public_amounts_keep_their_distinct_values_through_casting_and_costs",
         "test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
         "test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
+        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
         "test_mandatory_public_land_count_uses_existing_quantity_and_preserves_surface",
+        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
         "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
         "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
         "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
         "test_original_sands_mills_exact_x_for_only_the_chosen_player",
@@ -51194,30 +51225,29 @@
         "test_public_count_scry_and_surveil_share_fixed_partition_and_quantity_closure",
         "test_public_definition_can_bind_multiple_result_slots",
         "test_public_land_mill_reads_own_current_count_after_real_sacrifice_response",
+        "test_scaled_results_use_one_announced_x_without_changing_fixed_siblings",
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
-        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_keyword_first_matches_stat_first_without_losing_source_spans_or_boundaries",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
-        "test_ordered_amount_clauses_keep_scope_source_spans_and_unknown_clause_boundaries",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
-        "test_cast_x_and_public_amounts_keep_their_distinct_values_through_casting_and_costs"
+        "test_versions_keep_legacy_encoding_and_reject_malformed_coefficients",
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "privacy_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_debt_zero_and_positive_x_use_original_cost_and_aggregate_loss",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
         "test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
         "test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
         "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
@@ -51225,6 +51255,7 @@
         "test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
         "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
         "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
         "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
         "test_original_sands_mills_exact_x_for_only_the_chosen_player",
@@ -51236,32 +51267,36 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
-        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "replay_tests": [
+        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
         "test_actual_cascade_keeps_additional_x_positive_when_only_fixed_mana_is_waived",
+        "test_actual_copied_debt_keeps_x_and_uses_its_own_controller",
+        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
+        "test_actual_debt_zero_and_positive_x_use_original_cost_and_aggregate_loss",
+        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
+        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
         "test_actual_harvest_pyre_exiles_declared_graveyard_cards_before_creature_damage",
         "test_actual_haunting_misery_uses_creature_only_price_and_player_or_loyalty_target",
+        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
+        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
+        "test_actual_procrastinate_keeps_one_target_and_places_scaled_stun_after_tap",
+        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
         "test_actual_restless_dreams_chooses_graveyard_targets_before_hand_discards",
         "test_actual_sickening_dreams_uses_price_x_for_nontarget_damage_to_every_player",
+        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
+        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
         "test_actual_turbulent_dreams_uses_hand_price_x_without_adding_x_to_mana",
         "test_actual_v233_numeric_result_record_is_explicitly_incompatible_not_reinterpreted",
         "test_actual_vengeful_dreams_casts_out_of_turn_and_only_exiles_attacking_creatures",
         "test_announced_x_does_not_retarget_a_blinked_incarnation_or_refund_price",
+        "test_cast_x_and_public_amounts_keep_their_distinct_values_through_casting_and_costs",
         "test_copied_sickening_dreams_keeps_x_without_repeating_the_hand_price",
         "test_countered_and_partially_illegal_cost_defined_targets_keep_the_paid_price",
         "test_original_armor_prices_chosen_x_then_keeps_it_after_source_destruction",
         "test_original_ballista_uses_current_combat_target_domain",
+        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
         "test_original_drana_uses_one_chosen_x_for_target_and_source_results",
         "test_original_merfolk_draws_x_but_adds_one_counter_and_exhaust_stays_used",
         "test_original_sands_mills_exact_x_for_only_the_chosen_player",
@@ -51275,18 +51310,7 @@
         "test_target_tax_is_extra_mana_and_does_not_change_declared_price_x",
         "test_two_original_spider_activations_keep_separate_x_and_colored_payment",
         "test_unfunded_tax_keeps_the_untaxed_exact_x_quote_bounded_and_available",
-        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage",
-        "test_actual_craterhoof_enters_and_grants_one_counted_bonus_with_trample",
-        "test_actual_departed_craterhoof_keeps_trigger_controller_and_counts_at_resolution",
-        "test_actual_moonshaker_locks_recipients_through_control_blink_later_entry_and_cleanup",
-        "test_actual_throne_granted_activation_uses_departed_creatures_last_known_power",
-        "test_actual_ibex_attack_reads_current_greatest_own_power_once_before_group_bonus",
-        "test_actual_throne_equips_and_granted_tap_uses_current_power_excluding_source",
-        "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
-        "test_actual_pulse_keeps_prior_gain_once_across_simultaneous_state_action_replacements",
-        "test_actual_essence_pulse_reads_post_gain_history_and_weakens_every_seat_before_state_actions",
-        "test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline",
-        "test_cast_x_and_public_amounts_keep_their_distinct_values_through_casting_and_costs"
+        "test_zero_cost_defined_x_is_legal_without_resources_and_does_no_damage"
       ],
       "required_evidence": [
         "positive",
@@ -51302,7 +51326,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 8
+      "version": 9
     },
     {
       "applicability": {
@@ -56151,12 +56175,12 @@
       "version": 3
     },
     {
-      "id": "resolution.target_set.ordered_results",
-      "version": 1,
-      "status": "trusted",
-      "blockers": [],
       "applicability": {
-        "summary": "An ordered bounded program reuses one announced homogeneous public permanent target set for existing tap/untap,counter and fixed-characteristic leaves,with closed independent following draw,Scry or Investigate.",
+        "exclusions": [
+          "new/either/one-of choices,split targeting or variable/per-player counts",
+          "zone movement,correlated quantities and unsupported following effects",
+          "nested optional/modal result composition without separate owner proof"
+        ],
         "inputs": [
           "one bounded original target set with fixed count or up-to bound through six",
           "two or more independently closed same-schema target-set leaves",
@@ -56167,20 +56191,16 @@
           "ordered existing mutation intents over surviving original incarnations",
           "ordinary empty-set,all-illegal,copy count,private continuation and replay behavior"
         ],
-        "exclusions": [
-          "new/either/one-of choices,split targeting or variable/per-player counts",
-          "zone movement,correlated quantities and unsupported following effects",
-          "nested optional/modal result composition without separate owner proof"
-        ]
+        "summary": "An ordered bounded program reuses one announced homogeneous public permanent target set for existing tap/untap,counter and fixed-characteristic leaves,with closed independent following draw,Scry or Investigate."
       },
+      "blockers": [],
       "dependencies": [
         "target.revalidate_resolution",
         "resolution.effect.fixed_homogeneous_target_set"
       ],
-      "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Verified withdrawal rejects the sequence while retaining its ordinary target-set leaf;actual multi-leaf shape infers the owner without sequence annotations.",
-      "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting the follow-up result fails independent source-grounded ordered-effect expectations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.target_set.ordered_results",
       "implementation_components": [
         "quorune.compiler.target_set_result_sequences.target_set_result_sequence_template",
         "quorune.rules.target_set_result_sequences.target_set_result_sequence_capabilities",
@@ -56188,33 +56208,14 @@
         "quorune.compiler.program_generation._closed_effect_recognizers",
         "quorune.selection.targeting.TargetSelectionOwnerMixin"
       ],
-      "official_rules": [
-        "115.6",
-        "601.2c",
-        "603.3d",
-        "608.2b",
-        "608.2c",
-        "608.2h",
-        "704.4",
-        "707.10",
-        "707.10c"
+      "implementation_mutation_rationale": "Omitting the follow-up result fails independent source-grounded ordered-effect expectations.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
+        "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
+        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
       ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
-      "positive_tests": [
-        "test_same_set_counter_and_characteristic_results_are_ordered_and_fully_owned",
-        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations",
+      "multiplayer_tests": [
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
         "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
         "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
@@ -56227,12 +56228,20 @@
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
         "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
       ],
-      "interaction_tests": [
-        "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
-        "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
-        "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
+      "official_rules": [
+        "115.6",
+        "601.2c",
+        "603.3d",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "704.4",
+        "707.10",
+        "707.10c"
       ],
-      "multiplayer_tests": [
+      "positive_tests": [
+        "test_same_set_counter_and_characteristic_results_are_ordered_and_fully_owned",
+        "test_shared_schema_and_runtime_minimum_are_proved_without_sequence_annotations",
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
         "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
         "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
@@ -56244,7 +56253,22 @@
         "test_actual_cooldown_keeps_both_results_on_surviving_original_targets_after_blink_and_pending_load",
         "test_actual_out_cold_zero_targets_investigates_but_losing_all_selected_targets_stops_the_program",
         "test_actual_copied_join_forces_keeps_count_and_rebinds_both_effects_to_the_copy_targets"
-      ]
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {
@@ -60027,25 +60051,12 @@
       "version": 5
     },
     {
-      "id": "target.set.one_per_player",
-      "version": 1,
-      "official_rules": [
-        "115.7d",
-        "115.7e",
-        "115.9b",
-        "601.2c",
-        "603.3d",
-        "608.2b",
-        "707.10",
-        "707.10c"
-      ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
       "applicability": {
-        "summary": "An optional represented permanent target set chooses at most one current permanent per relevant player and retains each selected controller for resolution. Existing announced-count and simultaneous effect owners execute the set.",
+        "exclusions": [
+          "Mandatory per-player target counts",
+          "Unrepresented result siblings or target domains",
+          "Control, correlated quantities and source-linked exile without their own set owner"
+        ],
         "inputs": [
           "Closed optional announced homogeneous target set",
           "All-player or opponent controller domain",
@@ -60056,17 +60067,17 @@
           "Original target count/identity retention for copies",
           "Partial or zero-target resolution through existing primitive owners"
         ],
-        "exclusions": [
-          "Mandatory per-player target counts",
-          "Unrepresented result siblings or target domains",
-          "Control, correlated quantities and source-linked exile without their own set owner"
-        ]
+        "summary": "An optional represented permanent target set chooses at most one current permanent per relevant player and retains each selected controller for resolution. Existing announced-count and simultaneous effect owners execute the set."
       },
+      "blockers": [],
       "dependencies": [
         "target.cardinality.any_number",
         "resolution.effect.fixed_homogeneous_target_set",
         "target.revalidate_resolution"
       ],
+      "dependency_fail_closed_rationale": "Verified per-player capability withdrawal leaves ordinary announced sets exact. Actual flags/domain/primitive imply the fine authority independently of a coverage marker.",
+      "dependency_fail_closed_status": "passed",
+      "id": "target.set.one_per_player",
       "implementation_components": [
         "quorune.compiler.per_player_target_sets.per_player_target_set_template",
         "quorune.rules.per_player_target_sets.per_player_target_node_capabilities",
@@ -60074,6 +60085,46 @@
         "quorune.selection.target_validation.validate_grouped_target_assignment",
         "quorune.selection.target_validation.target_controller_matches_snapshot",
         "quorune.selection.copy_targets.prepare_copy_targets"
+      ],
+      "implementation_mutation_rationale": "Omitting the distinct-controller shared validation allows two targets from one player and fails its owner witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "multiplayer_tests": [
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "negative_tests": [
+        "test_recorded_controller_revalidation_and_strict_flag_types",
+        "test_verified_per_player_withdrawal_preserves_ordinary_announced_sets",
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "official_rules": [
+        "115.7d",
+        "115.7e",
+        "115.9b",
+        "601.2c",
+        "603.3d",
+        "608.2b",
+        "707.10",
+        "707.10c"
+      ],
+      "positive_tests": [
+        "test_optional_set_accepts_zero_and_distinct_players_but_rejects_two_from_one_player",
+        "test_compiler_lowering_uses_existing_announced_sets_and_infers_fine_authority",
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_optional_zero_targets_resolves_without_target_or_effect_mutation"
+      ],
+      "privacy_tests": [
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
+      ],
+      "replay_tests": [
+        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
+        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller",
+        "test_actual_optional_zero_targets_resolves_without_target_or_effect_mutation"
       ],
       "required_evidence": [
         "positive",
@@ -60083,40 +60134,13 @@
         "privacy",
         "replay"
       ],
-      "dependency_fail_closed_status": "passed",
-      "dependency_fail_closed_rationale": "Verified per-player capability withdrawal leaves ordinary announced sets exact. Actual flags/domain/primitive imply the fine authority independently of a coverage marker.",
-      "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Omitting the distinct-controller shared validation allows two targets from one player and fails its owner witness.",
       "status": "trusted",
-      "blockers": [],
-      "positive_tests": [
-        "test_optional_set_accepts_zero_and_distinct_players_but_rejects_two_from_one_player",
-        "test_compiler_lowering_uses_existing_announced_sets_and_infers_fine_authority",
-        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
-        "test_actual_optional_zero_targets_resolves_without_target_or_effect_mutation"
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
       ],
-      "negative_tests": [
-        "test_recorded_controller_revalidation_and_strict_flag_types",
-        "test_verified_per_player_withdrawal_preserves_ordinary_announced_sets",
-        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
-        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
-      ],
-      "interaction_tests": [
-        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
-        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
-      ],
-      "multiplayer_tests": [
-        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
-        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
-      ],
-      "privacy_tests": [
-        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller"
-      ],
-      "replay_tests": [
-        "test_actual_wave_rejects_same_player_then_keeps_partial_targets_after_control_and_departure",
-        "test_actual_copy_keeps_illegal_original_and_count_while_retargeting_under_new_controller",
-        "test_actual_optional_zero_targets_resolves_without_target_or_effect_mutation"
-      ]
+      "version": 1
     },
     {
       "applicability": {
@@ -62523,7 +62547,9 @@
     },
     {
       "applicability": {
-        "summary": "One fixed delayed action on a sealed source, blocking counterpart or damaged permanent; schema2 retains fixed named source-counter placement and removal.",
+        "exclusions": [
+          "Variable groups, new-zone objects, unrepresented event recipients and arbitrary delayed bodies"
+        ],
         "inputs": [
           "Creating controller and source incarnation",
           "Sealed battlefield recipient incarnation",
@@ -62532,9 +62558,7 @@
         "outputs": [
           "One delayed ordinary stack frame and canonical current-object action"
         ],
-        "exclusions": [
-          "Variable groups, new-zone objects, unrepresented event recipients and arbitrary delayed bodies"
-        ]
+        "summary": "One fixed delayed action on a sealed source, blocking counterpart or damaged permanent; schema2 retains fixed named source-counter placement and removal."
       },
       "blockers": [],
       "dependencies": [
@@ -63493,7 +63517,11 @@
     },
     {
       "applicability": {
-        "summary": "A closed per-pair blocking creature qualifier uses immutable public declaration facts and the exact source/counterpart relationship.",
+        "exclusions": [
+          "One-or-more aggregation",
+          "Unrepresented state-relative queries",
+          "Unrepresented result bodies"
+        ],
         "inputs": [
           "Sealed block transition and participant incarnations",
           "Fixed public type/color/subtype/numeric query"
@@ -63501,11 +63529,7 @@
         "outputs": [
           "One qualified relationship occurrence with existing multiplicity"
         ],
-        "exclusions": [
-          "One-or-more aggregation",
-          "Unrepresented state-relative queries",
-          "Unrepresented result bodies"
-        ]
+        "summary": "A closed per-pair blocking creature qualifier uses immutable public declaration facts and the exact source/counterpart relationship."
       },
       "blockers": [],
       "dependencies": [
@@ -64016,7 +64040,12 @@
     },
     {
       "applicability": {
-        "summary": "A positive dealt-damage occurrence with a closed source predicate and a creature permanent recipient retains the actual damaged incarnation independently of its source.",
+        "exclusions": [
+          "Player recipients",
+          "Zero dealt damage",
+          "Unsupported source qualities",
+          "Unrepresented result bodies"
+        ],
         "inputs": [
           "Committed public damage source and recipient facts",
           "Closed creature-recipient and source predicates",
@@ -64025,12 +64054,7 @@
         "outputs": [
           "An untargeted sealed damaged-permanent reference"
         ],
-        "exclusions": [
-          "Player recipients",
-          "Zero dealt damage",
-          "Unsupported source qualities",
-          "Unrepresented result bodies"
-        ]
+        "summary": "A positive dealt-damage occurrence with a closed source predicate and a creature permanent recipient retains the actual damaged incarnation independently of its source."
       },
       "blockers": [],
       "dependencies": [
@@ -67401,7 +67425,10 @@
     },
     {
       "applicability": {
-        "summary": "One unblocked-attacker occurrence at completion of blocker declarations, including creatures put into combat attacking; later blocker departure creates no new occurrence.",
+        "exclusions": [
+          "Unsupported result bodies",
+          "New unblocked events caused by later blocker removal"
+        ],
         "inputs": [
           "Completed blocker declarations",
           "Current attackers and historical blocked membership",
@@ -67410,10 +67437,7 @@
         "outputs": [
           "One ordinary APNAP-placeable event per unblocked attacker"
         ],
-        "exclusions": [
-          "Unsupported result bodies",
-          "New unblocked events caused by later blocker removal"
-        ]
+        "summary": "One unblocked-attacker occurrence at completion of blocker declarations, including creatures put into combat attacking; later blocker departure creates no new occurrence."
       },
       "blockers": [],
       "dependencies": [
@@ -75866,12 +75890,12 @@
       "version": 3
     },
     {
-      "id": "zone.reanimate.entry_counters",
-      "version": 2,
-      "status": "trusted",
-      "blockers": [],
       "applicability": {
-        "summary": "One fixed targeted graveyard return carries effect-generated numeric or ordinary keyword counters through the existing proposed battlefield entry.",
+        "exclusions": [
+          "shield,stun,unknown counter rules or a keyword without its closed gameplay owner",
+          "variable or conditional amounts,plural reanimation and linked result riders",
+          "a new incarnation substituted for the original selected target"
+        ],
         "inputs": [
           "one closed scalar graveyard target and destination controller",
           "fixed one-through-ten +1/+1,-1/-1,ordinary keyword or independently owned finality counters",
@@ -75882,20 +75906,16 @@
           "counters available to entry observation and state-based stabilization",
           "existing counter replacement ordering and serialization"
         ],
-        "exclusions": [
-          "shield,stun,unknown counter rules or a keyword without its closed gameplay owner",
-          "variable or conditional amounts,plural reanimation and linked result riders",
-          "a new incarnation substituted for the original selected target"
-        ]
+        "summary": "One fixed targeted graveyard return carries effect-generated numeric or ordinary keyword counters through the existing proposed battlefield entry."
       },
+      "blockers": [],
       "dependencies": [
         "zone.reanimate.fixed_target",
         "counter.producer.effect_entry"
       ],
-      "dependency_fail_closed_status": "passed",
       "dependency_fail_closed_rationale": "Verified withdrawal of the entry-counter owner prevents admission while ordinary scalar reanimation remains exact. Actual schema infers the owner even without coverage annotations.",
-      "implementation_mutation_status": "killed",
-      "implementation_mutation_rationale": "Changing the printed counter amount from two to one fails source-grounded compiler expectations; native zero-toughness and replacement totals distinguish entry-time counters.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.reanimate.entry_counters",
       "implementation_components": [
         "quorune.reanimation_entry_counters.validate_reanimation_entry_effect",
         "quorune.reanimation_entry_counters.reanimation_entry_counter_intent",
@@ -75905,6 +75925,23 @@
         "quorune.semantic_runtime.direct_target_fields.bound_graveyard_return_target_snapshot",
         "quorune.semantic_runtime.effect_handlers.DomainEffectHandler",
         "quorune.semantic_runtime.zone_move_intent.ZoneMoveIntent"
+      ],
+      "implementation_mutation_rationale": "Changing the printed counter amount from two to one fails source-grounded compiler expectations; native zero-toughness and replacement totals distinguish entry-time counters.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
+        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
+      ],
+      "multiplayer_tests": [
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
+        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
+      ],
+      "negative_tests": [
+        "test_unrepresented_counter_rules_variable_counts_and_linked_riders_remain_residual",
+        "test_runtime_minimum_ignores_annotations_and_the_intent_pins_identity_and_counter_placer",
+        "test_verified_entry_counter_authority_withdrawal_preserves_ordinary_reanimation",
+        "test_entry_counter_quantity_mutation_is_killed",
+        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks"
       ],
       "official_rules": [
         "400.7",
@@ -75919,37 +75956,9 @@
         "122.6a",
         "704.4"
       ],
-      "supported_profiles": [
-        "traditional",
-        "commander_duel",
-        "commander_review"
-      ],
-      "required_evidence": [
-        "positive",
-        "negative",
-        "interaction",
-        "multiplayer",
-        "privacy",
-        "replay"
-      ],
       "positive_tests": [
         "test_complete_fixed_entry_counter_forms_require_their_reanimation_and_counter_owners",
         "test_runtime_minimum_ignores_annotations_and_the_intent_pins_identity_and_counter_placer",
-        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
-        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
-      ],
-      "negative_tests": [
-        "test_unrepresented_counter_rules_variable_counts_and_linked_riders_remain_residual",
-        "test_runtime_minimum_ignores_annotations_and_the_intent_pins_identity_and_counter_placer",
-        "test_verified_entry_counter_authority_withdrawal_preserves_ordinary_reanimation",
-        "test_entry_counter_quantity_mutation_is_killed",
-        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks"
-      ],
-      "interaction_tests": [
-        "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
-        "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
-      ],
-      "multiplayer_tests": [
         "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
         "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
       ],
@@ -75959,7 +75968,22 @@
       "replay_tests": [
         "test_actual_reawakened_waits_before_entry_and_combines_counter_replacements_before_zero_toughness_checks",
         "test_actual_unbreakable_bond_installs_the_keyword_counter_and_its_lifelink_damage"
-      ]
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 2
     },
     {
       "applicability": {
@@ -76819,7 +76843,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 675,
+  "registry_version": 676,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

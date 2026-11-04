@@ -31,6 +31,7 @@ _LIBRARY_DEFINITION = re.compile(
     re.IGNORECASE,
 )
 _X = re.compile(r"\bX\b")
+_SCALED_X = re.compile(r"\b(?P<scale>twice|two times|three times) X\b", re.I)
 _RESULT_FIELDS = {
     'life_loss_then_gain_actual': ('amount',),
     'discover': ('amount',),
@@ -62,6 +63,13 @@ def _signed_number(value: Any) -> int | None:
     if type(value) is str and re.fullmatch(r"-?\d+", value):
         return int(value)
     return None
+
+
+def _fixed_x_projection(body: str, value: int) -> str:
+    """Reduce only the bounded source expression before fixed compilation."""
+    scaled = _SCALED_X.sub(
+        lambda match: str(value * (3 if match['scale'].lower() == 'three times' else 2)), body)
+    return _X.sub(str(value), scaled)
 
 
 def declared_effect_amount_template(
@@ -106,8 +114,10 @@ def declared_effect_amount_template(
         return None
     if _X.search(body) is None:
         return None
-    first = compile_fixed(_X.sub("2", body))
-    second = compile_fixed(_X.sub("3", body))
+    if quantity is not None and _SCALED_X.search(body) is not None:
+        return None
+    first = compile_fixed(_fixed_x_projection(body, 2))
+    second = compile_fixed(_fixed_x_projection(body, 3))
     if first[0] is None or second[0] is None or not first[3] or first[3] != second[3] or first[2] != second[2] or len(first[1]) != len(second[1]):
         return None
     binding_id = "x:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24]
@@ -122,13 +132,14 @@ def declared_effect_amount_template(
         if not _result_slot(operation, path):
             raise PublicQueryAmountError("X changed something other than a result slot")
         n, m = _signed_number(a), _signed_number(b)
-        if n not in {-2, 2} or m != n * 3 // 2 or type(a) is not type(b):
-            raise PublicQueryAmountError("X result did not preserve its signed unit coefficient")
+        if n not in {-6, -4, -2, 2, 4, 6} or m != n * 3 // 2 or type(a) is not type(b):
+            raise PublicQueryAmountError("X result did not preserve its bounded signed coefficient")
         replaced += 1
-        coefficient = 1 if n > 0 else -1
+        coefficient = n // 2
         return (
             PublicQueryAmountSpec(quantity=quantity, coefficient=coefficient, schema_version=2, binding_id=binding_id).to_dict()
-            if quantity is not None else CastXAmountSpec(coefficient=coefficient).to_dict()
+            if quantity is not None else CastXAmountSpec(
+                coefficient=coefficient, schema_version=1 if abs(coefficient) == 1 else 2).to_dict()
         )
 
     try:

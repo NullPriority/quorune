@@ -695,6 +695,7 @@
     "tests/fixtures/ring-original-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scalar-mill-wording-cards.json",
+    "tests/fixtures/scaled-cast-x-cards.json",
     "tests/fixtures/scheduled-event-pair-cards.json",
     "tests/fixtures/scheduled-half-life-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",

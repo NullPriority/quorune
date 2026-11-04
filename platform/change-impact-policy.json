@@ -11503,6 +11503,23 @@
         "test_fractional_player_results",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "typed-scaled-cast-x-results",
+      "patterns": [
+        "quorune/query_effect_amount_model.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/semantic_runtime/query_effect_amounts.py",
+        "tests/test_scaled_cast_x_amounts.py",
+        "tests/fixtures/scaled-cast-x-cards.json"
+      ],
+      "test_modules": [
+        "test_scaled_cast_x_amounts",
+        "test_declared_effect_amounts",
+        "test_variable_actual_life_transfer",
+        "test_quantified_counter_targets",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

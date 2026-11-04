@@ -39,7 +39,7 @@ class VariableActualLifeTransferCompilerTests(unittest.TestCase):
                 'Each opponent loses life equal to the number of Vampires you control. You gain life equal to the damage dealt this way.',
                 'Each opponent loses life equal to the number of Vampires you control. You gain life equal to the life lost this way. Rewrite history.'):
             self.assertNotEqual('exact',compile_oracle_card(record(text,'Sorcery'),capability_registry=registry).status)
-        debt=replace(record('Each opponent loses two times X life. You gain life equal to the life lost this way.','Sorcery'),mana_cost='{X}{W}{W}{B}{B}',mana_value=4)
+        debt=replace(record('Each opponent loses four times X life. You gain life equal to the life lost this way.','Sorcery'),mana_cost='{X}{W}{W}{B}{B}',mana_value=4)
         self.assertNotEqual('exact',compile_oracle_card(debt,capability_registry=registry).status)
 
     def test_verified_quantity_withdrawals_keep_fixed_actual_transfer_available(self):
