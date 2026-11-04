@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "2bacc86ba62b7c4de8398d1922057742fce904cbf2d5247956e9a3a2a67453e4"
+verified: "73fef8cbeef57b90667afadb842b3ffaf72f64fa6331c7fd8e6dffa7f7df05b1"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,12 +17,12 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 460 |
-| Cards | 5127 |
-| Rulings | 14934 |
-| Modules inspected | 801 |
-| Static requirements | 2254 |
-| Declared dynamic requirements | 84 |
+| Fixture files | 529 |
+| Cards | 5658 |
+| Rulings | 16859 |
+| Modules inspected | 887 |
+| Static requirements | 2516 |
+| Declared dynamic requirements | 115 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
 | Missing deck dependencies | 0 |
@@ -32,25 +32,25 @@ Overall closure: **closed**.
 
 | Shard | Modules | Status |
 | --- | ---: | --- |
-| casting-costs-mana | 70 | closed |
-| combat-declarations | 24 | closed |
-| compiler-cardprogram | 90 | closed |
+| casting-costs-mana | 71 | closed |
+| combat-declarations | 25 | closed |
+| compiler-cardprogram | 94 | closed |
 | core-domain | 14 | closed |
 | counter-continuous-effects | 60 | closed |
 | deterministic-game-regressions | 6 | closed |
-| events-replacement-zone | 54 | closed |
-| functional-01 | 61 | closed |
-| functional-02 | 61 | closed |
-| functional-03 | 65 | closed |
-| functional-04 | 60 | closed |
+| events-replacement-zone | 56 | closed |
+| functional-01 | 62 | closed |
+| functional-02 | 63 | closed |
+| functional-03 | 80 | closed |
+| functional-04 | 67 | closed |
 | functional-05 | 56 | closed |
-| functional-06 | 59 | closed |
+| functional-06 | 60 | closed |
 | functional-07 | 62 | closed |
-| functional-08 | 66 | closed |
+| functional-08 | 116 | closed |
 | functional-09 | 92 | closed |
-| functional-10 | 56 | closed |
-| functional-11 | 70 | closed |
-| functional-12 | 59 | closed |
+| functional-10 | 60 | closed |
+| functional-11 | 71 | closed |
+| functional-12 | 64 | closed |
 | generated-validation | 34 | closed |
 | main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |
