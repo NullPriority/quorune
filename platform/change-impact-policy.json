@@ -11463,6 +11463,24 @@
         "test_closed_effect_programs",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "source-spanned-independent-target-clauses",
+      "patterns": [
+        "quorune/compiler/independent_target_rows.py",
+        "quorune/compiler/program_composition.py",
+        "quorune/oracle_ir.py",
+        "tests/test_independent_target_clauses.py",
+        "tests/fixtures/independent-target-clause-cards.json"
+      ],
+      "test_modules": [
+        "test_independent_target_clauses",
+        "test_cast_creature_targets",
+        "test_bound_effect_programs",
+        "test_closed_effect_programs",
+        "test_fixed_damage_effect_clauses",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

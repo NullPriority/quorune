@@ -207,6 +207,15 @@ it does not expose hidden zones or create a general relational-target grammar.
 
 ## Copied target decisions
 
+Separate printed occurrences of `target` retain separate groups. The same
+object may fill each unqualified occurrence when it meets each predicate;
+`another target` in the second of two independent clauses requires distinct
+objects. The compiler preserves the source spans and passes that constraint
+to the existing spell-composition certificate and target planner. Each scalar
+result uses only its own group. An illegal target in one role does not suppress
+another legal role, and a copy rebinds each role under the existing per-group
+chosen-count rules.
+
 An ordered same-set result program announces targets once. Its `them` or
 `those` follow-ups consume the same surviving original target incarnations;
 each instruction does not discover a fresh set. A returned card with the same

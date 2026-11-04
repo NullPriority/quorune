@@ -59765,7 +59765,10 @@
         "quorune.targets",
         "quorune.compiler.event_player_target_results.event_player_target_result",
         "quorune.rules.event_player_targets.event_player_target_runtime_dependencies",
-        "quorune.rules.event_player_targets.bound_event_player_controller_schema"
+        "quorune.rules.event_player_targets.bound_event_player_controller_schema",
+        "quorune.compiler.independent_target_rows.independent_target_source_rows",
+        "quorune.compiler.independent_target_rows.mark_independent_target_nodes",
+        "quorune.compiler.program_composition.is_closed_composed_spell_effect_program"
       ],
       "implementation_mutation_rationale": "Omitting the bound mutation identity guard restores the original Requisition Raid failure after its first mode removes a shared target. The native witness also retains a shield-surviving target for the second destruction, and verifies actor-correct private replay and rollback. Omitting the defending-player relation adapter rejects its complete target witness.",
       "implementation_mutation_status": "killed",
@@ -59806,7 +59809,10 @@
         "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
         "test_actual_split_defenders_revalidate_control_and_survive_attacker_reentry",
         "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change",
-        "test_actual_granted_noncombat_damage_uses_the_damaged_player_without_a_combat_defender"
+        "test_actual_granted_noncombat_damage_uses_the_damaged_player_without_a_combat_defender",
+        "test_actual_consume_strength_offers_distinct_roles_and_applies_only_each_roles_scalar_result",
+        "test_actual_martial_glory_keeps_same_object_legal_and_partial_blink_is_local_to_its_role",
+        "test_actual_copy_rebinds_separate_roles_and_preserves_original_per_group_counts"
       ],
       "multiplayer_tests": [
         "test_original_raid_reuses_surviving_target_and_ignores_departed_target",
@@ -59832,7 +59838,10 @@
         "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
         "test_actual_split_defenders_revalidate_control_and_survive_attacker_reentry",
         "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change",
-        "test_actual_granted_noncombat_damage_uses_the_damaged_player_without_a_combat_defender"
+        "test_actual_granted_noncombat_damage_uses_the_damaged_player_without_a_combat_defender",
+        "test_actual_consume_strength_offers_distinct_roles_and_applies_only_each_roles_scalar_result",
+        "test_actual_martial_glory_keeps_same_object_legal_and_partial_blink_is_local_to_its_role",
+        "test_actual_copy_rebinds_separate_roles_and_preserves_original_per_group_counts"
       ],
       "negative_tests": [
         "test_all_targets_illegal_counters_by_rules",
@@ -59850,7 +59859,12 @@
         "test_actual_split_defenders_revalidate_control_and_survive_attacker_reentry",
         "test_runtime_proof_rejects_nonplayer_damage_wrong_events_and_missing_scope",
         "test_ambiguous_that_player_and_correlated_or_multiple_targets_remain_residual",
-        "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change"
+        "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change",
+        "test_unrepresented_sibling_choices_and_ambiguous_another_chains_stay_residual",
+        "test_existing_composition_certificate_rejects_a_dropped_distinct_constraint_or_marker",
+        "test_another_role_marker_omission_mutation_is_killed",
+        "test_actual_consume_strength_offers_distinct_roles_and_applies_only_each_roles_scalar_result",
+        "test_actual_copy_rebinds_separate_roles_and_preserves_original_per_group_counts"
       ],
       "official_rules": [
         "115.1",
@@ -59894,7 +59908,13 @@
         "test_actual_split_defenders_revalidate_control_and_survive_attacker_reentry",
         "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change",
         "test_actual_granted_noncombat_damage_uses_the_damaged_player_without_a_combat_defender",
-        "test_player_damage_and_cast_events_bind_only_their_proved_player"
+        "test_player_damage_and_cast_events_bind_only_their_proved_player",
+        "test_single_line_another_clause_preserves_distinct_roles_and_exact_source_spans",
+        "test_unqualified_target_occurrences_remain_separate_and_allow_the_same_object",
+        "test_existing_composition_certificate_rejects_a_dropped_distinct_constraint_or_marker",
+        "test_actual_consume_strength_offers_distinct_roles_and_applies_only_each_roles_scalar_result",
+        "test_actual_martial_glory_keeps_same_object_legal_and_partial_blink_is_local_to_its_role",
+        "test_actual_copy_rebinds_separate_roles_and_preserves_original_per_group_counts"
       ],
       "privacy_tests": [
         "test_hidden_zones_are_rejected_by_target_schema",
@@ -59920,7 +59940,8 @@
         "test_real_rust_counters_sacrificed_nontargeted_artifact_ability_without_draw",
         "test_actual_adventure_counters_nontargeted_departed_artifact_source_and_casts_creature",
         "test_actual_split_defenders_revalidate_control_and_survive_attacker_reentry",
-        "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change"
+        "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change",
+        "test_actual_consume_strength_offers_distinct_roles_and_applies_only_each_roles_scalar_result"
       ],
       "replay_tests": [
         "test_deflecting_swat_free_cost_and_exact_retarget",
@@ -59954,7 +59975,10 @@
         "test_rust_rejects_artifact_trigger_and_adventure_can_counter_that_departed_source_trigger",
         "test_actual_split_defenders_revalidate_control_and_survive_attacker_reentry",
         "test_actual_split_damaged_players_keep_targets_after_source_blink_and_target_control_change",
-        "test_actual_granted_noncombat_damage_uses_the_damaged_player_without_a_combat_defender"
+        "test_actual_granted_noncombat_damage_uses_the_damaged_player_without_a_combat_defender",
+        "test_actual_consume_strength_offers_distinct_roles_and_applies_only_each_roles_scalar_result",
+        "test_actual_martial_glory_keeps_same_object_legal_and_partial_blink_is_local_to_its_role",
+        "test_actual_copy_rebinds_separate_roles_and_preserves_original_per_group_counts"
       ],
       "required_evidence": [
         "positive",
@@ -59969,7 +59993,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 4
+      "version": 5
     },
     {
       "id": "target.set.one_per_player",
@@ -76764,7 +76788,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 673,
+  "registry_version": 674,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

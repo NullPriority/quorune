@@ -1181,12 +1181,11 @@ def _compile_face(
         )
         if typed_face is not None:
             return cipher_context_owner.apply_cipher_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
-    modal_blocks = fixed_nonrepeating_modal_context_blocks(
-        material_rows=material_rows, face_id=face_id, oracle_text=oracle_text, card_name=face_name or record.name, type_line=type_line, keywords=keywords,
-        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
-        effect_template=contextual_effect_template,
-        activated_or_event_node=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node,
-    )
+    from .compiler.independent_target_rows import prepare_target_clause_context,mark_independent_target_nodes
+    material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,face_id=face_id,oracle_text=oracle_text,
+        card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,effect_template=contextual_effect_template,
+        activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node)
     for index, row in (_class_context.class_compilation_rows(class_context, material_rows) if class_context is not None else _leveler_compilation_rows(leveler_context, material_rows)):
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue
@@ -1367,6 +1366,7 @@ def _compile_face(
                 residual_ids=(residual_id,),
             )
         )
+    nodes=mark_independent_target_nodes(nodes,distinct_target_spans)
     resolved_nodes = _class_context.apply_class_context(context=class_context, oracle_id=record.oracle_id, face_id=face_id, material_rows=material_rows, printed_keywords=keywords, nodes=reject_cast_cost_composition(restrict_temporary_interaction_context(record, face_id, nodes, residuals), residuals), residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
     resolved_nodes = station_context_owner.apply_station_context(context=station_context, oracle_id=record.oracle_id,
         face_id=face_id, oracle_text=oracle_text, material_rows=material_rows, nodes=resolved_nodes,
