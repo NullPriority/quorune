@@ -597,6 +597,7 @@
     "tests/fixtures/nonmana-kicker-cards.json",
     "tests/fixtures/nonmana-morph-cards.json",
     "tests/fixtures/nonmodal-face-mana-value-cards.json",
+    "tests/fixtures/number-of-token-cards.json",
     "tests/fixtures/numeric-count-self-cost-cards.json",
     "tests/fixtures/occurrence-player-target-cards.json",
     "tests/fixtures/opening-hand-battlefield-cards.json",

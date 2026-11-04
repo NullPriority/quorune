@@ -407,6 +407,14 @@ The precise Connive shape excludes internal continuation fields, open result
 tails and ambiguous event-object pronouns. Its capability closes through the
 existing draw, typed discard, destination replacement and counter owners.
 
+Scalar token-quantity lowering accepts the complete “create a number of …
+tokens equal to …” form by normalizing only its quantity to the existing
+declared-X result. Fixed token characteristics, tapped entry and abilities
+retain their ordinary token compiler. Source power and named counter amounts
+keep the scalar owner's current-incarnation and last-known-information timing;
+public object counts retain their existing query owner. Linked excess damage,
+die-roll results, unknown quantities and unrepresented siblings remain residual.
+
 `compiler/fixed_resolution_mana.py` lowers complete fixed symbol bundles into
 the existing mana effect, one instruction per represented color or colorless
 quantity. A represented spending restriction remains attached to every unit.

@@ -11735,6 +11735,20 @@
         "test_zone_trigger_events",
         "test_card_program_trust"
       ]
+    },
+    {
+      "id": "scalar-number-of-token-quantities",
+      "patterns": [
+        "quorune/compiler/scalar_effect_amounts.py",
+        "tests/test_number_of_token_amounts.py",
+        "tests/fixtures/number-of-token-cards.json"
+      ],
+      "test_modules": [
+        "test_number_of_token_amounts",
+        "test_scalar_effect_amounts",
+        "test_ravenous_rules",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

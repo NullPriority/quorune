@@ -89,6 +89,8 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     """Only replace result slots after complete consumption and fixed-shape proof."""
     from .target_hand_amount_templates import normalized_target_hand_damage
     normalized = normalized_target_hand_damage(text.strip(),source_name)
+    tokens=re.fullmatch(r'Create a number of (?P<definition>[^.]+? tokens?) equal to (?P<value>[^.]+?)\.?',normalized,re.I)
+    if tokens is not None:normalized=f"Create X {tokens['definition']}, where X is {tokens['value']}."
     definition = re.fullmatch(r"(?P<body>[^.]+?), where X is (?:equal to )?(?P<value>.+?)\.?", normalized, re.I)
     producer = None
     multiplier = 1
