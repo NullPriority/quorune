@@ -1,11 +1,25 @@
 from __future__ import annotations
 
-"""Retire only source-identical compatibility views of fixed token replacements."""
+"""Retire source-matched compatibility views of fixed token replacements."""
 
-from typing import Iterable
+from typing import Any, Iterable, Mapping
 from ..carddb import CardRecord
+from ..fixed_token_production import historical_unnamed_token_view
 from ..semantics import SemanticProgram
 from ..semantic_runtime.token_replacements import GenericAdditionalTokenReplacementHandler
+
+
+def _matches_reviewed_token(
+    current: Mapping[str, Any], reviewed: Mapping[str, Any],
+) -> bool:
+    if current == reviewed:
+        return True
+    token = current["token"]  # The current handler has already passed validation.
+    former = historical_unnamed_token_view(token["name"], token)
+    if former is None:
+        return False
+    name, definition = former
+    return {**current, "token": {**definition, "name": name}} == reviewed
 
 
 def shadowed_reviewed_additional_token_keys(
@@ -17,7 +31,7 @@ def shadowed_reviewed_additional_token_keys(
     generated=tuple(generated_programs);reviewed=tuple(reviewed_programs)
     shadowed=set();matched_sources=set()
     handler=GenericAdditionalTokenReplacementHandler()
-    fields=('semantic_schema_version','active_zone','event','destination','effects','handlers',
+    fields=('semantic_schema_version','active_zone','event','destination','effects',
             'target_schema','cost_schema','event_condition','trigger_limit','requires_arbiter')
     for current in generated:
         if (current.oracle_id!=record.oracle_id or current.trust_level!='trusted'
@@ -34,7 +48,9 @@ def shadowed_reviewed_additional_token_keys(
         for old in reviewed:
             if (old.oracle_id!=record.oracle_id or old.trust_level!='trusted'
                     or str(old.provenance.get('authored_by','')).startswith('oracle-ir-v')
-                    or any(getattr(old,field)!=getattr(current,field) for field in fields)):
+                    or any(getattr(old,field)!=getattr(current,field) for field in fields)
+                    or len(old.handlers)!=1
+                    or not _matches_reviewed_token(current.handlers[0], old.handlers[0])):
                 continue
             if all(current.provenance.get(key)
                    and current.provenance[key]==old.provenance.get(key)

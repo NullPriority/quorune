@@ -488,6 +488,54 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertIsNone(fixed_token_creation_effect_template(text))
 
+    def test_literal_token_name_is_shared_by_preview_and_commit_without_catalog_alias(self):
+        from types import SimpleNamespace
+        from unittest.mock import Mock
+        from quorune.fixed_token_production import TOKEN_LITERAL_NAME_VERSION_FIELD
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+        from quorune.token_creation_identity import (
+            TokenCreationError,
+            _new_token_identity,
+            _preview_token_object,
+        )
+
+        template = fixed_token_creation_effect_template(
+            "Create a 1/1 red Goblin creature token named Metallic Sliver."
+        )
+        self.assertIsNotNone(template)
+        self.assertEqual("Metallic Sliver", template.effect["name"])
+        self.assertEqual(1, template.effect["characteristics"][TOKEN_LITERAL_NAME_VERSION_FIELD])
+        catalog_record = SimpleNamespace(oracle_id="catalog-sliver", name="Metallic Sliver")
+        host = SimpleNamespace(
+            card_db=Mock(), state=SimpleNamespace(token_copy_value_version=1),
+            seats=["A", "B"], _stable_runtime_id=lambda namespace, ref: ref,
+        )
+        host.card_db.lookup.return_value = catalog_record
+        values = template.effect["characteristics"]
+        preview = _preview_token_object(host, "A", template.effect)
+        identity = _new_token_identity(host, name="Metallic Sliver", characteristics=values, ref="T1")
+        self.assertEqual("Metallic Sliver", preview.printed_name)
+        self.assertEqual("Metallic Sliver", identity[2])
+        self.assertTrue(identity[1].startswith("custom-token:"))
+        self.assertEqual(preview.annotations, identity[3])
+        self.assertNotIn(TOKEN_LITERAL_NAME_VERSION_FIELD, identity[3]["token_characteristics"])
+        self.assertEqual("Token Creature — Goblin", identity[3]["token_characteristics"]["type_line"])
+        host.card_db.lookup.assert_not_called()
+
+        legacy = {key: value for key, value in values.items() if key != TOKEN_LITERAL_NAME_VERSION_FIELD}
+        legacy_identity = _new_token_identity(host, name="Metallic Sliver", characteristics=legacy, ref="T1")
+        self.assertEqual(catalog_record.oracle_id, legacy_identity[1])
+        host.card_db.lookup.assert_called_once_with("Metallic Sliver")
+        for malformed in (True, None, 2, "1"):
+            with self.subTest(version=malformed):
+                characteristics = {**values, TOKEN_LITERAL_NAME_VERSION_FIELD: malformed}
+                self.assertEqual((), fixed_token_creation_node_capabilities(
+                    effects=({**template.effect, "characteristics": characteristics},),
+                    target_schema=None, mechanic_ids=set(template.mechanics),
+                ))
+                with self.assertRaisesRegex(TokenCreationError, "Unsupported literal token name version"):
+                    _new_token_identity(host, name="Metallic Sliver", characteristics=characteristics, ref="T1")
+
     def test_tapped_attacking_token_batch_has_complete_normal_admission(self):
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
@@ -1143,7 +1191,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         spirits = [
             card
             for object_id, card in engine.state.cards.items()
-            if object_id not in before and card.printed_name == "Spirit"
+            if object_id not in before and card.printed_name == "Spirit Token"
         ]
         self.assertEqual(2, len(spirits))
         self.assertEqual(1, len({card.zone_timestamp for card in spirits}))
@@ -1185,7 +1233,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         golem = next(
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Golem"
+            if card.is_token and card.printed_name == "Golem Token"
         )
         golem_data = engine._effective_card_data(golem)
         self.assertEqual(
@@ -1263,7 +1311,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.is_token
             and card.zone == "battlefield"
-            and card.printed_name == "Eldrazi Spawn"
+            and card.printed_name == "Eldrazi Spawn Token"
         )
         mana_ability = next(
             ability
@@ -1307,7 +1355,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.is_token
             and card.zone == "battlefield"
-            and card.printed_name == "Construct"
+            and card.printed_name == "Construct Token"
         )
         self.assertEqual("1", engine._effective_card_data(construct)["power"])
         engine.create_token(
@@ -1327,7 +1375,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.is_token
             and card.zone == "battlefield"
-            and card.printed_name == "Pest"
+            and card.printed_name == "Pest Token"
         ]
         self.assertEqual(2, len(pests))
         copied_ref = engine.create_token(
@@ -1394,7 +1442,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.is_token
             and card.zone == "battlefield"
-            and card.printed_name == "Pest"
+            and card.printed_name == "Pest Token"
         ]
         self.assertEqual(4, len(pests))
         damage_source = self.card(engine, "Mishra, Eminent One")
@@ -1504,15 +1552,15 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             if object_id not in before
         ]
         self.assertEqual(
-            {"Dinosaur", "Human Soldier"},
+            {"Dinosaur Token", "Human Soldier Token"},
             {card.printed_name for card in created},
         )
         self.assertEqual(1, len({card.zone_timestamp for card in created}))
         dinosaur = next(
-            card for card in created if card.printed_name == "Dinosaur"
+            card for card in created if card.printed_name == "Dinosaur Token"
         )
         soldier = next(
-            card for card in created if card.printed_name == "Human Soldier"
+            card for card in created if card.printed_name == "Human Soldier Token"
         )
         self.assertEqual(
             ["Haste"], engine._effective_card_data(dinosaur)["keywords"]
@@ -1581,7 +1629,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             if card.is_token and card.zone == "battlefield"
         ]
         self.assertEqual(
-            {"Food", "Human", "Map", "Thopter"},
+            {"Food", "Human Token", "Map", "Thopter Token"},
             {card.printed_name for card in tokens},
         )
         self.assertEqual(1, len({card.zone_timestamp for card in tokens}))
@@ -1728,7 +1776,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Map", "Thopter", "Treasure"},
+            {"Map", "Thopter Token", "Treasure"},
             {
                 card.printed_name
                 for card in engine.state.cards.values()

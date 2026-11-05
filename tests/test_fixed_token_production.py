@@ -616,12 +616,12 @@ class FixedTokenProductionTests(unittest.TestCase):
             created[token.printed_name] = token
 
         self.assertFalse(
-            engine._can_block(ordinary_attacker, created["Rat"])[0]
+            engine._can_block(ordinary_attacker, created["Rat Token"])[0]
         )
         self.assertFalse(
-            engine._can_block(created["Fish"], ordinary_blocker)[0]
+            engine._can_block(created["Fish Token"], ordinary_blocker)[0]
         )
-        current = engine._effective_card_data(created["Shapeshifter"])
+        current = engine._effective_card_data(created["Shapeshifter Token"])
         card_types, subtypes, _supertypes = type_parts(current["type_line"])
         self.assertIn("creature", card_types)
         self.assertEqual(CREATURE_SUBTYPES, frozenset(subtypes))
@@ -807,7 +807,7 @@ class FixedTokenProductionTests(unittest.TestCase):
         session.commands.clear()
         session.decisions.clear()
         self.pass_until_empty(session)
-        spirits = [card for card in engine.state.cards.values() if card.is_token and card.controller == "B" and card.printed_name == "Spirit"]
+        spirits = [card for card in engine.state.cards.values() if card.is_token and card.controller == "B" and card.printed_name == "Spirit Token"]
         self.assertEqual(2, len(spirits))
         self.assertTrue(all(engine._effective_card_data(card)["colors"] == ["W", "B"] for card in spirits))
         self.assertTrue(
@@ -884,7 +884,7 @@ class FixedTokenProductionTests(unittest.TestCase):
         spirits = [
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Spirit"
+            if card.is_token and card.printed_name == "Spirit Token"
         ]
         self.assertEqual(2, sum(card.controller == "B" for card in spirits))
         self.assertEqual(2, sum(card.controller == "C" for card in spirits))
@@ -1043,7 +1043,7 @@ class FixedTokenProductionTests(unittest.TestCase):
         token = next(
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Shapeshifter"
+            if card.is_token and card.printed_name == "Shapeshifter Token"
         )
         engine.state.players["A"].mana_pool["C"] = 2
         self.prepare_priority(session)

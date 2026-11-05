@@ -13,7 +13,9 @@ from ..ability_fragments import (
     ability_fragment_to_dict,
 )
 from ..fixed_token_production import (
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenCreationTemplate,
+    fixed_ordinary_token_name,
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .fixed_token_production_templates import (
@@ -38,7 +40,6 @@ _TOKEN_TREASURE = "Treasure"
 _TOKEN_FOOD = "Food"
 _TOKEN_MAP = "Map"
 _TOKEN_CLUE = "Clue"
-_TOKEN_THOPTER = "Thopter"
 
 FIXED_TOKEN_DEFINITION_BATCH_MECHANIC = "fixed-token-definition-batch"
 
@@ -169,14 +170,6 @@ _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
         ),
         "keywords": ["Indestructible"],
         "ability_profile": "tap_colorless_restricted_v1",
-    },
-    "1/1 colorless thopter artifact creature token with flying": {
-        "name": _TOKEN_THOPTER,
-        "type_line": "Token Artifact Creature — Thopter",
-        "colors": [],
-        "power": "1",
-        "toughness": "1",
-        "keywords": ["Flying"],
     },
 }
 
@@ -339,6 +332,7 @@ def _single_fixed_token_creation_effect_template(
     )
     characteristics: dict[str, Any] = {
         "type_line": f"Token {' '.join(ordered_types)} — {subtypes}",
+        TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
         "colors": colors,
         "power": creature.group("power"),
         "toughness": creature.group("toughness"),
@@ -367,7 +361,7 @@ def _single_fixed_token_creation_effect_template(
         effect={
             "op": "create_token",
             "controller": "$controller",
-            "name": subtypes,
+            "name": fixed_ordinary_token_name(subtypes),
             "quantity": quantity,
             **({"tapped": True} if creature.group("tapped") else {}),
             "characteristics": characteristics,

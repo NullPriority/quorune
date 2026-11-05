@@ -3541,7 +3541,12 @@ spell, triggered, and activated effects. The closed production emits a
 positive fixed quantity, an optional tapped entry state, and either a
 represented predefined artifact definition or a fixed creature definition
 with up to three colors, optional Artifact and Enchantment card types, a
-proper name or Legendary supertype, and capability-backed keywords. Changeling
+proper name or Legendary supertype, and capability-backed keywords. Ordinary
+unnamed creature definitions derive the copiable name from their printed
+subtypes plus “Token” under CR 111.4. A versioned literal-name marker makes
+the resolved name authoritative for creation and entry previews. Explicit
+names retain the printed wording. Predefined tokens and token copies use
+their existing name owners. Changeling
 and the exact can't-block or can't-be-blocked token sentences lower to the
 shared typed characteristic and declaration fragments rather than executable
 display text. Fixed creature tokens with Prowess carry exactly one canonical

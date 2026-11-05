@@ -74,7 +74,7 @@ class SourceCounterQuantityNativeTests(InheritedNativeFixture,unittest.TestCase)
                 s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
                 current=s.state.cards[source.object_id]
                 self.assertEqual(0 if blinked else 2,current.counters.get('+1/+1',0))
-                goblins=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Goblin']
+                goblins=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Goblin Token']
                 self.assertEqual(1 if blinked else 3,len(goblins));self.replay(s,load=True)
 
     def test_actual_insight_engine_draws_from_postcounter_amount_and_keeps_cards_private(self):

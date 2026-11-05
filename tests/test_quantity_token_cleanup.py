@@ -207,7 +207,7 @@ class QuantityTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
                 self.assertTrue(s.act('pilot:A',{'action_id':mana['id'],'pay':'auto'}).ok)
                 self.cast(s,'A',response,[grantee.ref]);self.resolve_top(s)
                 self.assertIsNone(self.resolve(s))
-                tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Elemental']
+                tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Elemental Token']
                 self.assertEqual(amount,len(tokens))
                 self.assertEqual(1,len([item for item in s.state.delayed_triggers if item.active]))
                 cleanup=next(item for item in s.state.delayed_triggers if item.active)

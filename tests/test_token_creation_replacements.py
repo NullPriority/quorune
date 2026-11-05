@@ -193,7 +193,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            {"Treasure", "Thopter"},
+            {"Treasure", "Thopter Token"},
             {engine._resolve_object("A", ref).printed_name for ref in created},
         )
         event = next(
@@ -666,7 +666,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Treasure", "Thopter", "Map"},
+            {"Treasure", "Thopter Token", "Map"},
             {
                 card.printed_name
                 for card in engine.state.cards.values()
@@ -784,7 +784,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Treasure", "Thopter", "Map"},
+            {"Treasure", "Thopter Token", "Map"},
             {
                 card.printed_name
                 for card in engine.state.cards.values()

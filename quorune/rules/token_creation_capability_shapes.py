@@ -43,11 +43,28 @@ from ..fixed_token_production import (
     clue_token_effect,
     sequential_investigate_count,
     fixed_token_player_target_schema,
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
+    literal_token_name_version,
+    fixed_ordinary_token_name,
 )
 
 
 _TOKEN_MECHANIC = "cr-111-tokens"
 _COLOR_ORDER = "WUBRG"
+
+
+def _is_afterlife_token_effect(effect: Mapping[str, Any]) -> bool:
+    from ..replacement.immutable import thaw_value
+
+    quantity = effect.get("quantity")
+    characteristics = effect.get("characteristics")
+    if type(quantity) is not int or not isinstance(characteristics, Mapping):
+        return False
+    try:
+        legacy_name = literal_token_name_version(characteristics) is None
+        return thaw_value(effect) == afterlife_token_effect(quantity, legacy_name=legacy_name)
+    except FixedTokenProductionError:
+        return False
 
 
 def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
@@ -66,12 +83,8 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
             and isinstance(value.get('characteristics'),Mapping)
             and {'power','toughness'}<=set(value['characteristics'])
             and not value.get('copy_of') and not value.get('copy_spec')):
-        quantity=value.get('quantity')
-        if AFTERLIFE_MECHANIC_ID in mechanics and type(quantity) is int:
-            try:
-                from ..replacement.immutable import thaw_value
-                if thaw_value(value)==afterlife_token_effect(quantity):return (AFTERLIFE_CAPABILITY_ID,)
-            except FixedTokenProductionError:pass
+        if AFTERLIFE_MECHANIC_ID in mechanics and _is_afterlife_token_effect(value):
+            return (AFTERLIFE_CAPABILITY_ID,)
         return (
             'token.creation.fixed_definition',
             *token_toxic_definition_dependencies(value['characteristics']),
@@ -225,9 +238,14 @@ def _fixed_creature_effect_closure(
         "toughness",
         "keywords",
         "ability_fragments",
+        TOKEN_LITERAL_NAME_VERSION_FIELD,
     }
     required = {"type_line", "colors", "power", "toughness"}
     if not required.issubset(characteristics) or set(characteristics) - allowed:
+        return None
+    try:
+        name_version = literal_token_name_version(characteristics)
+    except FixedTokenProductionError:
         return None
     name = effect.get("name")
     if not isinstance(name, str) or re.fullmatch(
@@ -270,7 +288,8 @@ def _fixed_creature_effect_closure(
         *("toxic" if keyword.startswith("Toxic ") else keyword.casefold() for keyword in keywords),
     }
     subtype_text = type_line.split(" — ", 1)[1]
-    if name != subtype_text or "Legendary" in type_line:
+    default_name = fixed_ordinary_token_name(subtype_text) if name_version is not None else subtype_text
+    if name != default_name or "Legendary" in type_line:
         mechanics.add("fixed-named-token")
     raw_fragments = characteristics.get("ability_fragments", [])
     if not isinstance(raw_fragments, list) or len(raw_fragments) > 3:
@@ -571,12 +590,8 @@ def _fixed_token_definition_node_capabilities(
         expected_investigate = (
             clue_token_effect(quantity) if type(quantity) is int else None
         )
-        expected_afterlife = (
-            afterlife_token_effect(quantity) if type(quantity) is int else None
-        )
     except FixedTokenProductionError:
         expected_investigate = None
-        expected_afterlife = None
     if (
         INVESTIGATE_MECHANIC_ID in mechanics
         and {
@@ -594,8 +609,7 @@ def _fixed_token_definition_node_capabilities(
             FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
             "cr-603-handling-triggered-abilities",
         }.issubset(mechanics)
-        and expected_afterlife is not None
-        and dict(effect) == expected_afterlife
+        and _is_afterlife_token_effect(effect)
     ):
         return (AFTERLIFE_CAPABILITY_ID,)
     closure = _fixed_token_effect_closure(fixed_effect)

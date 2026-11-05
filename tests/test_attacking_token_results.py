@@ -271,7 +271,7 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         self.assertTrue(s.act('pilot:A', {'action_id': 'order', 'triggers': order}).ok)
         self.until(s, lambda game: game.state.pending_decision is not None
             and game.state.pending_decision.kind == 'semantic.choice')
-        self.assertFalse(any(c.zone == 'battlefield' and c.printed_name == 'Soldier' for c in s.state.cards.values()))
+        self.assertFalse(any(c.zone == 'battlefield' and c.printed_name == 'Soldier Token' for c in s.state.cards.values()))
         self.choose_destinations(s, ('B', 'C'))
         decision = s.state.pending_decision
         self.assertNotEqual('semantic.choice', decision.kind, repr(decision.payload_by_actor.get('A'))[:1400])
@@ -281,7 +281,7 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         result = s.act('pilot:A', {'action_id': 'choose', 'choice': 'put'})
         self.assertTrue(result.ok, result.summary)
         self.settle(s)
-        soldiers = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Soldier']
+        soldiers = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Soldier Token']
         self.assertEqual(2, len(soldiers)); self.assertTrue(all(c.tapped for c in soldiers))
         self.assertEqual({'B', 'C'}, {c.attacking for c in soldiers})
         self.assertTrue(all(str(s.engine._effective_card_data(c)['power']) == '2' for c in soldiers))

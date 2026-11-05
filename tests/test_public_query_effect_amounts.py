@@ -1043,12 +1043,12 @@ class PublicQueryEffectAmountRuntimeTests(unittest.TestCase):
             kind="spell",
         )
         thopters_before = sum(
-            card.zone == "battlefield" and card.printed_name == "Thopter"
+            card.zone == "battlefield" and card.printed_name == "Thopter Token"
             for card in engine.state.cards.values()
         )
         self.resolve(engine, artifact_item, artifact_tokens)
         thopters_after = sum(
-            card.zone == "battlefield" and card.printed_name == "Thopter"
+            card.zone == "battlefield" and card.printed_name == "Thopter Token"
             for card in engine.state.cards.values()
         )
         self.assertEqual(thopters_before + 2, thopters_after)

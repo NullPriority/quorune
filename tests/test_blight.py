@@ -119,7 +119,11 @@ class FixedBlightRuntimeTests(unittest.TestCase):
         self.assertEqual((small.ref, 2), (events[0].details["object"], events[0].details["placed"]))
         self.assertEqual([small.ref], events[2].details["objects"])
         self.assertEqual("graveyard", session.state.cards[small.object_id].zone)
-        self.assertEqual(4, sum(card.is_token and card.zone == "battlefield" for card in session.state.cards.values()))
+        goblins = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(4, len(goblins))
+        for goblin in goblins:
+            self.assertEqual("Goblin Token", session.engine.display_name(goblin.object_id))
+            self.assertEqual("Goblin Token", session.engine._copyable_characteristics(goblin)["name"])
         self.replay(session)
 
     def test_actual_blight_payment_is_unavailable_under_counter_prohibition(self):

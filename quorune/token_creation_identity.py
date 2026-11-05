@@ -9,6 +9,11 @@ The creation transaction owns commitment of the returned values.
 import copy
 from typing import Any, Mapping, Protocol
 
+from .fixed_token_production import (
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
+    FixedTokenProductionError,
+    literal_token_name_version,
+)
 from .model import CardInstance
 from .token_copy_value_model import token_copy_value_mode,token_copy_value_annotations
 from .face_down_characteristics_model import face_down_characteristics_mode
@@ -124,6 +129,40 @@ def _copied_token_identity(
         copy_snapshot=token_copy_snapshot(host, original))
 
 
+def _new_token_definition(
+    host: TokenIdentityHost,
+    name: str,
+    characteristics: Mapping[str, Any],
+) -> tuple[str | None, str, dict[str, Any]]:
+    """Share source-owned identity and historical lookup between preview and entry."""
+    values = dict(characteristics)
+    try:
+        name_version = literal_token_name_version(values)
+    except FixedTokenProductionError as exc:
+        raise TokenCreationError(str(exc)) from exc
+    oracle_id = None
+    printed_name = name
+    if name_version is not None:
+        if DEFINED_TOKEN_FACES_FIELD in values:
+            raise TokenCreationError("A literal token name cannot override defined faces")
+        del values[TOKEN_LITERAL_NAME_VERSION_FIELD]
+    elif DEFINED_TOKEN_FACES_FIELD not in values:
+        try:
+            record = host.card_db.lookup(name)
+        except KeyError:
+            pass
+        else:
+            oracle_id, printed_name = record.oracle_id, record.name
+    annotations = {
+        "token_characteristics": copy.deepcopy(values),
+        **defined_token_creation_identity(values),
+        **token_copy_value_annotations(host),
+    }
+    if values:
+        annotations["copy_overrides"] = copy.deepcopy(values)
+    return oracle_id, printed_name, annotations
+
+
 def _new_token_identity(
     host: TokenIdentityHost,
     *,
@@ -131,23 +170,9 @@ def _new_token_identity(
     characteristics: Mapping[str, Any],
     ref: str,
 ) -> tuple[str, str, str, dict[str, Any]]:
-    record = None
-    if DEFINED_TOKEN_FACES_FIELD not in characteristics:
-        try:
-            record = host.card_db.lookup(name)
-        except KeyError:
-            pass
-    oracle_id = record.oracle_id if record else 'custom-token:' + host._stable_runtime_id('token-oracle',ref)
-    printed_name = record.name if record else name
-    annotations = {
-        "token_characteristics": copy.deepcopy(dict(characteristics)),
-        **defined_token_creation_identity(characteristics),
-        **token_copy_value_annotations(host),
-    }
-    if characteristics:
-        annotations["copy_overrides"] = copy.deepcopy(
-            dict(characteristics)
-        )
+    oracle_id, printed_name, annotations = _new_token_definition(host, name, characteristics)
+    if oracle_id is None:
+        oracle_id = "custom-token:" + host._stable_runtime_id("token-oracle", ref)
     return ref, oracle_id, printed_name, annotations
 
 
@@ -177,23 +202,9 @@ def _preview_token_object(
     else:
         if not name:
             name = "Token"
-        record = None
-        if DEFINED_TOKEN_FACES_FIELD not in characteristics:
-            try:
-                record = host.card_db.lookup(name)
-            except KeyError:
-                pass
-        oracle_id = record.oracle_id if record else 'custom-token:aura-entry-preview'
-        printed_name = record.name if record else name
-        annotations = {
-            "token_characteristics": copy.deepcopy(characteristics),
-            **defined_token_creation_identity(characteristics),
-            **token_copy_value_annotations(host),
-        }
-        if characteristics:
-            annotations["copy_overrides"] = copy.deepcopy(
-                characteristics
-            )
+        oracle_id, printed_name, annotations = _new_token_definition(host, name, characteristics)
+        if oracle_id is None:
+            oracle_id = "custom-token:aura-entry-preview"
     return CardInstance(
         object_id="aura-entry-preview",
         ref="aura-entry-preview",

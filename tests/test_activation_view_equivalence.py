@@ -100,7 +100,7 @@ class ActivationViewEquivalenceTests(unittest.TestCase):
         self.cast(s,source,payment={'C':2,'U':1});self.assertIsNone(self.resolve(s));self.cast(s,artifact,payment={'C':1})
         stack_ref=next(item.ref for item in s.state.stack if item.kind=='spell' and item.card_object_id==artifact.object_id)
         self.cast(s,counter,[stack_ref],seat='B',payment={'U':2});self.assertIsNone(self.resolve(s));self.assertEqual('graveyard',s.state.cards[artifact.object_id].zone)
-        thopters=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield' and c.printed_name=='Thopter'];self.assertEqual(1,len(thopters));token=thopters[0]
+        thopters=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield' and c.printed_name=='Thopter Token'];self.assertEqual(1,len(thopters));token=thopters[0]
         self.assertEqual(1,s.engine._numeric_stat(token.object_id,'power'));self.assertIn('flying',s.engine._combat_keywords(token))
         self.activation(s,source,costs=[token,token],payment={'C':1,'U':1},valid=False)
         self.activation(s,source,costs=[source,body],payment={'C':1,'U':1},valid=False)

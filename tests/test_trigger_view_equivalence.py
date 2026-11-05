@@ -118,7 +118,7 @@ class TriggerViewEquivalenceTests(unittest.TestCase):
         own=self.add(s.engine,'Village Rites',zone='hand',ref='bastion_a_rites');foreign=self.add(s.engine,'Village Rites',seat='B',zone='hand',ref='bastion_b_rites');control=self.add(s.engine,'Control Magic',seat='B',zone='hand')
         for i in range(4):self.add(s.engine,'Island',seat='B',ref='bastion_b_island'+str(i))
         self.add(s.engine,'Swamp',seat='B');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
-        self.prepare(s,mana={'C':2,'B':2});self.checkpoint(s);self.cast(s,source,payment={'C':2,'B':1});self.assertIsNone(self.resolve(s));soldiers=self.tokens(s,'Human Soldier');self.assertEqual(1,len(soldiers))
+        self.prepare(s,mana={'C':2,'B':2});self.checkpoint(s);self.cast(s,source,payment={'C':2,'B':1});self.assertIsNone(self.resolve(s));soldiers=self.tokens(s,'Human Soldier Token');self.assertEqual(1,len(soldiers))
         self.sacrifice_spell(s,own,soldiers[0]);self.assertIsNone(self.resolve(s));self.assertEqual([41,39,39,39],[s.state.players[x].life for x in 'ABCD'])
         self.advance(s,lambda x:x.state.active_player=='B' and x.state.phase=='precombat_main' and x.state.pending_decision.kind=='priority')
         self.cast(s,control,[body.ref],seat='B');self.assertIsNone(self.resolve(s));self.assertEqual(('A','B'),(s.state.cards[body.object_id].owner,s.state.cards[body.object_id].controller))
@@ -132,14 +132,14 @@ class TriggerViewEquivalenceTests(unittest.TestCase):
         self.cast(s,source,payment={'C':2,'U':1});pending=self.resolve(s);self.assertEqual('semantic.choice',pending.kind)
         schema=s.state.pending_decision.payload_by_actor['A']['legal_actions'][0]['choice_schema'];refs=schema['legal_refs'];self.assertEqual(2,len(refs));self.assertIn(secret.ref,refs)
         for seat in 'BCD':self.assertNotIn(secret.ref,json.dumps(s.packet('pilot:'+seat,full=True)))
-        s=self.replay(s,load=True);self.choose(s,{'action_id':'choose','cards':{'top':[secret.ref],'bottom':[r for r in refs if r!=secret.ref]}});self.assertIsNone(self.resolve(s));self.assertFalse(self.tokens(s,'Construct'))
-        self.cast(s,small,payment={'C':1});self.assertIsNone(self.resolve(s));self.assertFalse(self.tokens(s,'Construct'))
-        self.cast(s,large,payment={'C':3});self.assertIsNone(self.resolve(s));tokens=self.tokens(s,'Construct');self.assertEqual(1,len(tokens));self.assertEqual(4,s.engine._numeric_stat(tokens[0].object_id,'power'))
+        s=self.replay(s,load=True);self.choose(s,{'action_id':'choose','cards':{'top':[secret.ref],'bottom':[r for r in refs if r!=secret.ref]}});self.assertIsNone(self.resolve(s));self.assertFalse(self.tokens(s,'Construct Token'))
+        self.cast(s,small,payment={'C':1});self.assertIsNone(self.resolve(s));self.assertFalse(self.tokens(s,'Construct Token'))
+        self.cast(s,large,payment={'C':3});self.assertIsNone(self.resolve(s));tokens=self.tokens(s,'Construct Token');self.assertEqual(1,len(tokens));self.assertEqual(4,s.engine._numeric_stat(tokens[0].object_id,'power'))
         self.cast(s,destroy,[large.ref],payment={'C':1,'W':1});self.assertIsNone(self.resolve(s));self.assertEqual(3,s.engine._numeric_stat(tokens[0].object_id,'power'));self.private_replay(s,private)
 
     def test_real_synthesizer_does_not_observe_opponent_artifact_entry(self):
         s=self.session(823070);self.add(s.engine,NAMES[3]);spell=self.add(s.engine,'Manalith',seat='B',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
-        self.prepare(s,actor='B',active='B',mana={'C':3});self.checkpoint(s);self.cast(s,spell,seat='B',payment={'C':3});self.assertIsNone(self.resolve(s));self.assertFalse(self.tokens(s,'Construct'));self.private_replay(s,private)
+        self.prepare(s,actor='B',active='B',mana={'C':3});self.checkpoint(s);self.cast(s,spell,seat='B',payment={'C':3});self.assertIsNone(self.resolve(s));self.assertFalse(self.tokens(s,'Construct Token'));self.private_replay(s,private)
 
     def test_fresh_omission_and_widened_target_or_event_conditions_are_killed(self):
         method='test_four_originals_normally_close_with_one_current_owner_for_each_trigger'

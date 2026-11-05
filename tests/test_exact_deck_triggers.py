@@ -105,7 +105,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.controller == "B"
             and card.is_token
-            and card.printed_name == "Human Soldier"
+            and card.printed_name == "Human Soldier Token"
         )
         data = engine._effective_card_data(soldier)
         self.assertEqual("1", data["power"])

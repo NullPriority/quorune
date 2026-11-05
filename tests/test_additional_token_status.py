@@ -46,7 +46,7 @@ class AdditionalTokenStatusTests(unittest.TestCase):
         for card in (observer,spell):self.assertTrue(self.binding(s,card)['strict_capability_ready'])
         self.prepare(s,mana={'G':1});self.checkpoint(s);self.cast(s,'A',spell);self.assertIsNone(self.resolve(s))
         tokens={c.printed_name:c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield'}
-        self.assertEqual({'Servo','Map'},set(tokens));self.assertTrue(tokens['Servo'].tapped)
+        self.assertEqual({'Servo Token','Map'},set(tokens));self.assertTrue(tokens['Servo Token'].tapped)
         self.assertTrue(tokens['Map'].tapped,{name:card.tapped for name,card in tokens.items()})
         self.private_replay(s,private)
 
@@ -55,8 +55,8 @@ class AdditionalTokenStatusTests(unittest.TestCase):
         spell=self.add(s.engine,'Generic Intrinsic Artifact Subject',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         self.assertTrue(self.binding(s,spell)['strict_capability_ready']);self.prepare(s,mana={'G':1});self.checkpoint(s)
         self.cast(s,'A',spell);self.assertIsNone(self.resolve(s));tokens={c.printed_name:c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield'}
-        self.assertEqual({'Servo','Map'},set(tokens));self.assertFalse(any(c.tapped for c in tokens.values()))
-        self.assertIn('deathtouch',s.engine._combat_keywords(tokens['Servo']))
+        self.assertEqual({'Servo Token','Map'},set(tokens));self.assertFalse(any(c.tapped for c in tokens.values()))
+        self.assertIn('deathtouch',s.engine._combat_keywords(tokens['Servo Token']))
         self.assertNotIn('Deathtouch',s.engine._copyable_characteristics(tokens['Map']).get('keywords',[]));self.private_replay(s,private)
 
     def test_nonmatching_controller_and_type_do_not_receive_additional_tokens(self):
@@ -84,7 +84,7 @@ class AdditionalTokenStatusTests(unittest.TestCase):
                 result=s.act('pilot:A',{'action_id':'choose','replacement':row['id']});self.assertTrue(result.ok,result.summary)
             else:self.fail('Token replacement order did not finish')
             tokens=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield'];self.assertTrue(tokens)
-            self.assertTrue(all(c.tapped for c in tokens));self.assertEqual(2,sum(c.printed_name=='Servo' for c in tokens))
+            self.assertTrue(all(c.tapped for c in tokens));self.assertEqual(2,sum(c.printed_name=='Servo Token' for c in tokens))
             self.assertEqual(2 if map_first else 1,sum(c.printed_name=='Map' for c in tokens));self.private_replay(s,private)
 
     def test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics(self):

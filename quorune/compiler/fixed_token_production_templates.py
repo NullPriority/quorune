@@ -14,6 +14,8 @@ from ..fixed_token_production import (
     fixed_token_player_target_schema,
     FixedTokenProductionError,
     INVESTIGATE_MECHANIC_ID,
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
+    fixed_ordinary_token_name,
 )
 from .direct_target import direct_permanent_target_spec
 from .fixed_numbers import fixed_number
@@ -334,10 +336,11 @@ def _fixed_postposed_color_token_template(
         effect={
             "op": "create_token",
             "controller": "$controller",
-            "name": subtypes,
+            "name": fixed_ordinary_token_name(subtypes),
             "quantity": quantity,
             "characteristics": {
                 "type_line": f"Token Creature — {subtypes}",
+                TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
                 "colors": colors,
                 "power": match.group("power"),
                 "toughness": match.group("toughness"),

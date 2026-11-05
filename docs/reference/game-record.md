@@ -529,6 +529,13 @@ readable historical data does not bypass it. See
 The independent `face_down_characteristics_version` remains authoritative for
 face-down values and anonymous identity in either general copy-value mode.
 
+New compiler-owned fixed creature definitions carry
+`literal_token_name_version: 1` with their fully resolved name. The marker
+travels in the fixed definition and any pending replacement payload. Creation
+consumes it before committing the token's characteristics, so the name alone
+becomes a copiable value. Saved unmarked effects retain their historical name
+and catalog-lookup path. Game Record replay reads the saved semantic registry.
+
 An Incubate replacement continuation uses semantic intent kind `incubate` and a
 closed version-one identity containing actor, controller, resolved amount,
 source reference and reason. The replacement selection queue remains separate.

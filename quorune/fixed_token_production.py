@@ -16,6 +16,7 @@ FIXED_TOKEN_COPY_CAPABILITY_ID = "token.creation.fixed_copy"
 FIXED_DELAYED_TOKEN_CAPABILITY_ID = "trigger.delayed.fixed_token_creation"
 TYPED_TOKEN_ABILITY_CAPABILITY_ID = "token.creation.typed_ability_definition"
 TYPED_TOKEN_ABILITY_MECHANIC_ID = "fixed-token-typed-ability-definition"
+TOKEN_LITERAL_NAME_VERSION_FIELD = "literal_token_name_version"
 
 
 class FixedTokenProductionError(ValueError):
@@ -59,6 +60,40 @@ def fixed_token_player_target_schema(relation: str) -> dict[str, Any]:
     }
 
 
+def literal_token_name_version(values: Mapping[str, Any]) -> int | None:
+    """Validate the name authority carried by a fixed token definition."""
+    if TOKEN_LITERAL_NAME_VERSION_FIELD not in values:
+        return None
+    version = values[TOKEN_LITERAL_NAME_VERSION_FIELD]
+    if type(version) is not int or version != 1:
+        raise FixedTokenProductionError("Unsupported literal token name version")
+    return version
+
+
+def fixed_ordinary_token_name(subtypes: str) -> str:
+    """Derive a name from the printed subtype list when no name was given."""
+    return f"{subtypes} Token" if subtypes else "Token"
+
+
+def historical_unnamed_token_view(
+    name: object, definition: Mapping[str, Any],
+) -> tuple[str, dict[str, Any]] | None:
+    """Compare a corrected definition to its former default-name spelling."""
+    try:
+        version = literal_token_name_version(definition)
+    except FixedTokenProductionError:
+        return None
+    type_line = definition.get("type_line")
+    if version is None or not isinstance(type_line, str):
+        return None
+    _, separator, subtypes = type_line.partition(" — ")
+    if not separator or not subtypes or name != fixed_ordinary_token_name(subtypes):
+        return None
+    former = dict(definition)
+    del former[TOKEN_LITERAL_NAME_VERSION_FIELD]
+    return subtypes, former
+
+
 def _fixed_count(value: object, *, label: str) -> int:
     if type(value) is not int or not 1 <= value <= 20:
         raise FixedTokenProductionError(
@@ -83,16 +118,17 @@ def clue_token_effect(quantity: int) -> dict[str, Any]:
     }
 
 
-def afterlife_token_effect(quantity: int) -> dict[str, Any]:
+def afterlife_token_effect(quantity: int, *, legacy_name: bool = False) -> dict[str, Any]:
     """Return the canonical Spirit definition for one Afterlife instance."""
 
     return {
         "op": "create_token",
         "controller": "$controller",
-        "name": "Spirit",
+        "name": "Spirit" if legacy_name else fixed_ordinary_token_name("Spirit"),
         "quantity": _fixed_count(quantity, label="Afterlife"),
         "characteristics": {
             "type_line": "Token Creature — Spirit",
+            **({} if legacy_name else {TOKEN_LITERAL_NAME_VERSION_FIELD: 1}),
             "colors": ["W", "B"],
             "power": "1",
             "toughness": "1",
