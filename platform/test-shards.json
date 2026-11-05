@@ -1003,6 +1003,7 @@
       "test_public_history_condition_closure",
       "test_public_history_queries",
       "test_public_state_condition_compiler",
+      "test_recorded_history_conditions",
       "test_renowned_event_native",
       "test_revealed_library_top",
       "test_ring_native_actions",

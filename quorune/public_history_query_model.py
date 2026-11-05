@@ -6,7 +6,7 @@ from collections.abc import Mapping
 PUBLIC_HISTORY_QUERY_CAPABILITY='condition.history.fixed_public_query'
 SPELL_ORIGIN_HISTORY_CAPABILITY='condition.history.spell_origin'
 GRAVEYARD_TYPE_HISTORY_CAPABILITY='condition.history.graveyard_card_types'
-_EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed',
+_EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
     'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard'})
 _TYPES=frozenset({'artifact','battle','creature','enchantment','instant','kindred','land','planeswalker','sorcery'})
 
@@ -35,7 +35,7 @@ class PublicHistoryQuerySpec:
                 raise ValueError('History type predicates require distinct canonical card types')
             object.__setattr__(self,field,tuple(sorted(values)))
         typed_arrival=self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types))
-        if life and any((self.types_all,self.types_any,self.excluded_types)):
+        if (life or self.event == 'card_discarded') and any((self.types_all,self.types_any,self.excluded_types)):
             raise ValueError('This history event does not seal type predicates')
         if self.event=='creature_attacked' and any((self.types_all,self.types_any,self.excluded_types)):
             raise ValueError('Attack history mixes type/subtype terms and has no general type filter')

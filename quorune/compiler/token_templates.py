@@ -417,7 +417,7 @@ def _fixed_token_batch_creation_effect_template(
     text: str,
 ) -> FixedTokenCreationTemplate | None:
     normalized = " ".join(text.split()).rstrip(".")
-    if not normalized.startswith("Create "):
+    if not normalized.casefold().startswith("create "):
         return None
     boundaries = _batch_boundaries(normalized)
     candidates: dict[

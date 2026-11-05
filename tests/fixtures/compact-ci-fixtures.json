@@ -780,6 +780,7 @@
     "tests/fixtures/recipient-modifier-cards.json",
     "tests/fixtures/recipient-result-cards.json",
     "tests/fixtures/reconfigure-cards.json",
+    "tests/fixtures/recorded-history-condition-cards.json",
     "tests/fixtures/reflexive-payment-cards.json",
     "tests/fixtures/repeatable-object-action-triggers.json",
     "tests/fixtures/resolution-mana-choice-cards.json",

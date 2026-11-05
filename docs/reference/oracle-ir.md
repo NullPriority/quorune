@@ -93,6 +93,13 @@ replacement can change a later draw without changing the reveal results.
 An activated ability that adds mana and instructs a draw uses the stack
 under CR 605.1a.
 
+Current-turn conditions read committed casts, declared attacks, discards,
+permanent entries, graveyard arrivals and life changes from the existing
+history journal. An intervening condition is checked at occurrence and
+resolution, including a scheduled self-sacrifice. A casting discount or
+static ability uses the same facts at its own evaluation boundary. A missing
+journal remains unavailable even for a condition that requires zero events.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

@@ -22956,7 +22956,7 @@
           "Read-only count, amount sum or per-player maximum",
           "Independent trigger and resolution-time condition evaluation"
         ],
-        "summary": "Version8 public conditions count or sum closed current-turn history events using sealed occurrence actor/target and card-type facts. Missing/stale event history is unavailable, never a fabricated zero. Intervening-if and resolution consumers retain their own timing owners."
+        "summary": "Version8 public conditions count or sum closed current-turn history events using sealed occurrence actor/target and card-type facts. Missing/stale event history is unavailable, never a fabricated zero. Intervening-if and resolution consumers retain their own timing owners. Fixed absence checks and combined cast or life conditions reuse the committed journal. Discard counts carry no card characteristics."
       },
       "blockers": [],
       "dependencies": [],
@@ -22974,24 +22974,42 @@
       "interaction_tests": [
         "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
         "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_discard_and_mill_distinguish_any_player_and_controller_history",
+        "test_actual_lunar_requires_both_life_directions_from_its_controller",
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
-        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger"
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts"
       ],
       "multiplayer_tests": [
         "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
         "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_discard_and_mill_distinguish_any_player_and_controller_history",
+        "test_actual_lunar_requires_both_life_directions_from_its_controller",
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
-        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger"
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts"
       ],
       "negative_tests": [
         "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
         "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_discard_and_mill_distinguish_any_player_and_controller_history",
+        "test_actual_lunar_requires_both_life_directions_from_its_controller",
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
         "test_actual_soothsayer_without_life_event_does_not_create_a_trigger",
         "test_current_turn_history_grammar_composes_with_independent_trigger_results",
+        "test_current_turn_printed_conditions_use_closed_history_leaves",
         "test_history_queries_use_sealed_roles_and_per_player_amounts_without_current_objects",
         "test_missing_history_is_unavailable_in_zero_count_and_boolean_conditions",
         "test_new_history_schema_round_trips_without_changing_legacy_payloads",
@@ -23006,22 +23024,36 @@
       "positive_tests": [
         "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
         "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_discard_and_mill_distinguish_any_player_and_controller_history",
+        "test_actual_lunar_requires_both_life_directions_from_its_controller",
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
         "test_actual_soothsayer_without_life_event_does_not_create_a_trigger",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts",
         "test_current_turn_history_grammar_composes_with_independent_trigger_results",
+        "test_current_turn_printed_conditions_use_closed_history_leaves",
         "test_history_queries_use_sealed_roles_and_per_player_amounts_without_current_objects",
         "test_new_history_schema_round_trips_without_changing_legacy_payloads"
       ],
       "privacy_tests": [
+        "test_actual_discard_and_mill_distinguish_any_player_and_controller_history",
         "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history"
       ],
       "replay_tests": [
         "test_actual_denethor_controlled_sacrifice_counts_death_and_queued_token_survives_source_bounce",
         "test_actual_denethor_exiled_creature_does_not_satisfy_death_condition",
+        "test_actual_discard_and_mill_distinguish_any_player_and_controller_history",
+        "test_actual_lunar_requires_both_life_directions_from_its_controller",
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_malcator_counts_repeat_artifact_entries_after_the_object_leaves",
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_soothsayer_life_gain_and_loss_do_not_cancel_history",
-        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger"
+        "test_actual_soothsayer_without_life_event_does_not_create_a_trigger",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts"
       ],
       "required_evidence": [
         "positive",
@@ -23037,7 +23069,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -23070,14 +23102,17 @@
       "implementation_mutation_rationale": "Independently removing cast-origin or arrived-card type filtering changes a zero-match witness into one; both mutations are rejected.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
         "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify"
       ],
       "multiplayer_tests": [
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
         "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify"
       ],
       "negative_tests": [
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
         "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify",
         "test_arrival_producer_uses_owner_new_zone_types_and_retains_legacy_empty_types",
@@ -23094,6 +23129,7 @@
         "111.6"
       ],
       "positive_tests": [
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
         "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify",
         "test_arrival_producer_uses_owner_new_zone_types_and_retains_legacy_empty_types",
@@ -23106,6 +23142,7 @@
         "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves"
       ],
       "replay_tests": [
+        "test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard",
         "test_actual_scallywag_counts_arrival_after_card_returns_and_source_leaves",
         "test_actual_scallywag_dying_token_and_instant_cards_do_not_qualify"
       ],
@@ -62474,6 +62511,7 @@
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
         "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts",
         "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
         "test_actual_stern_lesson_tapped_powerstone_follows_discard_and_keeps_mana_restriction",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
@@ -62528,12 +62566,13 @@
         "test_fixed_token_batch_malformed_effect_rolls_back_atomically",
         "test_fixed_token_capability_shape_rejects_malformed_effects",
         "test_fixed_token_creation_rejects_dynamic_copy_attached_and_custom_ability_variants",
+        "test_fixed_toxic_token_definition_rejects_mismatched_fragments_and_infers_runtime_owner",
+        "test_lowercase_batch_verb_preserves_fixed_predefined_token_payloads",
         "test_optional_scalar_projection_only_enters_one_closed_child_result",
         "test_originals_admit_normally_and_token_runtime_minimum_is_independent",
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
         "test_singular_articles_share_one_closed_definition_and_original_source_span",
-        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
-        "test_fixed_toxic_token_definition_rejects_mismatched_fragments_and_infers_runtime_owner"
+        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary"
       ],
       "official_rules": [
         "111.2",
@@ -62561,6 +62600,7 @@
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
         "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts",
         "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
         "test_actual_stern_lesson_tapped_powerstone_follows_discard_and_keeps_mana_restriction",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
@@ -62573,12 +62613,13 @@
         "test_current_power_and_toughness_queries_snapshot_the_new_body",
         "test_fixed_token_batches_and_clues_promote_the_bounded_real_cards",
         "test_fixed_token_creation_compiles_shared_spell_trigger_and_activation_grammar",
+        "test_fixed_toxic_token_definitions_retain_typed_poison_and_declaration_owners",
+        "test_lowercase_batch_verb_preserves_fixed_predefined_token_payloads",
         "test_optional_scalar_projection_only_enters_one_closed_child_result",
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_originals_admit_normally_and_token_runtime_minimum_is_independent",
         "test_singular_articles_share_one_closed_definition_and_original_source_span",
-        "test_zero_single_reversed_groups_have_complete_nonduplicate_history",
-        "test_fixed_toxic_token_definitions_retain_typed_poison_and_declaration_owners",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_zero_single_reversed_groups_have_complete_nonduplicate_history"
       ],
       "privacy_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -62618,6 +62659,7 @@
         "test_actual_saber_and_broodhatch_choose_zero_or_all_actual_received_tokens_after_lethal",
         "test_actual_seed_death_counts_current_owned_creature_cards_including_itself",
         "test_actual_source_cost_requires_three_counters_and_pays_before_life_draw_or_token_result",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts",
         "test_actual_spoils_counts_real_creature_deaths_and_freezes_the_result",
         "test_actual_stern_lesson_tapped_powerstone_follows_discard_and_keeps_mana_restriction",
         "test_actual_wolfbriar_zero_or_two_payments_create_exact_wolves_after_source_departure",
@@ -63471,6 +63513,8 @@
       "implementation_mutation_rationale": "The focused compiler test removes the shared condition parser and requires every representative intervening-if form to return to a material trigger residual.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
         "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
@@ -63490,6 +63534,9 @@
       ],
       "negative_tests": [
         "test_absent_history_is_unavailable_not_known_empty",
+        "test_actual_lunar_requires_both_life_directions_from_its_controller",
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_composition_preserves_attachment_numeric_trigger_and_status_boundaries",
         "test_boolean_condition_truth_query_snapshots_and_malformed_inputs_are_distinct",
@@ -63510,6 +63557,10 @@
         "608.2a"
       ],
       "positive_tests": [
+        "test_actual_lunar_requires_both_life_directions_from_its_controller",
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
+        "test_actual_spell_kind_and_planeswalker_entry_conditions_keep_separate_facts",
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
         "test_boolean_public_conditions_keep_independent_leaf_snapshots_and_operators",
@@ -63530,6 +63581,8 @@
         "test_trusted_source_numeric_condition_rechecks_after_real_growth_and_blink"
       ],
       "replay_tests": [
+        "test_actual_nightpack_rechecks_its_controllers_cast_after_triggering",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_actual_survival_checks_tapped_at_discovery_and_again_on_resolution",
         "test_boolean_intervening_condition_rechecks_after_actual_attack_response_and_replays",
         "test_original_angelic_sell_sword_checks_attack_power_again_after_response",
@@ -71782,7 +71835,7 @@
           "unpaid controlled-source sacrifice through canonical replacements",
           "no sacrifice of a returned incarnation or another controller permanent"
         ],
-        "summary": "Resolve a fixed entry or turn-step trigger that sacrifices its original source unless its locked controller pays one closed fixed cost."
+        "summary": "Resolve a fixed entry or turn-step trigger that sacrifices its original source unless its locked controller pays one closed fixed cost. A closed current-turn history condition may guard a scheduled source sacrifice with no optional payment."
       },
       "blockers": [],
       "dependencies": [
@@ -71806,19 +71859,22 @@
       "implementation_mutation_rationale": "Source incarnation, controller and cost mutations must be killed before trust.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_source_departure_blink_phasing_and_control_do_not_erase_payment",
-        "test_trusted_sacred_mesa_priority_activation_then_controlled_pegasus_payment",
-        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays"
+        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays",
+        "test_trusted_sacred_mesa_priority_activation_then_controlled_pegasus_payment"
       ],
       "multiplayer_tests": [
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_trusted_ball_lightning_every_players_end_step_and_blink_replays"
       ],
       "negative_tests": [
-        "test_malformed_payment_and_wrong_stack_actor_fail_closed",
-        "test_source_is_revalidated_after_choice_without_changing_stack_payer",
-        "test_open_payments_other_sources_and_whole_card_siblings_remain_residual",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
+        "test_maintenance_dependency_and_source_guard_mutants_fail_closed",
         "test_maintenance_shape_rejects_missing_source_wrong_payer_and_target",
-        "test_maintenance_dependency_and_source_guard_mutants_fail_closed"
+        "test_malformed_payment_and_wrong_stack_actor_fail_closed",
+        "test_open_payments_other_sources_and_whole_card_siblings_remain_residual",
+        "test_source_is_revalidated_after_choice_without_changing_stack_payer"
       ],
       "official_rules": [
         "118.3",
@@ -71832,19 +71888,21 @@
         "701.21a"
       ],
       "positive_tests": [
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_decline_sacrifices_same_controlled_source_to_owner_graveyard",
-        "test_mandatory_sacrifice_auto_continues_and_restores_identity",
-        "test_entry_and_fixed_steps_preserve_source_spans_and_closed_costs"
+        "test_entry_and_fixed_steps_preserve_source_spans_and_closed_costs",
+        "test_mandatory_sacrifice_auto_continues_and_restores_identity"
       ],
       "privacy_tests": [
         "test_two_card_payment_is_private_atomic_and_rejects_stale_objects",
         "test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay"
       ],
       "replay_tests": [
-        "test_trusted_rupture_spire_land_action_pays_or_sacrifices_and_replays",
+        "test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one",
         "test_trusted_avatar_cast_private_full_payment_rollback_pending_and_replay",
+        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays",
         "test_trusted_ball_lightning_every_players_end_step_and_blink_replays",
-        "test_trusted_avatar_payment_replacement_pending_resumes_once_and_replays"
+        "test_trusted_rupture_spire_land_action_pays_or_sacrifices_and_replays"
       ],
       "required_evidence": [
         "positive",
@@ -71860,7 +71918,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -78498,7 +78556,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 706,
+  "registry_version": 707,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

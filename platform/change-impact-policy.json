@@ -9199,14 +9199,20 @@
         "quorune/public_history_query_model.py",
         "quorune/compiler/public_history_conditions.py",
         "tests/test_public_history_queries.py",
-        "tests/fixtures/public-history-query-cards.json"
+        "tests/fixtures/public-history-query-cards.json",
+        "quorune/compiler/source_maintenance_nodes.py",
+        "tests/test_recorded_history_conditions.py",
+        "tests/fixtures/recorded-history-condition-cards.json"
       ],
       "test_modules": [
         "test_public_history_queries",
         "test_public_state_event_counter_actions",
         "test_public_state_event_actions",
         "test_resolution_public_conditions",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_recorded_history_conditions",
+        "test_source_maintenance",
+        "test_static_characteristic_labels"
       ]
     },
     {
