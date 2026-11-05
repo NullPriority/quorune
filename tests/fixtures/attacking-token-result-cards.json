@@ -629,6 +629,53 @@
       "released_at": "2019-07-12",
       "toughness": "2",
       "type_line": "Creature \u2014 Human Knight"
+    },
+    {
+      "oracle_id": "fc04bfa9-a8f9-478d-8164-34b1e6c85417",
+      "name": "Path of Bravery",
+      "mana_cost": "{2}{W}",
+      "type_line": "Enchantment",
+      "oracle_text": "As long as your life total is greater than or equal to your starting life total, creatures you control get +1/+1.\nWhenever one or more creatures you control attack, you gain life equal to the number of attacking creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -734,6 +781,30 @@
       "oracle_id": "cc2b6e58-2d6f-495e-95f3-9496105c4cba",
       "published_at": "2009-10-01",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "fc04bfa9-a8f9-478d-8164-34b1e6c85417",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "Path of Bravery’s triggered ability triggers only once, after attacking creatures are declared. For example, if you attack with five creatures, you’ll gain 5 life as a single event."
+    },
+    {
+      "oracle_id": "fc04bfa9-a8f9-478d-8164-34b1e6c85417",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "If a creature you control is dealt damage at the same time that you gain life (most likely because a source you control with lifelink deals damage at the same time), and your life total becomes greater than or equal to your starting life total, apply Path of Bravery’s effect before considering whether or not the damage dealt to that creature is lethal."
+    },
+    {
+      "oracle_id": "fc04bfa9-a8f9-478d-8164-34b1e6c85417",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "Your starting life total is the life total you began the game with. For most two-player formats, this is 20. For Two-Headed Giant, it’s the life total your team started with, usually 30. In Commander games, your starting life total is 40."
+    },
+    {
+      "oracle_id": "fc04bfa9-a8f9-478d-8164-34b1e6c85417",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "If a creature enters the battlefield attacking after attacking creatures have been declared, the ability won’t trigger again because you didn’t declare that creature as an attacking creature. However, if such a creature enters the battlefield before the ability resolves, it will be counted when determining how much life is gained."
     }
   ],
   "schema_version": 1,

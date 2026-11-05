@@ -2114,8 +2114,13 @@ sets from the controller's graveyard; sealed entry, attack, sacrifice, death,
 and life history; public hand and starting-life relations; planeswalker subtype
 queries; and exact Equipment attachment counts. Printed numerical thresholds
 remain explicit descriptor amounts. Graveyard colors, card types, and canonical
-creature subtypes retain distinct query axes. Normal and token entry producers
-record the current transition before trigger discovery, and attack history seals
+creature subtypes retain distinct query axes. Starting-life comparisons read
+the configured starting value and the relevant player's current total. A
+complete controller-life antecedent can bind the intervening trigger's
+pronoun to the existing life-total setting effect. Two printed fixed static
+bonuses for the same recipient keep separate conditions and apply cumulatively.
+Normal and token entry producers record the current transition before trigger
+discovery, and attack history seals
 effective type and subtype membership plus the attacked object class while
 counting distinct attacking logical objects. Schema-v3 public facts remain a
   historical compatibility form whose attack quantity counts recorded attack

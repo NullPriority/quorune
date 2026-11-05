@@ -5,7 +5,9 @@ from __future__ import annotations
 from dataclasses import replace
 import re
 
-from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+from ..continuous_conditions import (
+    FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
+)
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_participant_schedule
 from ..scheduled_player import UPKEEP_HAND_COUNT_CAPABILITY, UpkeepParticipantHandCondition
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
@@ -49,7 +51,14 @@ def bind_public_intervening_trigger(match, *, card_name, compile_binding, compil
         FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
     } for leaf in condition.leaf_conditions()):
         return None
-    text = f"{match['prefix']}, {match['body']}"
+    body = match["body"]
+    if (
+        isinstance(condition, FixedPublicStateConditionSpec)
+        and condition.fact is FixedPublicStateFact.CONTROLLER_BELOW_STARTING_LIFE
+        and re.fullmatch(r"it becomes equal to your starting life total\.?", body, re.I)
+    ):
+        body = "Your life total becomes equal to your starting life total."
+    text = f"{match['prefix']}, {body}"
     base = compile_binding(text, card_name=card_name) or compile_source_binding(text, card_name=card_name)
     if base is None or base.public_state_condition is not None:
         return None

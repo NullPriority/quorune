@@ -202,6 +202,8 @@ class _FixedPublicStateSnapshotResolver:
         if fact in {
             FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE,
             FixedPublicStateFact.CONTROLLER_LIFE_ABOVE_STARTING,
+            FixedPublicStateFact.CONTROLLER_AT_OR_ABOVE_STARTING_LIFE,
+            FixedPublicStateFact.CONTROLLER_BELOW_STARTING_LIFE,
             FixedPublicStateFact.CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE,
         }:
             return self._player_fact_quantity(source, fact)
@@ -389,6 +391,10 @@ class _FixedPublicStateSnapshotResolver:
         life = int(self.state.players[controller].life)
         if fact is FixedPublicStateFact.CONTROLLER_LIFE_ABOVE_STARTING:
             return max(0, life - starting_life)
+        if fact is FixedPublicStateFact.CONTROLLER_AT_OR_ABOVE_STARTING_LIFE:
+            return int(life >= starting_life)
+        if fact is FixedPublicStateFact.CONTROLLER_BELOW_STARTING_LIFE:
+            return int(life < starting_life)
         if fact is (
             FixedPublicStateFact.CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE
         ):

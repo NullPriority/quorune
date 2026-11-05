@@ -138,6 +138,8 @@ class FixedPublicStateFact(StrEnum):
     )
     CONTROLLER_HAND_ADVANTAGE = "controller_hand_advantage"
     CONTROLLER_LIFE_ABOVE_STARTING = "controller_life_above_starting"
+    CONTROLLER_AT_OR_ABOVE_STARTING_LIFE = "controller_at_or_above_starting_life"
+    CONTROLLER_BELOW_STARTING_LIFE = "controller_below_starting_life"
     CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE = (
         "controller_at_or_below_half_starting_life"
     )
@@ -310,6 +312,11 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.CONTROLLER_COMMITTED_CRIME_THIS_TURN and (
             schema_version!=4 or amount!=1 or parameter is not None):
         raise FixedPublicStateConditionError('Crime qualification requires one current-turn history boolean')
+    if fact in {
+        FixedPublicStateFact.CONTROLLER_AT_OR_ABOVE_STARTING_LIFE,
+        FixedPublicStateFact.CONTROLLER_BELOW_STARTING_LIFE,
+    } and (schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError("Starting-life comparisons require a current boolean fact")
     if schema_version not in {3, 4}:
         if (schema_version != 7 or fact is not FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON
                 or amount != 1 or type(parameter) is not str or parameter not in 'WUBRG' or len(parameter) != 1):

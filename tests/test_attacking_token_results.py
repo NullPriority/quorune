@@ -292,6 +292,45 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         self.assertEqual([35, 38, 40], [s.state.players[seat].life for seat in 'BCD'])
         self.replay(s, load=True)
 
+    def test_actual_path_of_bravery_counts_creatures_put_into_combat_before_resolution(self):
+        session = self.session(715003)
+        session.state.config.semantic_policy = "trusted_only"
+        session.state.config.starting_life = 37
+        for seat in "BCD":
+            session.state.players[seat].life = 37
+        session.state.players["A"].life = 34
+        hero = self.add(session.engine, "Hero of Bladehold")
+        path = self.add(session.engine, "Path of Bravery")
+        self.assert_closed(session, hero)
+        self.assert_closed(session, path)
+        self.prepare(session)
+        self.checkpoint(session)
+
+        self.assertEqual(3, session.engine._numeric_stat(hero.object_id, "power"))
+        self.until(session, lambda game: game.state.pending_decision is not None
+            and game.state.pending_decision.kind == "combat.attackers")
+        result = session.act("pilot:A", {"action_id": "attack", "attackers": {hero.ref: "B"}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("trigger.order", session.state.pending_decision.kind)
+        items = [item for batch in session.state.pending_trigger_batches for item in batch.items]
+        life_trigger, = [item for item in items if item.get("source_object_id") == path.object_id]
+        token_trigger, = [
+            item for item in items if item.get("source_object_id") == hero.object_id
+            and item.get("context", {}).get("event") == "creature.attacks"
+        ]
+        battle_cry, = [item for item in items if item not in (life_trigger, token_trigger)]
+        order = [life_trigger.ref, battle_cry.ref, token_trigger.ref]
+        result = session.act("pilot:A", {"action_id": "order", "triggers": order})
+        self.assertTrue(result.ok, result.summary)
+        self.choose_destinations(session, ("B", "C"))
+        self.assertEqual(34, session.state.players["A"].life)
+        self.assertEqual(3, len([card for card in session.state.cards.values() if card.attacking]))
+        session = self.replay(session, load=True)
+        self.settle(session)
+        self.assertEqual(37, session.state.players["A"].life)
+        self.assertEqual(4, session.engine._numeric_stat(hero.object_id, "power"))
+        self.replay(session, load=True)
+
     def test_actual_parhelion_crew_creates_untapped_attacking_angels_that_survive_end_step(self):
         s = self.session(508400302); self.trim_opening_hand(s)
         vehicle = self.add(s.engine, 'Parhelion II'); crew = self.add(s.engine, 'Loxodon Smiter')
