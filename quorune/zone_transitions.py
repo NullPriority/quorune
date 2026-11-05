@@ -655,6 +655,10 @@ class ZoneTransitionOwner:
                 )
             except LifeStateError as exc:
                 raise GameRuleError(str(exc)) from exc
+        if departure.origin == "graveyard":
+            from .turn_history import record_graveyard_departure
+
+            record_graveyard_departure(self.host, card, plan.destination)
         if departure.origin == "stack":
             self._depart_stack_object(card)
         elif not already_detached:

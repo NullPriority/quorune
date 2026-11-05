@@ -3,11 +3,15 @@
 from dataclasses import dataclass
 from collections.abc import Mapping
 
+from .model import COMMITTED_OCCURRENCE_HISTORY_KINDS
+
 PUBLIC_HISTORY_QUERY_CAPABILITY='condition.history.fixed_public_query'
+COMMITTED_OCCURRENCE_HISTORY_CAPABILITY = "condition.history.committed_occurrences"
+TOKEN_CREATION_FACT = "controller_tokens_created_this_turn"
 SPELL_ORIGIN_HISTORY_CAPABILITY='condition.history.spell_origin'
 GRAVEYARD_TYPE_HISTORY_CAPABILITY='condition.history.graveyard_card_types'
 _EVENTS=frozenset({'spell_cast','creature_attacked','creature_died','permanent_sacrificed','card_discarded',
-    'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard'})
+    'player_gained_life','player_lost_life','permanent_entered','permanent_left','card_arrived_graveyard'}) | COMMITTED_OCCURRENCE_HISTORY_KINDS
 _TYPES=frozenset({'artifact','battle','creature','enchantment','instant','kindred','land','planeswalker','sorcery'})
 
 
@@ -35,7 +39,9 @@ class PublicHistoryQuerySpec:
                 raise ValueError('History type predicates require distinct canonical card types')
             object.__setattr__(self,field,tuple(sorted(values)))
         typed_arrival=self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types))
-        if (life or self.event == 'card_discarded') and any((self.types_all,self.types_any,self.excluded_types)):
+        if (life or self.event in (COMMITTED_OCCURRENCE_HISTORY_KINDS | {"card_discarded"})) and any(
+            (self.types_all, self.types_any, self.excluded_types)
+        ):
             raise ValueError('This history event does not seal type predicates')
         if self.event=='creature_attacked' and any((self.types_all,self.types_any,self.excluded_types)):
             raise ValueError('Attack history mixes type/subtype terms and has no general type filter')
@@ -62,6 +68,7 @@ class PublicHistoryQuerySpec:
     @property
     def capability_dependencies(self):
         return (PUBLIC_HISTORY_QUERY_CAPABILITY,
+            *((COMMITTED_OCCURRENCE_HISTORY_CAPABILITY,) if self.event in COMMITTED_OCCURRENCE_HISTORY_KINDS else ()),
             *((SPELL_ORIGIN_HISTORY_CAPABILITY,) if self.event=='spell_cast' and self.origin is not None else ()),
             *((GRAVEYARD_TYPE_HISTORY_CAPABILITY,) if self.event=='card_arrived_graveyard' and any((self.types_all,self.types_any,self.excluded_types)) else ()))
 
@@ -70,6 +77,8 @@ def matching_public_history_events(state,controller,spec):
     """Return sealed matching occurrences, or unavailable history."""
     history=getattr(state,'turn_history',None)
     if history is None or history.schema_version!=1 or history.turn_sequence!=state.turn_sequence:return None
+    if spec.event in COMMITTED_OCCURRENCE_HISTORY_KINDS and history.committed_occurrence_history_version != 1:
+        return None
     if spec.event=='permanent_left' and history.departure_history_version!=1:return None
     if spec.event=='card_arrived_graveyard' and history.arrival_history_version!=1:return None
     if spec.event=='spell_cast' and spec.origin is not None and history.spell_origin_history_version!=1:return None
@@ -112,6 +121,11 @@ def public_history_query_dependencies(value):
                         or node['counter_name'] is not None or type(node['amount']) is not int or node['amount']<0):
                     raise ValueError('History conditions have one closed nonnegative threshold')
                 required.update(PublicHistoryQuerySpec.from_dict(node['history_query']).capability_dependencies)
+            if node.get("fact") == TOKEN_CREATION_FACT:
+                from .continuous_conditions import FixedPublicStateConditionSpec
+
+                FixedPublicStateConditionSpec.from_dict(node)
+                required.add(COMMITTED_OCCURRENCE_HISTORY_CAPABILITY)
             for child in node.values():visit(child)
         elif isinstance(node,(tuple,list)):
             for child in node:visit(child)

@@ -84,7 +84,9 @@ def resolution_condition_node_capabilities(
     targeted = tuple(branch for branch,_ids in branches if _contains_target_reference(branch))
     if len(targeted) > (2 if same_target else 1) or (target_schema is not None) != bool(targeted):
         return ()
-    dependencies = {RESOLUTION_CONDITION_CAPABILITY}
+    from ..public_history_query_model import public_history_query_dependencies
+
+    dependencies = {RESOLUTION_CONDITION_CAPABILITY, *public_history_query_dependencies(wrapper["condition"])}
     from ..land_entry_condition_model import land_entry_condition_capabilities
     dependencies.update(land_entry_condition_capabilities(_condition.to_dict()))
     if same_target:

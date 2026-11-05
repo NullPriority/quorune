@@ -965,6 +965,7 @@
       "test_champion_choices",
       "test_chosen_aura_protection",
       "test_closed_effect_programs",
+      "test_committed_occurrence_history",
       "test_cost_defined_x",
       "test_counted_spell_additional_costs",
       "test_damage_prevention_aftermath",

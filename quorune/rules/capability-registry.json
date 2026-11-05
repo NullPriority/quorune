@@ -22943,6 +22943,107 @@
     {
       "applicability": {
         "exclusions": [
+          "Uncommitted payment proposals and copied spells on the stack",
+          "Current-zone substitution for a past card departure",
+          "Unrecorded journal facts in old checkpoints"
+        ],
+        "inputs": [
+          "Paid Warp cost on a sealed cast lifecycle",
+          "Committed graveyard departures of card objects and their original owners",
+          "The token creation owner's per-turn count"
+        ],
+        "outputs": [
+          "Closed controller or any-player public conditions",
+          "Deterministic scoped reads for cast cost, activation, resolution and triggers",
+          "Versioned occurrence evidence with no private destination"
+        ],
+        "summary": "Evaluate closed turn predicates using paid Warp casts, card departures from a graveyard, and actual token creation."
+      },
+      "blockers": [],
+      "dependencies": [
+        "condition.history.fixed_public_query"
+      ],
+      "dependency_fail_closed_rationale": "The runtime descriptor independently requires committed occurrence history when a condition uses the new event kinds or the token creation fact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "condition.history.committed_occurrences",
+      "implementation_components": [
+        "quorune.public_history_query_model.public_history_query_dependencies",
+        "quorune.turn_history.record_graveyard_departure",
+        "quorune.turn_history.record_warped_spell",
+        "quorune.turn_history.prospective_cast_history",
+        "quorune.turn_history.committed_token_count"
+      ],
+      "implementation_mutation_rationale": "The prospective cast witness rejects a fabricated graveyard departure for a card cast from hand.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_bennie_excludes_a_resolving_copy_and_counts_created_tokens",
+        "test_actual_countered_warp_and_ordinary_cast_are_distinct_for_void",
+        "test_actual_graveyard_move_and_flashback_bind_different_owners",
+        "test_actual_void_discount_counts_another_players_nonland_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_bennie_excludes_a_resolving_copy_and_counts_created_tokens",
+        "test_actual_countered_warp_and_ordinary_cast_are_distinct_for_void",
+        "test_actual_graveyard_move_and_flashback_bind_different_owners",
+        "test_actual_void_discount_counts_another_players_nonland_departure"
+      ],
+      "negative_tests": [
+        "test_actual_bennie_excludes_a_resolving_copy_and_counts_created_tokens",
+        "test_actual_countered_warp_and_ordinary_cast_are_distinct_for_void",
+        "test_actual_graveyard_move_and_flashback_bind_different_owners",
+        "test_actual_void_discount_counts_another_players_nonland_departure",
+        "test_committed_events_require_the_mode_and_exact_closed_payload",
+        "test_legacy_missing_occurrence_mode_keeps_its_original_replay_shape",
+        "test_prospective_departure_owner_and_origin_mutation_is_killed"
+      ],
+      "official_rules": [
+        "111.13",
+        "400.7",
+        "601.2a",
+        "601.2i",
+        "603.4",
+        "608.2i",
+        "608.3f",
+        "702.185a"
+      ],
+      "positive_tests": [
+        "test_actual_bennie_excludes_a_resolving_copy_and_counts_created_tokens",
+        "test_actual_countered_warp_and_ordinary_cast_are_distinct_for_void",
+        "test_actual_graveyard_move_and_flashback_bind_different_owners",
+        "test_actual_void_discount_counts_another_players_nonland_departure",
+        "test_committed_events_require_the_mode_and_exact_closed_payload",
+        "test_legacy_missing_occurrence_mode_keeps_its_original_replay_shape",
+        "test_void_resolution_declares_both_history_arms_and_keeps_one_target"
+      ],
+      "privacy_tests": [
+        "test_actual_void_discount_counts_another_players_nonland_departure"
+      ],
+      "replay_tests": [
+        "test_actual_bennie_excludes_a_resolving_copy_and_counts_created_tokens",
+        "test_actual_countered_warp_and_ordinary_cast_are_distinct_for_void",
+        "test_actual_graveyard_move_and_flashback_bind_different_owners",
+        "test_actual_void_discount_counts_another_players_nonland_departure",
+        "test_legacy_missing_occurrence_mode_keeps_its_original_replay_shape"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Current object substitutions for past events",
           "Hidden/source-relative/future/previous-turn predicates",
           "Unrecorded type, subtype, color and origin facts"
@@ -78556,7 +78657,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 707,
+  "registry_version": 708,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

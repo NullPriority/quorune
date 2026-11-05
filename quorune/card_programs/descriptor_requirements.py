@@ -70,7 +70,11 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if library_order:return library_order
         from ..public_history_query_model import public_history_query_dependencies
         from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies,QUALIFIED_SPELL_ORDINAL_FIELD
-        history=public_history_query_dependencies(value) if 'history_query' in value or value.get('kind') in {'history_count_at_least','history_count_at_most'} else ()
+        from ..public_history_query_model import TOKEN_CREATION_FACT
+        history = public_history_query_dependencies(value) if (
+            'history_query' in value or value.get('kind') in {'history_count_at_least', 'history_count_at_most'}
+            or value.get('fact') == TOKEN_CREATION_FACT
+        ) else ()
         if value.get('field')==QUALIFIED_SPELL_ORDINAL_FIELD:history=(*history,*qualified_spell_ordinal_dependencies(value))
         if history:
             return tuple(sorted({*history,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))

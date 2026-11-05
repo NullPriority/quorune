@@ -906,6 +906,10 @@ def _create_spell_item(
     )
     if not preparing:card.annotations.pop("temporary_play_permission", None)
     if existing_item is None:
+        if card.zone == "graveyard":
+            from ...turn_history import record_graveyard_departure
+
+            record_graveyard_departure(host, card, "stack")
         host._remove_from_zone(card)
         host._reset_zone_change(card, "stack")
         card.zone = "stack"
@@ -1130,6 +1134,11 @@ def _dispatch_cast_events(
         types=cast_types,
         origin=proposal.origin if getattr(host.state.turn_history,'spell_origin_history_version',None)==1 else None,
     )
+    lifecycle = item.context.get(FIXED_CAST_LIFECYCLE_CONTEXT_FIELD)
+    if isinstance(lifecycle, Mapping) and lifecycle.get("kind") == FixedCastLifecycleKind.WARP.value:
+        from ...turn_history import record_warped_spell
+
+        record_warped_spell(host, actor=proposal.seat, object_incarnation=card.logical_object_id)
     context = SpellCastEvent(
         schema_version=7,
         card_ref=card.ref,

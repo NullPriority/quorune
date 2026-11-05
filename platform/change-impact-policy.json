@@ -12078,6 +12078,28 @@
         "test_game_record_v3",
         "test_library_selection_knowledge"
       ]
+    },
+    {
+      "id": "committed-occurrence-history",
+      "patterns": [
+        "quorune/turn_history.py",
+        "quorune/public_history_query_model.py",
+        "quorune/compiler/public_history_conditions.py",
+        "quorune/rules/casting/public_conditions.py",
+        "quorune/rules/resolution_condition_shapes.py",
+        "quorune/record_state_provenance.py",
+        "tests/test_committed_occurrence_history.py",
+        "tests/fixtures/committed-occurrence-history-cards.json"
+      ],
+      "test_modules": [
+        "test_committed_occurrence_history",
+        "test_turn_history_rules",
+        "test_qualified_public_history",
+        "test_activation_conditions",
+        "test_resolution_public_conditions",
+        "test_fixed_casting_surface",
+        "test_game_record_v3"
+      ]
     }
   ],
   "risk_rules": [

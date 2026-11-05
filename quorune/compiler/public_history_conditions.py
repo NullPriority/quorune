@@ -4,7 +4,9 @@ import re
 
 from ..external_entry_state_model import PERMANENT_CARD_TYPES
 from ..public_history_query_model import PublicHistoryQuerySpec
-from ..continuous_conditions import FixedPublicStateConditionSpec,FixedPublicStateConditionKind
+from ..continuous_conditions import (
+    FixedPublicStateConditionKind, FixedPublicStateConditionSpec, FixedPublicStateFact,
+)
 from .fixed_numbers import fixed_number
 
 _N=r'a|an|one|two|three|four|five|six|seven|eight|nine|ten|[0-9]+'
@@ -19,6 +21,18 @@ def _condition(event,relation='controller',amount=1,*,types_all=(),types_any=(),
 
 def fixed_public_history_condition(text):
     text=' '.join(text.strip().rstrip('.').casefold().replace('’',"'").split())
+    if text == "a nonland permanent left the battlefield this turn or a spell was warped this turn":
+        return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.ANY, schema_version=6, terms=(
+            _condition("permanent_left", "any_player", excluded_types=("land",)),
+            _condition("spell_warped", "any_player"),
+        ))
+    if re.fullmatch(r"(?:a card|one or more cards) left your graveyard this turn", text):
+        return _condition("card_left_graveyard")
+    if re.fullmatch(r"you (?:created|have created) (?:a token|one or more tokens) this turn", text):
+        return FixedPublicStateConditionSpec(
+            FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST, amount=1, schema_version=4,
+            fact=FixedPublicStateFact.CONTROLLER_TOKENS_CREATED_THIS_TURN,
+        )
     if text in {"you haven't cast a spell from your hand this turn",'you have not cast a spell from your hand this turn'}:
         return _condition('spell_cast',amount=0,at_most=True,origin='hand')
     if re.fullmatch(r"you (?:didn't|did not|haven't|have not) cast a spell this turn", text):

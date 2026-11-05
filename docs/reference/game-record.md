@@ -96,6 +96,14 @@ target choices, while prohibitions consume no quota. Historical schema-one
 fragments and contexts retain their exact shape; no global checkpoint field is
 introduced. See [ADR 0159](../adr/0159-typed-trigger-source-and-event-participation.md).
 
+The optional `turn_history.committed_occurrence_history_version` is `1`
+when the journal records paid Warp casts and card departures from a
+graveyard. The manifest and initial checkpoint agree on this mode.
+The facts record the actor or graveyard owner and the original object
+incarnation without storing its hidden destination. Rollover clears
+the facts and retains the mode. Older records omit the field and retain
+their previous event hashes.
+
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
 during replay. The mode survives journal reset and turn rollover. A

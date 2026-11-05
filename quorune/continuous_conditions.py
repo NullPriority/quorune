@@ -126,6 +126,7 @@ class FixedPublicStateFact(StrEnum):
     )
     ANY_CREATURE_DIED_THIS_TURN = "any_creature_died_this_turn"
     CONTROLLER_ATTACKED_THIS_TURN = "controller_attacked_this_turn"
+    CONTROLLER_TOKENS_CREATED_THIS_TURN = "controller_tokens_created_this_turn"
     CONTROLLER_PERMANENT_LEFT_THIS_TURN = "controller_permanent_left_this_turn"
     OPPONENT_LOST_LIFE_THIS_TURN = "opponent_lost_life_this_turn"
     CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN = (
@@ -299,6 +300,9 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.SOURCE_RENOWNED and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Renowned state requires one current source designation fact')
+    if fact is FixedPublicStateFact.CONTROLLER_TOKENS_CREATED_THIS_TURN and (
+            schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError("Token creation requires one current-turn boolean")
     if fact is FixedPublicStateFact.CONTROLLER_COMMITTED_CRIME_THIS_TURN and (
             schema_version!=4 or amount!=1 or parameter is not None):
         raise FixedPublicStateConditionError('Crime qualification requires one current-turn history boolean')

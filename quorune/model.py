@@ -73,6 +73,8 @@ TurnHistoryEventKind = Literal[
     "crime_committed",
     "spell_mana_spent",
     "spell_cast",
+    "spell_warped",
+    "card_left_graveyard",
     "card_discarded",
     "creature_attacked",
     "creature_died",
@@ -86,6 +88,9 @@ TurnHistoryEventKind = Literal[
     "card_arrived_graveyard",
     "card_milled_graveyard",
 ]
+
+
+COMMITTED_OCCURRENCE_HISTORY_KINDS = frozenset({"spell_warped", "card_left_graveyard"})
 
 
 @dataclass(frozen=True, slots=True)
@@ -109,6 +114,15 @@ class TurnHistoryEvent:
     origin: str | None = None
 
     def __post_init__(self):
+        if self.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS and (
+            type(self.actor) is not str or not self.actor
+            or type(self.object_incarnation) is not str or not self.object_incarnation
+            or any(value is not None for value in (
+                self.target, self.target_kind, self.target_object_incarnation, self.origin,
+            ))
+            or self.types or type(self.amount) is not int or self.amount != 0
+        ):
+            raise ValueError("Committed occurrence history requires an actor and its exact object incarnation")
         if self.kind=='crime_committed' and (type(self.actor) is not str or not self.actor
                 or type(self.target) is not str or not self.target or self.target_kind!='stack_object'
                 or type(self.amount) is not int or self.amount!=1 or self.object_incarnation is not None
@@ -164,6 +178,7 @@ class TurnHistory:
     graveyard_type_history_version: int | None = None
     spell_mana_history_version: int | None = None
     crime_history_version: int | None = None
+    committed_occurrence_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -179,6 +194,9 @@ class TurnHistory:
         if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
         for mode in (self.spell_origin_history_version,self.graveyard_type_history_version,self.spell_mana_history_version,self.crime_history_version):
             if mode is not None and (type(mode) is not int or mode!=1):raise ValueError('Unsupported qualified history version')
+        occurrence_version = self.committed_occurrence_history_version
+        if occurrence_version is not None and (type(occurrence_version) is not int or occurrence_version != 1):
+            raise ValueError("Unsupported committed occurrence history version")
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
@@ -188,6 +206,8 @@ class TurnHistory:
             raise ValueError('Spell-mana facts require complete payment history')
         if self.crime_history_version is None and any(event.kind=='crime_committed' for event in self.events):
             raise ValueError('Crime facts require complete initial-action history')
+        if occurrence_version is None and any(event.kind in COMMITTED_OCCURRENCE_HISTORY_KINDS for event in self.events):
+            raise ValueError("Committed occurrence facts require complete history")
         previous_absent = self.previous_turn_sequence is None
         if previous_absent != (self.previous_active_player is None):
             raise ValueError(
@@ -227,6 +247,8 @@ class TurnHistory:
             **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
             **({"spell_mana_history_version":1} if self.spell_mana_history_version is not None else {}),
             **({"crime_history_version":1} if self.crime_history_version is not None else {}),
+            **({"committed_occurrence_history_version": 1}
+               if self.committed_occurrence_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -264,6 +286,7 @@ class TurnHistory:
             graveyard_type_history_version=data.get("graveyard_type_history_version"),
             spell_mana_history_version=data.get("spell_mana_history_version"),
             crime_history_version=data.get("crime_history_version"),
+            committed_occurrence_history_version=data.get("committed_occurrence_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

@@ -100,6 +100,13 @@ resolution, including a scheduled self-sacrifice. A casting discount or
 static ability uses the same facts at its own evaluation boundary. A missing
 journal remains unavailable even for a condition that requires zero events.
 
+Committed public conditions can read a paid Warp cast and an actual
+graveyard departure. Void uses a paid Warp cast or a nonland permanent
+departure by any player. A graveyard condition uses the card owner's
+departure fact, including when the card is cast. Token creation conditions
+share the creation owner's per-turn count, which excludes a permanent
+spell copy becoming a token on resolution.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

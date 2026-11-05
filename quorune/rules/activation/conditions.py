@@ -168,11 +168,11 @@ def _typed_condition_status(
             else ("payable", None)
         )
     if kind is ActivationConditionKind.TOKEN_CREATED_THIS_TURN:
-        created = int(
-            host.state.players[seat].stats.get(
-                "tokens_created_by_turn", {}
-            ).get(str(host.state.turn_sequence), 0)
-        )
+        from ...turn_history import committed_token_count
+
+        created = committed_token_count(host.state, seat)
+        if created is None:
+            return "unresolved", "token_creation_history_unavailable"
         return (
             ("payable", None)
             if created > 0

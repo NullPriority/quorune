@@ -161,6 +161,10 @@ class _FixedPublicStateSnapshotResolver:
             return int(any(card.zone == 'battlefield' and not card.phased_out
                 and card.is_commander and card.owner == source.controller and card.controller == source.controller
                 for card in self.state.cards.values()))
+        if fact is FixedPublicStateFact.CONTROLLER_TOKENS_CREATED_THIS_TURN:
+            from ..turn_history import committed_token_count
+
+            return committed_token_count(self.state, source.controller)
         if fact is FixedPublicStateFact.SOURCE_RENOWNED:
             return int(source.zone == 'battlefield' and not source.phased_out and source.renowned)
         if fact in {
