@@ -241,6 +241,18 @@ seals the limit before it offers private choices, and resumption validates the
 selection against the same limit. A stated quality still permits the player to
 search and find nothing.
 
+## Counted searches with alternative qualities
+
+Different qualifications can share one counted search. Each alternative
+retains its own predicate, and the search owner lists each eligible library
+object once even when it matches several branches. A shared type or color
+list retains its common qualifiers. The player makes one private selection
+within the printed count. Tapped land results move as one batch and the
+search shuffles once.
+
+The version-three selector carries the separate branches. The original
+version-two form retains its single predicate.
+
 ## Library search restrictions
 
 `LibrarySearchRuleSpec` represents current source prohibitions and fixed

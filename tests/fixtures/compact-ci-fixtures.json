@@ -520,6 +520,7 @@
     "tests/fixtures/discard-result-cards.json",
     "tests/fixtures/discover-cards.json",
     "tests/fixtures/disjoint-negative-keyword-cards.json",
+    "tests/fixtures/disjunctive-library-search-cards.json",
     "tests/fixtures/distinct-public-value-cards.json",
     "tests/fixtures/distinct-target-cost-cards.json",
     "tests/fixtures/double-faced-spell-copy-cards.json",

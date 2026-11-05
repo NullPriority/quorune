@@ -13,6 +13,7 @@ from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
     FixedCountedLibrarySearchTemplate,
+    SEARCH_ALTERNATIVES,
     counted_search_selector_is_closed,
     search_selector,
     SEARCH_LAND_SUBTYPES,
@@ -71,6 +72,10 @@ _COUNTED_TOP = re.compile(
     _COUNTED_START + _COUNTED_REVEAL
     + r"then shuffle and put (?P<pronoun>it|that card) on top\.", re.I,
 )
+_ALTERNATIVE_CONNECTOR = re.compile(r"(?:\s|,)\s*(?:and/or|or)\s+", re.I)
+_ALTERNATIVE_SEPARATOR = re.compile(r",\s*(?:(?:and/or|or)\s+)?|\s+(?:and/or|or)\s+", re.I)
+_ALTERNATIVE_ARTICLE = re.compile(r"^an?\s+", re.I)
+_CARD_NOUN = re.compile(r"\s+cards?$", re.I)
 
 
 def _or_terms(value: str) -> tuple[str, ...]:
@@ -122,6 +127,8 @@ def _search_query(
 
     if normalized == "permanent":
         return _permanent_query()
+    if normalized == "snow permanent":
+        return ObjectQuerySpec(types_any=tuple(sorted(_PERMANENT_TYPES)), supertypes_all=("snow",))
     if normalized in _PERMANENT_TYPES:
         return ObjectQuerySpec(types_all=(normalized,))
     if normalized == "equipment":
@@ -166,6 +173,16 @@ def _search_query(
                 types_all=("creature",),
                 subtypes_any=(qualifier,),
             )
+        if _ALTERNATIVE_CONNECTOR.search(qualifier):
+            terms = tuple(part.strip() for part in _ALTERNATIVE_SEPARATOR.split(qualifier))
+            if all(term in CREATURE_SUBTYPES for term in terms):
+                return ObjectQuerySpec(types_all=("creature",), subtypes_any=terms)
+    qualifiers, _, kind = normalized.rpartition(" ")
+    if (kind in (_PERMANENT_TYPES if destination == "battlefield" else _CARD_TYPES)
+            and _ALTERNATIVE_CONNECTOR.search(qualifiers)):
+        colors = tuple(part.strip() for part in _ALTERNATIVE_SEPARATOR.split(qualifiers))
+        if all(color in _COLORS for color in colors):
+            return ObjectQuerySpec(types_all=(kind,), colors_any=tuple(_COLORS[color] for color in colors))
     if normalized.endswith(" permanent"):
         qualifier = normalized.removesuffix(" permanent").strip()
         if qualifier in _COLORS:
@@ -200,7 +217,10 @@ def _search_query(
 
     type_terms = tuple(
         part.strip()
-        for part in re.split(r"\s+and/or\s+|\s+or\s+", normalized)
+        for part in (
+            _ALTERNATIVE_SEPARATOR.split(normalized)
+            if _ALTERNATIVE_CONNECTOR.search(normalized) else (normalized,)
+        )
         if part.strip()
     )
     if type_terms and all(term in _PERMANENT_TYPES for term in type_terms):
@@ -219,6 +239,59 @@ def _search_query(
 
 def _selector(query: ObjectQuerySpec) -> dict[str, list[str]]:
     return search_selector(query)
+
+
+def _disjunctive_selector(quality, *, destination, mana_value):
+    if not _ALTERNATIVE_CONNECTOR.search(quality):
+        return None
+    parts = tuple(part.strip() for part in _ALTERNATIVE_SEPARATOR.split(quality))
+    if not 2 <= len(parts) <= 4 or not all(parts):
+        return None
+    if "and/or" in quality.casefold() and any(_ALTERNATIVE_ARTICLE.match(part) for part in parts[1:]):
+        # An explicit count on another branch can request an independent result.
+        return None
+    explicit_nouns = all(_CARD_NOUN.search(part) for part in parts[:-1])
+    qualities = tuple(_CARD_NOUN.sub("", _ALTERNATIVE_ARTICLE.sub("", part)) for part in parts)
+    simple_nouns = all(
+        noun.casefold() == "basic land" or (" " not in noun and noun.casefold() not in _COLORS)
+        for noun in qualities
+    )
+    if not explicit_nouns and (not simple_nouns or mana_value is not None):
+        return None
+    leaves = []
+    for noun in qualities:
+        query = _search_query(noun, destination=destination)
+        if query is None:
+            return None
+        leaves.append(_selector(query))
+    if mana_value is not None:
+        # The prior branch's explicit card noun seals the final bound to its branch.
+        leaves[-1]["mana_value"] = mana_value
+    return {SEARCH_ALTERNATIVES: leaves}
+
+
+def _counted_search_selector(match, *, destination):
+    quality = match["quality"] or ""
+    query = _search_query(quality, destination=destination) if quality else ObjectQuerySpec()
+    mana_value = None
+    if match["mv"] is not None:
+        comparison = match["comparison"].casefold() if match["comparison"] else None
+        key = {None: "equal", "or less": "maximum", "or greater": "minimum"}[comparison]
+        mana_value = {key: int(match["mv"])}
+    if query is None:
+        if match["name"] is not None:
+            return None
+        return _disjunctive_selector(quality, destination=destination, mana_value=mana_value)
+    selector = _selector(query)
+    if match["name"] is not None:
+        name = match["name"].strip()
+        if (not name or not name[0].isupper()
+                or any(value in name.casefold() for value in (" or ", "chosen", "same name", "this way"))):
+            return None
+        selector["names"] = [name]
+    if mana_value is not None:
+        selector["mana_value"] = mana_value
+    return selector
 
 
 def fixed_counted_library_search_effect_template(
@@ -243,29 +316,9 @@ def fixed_counted_library_search_effect_template(
         "into your hand": "hand", "into your graveyard": "graveyard",
         "onto the battlefield": "battlefield", "onto the battlefield tapped": "battlefield",
     }[match["destination"].casefold()]
-    if count > 1 and destination != "hand":
+    selector = _counted_search_selector(match, destination="battlefield" if destination == "battlefield" else "hand")
+    if selector is None:
         return None
-    quality = match["quality"] or ""
-    query = (
-        _search_query(
-            quality, destination="battlefield" if destination == "battlefield" else "hand",
-        ) if quality else ObjectQuerySpec()
-    )
-    if query is None:
-        return None
-    selector: dict[str, Any] = _selector(query)
-    if match["name"] is not None:
-        name = match["name"].strip()
-        if (
-            not name or not name[0].isupper()
-            or any(value in name.casefold() for value in (" or ", "chosen", "same name", "this way"))
-        ):
-            return None
-        selector["names"] = [name]
-    if match["mv"] is not None:
-        comparison = match["comparison"].casefold() if match["comparison"] else None
-        key = {None: "equal", "or less": "maximum", "or greater": "minimum"}[comparison]
-        selector["mana_value"] = {key: int(match["mv"])}
     try:
         return FixedCountedLibrarySearchTemplate(
             count=count, optional_count=bool(match["optional"]),

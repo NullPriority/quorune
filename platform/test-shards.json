@@ -644,6 +644,7 @@
       "test_conditional_receiver_unions",
       "test_counter_doubling",
       "test_counter_placement_events",
+      "test_disjunctive_library_search",
       "test_draw_step_rules",
       "test_exact_keyword_families",
       "test_exact_land_families",
