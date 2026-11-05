@@ -403,6 +403,46 @@ def replace_pending_trigger_batch(host, index: int, batch: PendingTriggerBatch) 
     host.state.pending_trigger_batches[index] = batch
 
 
+def pin_upkeep_hand_at_departure(host, departing: Sequence[str]) -> None:
+    """Seal public hand counts on the affected upkeep occurrences before zone cleanup."""
+    from .scheduled_player import UPKEEP_HAND_COUNT_CAPABILITY, upkeep_hand_departure_context
+
+    state = host.state
+    seat = state.active_player
+    if state.step != 'upkeep' or seat not in departing:
+        return
+
+    def capture(semantic_key, context):
+        if context.get('player') != seat:
+            return None
+        program = host.semantics.get(semantic_key)
+        if program is None or UPKEEP_HAND_COUNT_CAPABILITY not in program.capability_dependencies:
+            return None
+        return upkeep_hand_departure_context(state, context)
+
+    stack_updates = []
+    for item in state.stack:
+        context = capture(item.semantic_key, item.context)
+        if context is not None:
+            stack_updates.append((item, context))
+    batch_updates = []
+    for index, batch in enumerate(state.pending_trigger_batches):
+        payload = batch.to_dict()
+        changed = False
+        for group in payload['groups']:
+            for item in group['items']:
+                context = capture(item.get('semantic_key'), item['context'])
+                if context is not None:
+                    item['context'] = context
+                    changed = True
+        if changed:
+            batch_updates.append((index, PendingTriggerBatch.from_dict(payload)))
+    for item, context in stack_updates:
+        item.context = context
+    for index, batch in batch_updates:
+        replace_pending_trigger_batch(host, index, batch)
+
+
 def enqueue_trigger_batch(
     host: TriggerProcessingHost,
     items: Sequence[StackItem],

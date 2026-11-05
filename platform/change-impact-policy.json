@@ -2820,14 +2820,18 @@
       "id": "scheduled-player-result-contract",
       "patterns": [
         "quorune/compiler/scheduled_player_triggers.py",
+        "quorune/compiler/public_trigger_conditions.py",
         "quorune/scheduled_player.py",
         "quorune/rules/scheduled_player_shapes.py",
+        "quorune/rules/event_subscriptions.py",
+        "tests/fixtures/upkeep-participant-hand-cards.json",
         "tests/fixtures/scheduled-player-triggers.json"
       ],
       "test_modules": [
         "test_scheduled_player_triggers",
         "test_fixed_counter_event_triggers",
         "test_upkeep_step_rules",
+        "test_upkeep_participant_hand_conditions",
         "test_card_program_trust"
       ]
     },

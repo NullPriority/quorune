@@ -290,7 +290,8 @@
       "test_support_counter_placement",
       "test_temporary_cast_restrictions",
       "test_typed_dynamic_characteristics",
-      "test_typed_query_self_characteristics"
+      "test_typed_query_self_characteristics",
+      "test_upkeep_participant_hand_conditions"
     ],
     "deterministic-game-regressions": [
       "test_codex_arena",
@@ -1300,7 +1301,8 @@
       "test_static_action_rules",
       "test_station_symbol_entries",
       "test_turn_history_rules",
-      "test_typed_query_self_characteristics"
+      "test_typed_query_self_characteristics",
+      "test_upkeep_participant_hand_conditions"
     ],
     "functional-11": [
       "test_activated_abilities",

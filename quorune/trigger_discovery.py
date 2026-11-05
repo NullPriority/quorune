@@ -36,7 +36,9 @@ from .continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
     FixedPublicStateConditionSpec,
 )
-from .rules.event_subscriptions import FixedEventSubscriptionSet, intervening_recheck_condition
+from .rules.event_subscriptions import (
+    FixedEventSubscriptionSet, intervening_recheck_condition, public_state_intervening_actual,
+)
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
     EvolveCharacteristics,
@@ -332,58 +334,6 @@ def _keyword_intervening_condition_actual(
     )
 
 
-def _public_state_intervening_actual(
-    host: TriggerDiscoveryHost,
-    condition: Mapping[str, Any],
-    *,
-    source: CardInstance,
-    context: Mapping[str, Any],
-) -> bool:
-    raw_condition = condition.get("condition")
-    if not isinstance(raw_condition, Mapping):
-        raise GameRuleError(
-            "Public-state intervening conditions require a typed descriptor"
-        )
-    try:
-        public_condition = FixedPublicStateConditionSpec.from_dict(raw_condition)
-    except ValueError as exc:
-        raise GameRuleError(str(exc)) from exc
-    controller = context.get("intervening_condition_controller")
-    if controller is not None and (
-        type(controller) is not str or controller not in host.state.players
-    ):
-        raise GameRuleError(
-            "Intervening-condition controller must name an active seat"
-        )
-    public_source = copy.copy(source)
-    if isinstance(controller, str):
-        public_source.controller = controller
-    locked_identity = context.get("source_logical_object_id")
-    if (
-        isinstance(controller, str)
-        and type(locked_identity) is str
-        and locked_identity
-        and public_source.logical_object_id != locked_identity
-    ):
-        public_source.zone = "departed"
-        public_source.attached_to = None
-        public_source.counters = {}
-        identity_prefix = f"{public_source.object_id}@"
-        incarnation = locked_identity.removeprefix(identity_prefix)
-        if (
-            not locked_identity.startswith(identity_prefix)
-            or not incarnation.isdigit()
-        ):
-            raise GameRuleError(
-                "Intervening-condition source identity is malformed"
-            )
-        public_source.zone_change_counter = int(incarnation)
-    return host._fixed_public_state_condition_holds(
-        public_source,
-        public_condition,
-    )
-
-
 def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
     from .attack_batch_model import ATTACK_BATCH_CONDITION
@@ -439,7 +389,7 @@ def _semantic_condition_actual(
         from .source_damage_death import source_damage_death_matches
         return source_damage_death_matches(host, source, context)
     if field == FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD:
-        return _public_state_intervening_actual(
+        return public_state_intervening_actual(
             host,
             condition,
             source=source,

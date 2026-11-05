@@ -252,6 +252,9 @@ Versioned scheduled-player results retain the step participant selected at
 occurrence. If that participant leaves before resolution, instructions addressed
 to that player are skipped and instructions for surviving players continue in
 their original order.
+An intervening condition on the upkeep participant's hand count checks the
+public count at occurrence and again at resolution. If the participant leaves,
+the recheck uses the count immediately before departure.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

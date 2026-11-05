@@ -87,6 +87,17 @@ def scheduled_player_result_step(program) -> str | None:
     return None
 
 
+def is_upkeep_participant_schedule(condition: Any) -> bool:
+    if not isinstance(condition, Mapping) or set(condition) != {'all'}:
+        return False
+    clauses = condition['all']
+    if not isinstance(clauses, (tuple, list)):
+        return False
+    upkeep = {'field': 'step', 'op': 'eq', 'value': 'upkeep'}
+    opponent = {'field': 'player', 'op': 'ne', 'value': '$source.controller'}
+    return tuple(clauses) in ((upkeep,), (upkeep, opponent))
+
+
 def scheduled_player_departure_runtime_dependencies(program) -> tuple[str, ...]:
     if SCHEDULED_PLAYER_DEPARTURE_COVERAGE not in program.coverage:
         return ()

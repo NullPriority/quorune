@@ -906,6 +906,7 @@
     "tests/fixtures/unpreventable-damage-cards.json",
     "tests/fixtures/untap-selection-limit-cards.json",
     "tests/fixtures/untargeted-untap-cards.json",
+    "tests/fixtures/upkeep-participant-hand-cards.json",
     "tests/fixtures/vanishing-cards.json",
     "tests/fixtures/variable-actual-life-cards.json",
     "tests/fixtures/variable-independent-life-cards.json",

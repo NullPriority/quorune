@@ -15,8 +15,6 @@ from .source_self_effect_templates import normalized_source_event_line, named_so
 from ..continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
-    FixedPublicStateConditionKind,
-    FixedPublicStateConditionSpec,
 )
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
@@ -44,7 +42,10 @@ from .spell_cast_predicates import (
     FixedSpellCastTurnRelation,
     fixed_spell_cast_binding_spec,
 )
-from .public_state_queries import fixed_public_state_condition
+from .public_trigger_conditions import (
+    FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, PUBLIC_INTERVENING_IF_TRIGGER, PublicTriggerCondition,
+    bind_public_intervening_trigger, public_trigger_condition_capabilities,
+)
 from .qualified_zone_event_bindings import QUALIFIED_ZONE_VARIANT, qualified_public_zone_event_binding_spec, public_binding_from_spec
 from .aggregated_zone_event_bindings import AGGREGATED_ZONE_VARIANT, aggregated_public_zone_event_binding_spec
 from .counter_placement_event_bindings import COUNTER_EVENT_VARIANTS
@@ -62,9 +63,6 @@ from .mutate_event_bindings import MUTATE_SOURCE_VARIANT,MUTATE_TRIGGER_TEMPLATE
 FIXED_COUNTER_EVENT_TRIGGER_MECHANIC = "fixed-counter-event-trigger"
 FIXED_TYPED_EVENT_EFFECT_TRIGGER_MECHANIC = (
     "fixed-typed-event-effect-trigger"
-)
-FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY = (
-    "trigger.condition.fixed_public_state"
 )
 FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC = (
     "trigger-event-spell-cast-fixed-characteristics"
@@ -273,10 +271,6 @@ _SCHEDULED_TRIGGER = re.compile(
     r"(?P<schedule>your upkeep|each upkeep|your draw step|your end step|each end step|"
     r"the end step|combat on your turn|each combat|your first main phase|your precombat main phase|"
     r"your second main phase|your postcombat main phase), (?P<body>.+)$",
-    re.IGNORECASE,
-)
-_PUBLIC_INTERVENING_IF_TRIGGER = re.compile(
-    r"^(?P<prefix>.+?), if (?P<condition>[^,]+), (?P<body>.+)$",
     re.IGNORECASE,
 )
 _CONTROLLED_LAND_ENTRY_TRIGGER = re.compile(
@@ -491,7 +485,7 @@ class FixedCounterTriggerBinding:
     public_mechanic: str | None = None
     public_template_id: str | None = None
     public_capabilities: tuple[str, ...] = ()
-    public_state_condition: FixedPublicStateConditionSpec | None = None
+    public_state_condition: PublicTriggerCondition | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -567,7 +561,7 @@ class FixedCounterTriggerBinding:
             )
         if self.public_state_condition is not None and not isinstance(
             self.public_state_condition,
-            FixedPublicStateConditionSpec,
+            PublicTriggerCondition,
         ):
             raise ValueError(
                 "Intervening-if triggers require one typed public-state condition"
@@ -1093,32 +1087,12 @@ def fixed_counter_trigger_binding(
     if normalized is not None:
         source_binding = fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True)
         if source_binding is not None:return source_binding
-    intervening = _PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
+    intervening = PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
-        condition = fixed_public_state_condition(
-            intervening.group("condition"),
-            source_name=card_name or "This source",
+        return bind_public_intervening_trigger(
+            intervening, card_name=card_name, compile_binding=fixed_counter_trigger_binding,
+            compile_source_binding=_public_state_source_self_trigger_binding,
         )
-        if condition is None:
-            return None
-        if any(leaf.kind in {
-            FixedPublicStateConditionKind.SOURCE_ENTERED_THIS_TURN,
-            FixedPublicStateConditionKind.SOURCE_COUNTER_AT_LEAST,
-            FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY,
-        } for leaf in condition.leaf_conditions()):
-            return None
-        base = fixed_counter_trigger_binding(
-            f"{intervening.group('prefix')}, {intervening.group('body')}",
-            card_name=card_name,
-        )
-        if base is None:
-            base = _public_state_source_self_trigger_binding(
-                f"{intervening.group('prefix')}, {intervening.group('body')}",
-                card_name=card_name,
-            )
-        if base is None or base.public_state_condition is not None:
-            return None
-        return replace(base, public_state_condition=condition)
     public = _public_trigger_binding(
         material_line,
         card_name=card_name,
@@ -1324,11 +1298,7 @@ def fixed_counter_event_trigger_node(
               if 'fixed-public-event-target-counter' in body_mechanics else ()),
             *binding.explicit_capabilities,
             *crime_fact_dependencies(binding.public_state_condition.to_dict() if binding.public_state_condition is not None else None),
-            *(
-                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
-                if binding.public_state_condition is not None
-                else ()
-            ),
+            *public_trigger_condition_capabilities(binding.public_state_condition),
         ),
     )
     residual_ids = (
@@ -1454,11 +1424,7 @@ def fixed_typed_event_effect_trigger_node(
         explicit_capabilities=(
             *binding.explicit_capabilities,
             *crime_fact_dependencies(binding.public_state_condition.to_dict() if binding.public_state_condition is not None else None),
-            *(
-                (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
-                if binding.public_state_condition is not None
-                else ()
-            ),
+            *public_trigger_condition_capabilities(binding.public_state_condition),
         ),
     )
     residual_ids = (

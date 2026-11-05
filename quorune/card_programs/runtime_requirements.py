@@ -143,7 +143,7 @@ def _event_query_runtime_requirements(program):
     if program.event==CRIME_EVENT:required.add(CRIME_CAPABILITY)
     required.update(crime_fact_dependencies((program.handlers,program.event_condition,program.effects,program.cost_schema)))
     from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
-    from ..rules.event_subscriptions import FixedEventSubscriptionSet
+    from ..rules.event_subscriptions import FixedEventSubscriptionSet, upkeep_hand_runtime_dependencies
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
         if subscriptions is not None:
@@ -163,6 +163,7 @@ def _event_query_runtime_requirements(program):
                 required.add('trigger.event.normalized_zone_change')
             if any(child.event.removesuffix('.self')==MUTATE_EVENT for child in subscriptions.subscriptions):
                 required.add(MUTATE_CAPABILITY)
+        required.update(upkeep_hand_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_event_subscriptions:invalid:{exc}')
     for resolver,value,label in (

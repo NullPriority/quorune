@@ -64175,6 +64175,92 @@
     {
       "applicability": {
         "exclusions": [
+          "other scheduled steps",
+          "hidden hand identities",
+          "dynamic thresholds"
+        ],
+        "inputs": [
+          "sealed upkeep participant",
+          "fixed hand-count threshold",
+          "public current or departure count"
+        ],
+        "outputs": [
+          "occurrence and resolution condition result"
+        ],
+        "summary": "Compare the scheduled upkeep participant public hand count at occurrence and resolution. Retain the last known count if they depart."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.condition.fixed_public_state",
+        "trigger.event.scheduled_player_result"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the capability leaves the source-spanned condition residual. Runtime admission independently validates the upkeep scope and typed comparison.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.condition.upkeep_participant_hand_count",
+      "implementation_components": [
+        "quorune.scheduled_player.UpkeepParticipantHandCondition",
+        "quorune.scheduled_player.UpkeepHandDeparture",
+        "quorune.scheduled_player.upkeep_hand_condition_holds",
+        "quorune.trigger_processing.pin_upkeep_hand_at_departure",
+        "quorune.rules.event_subscriptions.upkeep_hand_runtime_dependencies",
+        "quorune.compiler.public_trigger_conditions.upkeep_hand_condition"
+      ],
+      "implementation_mutation_rationale": "Replacing the departure count with the empty occurrence value fails the recheck witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_asylum_visitor_uses_current_and_last_known_upkeep_hand_count",
+        "test_original_netsuke_counts_only_the_upkeep_participant_and_damages_them",
+        "test_upkeep_hand_condition_pins_stack_and_pending_contexts_atomically"
+      ],
+      "multiplayer_tests": [
+        "test_original_asylum_visitor_uses_current_and_last_known_upkeep_hand_count",
+        "test_original_netsuke_counts_only_the_upkeep_participant_and_damages_them"
+      ],
+      "negative_tests": [
+        "test_original_asylum_visitor_uses_current_and_last_known_upkeep_hand_count",
+        "test_original_netsuke_counts_only_the_upkeep_participant_and_damages_them",
+        "test_upkeep_hand_condition_pins_stack_and_pending_contexts_atomically",
+        "test_upkeep_hand_compiler_requires_scope_and_condition_authority",
+        "test_upkeep_hand_runtime_requires_the_scope_and_capability"
+      ],
+      "official_rules": [
+        "402.3",
+        "503.1",
+        "603.4",
+        "608.2a",
+        "800.4i"
+      ],
+      "positive_tests": [
+        "test_original_asylum_visitor_uses_current_and_last_known_upkeep_hand_count",
+        "test_original_netsuke_counts_only_the_upkeep_participant_and_damages_them",
+        "test_upkeep_hand_compiler_requires_scope_and_condition_authority"
+      ],
+      "privacy_tests": [
+        "test_original_asylum_visitor_uses_current_and_last_known_upkeep_hand_count"
+      ],
+      "replay_tests": [
+        "test_original_asylum_visitor_uses_current_and_last_known_upkeep_hand_count",
+        "test_original_netsuke_counts_only_the_upkeep_participant_and_damages_them"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "the source controller's next upkeep",
           "a named player's next upkeep",
           "end-step or other delayed times",
@@ -78941,7 +79027,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 713,
+  "registry_version": 714,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

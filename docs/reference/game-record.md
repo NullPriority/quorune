@@ -191,6 +191,10 @@ anchor may be departed; only surviving ordering participants receive authority.
 This frame contains no fabricated stack program or semantic instruction cursor;
 see [ADR 0152](../adr/0152-state-based-physical-departure-order.md).
 
+An upkeep hand condition keeps the original scheduled participant. On departure,
+the affected stack items and pending trigger batches retain a typed snapshot of
+that seat and its public hand count. Card identities stay outside the snapshot.
+
 Plain ordering requests retain their schema-one fields and serialized shape.
 Schema-two requests additionally bind the resolved destination and its ordering
 actor when a replacement changes that contract. The original effect actor
