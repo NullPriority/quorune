@@ -10,6 +10,7 @@ from ..query_effect_amount_model import (
     PublicQueryAmountError,
     PublicQueryAmountSpec,
 )
+from ..live_battlefield_quantity_model import LiveBattlefieldQuantitySpec
 from ..rules.source_references import SourceReferenceSpec
 from .query_characteristic_templates import query_characteristic_quantity, query_characteristic_value
 from .live_battlefield_quantities import resolution_quantity
@@ -187,6 +188,12 @@ def _parsed_candidate(
     *,
     source_name: str,
 ) -> tuple[str, str, int, str, bool] | None:
+    energy = re.fullmatch(
+        r'You get an amount of \{E\}(?: \(energy counters\))?\s+equal to the number of '
+        r'(?P<quantity>.+?)\.?', text, re.I,
+    )
+    if energy is not None:
+        return 'controller-energy', energy['quantity'], 1, 'You get {E}{E}.', False
     library = re.fullmatch(
         r"Surveil X, where X is (?:equal to )?(?:the number of )?(?P<quantity>.+?)\.?",
         text, re.I,
@@ -309,6 +316,7 @@ _AMOUNT_FIELDS = {
     "surveil": "count",
     "create_token": "quantity",
     "place_counters": "amount",
+    "place_player_counters": "amount",
 }
 
 
@@ -438,7 +446,18 @@ def public_query_effect_amount_template(
         )
     assert candidate is not None
     family, quantity_text, coefficient, fixed_text, complete_value = candidate
-    quantity = resolution_quantity(quantity_text, source_name=source_name, complete_value=complete_value)
+    if family == 'controller-energy':
+        from .public_state_queries import fixed_battlefield_query_subject
+
+        parsed = fixed_battlefield_query_subject(quantity_text)
+        if parsed is None or parsed[0] != 'source_controller' or parsed[2]:
+            return None
+        try:
+            quantity = LiveBattlefieldQuantitySpec(parsed[0], parsed[1])
+        except ValueError:
+            return None
+    else:
+        quantity = resolution_quantity(quantity_text, source_name=source_name, complete_value=complete_value)
     if quantity is None:
         return None
     try:
@@ -463,6 +482,10 @@ def public_query_effect_amount_template(
         quantity=amount.quantity,
         coefficient=signed_coefficient,
     ).to_dict()
+    if family == 'controller-energy':
+        if operation != 'place_player_counters' or effect.get('subjects') != 'controller' or effect.get('counter') != 'energy':
+            return None
+        effect['zero_is_noop'] = True
     return (
         f"public-query-{family}-amount-v1",
         (effect,),
@@ -570,6 +593,14 @@ def _fixed_shape_effects(
                     return None
             except PublicQueryAmountError:
                 return None
+            if operation == 'place_player_counters':
+                if (effect.get('zero_is_noop') is not True or effect.get('subjects') != 'controller'
+                        or effect.get('counter') != 'energy' or spec.coefficient != 1
+                        or not isinstance(spec.quantity, LiveBattlefieldQuantitySpec)
+                        or spec.quantity.controller_relation != 'source_controller'
+                        or spec.quantity.exclude_source):
+                    return None
+                effect.pop('zero_is_noop')
             effect[field] = -1 if spec.coefficient < 0 else 1
             descriptor_count += 1
     if descriptor_count < 1 or any(
@@ -599,6 +630,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.node_capability_shapes import (
         fixed_damage_node_capabilities, fixed_draw_node_capabilities,
         fixed_scry_node_capabilities,
+        fixed_player_counter_placement_node_capabilities,
         fixed_source_characteristics_node_capabilities,
         fixed_target_characteristics_node_capabilities,
     )
@@ -649,6 +681,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             attack_event_characteristic_capabilities,
             fixed_resolution_characteristic_set_node_capabilities,
             fixed_counter_placement_node_capabilities,
+            fixed_player_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
               if {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC}.intersection(program.coverage) else ()),

@@ -790,6 +790,8 @@
         "quorune/compiler/query_counter_sequences.py",
         "quorune/compiler/effect_template_composition.py",
         "quorune/abilities.py",
+        "quorune/semantic_runtime/counter_placement_handlers.py",
+        "tests/fixtures/counted-energy-cards.json",
         "tests/fixtures/query-scaled-counter-cards.json"
       ],
       "test_modules": [
@@ -799,6 +801,8 @@
         "test_bound_effect_programs",
         "test_activated_abilities",
         "test_counter_placement_events",
+        "test_fixed_player_counter_placement_effects",
+        "test_counted_energy_actions",
         "test_card_program_trust"
       ]
     },

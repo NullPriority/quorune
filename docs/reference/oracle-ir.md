@@ -130,6 +130,8 @@ amount can read the hand after an earlier draw commits.
 Variable damage to each opponent uses the existing simultaneous damage batch.
 A declared amount shared by damage and life gain is determined at resolution
 and remains independent of how much damage prevention allows through.
+Counted energy uses the controller's current battlefield quantity at the
+instruction that grants it. A zero count creates no counter placement event.
 
 For each Oracle face and material ability, compilation records:
 

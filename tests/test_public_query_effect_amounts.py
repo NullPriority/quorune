@@ -170,6 +170,32 @@ class PublicQuantityBoundaryTests(unittest.TestCase):
 
 
 class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
+    def test_controller_energy_count_uses_closed_resolution_battlefield_quantity(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.query_effect_amount_model import PublicQueryAmountSpec
+
+        text = ('When this creature enters, you get an amount of {E} (energy counters) '
+                'equal to the number of artifact creatures you control.')
+        card = query_amount_record(text, suffix=687000001, type_line='Artifact Creature — Robot')
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        effect, = ir.faces[0].nodes[0].effects
+        self.assertEqual(('place_player_counters', 'controller', 'energy'),
+                         (effect['op'], effect['subjects'], effect['counter']))
+        self.assertIs(effect['zero_is_noop'], True)
+        amount = PublicQueryAmountSpec.from_dict(effect['amount'])
+        self.assertEqual(1, amount.coefficient)
+        self.assertEqual('source_controller', amount.quantity.controller_relation)
+        self.assertEqual(('artifact', 'creature'), amount.quantity.query.types_all)
+        for changed in (text.replace('you control', 'opponents control'),
+                        text.replace('artifact creatures you control', 'cards in your hand'),
+                        text + ' Then do something unrepresented.'):
+            rejected = compile_oracle_card(query_amount_record(changed, suffix=687000002,
+                type_line='Artifact Creature — Robot'), capability_registry=registry,
+                capability_profile='commander_review')
+            self.assertTrue(rejected.material_residuals)
+
     def test_opponent_token_quantity_has_explicit_player_count_dependency(self):
         from quorune.card_programs import bind_card_program_runtime
         from quorune.oracle_ir import compile_oracle_card
