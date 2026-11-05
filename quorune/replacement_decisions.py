@@ -539,6 +539,22 @@ def _resume_semantic_replacement(
     )
 
 
+def _scope_effect_destruction_choice(host, restored, pending, selection):
+    if (
+        getattr(host.state, "effect_destruction_replacement_version", None) != 1
+        or restored.resume_kind not in {"semantic", "semantic_preparation", "semantic_intent_completion"}
+    ):
+        return selection
+    fields = {"effect_id": selection} if isinstance(selection, str) else dict(selection)
+    event_id = fields.get("event_id", pending.event_id)
+    if any(
+        event.event_id == event_id and event.kind == "permanent.destroy"
+        for event in restored.batch.events
+    ):
+        return {**fields, "event_id": event_id}
+    return selection
+
+
 def complete_replacement_order_choice(
     host: ReplacementDecisionHost,
     decision: Any,
@@ -564,6 +580,7 @@ def complete_replacement_order_choice(
     selection = _replacement_selection(
         response, pending, error_type=error_type
     )
+    selection = _scope_effect_destruction_choice(host, restored, pending, selection)
     from .zone_devour import validate_devour_resume
     validate_devour_resume(host,batch,effects,selection,error_type=error_type)
     if restored.resume_kind=='opening_hand_entry':

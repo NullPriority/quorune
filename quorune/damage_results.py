@@ -1454,6 +1454,15 @@ def consume_deathtouch_damage_checks(
     return values
 
 
+def clear_damage_for_permanents(
+    host: DamageMarkerHost, subjects: Sequence[tuple[str, str]],
+) -> None:
+    """Clear damage on the incarnations retained by the committed rules action."""
+
+    for object_id, logical_object_id in subjects:
+        clear_permanent_damage(host, object_id, logical_object_id=logical_object_id)
+
+
 def clear_permanent_damage(
     host: DamageMarkerHost,
     object_id: str,

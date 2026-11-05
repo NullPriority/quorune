@@ -29,6 +29,7 @@ def resolve_destruction_replacements(
     *, batch_id: str, apnap_order: Sequence[str], cause: str,
     regeneration_prohibited: bool = False,
     selections: Sequence[str | Mapping[str, object]] = (),
+    allow_bound_single_event: bool = False,
 ) -> ResolvedDestructionReplacements:
     """Replay decisions and expand mandatory Aura destruction before commit."""
     by_id = {subject.object_id: subject for subject in subjects}
@@ -53,6 +54,7 @@ def resolve_destruction_replacements(
     for _ in range(len(by_id) + 1):
         progress = advance_replacement_batch(
             current, effects, selections=supplied[consumed:], require_all_selections=False,
+            allow_bound_single_event=allow_bound_single_event,
         )
         consumed += progress.consumed_selections
         current = progress.batch

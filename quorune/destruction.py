@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -408,6 +408,58 @@ def _canonical_selections(
     return tuple(result)
 
 
+def _uses_effect_replacement_stages(host: DestructionHost, cause: DestructionCause) -> bool:
+    return (
+        cause is DestructionCause.EFFECT
+        and getattr(host.state, "effect_destruction_replacement_version", None) == 1
+    )
+
+
+def _split_effect_replacement_selections(selections):
+    from .destruction_replacement_options import DESTRUCTION_EVENT_ID_PREFIX
+
+    if not isinstance(selections, (list, tuple)):
+        raise DestructionError("Destruction replacement selections must be a list")
+    destruction = []
+    destination = []
+    for selection in _canonical_selections(selections):
+        event_id = selection.get("event_id") if isinstance(selection, Mapping) else None
+        if isinstance(event_id, str) and event_id.startswith(DESTRUCTION_EVENT_ID_PREFIX):
+            if destination:
+                raise DestructionError("Destruction selections must precede destination selections")
+            destruction.append(selection)
+        else:
+            destination.append(selection)
+    return tuple(destruction), tuple(destination)
+
+
+def _prepare_destruction_replacement_stages(host, requests, *, replacement_selections, **options):
+    from .destruction_replacement_adapter import prepare_destruction_replacement_if_needed
+    from .replacement.ordering import ReplacementChoiceRequired
+
+    if not _uses_effect_replacement_stages(host, options["cause"]):
+        return (
+            prepare_destruction_replacement_if_needed(
+                host, requests, replacement_selections=replacement_selections, **options
+            ),
+            replacement_selections,
+        )
+    destruction, destination = _split_effect_replacement_selections(replacement_selections)
+    try:
+        replaced = prepare_destruction_replacement_if_needed(
+            host, requests, replacement_selections=destruction, **options
+        )
+    except ReplacementChoiceRequired as exc:
+        if destination:
+            raise DestructionError("Destruction choices changed before destination resume") from exc
+        raise
+    if replaced is not None:
+        return replace(replaced, replacement_selections=destination), destination
+    if destruction:
+        raise DestructionError("Destruction selections no longer have applicable replacements")
+    return None, destination
+
+
 def prepare_destructions(
     host: DestructionHost,
     requests: Sequence[DestructionRequest],
@@ -451,8 +503,7 @@ def prepare_destructions(
     if len(object_ids) != len(set(object_ids)):
         raise DestructionError("A permanent may be destroyed only once per batch")
 
-    from .destruction_replacement_adapter import prepare_destruction_replacement_if_needed
-    replaced = prepare_destruction_replacement_if_needed(
+    replaced, destination_selections = _prepare_destruction_replacement_stages(
         host, canonical_requests, cause=cause, actor=actor, reason=reason,
         regeneration_prohibited=regeneration_prohibited, event_order=event_order,
         replacement_selections=replacement_selections,
@@ -470,11 +521,11 @@ def prepare_destructions(
                                                 "battlefield", entry.logical_object_id))
         entries.append(entry)
 
-    if not isinstance(replacement_selections, (list, tuple)):
+    if not isinstance(destination_selections, (list, tuple)):
         raise DestructionError(
             "Destruction replacement selections must be a list"
         )
-    selections = _canonical_selections(replacement_selections)
+    selections = _canonical_selections(destination_selections)
     supplied_order = tuple(event_order)
     if any(type(value) is not str or not value for value in supplied_order):
         raise DestructionError(
@@ -518,6 +569,9 @@ def validate_destruction_plan(
     if not isinstance(plan, DestructionPlan):
         raise DestructionError("Destruction commits require a typed plan")
     if plan.replacement_subjects:
+        selections = plan.destruction_replacement_selections
+        if _uses_effect_replacement_stages(host, plan.cause):
+            selections = (*selections, *plan.replacement_selections)
         current = prepare_destructions(
             host, tuple(DestructionRequest(object_id, next(subject.logical_object_id
                         for subject in plan.replacement_subjects if subject.object_id == object_id))
@@ -525,7 +579,7 @@ def validate_destruction_plan(
             cause=plan.cause, actor=plan.actor, reason=plan.reason,
             regeneration_prohibited=plan.regeneration_prohibited,
             event_order=plan.requested_object_ids,
-            replacement_selections=plan.destruction_replacement_selections,
+            replacement_selections=selections,
         )
         if current != plan:
             raise DestructionError("Destruction replacement plan is stale")
@@ -606,6 +660,37 @@ def _canonical_companion_changes(
     return tuple(result)
 
 
+def _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_replacements):
+    from .damage_results import clear_damage_for_permanents
+
+    staged = _uses_effect_replacement_stages(host, plan.cause)
+    if staged and not changes and plan.replacement_selections:
+        raise DestructionError("Destination selections no longer have a destruction move")
+    damage_clears = tuple(
+        (entry.object_id, entry.logical_object_id)
+        for entry in plan.entries if entry.object_id in plan.damage_clear_object_ids
+    )
+    if not staged or not changes:
+        clear_damage_for_permanents(host, damage_clears)
+        damage_clears = ()
+    if not changes:
+        return
+    selections = tuple(thaw_value(value) for value in plan.replacement_selections)
+    if prepared_replacements is not None or damage_clears:
+        from .zone_transitions import ZoneTransitionOwner
+
+        ZoneTransitionOwner(host).move_cards_simultaneously(
+            changes, reason=plan.reason, log=False, transition_kinds=transition_kinds,
+            prepared_replacements=prepared_replacements, damage_clears=damage_clears,
+            replacement_selections=selections if prepared_replacements is None else (),
+        )
+    else:
+        host._move_cards_simultaneously(
+            changes, reason=plan.reason, log=False, transition_kinds=transition_kinds,
+            replacement_selections=selections,
+        )
+
+
 def commit_destruction_plan(
     host: DestructionHost,
     plan: DestructionPlan,
@@ -643,25 +728,7 @@ def commit_destruction_plan(
         )
     if prepared_zone_replacements is not None and set(prepared_zone_replacements) != {object_id for object_id,_ in changes}:
         raise DestructionError('Prepared destruction zone plans do not cover the complete batch')
-    if plan.damage_clear_object_ids:
-        from .damage_results import clear_permanent_damage
-        for object_id in plan.damage_clear_object_ids:
-            entry = next(value for value in plan.entries if value.object_id == object_id)
-            clear_permanent_damage(host, object_id, logical_object_id=entry.logical_object_id)
-    if changes and prepared_zone_replacements is not None:
-        from .zone_transitions import ZoneTransitionOwner
-        ZoneTransitionOwner(host).move_cards_simultaneously(changes, reason=plan.reason, log=False,
-            transition_kinds=transition_kinds, prepared_replacements=prepared_zone_replacements)
-    elif changes:
-        host._move_cards_simultaneously(
-            changes,
-            reason=plan.reason,
-            log=False,
-            replacement_selections=tuple(
-                thaw_value(value) for value in plan.replacement_selections
-            ),
-            transition_kinds=transition_kinds,
-        )
+    _commit_destruction_moves(host, plan, changes, transition_kinds, prepared_zone_replacements)
     apply_counter_changes(host, plan.shield_counter_plan)
 
     shielded: list[str] = []

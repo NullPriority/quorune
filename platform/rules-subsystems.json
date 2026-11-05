@@ -7878,14 +7878,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v687-trigger-continuation-results",
-      "compiler_version": "oracle-ir-v687",
+      "transition_id": "oracle-ir-v690-effect-destruction-replacement-atomicity",
+      "compiler_version": "oracle-ir-v690",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct shared intervening conditions across normalized subscriptions and scheduled results addressed to a player who leaves. Preserve each occurrence filter, instructions for surviving recipients, and historical serialized programs. The affected originals already passed whole-program admission."
+      "non_harvest_reason": "Commit damage clearing and movement after both effect destruction and destination replacement choices. Retain exact event identity across resumption and the historical behavior of records without the current execution version. This corrects already admitted destruction routes."
     },
     "forecast_corrections": [
       {

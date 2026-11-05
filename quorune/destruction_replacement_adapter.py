@@ -97,6 +97,10 @@ def prepare_replaced_destructions(
         subjects, relevant, requested, batch_id=batch_id, apnap_order=host.apnap_order(),
         cause=cause.value, regeneration_prohibited=regeneration_prohibited,
         selections=tuple(thaw_value(value) for value in replacement_selections),
+        allow_bound_single_event=(
+            cause.value == "effect"
+            and getattr(host.state, "effect_destruction_replacement_version", None) == 1
+        ),
     )
     entries = []
     shield_changes = []

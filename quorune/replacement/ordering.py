@@ -471,6 +471,8 @@ def apply_batch_replacement(
     effects: Iterable[ReplacementEffect],
     pending: ReplacementBatchChoice,
     selected_effect_id: str | None | Mapping[str, Any],
+    *,
+    allow_bound_single_event: bool = False,
 ) -> ReplacementEventBatch:
     all_effects = canonical_effects(effects)
     current = next_batch_replacement_choice(batch, all_effects)
@@ -481,6 +483,12 @@ def apply_batch_replacement(
     selected_value, supplied_allocation, selected_event_id, supplied_objects = _selection_parts(
         selected_effect_id
     )
+    if (
+        allow_bound_single_event
+        and not current.event_order_options
+        and selected_event_id == current.event_id
+    ):
+        selected_event_id = None
     if selected_event_id is not None:
         if selected_event_id not in current.event_order_options:
             raise ReplacementEffectError(
@@ -662,6 +670,7 @@ def advance_replacement_batch(
     *,
     selections: Iterable[str | None | Mapping[str, Any]] = (),
     require_all_selections: bool = True,
+    allow_bound_single_event: bool = False,
 ) -> ReplacementBatchProgress:
     all_effects = canonical_effects(effects)
     supplied = iter(selections)
@@ -693,7 +702,8 @@ def advance_replacement_batch(
                     consumed_selections=consumed,
                 )
         current = apply_batch_replacement(
-            current, all_effects, pending, selected
+            current, all_effects, pending, selected,
+            allow_bound_single_event=allow_bound_single_event,
         )
     if not require_all_selections:
         return ReplacementBatchProgress(

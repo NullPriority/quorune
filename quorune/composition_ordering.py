@@ -30,7 +30,8 @@ def selected_composition_order(request,refs):
 
 
 def resolve_composition_departure(owner,object_id,destination,*,reason,position='top',
-        replacement_selections=(),transition_kind=ZoneTransitionKind.ORDINARY,prepared_replacement=None):
+        replacement_selections=(),transition_kind=ZoneTransitionKind.ORDINARY,prepared_replacement=None,
+        damage_clears=()):
     from .composition_departure_commit import _prepare
     actor=_ACTOR.get()
     if actor is None:raise GameRuleError('Composition departure has no represented resolving-effect actor')
@@ -51,7 +52,7 @@ def resolve_composition_departure(owner,object_id,destination,*,reason,position=
         if not batch.choices:
             return owner.depart_composition(object_id,destination,physical_order=batch.ordered_ids(()),
                 chooser=chooser,actor=actor,reason=reason,position=position,replacement_selections=replacement_selections,
-                transition_kind=transition_kind,prepared_replacement=prepared_replacement)
+                transition_kind=transition_kind,prepared_replacement=prepared_replacement,damage_clears=damage_clears)
         ordering_actor=batch.choices[0][0][0]
         request=CompositionOrderRequest(root.to_dict(),destination,actor,ordering_actor,reason,
             plan.library_position or 'top',transition_kind.value,4,plan.destination,ordering_actor,
@@ -68,7 +69,7 @@ def resolve_composition_departure(owner,object_id,destination,*,reason,position=
             raise CompositionOrderChoiceRequired(replace(request,chooser=next_actor,ordering_actor=next_actor,orders=orders))
         return owner.depart_composition(object_id,destination,physical_order=batch.ordered_ids(orders),
             chooser=chooser,actor=actor,reason=reason,position=position,replacement_selections=replacement_selections,
-            transition_kind=transition_kind,prepared_replacement=prepared_replacement)
+            transition_kind=transition_kind,prepared_replacement=prepared_replacement,damage_clears=damage_clears)
     changed=plan.destination!=destination or chooser!=(root.owner if destination in ('graveyard','library','hand','command') else actor)
     from .composition_commander_replacement_model import commander_component_destinations
     redirects=FrozenMap(commander_component_destinations(plan.prepared_replacement.event.payload))
@@ -79,7 +80,7 @@ def resolve_composition_departure(owner,object_id,destination,*,reason,position=
     if plan.destination in {'hand','command','outside'} or len(request.refs)<=1:
         return owner.depart_composition(object_id,destination,physical_order=request.ordered_ids(request.refs),
             chooser=chooser,actor=actor,reason=reason,position=position,
-            replacement_selections=replacement_selections,transition_kind=transition_kind,prepared_replacement=prepared_replacement)
+            replacement_selections=replacement_selections,transition_kind=transition_kind,prepared_replacement=prepared_replacement,damage_clears=damage_clears)
     selection=_SELECTION.get()
     if selection is None:raise CompositionOrderChoiceRequired(request)
     selected,refs=selection
@@ -87,21 +88,23 @@ def resolve_composition_departure(owner,object_id,destination,*,reason,position=
     return owner.depart_composition(object_id,destination,physical_order=request.ordered_ids(refs),
         chooser=chooser,actor=actor,reason=reason,position=position,
         replacement_selections=replacement_selections,transition_kind=transition_kind,
-        prepared_replacement=prepared_replacement)
+        prepared_replacement=prepared_replacement,damage_clears=damage_clears)
 
 
-def resolve_composition_departure_batch(owner,changes,*,reason,replacement_selections,transition_kinds,prepared_replacements):
+def resolve_composition_departure_batch(owner,changes,*,reason,replacement_selections,transition_kinds,
+        prepared_replacements,damage_clears=()):
     from .zone_trigger_events import normalized_transition_kind_map
     from .composition_state_based_order import take_prepared_composition_departures
     from .composition_departure_commit import commit_prepared_composition_departures
     kinds=normalized_transition_kind_map(changes,transition_kinds)
     physical=take_prepared_composition_departures(changes,reason,kinds,prepared_replacements)
-    if physical is not None:return list(commit_prepared_composition_departures(owner,physical))
+    if physical is not None:
+        return list(commit_prepared_composition_departures(owner,physical,damage_clears=damage_clears))
     if len(changes)!=1:raise GameRuleError('Composed multi-object batches require their represented group continuation')
     object_id,destination=changes[0]
     return list(resolve_composition_departure(owner,object_id,destination,reason=reason,
         replacement_selections=replacement_selections,transition_kind=kinds.get(object_id,ZoneTransitionKind.ORDINARY),
-        prepared_replacement=(prepared_replacements or {}).get(object_id)))
+        prepared_replacement=(prepared_replacements or {}).get(object_id),damage_clears=damage_clears))
 
 
 def validate_original_composition_effect(host,item,effect,instruction_pointer):
