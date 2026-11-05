@@ -12,6 +12,7 @@ from .continuous_effect_model import ContinuousEffectDuration,ContinuousEffectEr
 
 FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID = "fixed-counted-library-search"
 FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID = "library.search.fixed_counted"
+_MANA_VALUE_BOUNDS = frozenset({"equal", "minimum", "maximum"})
 LIBRARY_SEARCH_RULE_CAPABILITY='library.search.restriction.static'
 LIBRARY_SEARCH_TEMP_CAPABILITY='library.search.prohibition.resolution_until_end_of_turn'
 LIBRARY_SEARCH_RULE_HANDLER='permission.action.library-search-rule.v1'
@@ -114,6 +115,42 @@ def search_selector(query: ObjectQuerySpec) -> dict[str, list[str]]:
         "colors_any": query.colors_any,
     }
     return {name: list(values) for name, values in fields.items() if values}
+
+
+def counted_search_mana_value_slot(path: tuple[str, ...]) -> bool:
+    return len(path) == 3 and path[:2] == ("selector", "mana_value") and path[2] in _MANA_VALUE_BOUNDS
+
+
+def counted_search_bound_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    """Validate a persisted X bound before the search owner sees a resolved integer."""
+    if effect.get("op") != "search":
+        return ()
+    from .entry_x_amount_model import ENTRY_X_AMOUNT_KIND, EntryXAmountSpec, entry_x_amount_dependencies
+    from .query_effect_amount_model import CAST_X_AMOUNT_KIND, CastXAmountSpec, cast_x_runtime_dependencies
+
+    dependencies = (*cast_x_runtime_dependencies(effect), *entry_x_amount_dependencies(effect))
+    selector = effect.get("selector")
+    bounds = selector.get("mana_value") if isinstance(selector, Mapping) else None
+    symbolic_bound = isinstance(bounds, Mapping) and any(isinstance(value, Mapping) for value in bounds.values())
+    if not dependencies and not symbolic_bound:
+        return ()
+    if not isinstance(bounds, Mapping) or len(bounds) != 1:
+        raise ValueError("A counted search X requires one mana value bound")
+    comparison, amount = next(iter(bounds.items()))
+    if comparison not in _MANA_VALUE_BOUNDS or not isinstance(amount, Mapping):
+        raise ValueError("A counted search X must occupy its mana value bound")
+    kind = amount.get("kind")
+    if kind == CAST_X_AMOUNT_KIND:
+        spec = CastXAmountSpec.from_dict(amount)
+    elif kind == ENTRY_X_AMOUNT_KIND:
+        spec = EntryXAmountSpec.from_dict(amount)
+    else:
+        raise ValueError("A counted search bound requires announced or sealed entry X")
+    if spec.coefficient <= 0:
+        raise ValueError("A counted search bound requires a positive X coefficient")
+    fixed = {**effect, "selector": {**selector, "mana_value": {comparison: 2 * spec.coefficient}}}
+    FixedCountedLibrarySearchTemplate.from_effect(fixed)
+    return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, *dependencies)
 
 
 def counted_search_selector_is_closed(

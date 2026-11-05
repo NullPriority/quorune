@@ -18,6 +18,7 @@ from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
 from ..entry_x_amount_model import ENTRY_X_AMOUNT_KIND,EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,ENTRY_X_AMOUNT_CAPABILITY
 from ..fixed_token_production import SEQUENTIAL_INVESTIGATE_OPERATION
+from ..library_search_model import counted_search_bound_dependencies, counted_search_mana_value_slot
 
 
 DECLARED_EFFECT_AMOUNT_MECHANIC = "declared-effect-amount"
@@ -59,6 +60,8 @@ _RESULT_FIELDS = {
 def _result_slot(operation: str, path: tuple[str, ...]) -> bool:
     return path in tuple((field,) for field in _RESULT_FIELDS.get(operation, ())) or (
         operation == "create_token" and path in {("characteristics", "power"), ("characteristics", "toughness")}
+    ) or (
+        operation == "search" and counted_search_mana_value_slot(path)
     )
 
 
@@ -136,6 +139,8 @@ def declared_effect_amount_template(
             return {key:project(a[key], b[key], operation, (*path, key)) for key in a}
         if not _result_slot(operation, path):
             raise PublicQueryAmountError("X changed something other than a result slot")
+        if operation == "search" and quantity is not None:
+            raise PublicQueryAmountError("Counted search bounds require announced or sealed entry X")
         n, m = _signed_number(a), _signed_number(b)
         if n not in {-6, -4, -2, 2, 4, 6} or m != n * 3 // 2 or type(a) is not type(b):
             raise PublicQueryAmountError("X result did not preserve its bounded signed coefficient")
@@ -297,6 +302,13 @@ def declared_amount_shape_context(
             return deepcopy(value)
         return value
     def project_instruction(effect: Mapping[str, Any]) -> Mapping[str, Any]:
+        if effect.get("op") == "search":
+            counted_search_bound_dependencies(effect)
+        if effect.get("op") == "offer_optional_effect":
+            nested = effect.get("effects")
+            if (isinstance(nested, (list, tuple)) and len(nested) == 1
+                    and isinstance(nested[0], Mapping) and nested[0].get("op") == "search"):
+                return {**effect, "effects": [project_instruction(nested[0])]}
         if (contains_public_query_effect_amount(effect) and not contains_declared_effect_amount(effect)):
             if not {CLOSED_EFFECT_PROGRAM_MECHANIC, PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC} <= mechanics:
                 raise PublicQueryAmountError("Independent amounts require a closed ordered instruction")
@@ -308,6 +320,6 @@ def declared_amount_shape_context(
 
     try:
         fixed = tuple(project_instruction(effect) for effect in effects)
-    except PublicQueryAmountError:
+    except (ValueError, TypeError, KeyError):
         return None
     return (fixed, mechanics - {DECLARED_EFFECT_AMOUNT_MECHANIC,"public-query-effect-amount",ENTRY_X_AMOUNT_MECHANIC}) if count else None

@@ -44524,7 +44524,7 @@
     {
       "applicability": {
         "exclusions": [
-          "dynamic or X-valued counts and qualities, multiple named alternatives and same-name linkage",
+          "dynamic result counts, unbound mana value expressions, multiple named alternatives and same-name linkage",
           "searching another player or another zone, split result destinations and multiple top/graveyard/permanent results",
           "search-limiting and search-replacement effects outside their own capability closure",
           "untrusted selected-card entry, copy, face-down and unsupported sibling behavior",
@@ -44533,7 +44533,7 @@
         "inputs": [
           "one schema-v2 fixed library search",
           "one through ten hand results or one permanent, graveyard or top result",
-          "empty, fixed characteristic, one literal name or fixed mana-value selector",
+          "empty, fixed characteristic, one literal name or one mana value bound",
           "current owned library identities and locked resolving controller"
         ],
         "outputs": [
@@ -44555,6 +44555,7 @@
       "id": "library.search.fixed_counted",
       "implementation_components": [
         "quorune.library_search_model.FixedCountedLibrarySearchTemplate",
+        "quorune.library_search_model.counted_search_bound_dependencies",
         "quorune.compiler.library_search_templates.fixed_counted_library_search_effect_template",
         "quorune.rules.library_search_capability_shapes.fixed_counted_library_search_node_capabilities",
         "quorune.selection.searching.HiddenSearchOwnerMixin",
@@ -79373,7 +79374,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 719,
+  "registry_version": 720,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

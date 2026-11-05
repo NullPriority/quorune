@@ -7452,6 +7452,30 @@
       ]
     },
     {
+      "id": "announced-x-counted-library-search",
+      "patterns": [
+        "quorune/library_search_model.py",
+        "quorune/compiler/declared_effect_amounts.py",
+        "quorune/compiler/entry_x_results.py",
+        "quorune/card_programs/descriptor_requirements.py",
+        "quorune/card_programs/reviewed_overlay.py",
+        "quorune/selection/searching.py",
+        "tests/test_announced_x_library_search.py",
+        "tests/fixtures/announced-x-library-search-cards.json"
+      ],
+      "test_modules": [
+        "test_announced_x_library_search",
+        "test_announced_activation_x",
+        "test_entry_x_results",
+        "test_fixed_library_searches",
+        "test_library_search_rules",
+        "test_semantic_searches",
+        "test_terminal_spell_shuffle",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "terminal-resolving-spell-self-shuffle",
       "patterns": [
         "quorune/compiler/spell_self_exile.py",

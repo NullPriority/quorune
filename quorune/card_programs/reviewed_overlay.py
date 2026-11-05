@@ -12,7 +12,11 @@ from ..creature_subtypes import canonical_creature_subtype
 from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
     FixedCountedLibrarySearchTemplate,
+    counted_search_bound_dependencies,
 )
+from ..query_effect_amount_model import CastXAmountSpec
+from ..rules.casting_additional_costs import fixed_sacrifice_additional_cost
+from ..rules.spell_self_exile import SELF_SHUFFLE, spell_self_shuffle_runtime_dependencies
 
 
 _SOURCE_REF_EVENT_CONDITION = {
@@ -116,6 +120,77 @@ def shadowed_reviewed_multi_event_keys(
     return shadowed
 
 
+def _same_search_cost(generated, reviewed):
+    if generated == reviewed:
+        return True
+    if any(not isinstance(schema, dict) or set(schema) != {"additional_costs"}
+           or not isinstance(schema["additional_costs"], list) or len(schema["additional_costs"]) != 1
+           for schema in (generated, reviewed)):
+        return False
+    previous = reviewed["additional_costs"][0]
+    if (not isinstance(previous, dict) or set(previous) != {"kind", "count", "types_any"}
+            or previous["kind"] != "sacrifice" or type(previous["count"]) is not int
+            or previous["count"] != 1 or not isinstance(previous["types_any"], list)
+            or any(type(value) is not str or not value for value in previous["types_any"])):
+        return False
+    try:
+        current = fixed_sacrifice_additional_cost(generated["additional_costs"][0])
+    except (ValueError, TypeError):
+        return False
+    types = tuple(sorted(value.casefold() for value in previous["types_any"]))
+    return current is not None and types == current.predicate.types_any
+
+
+def _legacy_x_search_view(effect):
+    """Project one closed announced X search onto the reviewed transport shape."""
+    try:
+        if not counted_search_bound_dependencies(effect):
+            return None
+        selector = effect["selector"]
+        comparison, amount = next(iter(selector["mana_value"].items()))
+        if CastXAmountSpec.from_dict(amount) != CastXAmountSpec():
+            return None
+    except (ValueError, TypeError, KeyError):
+        return None
+    result = {**effect, "selector": {**selector, "mana_value": {comparison: "$x"}}}
+    result.pop("schema_version")
+    if result.get("shuffle_before_placement") is False:
+        result.pop("shuffle_before_placement")
+    return result
+
+
+def _same_announced_x_search(generated, reviewed):
+    if (generated.event != "resolve" or not generated.ability_id.startswith("spell:")
+            or len(generated.effects) != 1 or not reviewed.effects):
+        return False
+    expected = _legacy_x_search_view(generated.effects[0])
+    if expected is None or not _same_search_cost(generated.cost_schema, reviewed.cost_schema):
+        return False
+    terminal = SELF_SHUFFLE.mechanic in generated.coverage
+    if terminal:
+        try:
+            required = spell_self_shuffle_runtime_dependencies(generated)
+        except (ValueError, TypeError):
+            return False
+        if (SELF_SHUFFLE.capability not in generated.capability_dependencies or not required
+                or reviewed.destination != "graveyard"
+                or reviewed.effects[1:] != [{"op": "shuffle_into_library", "card": "$card"}]):
+            return False
+    elif generated.destination != reviewed.destination or len(reviewed.effects) != 1:
+        return False
+    actual = dict(reviewed.effects[0])
+    if actual.get("searching_player") == "$controller":
+        actual.pop("searching_player")
+    if not isinstance(actual.get("selector"), dict):
+        return False
+    selector = dict(actual["selector"])
+    if isinstance(selector.get("types"), list) and all(type(value) is str for value in selector["types"]):
+        selector["types"] = [value.casefold() for value in selector["types"]]
+    if "colors_any" not in selector and isinstance(selector.get("colors"), list) and len(selector["colors"]) == 1:
+        selector["colors_any"] = selector.pop("colors")
+    return {**actual, "selector": selector} == expected
+
+
 def shadowed_reviewed_counted_search_keys(
     record: CardRecord,
     generated_programs: Iterable[SemanticProgram],
@@ -143,7 +218,7 @@ def shadowed_reviewed_counted_search_keys(
             getattr(generated, field) != getattr(old, field)
             for field in (
                 "active_zone", "event", "event_condition", "target_schema",
-                "cost_schema", "handlers", "destination", "requires_arbiter",
+                "handlers", "requires_arbiter",
             )
         ):
             continue
@@ -152,6 +227,11 @@ def shadowed_reviewed_counted_search_keys(
             or generated.provenance[field] != old.provenance.get(field)
             for field in ("source_oracle_hash", "source_rulings_hash")
         ):
+            continue
+        if _same_announced_x_search(generated, old):
+            shadowed.add(old.key)
+            continue
+        if generated.cost_schema != old.cost_schema or generated.destination != old.destination:
             continue
         if len(generated.effects) != len(old.effects):
             continue
