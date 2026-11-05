@@ -618,6 +618,36 @@ def _object_count_metric(value: str) -> CastReductionMetric | None:
     )
 
 
+def _aggregate_reduction_metric(value: str, *, distinct_only: bool = False) -> CastReductionMetric | None:
+    from .public_characteristic_aggregates import public_characteristic_aggregate
+
+    amount = public_characteristic_aggregate(value)
+    if amount is None or distinct_only and amount.aggregate.schema_version != 2:
+        return None
+    return CastReductionMetric(kind=CastReductionMetricKind.PUBLIC_AGGREGATE,
+                               aggregate=amount.aggregate, schema_version=3)
+
+
+def _variable_reduction_metric(value: str) -> CastReductionMetric | None:
+    aggregate = _aggregate_reduction_metric(value)
+    if aggregate is not None:
+        return aggregate
+    devotion = re.fullmatch(
+        r'your devotion to (?P<color>white|blue|black|red|green)(?:\. \(.+\))?', value, re.I,
+    )
+    if devotion is not None:
+        return CastReductionMetric(kind=CastReductionMetricKind.DEVOTION,
+                                   color=_COLORS[devotion['color'].casefold()])
+    total = re.fullmatch(r'the total mana value of (?P<quality>.+?) you control', value, re.I)
+    if total is None:
+        return None
+    query = _relative_query(CastReductionQueryScope.CONTROLLER_ZONE,
+                            _quality_query(total['quality'], zone='battlefield'))
+    if query is None:
+        return None
+    return CastReductionMetric(kind=CastReductionMetricKind.TOTAL_MANA_VALUE, queries=(query,))
+
+
 def self_spell_cost_reduction_handler(
     text: str,
 ) -> CastCostModifierTemplate | None:
@@ -694,40 +724,8 @@ def self_spell_cost_reduction_handler(
                 (_term(reduction, CastReductionMetric(kind=CastReductionMetricKind.DOMAIN)),)
             )
         elif variable := _SELF_VARIABLE_REDUCTION.fullmatch(normalized):
-            metric_text = variable.group("metric")
-            from .public_characteristic_aggregates import public_characteristic_aggregate
-            aggregate=public_characteristic_aggregate(metric_text)
-            devotion = re.fullmatch(
-                r"your devotion to (?P<color>white|blue|black|red|green)(?:\. \(.+\))?",
-                metric_text,
-                re.IGNORECASE,
-            )
-            total = re.fullmatch(
-                r"the total mana value of (?P<quality>.+?) you control",
-                metric_text,
-                re.IGNORECASE,
-            )
-            if aggregate is not None:
-                metric=CastReductionMetric(kind=CastReductionMetricKind.PUBLIC_AGGREGATE,
-                    aggregate=aggregate.aggregate,schema_version=3)
-            elif devotion is not None:
-                color = _COLORS[devotion.group("color").casefold()]
-                metric = CastReductionMetric(
-                    kind=CastReductionMetricKind.DEVOTION,
-                    color=color,
-                )
-            elif total is not None:
-                query = _relative_query(
-                    CastReductionQueryScope.CONTROLLER_ZONE,
-                    _quality_query(total.group("quality"), zone="battlefield"),
-                )
-                if query is None:
-                    return None
-                metric = CastReductionMetric(
-                    kind=CastReductionMetricKind.TOTAL_MANA_VALUE,
-                    queries=(query,),
-                )
-            else:
+            metric = _variable_reduction_metric(variable['metric'])
+            if metric is None:
                 return None
             specification = SelfSpellCostReductionSpec(
                 (_term((("GENERIC", 1),), metric),)
@@ -741,7 +739,9 @@ def self_spell_cost_reduction_handler(
                 return None
             metric_text = match.group("metric")
             if metric_text.casefold().startswith("for each "):
-                metric = _object_count_metric(metric_text[9:])
+                distinct = (_aggregate_reduction_metric(metric_text[9:], distinct_only=True)
+                            if len(reduction) == 1 and reduction[0][0] == 'GENERIC' else None)
+                metric = distinct or _object_count_metric(metric_text[9:])
             else:
                 metric = _public_condition_metric(metric_text) or _turn_fact_metric(
                     metric_text

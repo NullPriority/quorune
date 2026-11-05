@@ -792,7 +792,12 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
                 and {'schema_version','amount','counter_name'}<=set(value)):
             own=(*own,'player.designation.citys_blessing')
         if value.get('kind')=='controller_max_speed':own=(*own,'variant.speed.player')
-        if value.get('origin')=='public_characteristic_aggregate' or (value.get('kind')=='public_characteristic_aggregate' and 'aggregate' in value):own=(*own,'quantity_expression.public_characteristic_aggregate')
+        if (value.get('origin') == 'public_characteristic_aggregate'
+                or value.get('kind') == 'public_characteristic_aggregate' and 'aggregate' in value):
+            from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
+
+            aggregate = PublicCharacteristicAggregateSpec.from_dict(value.get('aggregate'))
+            own = (*own, *aggregate.capability_dependencies)
         return tuple(sorted({*own, *(cap for child in value.values() for cap in characteristic_quantity_capabilities(child))}))
     if isinstance(value, (list, tuple)):
         return tuple(sorted({cap for child in value for cap in characteristic_quantity_capabilities(child)}))

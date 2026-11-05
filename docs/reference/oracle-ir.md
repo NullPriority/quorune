@@ -107,6 +107,16 @@ departure fact, including when the card is cast. Token creation conditions
 share the creation owner's per-turn count, which excludes a permanent
 spell copy becoming a token on resolution.
 
+Distinct-value amounts count the locked controller's current creature powers
+or mana values in a closed public collection. Battlefield reads use effective
+characteristics. Graveyard reads use the public card view, including combined
+split-card mana values and the front face of a double-faced card.
+
+Draw and token amounts for each card the controller discarded this turn or
+each creature that died this turn use the typed scalar history reader. The
+amount uses committed events when the instruction applies, including events
+from earlier instructions of the same spell or ability.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

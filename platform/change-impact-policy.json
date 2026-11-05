@@ -946,7 +946,9 @@
         "quorune/compiler/event_player_results.py",
         "quorune/rules/event_player_result_shapes.py",
         "quorune/compiler/event_counter_results.py",
-        "quorune/event_counter_reference.py"
+        "quorune/event_counter_reference.py",
+        "tests/fixtures/scalar-history-quantity-cards.json",
+        "tests/test_scalar_history_quantities.py"
       ],
       "test_modules": [
         "test_qualified_zone_event_queries",
@@ -983,7 +985,9 @@
         "test_public_state_optional_result_actions",
         "test_public_state_predefined_token_actions",
         "test_scalar_mill_wording",
-        "test_soulbond"
+        "test_soulbond",
+        "test_scalar_history_quantities",
+        "test_distinct_public_characteristic_counts"
       ]
     },
     {

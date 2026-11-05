@@ -234,7 +234,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
         amount = context.get("amount") if isinstance(context, Mapping) else None
     elif spec.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE:
         from .public_characteristic_aggregates import current_public_characteristic_aggregate
-        amount=current_public_characteristic_aggregate(host,item.controller,spec.aggregate)
+        try:
+            amount = current_public_characteristic_aggregate(host, item.controller, spec.aggregate)
+        except ValueError as exc:
+            raise PublicQueryAmountError(str(exc)) from exc
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
     else:

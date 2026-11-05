@@ -84,6 +84,21 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
     return ScalarEffectAmountSpec(origin, characteristic=field)
 
 
+def _counted_history_result(text: str) -> tuple[str, ScalarEffectAmountSpec] | None:
+    match = re.fullmatch(
+        r"(?:Draw a card|Create (?:a|an|one) (?P<token>[^.]+? token)) for each "
+        r"(?P<subject>card you(?:['’]ve)? discarded this turn|creature that died this turn)\.",
+        text,
+        re.I,
+    )
+    if match is None:
+        return None
+    token = match["token"]
+    body = f"Create X {token}s." if token else "Draw X cards."
+    fact = "cards_discarded" if match["subject"].casefold().startswith("card ") else "creatures_died"
+    return body, ScalarEffectAmountSpec(ScalarAmountOrigin.HISTORY, history_fact=fact)
+
+
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
@@ -108,6 +123,16 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
     multiplier = 1
     if definition is not None:
         body, quantity = definition["body"], definition["value"].rstrip(".")
+    elif (distinct := re.fullmatch(r'Draw a card for each (?P<value>different .+?)\.', normalized, re.I)) is not None:
+        from .public_characteristic_aggregates import public_characteristic_aggregate
+
+        producer = public_characteristic_aggregate(distinct['value'])
+        if producer is None:
+            return None
+        body, quantity = 'Draw X cards.', ''
+    elif (counted_history := _counted_history_result(normalized)) is not None:
+        body, producer = counted_history
+        quantity = ""
     elif (each:=re.fullmatch(r'(?P<head>Draw a card|(?:You |Target player |Target opponent )?gain 1 life|Create (?:a|one) .+? token) for each (?P<counter>[A-Za-z0-9+/-]+) counters? on (?P<reference>.+?)\.',normalized,re.I)) is not None:
         body=re.sub(r'^Draw a card$','Draw X cards',each['head'],flags=re.I)
         body=re.sub(r'\bgain 1 life\b','gain X life',body,flags=re.I)

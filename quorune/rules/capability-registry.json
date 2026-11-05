@@ -52278,6 +52278,105 @@
     {
       "applicability": {
         "exclusions": [
+          "hidden identities",
+          "exile counters",
+          "selection among value groups"
+        ],
+        "inputs": [
+          "locked controller",
+          "typed public battlefield or owned graveyard query",
+          "effective characteristic values"
+        ],
+        "outputs": [
+          "nonnegative distinct value count"
+        ],
+        "summary": "Count distinct effective creature powers or mana values in a closed public collection for the current effect, mana ability, or cast price."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.public_characteristic_aggregate"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the capability keeps the source-spanned effect residual. Runtime binding independently rejects a cost descriptor that omits this producer.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.distinct_public_characteristic_count",
+      "implementation_components": [
+        "quorune.public_characteristic_aggregate_model.PublicCharacteristicAggregateSpec",
+        "quorune.public_characteristic_aggregates.current_public_characteristic_aggregate",
+        "quorune.public_quantity_reductions.public_mana_value",
+        "quorune.compiler.public_characteristic_aggregates.public_characteristic_aggregate",
+        "quorune.characteristic_fragments.characteristic_quantity_capabilities"
+      ],
+      "implementation_mutation_rationale": "Counting duplicate powers instead of unique current values fails the signed membership witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_golden_ratio_counts_distinct_signed_power_after_response",
+        "test_original_lunar_insight_counts_copied_values_and_nonland_zero",
+        "test_original_sudden_insight_counts_front_split_and_zero_values_in_own_graveyard",
+        "test_original_eris_cast_pays_for_distinct_instant_and_sorcery_values",
+        "test_original_selvala_produces_the_chosen_color_for_distinct_power"
+      ],
+      "multiplayer_tests": [
+        "test_original_golden_ratio_counts_distinct_signed_power_after_response",
+        "test_original_sudden_insight_counts_front_split_and_zero_values_in_own_graveyard",
+        "test_original_selvala_produces_the_chosen_color_for_distinct_power"
+      ],
+      "negative_tests": [
+        "test_distinct_count_preserves_signed_membership_and_kills_duplicate_mutant",
+        "test_distinct_public_count_compiler_requires_scope_and_capability",
+        "test_original_eris_cast_pays_for_distinct_instant_and_sorcery_values",
+        "test_original_selvala_produces_the_chosen_color_for_distinct_power"
+      ],
+      "official_rules": [
+        "107.1b",
+        "121.2",
+        "202.3",
+        "202.3d",
+        "202.3e",
+        "400.2",
+        "601.2f",
+        "605.3b",
+        "608.2h",
+        "702.26b",
+        "712.8a"
+      ],
+      "positive_tests": [
+        "test_distinct_count_preserves_signed_membership_and_kills_duplicate_mutant",
+        "test_distinct_public_count_compiler_requires_scope_and_capability",
+        "test_original_golden_ratio_counts_distinct_signed_power_after_response",
+        "test_original_lunar_insight_counts_copied_values_and_nonland_zero",
+        "test_original_sudden_insight_counts_front_split_and_zero_values_in_own_graveyard",
+        "test_original_eris_cast_pays_for_distinct_instant_and_sorcery_values",
+        "test_original_selvala_produces_the_chosen_color_for_distinct_power"
+      ],
+      "privacy_tests": [
+        "test_original_sudden_insight_counts_front_split_and_zero_values_in_own_graveyard"
+      ],
+      "replay_tests": [
+        "test_original_golden_ratio_counts_distinct_signed_power_after_response",
+        "test_original_lunar_insight_counts_copied_values_and_nonland_zero",
+        "test_original_sudden_insight_counts_front_split_and_zero_values_in_own_graveyard",
+        "test_original_eris_cast_pays_for_distinct_instant_and_sorcery_values",
+        "test_original_selvala_produces_the_chosen_color_for_distinct_power"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Hidden-zone keyword queries",
           "Early-layer power/toughness definitions",
           "Same-layer ability grants controlled by this quantity",
@@ -78657,7 +78756,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 708,
+  "registry_version": 709,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }
