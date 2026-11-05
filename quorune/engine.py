@@ -329,6 +329,7 @@ from .semantic_runtime import (
     draw_resolution_batch,
     PreparedZoneChange,
     prepare_draw_resolution,
+    prepare_stack_resolution_effect,
     typed_entry_life_payment_amount,
 )
 from .semantic_choices import (
@@ -3824,13 +3825,6 @@ class CommanderEngine(
     def _semantic_value(self, value: Any, item: StackItem) -> Any:
         return resolve_semantic_value(self, value, item)
 
-    @staticmethod
-    def _effect_has_missing_target(effect: Mapping[str, Any]) -> bool:
-        return any(
-            key in effect and effect.get(key) is None
-            for key in ("target", "stack", "card", "object")
-        )
-
     def _continue_resolution(
         self,
         *,
@@ -3849,21 +3843,8 @@ class CommanderEngine(
         item.context["currently_resolving"] = True
         index = 0
         while index < len(effects):
-            effect = normalize_game_record_v3_effect(
-                self._semantic_value(effects[index], item)
-            )
-            if self._effect_has_missing_target(effect):
-                self._log(
-                    item.controller,
-                    "effect.target.skipped",
-                    f"Skipped a target-dependent part of {item.ref}.",
-                    {
-                        "stack": item.ref,
-                        "operation": effect.get("op"),
-                        "reason": "that target is illegal",
-                    },
-                    importance=1,
-                )
+            effect = prepare_stack_resolution_effect(self, item, effects[index])
+            if effect is None:
                 index += 1
                 continue
             if effect.get("op") == "choose_cards_apnap":

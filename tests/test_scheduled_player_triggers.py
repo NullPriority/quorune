@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from types import SimpleNamespace
 import tempfile
 import unittest
 import json
@@ -19,6 +20,31 @@ import test_counter_placement_events as counter_witnesses
 
 
 class ScheduledPlayerTriggerCompilerTests(unittest.TestCase):
+    def test_departure_mode_requires_a_closed_scheduled_step_and_recipient(self):
+        from quorune.rules.scheduled_player_shapes import (
+            SCHEDULED_PLAYER_CAPABILITY, SCHEDULED_PLAYER_DEPARTURE_COVERAGE,
+            SCHEDULED_PLAYER_MECHANIC, scheduled_player_departure_runtime_dependencies,
+        )
+        text = "At the beginning of each player's upkeep, that player loses 2 life."
+        ir = compile_oracle_card(query_record(text), capability_registry=load_default_capability_registry())
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(SCHEDULED_PLAYER_DEPARTURE_COVERAGE, node.runtime_coverage)
+        program = dict(coverage=(SCHEDULED_PLAYER_MECHANIC, SCHEDULED_PLAYER_DEPARTURE_COVERAGE),
+                       effects=node.effects, capability_dependencies=node.capability_dependencies,
+                       target_schema=node.target_schema, event=node.event, event_condition=node.event_condition)
+        self.assertEqual((SCHEDULED_PLAYER_CAPABILITY,),
+                         scheduled_player_departure_runtime_dependencies(SimpleNamespace(**program)))
+        for change in (
+            {'event': 'permanent.enter'},
+            {'event_condition': {'any': [node.event_condition, {'field': 'step', 'op': 'eq', 'value': 'end_step'}]}},
+            {'target_schema': {'count': 1, 'zones': ['player']}},
+            {'capability_dependencies': ('life.change.effect',)},
+            {'effects': ({'op': 'lose_life', 'player': '$controller', 'amount': 2},)},
+        ):
+            with self.assertRaisesRegex(ValueError, 'closed upkeep or draw result'):
+                scheduled_player_departure_runtime_dependencies(SimpleNamespace(**{**program, **change}))
+
     def test_additional_draw_step_missing_authority_stays_residual(self):
         from quorune.rules.capabilities import CapabilityRegistry
 
@@ -162,6 +188,26 @@ class AdditionalDrawStepRuntimeTests(unittest.TestCase):
                 self.assertNotIn(oid,packet)
         self.replay(session)
 
+    def test_original_kami_skips_the_additional_draw_after_the_draw_player_leaves(self):
+        self.assert_admission('Kami of the Crescent Moon')
+        session = self.session(346_229)
+        source = self.add(session.engine, 'Kami of the Crescent Moon')
+        before = {seat: len(player.zones['hand']) for seat, player in session.state.players.items()}
+        self.enter_draw_step(session, 'B')
+        self.assertEqual(before['B'] + 1, len(session.state.players['B'].zones['hand']))
+        trigger, = [item for item in session.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual(('A', 'B', 'draw'),
+                         (trigger.controller, trigger.context['player'], trigger.context['step']))
+        departed = session.act('pilot:B', {'action_id': 'concede', 'choices': {'confirm_concede': True}})
+        self.assertTrue(departed.ok, departed.summary)
+        self.resolve(session)
+        self.assertFalse(session.state.stack)
+        self.assertEqual({seat: before[seat] for seat in 'ACD'},
+                         {seat: len(session.state.players[seat].zones['hand']) for seat in 'ACD'})
+        skipped, = [event.details for event in session.state.events if event.code == 'effect.player.skipped']
+        self.assertEqual(('B', 'draw'), (skipped['player'], skipped['operation']))
+        self.replay(session)
+
     def test_original_overbeing_additional_draw_occurs_only_on_controller_draw_step(self):
         self.assert_admission('Overbeing of Myth')
         for active in 'AB':
@@ -250,6 +296,56 @@ class ScheduledPlayerTriggerRuntimeTests(unittest.TestCase):
             if session.state.step=='upkeep':break
             result=session.act(session.pending_principals()[0],{'action_id':'pass'});self.assertTrue(result.ok,result.summary)
         self.assertEqual('upkeep',session.state.step)
+
+    def resolve_upkeep_after_participant_leaves(self, name, *, seed, skipped_operation, controller_life):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE
+
+        session = self.session(seed)
+        source = self.add(session.engine, name)
+        private = self.add(session.engine, 'Generic Bound Body', seat='B', zone='hand', ref='departing-hand-card')
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup(name, fuzzy=False), semantic_registry=session.engine.semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding)
+        self.enter_upkeep_from_untap(session, 'B')
+        trigger, = [item for item in session.state.stack if item.source_object_id == source.object_id]
+        self.assertEqual(('A', 'B', 'upkeep'),
+                         (trigger.controller, trigger.context['player'], trigger.context['step']))
+        self.assertIn(SCHEDULED_PLAYER_DEPARTURE_COVERAGE,
+                      session.engine.semantics.get(trigger.semantic_key).coverage)
+
+        before = authoritative_state_hash(session.state)
+        rejected = session.act('pilot:B', {'action_id': 'concede'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:B', {'action_id': 'concede', 'choices': {'confirm_concede': True}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(session.state.players['B'].in_game)
+        self.assertEqual('B', session.state.active_player)
+        self.assertIn(trigger.ref, {item.ref for item in session.state.stack})
+        for viewer in 'ACD':
+            self.assertNotIn(private.ref, json.dumps(session.packet('pilot:' + viewer, full=True)))
+
+        session = self.replay(session, load=True)
+        self.resolve(session)
+        self.assertFalse(session.state.stack)
+        self.assertEqual({'A': controller_life, 'B': 40, 'C': 40, 'D': 40},
+                         {seat: player.life for seat, player in session.state.players.items()})
+        skipped, = [event.details for event in session.state.events if event.code == 'effect.player.skipped']
+        self.assertEqual({'stack': trigger.ref, 'player': 'B', 'operation': skipped_operation,
+                          'reason': 'scheduled_player_departed'}, skipped)
+        self.replay(session)
+
+    def test_original_copper_tablet_resolves_when_the_upkeep_participant_concedes(self):
+        self.resolve_upkeep_after_participant_leaves('Copper Tablet', seed=800_403_201,
+                                                      skipped_operation='damage', controller_life=40)
+
+    def test_departed_upkeep_recipient_does_not_cancel_the_surviving_controller_result(self):
+        self.resolve_upkeep_after_participant_leaves('Generic Mixed Opponent Upkeep Result', seed=800_403_202,
+                                                      skipped_operation='draw', controller_life=41)
 
     def test_mixed_upkeep_resolves_draw_and_locked_controller_life_privately(self):
         self.mixed_upkeep(change_controller=True)

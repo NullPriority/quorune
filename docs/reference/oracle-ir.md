@@ -187,6 +187,10 @@ that condition alongside its own occurrence filter. Trigger discovery uses the
 selected subscription. Resolution rechecks the shared condition for the
 controller captured when the ability triggered. Saved programs keep their
 original condition descriptors.
+Versioned scheduled-player results retain the step participant selected at
+occurrence. If that participant leaves before resolution, instructions addressed
+to that player are skipped and instructions for surviving players continue in
+their original order.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

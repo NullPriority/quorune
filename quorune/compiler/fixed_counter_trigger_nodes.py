@@ -20,6 +20,7 @@ from ..continuous_conditions import (
 )
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE, SCHEDULED_PLAYER_MECHANIC
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .trigger_result_templates import binding_effect_template
@@ -1491,15 +1492,18 @@ def fixed_typed_event_effect_trigger_node(
         template_id=binding.typed_effect_template_id,
         effects=effects,
         target_schema=target_schema,
-        runtime_coverage=_event_runtime_coverage(
-            binding,
-            current_ability=(
-                requires_current_ability
-                and (
-                    template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
-                    or binding.variant == "fixed_entry_return_requirement"
-                )
+        runtime_coverage=(
+            *_event_runtime_coverage(
+                binding,
+                current_ability=(
+                    requires_current_ability
+                    and (
+                        template in FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS
+                        or binding.variant == "fixed_entry_return_requirement"
+                    )
+                ),
             ),
+            *((SCHEDULED_PLAYER_DEPARTURE_COVERAGE,) if SCHEDULED_PLAYER_MECHANIC in body_mechanics else ()),
         ),
         mechanics=mechanics,
         residual_ids=residual_ids,

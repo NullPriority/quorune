@@ -5,6 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 import re
 
+from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, SCHEDULED_PLAYER_MECHANIC
 from .fixed_public_event_trigger_bindings import FixedPublicEventBindingSpec
 from .fixed_controller_effect_sequences import _clauses
 from .event_result_value_templates import scheduled_fractional_life_instruction
@@ -13,8 +14,6 @@ from .affected_player_discard_templates import (
     FIXED_CONTROLLER_DISCARD_MECHANIC,
 )
 
-SCHEDULED_PLAYER_CAPABILITY = 'trigger.event.scheduled_player_result'
-SCHEDULED_PLAYER_MECHANIC = 'scheduled-player-event-result'
 SCHEDULED_PLAYER_VARIANTS = frozenset({'each_player_upkeep','each_opponent_upkeep','enchanted_object_controller_upkeep',
                                      'each_player_draw','each_opponent_draw','each_other_player_draw'})
 
