@@ -1308,6 +1308,7 @@
       "test_source_zone_ability_grants",
       "test_static_action_rules",
       "test_station_symbol_entries",
+      "test_terminal_spell_shuffle",
       "test_turn_history_rules",
       "test_typed_query_self_characteristics",
       "test_upkeep_participant_hand_conditions"

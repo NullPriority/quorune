@@ -855,16 +855,20 @@ draw/discard boundaries remain distinct. Self tap/untap pronouns bind only in
 a proven source event. Copy results retain ordinary copiable-value and LKI
 ownership, including source departure and copied triggered abilities.
 
-`compiler/spell_self_exile.py` recognizes a terminal source-self exile clause
-only at the end of an ordinary single-face spell's complete source. Its body
-must compile independently with unchanged targets and prices. The resulting
-typed marker uses the existing replacement-aware resolution destination;
-countering and all-target-illegal rejection retain their ordinary graveyard
-exit. Partial target resolution and zero target choices still finish the body
-and self-exile. Transient spell-copy objects cannot move the original card.
-Unknown siblings, another object's name, nonterminal and conditional self
-exile remain residual. No runtime Oracle parsing or new movement operation is
-introduced.
+`compiler/spell_self_exile.py` recognizes printed terminal self-exile and
+owner-library shuffle instructions at the end of an ordinary single-face
+spell. The body compiles independently and retains its targets and prices.
+The typed terminal move uses the ordinary replacement-aware resolution
+destination. Countered spells and spells with all targets illegal use the
+ordinary counter destination. Legal partial-target and zero-choice
+resolutions still finish the body and its terminal move.
+
+An owner-library instruction completes the spell's proposed move and shuffles
+its owner's library once, even when a replacement changes the move. A shuffle
+in the spell's body is a separate instruction. A spell copy moves and shuffles
+using its own ownership, then ceases during stabilization. Conditional,
+nonterminal and other-object instructions need their own compiler and rules
+contracts.
 
 The frontier owner passes the same original IR used for its node inventory to
 CardProgram lowering, retaining independent trust and construction-failure

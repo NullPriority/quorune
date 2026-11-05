@@ -85,9 +85,9 @@ def special_node_capabilities(*,effects,target_schema,mechanics,cost_schema=None
     if 'quantified-counter-target-set' in mechanics:
         from .counter_target_set_shapes import quantified_counter_target_capabilities
         return quantified_counter_target_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
-    if 'spell-resolution-self-exile' in mechanics:
-        from .spell_self_exile import spell_self_exile_node_capabilities
-        return spell_self_exile_node_capabilities(effects=effects,target_schema=target_schema,
+    from .spell_self_exile import TERMINAL_SPELL_MOVE_MECHANICS, terminal_spell_move_node_capabilities
+    if TERMINAL_SPELL_MOVE_MECHANICS.intersection(mechanics):
+        return terminal_spell_move_node_capabilities(effects=effects,target_schema=target_schema,
             mechanics=mechanics,cost_schema=cost_schema)
     if 'manifest' in mechanics and all(effect.get('op') == 'manifest_card' for effect in effects):
         from .manifest_shapes import manifest_node_capabilities

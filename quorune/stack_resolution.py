@@ -20,6 +20,7 @@ from .errors import StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
 from .rules.casting.face_queries import prospective_cast_record
+from .rules.spell_self_exile import SELF_SHUFFLE, spell_self_shuffle_runtime_dependencies
 from .semantic_runtime.zone_replacements import PreparedZoneChange
 from .stack_counter import current_intrinsic_counter_prohibitions, oracle_has_intrinsic_counter_prohibition
 from .combat_entry_activations import cleanup_ninjutsu_reveal
@@ -62,6 +63,7 @@ class GenericStackResolutionQuery(Protocol):
 
 class StackResolutionCompletionHost(Protocol):
     state: Any
+    semantics: Any
 
     def move_card(
         self,
@@ -71,6 +73,8 @@ class StackResolutionCompletionHost(Protocol):
     ) -> CardInstance: ...
 
     def shuffle_library(self, seat: str, *, reason: str, actor: str | None = None) -> None: ...
+
+    def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -177,12 +181,32 @@ def trusted_generic_empty_resolution(
     )
 
 
+def _printed_shuffle_owner(host: StackResolutionCompletionHost, item: StackItem, destination: str | None) -> str | None:
+    if (item.kind not in {"spell", "spell_copy"} or item.semantic_key is None
+            or destination not in {None, SELF_SHUFFLE.destination}):
+        return None
+    program = host.semantics.get(item.semantic_key)
+    if program is None or SELF_SHUFFLE.mechanic not in program.coverage:
+        return None
+    required = spell_self_shuffle_runtime_dependencies(program)
+    if (not set(required).issubset(program.capability_dependencies)
+            or not host.semantic_program_is_current_trusted(program)):
+        raise StateInvariantError("Resolving self shuffle requires its trusted program")
+    card = host.state.cards.get(item.card_object_id)
+    if card is None:
+        raise StateInvariantError("Resolving self shuffle requires its original or copied spell object")
+    return card.owner
+
+
 def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackItem,
         destination: str | None,prepared_replacement: PreparedZoneChange | None) -> None:
     from .rules.entry_cast_information import resolving_entry_cast_information
     from .rules.ravenous import resolving_ravenous_entry
+    shuffle_owner = _printed_shuffle_owner(host, item, destination)
     with resolving_entry_cast_information(host,item),resolving_ravenous_entry(host,item):
         _complete_stack_resolution(host,item=item,destination=destination,prepared_replacement=prepared_replacement)
+        if shuffle_owner is not None:
+            host.shuffle_library(shuffle_owner, reason="Resolving spell shuffled into library", actor=item.controller)
 
 
 def _complete_stack_resolution(

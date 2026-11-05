@@ -38,7 +38,7 @@ from ..protection_attachment_exceptions import attached_protection_runtime_depen
 from ..query_effect_amount_model import cast_x_runtime_dependencies
 from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
 from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
-from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies
+from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies, spell_self_shuffle_runtime_dependencies
 from ..rules.random_graveyard_returns import random_graveyard_return_runtime_dependencies
 from ..rules.temporary_cast_restrictions import temporary_cast_runtime_dependencies
 from ..rules.keyword_runtime_requirements import keyword_runtime_dependencies
@@ -242,6 +242,17 @@ def _value_runtime_requirements(program):
     return required, blockers
 
 
+def _terminal_spell_move_requirements(program, required, blockers):
+    for resolver, label in (
+        (spell_self_exile_runtime_dependencies, 'spell_self_exile'),
+        (spell_self_shuffle_runtime_dependencies, 'spell_self_shuffle'),
+    ):
+        try:
+            required.update(resolver(program))
+        except (ValueError, TypeError) as exc:
+            blockers.add(f'runtime_{label}:invalid:{exc}')
+
+
 def program_dynamic_runtime_requirements(program):
     from ..rules.fuse_shapes import fuse_runtime_requirements
     try:
@@ -283,8 +294,7 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_temporary_cast_restriction:invalid:{exc}')
     try:required.update(random_graveyard_return_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_random_graveyard_return:invalid:{exc}')
-    try:required.update(spell_self_exile_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_self_exile:invalid:{exc}')
+    _terminal_spell_move_requirements(program, required, blockers)
     try:required.update(closed_effect_program_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_closed_effect_program:invalid:{exc}')
     try:required.update(activation_restriction_runtime_dependencies(program))

@@ -221,8 +221,8 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         forbid_public_x=available,
         kicked_self_replacement_available=bool(is_spell and not record.faces),
         bargain_available=bool(is_spell and _bargain_declaration_available(record, oracle_text)))
-    from .spell_self_exile import spell_self_exile_effect_compiler
-    return spell_self_exile_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
+    from .spell_self_exile import terminal_spell_move_effect_compiler
+    return terminal_spell_move_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
         ordinary_spell=bool(is_spell and not record.faces))
 
 

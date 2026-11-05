@@ -312,6 +312,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
     'own-graveyard-return-choice': ('zone.return.own_graveyard_choice',),
     'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
+    'spell-resolution-self-shuffle': ('zone.shuffle.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'any-number-target-set': ('target.cardinality.any_number',),
     'quantified-counter-target-set': ('counter.producer.quantified_target_set',),

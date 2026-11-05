@@ -11,6 +11,7 @@ from ..card_programs.admission import (
 from ..carddb import CardRecord
 from ..stack_resolution_authority_model import INTRINSIC_EMPTY_SPELL_ADMISSION
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.spell_self_exile import terminal_spell_move
 from ..semantics import SemanticProgram
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .intrinsic_counter_nodes import intrinsic_empty_spell_admission
@@ -34,6 +35,15 @@ class _EffectComponentView:
 
 def _copy_mapping(value: Any) -> dict[str, Any] | None:
     return dict(value) if value is not None else None
+
+
+def _resolution_destination(node, mechanics):
+    terminal_move = terminal_spell_move(mechanics)
+    if terminal_move is not None:
+        return terminal_move.destination
+    if "fixed-permanent-additional-cost-declaration" in node.runtime_coverage:
+        return "battlefield"
+    return "graveyard" if node.kind in {"spell_ability", "spell_variant"} else None
 
 
 def _ordered_unique(values: Iterable[str]) -> list[str]:
@@ -568,9 +578,7 @@ def program_from_generated_node_group(
         ),
         effects=effects,
         handlers=[dict(handler) for node in nodes for handler in node.handlers],
-        destination=("exile" if 'spell-resolution-self-exile' in represented_mechanics
-            else "battlefield" if "fixed-permanent-additional-cost-declaration" in first.runtime_coverage
-            else "graveyard" if first.kind in {"spell_ability", "spell_variant"} else None),
+        destination=_resolution_destination(first, represented_mechanics),
         requires_arbiter=trust_level != "trusted",
         version=1,
         oracle_id=record.oracle_id,

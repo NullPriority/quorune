@@ -77268,9 +77268,9 @@
       "id": "zone.exile.resolving_spell",
       "implementation_components": [
         "quorune.compiler.spell_self_exile.terminal_self_exile_body",
-        "quorune.compiler.spell_self_exile.spell_self_exile_effect_compiler",
+        "quorune.compiler.spell_self_exile.terminal_spell_move_effect_compiler",
         "quorune.compiler.spell_self_exile.closed_spell_self_exile_program",
-        "quorune.rules.spell_self_exile.spell_self_exile_node_capabilities",
+        "quorune.rules.spell_self_exile.terminal_spell_move_node_capabilities",
         "quorune.rules.spell_self_exile.spell_self_exile_runtime_dependencies",
         "quorune.stack_resolution.complete_stack_resolution",
         "quorune.compiler.nonleaf_effect_closure.effect_program_is_closed"
@@ -79170,6 +79170,96 @@
     {
       "applicability": {
         "exclusions": [
+          "countered or all-targets-illegal spells",
+          "other-object or conditional shuffles",
+          "Omen alternative faces",
+          "unrepresented body instructions"
+        ],
+        "inputs": [
+          "independently closed spell body",
+          "final printed source-specific shuffle instruction",
+          "successful resolution"
+        ],
+        "outputs": [
+          "replacement-aware spell move to its owner library",
+          "one shuffle of that library"
+        ],
+        "summary": "A closed printed terminal instruction moves the resolving spell and shuffles its owner library once."
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.shuffle.fixed_controller",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "Runtime binding revalidates the complete source-move marker, template and destination independently.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.shuffle.resolving_spell",
+      "implementation_components": [
+        "quorune.compiler.spell_self_exile.terminal_self_shuffle_body",
+        "quorune.compiler.spell_self_exile.terminal_spell_move_effect_compiler",
+        "quorune.rules.spell_self_exile.spell_self_shuffle_runtime_dependencies",
+        "quorune.stack_resolution.complete_stack_resolution",
+        "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library"
+      ],
+      "implementation_mutation_rationale": "Omitting the terminal wrapper leaves the complete printed spell unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_beacon_and_opponents_copy_shuffle_separate_owner_libraries",
+        "test_zenith_shuffles_once_after_foreign_draw_choice_resumes",
+        "test_countered_and_all_illegal_beacons_skip_the_shuffle"
+      ],
+      "multiplayer_tests": [
+        "test_beacon_and_opponents_copy_shuffle_separate_owner_libraries",
+        "test_zenith_shuffles_once_after_foreign_draw_choice_resumes",
+        "test_countered_and_all_illegal_beacons_skip_the_shuffle"
+      ],
+      "negative_tests": [
+        "test_terminal_shuffle_closes_only_its_own_final_instruction_and_body",
+        "test_countered_and_all_illegal_beacons_skip_the_shuffle"
+      ],
+      "official_rules": [
+        "201.5",
+        "608.2b",
+        "608.2c",
+        "608.2m",
+        "608.2n",
+        "701.24a",
+        "701.24c",
+        "704.5e",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_terminal_shuffle_closes_only_its_own_final_instruction_and_body",
+        "test_beacon_and_opponents_copy_shuffle_separate_owner_libraries",
+        "test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
+      ],
+      "privacy_tests": [
+        "test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
+      ],
+      "replay_tests": [
+        "test_beacon_and_opponents_copy_shuffle_separate_owner_libraries",
+        "test_zenith_shuffles_once_after_foreign_draw_choice_resumes",
+        "test_countered_and_all_illegal_beacons_skip_the_shuffle"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "spell-or-permanent heterogeneous targets",
           "mass moves other than the exact each-player one-creature return",
           "alternative-cost returns",
@@ -79283,7 +79373,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 717,
+  "registry_version": 719,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

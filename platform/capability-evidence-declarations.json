@@ -263699,6 +263699,115 @@
     },
     {
       "common": {
+        "applicability_note": "A closed printed terminal instruction moves the resolving spell and shuffles its owner library once.",
+        "capability_id": "zone.shuffle.resolving_spell",
+        "official_rule_ids": [
+          "201.5",
+          "608.2b",
+          "608.2c",
+          "608.2m",
+          "608.2n",
+          "701.24a",
+          "701.24c",
+          "704.5e",
+          "707.10"
+        ],
+        "supported_profiles": [
+          "traditional",
+          "commander_duel",
+          "commander_review"
+        ]
+      },
+      "references": [
+        [
+          26773,
+          "interaction",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
+        ],
+        [
+          26774,
+          "interaction",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
+        ],
+        [
+          26775,
+          "interaction",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
+        ],
+        [
+          26776,
+          "multiplayer",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
+        ],
+        [
+          26777,
+          "multiplayer",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
+        ],
+        [
+          26778,
+          "multiplayer",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
+        ],
+        [
+          26779,
+          "mutation",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleCompilerTests.test_omitting_the_terminal_shuffle_compiler_is_detected"
+        ],
+        [
+          26780,
+          "negative",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleCompilerTests.test_terminal_shuffle_closes_only_its_own_final_instruction_and_body"
+        ],
+        [
+          26781,
+          "negative",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
+        ],
+        [
+          26782,
+          "positive",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleCompilerTests.test_terminal_shuffle_closes_only_its_own_final_instruction_and_body"
+        ],
+        [
+          26783,
+          "positive",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
+        ],
+        [
+          26784,
+          "positive",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
+        ],
+        [
+          26785,
+          "privacy",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
+        ],
+        [
+          26786,
+          "replay",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
+        ],
+        [
+          26787,
+          "replay",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_countered_and_all_illegal_beacons_skip_the_shuffle"
+        ],
+        [
+          26788,
+          "replay",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_zenith_shuffles_once_after_foreign_draw_choice_resumes"
+        ],
+        [
+          26789,
+          "rollback",
+          "tests.test_terminal_spell_shuffle.TerminalSpellShuffleRuntimeTests.test_beacon_and_opponents_copy_shuffle_separate_owner_libraries"
+        ]
+      ]
+    },
+    {
+      "common": {
         "applicability_note": "Choose one complete printed mana arm, pay the shared source tap once, apply each current generic tax to the chosen arm, preserve existing result owners, atomic rejection, private projection, pending load and exact replay.",
         "capability_id": "zone.single_owner_move.fixed_destination",
         "official_rule_ids": [
@@ -263721,27 +263830,27 @@
       },
       "references": [
         [
-          26773,
+          26790,
           "interaction",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          26778,
+          26795,
           "multiplayer",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          26787,
+          26804,
           "positive",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          26792,
+          26809,
           "privacy",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ],
         [
-          26795,
+          26812,
           "replay",
           "tests.test_alternative_activation_mana.AlternativeActivationManaTests.test_actual_colored_shard_arms_return_grant_and_prevent_through_their_existing_result_owners"
         ]
@@ -263771,7 +263880,7 @@
       },
       "references": [
         [
-          26774,
+          26791,
           "interaction",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_source_attachment_and_choice_lifecycle"
         ]
@@ -263801,27 +263910,27 @@
       },
       "references": [
         [
-          26775,
+          26792,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          26780,
+          26797,
           "multiplayer",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          26794,
+          26811,
           "privacy",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          26797,
+          26814,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ],
         [
-          26801,
+          26818,
           "rollback",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_activations_preserve_owner_position_and_replay"
         ]
@@ -263851,12 +263960,12 @@
       },
       "references": [
         [
-          26776,
+          26793,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_target_revalidates_after_creeper_response"
         ],
         [
-          26798,
+          26815,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_graveyard_library_target_revalidates_after_creeper_response"
         ]
@@ -263886,12 +263995,12 @@
       },
       "references": [
         [
-          26777,
+          26794,
           "interaction",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_king_crab_returns_borrowed_green_creature_to_owners_library"
         ],
         [
-          26799,
+          26816,
           "replay",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryRuntimeTests.test_original_king_crab_returns_borrowed_green_creature_to_owners_library"
         ]
@@ -263921,7 +264030,7 @@
       },
       "references": [
         [
-          26779,
+          26796,
           "multiplayer",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_zone_move_commander_replacement_and_projection"
         ]
@@ -263951,7 +264060,7 @@
       },
       "references": [
         [
-          26781,
+          26798,
           "mutation",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_move_shapes_and_boundaries"
         ]
@@ -263981,7 +264090,7 @@
       },
       "references": [
         [
-          26782,
+          26799,
           "mutation",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_live_promotion_requires_the_existing_closed_shape"
         ]
@@ -264011,7 +264120,7 @@
       },
       "references": [
         [
-          26783,
+          26800,
           "mutation",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_scope_and_mutants_remain_fail_closed"
         ]
@@ -264041,7 +264150,7 @@
       },
       "references": [
         [
-          26784,
+          26801,
           "negative",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_move_shapes_and_boundaries"
         ]
@@ -264071,12 +264180,12 @@
       },
       "references": [
         [
-          26785,
+          26802,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder"
         ],
         [
-          26789,
+          26806,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_legacy_union_owner_move_shapes_do_not_enter_single_predicate_decoder"
         ]
@@ -264106,7 +264215,7 @@
       },
       "references": [
         [
-          26786,
+          26803,
           "negative",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owner_library_scope_and_mutants_remain_fail_closed"
         ]
@@ -264136,7 +264245,7 @@
       },
       "references": [
         [
-          26788,
+          26805,
           "positive",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveCompilerTests.test_fixed_owner_zone_moves_compile_across_contexts"
         ]
@@ -264166,7 +264275,7 @@
       },
       "references": [
         [
-          26790,
+          26807,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_owned_graveyard_library_moves_preserve_origin_owner_type_and_position"
         ]
@@ -264196,7 +264305,7 @@
       },
       "references": [
         [
-          26791,
+          26808,
           "positive",
           "tests.test_fixed_public_zone_moves.TargetedOwnerLibraryCompilerTests.test_qualified_battlefield_library_moves_share_current_permanent_query"
         ]
@@ -264226,7 +264335,7 @@
       },
       "references": [
         [
-          26793,
+          26810,
           "privacy",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_zone_move_commander_replacement_and_projection"
         ]
@@ -264256,7 +264365,7 @@
       },
       "references": [
         [
-          26796,
+          26813,
           "replay",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_library_positions_target_revalidation_and_replay"
         ]
@@ -264286,7 +264395,7 @@
       },
       "references": [
         [
-          26800,
+          26817,
           "rollback",
           "tests.test_fixed_public_zone_moves.FixedPublicZoneMoveRuntimeTests.test_fixed_owner_library_positions_target_revalidation_and_replay"
         ]
