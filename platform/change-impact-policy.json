@@ -12104,6 +12104,29 @@
         "test_fixed_casting_surface",
         "test_game_record_v3"
       ]
+    },
+    {
+      "id": "public-power-thresholds",
+      "patterns": [
+        "quorune/continuous_conditions.py",
+        "quorune/public_characteristic_aggregate_model.py",
+        "quorune/public_characteristic_aggregates.py",
+        "quorune/compiler/public_characteristic_aggregates.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "tests/test_public_power_thresholds.py",
+        "tests/fixtures/public-power-threshold-cards.json",
+        "quorune/compiler/resolution_condition_templates.py",
+        "quorune/compiler/public_replacement_rows.py",
+        "quorune/characteristic_evaluation_host.py"
+      ],
+      "test_modules": [
+        "test_public_power_thresholds",
+        "test_distinct_public_characteristic_counts",
+        "test_activation_conditions",
+        "test_resolution_public_conditions",
+        "test_fixed_public_state_characteristics",
+        "test_card_program_trust"
+      ]
     }
   ],
   "risk_rules": [

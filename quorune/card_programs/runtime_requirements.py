@@ -205,6 +205,33 @@ def _intrinsic_spell_face_dependencies(coverage):
     ) if marker in coverage}
 
 
+def _value_runtime_requirements(program):
+    """Infer the existing minima for typed values and their public predicates."""
+    from ..characteristic_fragments import characteristic_quantity_capabilities
+    from ..rules.casting.public_conditions import self_public_condition_dependencies
+
+    values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
+    required = set(characteristic_quantity_capabilities((*values, program.event_condition)))
+    blockers = set()
+    try:
+        required.update(self_public_condition_dependencies((program.handlers, program.cost_schema)))
+    except (ValueError, TypeError) as exc:
+        blockers.add(f"runtime_self_public_condition:invalid:{exc}")
+    try:
+        required.update(typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage)))
+    except (ValueError, TypeError) as exc:
+        blockers.add(f"runtime_typed_result_amount:invalid:{exc}")
+    try:
+        required.update(fixed_resolution_characteristics_runtime_dependencies(program))
+    except (ValueError, TypeError) as exc:
+        blockers.add(f"runtime_resolution_characteristics:invalid:{exc}")
+    try:
+        required.update(cast_x_runtime_dependencies(values))
+    except (ValueError, TypeError) as exc:
+        blockers.add(f"runtime_cast_x_amount:invalid:{exc}")
+    return required, blockers
+
+
 def program_dynamic_runtime_requirements(program):
     from ..rules.fuse_shapes import fuse_runtime_requirements
     try:
@@ -213,11 +240,9 @@ def program_dynamic_runtime_requirements(program):
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
     required,blockers=_event_query_runtime_requirements(program)
     required.update(_intrinsic_spell_face_dependencies(program.coverage))
-    from ..characteristic_fragments import characteristic_quantity_capabilities
-    required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
-    from ..rules.casting.public_conditions import self_public_condition_dependencies
-    try:required.update(self_public_condition_dependencies((program.handlers,program.cost_schema)))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_self_public_condition:invalid:{exc}')
+    value_requirements, value_blockers = _value_runtime_requirements(program)
+    required.update(value_requirements)
+    blockers.update(value_blockers)
     try:required.update(city_activation_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_city_activation:invalid:{exc}')
     try:required.update(paid_graveyard_runtime_dependencies(program))
@@ -250,14 +275,8 @@ def program_dynamic_runtime_requirements(program):
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_random_graveyard_return:invalid:{exc}')
     try:required.update(spell_self_exile_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_spell_self_exile:invalid:{exc}')
-    try:required.update(typed_result_amount_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema),mechanics=tuple(program.coverage)))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_typed_result_amount:invalid:{exc}')
     try:required.update(closed_effect_program_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_closed_effect_program:invalid:{exc}')
-    try:required.update(fixed_resolution_characteristics_runtime_dependencies(program))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_resolution_characteristics:invalid:{exc}')
-    try:required.update(cast_x_runtime_dependencies((program.effects,program.handlers,program.target_schema,program.cost_schema)))
-    except (ValueError,TypeError) as exc:blockers.add(f'runtime_cast_x_amount:invalid:{exc}')
     try:required.update(activation_restriction_runtime_dependencies(program))
     except (ValueError,TypeError) as exc:blockers.add(f'runtime_boast:invalid:{exc}')
     required.update(qualified_hexproof_runtime_dependencies(program))

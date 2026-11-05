@@ -27,13 +27,17 @@ def resolution_condition_template(
     replacement=fixed_public_self_replacement_template(normalized,source_name=source_name,compile_component=compile_component)
     if replacement is not None:return replacement
     positions = _top_level_positions(normalized, "If ")
+    separator = "If "
+    if positions == () and "Then if " in normalized:
+        separator = "Then if "
+        positions = _top_level_positions(normalized, separator)
     if positions is None or len(positions) != 1 or not normalized.endswith("."):
         return None
     position = positions[0]
     prefix = normalized[:position].strip()
-    if prefix and not prefix.endswith("."):
+    if (prefix and not prefix.endswith(".")) or (separator == "Then if " and not prefix):
         return None
-    body = normalized[position + 3 :]
+    body = normalized[position + len(separator):]
     if re.search(r"\b(?:instead|this way|that much|otherwise|if)\b", body, re.IGNORECASE):
         return None
     commas = _top_level_positions(body, ", ")

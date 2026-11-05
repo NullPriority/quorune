@@ -117,6 +117,12 @@ each creature that died this turn use the typed scalar history reader. The
 amount uses committed events when the instruction applies, including events
 from earlier instructions of the same spell or ability.
 
+Power thresholds read the current effective powers of creatures the controller
+controls. Coven counts distinct signed powers and Formidable sums signed powers.
+A trigger with an intervening condition checks at occurrence and resolution.
+An activation uses the same aggregate when generating and validating legal actions.
+An ordered conditional instruction reads the game after its preceding instruction applies.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

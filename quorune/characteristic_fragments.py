@@ -792,6 +792,12 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
                 and {'schema_version','amount','counter_name'}<=set(value)):
             own=(*own,'player.designation.citys_blessing')
         if value.get('kind')=='controller_max_speed':own=(*own,'variant.speed.player')
+        if value.get("kind") == "public_power_aggregate_at_least":
+            from .continuous_conditions import FixedPublicStateConditionSpec
+            from .public_characteristic_aggregate_model import PUBLIC_POWER_THRESHOLD_CAPABILITY
+
+            condition = FixedPublicStateConditionSpec.from_dict(value)
+            own = (*own, PUBLIC_POWER_THRESHOLD_CAPABILITY, *condition.aggregate.capability_dependencies)
         if (value.get('origin') == 'public_characteristic_aggregate'
                 or value.get('kind') == 'public_characteristic_aggregate' and 'aggregate' in value):
             from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec

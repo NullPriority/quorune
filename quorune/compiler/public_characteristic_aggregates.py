@@ -5,18 +5,56 @@ from __future__ import annotations
 import re
 
 from ..object_predicate import ObjectQuerySpec
-from ..public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
+from ..public_characteristic_aggregate_model import (
+    CONTROLLED_CREATURES_POWER_QUERY, PublicCharacteristicAggregateSpec,
+)
+from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from ..scalar_effect_amount_model import ScalarAmountOrigin,ScalarEffectAmountSpec
 
 
 _DISTINCT_QUERIES = {
-    ('power', 'creatures you control'): ObjectQuerySpec(zones=('battlefield',), types_all=('creature',)),
+    ('power', 'creatures you control'): CONTROLLED_CREATURES_POWER_QUERY,
     ('mana value', 'nonland permanents you control'): ObjectQuerySpec(zones=('battlefield',), excluded_types=('land',)),
     ('mana value', 'cards in your graveyard'): ObjectQuerySpec(zones=('graveyard',), token=False),
     ('mana value', 'nonland cards in your graveyard'): ObjectQuerySpec(zones=('graveyard',), token=False, excluded_types=('land',)),
     ('mana value', 'instant and sorcery cards in your graveyard'): ObjectQuerySpec(zones=('graveyard',), token=False,
                                                                                types_any=('instant', 'sorcery')),
 }
+
+
+_DISTINCT_THRESHOLD = re.compile(
+    rf"you control (?P<prefix>at least )?(?P<count>{FIXED_COUNT_PATTERN})(?P<suffix> or more)? "
+    r"creatures with different powers",
+    re.I,
+)
+_TOTAL_POWER_THRESHOLD = re.compile(
+    rf"(?:creatures you control have total power|the total power of creatures you control is) "
+    rf"(?P<count>{FIXED_COUNT_PATTERN}) or greater",
+    re.I,
+)
+
+
+def public_creature_power_threshold(text: str):
+    from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
+
+    normalized = " ".join(text.strip().rstrip(".").split())
+    distinct = _DISTINCT_THRESHOLD.fullmatch(normalized)
+    total = _TOTAL_POWER_THRESHOLD.fullmatch(normalized)
+    if distinct is None and total is None:
+        return None
+    if distinct is not None and bool(distinct["prefix"]) == bool(distinct["suffix"]):
+        return None
+    amount = fixed_number((distinct or total)["count"])
+    if amount == 0:
+        return None
+    aggregate = PublicCharacteristicAggregateSpec(
+        "power", "distinct_count" if distinct is not None else "sum",
+        "source_controller", CONTROLLED_CREATURES_POWER_QUERY, schema_version=2 if distinct is not None else 1,
+    )
+    return FixedPublicStateConditionSpec(
+        FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST,
+        amount=amount, schema_version=9, aggregate=aggregate,
+    )
 
 
 def public_characteristic_aggregate(value:str):

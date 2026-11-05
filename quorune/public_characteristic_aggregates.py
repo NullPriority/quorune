@@ -2,12 +2,26 @@ from __future__ import annotations
 
 """Current public characteristic aggregates for resolution and cost values."""
 
+from collections.abc import Sequence
 from dataclasses import replace
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION
 from .continuous_effect_model import Layer
 from .object_query import exact_numeric_characteristic,object_matches_query,object_query_result
 from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec,PUBLIC_STAT_AGGREGATE_CAPABILITY
 from .public_quantity_reductions import public_mana_value
+
+
+def reduce_public_characteristic_values(values: Sequence[int | None], reduction: str) -> int:
+    """Apply one aggregate to signed values after membership is sealed."""
+    if any(type(value) is not int for value in values):
+        raise ValueError("A matched current creature stat is unavailable")
+    if reduction == "distinct_count":
+        return len(set(values))
+    if reduction == "sum":
+        return sum(values)
+    if reduction == "maximum":
+        return max(values, default=0)
+    raise ValueError("Public characteristic aggregate reduction is unsupported")
 
 
 def current_public_characteristic_aggregate(host,controller:str,spec:PublicCharacteristicAggregateSpec):
@@ -40,9 +54,5 @@ def current_public_characteristic_aggregate(host,controller:str,spec:PublicChara
             value = public_mana_value(data)
         else:
             value = exact_numeric_characteristic(card, data, spec.characteristic) if 'creature' in parts[0] else 0
-        if type(value) is not int:
-            raise ValueError('A matched current creature stat is unavailable')
         values.append(value)
-    if spec.reduction == 'distinct_count':
-        return len(set(values))
-    return sum(values) if spec.reduction=='sum' else max(values,default=0)
+    return reduce_public_characteristic_values(values, spec.reduction)

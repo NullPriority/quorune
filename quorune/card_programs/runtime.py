@@ -107,11 +107,37 @@ class _FixedPublicStateSnapshotResolver:
                 return None
         return object_matches_query(row, condition.predicate)
 
+    def _power_aggregate_result(self, source: Any, condition: FixedPublicStateConditionSpec) -> int | None:
+        from ..public_characteristic_aggregates import reduce_public_characteristic_values
+
+        if self.public_object_resolver is None:
+            return None
+        aggregate = condition.aggregate
+        values = []
+        for object_id in self.state.players[source.controller].zones["battlefield"]:
+            card = self.state.cards.get(object_id)
+            if card is None:
+                return None
+            if card.zone != "battlefield" or card.phased_out or card.controller != source.controller:
+                continue
+            row = self._public_object(card)
+            if row is None:
+                return None
+            if object_matches_query(row, aggregate.query):
+                values.append(row.effective_power)
+        try:
+            value = reduce_public_characteristic_values(values, aggregate.reduction)
+        except ValueError:
+            return None
+        return int(value >= condition.amount)
+
     def _condition_quantity(
         self,
         source: Any,
         condition: FixedPublicStateConditionSpec,
     ) -> int | None:
+        if condition.aggregate is not None:
+            return self._power_aggregate_result(source, condition)
         if condition.history_query is not None:
             from ..public_history_query_model import public_history_query_value
             return public_history_query_value(self.state,source.controller,condition.history_query)
@@ -538,6 +564,7 @@ def fixed_public_state_condition_matches(
         FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
         FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,
         FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST,
+        FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST,
     }
     leaves=condition.leaf_conditions();snapshots=snapshot.term_snapshots if condition.terms else (snapshot,)
     if require_available and any(leaf.kind in quantity_kinds and child.condition_quantity is None for leaf,child in zip(leaves,snapshots)):

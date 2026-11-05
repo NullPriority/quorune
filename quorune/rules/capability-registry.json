@@ -22860,6 +22860,93 @@
     {
       "applicability": {
         "exclusions": [
+          "Hidden or opponent-controlled object collections",
+          "Unrepresented power-dependent continuous characteristic effects",
+          "Dynamic thresholds or alternate characteristics"
+        ],
+        "inputs": [
+          "One locked controller",
+          "A fixed positive threshold",
+          "Current effective powers of controlled creatures"
+        ],
+        "outputs": [
+          "A closed total-power or distinct-power predicate",
+          "Current evaluation at the existing rule timing boundary"
+        ],
+        "summary": "Check a closed threshold against the sum or distinct count of signed creature powers controlled by the named controller."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.public_characteristic_aggregate"
+      ],
+      "dependency_fail_closed_rationale": "The typed threshold independently requires its bound aggregate and its reduction capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "condition.characteristics.public_power_aggregate",
+      "implementation_components": [
+        "quorune.continuous_conditions.FixedPublicStateConditionSpec",
+        "quorune.compiler.public_characteristic_aggregates.public_creature_power_threshold",
+        "quorune.public_characteristic_aggregates.reduce_public_characteristic_values",
+        "quorune.card_programs.runtime._FixedPublicStateSnapshotResolver._power_aggregate_result"
+      ],
+      "implementation_mutation_rationale": "Clamping negative powers kills both the signed sum and the signed distinct count witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_circle_is_a_conditional_payment_source",
+        "test_actual_coven_counts_signed_values_and_rechecks_after_response",
+        "test_actual_might_checks_after_the_targeted_power_change",
+        "test_actual_total_power_uses_signed_values_for_activation_and_end_step"
+      ],
+      "multiplayer_tests": [
+        "test_actual_coven_counts_signed_values_and_rechecks_after_response",
+        "test_actual_total_power_uses_signed_values_for_activation_and_end_step"
+      ],
+      "negative_tests": [
+        "test_actual_circle_is_a_conditional_payment_source",
+        "test_actual_coven_counts_signed_values_and_rechecks_after_response",
+        "test_actual_might_checks_after_the_targeted_power_change",
+        "test_actual_total_power_uses_signed_values_for_activation_and_end_step",
+        "test_power_thresholds_declare_closed_signed_reductions"
+      ],
+      "official_rules": [
+        "107.1b",
+        "208.1",
+        "603.4",
+        "608.2c",
+        "608.2h",
+        "702.26b"
+      ],
+      "positive_tests": [
+        "test_actual_circle_is_a_conditional_payment_source",
+        "test_actual_coven_counts_signed_values_and_rechecks_after_response",
+        "test_actual_might_checks_after_the_targeted_power_change",
+        "test_actual_total_power_uses_signed_values_for_activation_and_end_step",
+        "test_power_thresholds_declare_closed_signed_reductions"
+      ],
+      "privacy_tests": [],
+      "replay_tests": [
+        "test_actual_circle_is_a_conditional_payment_source",
+        "test_actual_coven_counts_signed_values_and_rechecks_after_response",
+        "test_actual_might_checks_after_the_targeted_power_change",
+        "test_actual_total_power_uses_signed_values_for_activation_and_end_step"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "static layer-conditioned characteristic effects",
           "dynamic numeric thresholds",
           "aggregate total power",
@@ -55432,6 +55519,7 @@
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
+        "test_actual_might_checks_after_the_targeted_power_change",
         "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
         "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
         "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
@@ -55461,6 +55549,7 @@
       ],
       "negative_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
+        "test_actual_might_checks_after_the_targeted_power_change",
         "test_closed_schema_and_unselected_branch_are_validated_before_result_selection",
         "test_conditional_exclusions_are_fully_consumed",
         "test_derived_conditional_results_remain_residual_without_timing_proof",
@@ -55468,6 +55557,7 @@
         "test_executable_condition_rejects_withdrawn_capability_closure",
         "test_handler_binds_controller_and_rejects_unavailable_facts",
         "test_legacy_card_queries_remain_closed_but_other_v2_quantities_stay_excluded",
+        "test_ordered_if_requires_a_complete_prefix_and_keeps_the_span",
         "test_original_unholy_hunger_excludes_opponent_cards_and_resolving_spell",
         "test_replacement_residual_owner_retains_exact_unowned_node_contract",
         "test_replacement_schema_requires_owned_otherwise_shape_and_preserves_old_variants",
@@ -55485,10 +55575,12 @@
       ],
       "positive_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
+        "test_actual_might_checks_after_the_targeted_power_change",
         "test_complete_branches_declare_cast_fact_self_replacement_and_each_child_owner",
         "test_condition_keeps_printed_order_and_child_capability_shapes",
         "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
         "test_four_originals_and_card_only_condition_keep_complete_admission",
+        "test_ordered_if_requires_a_complete_prefix_and_keeps_the_span",
         "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
         "test_original_conquerors_pledge_retains_twelve_complete_token_recipes",
         "test_original_field_research_selects_two_or_three_private_draws_never_both",
@@ -55515,6 +55607,7 @@
       ],
       "replay_tests": [
         "test_actual_drag_canal_checks_real_death_then_surveys_privately_before_one_usable_clue",
+        "test_actual_might_checks_after_the_targeted_power_change",
         "test_countered_kicked_original_keeps_paid_cost_and_has_neither_branch_result",
         "test_mandatory_earlier_life_prefix_survives_and_condition_precedes_default_draw",
         "test_original_bold_defense_chooses_one_modifier_set_and_retains_the_keyword",
@@ -78756,7 +78849,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 709,
+  "registry_version": 710,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

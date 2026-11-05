@@ -10,11 +10,13 @@ from .object_predicate import ObjectQuerySpec
 
 PUBLIC_STAT_AGGREGATE_CAPABILITY='quantity_expression.public_characteristic_aggregate'
 DISTINCT_PUBLIC_CHARACTERISTIC_COUNT_CAPABILITY = 'quantity_expression.distinct_public_characteristic_count'
+PUBLIC_POWER_THRESHOLD_CAPABILITY = "condition.characteristics.public_power_aggregate"
+CONTROLLED_CREATURES_POWER_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
 
 
 def _is_closed_distinct_query(characteristic: str, query: ObjectQuerySpec) -> bool:
     if characteristic == 'power':
-        return query == ObjectQuerySpec(zones=('battlefield',), types_all=('creature',))
+        return query == CONTROLLED_CREATURES_POWER_QUERY
     if characteristic != 'mana_value':
         return False
     return query in (

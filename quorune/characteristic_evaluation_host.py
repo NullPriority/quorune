@@ -113,6 +113,10 @@ class CharacteristicEvaluationHostMixin:
             return fixed_public_state_condition_matches(self.state, source, condition,
                 public_object_resolver=current_numeric_object, quantity_resolver=None,
                 require_available=require_available)
+        needs_effective_power = any(
+            leaf.kind is FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST
+            for leaf in condition.leaf_conditions()
+        )
         return fixed_public_state_condition_matches(
             self.state,
             source,
@@ -120,6 +124,7 @@ class CharacteristicEvaluationHostMixin:
             public_object_resolver=partial(
                 self._public_object_query_result,
                 _enforce_static_component_applicability=True,
+                _maximum_layer=None if needs_effective_power else Layer.COLOR,
             ),
             quantity_resolver=partial(
                 query_characteristic_count,

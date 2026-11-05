@@ -10,6 +10,9 @@ from .characteristic_fragments import (
 )
 from .counter_names import CounterStateError, normalized_counter_name
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
+from .public_characteristic_aggregate_model import (
+    CONTROLLED_CREATURES_POWER_QUERY, PublicCharacteristicAggregateSpec,
+)
 
 
 class FixedPublicStateConditionError(ValueError):
@@ -50,6 +53,7 @@ FIXED_PUBLIC_STATE_INTERVENING_COVERAGE = (
 
 
 class FixedPublicStateConditionKind(StrEnum):
+    PUBLIC_POWER_AGGREGATE_AT_LEAST = "public_power_aggregate_at_least"
     HISTORY_COUNT_AT_LEAST='history_count_at_least'
     HISTORY_COUNT_AT_MOST='history_count_at_most'
     ALL = 'all'
@@ -350,6 +354,7 @@ class FixedPublicStateConditionSpec:
     schema_version: int = 1
     terms: tuple['FixedPublicStateConditionSpec', ...] = ()
     history_query: Any = None
+    aggregate: PublicCharacteristicAggregateSpec | None = None
 
     def leaf_conditions(self):
         return self.terms if self.terms else (self,)
@@ -371,7 +376,27 @@ class FixedPublicStateConditionSpec:
                 or any(v is not None for v in (self.counter_name,self.predicate,self.quantity,self.fact,self.fact_parameter)) or self.terms):
             raise FixedPublicStateConditionError('History conditions require version8, one typed query and a nonnegative threshold')
 
+    def _validate_power_aggregate(self) -> None:
+        aggregate = self.aggregate
+        if (
+            type(self.schema_version) is not int or self.schema_version != 9
+            or self.kind is not FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST
+            or type(self.amount) is not int or self.amount <= 0
+            or not isinstance(aggregate, PublicCharacteristicAggregateSpec)
+            or aggregate.characteristic != "power" or aggregate.reduction not in ("sum", "distinct_count")
+            or aggregate.controller_relation != "source_controller"
+            or aggregate.query != CONTROLLED_CREATURES_POWER_QUERY
+            or any(value is not None for value in (
+                self.counter_name, self.predicate, self.quantity, self.fact, self.fact_parameter, self.history_query,
+            ))
+            or self.terms
+        ):
+            raise FixedPublicStateConditionError("Power thresholds require one closed controlled-creature aggregate")
+
     def __post_init__(self) -> None:
+        if self.schema_version == 9 or self.aggregate is not None or self.kind == FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST:
+            self._validate_power_aggregate()
+            return
         if self.schema_version==8 or self.history_query is not None or self.kind in {
                 FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}:
             self._validate_history()
@@ -520,6 +545,11 @@ class FixedPublicStateConditionSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version == 9:
+            return {
+                "schema_version": 9, "kind": self.kind.value, "amount": self.amount,
+                "counter_name": None, "aggregate": self.aggregate.to_dict(),
+            }
         if self.schema_version==8:
             return {'schema_version':8,'kind':self.kind.value,'amount':self.amount,'counter_name':None,'history_query':self.history_query.to_dict()}
         value = {
@@ -560,6 +590,17 @@ class FixedPublicStateConditionSpec:
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "FixedPublicStateConditionSpec":
+        if isinstance(value, Mapping) and (value.get("schema_version") == 9 or "aggregate" in value):
+            if set(value) != {"schema_version", "kind", "amount", "counter_name", "aggregate"} or value["counter_name"] is not None:
+                raise FixedPublicStateConditionError("Power threshold condition fields are malformed")
+            try:
+                return cls(
+                    FixedPublicStateConditionKind(value["kind"]), amount=value["amount"],
+                    schema_version=value["schema_version"],
+                    aggregate=PublicCharacteristicAggregateSpec.from_dict(value["aggregate"]),
+                )
+            except (ValueError, TypeError, KeyError) as exc:
+                raise FixedPublicStateConditionError(str(exc)) from exc
         if isinstance(value,Mapping) and (value.get('schema_version')==8 or 'history_query' in value):
             from .public_history_query_model import PublicHistoryQuerySpec,public_history_query_dependencies
             try:
@@ -731,7 +772,10 @@ class FixedPublicStateConditionSpec:
             return counters.get(str(self.counter_name), 0) >= int(self.amount)
         if self.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY:
             return snapshot.source_query_matches is True
-        if self.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+        if self.kind in {
+            FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
+            FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST,
+        }:
             return snapshot.condition_quantity is not None and snapshot.condition_quantity > 0
         if self.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY:
             return snapshot.attached_query_matches is True
