@@ -256,6 +256,7 @@ class LegendStateBasedChoiceNativeTests(InheritedNativeFixture, unittest.TestCas
         self.assertEqual(('priority', ['B']), (s.state.pending_decision.kind, s.state.pending_decision.actors))
         for viewer in 'ABD':
             self.assertNotIn(private.ref, json.dumps(s.packet('pilot:' + viewer, full=True)))
+        self.assertIn(private.ref, json.dumps(s.packet('pilot:C', full=True)))
         self.replay(s, load=True)
 
     def test_legacy_absence_retains_the_original_offered_choice_and_replay(self):
