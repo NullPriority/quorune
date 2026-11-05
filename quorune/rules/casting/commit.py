@@ -1,6 +1,7 @@
 from __future__ import annotations
 from ...spell_mana_counts import capture_spell_mana_counts
-from .spell_context import declared_spell_context
+from .spell_context import capture_paid_creature_stats, declared_spell_context
+from ...scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, PaidCreatureStatSnapshot
 from ...adventure import adventure_stack_context
 from ...omen import omen_stack_context
 from ..optional_life_cost_model import optional_life_cost_amount
@@ -168,6 +169,7 @@ class _AdditionalCostCommit:
     source_characteristics: dict[str, dict[str, Any]]
     paid_refs: list[str]
     paid_contexts: list[dict[str, Any]]
+    paid_creature_stats: PaidCreatureStatSnapshot | None = None
 
 
 def _revalidate_source(host: CastCommitHost, proposal: CastProposal) -> tuple[Any, Any, Any]:
@@ -639,14 +641,78 @@ def _fixed_cast_cost_object_context(
     }
 
 
+def _commit_card_cost_changes(host, proposal, card, result, changes, *, needs_stats: bool) -> None:
+    """Apply selected cost moves and record their predeparture facts."""
+    for (
+        paid,
+        origin,
+        controller,
+        logical_id,
+        data,
+        attachments,
+        kind,
+        destination,
+        replacement_selections,
+    ) in changes:
+        if needs_stats and kind == 'sacrifice':
+            try:
+                result.paid_creature_stats = capture_paid_creature_stats(host, paid, result.paid_creature_stats)
+            except ValueError as exc:
+                raise CastProposalError(str(exc), reason='paid_sacrifice_stats_invalid') from exc
+        result.paid_contexts.append(
+            _fixed_cast_cost_object_context(host, paid)
+        )
+        transition_kind = (
+            ZoneTransitionKind.DISCARD
+            if kind == "discard"
+            else ZoneTransitionKind.SACRIFICE
+            if kind == "sacrifice"
+            else ZoneTransitionKind.ORDINARY
+        )
+        host.move_card(
+            paid.object_id,
+            destination,
+            reason=f"{card.printed_name} {kind} cost",
+            semantic_events=False,
+            replacement_selections=replacement_selections,
+            transition_kind=transition_kind,
+        )
+        result.paid_refs.append(paid.ref)
+        result.deferred_events.append(
+            (
+                paid,
+                origin,
+                controller,
+                logical_id,
+                data,
+                attachments,
+                paid.zone,
+                transition_kind,
+            )
+        )
+        host._log(
+            proposal.seat,
+            f"cost.{kind}",
+            f"{proposal.seat} paid {paid.ref} as a {kind} cost.",
+            {"spell": card.ref, "object": paid.ref},
+            importance=1,
+            changed_objects=[paid.object_id],
+            changed_players=[proposal.seat],
+        )
+    if needs_stats and result.paid_creature_stats is None:
+        raise CastProposalError('The paid creature stats are missing', reason='paid_sacrifice_missing')
+
+
 def _commit_additional_costs(
     host: CastCommitHost,
     proposal: CastProposal,
     response: Mapping[str, Any],
     card: Any,
     selected_option: Mapping[str, Any],
+    *, program: Any,
 ) -> _AdditionalCostCommit:
     result = _AdditionalCostCommit([], [], {}, {}, [], [])
+    needs_stats = program is not None and PAID_SACRIFICE_STAT_CAPABILITY in program.capability_dependencies
     selected_exile = selected_option.get("selected_exile_card")
     if selected_exile:
         exiled = host._resolve_object(
@@ -690,6 +756,8 @@ def _commit_additional_costs(
             )
     selections = list(selected_option.get("selected_additional_costs", []))
     if not selections:
+        if needs_stats:
+            raise CastProposalError('The paid creature selection is missing', reason='paid_sacrifice_missing')
         return result
     result.source_snapshots = [
         copy.deepcopy(source)
@@ -734,57 +802,7 @@ def _commit_additional_costs(
         changes.extend(
             _ordinary_card_cost_commit_entries(host, proposal, selected)
         )
-    for (
-        paid,
-        origin,
-        controller,
-        logical_id,
-        data,
-        attachments,
-        kind,
-        destination,
-        replacement_selections,
-    ) in changes:
-        result.paid_contexts.append(
-            _fixed_cast_cost_object_context(host, paid)
-        )
-        transition_kind = (
-            ZoneTransitionKind.DISCARD
-            if kind == "discard"
-            else ZoneTransitionKind.SACRIFICE
-            if kind == "sacrifice"
-            else ZoneTransitionKind.ORDINARY
-        )
-        host.move_card(
-            paid.object_id,
-            destination,
-            reason=f"{card.printed_name} {kind} cost",
-            semantic_events=False,
-            replacement_selections=replacement_selections,
-            transition_kind=transition_kind,
-        )
-        result.paid_refs.append(paid.ref)
-        result.deferred_events.append(
-            (
-                paid,
-                origin,
-                controller,
-                logical_id,
-                data,
-                attachments,
-                paid.zone,
-                transition_kind,
-            )
-        )
-        host._log(
-            proposal.seat,
-            f"cost.{kind}",
-            f"{proposal.seat} paid {paid.ref} as a {kind} cost.",
-            {"spell": card.ref, "object": paid.ref},
-            importance=1,
-            changed_objects=[paid.object_id],
-            changed_players=[proposal.seat],
-        )
+    _commit_card_cost_changes(host, proposal, card, result, changes, needs_stats=needs_stats)
     return result
 
 
@@ -1472,7 +1490,7 @@ def _commit_cast_costs_and_stack(
     if optional_life := optional_life_cost_amount(selected_option):
         _pay_fixed_life_additional_cost(host,proposal,card,selected_option,optional_life)
     costs = _commit_additional_costs(
-        host, proposal, response, card, selected_option
+        host, proposal, response, card, selected_option, program=program,
     )
     item = _create_spell_item(
         host,

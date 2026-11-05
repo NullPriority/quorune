@@ -132,6 +132,9 @@ A declared amount shared by damage and life gain is determined at resolution
 and remains independent of how much damage prevention allows through.
 Counted energy uses the controller's current battlefield quantity at the
 instruction that grants it. A zero count creates no counter placement event.
+Spells with one fixed creature sacrifice can read the power or toughness
+sealed when that price is paid. The receipt follows the spell through copies
+and replay. Result amounts apply the ordinary zero floor.
 
 For each Oracle face and material ability, compilation records:
 

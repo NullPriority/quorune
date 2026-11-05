@@ -2714,10 +2714,14 @@
       "id": "counted-spell-price-contract",
       "patterns": [
         "quorune/compiler/spell_additional_cost_nodes.py",
+        "quorune/compiler/paid_sacrifice_amount_templates.py",
+        "quorune/rules/casting/spell_context.py",
+        "tests/fixtures/paid-sacrifice-creature-stat-cards.json",
         "quorune/replacement/replay.py",
         "tests/fixtures/counted-spell-additional-costs.json"
       ],
       "test_modules": [
+        "test_paid_sacrifice_creature_stats",
         "test_counted_spell_additional_costs",
         "test_fixed_zone_change_additional_costs",
         "test_fixed_sacrifice_additional_costs",

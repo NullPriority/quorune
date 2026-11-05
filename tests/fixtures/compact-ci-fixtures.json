@@ -707,6 +707,7 @@
     "tests/fixtures/paid-event-copy-cards.json",
     "tests/fixtures/paid-graveyard-cast-cards.json",
     "tests/fixtures/paid-mana-resolution-cards.json",
+    "tests/fixtures/paid-sacrifice-creature-stat-cards.json",
     "tests/fixtures/paired-typecycling-cards.json",
     "tests/fixtures/partial-copy-targets-cards.json",
     "tests/fixtures/per-player-target-cards.json",

@@ -52846,6 +52846,90 @@
     {
       "applicability": {
         "exclusions": [
+          "variable sacrifice prices",
+          "chosen targets based on paid stats",
+          "nonstat or unrepresented results"
+        ],
+        "inputs": [
+          "one fixed mandatory creature sacrifice",
+          "current signed power and toughness before departure"
+        ],
+        "outputs": [
+          "sealed cast receipt",
+          "resolved scalar amount on the spell or copy"
+        ],
+        "summary": "Resolve bounded numeric result slots from the last known power or toughness of the creature paid for a spell."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.scalar_effect_amount",
+        "casting.additional_cost.fixed_sacrifice"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawn snapshot authority leaves a material residual. Runtime binding requires the original fixed creature price.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.paid_sacrifice_creature_stat",
+      "implementation_components": [
+        "quorune.scalar_effect_amount_model.PaidCreatureStatSnapshot",
+        "quorune.compiler.paid_sacrifice_amount_templates.paid_sacrifice_amount_template",
+        "quorune.rules.casting.spell_context.capture_paid_creature_stats",
+        "quorune.scalar_effect_amounts.resolve_scalar_effect_amount"
+      ],
+      "implementation_mutation_rationale": "Reading a different stat changes the signed result witness. Native copies use the exact sealed payment after the creature leaves.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_momentous_fall_and_its_copy_keep_the_two_paid_stats",
+        "test_original_fling_handles_negative_power_and_a_sacrificed_target"
+      ],
+      "multiplayer_tests": [
+        "test_original_momentous_fall_and_its_copy_keep_the_two_paid_stats",
+        "test_original_fling_handles_negative_power_and_a_sacrificed_target"
+      ],
+      "negative_tests": [
+        "test_compiler_requires_the_closed_price_and_paid_stat_capability",
+        "test_snapshot_incarnation_and_stat_selection_fail_closed",
+        "test_original_fling_handles_negative_power_and_a_sacrificed_target",
+        "test_bound_spell_requires_the_original_price_at_admission"
+      ],
+      "official_rules": [
+        "107.1b",
+        "400.7",
+        "601.2c",
+        "601.2h",
+        "608.2h",
+        "701.21a",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_compiler_requires_the_closed_price_and_paid_stat_capability",
+        "test_original_momentous_fall_and_its_copy_keep_the_two_paid_stats",
+        "test_original_fling_handles_negative_power_and_a_sacrificed_target"
+      ],
+      "privacy_tests": [
+        "test_original_momentous_fall_and_its_copy_keep_the_two_paid_stats"
+      ],
+      "replay_tests": [
+        "test_original_momentous_fall_and_its_copy_keep_the_two_paid_stats",
+        "test_original_fling_handles_negative_power_and_a_sacrificed_target"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "static characteristic cycles",
           "hidden/graveyard/event-linked collections",
           "unavailable creature stats",
@@ -79114,7 +79198,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 715,
+  "registry_version": 716,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

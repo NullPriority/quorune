@@ -9,6 +9,8 @@ from ...evoke import EVOKE_PAYMENT_FIELD
 from ...kicker import KICKER_MECHANIC_ID
 from ...morph import MORPH_CAST_METHOD
 from ...mutate_model import MUTATE_PAYMENT_FIELD
+from ...object_query import exact_numeric_characteristic
+from ...scalar_effect_amount_model import PAID_SACRIFICE_STAT_CONTEXT, PaidCreatureStatSnapshot
 from .paid_entry_copy_costs import paid_entry_copy_cast_context
 from .multikicker_costs import multikicker_cast_context
 from .replicate_costs import replicate_cast_context
@@ -29,6 +31,17 @@ def _fixed_cast_lifecycle_cost_context(
         }
         if costs.paid_contexts
         else {}
+    )
+
+
+def capture_paid_creature_stats(host, creature, previous):
+    if previous is not None:
+        raise ValueError('The paid stat result requires one sacrificed creature')
+    effective = host._effective_card_data(creature)
+    return PaidCreatureStatSnapshot(
+        creature.logical_object_id,
+        exact_numeric_characteristic(creature, effective, 'power'),
+        exact_numeric_characteristic(creature, effective, 'toughness'),
     )
 
 
@@ -67,6 +80,7 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         **characteristic_stack_context(details),
         **lifecycle_context,
         **_fixed_cast_lifecycle_cost_context(costs),
+        **({PAID_SACRIFICE_STAT_CONTEXT: costs.paid_creature_stats.to_dict()} if costs.paid_creature_stats is not None else {}),
         **(
             {
                 EVOKE_PAYMENT_FIELD: copy.deepcopy(

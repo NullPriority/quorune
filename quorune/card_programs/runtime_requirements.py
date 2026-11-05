@@ -210,6 +210,8 @@ def _value_runtime_requirements(program):
     """Infer the existing minima for typed values and their public predicates."""
     from ..characteristic_fragments import characteristic_quantity_capabilities
     from ..rules.casting.public_conditions import self_public_condition_dependencies
+    from ..rules.casting_additional_costs import fixed_creature_sacrifice_price
+    from ..scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, PAID_SACRIFICE_STAT_MECHANIC
 
     values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
     required = set(characteristic_quantity_capabilities((*values, program.event_condition)))
@@ -219,7 +221,14 @@ def _value_runtime_requirements(program):
     except (ValueError, TypeError) as exc:
         blockers.add(f"runtime_self_public_condition:invalid:{exc}")
     try:
-        required.update(typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage)))
+        amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
+        paid = PAID_SACRIFICE_STAT_CAPABILITY in amounts
+        if paid != (PAID_SACRIFICE_STAT_MECHANIC in program.coverage) or (paid and (
+            program.event != 'resolve' or not program.ability_id.startswith('spell:')
+            or not fixed_creature_sacrifice_price(program.cost_schema)
+        )):
+            raise ValueError('Paid creature stats require their closed spell and fixed creature sacrifice price')
+        required.update(amounts)
     except (ValueError, TypeError) as exc:
         blockers.add(f"runtime_typed_result_amount:invalid:{exc}")
     try:

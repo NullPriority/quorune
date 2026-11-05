@@ -23,6 +23,7 @@ from .declared_effect_amounts import (
 from .scalar_effect_amounts import scalar_amount_shape_context
 from .counter_placement_templates import FIXED_COUNTER_NAME_PATTERN
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY
+from ..scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, PAID_SACRIFICE_STAT_MECHANIC
 from ..scalar_effect_amount_model import TARGET_HAND_COUNT_MECHANIC,TARGET_HAND_COUNT_CAPABILITY
 from ..multikicker_result_amounts import MULTIKICKER_AMOUNT_MECHANIC, MULTIKICKER_AMOUNT_CAPABILITY
 from ..mana_spent_amounts import MANA_COLOR_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_CAPABILITY
@@ -32,6 +33,7 @@ from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC,CAST_MANA_VALUE_CAPABI
 PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC = "public-query-effect-amount"
 AMOUNT_MECHANIC_CAPABILITIES = {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC: (PUBLIC_QUERY_AMOUNT_CAPABILITY,),
                                SCALAR_AMOUNT_MECHANIC: (SCALAR_AMOUNT_CAPABILITY,),
+                               PAID_SACRIFICE_STAT_MECHANIC: (PAID_SACRIFICE_STAT_CAPABILITY,),
                                TARGET_HAND_COUNT_MECHANIC:(TARGET_HAND_COUNT_CAPABILITY,),
                                MULTIKICKER_AMOUNT_MECHANIC:(MULTIKICKER_AMOUNT_CAPABILITY,'casting.multikicker.fixed_mana'),
                                MANA_COLOR_AMOUNT_MECHANIC:(MANA_COLOR_AMOUNT_CAPABILITY,)}
@@ -644,8 +646,11 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
     from ..rules.fixed_controller_effect_shapes import fixed_controller_effect_sequence_node_capabilities
     from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristic_set_node_capabilities
     from ..rules.attack_event_results import attack_event_characteristic_capabilities
+    from ..rules.casting_additional_costs import fixed_creature_sacrifice_price
 
     if not {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC, SCALAR_AMOUNT_MECHANIC}.intersection(program.coverage):
+        return False
+    if PAID_SACRIFICE_STAT_MECHANIC in program.coverage and not fixed_creature_sacrifice_price(program.cost_schema):
         return False
     context = public_query_amount_shape_context(program.effects, set(program.coverage),target_schema=program.target_schema)
     if context is None:
@@ -684,9 +689,9 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
             fixed_player_counter_placement_node_capabilities,
             closed_effect_program_node_capabilities,
             *((fixed_effect_clause_sequence_node_capabilities,)
-              if {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC}.intersection(program.coverage) else ()),
+              if {MULTIKICKER_AMOUNT_MECHANIC, MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
             *((fixed_controller_effect_sequence_node_capabilities,)
-              if MANA_COLOR_AMOUNT_MECHANIC in program.coverage else ()),
+              if {MANA_COLOR_AMOUNT_MECHANIC, PAID_SACRIFICE_STAT_MECHANIC}.intersection(program.coverage) else ()),
         )
     )
 
