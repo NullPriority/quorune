@@ -258,6 +258,7 @@ class SemanticChoiceIntentHostMixin:
             return resolve_public_zone_move_set(
                 self,
                 actor=intent.actor,
+                followup=intent.followup,
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,

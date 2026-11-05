@@ -236,20 +236,23 @@ def _validate_mana_payment_frame(
         )
 
 
-def _counted_destruction_plan(plan: IntentPlan) -> bool:
-    from .semantic_runtime.intents import DestroyPermanentSetIntent
+def _quantity_followup_plan(plan: IntentPlan) -> bool:
+    from .semantic_runtime.intents import DestroyPermanentSetIntent, MovePublicZoneSetIntent
 
-    return any(isinstance(intent, DestroyPermanentSetIntent) and intent.followup is not None for intent in plan.intents)
+    return any(
+        isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent)) and intent.followup is not None
+        for intent in plan.intents
+    )
 
 
-def _execute_counted_destruction(host, plan, remaining):
+def _execute_quantity_followup(host, plan, remaining):
     from .conditional_exile_return import defer_conditional_cost_returns
-    from .rules.destruction_result_model import CommittedDestructionFollowup
+    from .rules.committed_quantity_followups import CommittedQuantityFollowup
 
     with defer_conditional_cost_returns() as waiting:
         result = execute_intent_plan(host, plan)
-    if not isinstance(result, CommittedDestructionFollowup):
-        raise ReplacementEffectError("Counted destruction did not produce its committed result")
+    if not isinstance(result, CommittedQuantityFollowup):
+        raise ReplacementEffectError("Counted action did not produce its committed result")
     effects = tuple(thaw_value(effect) for effect in result.effects)
     return (*effects, *remaining), waiting
 
@@ -278,10 +281,10 @@ def apply_effect_with_replacement_choice(
         with composition_resolution_actor(item.controller):
             if plan is None:
                 host.apply_effect(effect, actor=item.controller, as_cost=False)
-            elif _counted_destruction_plan(plan):
+            elif _quantity_followup_plan(plan):
                 from .conditional_exile_return import return_deferred_source_departures
 
-                remaining, waiting = _execute_counted_destruction(host, plan, remaining)
+                remaining, waiting = _execute_quantity_followup(host, plan, remaining)
                 committed_followup = True
                 return_deferred_source_departures(host, waiting)
             else:

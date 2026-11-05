@@ -693,6 +693,12 @@
     {
       "id": "fixed-owner-zone-move-contract",
       "patterns": [
+        "quorune/compiler/public_exile_followup_templates.py",
+        "quorune/rules/public_exile_result_model.py",
+        "quorune/rules/committed_quantity_followups.py",
+        "quorune/semantic_runtime/public_zone_move_handlers.py",
+        "tests/test_public_exile_followups.py",
+        "tests/fixtures/public-exile-followup-cards.json",
         "quorune/compiler/fixed_owner_zone_move_templates.py",
         "quorune/public_zone_moves.py",
         "quorune/replacement/replay.py",
@@ -704,6 +710,8 @@
       "test_modules": [
         "test_card_program_trust",
         "test_fixed_public_zone_moves",
+        "test_public_exile_followups",
+        "test_committed_destruction_followups",
         "test_game_record_v3",
         "test_rules_scheduler",
         "test_zone_general_rules"

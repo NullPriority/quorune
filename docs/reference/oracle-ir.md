@@ -80,6 +80,11 @@ choices, including a destruction redirected to exile. The following draw,
 life change, token creation, or source counter instruction receives that quantity
 after the destruction commits and any required physical order is complete.
 
+A targeted public graveyard exile can bind a follow-up to its committed card
+incarnations. The scope uses the public front-face characteristics before the
+move. A union counts one card once, and the resulting life, token, or source
+counter instruction runs in the chosen ability or modal sequence.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

@@ -14,6 +14,8 @@ from typing import Any, Iterable, Mapping, Protocol, Sequence
 
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
 from .object_query import ObjectQueryResult, query_objects
+from .rules.committed_quantity_followups import CommittedQuantityFollowup
+from .rules.public_exile_result_model import PublicExileFollowup
 from .rules.single_object_zone_transition import (
     SingleObjectDestination,
     SingleObjectOrigin,
@@ -461,9 +463,10 @@ def snapshot_public_zone_move_set(
     actor: str,
     spec: PublicZoneMoveSetSpec,
     source_ref: str | None = None,
+    object_rows: Sequence[ObjectQueryResult] | None = None,
 ) -> PublicZoneMoveSnapshot:
     selected = select_public_zone_move_objects(
-        query.public_zone_move_object_rows(actor),
+        query.public_zone_move_object_rows(actor) if object_rows is None else object_rows,
         spec,
         actor=actor,
         active_seats=query.public_zone_move_active_seats(),
@@ -485,6 +488,32 @@ def snapshot_public_zone_move_set(
     )
 
 
+def _exile_followup_rows(host, actor, spec, followup):
+    from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION
+
+    if (
+        not isinstance(followup, PublicExileFollowup)
+        or getattr(host.state, "characteristic_query_boundary_version", None) != PUBLIC_ZONE_FRONT_FACE_VERSION
+    ):
+        raise PublicZoneMoveError("Graveyard exile follow-up requires the current public face view")
+    followup.validate_move(spec)
+    return tuple(
+        row for row in host.public_zone_move_object_rows(actor)
+        if row.zone == "graveyard"
+        and getattr(host.state.cards.get(row.object_id), "is_card_object", False)
+    )
+
+
+def _committed_exile_count(snapshot, rows, moved, followup) -> int:
+    selected = {value.object_id: value.logical_object_id for value in snapshot.objects}
+    counted = {row.object_id for row in query_objects(rows, followup.query)} & selected.keys()
+    return len({
+        card.object_id for card in moved
+        if card.object_id in counted and card.zone == "exile"
+        and card.logical_object_id != selected[card.object_id]
+    })
+
+
 def resolve_public_zone_move_set(
     host: PublicZoneMoveHost,
     *,
@@ -493,16 +522,15 @@ def resolve_public_zone_move_set(
     reason: str,
     source_ref: str | None = None,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
-) -> PublicZoneMoveSnapshot:
+    followup: PublicExileFollowup | None = None,
+) -> PublicZoneMoveSnapshot | CommittedQuantityFollowup:
     """Resolve a fixed public set through the canonical simultaneous owner."""
 
     _nonempty(actor, field="Public zone-move actor")
     _nonempty(reason, field="Public zone-move reason")
+    rows = _exile_followup_rows(host, actor, spec, followup) if followup is not None else None
     snapshot = snapshot_public_zone_move_set(
-        host,
-        actor=actor,
-        spec=spec,
-        source_ref=source_ref,
+        host, actor=actor, spec=spec, source_ref=source_ref, object_rows=rows,
     )
     for value in snapshot.objects:
         card = host.state.cards.get(value.object_id)
@@ -522,6 +550,7 @@ def resolve_public_zone_move_set(
             raise PublicZoneMoveError(
                 "Public zone-move snapshot became stale before commit"
             )
+    moved = ()
     if snapshot.objects:
         from .zone_transitions import ZoneTransitionOwner
 
@@ -538,7 +567,7 @@ def resolve_public_zone_move_set(
             if spec.destination is PublicZoneDestination.BATTLEFIELD
             else None
         )
-        ZoneTransitionOwner(host).move_cards_simultaneously(
+        moved = ZoneTransitionOwner(host).move_cards_simultaneously(
             tuple(
                 (value.object_id, spec.destination.value)
                 for value in snapshot.objects
@@ -570,6 +599,8 @@ def resolve_public_zone_move_set(
             sorted({value.owner for value in snapshot.objects})
         ),
     )
+    if followup is not None:
+        return followup.from_committed_count(_committed_exile_count(snapshot, rows, moved, followup))
     return snapshot
 
 

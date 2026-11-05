@@ -5698,6 +5698,103 @@
     {
       "applicability": {
         "exclusions": [
+          "Hidden zones, variable target lists, and noncard objects",
+          "Public zone moves without a supported exile result scope",
+          "Per-owner follow-ups and variable token characteristics"
+        ],
+        "inputs": [
+          "One fixed targeted public graveyard exile instruction",
+          "Front-face characteristics of eligible card incarnations before movement",
+          "Committed destination and incarnation results from the simultaneous zone owner"
+        ],
+        "outputs": [
+          "One closed life gain, token creation, or source-counter instruction using the committed exile count"
+        ],
+        "summary": "Bind an ordered follow-up to actual cards exiled from one targeted public graveyard, filtered by their pre-move characteristics."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.move.fixed_public_set",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing counted public exile keeps the ordered source residual and preserves ordinary fixed graveyard exile.",
+      "dependency_fail_closed_status": "passed",
+      "id": "card.exile.public_graveyard_result_quantity",
+      "implementation_components": [
+        "quorune.compiler.public_exile_followup_templates.public_exile_followup_template",
+        "quorune.rules.public_exile_result_model.PublicExileFollowup",
+        "quorune.public_zone_moves.resolve_public_zone_move_set",
+        "quorune.rules.committed_quantity_followups.quantity_followup_from_count",
+        "quorune.replacement_decisions.apply_effect_with_replacement_choice"
+      ],
+      "implementation_mutation_rationale": "A nonzero sentinel replacing a committed count fails the typed quantity witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_release_to_memory_counts_only_the_opponents_front_creatures",
+        "test_actual_canoptek_counts_dual_types_once_and_excludes_the_modal_back_land",
+        "test_actual_necromancers_covenant_moves_only_creature_cards_then_creates_zombies",
+        "test_actual_malanthrope_counts_own_graveyard_then_uses_the_source_incarnation",
+        "test_actual_titanias_command_binds_exile_life_and_continues_the_second_mode"
+      ],
+      "multiplayer_tests": [
+        "test_actual_release_to_memory_counts_only_the_opponents_front_creatures",
+        "test_actual_canoptek_counts_dual_types_once_and_excludes_the_modal_back_land",
+        "test_actual_necromancers_covenant_moves_only_creature_cards_then_creates_zombies",
+        "test_actual_malanthrope_counts_own_graveyard_then_uses_the_source_incarnation",
+        "test_actual_titanias_command_binds_exile_life_and_continues_the_second_mode"
+      ],
+      "negative_tests": [
+        "test_public_exile_followup_rejects_hidden_or_unbound_count_scopes",
+        "test_public_exile_followup_withdrawal_retains_plain_graveyard_exile",
+        "test_public_exile_followup_committed_quantity_mutation_is_killed"
+      ],
+      "official_rules": [
+        "400.2",
+        "400.7",
+        "608.2c",
+        "608.2h",
+        "608.2i",
+        "701.13a",
+        "712.8a"
+      ],
+      "positive_tests": [
+        "test_public_exile_followup_keeps_target_scope_and_printed_span",
+        "test_public_exile_followup_committed_quantity_mutation_is_killed",
+        "test_actual_release_to_memory_counts_only_the_opponents_front_creatures",
+        "test_actual_canoptek_counts_dual_types_once_and_excludes_the_modal_back_land",
+        "test_actual_necromancers_covenant_moves_only_creature_cards_then_creates_zombies",
+        "test_actual_malanthrope_counts_own_graveyard_then_uses_the_source_incarnation",
+        "test_actual_titanias_command_binds_exile_life_and_continues_the_second_mode"
+      ],
+      "privacy_tests": [
+        "test_actual_release_to_memory_counts_only_the_opponents_front_creatures"
+      ],
+      "replay_tests": [
+        "test_actual_release_to_memory_counts_only_the_opponents_front_creatures",
+        "test_actual_canoptek_counts_dual_types_once_and_excludes_the_modal_back_land",
+        "test_actual_necromancers_covenant_moves_only_creature_cards_then_creates_zombies",
+        "test_actual_malanthrope_counts_own_graveyard_then_uses_the_source_incarnation",
+        "test_actual_titanias_command_binds_exile_life_and_continues_the_second_mode"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "prepare or unprepare instruction grammar beyond intrinsic entry",
           "non-instant/sorcery inset spells",
           "general phasing action admission"
@@ -78306,7 +78403,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 704,
+  "registry_version": 705,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

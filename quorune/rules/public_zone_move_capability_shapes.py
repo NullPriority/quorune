@@ -353,15 +353,26 @@ def fixed_public_zone_move_set_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    from .public_exile_result_model import PUBLIC_EXILE_RESULT_MECHANIC, PublicExileFollowup
+
+    has_followup = "followup" in effect
+    if has_followup != (PUBLIC_EXILE_RESULT_MECHANIC in mechanics):
+        return ()
+    expected = {"op", "source", "set"} | ({"followup"} if has_followup else set())
     if (
-        set(effect) != {"op", "source", "set"}
+        set(effect) != expected
         or effect.get("op") != "move_public_zone_set"
         or effect.get("source") != "$source"
     ):
         return ()
     try:
         spec = PublicZoneMoveSetSpec.from_dict(effect["set"])
-    except (KeyError, TypeError, PublicZoneMoveError):
+        result_caps = ()
+        if has_followup:
+            followup = PublicExileFollowup.from_dict(effect["followup"])
+            followup.validate_move(spec)
+            result_caps = followup.capability_dependencies
+    except (KeyError, TypeError, ValueError):
         return ()
     targeted = spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
     if targeted:
@@ -373,6 +384,7 @@ def fixed_public_zone_move_set_node_capabilities(
             return ()
         return (
             "zone.move.fixed_public_set",
+            *result_caps,
             "target.revalidate_resolution",
         )
     if target_schema is not None or "cr-115-targets" in mechanics:

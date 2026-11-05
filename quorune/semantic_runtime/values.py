@@ -118,9 +118,9 @@ def _resolve_effect_mapping(host, value, item):
         from ..delayed_object_actions import bind_delayed_object_instruction
         try:return bind_delayed_object_instruction(host,value,item)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if value.get("op") == "destroy_all" and "followup" in value:
-        destruction = {key: child for key, child in value.items() if key != "followup"}
-        return {**_resolve_effect_mapping(host, destruction, item), "followup": value["followup"]}
+    if "followup" in value and value.get("op") in ("destroy_all", "move_public_zone_set"):
+        preceding_action = {key: child for key, child in value.items() if key != "followup"}
+        return {**_resolve_effect_mapping(host, preceding_action, item), "followup": value["followup"]}
     if value.get('op')=='create_token_then_counters':
         from ..created_token_counter_model import validate_created_token_counter
         try:validate_created_token_counter(value)

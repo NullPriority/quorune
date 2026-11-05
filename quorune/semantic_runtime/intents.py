@@ -24,6 +24,7 @@ from typing import Any, Literal, Mapping, TypeAlias
 
 from ..affected_permanents import AffectedPermanentSetSpec
 from ..rules.destruction_result_model import DestructionFollowup
+from ..rules.public_exile_result_model import PublicExileFollowup
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
 from ..fixed_damage_set_model import FixedDamageSetSpec
@@ -392,8 +393,13 @@ class MovePublicZoneSetIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    followup: PublicExileFollowup | None = None
 
     def __post_init__(self) -> None:
+        if self.followup is not None:
+            if not isinstance(self.followup, PublicExileFollowup):
+                raise ValueError("Public exile follow-up must be typed")
+            self.followup.validate_move(self.spec)
         if any(
             type(value) is not str or not value
             for value in (self.actor, self.reason)

@@ -8,6 +8,7 @@ from ..public_zone_moves import (
     PublicZoneMoveSetSpec,
     PublicZoneSeatRelation,
 )
+from ..rules.public_exile_result_model import PublicExileFollowup
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
@@ -90,6 +91,7 @@ class MovePublicZoneSetHandler:
             "op",
             "source",
             "set",
+            "followup",
             "reason",
             "_replacement_selections",
         }
@@ -135,6 +137,7 @@ class MovePublicZoneSetHandler:
                 reason=reason,
                 source_ref=source_ref,
                 replacement_selections=tuple(selections),
+                followup=PublicExileFollowup.from_dict(effect["followup"]) if "followup" in effect else None,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

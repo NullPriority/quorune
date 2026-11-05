@@ -25,6 +25,13 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
 
             return (*destruction, *DestructionFollowup.from_dict(value["followup"]).capability_dependencies)
         if destruction:return destruction
+        if value.get("op") == "move_public_zone_set" and "followup" in value:
+            from ..public_zone_moves import PublicZoneMoveSetSpec
+            from ..rules.public_exile_result_model import PublicExileFollowup
+
+            followup = PublicExileFollowup.from_dict(value["followup"])
+            followup.validate_move(PublicZoneMoveSetSpec.from_dict(value["set"]))
+            return followup.capability_dependencies
         from ..alternative_discard_model import alternative_discard_runtime_dependencies
         alternative=alternative_discard_runtime_dependencies(value)
         if alternative:return tuple(sorted({*alternative,*(cap for child in value.values()

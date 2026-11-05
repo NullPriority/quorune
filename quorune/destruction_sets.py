@@ -17,7 +17,8 @@ from .destruction import (
     commit_destruction_plan,
     prepare_destructions,
 )
-from .rules.destruction_result_model import CommittedDestructionFollowup, DestructionFollowup
+from .rules.committed_quantity_followups import CommittedQuantityFollowup
+from .rules.destruction_result_model import DestructionFollowup
 from .object_query import ObjectQueryResult
 from .util import stable_json
 
@@ -168,7 +169,7 @@ def resolve_destruction_set(
     regeneration_prohibited: bool = False,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
     followup: DestructionFollowup | None = None,
-) -> DestructionResult | CommittedDestructionFollowup:
+) -> DestructionResult | CommittedQuantityFollowup:
     """Resolve one fixed affected set through the canonical destruction owner."""
 
     _nonempty(actor, field="Destruction set actor")

@@ -1322,9 +1322,11 @@ def capability_dependencies_for_node(
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
     from .destruction_result_model import DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
+    from .public_exile_result_model import PUBLIC_EXILE_RESULT_CAPABILITY, PUBLIC_EXILE_RESULT_MECHANIC
 
     mapping = {
         DESTRUCTION_RESULT_CAPABILITY: DESTRUCTION_RESULT_MECHANIC,
+        PUBLIC_EXILE_RESULT_CAPABILITY: PUBLIC_EXILE_RESULT_MECHANIC,
         'resolution.target_set.ordered_results':'shared-target-set-result-sequence',
         'zone.reanimate.entry_counters':'fixed-target-entry-counter-reanimation',
         'target.set.one_per_player':'fixed-per-player-target-set',

@@ -146,18 +146,22 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
-    if "destroyed this way" in text.casefold():
+    folded = text.casefold()
+    if "destroyed this way" in folded or "exiled this way" in folded:
         from .destruction_followup_templates import destruction_followup_template
-        destruction_followup = destruction_followup_template(
-            text,
-            compile_literal=lambda body: reviewed_effect_template_composition(
-                body, source_name=source_name, compile_atomic=compile_atomic, compile_fixed=compile_fixed,
-                cast_x_available=cast_x_available, forbid_public_x=forbid_public_x,
-                allow_declarations=allow_declarations, allow_conditions=allow_conditions,
-            ),
+        from .public_exile_followup_templates import public_exile_followup_template
+
+        compile_literal = partial(
+            reviewed_effect_template_composition, source_name=source_name,
+            compile_atomic=compile_atomic, compile_fixed=compile_fixed, cast_x_available=cast_x_available,
+            forbid_public_x=forbid_public_x, allow_declarations=allow_declarations, allow_conditions=allow_conditions,
         )
-        if destruction_followup is not None:
-            return destruction_followup
+        committed_followup = (
+            destruction_followup_template(text, compile_literal=compile_literal)
+            or public_exile_followup_template(text, compile_literal=compile_literal)
+        )
+        if committed_followup is not None:
+            return committed_followup
     from .source_counter_quantity_sequences import source_counter_quantity_sequence
     source_quantity=source_counter_quantity_sequence(text,card_name=source_name,compile_fixed=compile_fixed)
     if source_quantity is not None:return source_quantity
