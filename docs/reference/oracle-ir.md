@@ -127,6 +127,9 @@ Qualified battlefield counts read current effective power, toughness, or
 represented modifications at the instruction that uses the count. A granted
 draw may read its own independent count. In an ordered spell, a later declared
 amount can read the hand after an earlier draw commits.
+Variable damage to each opponent uses the existing simultaneous damage batch.
+A declared amount shared by damage and life gain is determined at resolution
+and remains independent of how much damage prevention allows through.
 
 For each Oracle face and material ability, compilation records:
 

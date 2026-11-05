@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from common import ROOT
 from inherited_composition_fixture import InheritedNativeFixture
+import test_public_history_queries as history_controls
 from quorune.attachments import attach_objects
 from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
@@ -21,6 +22,7 @@ from quorune.live_battlefield_quantity_model import LIVE_QUALIFIED_CREATURE_COUN
 from quorune.object_query import ObjectQueryResult
 from quorune.oracle_ir import compile_oracle_card
 from quorune.query_effect_amount_model import PublicQueryAmountSpec
+from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from scripts.build_test_database import build_fixture_database
 from test_bound_effect_programs import record
@@ -76,6 +78,14 @@ class QualifiedLiveCreatureCountTests(unittest.TestCase):
                     **amount, 'schema_version': 2, 'binding_id': 'declared-instruction',
                 }},)))
                 self.assertFalse(granted_effect_values_are_closed(({**effect, 'count': '$x'},)))
+        leading = resolution_quantity('the number of other modified creatures you control',
+                                      source_name='Source', complete_value=True)
+        suffix = resolution_quantity('the number of modified creatures you control other than this creature',
+                                     source_name='Source', complete_value=True)
+        self.assertEqual(leading, suffix)
+        self.assertTrue(suffix.exclude_source)
+        self.assertIsNone(resolution_quantity('the number of modified creatures you control other than that creature',
+                                             source_name='Source', complete_value=True))
 
     def test_qualified_draw_keeps_source_spans_and_requires_its_capability(self):
         registry = load_default_capability_registry()
@@ -242,6 +252,115 @@ class QualifiedLiveCreatureCountActionTests(InheritedNativeFixture, unittest.Tes
                 self.cast(session, 'A', source)
                 self.assertIsNone(self.resolve(session))
                 self.assertEqual(before - 1 + expected, len(session.state.players['A'].zones['hand']))
+                self.replay(session)
+
+    def test_original_arabella_shares_one_live_amount_across_damage_and_life_gain(self):
+        session = self.session(699_120_301)
+        source = self.add(session.engine, 'Arabella, Abandoned Doll')
+        source.acquired_control_turn_count = -1
+        bear = self.add(session.engine, 'Grizzly Bears')
+        self.add(session.engine, 'Hill Giant')
+        self.add(session.engine, 'Grizzly Bears', seat='C', ref='opposing-bear')
+        bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+        shield = self.add(session.engine, 'Healing Salve', seat='B', zone='hand')
+        self.add(session.engine, 'Island', seat='B')
+        self.add(session.engine, 'Generic Bound Plains', seat='B')
+        self.prepare(session)
+        self.checkpoint(session)
+        for card in (source, bounce, shield):
+            self.assert_closed(session, card)
+        private = session.state.cards[session.state.players['D'].zones['hand'][0]].ref
+
+        self.attack(session, [(source, 'B')])
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.cast_for(session, 'B', bounce, [bear.ref])
+        self.resolve_top(session)
+        self.priority(session, 'B')
+        action = self.action(session, 'B', shield)
+        command = {'action_id': action['id'], 'modes': ['mode_2'], 'targets': ['B'], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:C', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:B', command)
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        self.assertEqual([40, 40, 40, 40], [session.state.players[seat].life for seat in 'ABCD'])
+
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual('hand', session.state.cards[bear.object_id].zone)
+        self.assertEqual([41, 40, 39, 39], [session.state.players[seat].life for seat in 'ABCD'])
+        batches = [event.details for event in session.state.events
+                   if event.code == 'effect.damage' and 'damage_events' in event.details]
+        self.assertEqual(1, len(batches))
+        self.assertEqual(1, batches[0]['assigned_amount'])
+        self.assertEqual([('B', 0), ('C', 1), ('D', 1)],
+                         [(event['target'], event['amount']) for event in batches[0]['damage_events']])
+        for seat in 'ABC':
+            self.assertNotIn(private, json.dumps(session.packet('pilot:' + seat, full=True)))
+        self.replay(session)
+
+    def test_original_raiju_counts_after_the_counter_and_excludes_its_modified_source(self):
+        session = self.session(699_120_302)
+        source = self.add(session.engine, 'Thundering Raiju')
+        source.counters['charge'] = 1
+        target = self.add(session.engine, 'Grizzly Bears')
+        removed = self.add(session.engine, 'Hill Giant')
+        removed.counters['charge'] = 1
+        bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+        self.add(session.engine, 'Island', seat='B')
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+
+        self.attack(session, [(source, 'B')])
+        self.target(session, 'A', [target.ref])
+        self.assertEqual(1, self.trigger_count(session, source))
+        self.cast_for(session, 'B', bounce, [removed.ref])
+        self.resolve_top(session)
+        self.assertEqual('hand', session.state.cards[removed.object_id].zone)
+        self.assertEqual(0, session.state.cards[target.object_id].counters.get('+1/+1', 0))
+
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[target.object_id].counters['+1/+1'])
+        self.assertEqual([40, 39, 39, 39], [session.state.players[seat].life for seat in 'ABCD'])
+        self.replay(session)
+
+    def test_original_gau_uses_last_effective_power_after_the_source_leaves(self):
+        for left_graveyard in (False, True):
+            with self.subTest(left_graveyard=left_graveyard):
+                session = self.session(699_120_303 + left_graveyard)
+                source = self.add(session.engine, 'Gau, Feral Youth')
+                flashback = self.add(session.engine, 'Think Twice', zone='graveyard')
+                growth = self.add(session.engine, 'Giant Growth', zone='hand')
+                bounce = self.add(session.engine, 'Unsummon', seat='B', zone='hand')
+                self.add(session.engine, 'Island', seat='B')
+                self.assert_closed(session, source)
+                self.prepare(session, mana={'C': 2, 'U': 1, 'G': 1})
+                self.checkpoint(session)
+                self.cast_for(session, 'A', growth, [source.ref])
+                self.resolve_top(session)
+                power = session.engine._numeric_stat(source.object_id, 'power')
+                self.assertGreater(power, int(self.db.by_oracle_id(source.oracle_id).power))
+                if left_graveyard:
+                    self.priority(session, 'A')
+                    action = self.action(session, 'A', flashback)
+                    result = session.act('pilot:A', {'action_id': action['id'], 'cost_option': 'flashback', 'pay': 'auto'})
+                    self.assertTrue(result.ok, result.summary)
+                    self.resolve_top(session)
+                    self.assertEqual('exile', session.state.cards[flashback.object_id].zone)
+
+                history_controls.PublicHistoryQueryNativeTests.end_step(self, session)
+                self.assertEqual(int(left_graveyard), self.trigger_count(session, source))
+                if left_graveyard:
+                    self.cast_for(session, 'B', bounce, [source.ref])
+                    self.resolve_top(session)
+                    self.assertEqual('hand', session.state.cards[source.object_id].zone)
+                    session = self.replay(session, load=True)
+                    self.assertIsNone(self.resolve(session))
+                self.assertEqual([40] + [40 - power * left_graveyard] * 3,
+                                 [session.state.players[seat].life for seat in 'ABCD'])
                 self.replay(session)
 
     def test_original_avalanche_binds_hand_amount_after_the_independent_draw(self):

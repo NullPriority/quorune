@@ -44,7 +44,7 @@ _RESULT_FIELDS = {
     'create_token_then_counters': ('amount',),
     'return_random_graveyard_cards': ('count',),
     SEQUENTIAL_INVESTIGATE_OPERATION: ('count',),
-    "damage": ("amount",), "damage_fixed_set": ("amount",),
+    "damage": ("amount",), "damage_each_opponent": ("amount",), "damage_fixed_set": ("amount",),
     "draw": ("count",), "draw_each_player": ("count",),
     "mill": ("count",), "scry": ("count",),
     "life": ("delta",), "lose_life": ("amount",),

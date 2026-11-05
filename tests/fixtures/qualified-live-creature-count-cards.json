@@ -293,6 +293,277 @@
       "released_at": "2001-02-05",
       "toughness": "2",
       "type_line": "Creature — Kavu"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{W}",
+      "name": "Arabella, Abandoned Doll",
+      "oracle_id": "7c4bbb1b-29c4-4e06-aed0-b361293a585b",
+      "oracle_text": "Whenever Arabella attacks, it deals X damage to each opponent and you gain X life, where X is the number of creatures you control with power 2 or less.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": "3",
+      "type_line": "Legendary Artifact Creature — Toy"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Haste"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{R}",
+      "name": "Thundering Raiju",
+      "oracle_id": "3d713c11-36a7-4b19-8c42-a9b61ef5902c",
+      "oracle_text": "Haste\nWhenever this creature attacks, put a +1/+1 counter on target creature you control. Then this creature deals X damage to each opponent, where X is the number of modified creatures you control other than this creature. (Equipment, Auras you control, and counters are modifications.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "3",
+      "type_line": "Creature — Spirit"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Rage"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Gau, Feral Youth",
+      "oracle_id": "9e96d12b-8381-4706-8089-3521aa2b5422",
+      "oracle_text": "Rage — Whenever Gau attacks, put a +1/+1 counter on it.\nAt the beginning of each end step, if a card left your graveyard this turn, Gau deals damage equal to its power to each opponent.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-06-13",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Berserker"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Healing Salve",
+      "oracle_id": "8da8644c-75a1-4fe9-8e94-900d948d631c",
+      "oracle_text": "Choose one —\n• Target player gains 3 life.\n• Prevent the next 3 damage that would be dealt to any target this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-12-05",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [
+        "Flashback"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Think Twice",
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "oracle_text": "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -319,6 +590,42 @@
       "comment": "The number of modified creatures you control is counted at the time the ability resolves, not the time that damage was dealt.",
       "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95",
       "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The value of X is determined only once, as Arabella's ability resolves.",
+      "oracle_id": "7c4bbb1b-29c4-4e06-aed0-b361293a585b",
+      "published_at": "2024-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with a counter on it is considered modified no matter what kind of counter it is or which player put it on that creature.",
+      "oracle_id": "3d713c11-36a7-4b19-8c42-a9b61ef5902c",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "An Aura controlled by an opponent does not cause a creature you control to be modified.",
+      "oracle_id": "3d713c11-36a7-4b19-8c42-a9b61ef5902c",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature that is equipped is considered modified no matter who controls the Equipment that's attached to it.",
+      "oracle_id": "3d713c11-36a7-4b19-8c42-a9b61ef5902c",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Gau's last ability checks at the moment it would trigger to see if a card left your graveyard this turn. If none did, the ability won't trigger at all. Once your end step begins, it's too late to make a card leave your graveyard in order to cause this ability to trigger.",
+      "oracle_id": "9e96d12b-8381-4706-8089-3521aa2b5422",
+      "published_at": "2025-06-06",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Gau is no longer on the battlefield when its last ability resolves, use its power as it last existed on the battlefield to determine how much damage the ability deals.",
+      "oracle_id": "9e96d12b-8381-4706-8089-3521aa2b5422",
+      "published_at": "2025-06-06",
       "source": "wotc"
     }
   ],

@@ -303,6 +303,7 @@ _AMOUNT_FIELDS = {
     "lose_life": "amount",
     "lose_life_each_opponent": "amount",
     "damage": "amount",
+    "damage_each_opponent": "amount",
     "draw": "count",
     "scry": "count",
     "surveil": "count",
