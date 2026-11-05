@@ -221,6 +221,7 @@ from .executor import (
     draw_resolution_batch,
     execute_intent_plan,
     prepare_draw_resolution,
+    prepare_stack_resolution_effect,
 )
 from .effect_handlers import DOMAIN_EFFECT_HANDLERS, DomainEffectHandler
 from .destruction_handlers import (
@@ -678,6 +679,7 @@ __all__ = [
     "draw_resolution_batch",
     "execute_intent_plan",
     "prepare_draw_resolution",
+    "prepare_stack_resolution_effect",
     "resolve_token_creation_replacements",
     "resolve_counter_placement_replacements",
     "resolve_zone_change_replacements",

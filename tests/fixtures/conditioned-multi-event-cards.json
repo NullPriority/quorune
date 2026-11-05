@@ -1,0 +1,124 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Disenchant",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{B}",
+      "name": "Naomi, Pillar of Order",
+      "oracle_id": "cd6018de-5791-4c13-b134-38c410f04872",
+      "oracle_text": "Whenever Naomi enters or attacks, if you control an artifact and an enchantment, create a 2/2 white Samurai creature token with vigilance.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2022-02-18",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Human Advisor"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you don't control both an artifact and an enchantment at the moment Naomi, Pillar of Order enters the battlefield or attacks, its ability won't trigger at all. If the ability triggers, it will check again as it tries to resolve. If you don't control both at that time, the ability won't do anything.",
+      "oracle_id": "cd6018de-5791-4c13-b134-38c410f04872",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The artifact and the enchantment may be the same permanent.",
+      "oracle_id": "cd6018de-5791-4c13-b134-38c410f04872",
+      "published_at": "2022-02-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Naomi original and the shared Disenchant control"
+}

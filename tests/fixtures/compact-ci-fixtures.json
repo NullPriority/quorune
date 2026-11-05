@@ -474,6 +474,7 @@
     "tests/fixtures/conditional-query-declaration-cards.json",
     "tests/fixtures/conditional-receiver-union-cards.json",
     "tests/fixtures/conditional-recipient-cards.json",
+    "tests/fixtures/conditioned-multi-event-cards.json",
     "tests/fixtures/controlled-counter-cost-cards.json",
     "tests/fixtures/controlled-keyword-target-cards.json",
     "tests/fixtures/controller-damage-cards.json",

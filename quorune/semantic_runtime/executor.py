@@ -787,6 +787,33 @@ def _synchronize_instruction_observers(sink):
         reconcile_soulbond_pairs(sink)
 
 
+def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -> dict[str, Any] | None:
+    """Resolve one available instruction without changing its position in the program."""
+    from ..card_overrides import normalize_game_record_v3_effect
+    from ..scheduled_player import scheduled_player_instruction_is_impossible
+
+    if scheduled_player_instruction_is_impossible(host, item, raw_effect):
+        host._log(
+            item.controller, 'effect.player.skipped',
+            f'Skipped a part of {item.ref} for a player who left the game.',
+            {'stack': item.ref, 'operation': raw_effect.get('op'),
+             'player': item.context['player'], 'reason': 'scheduled_player_departed'},
+            importance=1,
+        )
+        return None
+
+    effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
+    if any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object')):
+        host._log(
+            item.controller, 'effect.target.skipped',
+            f'Skipped a target-dependent part of {item.ref}.',
+            {'stack': item.ref, 'operation': effect.get('op'), 'reason': 'that target is illegal'},
+            importance=1,
+        )
+        return None
+    return effect
+
+
 def execute_intent_plan(sink: SemanticIntentSink, plan: IntentPlan) -> object:
     if any(isinstance(intent, DrawCardsIntent) for intent in plan.intents):
         raise SemanticNodeError(

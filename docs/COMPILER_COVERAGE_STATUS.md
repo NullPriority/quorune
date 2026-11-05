@@ -2,7 +2,7 @@
 title: "Compiler coverage status"
 status: "generated"
 authoritative_source: "coverage/architecture-audit.json"
-verified: "e8624de56a2274888ca29ee08df03a98d31afd583b04b41b5b69515a500881c9"
+verified: "cfe7087703f5e7be3da3ca58f9a35a65d754f97360b156b14092bc6ed54e416b"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 generated_source: "coverage/architecture-audit.json"
@@ -11,11 +11,11 @@ generation_command: ".\.venv\Scripts\python.exe scripts\update_architecture_audi
 
 # Compiler coverage status
 
-Source fingerprint: `e8624de56a2274888ca29ee08df03a98d31afd583b04b41b5b69515a500881c9`
+Source fingerprint: `cfe7087703f5e7be3da3ca58f9a35a65d754f97360b156b14092bc6ed54e416b`
 
 ## Current top-level state
 
-- Compiler version: `oracle-ir-v686`
+- Compiler version: `oracle-ir-v687`
 - Runtime IR: `OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index`
 - CardProgram schema version: `2`
 - Commander Oracle objects: `31623`

@@ -36,7 +36,7 @@
     "ordinary printed Exhaust now uses one typed per-ability, per-object once-only activation owner shared by advertised actions and accepted commands; control changes and phasing preserve the consumed use, while a zone change creates a new object and resets it. One closed source-threaded fixed counter-then-until-end-of-turn characteristic sequence is shared by activated and triggered contexts, preserves printed order, suspends for replacement choices, revalidates source identity, and commits atomically. Effects that grant another Exhaust use, copied, granted, removed, or face-down Exhaust abilities, reverse-order or broader source sequences, usage-limited mana auto-payment, and independently unsupported costs or results remain explicit blockers, so aggregate Exhaust is not trusted"
   ],
   "generated": {
-    "evaluated_input_fingerprint": "59025d3572b8424c6de29b061c2d6685101d135c3ba8e4d8b0ba7f9c365ef213",
+    "evaluated_input_fingerprint": "2ced1606f264039ad70995daac3b1b3cf7ce5330d296207207e6040645cfe5a0",
     "generator": "scripts/update_platform_status.py",
     "input_fingerprint_algorithm": "platform-readiness-derived-inputs-sha256-v1",
     "source": "platform/readiness-source.json",
@@ -750,7 +750,7 @@
     "generated_validation_modules": 34,
     "migration_files": 1,
     "overlay_test_suites": 17,
-    "primary_test_modules": 888,
+    "primary_test_modules": 889,
     "primary_test_shards": 13,
     "schema_files": 18,
     "server_files": 5,

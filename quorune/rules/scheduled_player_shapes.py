@@ -9,11 +9,25 @@ from .affected_player_discard_capability_shapes import (
     fixed_controller_discard_node_capabilities,
 )
 
+SCHEDULED_PLAYER_CAPABILITY = 'trigger.event.scheduled_player_result'
+SCHEDULED_PLAYER_MECHANIC = 'scheduled-player-event-result'
+SCHEDULED_PLAYER_DEPARTURE_COVERAGE = 'scheduled_player_departure_v1'
+
+
+def scheduled_player_subject_instruction(effect: Mapping[str, Any]) -> bool:
+    operation = effect.get('op')
+    if operation == 'damage':
+        return effect.get('target') == '$context.player'
+    if operation == 'choose_cards_apnap':
+        return effect.get('players') == ['$context.player']
+    return (operation in ('life', 'lose_life', 'draw', 'mill')
+            and effect.get('player') == '$context.player')
+
 
 def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,mechanic_ids:Iterable[str]):
-    if 'scheduled-player-event-result' not in set(mechanic_ids) or target_schema is not None or not 1<=len(effects)<=2:return ()
-    if not any(effect.get('player', effect.get('target')) == '$context.player' or effect.get('players') == ['$context.player'] for effect in effects):return ()
-    capabilities={'trigger.event.scheduled_player_result'}
+    if SCHEDULED_PLAYER_MECHANIC not in set(mechanic_ids) or target_schema is not None or not 1<=len(effects)<=2:return ()
+    if not any(scheduled_player_subject_instruction(effect) for effect in effects):return ()
+    capabilities={SCHEDULED_PLAYER_CAPABILITY}
     for effect in effects:
         op=effect.get('op')
         if op == 'choose_cards_apnap':
@@ -53,3 +67,29 @@ def scheduled_player_node_capabilities(*,effects:Sequence[Mapping[str,Any]],targ
 def is_closed_scheduled_player_program(program):
     required=scheduled_player_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
     return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
+def _scheduled_steps(condition: Mapping[str, Any] | None) -> set[str]:
+    if not isinstance(condition, Mapping):
+        return set()
+    if set(condition) == {'all'} and isinstance(condition['all'], (list, tuple)):
+        return set().union(*(_scheduled_steps(child) for child in condition['all']))
+    value = condition.get('value')
+    if type(value) is str and condition == {'field': 'step', 'op': 'eq', 'value': value}:
+        return {value}
+    return set()
+
+
+def scheduled_player_result_step(program) -> str | None:
+    steps = _scheduled_steps(program.event_condition)
+    if program.event == 'step.begin' and steps in ({'upkeep'}, {'draw'}):
+        return next(iter(steps))
+    return None
+
+
+def scheduled_player_departure_runtime_dependencies(program) -> tuple[str, ...]:
+    if SCHEDULED_PLAYER_DEPARTURE_COVERAGE not in program.coverage:
+        return ()
+    if scheduled_player_result_step(program) is None or not is_closed_scheduled_player_program(program):
+        raise ValueError('Scheduled player departure requires a closed upkeep or draw result')
+    return (SCHEDULED_PLAYER_CAPABILITY,)
