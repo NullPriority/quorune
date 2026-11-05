@@ -1321,11 +1321,13 @@ def capability_dependencies_for_node(
 
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
+    from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_CAPABILITY, DAMAGE_DEATH_EXILE_MECHANIC
     from .destruction_result_model import DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
     from .public_exile_result_model import PUBLIC_EXILE_RESULT_CAPABILITY, PUBLIC_EXILE_RESULT_MECHANIC
     from .revealed_library_top import REVEAL_TOP_CAPABILITY, REVEAL_TOP_MECHANIC
 
     mapping = {
+        DAMAGE_DEATH_EXILE_CAPABILITY: DAMAGE_DEATH_EXILE_MECHANIC,
         DESTRUCTION_RESULT_CAPABILITY: DESTRUCTION_RESULT_MECHANIC,
         PUBLIC_EXILE_RESULT_CAPABILITY: PUBLIC_EXILE_RESULT_MECHANIC,
         REVEAL_TOP_CAPABILITY: REVEAL_TOP_MECHANIC,

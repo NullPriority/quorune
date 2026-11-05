@@ -13,6 +13,8 @@ from .damage import (
 )
 from .damage_values import DamageProposal
 from .damage_source import DamageSourceSnapshot
+from .damage_death_exile_model import DamageDeathExileScope
+from .rules.damage_death_exile import commit_damage_death_exile
 from .affected_permanents import (
     AffectedPermanentSetError,
     AffectedPermanentSetSpec,
@@ -235,6 +237,7 @@ def resolve_fixed_damage_set(
     ] = (),
     replacement_event_ids: Sequence[str] = (),
     source_override: Mapping[str, Any] | None = None,
+    death_exile_scope: DamageDeathExileScope | None = None,
 ) -> DamageBatchResult:
     """Resolve one fixed set as one canonical simultaneous damage batch."""
 
@@ -312,6 +315,8 @@ def resolve_fixed_damage_set(
         )
     except DamageError as exc:
         raise FixedDamageSetError(str(exc)) from exc
+    if death_exile_scope is not None:
+        commit_damage_death_exile(host, scope=death_exile_scope, source_ref=source_ref, events=result.events)
     host._log(
         actor,
         "effect.damage.fixed_set",

@@ -40,11 +40,27 @@ def temporary_keyword_removal_instruction(effect):
 
 def temporary_keyword_removal_capabilities(*,effects,target_schema,mechanic_ids):
     mechanics=set(mechanic_ids)
-    if MECHANIC not in mechanics or 'cr-611-continuous-effects' not in mechanics or len(effects)!=1:
+    if MECHANIC not in mechanics or 'cr-611-continuous-effects' not in mechanics:
+        return ()
+    damage_dependencies = ()
+    if len(effects) == 2:
+        from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_FIELD, DamageDeathExileScope
+        from .damage_capability_shapes import fixed_damage_node_capabilities
+
+        damage, removal = effects
+        if (damage.get(DAMAGE_DEATH_EXILE_FIELD) != DamageDeathExileScope.TARGET.value
+                or removal.get('card') != '$target.0'):
+            return ()
+        damage_dependencies = fixed_damage_node_capabilities(effects=(damage,), target_schema=target_schema,
+                                                             mechanic_ids=mechanics)
+        if not damage_dependencies:
+            return ()
+        effects = (removal,)
+    if len(effects) != 1:
         return ()
     try:selection=temporary_keyword_removal_instruction(effects[0])
     except (ValueError,TypeError,KeyError):return ()
-    dependencies={CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn'}
+    dependencies={CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn', *damage_dependencies}
     if isinstance(selection,ObjectQuerySpec):
         from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
         if 'creature' not in selection.types_all or not fixed_resolution_characteristic_query_is_closed(selection,target_schema=target_schema):return ()

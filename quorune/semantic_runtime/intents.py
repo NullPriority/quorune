@@ -29,6 +29,7 @@ from ..rules.revealed_library_top import RevealedLibraryTopSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
 from ..fixed_damage_set_model import FixedDamageSetSpec
+from ..damage_death_exile_model import DamageDeathExileScope
 from ..impulse_access_model import ImpulseAccessDuration
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, thaw_value
@@ -442,6 +443,7 @@ class DealFixedDamageSetIntent:
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     replacement_event_ids: tuple[str, ...] = ()
     source_snapshot: FrozenMap | None = None
+    death_exile_scope: DamageDeathExileScope | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -459,6 +461,8 @@ class DealFixedDamageSetIntent:
             raise ValueError(
                 "Fixed damage-set intents require a typed recipient set"
             )
+        if self.death_exile_scope is not None and self.death_exile_scope is not DamageDeathExileScope.DEALT_CREATURES:
+            raise ValueError('Fixed damage-set death exile follows actual damaged creatures')
         object.__setattr__(
             self,
             "replacement_selections",

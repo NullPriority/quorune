@@ -322,6 +322,7 @@ def _generated_static_declaration(node: Any) -> bool:
 
 def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
     """Recognize only the reviewed fixed-damage effect-program family."""
+    from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_MECHANIC
 
     template_id = str(program.provenance.get("template_id") or "")
     if not template_id.startswith("damage-"):
@@ -333,7 +334,7 @@ def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value.startswith("cr-")
+                if value.startswith("cr-") or value == DAMAGE_DEATH_EXILE_MECHANIC
             ),
         )
     )

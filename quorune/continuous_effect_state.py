@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .damage_death_exile_model import ResolvedDamageDeathExile
 
 from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
@@ -174,7 +175,7 @@ def commit_continuous_effect(
 
     if not isinstance(
         effect,
-        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition),
+        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"

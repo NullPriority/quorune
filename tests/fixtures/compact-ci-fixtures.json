@@ -501,6 +501,7 @@
     "tests/fixtures/creature-subtype-addition-cards.json",
     "tests/fixtures/crime-cards.json",
     "tests/fixtures/cycle-or-discard-event-cards.json",
+    "tests/fixtures/damage-death-exile-cards.json",
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/damage-source-identity-cards.json",
     "tests/fixtures/dealt-damage-recipient-cards.json",

@@ -147,6 +147,16 @@ def reviewed_effect_template_composition(
     if atomic[0] is not None:
         return atomic
     folded = text.casefold()
+    if 'would die this turn, exile it instead.' in folded:
+        from .damage_death_exile_templates import damage_death_exile_template
+
+        death_exile = damage_death_exile_template(text, compile_body=partial(
+            reviewed_effect_template_composition, source_name=source_name,
+            compile_atomic=compile_atomic, compile_fixed=compile_fixed, cast_x_available=cast_x_available,
+            forbid_public_x=forbid_public_x, allow_declarations=allow_declarations, allow_conditions=allow_conditions,
+        ))
+        if death_exile is not None:
+            return death_exile
     if "card revealed this way" in folded and "each player reveals" in folded:
         from .revealed_library_top_templates import reveal_top_result_template
 

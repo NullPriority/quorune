@@ -168,6 +168,11 @@ overlapping groups before creating proposals. Every recipient then enters one
 rollback, and replay behavior cannot diverge from single-target or combat
 damage.
 
+Death-exile followups seal the originally selected creature or the creatures
+that actually received positive damage. The typed end-of-turn journal exposes
+their battlefield-to-graveyard replacements before state-based actions. A
+returning permanent has a new incarnation and leaves the prior rule behind.
+
 The affected-set owner accepts a nonnegative resolved integer. A zero amount
 delegates to the same canonical no-damage boundary: it produces no replacement
 or prevention choice, damage result, or damage-trigger history. Literal compiler

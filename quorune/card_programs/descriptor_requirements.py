@@ -25,6 +25,14 @@ def _committed_action_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     return ()
 
 
+def _damage_payload_dependencies(value, mechanics):
+    from ..damage_death_exile_model import damage_death_exile_payload_dependencies
+    from ..damage_prevention_permission import unpreventability_payload_dependencies
+
+    return (*unpreventability_payload_dependencies(value, coverage=mechanics),
+            *damage_death_exile_payload_dependencies(value, coverage=mechanics))
+
+
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
@@ -104,8 +112,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own,*life_gain_prohibition_payload_dependencies(value,coverage=mechanics))
         from ..counter_permission import counter_prohibition_payload_dependencies
         own = (*own,*counter_prohibition_payload_dependencies(value,coverage=mechanics))
-        from ..damage_prevention_permission import unpreventability_payload_dependencies
-        own = (*own,*unpreventability_payload_dependencies(value,coverage=mechanics))
+        own = (*own, *_damage_payload_dependencies(value, mechanics))
         if value.get('kind') == 'legend_rule_exemption':
             from ..legend_rule_model import legend_rule_payload_dependencies
             own = (*own, *legend_rule_payload_dependencies(value))

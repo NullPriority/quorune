@@ -9,6 +9,7 @@ from ..fixed_damage_set_model import (
     PermanentControllerRelation,
     PermanentDamageGroup,
 )
+from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_FIELD, damage_death_exile_scope
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import DealFixedDamageSetIntent, IntentPlan
 
@@ -24,6 +25,7 @@ _FIELDS = frozenset(
         "_replacement_selections",
         "_replacement_event_ids",
         "source_snapshot",
+        DAMAGE_DEATH_EXILE_FIELD,
     }
 )
 
@@ -118,6 +120,7 @@ class FixedDamageSetHandler:
                 replacement_selections=selections,
                 replacement_event_ids=event_ids,
                 source_snapshot=effect.get('source_snapshot'),
+                death_exile_scope=damage_death_exile_scope(effect),
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc
