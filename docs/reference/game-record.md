@@ -76,13 +76,15 @@ event shape and remains absent on serialization. Unknown, boolean and
 manifest/checkpoint-mismatched versions reject; existing runtime-trust checks
 retain their separate contract.
 
-Current games pin `characteristic_query_boundary_version: 1` in authoritative
+Current games pin `characteristic_query_boundary_version: 2` in authoritative
 checkpoints and format provenance. Bounded public characteristic reads include
 their completed requested layer, including color changes used by later conditional
-ability grants. Earlier-source participation and layer-six dependencies retain
-their existing owners. Historical absence preserves the former cutoff and remains
-absent on serialization. Unknown or boolean state versions and mismatched format
-provenance reject; declared runtime provenance retains its separate strict check.
+ability grants. Version two also reads the front face of face-up double-faced
+cards in the graveyard, exile, and command zone. Prospective cast and entry
+views keep their selected face. Version one retains its recorded face view,
+and historical absence preserves the former cutoff and remains absent on
+serialization. Unknown or boolean state versions and mismatched format
+provenance reject. Declared runtime provenance retains its separate strict check.
 See [ADR 0160](../adr/0160-versioned-completed-characteristic-queries.md).
 
 Static trigger-participation schema two retains a closed rule and optional

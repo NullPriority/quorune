@@ -147,7 +147,7 @@ def validate_state_versions(
             or blocks!=(block_characteristics_version(getattr(state,'block_characteristics_version',None)) or 0)):
         raise ValueError('Block characteristic facts provenance does not match the initial checkpoint')
     boundary=format_value.get('characteristic_query_boundary_version',0)
-    if (type(boundary) is not int or boundary not in {0,1}
+    if (type(boundary) is not int or boundary not in {0,1,2}
             or boundary!=(characteristic_query_boundary_version(getattr(state,'characteristic_query_boundary_version',None)) or 0)):
         raise ValueError('Characteristic query boundary provenance does not match the initial checkpoint')
     from .state_based_legend_model import legend_rule_choice_version

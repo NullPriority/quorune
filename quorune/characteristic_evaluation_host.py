@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION
 from .entry_copy import copiable_oracle_id
 from .ring_effects import ring_legendary_effects
 from .ring_state import current_ring_rule_views
@@ -653,6 +654,8 @@ class CharacteristicEvaluationHostMixin:
             card,
             record,
             error_type=GameRuleError,
+            public_zone_front_faces=(not printed_entry_characteristics
+                and getattr(self.state, 'characteristic_query_boundary_version', None) == PUBLIC_ZONE_FRONT_FACE_VERSION),
         )
         static_component_fragments = (
             self._effective_static_component_fragment_map()

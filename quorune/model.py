@@ -33,7 +33,7 @@ from .transform_timestamp_model import transform_timestamp_version
 from .face_status_timestamp_model import face_status_timestamp_version
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
-from .characteristic_query_boundary_model import characteristic_query_boundary_version
+from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION, characteristic_query_boundary_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import token_copy_value_version
@@ -1049,7 +1049,7 @@ class GameState:
     face_status_timestamp_version: int | None = 1
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
-    characteristic_query_boundary_version: int | None = 1
+    characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION
     stack_resolution_authority_version: int | None = 1
     token_copy_value_version: int | None = 1
     qualified_attack_facts_version: int | None = 1

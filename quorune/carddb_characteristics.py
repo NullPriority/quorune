@@ -94,6 +94,7 @@ def base_card_characteristics(
     record: CardRecord | None,
     *,
     cast_face_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION,
+    public_zone_front_faces: bool = False,
 ) -> dict[str, Any]:
     """Adapt printed or custom object data to the shared evaluator schema."""
 
@@ -143,7 +144,11 @@ def base_card_characteristics(
         }
 
     face = omen_characteristic_face(card, record, cast_face_version=cast_face_version)
-    if face is None and card.active_face:
+    if (face is None and public_zone_front_faces and record.layout in {'modal_dfc', 'transform'}
+            and len(record.faces) == 2 and card.zone in {'graveyard', 'exile', 'command'}
+            and not card.face_down and card.annotations.get('prospective_cast_face') is not True):
+        face = record.faces[0]
+    elif face is None and card.active_face:
         face = next(
             (
                 value

@@ -879,7 +879,7 @@ def collect_card_program_continuous_effects(
 ) -> tuple[ContinuousEffect, ...]:
     completed_layer_queries = characteristic_query_boundary_version(
         getattr(state, 'characteristic_query_boundary_version', None)
-    ) == 1
+    ) is not None
     registry = default_continuous_effect_component_registry()
     registered_handler_ids = frozenset(
         str(row["handler_id"]) for row in registry.inventory()

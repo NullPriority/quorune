@@ -104,12 +104,16 @@ class AbilityFragmentHostMixin:
         record: Any,
         *,
         error_type: type[Exception] | None = None,
+        public_zone_front_faces: bool = False,
     ) -> dict[str, Any]:
         if getattr(card,'permanent_composition',None) is not None:
             from .composition_characteristics import composition_copiable_values
             return composition_copiable_values(card.permanent_composition)
         base = base_card_characteristics(
-            card, record, cast_face_version=getattr(getattr(self, "state", None), "cast_face_offers_version", None),
+            card,
+            record,
+            cast_face_version=getattr(getattr(self, "state", None), "cast_face_offers_version", None),
+            public_zone_front_faces=public_zone_front_faces,
         )
         from .rules.station_symbols import compiled_station_symbols
         if compiled_station_symbols(self, card, record=record) is not None:
