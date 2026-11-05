@@ -61,6 +61,37 @@ def fixed_attachment_action_node_capabilities(
         or effect.get("target") != "$target.0"
     ):
         return ()
+    if effect.get("attachment_kind") == "equipment" and "controller_relation" in target_schema:
+        from ..compiler.direct_target import DirectPermanentTargetSpec
+        from .permanent_predicate_capability_shapes import (
+            direct_permanent_target_schema_is_closed,
+            direct_target_predicate_capabilities,
+        )
+
+        if not direct_permanent_target_schema_is_closed(target_schema):
+            return ()
+        try:
+            spec = DirectPermanentTargetSpec.from_target_schema(target_schema)
+        except (TypeError, ValueError):
+            return ()
+        if (
+            spec.controller_relation != "you"
+            or not (spec.types_any == ("creature",) or spec.types_all == ("creature",))
+            or not (spec.subtypes_any or spec.subtypes_none)
+            or spec != DirectPermanentTargetSpec(
+                types_any=spec.types_any,
+                types_all=spec.types_all,
+                subtypes_any=spec.subtypes_any,
+                subtypes_none=spec.subtypes_none,
+                controller_relation="you",
+            )
+        ):
+            return ()
+        return (
+            FIXED_SOURCE_ATTACHMENT_CAPABILITY,
+            "target.revalidate_resolution",
+            *direct_target_predicate_capabilities(target_schema),
+        )
     allowed_schema = {
         "zones",
         "categories",

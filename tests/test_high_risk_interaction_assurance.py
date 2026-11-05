@@ -4,6 +4,7 @@ import unittest
 
 from common import DB_PATH
 from high_risk_interaction_support import (
+    boundary_record,
     ALL_HIGH_RISK_BOUNDARY_PAIRS,
     BOUND_EFFECT_AND_REPLACEMENT_PAIRS,
     CONTINUOUS_AND_REPLACEMENT_PAIRS,
@@ -50,6 +51,26 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         cls.db.close()
+
+    def test_promoted_original_emblem_and_reanimation_have_normal_complete_admission(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+
+        registry = load_default_capability_registry()
+        for name in ("Gideon, Ally of Zendikar", "Proclamation of Rebirth"):
+            with self.subTest(name=name):
+                record = self.db.lookup(name)
+                self.assertIsNotNone(record)
+                program = compile_best_available_card_program(
+                    self.db, record, semantic_registry=SemanticRegistry(),
+                    capability_registry=registry, capability_profile="commander_review",
+                )
+                binding = bind_card_program_runtime(
+                    program, capability_registry=registry, profile="commander_review",
+                )
+                self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
 
     def test_original_caldera_devour_damage_closes_while_variable_entry_payment_remains_residual(self):
         from high_risk_interaction_support import _observed_piece_ids
@@ -146,13 +167,27 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         from quorune.semantics import SemanticRegistry
 
         expected = {
-            'The Shattered States Era // Nameless Conqueror': 'continuous.control.fixed_resolution',
-            'The Legend of Kyoshi // Avatar Kyoshi': 'mana.production.public_quantity',
+            'The Shattered States Era // Nameless Conqueror': (
+                'capability.continuous.control.fixed_resolution',
+                'residual.card_form.ordinary-saga-chapter-event-binding',
+                'residual.effect_clause.exact-typed-chapter-effect-body'),
+            'The Legend of Kyoshi // Avatar Kyoshi': (
+                'capability.mana.production.public_quantity',
+                'residual.card_form.ordinary-saga-chapter-event-binding',
+                'residual.effect_clause.exact-typed-chapter-effect-body'),
+            'control-replacement-boundary': (
+                'capability.continuous.control.fixed_resolution',
+                'residual.replacement.replacement-applicability',
+                'residual.replacement.self-replacement-and-prevention-ordering'),
+            'quantity-mana-replacement-boundary': (
+                'capability.mana.production.public_quantity',
+                'residual.replacement.replacement-applicability',
+                'residual.replacement.self-replacement-and-prevention-ordering'),
         }
         registry = load_default_capability_registry()
-        for name, capability in expected.items():
+        for name, pieces in expected.items():
             with self.subTest(name=name):
-                card = self.db.lookup(name)
+                card = boundary_record(self.db, name)
                 ir = compile_oracle_card(card, capability_registry=registry,
                                          capability_profile='commander_review')
                 program = compile_best_available_card_program(
@@ -161,11 +196,7 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 )
                 row = analyze_card_unlocks(ir, program=program, program_error=None,
                                           capabilities=registry, profile='commander_review')
-                self.assertLessEqual({
-                    'capability.' + capability,
-                    'residual.replacement.replacement-applicability',
-                    'residual.replacement.self-replacement-and-prevention-ordering',
-                }, _observed_piece_ids(row))
+                self.assertLessEqual(set(pieces), _observed_piece_ids(row))
                 self.assertTrue(ir.material_residuals)
                 self.assertEqual('residual', row['card_program_status'])
                 self.assertIsNone(row['hard_construction_failure'])
@@ -260,19 +291,23 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
         expected = {
             "Azusa's Many Journeys // Likeness of the Seeker": (
                 'capability.permanent.untap.fixed_land_choice',
-                'residual.replacement.replacement-applicability',
-                'residual.replacement.self-replacement-and-prevention-ordering'),
+                'residual.card_form.ordinary-saga-chapter-event-binding',
+                'residual.effect_clause.exact-typed-chapter-effect-body'),
             'Valki, God of Lies // Tibalt, Cosmic Impostor': (
                 'capability.target.permanent.characteristic_predicate',
                 'capability.zone.move.fixed_public_set'),
             'Ob Nixilis, the Adversary': (
                 'capability.zone.draw.library_to_hand',
                 'residual.copy_or_face.multiple-granted-instances-permanent-variable-copy-exceptions-and-mixed-consuming-costs'),
+            'land-untap-replacement-boundary': (
+                'capability.permanent.untap.fixed_land_choice',
+                'residual.replacement.replacement-applicability',
+                'residual.replacement.self-replacement-and-prevention-ordering'),
         }
         registry = load_default_capability_registry()
         for name, pieces in expected.items():
             with self.subTest(name=name):
-                card = self.db.lookup(name)
+                card = boundary_record(self.db, name)
                 ir = compile_oracle_card(card, capability_registry=registry, capability_profile='commander_review')
                 program = compile_best_available_card_program(self.db, card, semantic_registry=SemanticRegistry(),
                     capability_registry=registry, capability_profile='commander_review')
@@ -341,12 +376,18 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             ),
             "Kytheon, Hero of Akros // Gideon, Battle-Forged": (
                 "capability.permanent.indestructible.ordinary",
+                "capability.damage.prevention.persistent_amount",
+                "residual.activated_effect.tap-state",
+                "residual.activated_effect.ordered-effect-composition",
+            ),
+            "indestructible-dynamic-prevention-boundary": (
+                "capability.permanent.indestructible.ordinary",
                 "residual.replacement.damage-prevention",
             ),
         }
         for name, pieces in expected.items():
             with self.subTest(name=name):
-                record = self.db.lookup(name)
+                record = boundary_record(self.db, name)
                 ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
                 program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(), capability_registry=registry, capability_profile="commander_review")
                 row = analyze_card_unlocks(ir, program=program, program_error=None, capabilities=registry, profile="commander_review")

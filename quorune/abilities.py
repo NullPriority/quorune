@@ -1084,9 +1084,9 @@ def _parse_cost(actual_cost: str, card_name: str) -> _ParsedCost:
         if not residue:
             continue
         lower = residue.casefold().strip(" .")
-        loyalty_match = re.fullmatch(r"(?P<sign>[+\-\u2212])(?P<amount>\d+)", residue)
+        loyalty_match = re.fullmatch(r"(?:(?P<sign>[+\-\u2212])(?P<amount>\d+)|0)", residue)
         if loyalty_match:
-            amount = int(loyalty_match.group("amount"))
+            amount = int(loyalty_match.group("amount") or 0)
             loyalty_clauses += 1
             loyalty_delta = amount if loyalty_match.group("sign") == "+" else -amount
             if loyalty_clauses > 1:

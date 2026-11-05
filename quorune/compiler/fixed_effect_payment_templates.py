@@ -22,8 +22,10 @@ _OPEN = re.compile(r"\b(?:if|unless|may|when|where|random|repeat|this way|that m
 Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]]
 
 
-def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
+def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False) -> FixedEffectPaymentSpec | None:
     value=text.strip()
+    if allow_source_sacrifice and re.fullmatch(r'sacrifice this (?:artifact|aura|battle|creature|enchantment|equipment|land|permanent|planeswalker|token|vehicle)',value,re.I):
+        return FixedEffectPaymentSpec('source_sacrifice',schema_version=7,source_ref='$source.zone_object')
     compound=re.fullmatch(r'pay (?P<mana>(?:\{(?:[0-9]+|[WUBRGC])\})+) and discard a card',value,re.I)
     if compound is not None:
         from ..object_predicate import ObjectQuerySpec
@@ -55,6 +57,8 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
         if parsed is None or parsed.operation!='discard_one':return None
         return FixedEffectPaymentSpec('discard',predicate=replace(parsed.predicate,owner='$controller'))
     if value.casefold().startswith('sacrifice '):
+        another=bool(re.match(r'sacrifice another ',value,re.I))
+        if another:clause='As an additional cost to cast this spell, '+re.sub(r'^sacrifice another ', 'sacrifice a ',value,flags=re.I)+'.'
         parsed=fixed_sacrifice_additional_cost_template(clause)
         from ..object_predicate import ObjectQuerySpec
         if parsed is not None:predicate=ObjectQuerySpec.from_dict(parsed.descriptor['predicate'])
@@ -62,7 +66,8 @@ def fixed_effect_payment_spec(text: str) -> FixedEffectPaymentSpec | None:
             zone_cost=fixed_zone_change_additional_cost_template(clause)
             if zone_cost is None or zone_cost.operation!='sacrifice_one':return None
             predicate=zone_cost.predicate
-        return FixedEffectPaymentSpec('sacrifice',predicate=replace(predicate,controller='$controller'))
+        return FixedEffectPaymentSpec('sacrifice',schema_version=6 if another else 2,
+            predicate=replace(predicate,controller='$controller',exclude_ref='$source.zone_object' if another else None))
     return None
 
 
@@ -114,7 +119,7 @@ def _owned_graveyard_exile_payment(value):
 def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], Compiled]) -> Compiled | None:
     match=_PAYMENT.fullmatch(text.strip())
     if match is None:return None
-    cost=fixed_effect_payment_spec(match['cost'])
+    cost=fixed_effect_payment_spec(match['cost'],allow_source_sacrifice=True)
     body=match['body'].strip()
     if cost is None or _OPEN.search(body) or '"' in body:return None
     template,effects,schema,mechanics=compile_effect(body)
@@ -148,6 +153,9 @@ def fixed_effect_payment_with_mandatory_prefix(text: str, *, compile_effect: Cal
 
 
 def is_closed_fixed_effect_payment_program(program: Any) -> bool:
+    from ..rules.fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
+    try:fixed_payment_event_player_runtime_dependencies(program)
+    except (TypeError,ValueError):return False
     from ..rules.fixed_effect_clause_shapes import fixed_optional_mana_payment_node_capabilities
     required=set(fixed_optional_mana_payment_node_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage))
     return bool(required) and required <= set(program.capability_dependencies)

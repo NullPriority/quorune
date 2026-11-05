@@ -9,6 +9,65 @@ maintenance: "hand-maintained"
 
 # Typed semantic handlers
 
+Closed two-clause effects also accept top-level comma-then and period-Then
+wording. The compiler retains each independently owned instruction and the
+complete target schema. Quoted and parenthetical rules stay nested; linked
+references, intrinsic search/shuffle and ambiguous optional scope remain with
+their dedicated owners. An omitted third-person player subject keeps its
+explicit first-clause player relation. Resolution order, later choices and
+target legality use the existing sequence and instruction owners.
+
+Optional graveyard returns use an actor-scoped non-target choice. Candidates
+come from the current owned graveyard through the shared public-zone query,
+with a closed card-type predicate. The choice seals incarnations and rechecks
+the current candidate set before emitting the existing identity-bound return
+intent. In a mill/return sequence, milling and its replacements finish before
+the optional choice; previously present cards remain eligible. Declining the
+return leaves the preceding instructions committed. The resolving controller
+owns the choice even if control of its permanent source later changes.
+
+Explore completion uses the canonical reveal, counter and movement transaction.
+Its qualified creature event reads the same incarnation's current types or
+the existing ability-source LKI snapshot. A returned physical card cannot
+replace the departed explorer's identity or controller. The legacy permanent
+completion and qualified creature completion join one ordinary APNAP batch;
+the type facts remain transient choice and intent data.
+
+Public source-counter results reuse the counter compiler's self-reference
+vocabulary and closed counter/controller sequence owner. Source growth followed
+by a temporary declaration rule composes the existing leaves, each pinned to
+the source incarnation. Losing a source prevents its counter or modifier while
+independent controller instructions continue in their printed order.
+
+Chosen-color cast triggers compare canonical event-time spell colors with the
+source incarnation's existing public color designation. Current controller
+and any-caster subscriptions remain distinct. Multicolored membership yields
+one trigger per cast; an absent designation, colorless spell or uncast copy
+does not qualify. The runtime independently infers the designation-reader
+dependency. Ordinary result owners retain source-counter identity, optional
+choice authority and the caster referenced by "that player."
+
+Crime is recorded at authoritative initial cast, activation and targeted
+trigger completion. The typed classifier reads sealed initial target roles
+across players, permanents, stack objects and graveyard cards. One qualifying
+action creates one history fact and actor-relative event, independently from
+how many targets qualify or whether the action resolves. An uncast spell copy
+is not a cast, an activated-ability copy is not activated, and a triggered
+ability copy put on the stack can qualify. Retargeting neither creates nor
+erases the original crime. Current-turn conditions read complete versioned
+history; source trigger-use limits remain independent. Public condition and
+event descriptors infer the crime capability through the ordinary compiler
+and runtime requirement owners. Unrepresented result bodies remain residual.
+
+Targeted face-up instructions use the existing domain-effect handler family.
+Their closed schema rejects forged runtime context, extra fields and noninteger
+versions before lowering. The existing target owner revalidates face-down status
+and controller relation; the effect delegates to `ZoneTransitionOwner.turn_face_up`.
+Successful attempts publish one face-up occurrence after the canonical status
+change. Physical spell-card refusals publish a brief reveal through the same
+owner and retain face-down status without firing face-up triggers. Morph prices
+are relevant to special actions, not this resolving instruction.
+
 Fixed opponent loss followed by gain equal to the actual life lost uses
 `ActualLifeTransferHandler` in the existing semantic-choice registry. The
 existing life-loss batch commits each active opponent's replacement-aware
@@ -217,8 +276,13 @@ closed and the same target contract. Entry results consume immutable original
 entry facts; a later departure or unpaid reentry cannot replace that occurrence.
 Spell copies retain declarations, while ordinary permanent copies do not
 inherit another object's casting history. No global flag or game-state mode is
-introduced. Conditional announcement targets, discounts and other unrepresented
-linked bodies remain residual. See
+introduced. `DeclaredCostReductionSpec` qualifies a fixed generic discount with
+the same source-local declaration. Its component belongs to the existing cast
+registry and requires complete card admission. The shared total-cost planner
+applies the server-generated option's facts before sacrifice payment; colored
+requirements and printed mana value remain unchanged. Conditional announcement
+targets, variable or colored Bargain discounts and other unrepresented linked
+bodies remain residual. See
 [ADR 0137](../adr/0137-linked-optional-casting-declarations.md).
 
 Forecast is an optional marker in the existing activated-ability descriptor.
@@ -347,6 +411,20 @@ a closed life-intent identity and resumes only that uncommitted intent. The
 continuation decoder rejects unknown intent kinds and changed identity, and
 exact replay reissues the same semantic response and replacement selection.
 
+Life-total setting uses a closed `LifeTotalValueSpec` and one immutable
+resolution snapshot. The existing domain-effect handler supplies authenticated
+source context; programs cannot supply that context themselves. Fixed,
+starting-life, extreme-life and represented board/library count values produce
+the ordinary signed gain or loss required by CR 119.5. The existing life batch
+then applies gain permission, replacements and source-attributed result events.
+It never assigns the requested final total directly. All-player instructions
+freeze every value before any replacement choice or mutation, so later players
+do not read earlier replacement-adjusted totals. A zero difference produces no
+life event. Exchange, team and unrepresented quantity or rider semantics remain
+outside this producer. Existing effects and record state fields keep their
+current representations.
+Board counts exclude phased-out permanents under their current status.
+
 Backup commits canonical target counters before a version-seven temporary
 ability bundle. Its shared target decision permits any legal creature; a self
 target gets only the counters. A different target gains fixed keywords and
@@ -431,6 +509,17 @@ members, and destination replacements retain the sealed choice before the
 remaining instructions resume. Sacrifice uses its own transition cause and
 does not consume destruction or regeneration effects.
 
+Alternative-quality hand discards use a typed `alternative_discard_count`
+inside the same APNAP instruction. The affected player can discard one card
+matching the closed quality predicates or the available fallback subset.
+Having a matching card does not remove the fallback option. The private form
+offers separate matching and fallback branches, and command validation uses
+the same legal subsets. Draws printed before the discard finish before its
+hand is inspected; the discard still applies when those draws are prevented.
+Each player's selected cards stay hidden from other principals and remain in
+hand until the existing simultaneous discard commit. Ordinary fixed and
+fractional choice payloads retain their previous form and validation.
+
 The separate `discard_random_cards` instruction samples a fixed one-to-four
 card subset of each represented current hand without a client selection choice.
 Each player's complete hand is validated before sampling; empty and short hands
@@ -496,6 +585,15 @@ deferred through the existing APNAP batch owner. Independent creation
 instructions remain sequential, including zero actual creations. Printed
 Haste-qualified entry observers remain residual; event-data diagnostics do not
 expand that grammar.
+
+Creation triggers use individual `token.created` facts or one complete
+`tokens.created` instruction fact. The latter retains the actual creator,
+replacement-adjusted creature count and whether that player had an earlier
+creation event this turn. First-event qualification is independent of when an
+observer arrived or last used its ability. Create-or-sacrifice wording retains
+separate subscription predicates; token death alone is not a sacrifice.
+Existing event contexts and historical state shapes remain unchanged.
+
 Copied recurring abilities remain ordinary typed granted triggers. Populate
 chooses only a currently controlled creature token, including the known-empty
 case, through the existing choice and token owners. Historical descriptor

@@ -22,23 +22,30 @@ from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
 _COPY_TERM = "copy"
 
 
-def physical_stack_record(host: Any, item: StackItem):
-    """Bind spell provenance to the announced physical card after copy entry."""
+def physical_stack_record(host: Any, item: StackItem, *, physical_card: Any = None):
+    """Bind provenance to the announced physical card, including a detached source."""
     from .entry_copy import copiable_oracle_id
 
     card = host.state.cards.get(item.card_object_id or '')
+    detached=card is None and physical_card is not None
+    if detached:
+        if physical_card.object_id!=item.card_object_id:
+            raise StateInvariantError('Captured physical spell source belongs to another object')
+        card=physical_card
     from .face_down_characteristics_model import face_down_characteristics_mode
-    if (card is not None and item.kind=='spell_copy' and face_down_characteristics_mode(host)==1
+    from .token_copy_value_model import token_copy_value_mode
+    if (card is not None and item.kind=='spell_copy'
+            and (face_down_characteristics_mode(host)==1 or token_copy_value_mode(host)==1)
             and card.oracle_id.startswith('custom-copy:')):return None
     if card is not None and copiable_oracle_id(card) != card.oracle_id:
         return host.card_db.by_oracle_id(card.oracle_id)
-    return host.card_record(item.card_object_id)
+    return host.card_record(card if detached else item.card_object_id)
 
 
 class GenericStackResolutionQuery(Protocol):
     semantics: Any
 
-    def card_record(self, object_id: str) -> Any: ...
+    def card_record(self, object_id: str | CardInstance) -> Any: ...
 
     def _trusted_generic_spell(self, record: Any) -> bool: ...
 
@@ -67,6 +74,7 @@ def trusted_generic_empty_resolution(
     host: GenericStackResolutionQuery,
     item: StackItem,
     program: Any,
+    *, physical_card: Any = None,
 ) -> EmptyStackResolution | None:
     """Plan an empty resolution only for an exact spell without an effect program."""
 
@@ -74,7 +82,7 @@ def trusted_generic_empty_resolution(
         return None
     provenance: str | None = None
     if item.kind == "spell" and item.card_object_id:
-        record = physical_stack_record(host, item)
+        record = physical_stack_record(host, item, physical_card=physical_card)
         from .face_down_characteristics_model import face_down_characteristics_mode
         if face_down_characteristics_mode(host)==1:
             card=host.state.cards.get(item.card_object_id)
@@ -105,7 +113,15 @@ def trusted_generic_empty_resolution(
     )
 
 
-def complete_stack_resolution(
+def complete_stack_resolution(host: StackResolutionCompletionHost,*,item: StackItem,
+        destination: str | None,prepared_replacement: PreparedZoneChange | None) -> None:
+    from .rules.entry_cast_information import resolving_entry_cast_information
+    from .rules.ravenous import resolving_ravenous_entry
+    with resolving_entry_cast_information(host,item),resolving_ravenous_entry(host,item):
+        _complete_stack_resolution(host,item=item,destination=destination,prepared_replacement=prepared_replacement)
+
+
+def _complete_stack_resolution(
     host: StackResolutionCompletionHost,
     *,
     item: StackItem,

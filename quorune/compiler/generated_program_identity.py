@@ -84,7 +84,7 @@ def generated_ability_id(
                 _EVOLVE_MECHANIC,
                 _CASCADE_MECHANIC,
                 _PROWESS_MECHANIC,
-                'increment',
+                'increment', 'myriad',
                 AFTERLIFE_MECHANIC_ID,
                 "chapter",
                 "backup",

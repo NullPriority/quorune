@@ -254,6 +254,22 @@ class StaticAttachedControlRuntimeTests(unittest.TestCase):
         ir=compile_oracle_card(record,capability_registry=self.registry,capability_profile='commander_review')
         program=compile_best_available_card_program(self.db,record,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
         row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')
+        self.assertLessEqual({'capability.continuous.control.attached_source',
+            'residual.continuous_layer.continuous-effect-layers-and-dependencies',
+            'residual.target_or_choice.conditional-effect'},_observed_piece_ids(row))
+        self.assertEqual('residual',row['card_program_status']);self.assertIsNone(row['hard_construction_failure'])
+        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready']);self.assertFalse(binding['compatible_ready'])
+        self.assertIn('trust_basis:unresolved',binding['blockers'])
+        # Keep the replacement boundary explicit after Gift stopped being
+        # mislabeled as a replacement residual by the classifier.
+        from dataclasses import replace
+        boundary=replace(record,name='Generic Attached Control Replacement Boundary',
+            oracle_id='fixture:attached-control-replacement',
+            oracle_text='Enchant creature\nYou control enchanted creature.\nSkip your draw step.')
+        ir=compile_oracle_card(boundary,capability_registry=self.registry,capability_profile='commander_review')
+        program=compile_best_available_card_program(self.db,boundary,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
+        row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')
         self.assertLessEqual({'capability.continuous.control.attached_source','residual.replacement.replacement-applicability',
             'residual.replacement.self-replacement-and-prevention-ordering'},_observed_piece_ids(row))
         self.assertEqual('residual',row['card_program_status']);self.assertIsNone(row['hard_construction_failure'])

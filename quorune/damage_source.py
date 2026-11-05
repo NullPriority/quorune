@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from .permanent_event_state_model import PermanentEventState
+
 from dataclasses import dataclass
 from math import isfinite
 from typing import Any, Iterable, Mapping
+from .commander_damage_identity_model import PhysicalCommanderDamageIdentities
 
 from .ability_fragments import (
     AbilityFragmentError,
@@ -96,8 +99,18 @@ class DamageSourceSnapshot:
     toxic_value: int | None = 0
     scope_facts: tuple[str,...] = ()
     combat_partners: tuple[str,...] = ()
+    physical_commander_identities: PhysicalCommanderDamageIdentities | None = None
+    permanent_state: PermanentEventState | None = None
 
     def __post_init__(self) -> None:
+        if self.permanent_state is not None and not isinstance(self.permanent_state,PermanentEventState):
+            raise DamageError('Damage source permanent state must be typed or absent')
+        if self.physical_commander_identities is not None:
+            if not isinstance(self.physical_commander_identities,PhysicalCommanderDamageIdentities):
+                raise DamageError('Physical commander source identities must be typed')
+            try:self.physical_commander_identities.validate_source(is_commander=self.is_commander,
+                designation_id=self.commander_designation_id,oracle_id=self.oracle_id)
+            except ValueError as exc:raise DamageError(str(exc)) from exc
         from .damage_scope_facts import canonical_damage_scope_facts,canonical_damage_partner_identities
         object.__setattr__(self,'scope_facts',canonical_damage_scope_facts(self.scope_facts))
         object.__setattr__(self,'combat_partners',canonical_damage_partner_identities(self.combat_partners))
@@ -153,6 +166,9 @@ class DamageSourceSnapshot:
 
     def to_dict(self) -> dict[str, object]:
         return {
+            **({'permanent_state':self.permanent_state.to_dict()} if self.permanent_state is not None else {}),
+            **({'physical_commander_identities':self.physical_commander_identities.to_dict()}
+               if self.physical_commander_identities is not None else {}),
             **({'scope_facts':list(self.scope_facts)} if self.scope_facts else {}),
             **({'combat_partners':list(self.combat_partners)} if self.combat_partners else {}),
             "ref": self.ref,
@@ -196,7 +212,7 @@ class DamageSourceSnapshot:
             "toxic_value",
         }
         legacy_expected = expected - {"mana_value"}
-        if frozenset(set(value)-{'scope_facts','combat_partners'}) not in {
+        if frozenset(set(value)-{'scope_facts','combat_partners','physical_commander_identities','permanent_state'}) not in {
             frozenset(expected),
             frozenset(legacy_expected),
         }:
@@ -227,7 +243,14 @@ class DamageSourceSnapshot:
                 raise DamageError("Damage source snapshot identity is malformed")
         if type(value["is_commander"]) is not bool:
             raise DamageError("Damage source commander flag is malformed")
+        try:
+            physical=(PhysicalCommanderDamageIdentities.from_dict(value['physical_commander_identities'])
+                if 'physical_commander_identities' in value else None)
+            permanent=(PermanentEventState.from_dict(value['permanent_state']) if 'permanent_state' in value else None)
+        except (ValueError,TypeError) as exc:raise DamageError(str(exc)) from exc
         return cls(
+            permanent_state=permanent,
+            physical_commander_identities=physical,
             scope_facts=value.get('scope_facts',()),
             combat_partners=value.get('combat_partners',()),
             ref=value["ref"],

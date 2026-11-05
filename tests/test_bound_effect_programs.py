@@ -4,8 +4,8 @@ from __future__ import annotations
 
 A targeted player draws then loses life; the ability controller is distinct.
 A later 'it' refers to the same selected incarnation, preserving qualifiers.
-Two explicit target clauses still require independent choices and stay outside
-this grammar. A suspended replacement resumes after already committed effects.
+Two explicit target clauses use independent choices through the shared sequence
+owner, outside this grammar. A suspended replacement resumes after committed effects.
 """
 
 from copy import deepcopy
@@ -26,6 +26,7 @@ from quorune.compiler.bound_effect_programs import (
     bound_effect_program_template,
 )
 from quorune.compiler.closed_effect_programs import closed_effect_program_template
+from quorune.compiler.target_player_sequences import TARGET_PLAYER_SEQUENCE_CAPABILITY
 from quorune.continuous_effect_state import expire_end_of_turn_continuous_effects
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.model import CardInstance, GameConfig
@@ -111,7 +112,8 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
                 with self.subTest(text=text):
                     ir = self.compile(text, kind)
                     self.assertEqual("exact", ir.status, ir.material_residuals)
-                    self.assertTrue(any(CAPABILITY in n.capability_dependencies for f in ir.faces for n in f.nodes))
+                    owner = TARGET_PLAYER_SEQUENCE_CAPABILITY if body in bodies[:2] else CAPABILITY
+                    self.assertTrue(any(owner in n.capability_dependencies for f in ir.faces for n in f.nodes))
                     self.assertTrue(all(n.text == text[n.span.start:n.span.end] for f in ir.faces for n in f.nodes))
 
     def test_bound_effect_exclusions_and_malformed_shapes(self):
@@ -121,6 +123,14 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         for text in (
             "Untap target creature. Target creature gets +2/+2 until end of turn.",
             "Target player draws two cards. Target player loses 2 life.",
+        ):
+            with self.subTest(independent_targets=text):
+                self.assertIsNone(bound_effect_program_template(text, compile_component=compile_atomic))
+                ir=self.compile(text)
+                self.assertEqual('exact',ir.status,ir.material_residuals)
+                self.assertEqual(2,len(ir.faces[0].nodes))
+                self.assertTrue(all(node.target_schema['count']==1 for node in ir.faces[0].nodes))
+        for text in (
             "Target creature gets +2/+2 until end of turn. Its controller draws a card.",
             "Return target creature card from your graveyard to your hand. Untap that card.",
             "Target creature gets +2/+2 until end of turn. If it is attacking, untap it.",
@@ -150,7 +160,7 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
                 effects=effects, target_schema=changed_schema, mechanic_ids=mechanics))
 
     def test_bound_effect_dependency_and_compiler_mutants(self):
-        text = "Target player draws two cards and loses 2 life."
+        text = "Untap target creature. It gains flying until end of turn. Draw a card."
         self.assertEqual("exact", self.compile(text).status)
         for dependency in (CAPABILITY, "zone.draw.library_to_hand", "target.revalidate_resolution"):
             raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
@@ -165,9 +175,9 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
     def test_measurement_requires_real_whole_program_closure(self):
         candidates = tuple(replace(record(text, kind), oracle_id=f"fixture:bound-probe-{index}")
             for index, (text, kind) in enumerate((
-                ("Target player draws two cards and loses 2 life.", "Instant"),
+                ("Untap target creature. It gains flying until end of turn. Draw a card.", "Instant"),
                 ("Untap target creature. It gains flying until end of turn.", "Instant"),
-                ("Warp {2}\nWhen this creature enters, target player draws two cards and loses 2 life.",
+                ("Warp {2}\nWhen this creature enters, untap target creature. It gains flying until end of turn. Draw a card.",
                  "Creature — Human"),
             )))
         with patch("quorune.compiler.effect_template_composition.bound_effect_program_template", return_value=None):

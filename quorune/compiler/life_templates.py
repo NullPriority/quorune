@@ -86,10 +86,27 @@ def _player_target_schema(relation: str) -> dict[str, Any]:
     }
 
 
-def fixed_actual_life_transfer_template(text: str):
-    from ..rules.actual_life_transfer import ACTUAL_LIFE_TRANSFER_OPERATION
-    match=re.fullmatch(rf'each opponent loses (?P<count>{FIXED_COUNT_PATTERN}) life(?:, then|\. Then) you gain life equal to the life lost this way\.?',text,re.I)
+def _public_actual_life_transfer_template(text,source_name):
+    if source_name is None:return None
+    match=re.fullmatch(r'each opponent loses (?:X life, where X is (?P<declared>[^.]+)|life equal to (?P<direct>[^.]+))\. (?:Then )?You gain life equal to the life lost this way\.?',text,re.I)
     if match is None:return None
+    from .live_battlefield_quantities import resolution_quantity
+    from ..characteristic_fragments import CharacteristicQuantityScope,CharacteristicQuantitySpec
+    from ..query_effect_amount_model import PublicQueryAmountSpec
+    from ..rules.actual_life_transfer import ACTUAL_LIFE_TRANSFER_OPERATION
+    quantity=resolution_quantity(match['declared'] or match['direct'],source_name=source_name,complete_value=True)
+    if (not isinstance(quantity,CharacteristicQuantitySpec) or quantity.scope is not CharacteristicQuantityScope.CONTROLLER_ZONE
+            or quantity.query is None or quantity.query.zones!=('battlefield',)):return None
+    return FixedLifeEffectTemplate(template_id='actual-opponent-public-life-transfer-v1',
+        effect={'op':ACTUAL_LIFE_TRANSFER_OPERATION,'schema_version':1,'player':'$controller',
+            'amount':PublicQueryAmountSpec(quantity).to_dict()},
+        mechanic_ids=(LIFE_MECHANIC,'public-query-effect-amount'))
+
+
+def fixed_actual_life_transfer_template(text: str,*,source_name=None):
+    from ..rules.actual_life_transfer import ACTUAL_LIFE_TRANSFER_OPERATION
+    match=re.fullmatch(rf'each (?:opponent|other player) loses (?P<count>{FIXED_COUNT_PATTERN}) life(?:, then|\.(?: Then)?) you gain life equal to the life lost this way\.?',text,re.I)
+    if match is None:return _public_actual_life_transfer_template(text,source_name)
     count=fixed_number(match['count'])
     if count<=0:return None
     return FixedLifeEffectTemplate(template_id='actual-opponent-life-transfer-v1',
@@ -99,11 +116,15 @@ def fixed_actual_life_transfer_template(text: str):
 
 def fixed_life_effect_template(
     text: str,
+    *,source_name: str | None=None,
 ) -> FixedLifeEffectTemplate | None:
     """Lower closed fixed controller, target-player, and opponent changes."""
 
     normalized = " ".join(text.strip().split())
-    actual=fixed_actual_life_transfer_template(normalized)
+    from .life_total_setting_templates import life_total_setting_template
+    setting=life_total_setting_template(normalized)
+    if setting is not None:return setting
+    actual=fixed_actual_life_transfer_template(normalized,source_name=source_name)
     if actual is not None:return actual
     match = re.fullmatch(
         rf"target opponent loses (?P<count>{FIXED_COUNT_PATTERN}) life "

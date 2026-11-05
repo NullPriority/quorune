@@ -54,6 +54,8 @@ from .conspire import FixedConspireHandler
 from .casualty import FixedCasualtyHandler
 from .bargain import BargainCostHandler
 from ..bargain_model import FixedBargainSpec
+from ..declared_cost_reductions import DeclaredCostReductionSpec
+from .declared_cost_reductions import DeclaredCostReductionHandler
 from .targeted_spell_costs import TargetedSpellCostHandler
 from .activation_costs import FixedActivationCostModifierHandler, TargetedActivationCostModifierHandler, PublicQuantityActivationCostModifierHandler
 from ..activation_cost_modifiers import FixedActivationCostModifierSpec
@@ -552,6 +554,7 @@ class CastCostComponentRegistry(
         | FixedConspireSpec
         | FixedCasualtySpec
         | FixedBargainSpec
+        | DeclaredCostReductionSpec
         | FixedActivationCostModifierSpec,
     ]
 ):
@@ -584,6 +587,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
             FixedConspireHandler(),
             FixedCasualtyHandler(),
             BargainCostHandler(),
+            DeclaredCostReductionHandler(),
             FixedActivationCostModifierHandler(),
             TargetedActivationCostModifierHandler(),
             PublicQuantityActivationCostModifierHandler(),

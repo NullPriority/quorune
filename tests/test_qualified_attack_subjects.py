@@ -45,7 +45,12 @@ class QualifiedAttackCompilerTests(unittest.TestCase):
         old=_qualified_damage_singular_spec('Whenever a blue creature you control deals combat damage to a player, draw a card.')
         self.assertIsNotNone(old)
         self.assertFalse(any(PREFIX in str(v) for v in old.condition.values()))
-        self.assertIsNone(_qualified_damage_singular_spec('Whenever a modified creature you control deals combat damage to a player, draw a card.'))
+        modified=_qualified_damage_singular_spec('Whenever a modified creature you control deals combat damage to a player, draw a card.')
+        self.assertIsNotNone(modified)
+        self.assertIn('trigger.event.state_qualified_damage',modified.capabilities)
+        self.assertIn({'field':'source_permanent_state_modified','op':'eq','value':True},modified.condition['all'])
+        self.assertFalse(any(PREFIX in str(v) for v in modified.condition.values()))
+        self.assertIsNone(_qualified_damage_singular_spec('Whenever a creature you control that became modified this turn deals combat damage to a player, draw a card.'))
         valid={'all':[{'field':PREFIX+'version','op':'eq','value':1},
             {'field':PREFIX+'subtypes','op':'contains_any','value':['dragon']}]}
         self.assertEqual((CAPABILITY,),qualified_attack_runtime_dependencies(SimpleNamespace(event='creature.attacks',event_condition=valid)))

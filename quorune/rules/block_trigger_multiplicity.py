@@ -5,7 +5,7 @@ from collections.abc import Mapping
 
 def _uses_block_pair(condition):
     if isinstance(condition, Mapping):
-        return condition.get('field') in {'blocked_attacker', 'blocked_attacker_keywords'} or any(
+        return condition.get('field') in {'blocked_attacker', 'blocked_attacker_keywords','block_counterpart_matches'} or any(
             _uses_block_pair(value) for value in condition.values())
     if isinstance(condition, (list, tuple)):
         return any(_uses_block_pair(value) for value in condition)

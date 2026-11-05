@@ -248,6 +248,7 @@ def _kind_base(kind: str) -> str:
     return {
         "dependency_contract": "mechanic_dependency",
         "trigger": "event_binding",
+        "trigger_effect": "effect_clause",
         "spell_effect": "effect_clause",
         "static_ability": "static_clause",
         "effect": "activated_effect",

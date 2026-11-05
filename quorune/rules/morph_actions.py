@@ -80,7 +80,12 @@ class MorphActionHost(Protocol):
         self, *, zones: set[str] | None = None
     ) -> Sequence[Any]: ...
 
-def _eligible_spec(host: MorphActionHost, seat: str, card: Any, *, method: str | None = None) -> Any | None:
+def _eligible_spec(host: MorphActionHost, seat: str, card: Any, *, method: str | None = None, face_up_ability=None) -> Any | None:
+    if getattr(card,'permanent_composition',None) is not None:
+        from .composition_face_up import selected_composed_turn_up_option
+        option=selected_composed_turn_up_option(host,seat,card,method=method,source_key=face_up_ability)
+        return option.spec if option is not None else None
+    if face_up_ability is not None:return None
     from ..manifest import manifest_turn_up_spec, is_manifested
     manifested = is_manifested(card)
     if manifested and method in {None, 'manifest'}:
@@ -123,16 +128,31 @@ def build_turn_face_up_offer(
     host: MorphActionHost,
     seat: str,
     card: Any,
-    *, method: str | None = None, mana_cost_option: str | None = None,
+    *, method: str | None = None, mana_cost_option: str | None = None, face_up_ability=None,
 ) -> ActionOffer | None:
-    spec = _eligible_spec(host, seat, card, method=method)
+    if getattr(card,'permanent_composition',None) is not None:
+        offer,_spec=_composed_offer_and_spec(host,seat,card,method=method,
+            mana_cost_option=mana_cost_option,face_up_ability=face_up_ability)
+        return offer
+    spec = _eligible_spec(host, seat, card, method=method,face_up_ability=face_up_ability)
     if spec is None:
         return None
     return _build_turn_face_up_offer(host, seat, card, spec,
         method=method, mana_cost_option=mana_cost_option)
 
 
-def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_option):
+def _composed_offer_and_spec(host,seat,card,*,method,mana_cost_option,face_up_ability):
+    from .composition_face_up import composed_turn_up_options
+    options=composed_turn_up_options(host,seat,card)
+    selected=next((option for option in options if (method is None or option.spec.method==method)
+        and (face_up_ability is None or option.source_key==face_up_ability)),None)
+    if selected is None:return None,None
+    return _build_turn_face_up_offer(host,seat,card,selected.spec,method=selected.spec.method,
+        mana_cost_option=mana_cost_option,face_up_ability=selected.source_key,
+        extra_source=selected!=options[0]),selected.spec
+
+
+def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_option, face_up_ability=None, extra_source=False):
     from ..manifest import is_manifested
     from .nonmana_morph_costs import nonmana_morph_offer_fields
 
@@ -158,7 +178,8 @@ def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_optio
         return None
     return ActionOffer(
         action_id=f"turn-face-up:{card.ref}" + (f':{method}' if method is not None and is_manifested(card) else '')
-            + (f':{mana_cost_option}' if mana_cost_option is not None else ''),
+            + (f':{mana_cost_option}' if mana_cost_option is not None else '')
+            + (f':ability:{face_up_ability}' if extra_source else ''),
         action="turn_face_up",
         seat=seat,
         label=f"Turn {card.printed_name} face up — " + (
@@ -174,6 +195,7 @@ def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_optio
                 "requirements": requirements,
                 "auto_pay": True,
                 "method": spec.method,
+                **({'face_up_ability':face_up_ability} if face_up_ability is not None else {}),
                 **({'mana_cost_option': mana_cost_option} if options else {}),
                 **nonmana_fields,
             }
@@ -182,6 +204,16 @@ def _build_turn_face_up_offer(host, seat, card, spec, *, method, mana_cost_optio
 
 
 def build_turn_face_up_offers(host, seat, card):
+    if getattr(card,'permanent_composition',None) is not None:
+        from .composition_face_up import composed_turn_up_options
+        offers=[]
+        for index,choice in enumerate(composed_turn_up_options(host,seat,card)):
+            for option in getattr(choice.spec,'mana_cost_options',()) or (None,):
+                offer=_build_turn_face_up_offer(host,seat,card,choice.spec,method=choice.spec.method,
+                    mana_cost_option=option.option_id if option is not None else None,
+                    face_up_ability=choice.source_key,extra_source=index>0)
+                if offer is not None:offers.append(offer)
+        return tuple(offers)
     from ..manifest import is_manifested
     methods = ('manifest', *FACE_DOWN_CAST_METHODS) if is_manifested(card) else (None,)
     offers = []
@@ -215,8 +247,13 @@ def commit_turn_face_up(
         controlled_only=True,
     )
     method = response.get('method')
-    offer = build_turn_face_up_offer(host, seat, card, method=method,
-        mana_cost_option=response.get('mana_cost_option'))
+    composed_spec=None
+    if card.permanent_composition is not None:
+        offer,composed_spec=_composed_offer_and_spec(host,seat,card,method=method,
+            mana_cost_option=response.get('mana_cost_option'),face_up_ability=response.get('face_up_ability'))
+    else:
+        offer = build_turn_face_up_offer(host, seat, card, method=method,
+            mana_cost_option=response.get('mana_cost_option'),face_up_ability=response.get('face_up_ability'))
     if offer is None:
         raise GameRuleError("This permanent cannot currently be turned face up")
     supplied = response.get("proposal_fingerprint")
@@ -229,7 +266,8 @@ def commit_turn_face_up(
             != replace(offer, expiry_revision=expiry).fingerprint
         ):
             raise GameRuleError("The advertised turn-face-up action is stale")
-    spec = _eligible_spec(host, seat, card, method=method)
+    spec = composed_spec if composed_spec is not None else _eligible_spec(host, seat, card,
+        method=method,face_up_ability=response.get('face_up_ability'))
     if spec is None:
         raise GameRuleError("The face-down method contract changed before payment")
     requirements = offer.to_dict()['requirements']
@@ -247,9 +285,12 @@ def commit_turn_face_up(
         host.turn_priority.complete_special_action(seat)
         return
     try:
-        ZoneTransitionOwner(host).turn_face_up(card, viewers=tuple(host.seats))
+        changed=ZoneTransitionOwner(host).turn_face_up(card, viewers=tuple(host.seats))
     except ZoneObjectStateError as exc:
         raise GameRuleError(str(exc)) from exc
+    if not changed:
+        host.turn_priority.complete_special_action(seat)
+        return
     if spec.method == MEGAMORPH_CAST_METHOD:
         payment_id = str(
             response.get("_mana_payment_id") or offer.fingerprint

@@ -23,6 +23,7 @@ from ..object_predicate import ObjectQuerySpec, PermanentStatePredicateSpec
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_pattern
 from .creature_subtypes import canonical_creature_subtype
 from .collection_quantity_templates import collection_quantity, fixed_quantity_arithmetic, additive_quantity, public_card_quantity
+from .noncreature_quantity_subtypes import noncreature_quantity_subtype_fields
 
 
 _TRAILING_REMINDER = re.compile(r"\s+\([^()]*\)\.?$")
@@ -91,17 +92,6 @@ _PERMANENT_CARD_TYPES = (
     "land",
     "planeswalker",
 )
-_LAND_SUBTYPES = frozenset(
-    {"plains", "island", "swamp", "mountain", "forest", "gate", "desert"}
-)
-_NONCREATURE_SUBTYPE_OWNERS = {
-    "aura": "enchantment",
-    "equipment": "artifact",
-    "gate": "land",
-    "desert": "land",
-}
-
-
 def _definition_subtype_union(normalized, fields):
     union_parts = re.split(
         r",\s*(?:and/or\s+)?|\s+and/or\s+",
@@ -236,6 +226,7 @@ def _query_quantity_descriptor(
             }
         )
     singular = singulars.get(normalized, normalized)
+    singular = re.sub(r'\btokens$', 'token', singular)
     words = singular.split()
     if words and words[0] in {'tapped','untapped'}:
         if zone!='battlefield':return None
@@ -273,12 +264,9 @@ def _query_quantity_descriptor(
             fields['token'] = False
     elif descriptor == "permanent":
         fields["types_any"] = _PERMANENT_CARD_TYPES
-    elif descriptor in _NONCREATURE_SUBTYPE_OWNERS:
-        fields["types_all"] = (_NONCREATURE_SUBTYPE_OWNERS[descriptor],)
-        fields["subtypes_all"] = (descriptor,)
-    elif descriptor in _LAND_SUBTYPES:
-        fields["types_all"] = ("land",)
-        fields["subtypes_all"] = (descriptor,)
+    elif (subtype_fields := noncreature_quantity_subtype_fields(descriptor,
+            zone=zone, definition_extensions=definition_extensions)) is not None:
+        fields.update(subtype_fields)
     elif descriptor == "artifact creature":
         fields["types_all"] = ("artifact", "creature")
     else:

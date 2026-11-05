@@ -278,15 +278,16 @@ class ClosedEffectProgramCompilerTests(unittest.TestCase):
                     self.assertEqual(BOUND_EFFECT_PROGRAM_TEMPLATE_ID, node.template_id)
                     self.assertIn(BOUND_EFFECT_PROGRAM_CAPABILITY, node.capability_dependencies)
                 else:
-                    self.assertEqual(CLOSED_EFFECT_PROGRAM_TEMPLATE_ID, node.template_id)
+                    if node.template_id=='fixed-effect-clause-sequence-v1':
+                        leaf=closed_effect_program_template(record.oracle_text,compile_component=partial(_reviewed_atomic_effect_template,card_name=record.name))
+                        self.assertIsNotNone(leaf);self.assertEqual(leaf.effects,node.effects);self.assertEqual(leaf.target_schema,node.target_schema)
+                        self.assertIn('resolution.effect_sequence.fixed_clauses',node.capability_dependencies)
+                    else:self.assertEqual(CLOSED_EFFECT_PROGRAM_TEMPLATE_ID, node.template_id)
                 self.assertEqual(
                     operations,
                     tuple(effect["op"] for effect in node.effects),
                 )
-                self.assertIn(
-                    CLOSED_EFFECT_PROGRAM_CAPABILITY,
-                    node.capability_dependencies,
-                )
+                self.assertTrue({CLOSED_EFFECT_PROGRAM_CAPABILITY,'resolution.effect_sequence.fixed_clauses'}&set(node.capability_dependencies))
 
         legacy = self.compile(
             effect_program_record("Destroy target creature. You gain 3 life.")
@@ -307,8 +308,8 @@ class ClosedEffectProgramCompilerTests(unittest.TestCase):
                     node
                     for face in ir.faces
                     for node in face.nodes
-                    if CLOSED_EFFECT_PROGRAM_CAPABILITY
-                    in node.capability_dependencies
+                    if {CLOSED_EFFECT_PROGRAM_CAPABILITY,'resolution.effect_sequence.fixed_clauses'}
+                    &set(node.capability_dependencies)
                 )
                 self.assertTrue(nodes)
                 programs = generated_programs(
@@ -321,8 +322,8 @@ class ClosedEffectProgramCompilerTests(unittest.TestCase):
                 closed = tuple(
                     program
                     for program in programs
-                    if CLOSED_EFFECT_PROGRAM_CAPABILITY
-                    in program.capability_dependencies
+                    if {CLOSED_EFFECT_PROGRAM_CAPABILITY,'resolution.effect_sequence.fixed_clauses'}
+                    &set(program.capability_dependencies)
                 )
                 self.assertTrue(closed)
                 self.assertTrue(

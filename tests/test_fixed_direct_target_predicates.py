@@ -56,6 +56,25 @@ def record(
 
 
 class FixedDirectTargetCompilerTests(unittest.TestCase):
+    def test_control_and_keyword_subject_orders_share_one_target_contract(self):
+        for control in ('you control','an opponent controls',"you don't control"):
+            for quality in ('with flying','without flying','with defender'):
+                with self.subTest(control=control,quality=quality):
+                    expected=direct_permanent_target_spec('target creature '+quality+' '+control)
+                    actual=direct_permanent_target_spec('target creature '+control+' '+quality)
+                    self.assertIsNotNone(expected);self.assertEqual(expected,actual)
+        for subject in ('target creature you control with an unknown ability',
+                'target creature you control without flying and vigilance',
+                'target creature you control without flying except one'):
+            self.assertIsNone(direct_permanent_target_spec(subject))
+
+    def test_controlled_keyword_normalization_omission_is_killed(self):
+        self.test_control_and_keyword_subject_orders_share_one_target_contract()
+        with patch('quorune.compiler.direct_target._normalize_controlled_keyword_subject',side_effect=lambda value:value):
+            result=unittest.TestResult()
+            FixedDirectTargetCompilerTests('test_control_and_keyword_subject_orders_share_one_target_contract').run(result)
+        self.assertFalse(result.errors,result.errors);self.assertTrue(result.failures)
+
     def test_pinned_noncreature_subtype_targets_preserve_bare_domain(self):
         for subtype in ('equipment','aura','shrine','island','mountain','spacecraft','treasure','room'):
             spec=direct_permanent_target_spec('target '+subtype)

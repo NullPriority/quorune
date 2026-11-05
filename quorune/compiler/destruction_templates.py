@@ -240,6 +240,9 @@ def fixed_affected_permanent_query(
         phrase = phrase[6:]
 
     kwargs: dict[str, Any] = {"zones": ("battlefield",)}
+    from .qualified_destruction_queries import qualified_destruction_query
+    qualified=qualified_destruction_query(phrase,parse_base=fixed_affected_permanent_query)
+    if qualified is not None:return qualified,exclude_source
     if phrase in {"permanents", "nonland permanents"}:
         if phrase.startswith("nonland"):
             kwargs["excluded_types"] = ("land",)

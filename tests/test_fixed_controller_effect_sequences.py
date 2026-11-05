@@ -602,11 +602,15 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
                         mechanic_ids=mechanics,
                     ),
                 )
+        setting = fixed_life_effect_template("Your life total becomes 20.")
+        self.assertIsNotNone(setting)
+        self.assertEqual({'op':'set_life_total','schema_version':1,'player':'$controller',
+            'value':{'schema_version':1,'kind':'fixed','total':20}},setting.effect)
         for text in (
             "You gain 0 life.",
             "You gain X life.",
             "You gain life equal to your devotion.",
-            "Your life total becomes 20.",
+            "Your life total becomes a secretly chosen total.",
             "Exchange life totals with target opponent.",
             "You may pay 2 life.",
         ):
@@ -876,6 +880,14 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
         self.assertEqual(1,effects[1]['count'])
 
     def test_unsupported_sequence_wording_remains_a_precise_residual(self):
+        optional = "Scry 1, then you may draw a card."
+        self.assertIsNone(fixed_controller_effect_sequence_template(optional))
+        ir=compile_oracle_card(self.fixture(optional),capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        self.assertEqual(['scry','offer_draw'],[effect['op'] for effect in ir.faces[0].nodes[0].effects])
+        self.assertEqual(1,ir.faces[0].nodes[0].effects[0]['count'])
+        self.assertEqual(1,ir.faces[0].nodes[0].effects[1]['count'])
         supported="Draw two cards, then discard a card at random."
         template=fixed_controller_effect_sequence_template(supported)
         self.assertIsNotNone(template)
@@ -897,7 +909,7 @@ class FixedControllerEffectSequenceCompilerTests(unittest.TestCase):
         self.assertEqual((1, 1), (effects[1]['count'], effects[2]['amount']))
         for text in (
             "Draw cards equal to the number of different powers among creatures you control. Scry 1.",
-            "Scry 1, then you may draw a card.",
+            "Scry 1, then you may draw X cards.",
             "Draw a card. Each player loses X life.",
             "Draw a card unless an opponent pays {1}.",
             "Draw two cards, then discard a creature card at random.",

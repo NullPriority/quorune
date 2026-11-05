@@ -97,6 +97,8 @@ def _copiable_values(host, target, spec, *, entering=None):
         except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError('Entering source stats are not represented') from exc
         exception=replace(exception,power=power,toughness=toughness,retain_source_stats=False)
     values = apply_copy_exception(values, exception)
+    from ..defined_token_faces import single_face_copy_values
+    values = single_face_copy_values(values)
     values[COPIABLE_ORACLE_FIELD], values[COPIABLE_FACE_FIELD] = identity, face
     return values
 

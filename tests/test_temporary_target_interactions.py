@@ -61,6 +61,25 @@ def record(text: str, *, type_line="Instant", mana_cost="{G}") -> CardRecord:
 
 
 class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
+    def test_targeted_regeneration_composition_declares_its_complete_primitive_owners(self):
+        from test_public_query_effect_amounts import _NoRulingsDatabase
+        from quorune.card_programs import compile_card_program,bind_card_program_runtime
+        registry=load_default_capability_registry()
+        card=record('Target creature gains deathtouch until end of turn. Regenerate it.')
+        program=compile_card_program(_NoRulingsDatabase(),card,capability_registry=registry,
+            capability_profile='commander_review',trust_level='trusted')
+        self.assertIn('permanent.regeneration.self_activation',program.capability_dependencies)
+        bound=bind_card_program_runtime(program,capability_registry=registry,profile='commander_review')
+        self.assertTrue(bound['strict_capability_ready'],bound['blockers'])
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        ability=program.abilities[0];cap='permanent.regeneration.self_activation'
+        dependencies=tuple(value for value in ability.capability_dependencies if value!=cap)
+        missing=replace(ability,capability_dependencies=dependencies,
+            capability_closure=registry.closure(dependencies,profile='commander_review').to_dict())
+        bound=bind_semantic_program_runtime(missing,capability_registry=registry,profile='commander_review')
+        self.assertFalse(bound['strict']);self.assertTrue(any('undeclared_runtime_dependency:'+cap in b for b in bound['blockers']))
+
     def test_fixed_protection_uses_closed_direct_target_and_quality_contracts(self):
         from quorune.compiler.direct_target import direct_permanent_target_spec
         from quorune.ability_fragments import ability_fragment_from_dict,ProtectionSpec

@@ -218,6 +218,11 @@ def fixed_damage_node_capabilities(
     if "cr-120-damage" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if (target_schema is None and set(effect) == {'op', 'source', 'target', 'amount'}
+            and effect.get('op') == 'damage' and effect.get('source') == '$source'
+            and effect.get('target') == '$event.block_counterpart' and _positive_int(effect.get('amount'))):
+        return ('damage.amount.positive', 'damage.result.multitype_permanent',
+                'damage.source.stack_current_or_lki', 'trigger.event.block_pair_counterpart')
     if (target_schema is None and isinstance(effect.get('target'),Mapping)
             and effect['target'].get('kind')=='target_controller_information'):
         from ..target_controller_information import controller_reference_index,TARGET_CONTROLLER_INFORMATION_CAPABILITY,TARGET_CONTROLLER_INFORMATION_MECHANIC

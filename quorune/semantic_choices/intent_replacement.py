@@ -1,5 +1,7 @@
 from __future__ import annotations
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
+from ..incubate_model import IncubateIntent,decode_incubate_intent_identity
+from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent,decode_discover_cast_identity,decode_discover_cleanup_identity
 from ..cipher_model import EncodeCipherIntent, cipher_intent_identity, validate_cipher_intent_identity
 from ..discard_result_model import DiscardWholeHandsResultIntent, decode_discard_result_identity
 from ..semantic_runtime.counter_movement_intent import MoveCountersIntent, decode_counter_movement_identity
@@ -295,6 +297,7 @@ def _library_selection_intent_identity(
                 ),
                 "remainder_order": intent.arrangement.remainder_order,
                 **({'selected_destination':intent.arrangement.selected_destination} if intent.arrangement.selected_destination!='hand' else {}),
+                **({'entry_tapped':intent.arrangement.entry_tapped} if intent.arrangement.selected_destination=='battlefield' else {}),
             },
             _REASON_FIELD: intent.reason,
             "source_stack_ref": intent.source_stack_ref,
@@ -346,12 +349,17 @@ def _create_token_intent_identity(
         identity["copy_snapshot"] = thaw_value(intent.copy_snapshot)
     if intent.attacking_groups:
         identity["attacking_groups"] = list(intent.attacking_groups)
+    if intent.token_cleanup is not None:
+        identity['token_cleanup'] = intent.token_cleanup.to_dict()
     return identity
 
 
 def semantic_intent_identity(intent: Any) -> tuple[str, dict[str, Any]]:
     """Return the closed identity of a replacement-capable typed intent."""
 
+    if isinstance(intent,IncubateIntent):return 'incubate',intent.identity()
+    if isinstance(intent,DiscoverCleanupIntent):return 'discover_cleanup',intent.identity()
+    if isinstance(intent,DiscoverCastIntent):return 'discover_cast',intent.identity()
     if isinstance(intent, EncodeCipherIntent):return 'cipher_encode', cipher_intent_identity(intent)
     if isinstance(intent, DiscardWholeHandsResultIntent):return 'discard_hand_result', intent.identity()
     if isinstance(intent,LifeLossBatchIntent):return 'life_loss_batch',intent.identity()
@@ -715,10 +723,14 @@ def _validate_library_selection_intent_identity(
             "Library selection intent identity fields are malformed"
         )
     raw = value["arrangement"]
+    new_entry=isinstance(raw,Mapping) and raw.get('selected_destination')=='battlefield'
+    expected_fields=(_LIBRARY_SELECTION_ARRANGEMENT_FIELDS|{'selected_destination','entry_tapped'} if new_entry else
+        _LIBRARY_SELECTION_ARRANGEMENT_FIELDS|{'selected_destination'} if isinstance(raw,Mapping) and 'selected_destination' in raw else
+        _LIBRARY_SELECTION_ARRANGEMENT_FIELDS)
     if (
         not isinstance(raw, Mapping)
-        or set(raw) != (_LIBRARY_SELECTION_ARRANGEMENT_FIELDS|{'selected_destination'} if 'selected_destination' in raw else _LIBRARY_SELECTION_ARRANGEMENT_FIELDS)
-        or 'selected_destination' in raw and raw['selected_destination']!='library_top'
+        or set(raw) != expected_fields
+        or 'selected_destination' in raw and raw['selected_destination'] not in {'library_top','battlefield'}
         or not isinstance(raw["looked"], (list, tuple))
     ):
         raise SemanticChoiceError(
@@ -735,6 +747,7 @@ def _validate_library_selection_intent_identity(
             remainder_destination=raw["remainder_destination"],
             remainder_order=raw["remainder_order"],
             selected_destination=raw.get('selected_destination','hand'),
+            entry_tapped=raw.get('entry_tapped',False),
         )
         intent = LibrarySelectionIntent(
             actor=value["actor"],
@@ -756,6 +769,15 @@ def validate_semantic_intent_identity(
     kind: str,
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if kind=='discover_cast':
+        try:return decode_discover_cast_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind=='discover_cleanup':
+        try:return decode_discover_cleanup_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
+    if kind == 'incubate':
+        try:return decode_incubate_intent_identity(value)
+        except (TypeError,ValueError) as exc:raise SemanticChoiceError(str(exc)) from exc
     if kind == 'discard_hand_result':
         try:return decode_discard_result_identity(value)
         except (ValueError, TypeError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -1113,6 +1135,17 @@ def _validate_proliferate_intent_identity(
 def _validate_create_token_intent_identity(
     value: Mapping[str, Any],
 ) -> dict[str, Any]:
+    if isinstance(value, Mapping) and 'token_cleanup' in value:
+        from ..created_token_cleanup import CreatedTokenCleanupPlan
+        try:
+            plan = CreatedTokenCleanupPlan.from_dict(value['token_cleanup'])
+            base = _validate_create_token_intent_identity({key: child for key, child in value.items() if key != 'token_cleanup'})
+            if (base['copy_of'] is not None or base.get('copy_snapshot') is not None
+                    or any(base.get(key, False) for key in ('sacrifice_at_end_step', 'sacrifice_on_controller_end_step', 'exile_at_end_of_combat'))):
+                raise ValueError('Typed cleanup conflicts with a legacy token lifecycle')
+            return {**base, 'token_cleanup': plan.to_dict()}
+        except (TypeError, ValueError, KeyError) as exc:
+            raise SemanticChoiceError('Token cleanup intent identity is malformed') from exc
     if not isinstance(value, Mapping) or set(value) not in {
         frozenset(_CREATE_TOKEN_FIELDS_V1),
         frozenset(_CREATE_TOKEN_FIELDS),
@@ -1196,7 +1229,10 @@ def with_replacement_selections(
     intent: Any,
     selections: Sequence[str | FrozenMap | Mapping[str, Any]],
 ) -> (
-    PlaceCountersIntent
+    DiscoverCastIntent
+    | DiscoverCleanupIntent
+    | IncubateIntent
+    | PlaceCountersIntent
     | MoveCountersIntent
     | LifeChangeIntent
     | PlaceCounterBatchIntent
@@ -1217,6 +1253,9 @@ def with_replacement_selections(
         (
             *DESTRUCTION_INTENT_TYPES,
             *CHAMPION_INTENT_TYPES,
+            DiscoverCastIntent,
+            DiscoverCleanupIntent,
+            IncubateIntent,
             EncodeCipherIntent,
             DiscardWholeHandsResultIntent,
             PlaceCountersIntent,

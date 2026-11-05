@@ -2,18 +2,7 @@
 from dataclasses import dataclass
 from ...cast_source_placement_model import cast_source_placement_version
 from .public_conditions import prospective_cost_condition_view
-
-
-@dataclass(frozen=True,slots=True)
-class _ProspectiveCharacteristicReadHost:
-    original: object
-    state: object
-
-    def __getattr__(self,name):
-        value=getattr(self.original,name)
-        if getattr(value,'__self__',None) is self.original and hasattr(value,'__func__'):
-            return value.__func__.__get__(self,type(self))
-        return value
+from ...characteristic_read_frames import CharacteristicReadHost as _ProspectiveCharacteristicReadHost
 
 
 @dataclass(frozen=True,slots=True)

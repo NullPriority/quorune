@@ -65,6 +65,7 @@ from .fixed_counter_controller_effect_sequences import (
 )
 from .proliferate_templates import single_proliferate_effect_template
 from .reanimation_templates import fixed_target_reanimation_effect_template
+from .reanimation_entry_counter_templates import fixed_reanimation_entry_counter_template
 from .public_zone_move_templates import public_zone_move_effect_template
 from .return_to_hand_templates import (
     targeted_own_graveyard_return_to_hand_effect_template,
@@ -114,6 +115,7 @@ def _attachment_or_owner_zone_move(
 
 
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
+    fixed_reanimation_entry_counter_template,
     fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
     destruction_effect_template,
     targeted_exile_effect_template,
@@ -192,6 +194,9 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    from .graveyard_return_choice_templates import graveyard_return_choice_template
+    returned = graveyard_return_choice_template(text)
+    if returned is not None:return returned
     independent = _source_independent_resolution_template(text)
     if independent is not None:
         return independent
@@ -252,6 +257,9 @@ def typed_resolution_effect_template(
     )
     if affected_player_discard is not None:
         return affected_player_discard.compiled()
+    from .per_player_target_sets import per_player_target_set_template
+    per_player=per_player_target_set_template(text)
+    if per_player is not None:return per_player
     fixed_homogeneous_target_set = (
         fixed_homogeneous_target_set_effect_template(text)
     )

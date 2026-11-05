@@ -15,6 +15,7 @@ from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 
 
 COMPOSED_SPELL_EFFECT_SEQUENCE = "composed-spell-effect-sequence-v1"
+DISTINCT_CLAUSE_TARGET_COVERAGE = 'target_group_distinct_previous_clause'
 _SPAN_START_FIELD = "start"
 
 
@@ -64,7 +65,9 @@ def _bounded_public_target_set_schema(schema: Mapping[str, Any]) -> bool:
     return True
 
 
-def _composed_target_schema(schemas: Sequence[Mapping[str, Any]]) -> dict[str, Any] | None:
+def _composed_target_schema(schemas: Sequence[Mapping[str, Any]], *, distinct: bool=False) -> dict[str, Any] | None:
+    if distinct and (len(schemas)!=2 or any(not _fixed_public_single_target_schema(schema) for schema in schemas)):
+        return None
     if not schemas:
         return None
     if len(schemas) == 1:
@@ -72,7 +75,8 @@ def _composed_target_schema(schemas: Sequence[Mapping[str, Any]]) -> dict[str, A
     if len(schemas) > 4 or any(not (_fixed_public_single_target_schema(schema) or _bounded_public_target_set_schema(schema)) for schema in schemas):
         return None
     return {'groups': [{**{k:v for k,v in schema.items() if k not in {'count','up_to'}},
-        'id': 'clause_' + str(index), 'min': 0 if 'up_to' in schema else 1, 'max': schema.get('up_to',1)} for index,schema in enumerate(schemas)]}
+        'id': 'clause_' + str(index), 'min': 0 if 'up_to' in schema else 1, 'max': schema.get('up_to',1)} for index,schema in enumerate(schemas)],
+        **({'globally_distinct':True} if distinct else {})}
 
 
 def _scope_component_target(value: Any, role: int, *, restore: bool = False) -> Any:
@@ -164,6 +168,7 @@ def is_closed_composed_spell_effect_program(
     ):
         return False
     component_spans: list[dict[str, int]] = []
+    distinct_roles=[]
     for component in components:
         if (
             not isinstance(component, Mapping)
@@ -222,6 +227,8 @@ def is_closed_composed_spell_effect_program(
             event_conditions.append(dict(event_condition))
         if target_schema is not None:
             target_schemas.append(dict(target_schema))
+            if DISTINCT_CLAUSE_TARGET_COVERAGE in coverage:distinct_roles.append(len(target_schemas)-1)
+        elif DISTINCT_CLAUSE_TARGET_COVERAGE in coverage:return False
         if multi_target and target_schema is not None and not _component_target_roles_are_exact(program.effects[offset:end], target_offset):
             return False
         component_shape = _EffectComponentView(
@@ -263,10 +270,25 @@ def is_closed_composed_spell_effect_program(
         and len(event_conditions) <= 1
         and (event_conditions[0] if event_conditions else None)
         == program.event_condition
-        and (not multi_target or _composed_target_schema(target_schemas) is not None)
-        and _composed_target_schema(target_schemas) == program.target_schema
+        and (not distinct_roles or distinct_roles==[1] and len(target_schemas)==2)
+        and (not multi_target or _composed_target_schema(target_schemas,distinct=bool(distinct_roles)) is not None)
+        and _composed_target_schema(target_schemas,distinct=bool(distinct_roles)) == program.target_schema
         and sorted(dependencies) == sorted(program.capability_dependencies)
     )
+
+
+def composed_spell_family_runtime_dependencies(program, *, capability, mechanic):
+    """Respect validated component scopes before inferring a shared family."""
+    provenance=getattr(program,'provenance',None)
+    if not isinstance(provenance,Mapping) or provenance.get('template_id') != COMPOSED_SPELL_EFFECT_SEQUENCE:
+        return None
+    from .program_generation import _closed_effect_recognizers
+    if not is_closed_composed_spell_effect_program(program,
+            component_recognizers=_closed_effect_recognizers()):
+        raise ValueError('Composed effect scopes lack their exact component owners and target roles')
+    if mechanic in program.coverage and capability not in program.capability_dependencies:
+        raise ValueError('Composed effect scope lost its required family owner')
+    return (capability,) if capability in program.capability_dependencies else ()
 
 
 def _validated_group_identity(
@@ -321,7 +343,8 @@ def _validated_group_identity(
         or len({node.active_zone for node in nodes}) != 1
         or len({node.event for node in nodes}) != 1
         or (sum(node.target_schema is not None for node in nodes) > 1 and _composed_target_schema(
-            [node.target_schema for node in nodes if node.target_schema is not None]) is None)
+            [node.target_schema for node in nodes if node.target_schema is not None],
+            distinct=any(DISTINCT_CLAUSE_TARGET_COVERAGE in node.runtime_coverage for node in nodes)) is None)
         or sum(node.cost is not None for node in nodes) > 1
         or sum(node.event_condition is not None for node in nodes) > 1
     ):
@@ -375,12 +398,14 @@ def _node_group_provenance(
     from .permanent_additional_cost_nodes import PERMANENT_ADDITIONAL_COST_COVERAGE
     from ..stack_spell_copy_model import STACK_SPELL_COPY_MECHANIC
     copy_requires_complete_source = any(STACK_SPELL_COPY_MECHANIC in node.mechanics for node in nodes)
+    from ..face_up_effect_model import FACE_UP_EFFECT_MECHANIC
+    face_up_requires_complete_source = any(FACE_UP_EFFECT_MECHANIC in node.mechanics for node in nodes)
     from ..overload_model import OVERLOAD_BOUNDARY
     from ..cleave_model import CLEAVE_BOUNDARY
     from ..rules.fuse_model import FUSE_HANDLER
     fuse_source = next((h['fuse'] for f in ir.faces for n in f.nodes for h in n.handlers if h.get('handler_id')==FUSE_HANDLER),None)
     text_variant_requires_complete_source = fuse_source is not None or any(OVERLOAD_BOUNDARY in node.runtime_coverage or CLEAVE_BOUNDARY in node.runtime_coverage for node in nodes)
-    requires_complete_card_program = text_variant_requires_complete_source or copy_requires_complete_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
+    requires_complete_card_program = face_up_requires_complete_source or text_variant_requires_complete_source or copy_requires_complete_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes
         for handler in node.handlers
@@ -388,7 +413,7 @@ def _node_group_provenance(
     return {
         "source_oracle_hash": ir.oracle_hash,
         **({'fuse_source': fuse_source} if fuse_source is not None else {}),
-        **({'requires_complete_card_program': True} if copy_requires_complete_source or text_variant_requires_complete_source else {}),
+        **({'requires_complete_card_program': True} if face_up_requires_complete_source or copy_requires_complete_source or text_variant_requires_complete_source else {}),
         "source_rulings_hash": rulings_hash,
         "authored_by": authored_by,
         "review_status": (
@@ -550,7 +575,8 @@ def program_from_generated_node_group(
         trust_level=trust_level,
         provenance=provenance,
         tests=_ordered_unique(f"oracle_template:{node.template_id}" for node in nodes),
-        target_schema=_composed_target_schema(target_schemas),
+        target_schema=_composed_target_schema(target_schemas,
+            distinct=any(DISTINCT_CLAUSE_TARGET_COVERAGE in node.runtime_coverage for node in nodes)),
         cost_schema=(
             _copy_mapping(cost_node.cost) if cost_node is not None else None
         ),

@@ -638,7 +638,7 @@ class FixedTargetEffectSequenceCompilerTests(unittest.TestCase):
             "Target creature gets +1/+1 until end of turn. You may put a +1/+1 counter on it.",
             "Target creature gains protection from the card type of your choice until end of turn. Put a +1/+1 counter on it.",
             "Target creature gets +1/+1 until end of turn. Scry X. Put a +1/+1 counter on it.",
-            "Target creature gets +1/+1 until end of turn. Put a +1/+1 counter on target creature.",
+            "Target creature gets +1/+1 until end of turn. Another target creature gets -1/-1 until end of turn. Another target creature gains flying until end of turn.",
             "Put a +1/+1 counter on it. It gains flying until end of turn.",
             "Target creature gains flying or reach until end of turn. Put a +1/+1 counter on it.",
             "Target creature gets +1/+1 until end of turn. Put a counter of your choice on it.",

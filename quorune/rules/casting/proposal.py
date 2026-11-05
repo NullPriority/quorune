@@ -138,7 +138,11 @@ def _resolve_cast_source(host: CastProposalHost, request: CastProposalRequest) -
         zones=set(request.zones),
         owned_only=False,
     )
-    if card.zone in {"hand", "command"} and card.owner != request.actor:
+    resolving_hand_authority = (
+        card.zone == "hand" and request.authorized_from_zone == "hand"
+        and request.authorized_cost_option is not None and request.during_resolution
+    )
+    if card.zone in {"hand", "command"} and card.owner != request.actor and not resolving_hand_authority:
         raise CastProposalError(
             "A player may cast only their own cards from this zone",
             reason="wrong_owner",
@@ -343,7 +347,9 @@ def _rules_authorized_cost_base(
             reason="conflicting_authorized_cost",
         )
     if request.authorized_cost_option is not None:
-        return dict(thaw_json(request.authorized_cost_option)), True
+        # A resolving alternative replaces the mana base, while the spell's
+        # additional costs and payment abilities remain applicable.
+        return dict(thaw_json(request.authorized_cost_option)), False
     if method_spec is None:
         return None, False
     return (

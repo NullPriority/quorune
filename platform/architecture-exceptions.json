@@ -15,7 +15,12 @@
       "replay_implications": "Current paired instructions and delayed identities are pinned in the existing Game Record; incompatible historical trust provenance remains fail-closed rather than reinterpreted.",
       "privacy_implications": "Only public selected objects are tracked; delayed metadata does not expose hidden libraries, hands or private replacement authority.",
       "security_implications": "Malformed bindings, unsupported grammar, stale objects and changed continuation data fail before committed mutation through canonical owners.",
-      "tests": ["tests.test_linked_exile_return.LinkedExileReturnCompilerTests.test_closed_descriptor_has_exact_capability_shape", "tests.test_linked_exile_return.LinkedExileReturnRuntimeContractTests.test_identity_guard_mutant_is_killed", "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_trusted_counter_entry_replacement_choice_checkpoint_resumes_return_only", "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"]
+      "tests": [
+        "tests.test_linked_exile_return.LinkedExileReturnCompilerTests.test_closed_descriptor_has_exact_capability_shape",
+        "tests.test_linked_exile_return.LinkedExileReturnRuntimeContractTests.test_identity_guard_mutant_is_killed",
+        "tests.test_linked_exile_return.LinkedExileReturnActionTests.test_trusted_counter_entry_replacement_choice_checkpoint_resumes_return_only",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"
+      ]
     },
     {
       "exception_id": "ARCH-EXC-0001",
@@ -1433,6 +1438,72 @@
         "tests.test_provoke_rules.ProvokeTests.test_fresh_actual_requirement_commit_and_untap_omissions_are_killed",
         "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
         "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0061",
+      "adr": "docs/adr/0143-compiled-command-emblem-abilities.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "be9bb1b2c1db584a61f4c3b1331c02501ffa136915c2d7d2f9984ca3134ff02a",
+      "exact_allowance": "The previous exact structural baseline with only the three emblem object-map, command-zone membership and compatibility-marker write identities moved from CommanderEngine.create_emblem to quorune.emblems._commit_emblem_object, plus the create_compiled_emblem operation. Other allowances remain unchanged or smaller.",
+      "rationale": "A protected typed emblem creation owner replaces engine mutation. Independently closed, trusted command-zone children execute from the real public noncard emblem, while the legacy display-only constructor retains its exact serialization and journal behavior.",
+      "owner": "rules/compiler/replay maintainers through protected certification",
+      "maximum_scope": "Only the exact three-write migration and one typed compiled-emblem operation. No added engine methods, total direct-write growth, unowned writes, identity dispatch, runtime Oracle interpretation, callbacks, duplicate registry or size-ceiling growth.",
+      "removal_condition": "Remove this binding when later exact review supersedes the allowance or the operation is retired; preserve typed child closure, actual source lifetime and historical compatibility.",
+      "target_milestone": "trusted command-zone characteristic and triggered emblem abilities",
+      "replay_implications": "Legacy objects omit the new descriptor and preserve existing fields; newly compiled emblems persist versioned trusted child references and actual command-source identities through pending load and exact replay.",
+      "privacy_implications": "Only public command objects and principal-owned existing choice/draw/search paths are used. No private cards or capabilities enter reference descriptors.",
+      "security_implications": "The complete child graph is verified against current trusted command-only programs before allocation. Unknown fields, source mismatches, underdeclared capabilities and unavailable children fail closed.",
+      "tests": [
+        "tests.test_compiled_emblems.CompiledEmblemValueTests.test_unavailable_wrong_source_and_underdeclared_children_fail_before_allocation",
+        "tests.test_compiled_emblems.CompiledEmblemRuntimeTests.test_original_huatli_emblem_triggers_after_creator_dies_and_replays_private_draw",
+        "tests.test_compiled_emblems.CompiledEmblemRuntimeTests.test_original_gideon_emblems_stack_after_bounce_and_keep_owner_after_creator_control_change",
+        "tests.test_compiled_emblems.CompiledEmblemRuntimeTests.test_original_koth_emblem_is_a_colorless_command_damage_source_after_creator_dies",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound",
+        "tests.test_architecture_governance.ArchitectureGovernanceTests.test_exception_is_bound_to_exact_allowance_fingerprint"
+      ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0062",
+      "adr": "docs/adr/0148-physical-composition-storage.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "3670b275e1b5c96fc6f3094fda6aec609ac99440142fe7606254acc4b5ae2b66",
+      "exact_allowance": "Transfer the existing copy-object and emblem card-map assignments to exactly two in-place GameObjectStore commit operations (update/pop), and the existing zone _commit_move stack assignment to _depart_stack_object. Preserve all other exact allowances.",
+      "rationale": "One current-object map port consolidates copy, token and emblem registration and composition detachment. Existing map aliases and constant-time per-object edits are retained. Two baseline identities replace two existing identities; the stack site moves without multiplication. Total structural identity and direct-write ceilings stay unchanged while engine and emblem ceilings each fall by one.",
+      "owner": "rules/compiler/replay maintainers through protected certification",
+      "maximum_scope": "Only the three listed identity transfers and canonical object-map owner. No total write-site, engine-write, size, Oracle-interpretation, identity-dispatch or operation-inventory allowance growth.",
+      "removal_condition": "Supersede only through an exact reviewed extraction or remove when these writes disappear; preserve map alias, validation-before-mutation, ordinary creation, codec and composition rollback controls.",
+      "target_milestone": "canonical current-object membership and complete physical composition lifecycle",
+      "replay_implications": "Existing registrations preserve object ordering and mapping identity; absent composition fields retain actual HEAD card bytes. New physical stores are versioned. No historical trust provenance is rewritten.",
+      "privacy_implications": "The object-map port carries no projection authority; private physical snapshots stay in authoritative storage and existing public registrations retain their own visibility owners.",
+      "security_implications": "All mutation remains server-internal under declared owners and existing command/transaction authority. Complete edits validate before changing membership; unavailable composition departures fail before mutation.",
+      "tests": [
+        "tests.test_permanent_composition.CompositionStorageTests.test_object_map_port_preserves_aliases_and_rejects_the_whole_invalid_edit",
+        "tests.test_permanent_composition.CompositionCaptureNativeTests.test_physical_merge_kernel_keeps_one_object_and_rolls_back_partial_commit"
+      ]
+    },
+    {
+      "exception_id": "ARCH-EXC-0063",
+      "adr": "docs/adr/0161-ordinary-attacking-token-results.md",
+      "artifact": "platform/architecture-guard-baseline.json",
+      "allowance_fingerprint": "b94b2c6fe30759d1da93b7a8f68bf6c6f3800cb2d4b69858640685eb9dcc5953",
+      "exact_allowance": "The exact inherited baseline plus only choose_fixed_attacking_token_destinations. All module/function size ceilings, engine methods, direct-write identities and identity-flow limits remain unchanged.",
+      "rationale": "Ordinary fixed creature definitions enter attacking through a principal-bound typed choice over a replacement-expanded public preview. Shared destination planning and canonical CreateTokenIntent retain all mutation authority; a separately pinned Battle Cry resolution policy integrates the newly reachable live attacking set.",
+      "owner": "rules and compiler maintainers",
+      "maximum_scope": "One closed fixed-definition combat-entry operation; no new generic mutation, copy recipe, recipient grammar, private-information channel, registry or callback surface.",
+      "removal_condition": "Remove this operation allowance when the registered semantic-choice inventory is validated directly through capability-bound handler contracts; retain no extra size or direct-write exceptions.",
+      "target_milestone": "capability-closed ordinary attacking-token entry",
+      "replay_implications": "New operation has an exact version-one result and continuation. Mobilize/Myriad shapes remain unchanged. Current Battle Cry live recipients are pinned by battle_cry_resolution_version1; historical absence retains the declared-set boundary. Trust provenance remains strict.",
+      "privacy_implications": "Only live public defending players, planeswalkers and battles are projected. Hidden hands and libraries do not participate in destination choice.",
+      "security_implications": "Malformed definitions, unknown fields/versions, unauthorized principals, stale previews and incomplete or illegal destination maps fail before token entry.",
+      "tests": [
+        "tests.test_attacking_token_results.AttackingTokenResultCompilerTests.test_withdrawn_attacking_owner_does_not_withdraw_ordinary_fixed_tokens",
+        "tests.test_attacking_token_results.AttackingTokenDestinationModelTests.test_malformed_definitions_and_stale_or_incomplete_assignments_are_rejected",
+        "tests.test_attacking_token_results.AttackingTokenDestinationModelTests.test_battle_cry_marker_codec_preserves_legacy_absence_and_rejects_mismatch",
+        "tests.test_attacking_token_results.AttackingTokenResultNativeTests.test_actual_hero_entry_before_battle_cry_uses_live_attackers_without_attack_events",
+        "tests.test_attacking_token_results.AttackingTokenResultNativeTests.test_actual_parhelion_crew_creates_untapped_attacking_angels_that_survive_end_step",
+        "tests.test_fixed_keyword_event_effects.FixedKeywordEventEffectRuntimeTests.test_mobilize_token_multiplier_expands_independent_destination_choices",
+        "tests.test_card_program_trust.CardProgramTrustTests.test_global_handler_and_component_inventory_is_capability_bound"
       ]
     }
   ]

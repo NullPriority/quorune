@@ -347,8 +347,8 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
         ir = self.compile(text)
         self.assertEqual("exact", ir.status, ir.material_residuals)
         node = ir.faces[0].nodes[0]
-        self.assertEqual("bound-effect-program-v1", node.template_id)
-        self.assertIn("resolution.effect_program.bound_references", node.capability_dependencies)
+        self.assertEqual("fixed-target-player-effect-sequence-v1", node.template_id)
+        self.assertIn("resolution.effect.fixed_target_player_sequence", node.capability_dependencies)
         self.assertEqual(("choose_cards_apnap", "draw"), tuple(e["op"] for e in node.effects))
         self.assertEqual(["$target.0"], node.effects[0]["players"])
         self.assertEqual("discard", node.effects[0]["then"])

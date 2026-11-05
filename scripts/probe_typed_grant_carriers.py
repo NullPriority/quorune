@@ -21,7 +21,8 @@ def main() -> int:
     parser.add_argument("--db", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    frontier = json.loads(gzip.decompress((ROOT / "coverage/card-unlock-frontier.json.gz").read_bytes()))
+    from quorune.frontier_storage import unpack_frontier_document
+    frontier = unpack_frontier_document(json.loads(gzip.decompress((ROOT / "coverage/card-unlock-frontier.json.gz").read_bytes())))
     policy = json.loads((ROOT / "platform/rules-subsystems.json").read_text(encoding="utf-8"))["work_selection"]["coverage_family"]
     bundle = next(row for row in policy["candidate_bundles"] if row["bundle_id"] == "bundle:typed-layer-six-grant-carriers")
     diagnostic = []

@@ -156,6 +156,53 @@ class ConditionalCreatureTypeRemovalTests(unittest.TestCase):
 
 
 class StaticSettingCompilerTests(unittest.TestCase):
+    def test_commander_setting_query_keeps_owner_controller_and_designation_distinct(self):
+        from quorune.continuous_effects import CharacteristicState,evaluate_continuous_effects
+        from quorune.semantic_runtime.continuous_components import ContinuousEffectSourceContext
+        text='Commander creatures you own have base power and toughness 4/7 and are Elves in addition to their other types.'
+        compiled=fixed_characteristic_setting_handler(text)
+        self.assertIsNotNone(compiled)
+        descriptor=compiled[1]
+        self.assertIn('state_query.commander.designation',compiled[2])
+        self.assertEqual('source_owner',descriptor['target']['controller'])
+        self.assertTrue(descriptor['target']['predicate']['commander'])
+        context=ContinuousEffectSourceContext(source_object_id='source',source_ref='SOURCE',source_controller='A',
+            source_timestamp=3,component_id='commander-setting')
+        effects=FixedCharacteristicSettingsHandler().lower(descriptor,context)
+        for owner,controller,commander,expected in (('A','B',True,(4,7)),('B','A',True,(2,3)),('A','A',False,(2,3))):
+            base=CharacteristicState(name='Receiver',controller=controller,card_types={'Creature'},
+                subtypes={'Human'},power=2,toughness=3)
+            result=evaluate_continuous_effects(base,effects,context={'object_id':'receiver',
+                'logical_object_id':'receiver@0','zone':'battlefield','owner':owner,'controller':controller,
+                'commander':commander}).characteristics
+            self.assertEqual(expected,(result['power'],result['toughness']))
+            self.assertEqual(expected==(4,7),'elf' in {s.lower() for s in result['subtypes']})
+        for predicate,relation in (({'commander':False},'source_owner'),({'commander':None},'source_owner'),
+                ({'types_all':['artifact']},'source_owner'),({},'source_opponents'),({'owner':'B'},'source_owner')):
+            bad=deepcopy(descriptor);bad['target']['predicate'].update(predicate);bad['target']['controller']=relation
+            with self.subTest(predicate=predicate,relation=relation),self.assertRaises(ValueError):
+                FixedCharacteristicSettingsHandler().validate(bad)
+        noncreature=CharacteristicState(name='Commander walker',controller='B',card_types={'Planeswalker'},
+            subtypes={'Test'},power=None,toughness=None)
+        result=evaluate_continuous_effects(noncreature,effects,context={'object_id':'walker',
+            'logical_object_id':'walker@0','zone':'battlefield','owner':'A','controller':'B','commander':True}).characteristics
+        self.assertEqual((None,None),(result['power'],result['toughness']))
+        self.assertNotIn('elf',{s.lower() for s in result['subtypes']})
+
+    def test_commander_setting_rejects_withdrawn_designation_dependency(self):
+        from scripts.update_capability_evidence import build_index,discover_tests
+        from quorune.rules.evidence import read_evidence_document,validate_capability_evidence_index
+        data=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in data['capabilities'] if row['id']=='state_query.commander.designation').update(
+            status='blocked',blockers=['withdrawn designation query'])
+        registry=CapabilityRegistry(data)
+        index=build_index(registry_value=data,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
+        text='Commander creatures you own have base power and toughness 4/7 and are Elves in addition to their other types.'
+        ir=compile_oracle_card(replace(query_record(text),type_line='Enchantment'),capability_registry=registry)
+        self.assertNotEqual('exact',ir.status)
+
     def test_conditional_source_setting_preserves_public_condition_and_layer_contract(self):
         from test_qualified_zone_event_queries import query_record
         text = "During your turn, this creature has base power and toughness 5/2."
@@ -325,6 +372,42 @@ class StaticSettingCompilerTests(unittest.TestCase):
 
 
 class StaticSettingRuntimeTests(unittest.TestCase):
+    def test_actual_owned_commander_setting_cast_matches_owner_across_control_and_replays(self):
+        from quorune.zone_transitions import ZoneTransitionOwner
+        session=self.session(284090);engine=session.engine;zone_owner=ZoneTransitionOwner(engine)
+        commanders={seat:next(engine.state.cards[oid] for oid in engine.state.players[seat].zones['command']
+            if engine.state.cards[oid].is_commander) for seat in ('A','B')}
+        for seat,controller in (('A','B'),('B','A')):
+            zone_owner.move_card(commanders[seat].object_id,'battlefield',controller=controller,reason='Setting receiver fixture')
+        own=engine.state.cards[commanders['A'].object_id];other=engine.state.cards[commanders['B'].object_id]
+        own.counters['+1/+1']=2
+        base_other=(engine._numeric_stat(other.object_id,'power'),engine._numeric_stat(other.object_id,'toughness'))
+        base_own=(engine._numeric_stat(own.object_id,'power'),engine._numeric_stat(own.object_id,'toughness'))
+        token_ref=engine.create_token('A',name='Setting Bystander',
+            characteristics={'type_line':'Token Creature — Beast','power':'3','toughness':'4'},
+            reason='Noncommander setting control')[0]
+        token=engine._resolve_object('A',token_ref)
+        background=self.add(engine,'Raised by Giants',zone='hand',ref='OWNED_SETTING')
+        self.assert_closed_card(session,background)
+        offer=self.ready(session,background,{'G':1,'C':5});self.checkpoint(session)
+        for seat in 'BCD':self.assertNotIn(background.ref,json.dumps(session.packet('pilot:'+seat,full=True)['state']))
+        before=authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B',{'action_id':offer['id'],'pay':'auto'}).ok)
+        self.assertEqual(before,authoritative_state_hash(session.state))
+        self.assertTrue(session.act('pilot:A',{'action_id':offer['id'],'pay':'auto'}).ok)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((12,12),(engine._numeric_stat(own.object_id,'power'),engine._numeric_stat(own.object_id,'toughness')))
+        self.assertIn('giant',self.current_types(session,own)[1])
+        self.assertEqual(base_other,(engine._numeric_stat(other.object_id,'power'),engine._numeric_stat(other.object_id,'toughness')))
+        self.assertNotIn('giant',self.current_types(session,other)[1])
+        self.assertEqual((3,4),(engine._numeric_stat(token.object_id,'power'),engine._numeric_stat(token.object_id,'toughness')))
+        self.assertNotIn('giant',self.current_types(session,token)[1])
+        self.replay(session,load=True)
+        # Separate canonical departure-owner control after the replayed cast prefix.
+        zone_owner.move_card(background.object_id,'graveyard',reason='Setting source departure fixture')
+        self.assertEqual(base_own,(engine._numeric_stat(own.object_id,'power'),engine._numeric_stat(own.object_id,'toughness')))
+        self.assertNotIn('giant',self.current_types(session,own)[1])
+
     def cast_at_priority(self, session, seat, card, targets=()):
         for _ in range(16):
             session.engine.pump()
@@ -678,6 +761,7 @@ class StaticSettingRuntimeTests(unittest.TestCase):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'settings.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
             ROOT/'tests/fixtures/static-characteristic-setting-cards.json',
+            ROOT/'tests/fixtures/owned-commander-setting-cards.json',
             ROOT/'tests/fixtures/event-player-subject-cards.json',
             ROOT/'tests/fixtures/conditional-exile-cards.json',ROOT/'tests/fixtures/scryfall-exact-lists.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()

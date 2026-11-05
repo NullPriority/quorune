@@ -1,13 +1,35 @@
 from __future__ import annotations
 
-"""Memoize completed pure characteristic reads within one synchronous read."""
+"""Scoped characteristic reads and detached source views."""
 
 from contextlib import contextmanager
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass, field
 from typing import Any
+from collections.abc import Mapping
 from functools import wraps
+
+
+@dataclass(frozen=True,slots=True)
+class CharacteristicStateView:
+    original: Any
+    cards: Mapping
+    players: Mapping
+
+    def __getattr__(self,name):return getattr(self.original,name)
+
+
+@dataclass(frozen=True,slots=True)
+class CharacteristicReadHost:
+    original: Any
+    state: Any
+
+    def __getattr__(self,name):
+        value=getattr(self.original,name)
+        if getattr(value,'__self__',None) is self.original and hasattr(value,'__func__'):
+            return value.__func__.__get__(self,type(self))
+        return value
 
 
 @dataclass(slots=True)

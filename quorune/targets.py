@@ -129,7 +129,7 @@ def _target_relations(raw: Mapping[str, Any]) -> tuple[str, str, str]:
         ("owner", owner),
         ("player", player),
     ):
-        if relation not in {"any", "you", "opponent"}:
+        if relation not in ({"any", "you", "opponent", "spell_owner"} if name=="owner" else {"any", "you", "opponent"}):
             raise ValueError(f"Unknown {name} relation {relation!r}")
     return controller, owner, player
 
@@ -364,6 +364,8 @@ _TARGET_GROUP_FIELDS = frozenset(
         "groups",
         "globally_distinct",
         "same_player_groups",
+        "distinct_controllers",
+        "retain_controller",
     }
 )
 
@@ -416,6 +418,8 @@ class TargetGroup:
     distinct: bool = True
     allow_reuse: bool = False
     same_owner: bool = False
+    distinct_controllers: bool = False
+    retain_controller: bool = False
     different_from_groups: tuple[str, ...] = ()
     predicate: str = ""
     resolution_condition: dict[str, Any] = field(default_factory=dict)
@@ -425,6 +429,10 @@ class TargetGroup:
     damage_history: TargetDamageHistorySpec | None = None
 
     def __post_init__(self) -> None:
+        if any(type(value)is not bool for value in (self.distinct_controllers,self.retain_controller)):
+            raise ValueError('Controller target constraints must be boolean')
+        if (self.distinct_controllers or self.retain_controller) and (self.zones!=('battlefield',) or self.categories!=('permanent',)):
+            raise ValueError('Controller target constraints require battlefield permanents')
         if type(self.same_owner) is not bool:
             raise ValueError("Target same_owner constraint must be boolean")
         if self.combat_state is not None and (
@@ -593,6 +601,8 @@ class TargetGroup:
             "distinct": bool(raw.get("distinct", True)),
             "allow_reuse": bool(raw.get("allow_reuse", False)),
             "same_owner": _optional_bool(raw.get("same_owner")) or False,
+            "distinct_controllers": raw.get('distinct_controllers',False),
+            "retain_controller": raw.get('retain_controller',False),
             "different_from_groups": _strings(raw.get("different_from_groups")),
             "predicate": predicate,
             "resolution_condition": _target_resolution_condition(
@@ -618,6 +628,8 @@ class TargetGroup:
             "distinct": self.distinct,
             "allow_reuse": self.allow_reuse,
             **({"same_owner": True} if self.same_owner else {}),
+            **({'distinct_controllers':True} if self.distinct_controllers else {}),
+            **({'retain_controller':True} if self.retain_controller else {}),
             "different_from_groups": list(self.different_from_groups),
             "legal_refs": list(legal_refs),
         }

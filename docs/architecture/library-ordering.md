@@ -113,6 +113,23 @@ put into a graveyard “this way” remains outside this fixed-body grammar.
 
 ## Fixed library selection
 
+`mana_value_limit.py` provides a closed immutable limit over an already evaluated
+mana value. It does not derive that value from costs paid, power or card names.
+The battlefield-selection shape uses that limit separately from the public
+battlefield power/toughness query contract.
+
+`variable_library_selection_model.py` supplies a resolved-count bridge to the
+existing fixed selection schema. Zero normalizes to no inspection. Positive
+counts retain the printed selection policy, bound fixed cardinalities by the
+inspection, and reduce two optional slots to one union when only one card is
+inspected. The compiler binds an existing declared, cast-X or scalar amount;
+the registered automatic preparation captures that count before delegating to
+the fixed selection instruction. It performs no look or reveal itself. The
+existing partition and destination owners retain privacy, physical/logical
+identity validation, replacement continuation and replay authority. Unowned
+amounts, another player's library, linked followups and unrepresented selected
+destinations remain residual.
+
 `library.select.fixed_controller` owns one complete fixed positive inspection
 or reveal of the resolving controller's library top. The compiler supplies a
 closed choice policy, typed characteristic predicates, hand cardinality, and a
@@ -159,11 +176,61 @@ card. Saved intent identities explicitly record `library_top` only for this
 form; historical hand-selection descriptors and intent bytes keep their
 existing default. This narrow form does not authorize other exile selections.
 
-The family excludes variable counts, another player's library, conditional or
-payment instructions, numeric, chosen, and name predicates, battlefield,
-unrepresented exile, cast, or play destinations, and any unowned preceding or trailing
-effect. These exclusions remain material compiler residuals rather than
-runtime prose interpretation.
+A version-three fixed selection represents explicit creature, land or
+planeswalker selection for entry under the resolving controller. It retains a
+typed optional mana-value maximum and explicit tapped status. The shared zone
+owner prepares and commits all selected entrants simultaneously before the
+library partition owner orders the complete remainder on the bottom. Entry
+replacement choices suspend the whole procedure before either group moves.
+Saved intent identities carry entry status only for this destination; old hand
+and top/exile identities retain their existing bytes.
+
+Aura-capable or ambiguous selectors, attacking entry, linked post-entry grants
+and graveyard remainders remain outside this battlefield shape. Another player's
+library, conditional or payment instructions, unowned numeric, chosen and name
+predicates, other exile, cast or play destinations, and unowned preceding or
+trailing effects also remain material compiler residuals.
+
+## Discover
+
+`library.discover.controller` represents a nonnegative controller Discover
+instruction. Its immutable progress pins each public exile incarnation. The
+same closed action composes inside spells, triggers and paid activations; the
+captured controller persists after an activation sacrifices or exiles its source.
+The existing zone-intent continuation exiles one library card at a time until the
+nonland card's mana value is at most the resolved amount. The cast decision
+independently checks the resulting spell's mana value against the same inclusive
+limit, retaining canonical face, target, cost and prohibition queries.
+Amounts may use the existing declared cast-X, public-query or scalar result
+owners. A defined source quantity binds before an optional effect wraps it;
+departure quantities use last-known battlefield information. The resolved amount
+remains fixed throughout the scan and its choices. Zero still performs Discover's
+scan; declining an optional Discover performs none.
+
+Mandatory cost replacements suspend the whole attempted cast before payment
+commits. The immutable cast intent retains the resolving permission, candidate,
+face, cost and targets. Resume replays ordered choices through the canonical
+payment journal inside a transaction, including when distinct cost objects need
+separate choices. The enclosing instruction waits until casting completes;
+saved cost choices cannot become ordinary priority-cast authority.
+An immediate conditional return caused by a paid source can require another
+entry choice after the cast commits. That choice retains the paid cast and the
+parent's remaining work; Discover cleanup and followup wait for the return.
+
+The shared cast-or-decline form offers only current legal options. A declined
+or unavailable cast moves the discovered card into hand. The canonical zone
+owner moves the other exiled cards to the bottom in random order, then the
+procedure emits `player.discovered`. Applicable destination replacements suspend
+cleanup before the whole bottom batch moves; the saved continuation retains its
+public exile progress. Empty libraries still complete the action.
+Casting and cleanup preserve the enclosing instruction continuation; the cast
+spell resolves after that enclosing spell or ability finishes. Cascade retains
+its separate strict-less comparison and cleanup contract.
+
+Unowned quantity expressions, linked discovered-card references and discovery
+observers remain material. Original-card admission and focused native witnesses
+bound the implemented claim; a recognized action does not establish that every
+source containing it is closed.
 
 ## Library search restrictions
 
@@ -187,6 +254,31 @@ duration after the resolving spell leaves the stack. Static participation
 instead follows current source ability, face, controller and phasing state.
 Causal-controller restrictions, payments to ignore a source, and unrepresented
 replacement forms remain explicit compiler boundaries.
+
+## Controller reveal-until partitions
+
+A typed controller-only scan reveals a consecutive prefix through a fixed
+positive number of qualifying cards. The pure query stops at the required
+match and leaves all cards in the library until the printed result. Matching
+hand or battlefield results delegate to the existing fixed-selection owner;
+all-revealed hand results use its existing reveal and selection intents without
+an invented choose-all interaction. Empty or insufficient-match libraries do
+as much as possible. This procedure does not draw cards.
+
+Mandatory matching partitions retain current identities, entry replacements,
+chosen ordering and private projection. A randomized multi-card remainder
+loses positional knowledge for every player; a chosen multi-card bottom order
+is owner-private even after public reveal. Singleton and unaffected-card
+knowledge remain valid. Random bottom ordering is not a shuffle.
+`library_selection_knowledge_version: 1` independently pins that knowledge
+correction while historical absence retains earlier bookkeeping. See
+[ADR 0156](../adr/0156-versioned-library-order-knowledge.md) and
+[ADR 0157](../adr/0157-controller-reveal-until-partitions.md).
+
+Other players' libraries, variable or chosen stopping conditions, linked
+revealed-count/mana-value consumers, casting results, shuffle-the-rest forms
+and unrepresented destinations remain outside this scan family. Existing
+fixed-count selection and Discover retain their separate contracts.
 
 ## Deliberate boundary
 

@@ -39,16 +39,21 @@ def _player_target_schema(*, opponent: bool = False) -> dict[str, Any]:
 
 @dataclass(frozen=True, slots=True)
 class PublicGraveyardCardExileTemplate:
-    """One target physical card in any public graveyard."""
+    """One target physical card in a public, optionally owner-relative graveyard."""
 
     target: PublicGraveyardCardTargetKind = PublicGraveyardCardTargetKind.CARD
+    owner_relation: str = "any"
 
     def __post_init__(self) -> None:
         if not isinstance(self.target, PublicGraveyardCardTargetKind):
             raise ValueError("Public graveyard exile target is unsupported")
+        PublicGraveyardCardTargetSpec(self.target, owner_relation=self.owner_relation)
 
     @property
     def template_id(self) -> str:
+        if self.owner_relation != "any":
+            return ("exile-target-" + PublicGraveyardCardTargetSpec(self.target).slug
+                    + "-from-owner-" + self.owner_relation + "-graveyard-v1")
         return (
             "exile-target-"
             + PublicGraveyardCardTargetSpec(self.target).slug
@@ -64,7 +69,7 @@ class PublicGraveyardCardExileTemplate:
 
     @property
     def target_schema(self) -> Mapping[str, Any]:
-        return PublicGraveyardCardTargetSpec(self.target).to_target_schema()
+        return PublicGraveyardCardTargetSpec(self.target, owner_relation=self.owner_relation).to_target_schema()
 
     @property
     def mechanics(self) -> tuple[str, ...]:
@@ -209,14 +214,15 @@ def public_graveyard_card_exile_template(
         re.escape(kind.value) for kind in PublicGraveyardCardTargetKind
     )
     match = re.fullmatch(
-        rf"exile target (?P<target>{targets}) from a graveyard\.?",
+        rf"exile target (?P<target>{targets}) from (?P<owner>a|your|an opponent[\x27’]s) graveyard\.?",
         text.strip(),
         re.IGNORECASE,
     )
     if match is None:
         return None
     return PublicGraveyardCardExileTemplate(
-        PublicGraveyardCardTargetKind(match.group("target").casefold())
+        PublicGraveyardCardTargetKind(match.group("target").casefold()),
+        owner_relation={"a": "any", "your": "you"}.get(match.group("owner").casefold(), "opponent"),
     )
 
 

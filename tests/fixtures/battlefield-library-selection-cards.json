@@ -1,0 +1,932 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "battlefield_library_selection_originals",
+  "source": "Pinned original candidate Oracle identities from the independent destination/selector inventory.",
+  "cards": [
+    {
+      "oracle_id": "96e5d4a1-e59f-4140-823f-a17e15ee5d8d",
+      "name": "Aang, at the Crossroads // Aang, Destined Savior",
+      "mana_cost": "{2}{G}{W}{U} // ",
+      "cmc": 5.0,
+      "type_line": "Legendary Creature — Human Avatar Ally // Legendary Creature — Avatar Ally",
+      "oracle_text": "Aang, at the Crossroads: Flying\nWhen Aang enters, look at the top five cards of your library. You may put a creature card with mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.\nWhen another creature you control leaves the battlefield, transform Aang at the beginning of the next upkeep.\n//\nAang, Destined Savior: Flying\nLand creatures you control have vigilance.\nAt the beginning of combat on your turn, earthbend 2. (Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Transform",
+        "Earthbend"
+      ],
+      "produced_mana": [],
+      "layout": "transform",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [
+            "G",
+            "U",
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}{W}{U}",
+          "name": "Aang, at the Crossroads",
+          "oracle_text": "Flying\nWhen Aang enters, look at the top five cards of your library. You may put a creature card with mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.\nWhen another creature you control leaves the battlefield, transform Aang at the beginning of the next upkeep.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Legendary Creature — Human Avatar Ally"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Aang, Destined Savior",
+          "oracle_text": "Flying\nLand creatures you control have vigilance.\nAt the beginning of combat on your turn, earthbend 2. (Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Legendary Creature — Avatar Ally"
+        }
+      ]
+    },
+    {
+      "oracle_id": "e05029b4-552d-4691-a5c4-885284fb1636",
+      "name": "Cartographer's Survey",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Look at the top seven cards of your library. Put up to two land cards from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-11-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "96b909ab-55f1-4cde-a675-2504de3da772",
+      "name": "Cavalier of Thorns",
+      "mana_cost": "{2}{G}{G}{G}",
+      "cmc": 5.0,
+      "type_line": "Creature — Elemental Knight",
+      "oracle_text": "Reach\nWhen this creature enters, reveal the top five cards of your library. Put a land card from among them onto the battlefield and the rest into your graveyard.\nWhen this creature dies, you may exile it. If you do, put another target card from your graveyard on top of your library.",
+      "power": "5",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "0bbcb563-09b3-499d-a9cc-3a6d7501dd81",
+      "name": "Collected Company",
+      "mana_cost": "{3}{G}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Look at the top six cards of your library. Put up to two creature cards with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in any order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-03-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e17ea7eb-362e-4c61-97cd-537f3921bced",
+      "name": "Deploy the Gatewatch",
+      "mana_cost": "{4}{W}{W}",
+      "cmc": 6.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Look at the top seven cards of your library. Put up to two planeswalker cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-08-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "71d14755-b81d-4aec-b94d-1637884a5844",
+      "name": "Elvish Rejuvenator",
+      "mana_cost": "{2}{G}",
+      "cmc": 3.0,
+      "type_line": "Creature — Elf Druid",
+      "oracle_text": "When this creature enters, look at the top five cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "23320d55-80cb-4da3-a53c-8c75abdc8c8f",
+      "name": "Ignis Scientia",
+      "mana_cost": "{1}{G}{U}",
+      "cmc": 3.0,
+      "type_line": "Legendary Creature — Human Advisor",
+      "oracle_text": "When Ignis Scientia enters, look at the top six cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.\nI've Come Up with a New Recipe! — {1}{G}{U}, {T}: Exile target card from a graveyard. If a creature card was exiled this way, create a Food token.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "keywords": [
+        "Food"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-06-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b9ca8ead-c267-4170-a6c8-04498330c82b",
+      "name": "Jet, Rebel Leader",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Rebel Ally",
+      "oracle_text": "Whenever Jet attacks, look at the top five cards of your library. You may put a creature card with mana value 3 or less from among them onto the battlefield tapped and attacking. Put the rest on the bottom of your library in a random order.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "07c82cde-f00d-4454-9df4-9286e344c9bb",
+      "name": "Muxus, Goblin Grandee",
+      "mana_cost": "{4}{R}{R}",
+      "cmc": 6.0,
+      "type_line": "Legendary Creature — Goblin Noble",
+      "oracle_text": "When Muxus enters, reveal the top six cards of your library. Put all Goblin creature cards with mana value 5 or less from among them onto the battlefield and the rest on the bottom of your library in a random order.\nWhenever Muxus attacks, it gets +1/+1 until end of turn for each other Goblin you control.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b0060b32-b856-4ff7-a113-cec2dc8f8dc6",
+      "name": "See the Unwritten",
+      "mana_cost": "{4}{G}{G}",
+      "cmc": 6.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Reveal the top eight cards of your library. You may put a creature card from among them onto the battlefield. Put the rest into your graveyard.\nFerocious — If you control a creature with power 4 or greater, you may put two creature cards onto the battlefield instead of one.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Ferocious"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "cbad3570-5417-42e6-b3ef-f42194098314",
+      "name": "Shigeki, Jukai Visionary",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Legendary Enchantment Creature — Snake Druid",
+      "oracle_text": "{1}{G}, {T}, Return Shigeki to its owner's hand: Reveal the top four cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest into your graveyard.\nChannel — {X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards from your graveyard to your hand.",
+      "power": "1",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Channel"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b1a0ae56-77aa-43ad-9aa8-dc1ab779e9d9",
+      "name": "Silverback Elder",
+      "mana_cost": "{2}{G}{G}{G}",
+      "cmc": 5.0,
+      "type_line": "Creature — Ape Shaman",
+      "oracle_text": "Whenever you cast a creature spell, choose one —\n• Destroy target artifact or enchantment.\n• Look at the top five cards of your library. You may put a land card from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.\n• You gain 4 life.",
+      "power": "5",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-09-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "2faa8dc1-0370-458c-9aef-44f81a9b5cd5",
+      "name": "Summoning Trap",
+      "mana_cost": "{4}{G}{G}",
+      "cmc": 6.0,
+      "type_line": "Instant — Trap",
+      "oracle_text": "If a creature spell you cast this turn was countered by a spell or ability an opponent controlled, you may pay {0} rather than pay this spell's mana cost.\nLook at the top seven cards of your library. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in any order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-03-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "892a83a0-a3cb-4cfb-9106-4008e4e75c0f",
+      "name": "United Battlefront",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Look at the top seven cards of your library. Put up to two noncreature, nonland permanent cards with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "99c2d3ef-e5b4-48cd-b3f5-de9b02c7c36a",
+      "name": "Ureni of the Unwritten",
+      "mana_cost": "{4}{G}{U}{R}",
+      "cmc": 7.0,
+      "type_line": "Legendary Creature — Spirit Dragon",
+      "oracle_text": "Flying, trample\nWhenever Ureni enters or attacks, look at the top eight cards of your library. You may put a Dragon creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": "7",
+      "toughness": "7",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "keywords": [
+        "Flying",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "33d556c5-1bb4-49bb-88c2-627311eb8c9b",
+      "name": "Web of Life and Destiny",
+      "mana_cost": "{6}{G}{G}",
+      "cmc": 8.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nAt the beginning of combat on your turn, look at the top five cards of your library. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Convoke"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-09-26",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "07c82cde-f00d-4454-9df4-9286e344c9bb",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "If a card in a player's library has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "07c82cde-f00d-4454-9df4-9286e344c9bb",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "The bonus Muxus gets is determined only as its last ability resolves. Once that happens, the bonus won't change later in the turn even if the number of Goblins you control changes."
+    },
+    {
+      "oracle_id": "0bbcb563-09b3-499d-a9cc-3a6d7501dd81",
+      "published_at": "2015-02-25",
+      "source": "wotc",
+      "comment": "Each of the creature cards can have mana value 3 or less. It's not the total mana value of the two cards."
+    },
+    {
+      "oracle_id": "23320d55-80cb-4da3-a53c-8c75abdc8c8f",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "If the target card is an illegal target as Ignis Scientia's last ability resolves, it won't resolve and none of its effects will happen. You won't create a Food token even if the target card was a creature card."
+    },
+    {
+      "oracle_id": "23320d55-80cb-4da3-a53c-8c75abdc8c8f",
+      "published_at": "2025-06-06",
+      "source": "wotc",
+      "comment": "A Food token is an artifact token with \"{2}, {T}, Sacrifice this token: You gain 3 life.\""
+    },
+    {
+      "oracle_id": "2faa8dc1-0370-458c-9aef-44f81a9b5cd5",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "Casting a Trap by paying its alternative cost doesn't change its mana cost or mana value. The only difference is the cost you actually pay."
+    },
+    {
+      "oracle_id": "2faa8dc1-0370-458c-9aef-44f81a9b5cd5",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "Effects that increase or reduce the cost to cast a Trap will apply to whichever cost you chose to pay."
+    },
+    {
+      "oracle_id": "2faa8dc1-0370-458c-9aef-44f81a9b5cd5",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "You may ignore a Trap's alternative cost condition and simply cast it for its normal mana cost. This is true even if its alternative cost condition has been met."
+    },
+    {
+      "oracle_id": "2faa8dc1-0370-458c-9aef-44f81a9b5cd5",
+      "published_at": "2009-10-01",
+      "source": "wotc",
+      "comment": "If there are seven or fewer cards in your library, you'll look at all of them."
+    },
+    {
+      "oracle_id": "892a83a0-a3cb-4cfb-9106-4008e4e75c0f",
+      "published_at": "2025-04-04",
+      "source": "wotc",
+      "comment": "If a card in a library has {X} in its mana cost, X is 0 for the purpose of determining its mana value."
+    },
+    {
+      "oracle_id": "96e5d4a1-e59f-4140-823f-a17e15ee5d8d",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Aang, at the Crossroads's delayed triggered ability won't cause it to transform back into Aang, at the Crossroads if it has already transformed into Aang, Destined Savior, perhaps because several creatures left the battlefield in one turn."
+    },
+    {
+      "oracle_id": "96e5d4a1-e59f-4140-823f-a17e15ee5d8d",
+      "published_at": "2025-10-02",
+      "source": "wotc",
+      "comment": "Aang, at the Crossroads's delayed triggered ability triggers at the beginning of the next upkeep regardless of whose turn it is."
+    },
+    {
+      "oracle_id": "b0060b32-b856-4ff7-a113-cec2dc8f8dc6",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Because you’re not casting the creature cards, you can’t pay any additional or alternative costs. You can’t put the cards onto the battlefield face down."
+    },
+    {
+      "oracle_id": "b0060b32-b856-4ff7-a113-cec2dc8f8dc6",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You determine whether the ferocious ability applies before any creature cards are put onto the battlefield. If you put two creature cards onto the battlefield this way, those creatures enter the battlefield at the same time."
+    },
+    {
+      "oracle_id": "b0060b32-b856-4ff7-a113-cec2dc8f8dc6",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If a card you put onto the battlefield this way has {X} in its mana cost, X is considered to be 0."
+    },
+    {
+      "oracle_id": "b0060b32-b856-4ff7-a113-cec2dc8f8dc6",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Some ferocious abilities that appear on instants and sorceries use the word “instead.” These spells have an upgraded effect if you control a creature with power 4 or greater as they resolve. For these, you only get the upgraded effect, not both effects."
+    },
+    {
+      "oracle_id": "b0060b32-b856-4ff7-a113-cec2dc8f8dc6",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "Ferocious abilities of instants and sorceries that don’t use the word “instead” will provide an additional effect if you control a creature with power 4 or greater as they resolve."
+    },
+    {
+      "oracle_id": "b1a0ae56-77aa-43ad-9aa8-dc1ab779e9d9",
+      "published_at": "2022-09-09",
+      "source": "wotc",
+      "comment": "Silverback Elder’s triggered ability resolves before the spell that caused it to trigger. The ability will resolve even if that spell is countered."
+    },
+    {
+      "oracle_id": "cbad3570-5417-42e6-b3ef-f42194098314",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Discarding the card is part of the cost to activate a channel ability."
+    },
+    {
+      "oracle_id": "cbad3570-5417-42e6-b3ef-f42194098314",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a channel ability requires a target, you may not activate it without a target just to discard the card."
+    }
+  ]
+}

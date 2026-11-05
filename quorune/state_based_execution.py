@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Mapping, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence, TYPE_CHECKING
 from .control_effects import ControlEffectHost, synchronize_control_effects
 
 from .counter_removal import (
@@ -32,6 +32,8 @@ from .saga_progression import saga_final_chapter_snapshot
 from .zone_trigger_events import ZoneTransitionKind
 from .util import unique_preserving_order
 from .semantic_runtime.zone_replacement_model import PreparedZoneChange
+if TYPE_CHECKING:
+    from .composition_departure_batch import PreparedCompositionDepartureBatch
 
 
 def synchronize_state_based_observers(host):
@@ -220,6 +222,7 @@ class StateBasedExecutionPlan:
     counter_removals: StateBasedCounterRemovalPlan
     state_changed: bool
     zone_replacements: tuple[tuple[str, PreparedZoneChange], ...] = ()
+    composition_departure_batch: PreparedCompositionDepartureBatch | None = None
 
 
 def _prepare_counter_removals(
@@ -444,7 +447,8 @@ def commit_state_based_zone_changes(
     plan: StateBasedExecutionPlan,
 ) -> None:
     from .conditional_exile_return import defer_conditional_cost_returns, finish_conditional_cost_returns
-    with defer_conditional_cost_returns() as waiting:
+    from .composition_state_based_order import prepared_state_based_compositions
+    with defer_conditional_cost_returns() as waiting,prepared_state_based_compositions(plan.composition_departure_batch):
         _commit_state_based_zone_changes(host,plan)
     finish_conditional_cost_returns(host,waiting)
 

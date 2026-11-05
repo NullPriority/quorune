@@ -101,10 +101,20 @@ _COUNTER_FOR_EACH = re.compile(
 )
 _QUERY_CHARACTERISTIC_PATTERNS = (
     (
+        "per-object",
+        re.compile(
+            r"^Until end of turn, (?P<subject>.+?) "
+            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets?) "
+            r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+) for each "
+            r"(?P<quantity>.+?)(?P<suffix_keywords> and gains? .+?)?\.?$",
+            re.IGNORECASE,
+        ),
+    ),
+    (
         "where-x",
         re.compile(
             r"^(?P<subject>.+?) "
-            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets) "
+            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets?) "
             r"(?P<power>[+-](?:X|0))/(?P<toughness>[+-](?:X|0))"
             r"(?P<suffix_keywords> and gains? .+?)? until end of turn, "
             r"where X is (?:(?:equal to )?the number of )?"
@@ -116,7 +126,7 @@ _QUERY_CHARACTERISTIC_PATTERNS = (
         "per-object",
         re.compile(
             r"^(?P<subject>.+?) "
-            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets) "
+            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets?) "
             r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
             r"(?P<suffix_keywords> and gains? .+?)? until end of turn "
             r"for each (?P<quantity>.+?)\.?$",
@@ -127,7 +137,7 @@ _QUERY_CHARACTERISTIC_PATTERNS = (
         "per-object",
         re.compile(
             r"^(?P<subject>.+?) "
-            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets) "
+            r"(?:(?:gains? (?P<prefix_keywords>.+?) and )?gets?) "
             r"(?P<power>[+-]\d+)/(?P<toughness>[+-]\d+)"
             r"(?P<suffix_keywords> and gains? .+?)? for each "
             r"(?P<quantity>.+?) until end of turn\.?$",
@@ -135,6 +145,11 @@ _QUERY_CHARACTERISTIC_PATTERNS = (
         ),
     ),
 )
+
+_CHARACTERISTIC_RESULT_OPERATIONS = frozenset({
+    "modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn",
+    "modify_all_matching_permanents_until_end_of_turn",
+})
 
 
 def _coefficient(value: str | None) -> int:
@@ -281,6 +296,9 @@ def _query_characteristic_candidate(
 
 
 _AMOUNT_FIELDS = {
+    "drain_opponent": "amount",
+    "drain_each_opponent": "amount",
+    "life_loss_then_gain_actual": "amount",
     "life": "delta",
     "lose_life": "amount",
     "lose_life_each_opponent": "amount",
@@ -376,8 +394,17 @@ def public_query_effect_amount_template(
         template_id, effects, target_schema, mechanics = compile_fixed(
             fixed_text
         )
+        declared_global = bool(re.search(r", where X is ", normalized, re.IGNORECASE))
+        if template_id is None and not declared_global:
+            from .fixed_public_characteristic_sets import fixed_public_characteristic_set_effect_template
+            public_text=(f"{subject} get {power * 2:+d}/{toughness * 2:+d}"
+                f"{keyword_suffix.replace(' and gains ', ' and gain ', 1)} until end of turn.")
+            public_set=fixed_public_characteristic_set_effect_template(public_text)
+            if public_set is not None:template_id,effects,target_schema,mechanics=public_set
         if template_id is None or not mechanics:
             return None
+        if declared_global and any(effect.get("op") == "modify_all_matching_permanents_until_end_of_turn" for effect in effects):
+            return None  # Keep the existing instruction-scoped declaration owner.
         if target_schema is None and effects and all(effect.get("card") == "$source" for effect in effects):
             source_template = _source_characteristic_amount_base(effects)
             if source_template is None:
@@ -387,7 +414,7 @@ def public_query_effect_amount_template(
         projected: list[Mapping[str, Any]] = []
         for raw_effect in effects:
             effect = deepcopy(dict(raw_effect))
-            if effect.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}:
+            if effect.get("op") in _CHARACTERISTIC_RESULT_OPERATIONS:
                 if (
                     type(effect.get("power")) is not int
                     or type(effect.get("toughness")) is not int
@@ -459,7 +486,7 @@ def contains_public_query_characteristic_amount(value: Any) -> bool:
     """Return whether one temporary stat operation carries this scalar."""
 
     if isinstance(value, Mapping):
-        if value.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}:
+        if value.get("op") in _CHARACTERISTIC_RESULT_OPERATIONS:
             return any(
                 isinstance(value.get(field), Mapping)
                 and value[field].get("kind") == PUBLIC_QUERY_AMOUNT_KIND
@@ -481,8 +508,11 @@ def _fixed_shape_effects(
     """Project query-derived scalars to positive fixed values for shape checks."""
 
     projected = [deepcopy(dict(effect)) for effect in effects]
+    if any(effect.get("op") == "modify_all_matching_permanents_until_end_of_turn"
+           for effect in projected) and len(projected) != 1:
+        return None
     characteristic = any(
-        effect.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}
+        effect.get("op") in _CHARACTERISTIC_RESULT_OPERATIONS
         and contains_public_query_effect_amount(effect)
         for effect in projected
     )
@@ -490,7 +520,7 @@ def _fixed_shape_effects(
         modifiers = tuple(
             effect
             for effect in projected
-            if effect.get("op") in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}
+            if effect.get("op") in _CHARACTERISTIC_RESULT_OPERATIONS
         )
         references = {
             effect.get("card")
@@ -498,8 +528,7 @@ def _fixed_shape_effects(
             if effect.get("op")
             in {
                 "grant_keyword_until_end_of_turn",
-                "modify_stats_until_end_of_turn",
-                "apply_source_characteristics_until_end_of_turn",
+                *_CHARACTERISTIC_RESULT_OPERATIONS,
             }
         }
         if (
@@ -510,8 +539,7 @@ def _fixed_shape_effects(
                 effect.get("op")
                 not in {
                     "grant_keyword_until_end_of_turn",
-                    "modify_stats_until_end_of_turn",
-                    "apply_source_characteristics_until_end_of_turn",
+                    *_CHARACTERISTIC_RESULT_OPERATIONS,
                 }
                 for effect in projected
             )
@@ -523,7 +551,7 @@ def _fixed_shape_effects(
     for effect in projected:
         operation = str(effect.get("op") or "")
         fields: tuple[str, ...]
-        if operation in {"modify_stats_until_end_of_turn", "apply_source_characteristics_until_end_of_turn"}:
+        if operation in _CHARACTERISTIC_RESULT_OPERATIONS:
             fields = ("power", "toughness")
         else:
             field = _AMOUNT_FIELDS.get(operation)
@@ -574,6 +602,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         fixed_target_characteristics_node_capabilities,
     )
     from ..rules.fixed_controller_effect_shapes import fixed_life_node_capabilities
+    from ..rules.actual_life_transfer import actual_life_transfer_capabilities
     from ..rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
     from ..rules.counter_placement_capability_shapes import fixed_counter_placement_node_capabilities
     from ..rules.closed_effect_program_shapes import closed_effect_program_node_capabilities
@@ -607,6 +636,7 @@ def public_query_amount_program_is_closed(program: Any, *, required_dependencies
         bool(dependencies:=resolver(effects=effects, target_schema=program.target_schema, mechanic_ids=mechanics))
         and set(dependencies).issubset(program.capability_dependencies)
         for resolver in (
+            actual_life_transfer_capabilities,
             fixed_damage_node_capabilities,
             fixed_draw_node_capabilities,
             fixed_scry_node_capabilities,

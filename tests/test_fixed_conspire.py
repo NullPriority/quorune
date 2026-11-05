@@ -363,7 +363,7 @@ class FixedConspireRuntimeTests(unittest.TestCase):
 
     def test_original_conspire_cards_require_complete_normal_registration(self):
         expected = {'Ghastly Discovery', 'Gleeful Sabotage', 'Burn Trail', 'Rally the Galadhrim',
-            'Memory Sluice', 'Barkshell Blessing', 'Aethertow'}
+            'Memory Sluice', 'Barkshell Blessing', 'Aethertow', 'Giantbaiting'}
         rows = [r for r in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']
             if 'Conspire' in r.get('keywords', ())]
         self.assertEqual(11, len(rows))

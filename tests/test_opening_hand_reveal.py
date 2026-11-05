@@ -46,10 +46,38 @@ class OpeningRevealCompilerTests(unittest.TestCase):
 
     def test_actual_life_transfer_and_top_exile_results_have_reusable_closed_templates(self):
         for text in ('Each opponent loses 3 life, then you gain life equal to the life lost this way.',
+                'Each opponent loses 3 life. You gain life equal to the life lost this way.',
+                'Each other player loses 2 life. You gain life equal to the life lost this way.',
                 'Look at the top four cards of your library. You may put one of those cards back on top of your library. Exile the rest.'):
             with self.subTest(text=text):
                 ir=compile_oracle_card(record(text,'Sorcery'),capability_registry=load_default_capability_registry())
                 self.assertEqual('exact',ir.status,ir.material_residuals)
+
+    def test_actual_life_transfer_sentence_grammar_keeps_fixed_gain_and_unknown_amounts_distinct(self):
+        from quorune.compiler.life_templates import fixed_actual_life_transfer_template
+        for text in ('Each opponent loses 3 life, then you gain life equal to the life lost this way.',
+                'Each opponent loses 3 life. Then you gain life equal to the life lost this way.',
+                'Each opponent loses 3 life. You gain life equal to the life lost this way.'):
+            template=fixed_actual_life_transfer_template(text);self.assertIsNotNone(template)
+            self.assertEqual({'op':'life_loss_then_gain_actual','schema_version':1,'player':'$controller','amount':3},template.compiled()[1][0])
+        for text in ('Each opponent loses X life. You gain life equal to the life lost this way.',
+                'Each opponent loses 3 life. You gain 3 life.',
+                'Each opponent loses 3 life. You gain life equal to the damage dealt this way.',
+                'Each opponent loses 3 life. You gain life equal to the life lost this way. Rewrite history.'):
+            self.assertIsNone(fixed_actual_life_transfer_template(text))
+
+    def test_actual_life_transfer_uses_the_same_closed_owner_in_activated_bodies(self):
+        from quorune.rules.capabilities import capability_dependencies_for_node
+        registry=load_default_capability_registry()
+        for cost,players in (('{2}{B}','opponent'),('{2}{B}, {T}, Discard a card','other player')):
+            text=cost+': Each '+players+' loses 2 life. You gain life equal to the life lost this way.'
+            ir=compile_oracle_card(record(text,'Creature — Human Cleric'),capability_registry=registry)
+            self.assertEqual('exact',ir.status,ir.material_residuals)
+            node=ir.faces[0].nodes[0];self.assertIn(ACTUAL_LIFE_TRANSFER_CAPABILITY,node.capability_dependencies)
+        effect={'op':'life_loss_then_gain_actual','schema_version':1,'player':'$controller','amount':2}
+        self.assertIn(ACTUAL_LIFE_TRANSFER_CAPABILITY,capability_dependencies_for_node(effects=(effect,),target_schema=None,mechanic_ids=('cr-119-life',)))
+        for change in ({'amount':True},{'amount':0},{'player':'$target.0'},{'stage':'gain'}):
+            self.assertNotIn(ACTUAL_LIFE_TRANSFER_CAPABILITY,capability_dependencies_for_node(effects=({**effect,**change},),target_schema=None,mechanic_ids=('cr-119-life',)))
 
     def test_fixed_existing_results_have_complete_source_and_scoped_delayed_specs(self):
         for text,timing in ((TEXT,'your_first_upkeep'),

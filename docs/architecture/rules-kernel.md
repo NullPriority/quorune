@@ -9,6 +9,341 @@ maintenance: "hand-maintained"
 
 # Rules kernel
 
+`declared_cost_reductions.py` defines a closed, immutable generic discount
+qualified by an announced source-local optional cost. Its cast component uses
+the existing registry and complete-card admission. The shared total-cost
+planner evaluates the server-generated option's declaration before payment,
+reduces only generic mana with the ordinary zero floor, and retains colored
+requirements and printed mana value. Sacrifice candidates, commitment,
+destination replacements and rollback remain with their current owners.
+Missing or mismatched declaration instances reject instead of inferring a
+discount from later zone state. See
+[ADR 0137](../adr/0137-linked-optional-casting-declarations.md).
+
+`permanent_composition.py` defines immutable physical topology around a retained
+object incarnation. Its ordered component identities preserve common ownership,
+the top component's token status, physical commander designations and explicit
+mutation history. Reordering or adding a part retains the original object;
+departure queries require that same incarnation. Copiable characteristics and
+the live controller have separate owners. The closed value codec isolates its
+inputs and preserves the distinction between one permanent and its physical
+parts.
+
+`composition_snapshot.py` freezes the canonical physical card payload alongside
+its separate copiable-value plane. Detached reconstruction creates fresh card
+data through the existing card codec. `rules/composition_capture.py` validates
+the current incarnation and expected zone, with an exact stack reference for
+spell reads; stack resolution can retain a logical ID across the zone change.
+It reads the spell's current controller from the stack owner while preserving
+the physical holder and owner independently. Face-down copy values use the
+existing copy-layer view. These authoritative snapshots remain separate from
+principal projections and do not change live membership or record payloads.
+
+`composition_storage.py` couples the topology to every physical snapshot and
+ordered merge timestamp. The optional `CardInstance.permanent_composition`
+field stores that closed value; absence stays absent in serialized cards.
+`rules/composition_merge.py` prepares exact current inputs and
+`ZoneTransitionOwner.commit_composition_merge` owns transactional physical
+incorporation. The retained battlefield object keeps its controller and state;
+the incorporated stack object becomes archived data instead of an extra live
+permanent. Membership validation rejects duplicate live or stored parts.
+`game_object_store.py` owns in-place registration and detachment in the existing
+current-object map. Copy, token and emblem construction share that port while
+retaining their own ref allocation, visibility, zones and event owners.
+
+Mutate casting uses `rules/casting/mutate_costs.py` to add ordinary or hybrid
+alternatives only from current, complete, face-bound intrinsic metadata. The
+existing target owner revalidates the same-spell-owner non-Human target. A lost
+target takes the ordinary creature resolution path. For a legal target,
+`semantic_choices/mutate.py` retains the spell controller's top-or-bottom
+selection with both object incarnations. Its typed intent delegates to
+`rules/mutate_resolution.py` and the physical merge owner, without an entry
+event. Mutation occurrence dispatch follows the committed merge; source-specific
+compiled subscriptions use the existing inherited-trigger discovery owner.
+Copied mutating spells retain their alternative and targeting decisions while
+their existing noncard objects supply the copy owner's identity. An illegal
+copied target produces an ordinary token entry; a legal copied merge can become
+the top token component. The physical card owner, spell controller and retained
+permanent controller stay distinct. Mutation events use the retained permanent's
+controller and preserve independent inherited ability occurrences.
+
+`composition_departure.py` distinguishes the retained permanent's departure from
+physical component arrivals. Parent facts publish leave/death/sacrifice once;
+component facts supply their own destination-card events and history. Ordinary
+occurrences omit the new fact and retain their existing wire shape.
+`ZoneTransitionOwner.depart_composition` coordinates a split through
+`composition_departure_commit.py` after its trusted caller supplies an exact
+physical order and ordering principal. All cards pass through canonical reset
+and destination placement before the group publishes events. Graveyard and
+library order is bottom-to-top; library order stays out of the public journal.
+The kernel rejects unavailable replacement results, linked-return and
+token-parent commander cases before membership changes.
+
+For one composed departure in a trusted resolving instruction,
+`composition_ordering.py` scopes the effect actor and suspends through the
+existing semantic-choice registry. `CompositionOrderHandler` issues the private
+permutation to the physical owner for graveyard/library movement. The retained
+root and store stay in place during the choice. Completion validates the root,
+issued schema and original trusted instruction, retries that instruction under
+the selected order, then uses the existing resolution cursor. Owner, retained
+controller and spell controller remain independent. Multi-object resolving
+instructions and cost continuations retain their separate guards.
+
+State-based departures use `composition_state_based_order.py` to retain the
+complete destruction/destination result and battlefield frame without requiring
+a resolving spell. Surviving owners choose physical graveyard order in APNAP
+order. A destination group includes ordinary companion cards, so its owner can
+interleave them with components of every departing composition. No movement
+occurs until all required orders are collected. The existing zone owner commits
+the complete physical batch before publishing any zone event; all histories
+are recorded before look-back triggers use the shared pre-departure sources.
+Lethal destruction and zero-toughness movement retain their distinct existing
+state-based preparation, including indestructible and replacement choices.
+
+`composition_replacements.py` validates a represented whole-object destination
+result before the split. The existing replacement owner chooses that result
+once. Fixed counter leaves follow each physical card's new destination and
+incarnation, preserving the replacement source's placing player. Counter
+values commit through the existing counter owner before zone facts are published;
+counter and zone triggers enter the shared trigger batch.
+For exile, the replacement source's controller orders the physical arrivals;
+the original resolving actor remains distinct. Nested counter modifiers,
+counter permissions and unrepresented replacement operations reject before
+movement.
+
+For a token-topped composition, card-only destination replacements affect its
+captured physical card group while token components retain the permanent's
+destination. Both scopes share one affected-controller replacement choice;
+whole-permanent replacements update both results. Fixed counters remain scoped
+to their recipients. The existing physical batch groups arrivals by destination
+and ordering principal. Schema-four resolving requests collect those groups in
+APNAP order and retain every component on the battlefield until all required
+orders finish. Unknown scopes, changed actors and incomplete permutations
+reject before movement. See
+[ADR 0155](../adr/0155-token-parent-card-replacement-scope.md).
+
+Composed graveyard and exile departures restore each physical card's own
+commander designation. The existing commander state-action owner then offers
+that card's owner its ordinary command-or-remain choice for the new incarnation.
+Returning a commander does not redirect the other physical cards. Decline
+history and command-zone cast counts remain attached to their existing owners.
+Top-component characteristics and another player's control do not transfer the
+physical designation. Commander hand/library movement uses the existing
+replacement chooser before commitment. A closed component snapshot lets the
+owner redirect only the designated cards to command. The other parts retain
+their ordinary destination. Library ordering excludes redirected commanders
+and finishes before the atomic split; hand movement needs no artificial order
+decision. Destination epochs let the commander rule become applicable again
+after a later represented destination replacement, without changing ordinary
+uncomposed event fields. See
+[ADR 0154](../adr/0154-physical-commander-destination-replacement.md).
+
+Merged damage sources capture the physical commander identity set from their
+validated store, separately from the retained root's identity and copiable
+characteristics. The damage transaction credits each applicable commander
+ledger from the final combat damage while committing life damage once. Snapshot
+data retains those identities after source departure; public ledger labels can
+resolve a commander archived below another card. Ordinary sources retain their
+single-identity representation. See
+[ADR 0153](../adr/0153-merged-commander-damage-identities.md).
+
+This physical kernel supplies no casting permission. Mutate casting, flipped
+physical status, complete replacement, cost and player-departure
+continuations retain unfinished boundaries. Unrepresented composed movement
+rejects before commitment. See
+[ADR 0148](../adr/0148-physical-composition-storage.md).
+
+`composition_characteristics.py` supplies top-component copiable values and
+constituent keyword, typed-fragment and activation catalogs. The existing layer
+owner applies the merge effect in layer 1a at its recorded timestamp, before
+face-down handling and later layers. Existing continuous effects remain on the
+retained object. Activations retain their compiled semantic key and receive
+distinct catalog identities. `CopiableProgramSourceSpec` retains copied program
+source and face data in the ordinary ability-fragment plane; trigger discovery
+uses the existing registry and trust checks for every instance. Repeated physical
+merges preserve the retained carrier and distinct buried trigger instances.
+The inherited day/night-bound query reads current trusted compiled source
+programs through that same ability plane. It retains all distinct bound modes
+and observes layer-six ability loss. Day/night coordination uses inherited
+presence to establish a designation and a separate physical-face query for
+automatic transforms. Merged permanents have no front/back eligibility. The
+transform owner checks inherited bound restrictions before ordinary transform
+instructions. Complete physical face commitment remains a separate readiness
+boundary.
+Copied static instances retain their existing applicability key and a separate
+`CopiableStaticInstanceSpec` for each occurrence. Layer-1a application rebases
+creation time to the creating effect; the collector lowers each surviving
+instance with a distinct effect identity and the later of its creation time and
+the retained object's timestamp. Copied and granted occurrences share the
+existing ordering owner, preserving ordinary grant order. Ability loss removes
+current participation without changing copiable values. Copied static candidates
+come from an immutable layer-one source view computed without static collection.
+The existing source-layer queries decide early participation; final layer-six
+keys govern later effects. Candidate and final lowering retain the same copied
+instance identities and creation times. Temporary copies keep instance tracking
+through catalog replacement; explicit current program keys take precedence over
+superseded Oracle provenance. This tracking is ephemeral and absent from public
+characteristic snapshots. Physical face and departure operations continue through
+their existing composition owners. Mutate casting requires a complete original;
+unrepresented sibling abilities remain material residuals.
+Copy-value reads share `AbilityFragmentHostMixin` with compiled base and ability
+catalog reads. The engine inherits that read facade; mutation remains with its
+existing owners.
+
+`rules/composition_faces.py` prepares physical face changes from the stored
+components' pinned card or token definitions. Its immutable result retains the
+original carrier and topology, with fresh detached snapshots for eligible
+opposite faces. It validates the source transform-count scope and rejects
+unrelated component-state changes. Physical token faces come from their creation
+definition. Face-up preparation restores every face-down component through
+detached calls to the existing object-state owner and derives its copiable
+values. Double-faced components use their front faces. Any physical instant or
+sorcery card component produces an unchanged refusal plan, including when copy
+effects obscure its printed type. Already face-up components retain their
+physical and copiable snapshots, including ordinary tokens. Ordinary face-down
+tokens restore their existing creation/copy values through the detached
+object-state owner without a double-faced definition. Transforming tokens use
+their immutable creation front. Captured copied spells with unrepresented
+physical creation faces still reject.
+Captured spell copies with explicit physical token faces use a detached token
+read view to select and derive each face. Their stored spell-copy kind and
+stack context stay intact. This does not supply missing creation metadata or
+introduce a spell-copy creation path.
+The planner performs no live mutation.
+`composition_face_changes.py` commits a prepared transform through
+`ZoneTransitionOwner`. It recomputes exact carrier/storage/count inputs inside
+the transaction, updates every eligible component together and increments the
+retained transform count once. The parent keeps its timestamp because a merged
+permanent is not double-faced. The shared transform batch publishes one
+occurrence with the parent's current before/after names. Stale or forged plans
+reject before writes; a later invariant failure rolls back the full update.
+Face-down components stay unchanged while eligible face-up components transform;
+an ineligible hidden part needs no physical-face lookup or value derivation.
+Inherited bound-ability restrictions and automatic day/night exclusion remain
+with the shared legality path.
+For represented inherited Morph, Megamorph and Disguise prices,
+`rules/composition_face_up.py` evaluates a detached face-up carrier and physical
+snapshots through `CharacteristicReadHost`. The same read facade serves
+prospective casting costs. It overrides the carrier for global characteristic
+reads without changing live membership, clocks or projections. The shared pure
+face-status planner projects the parent's post-action timestamp in modern mode
+without allocating the actual clock; absent mode keeps the old timestamp.
+Current copiable
+provenance selects trusted complete source programs; a keyword alone supplies
+no price. Layer-6 ability loss suppresses unavailable prices.
+Each payable source-bound price has its own offer. The first retained method
+keeps its existing action identity, and additional choices have distinct source
+selectors and the same expiry/fingerprint checks. Acceptance computes its
+current offer and typed price together before payment. The zone owner then
+recomputes physical preparation and commits all component status/reveal fields
+and the parent atomically. The existing action publishes one face-up occurrence,
+places the chosen Megamorph counter before triggers, and retains ordinary
+nonmana payment and trigger owners. Failed post-write invariants roll back the
+group. This supplies no Mutate casting permission.
+For a merged manifested card, the shared price collector also reads the
+physical top creature card's printed mana cost, using its front face when
+represented. Animation, a copied Oracle identity or copied mana cost cannot
+supply that physical-card authority. Tokens and cards without represented
+creature-card costs receive no Manifest price. The ordinary current inherited
+Morph methods remain separate alternatives; only a selected Megamorph price
+adds its counter. Accepted Manifest uses the same all-part status/reveal and
+parent timestamp/event owner and creates no new entry occurrence.
+Targeted face-up effects use a closed versioned instruction and the existing
+target schema, including face-down status and controller relation. Compiler
+promotion requires the canonical whole-source admission certificate. Resolution
+revalidates the target, then delegates to the same zone owner without paying a
+turn-up special-action cost. A successful attempt publishes one parent occurrence
+after the atomic status/timestamp change; inherited triggers belong to their
+current source controller.
+
+A physical instant or sorcery card prevents a manifested or merged permanent
+from turning up. The zone owner briefly reveals the affected physical cards,
+retains knowledge, and preserves face status, copiable values, timestamps and
+the clock. It publishes no turned-face-up occurrence. Refused merged attempts
+revalidate the complete preparation inside the existing transaction, including
+viewers and incarnation; publication failures roll back knowledge and storage.
+This creates no otherwise illegal special-action offer. Remaining physical
+creation/flip and remaining commander, replacement, cost and player-departure lifecycles retain separate readiness
+boundaries before full Mutate admission.
+
+`defined_token_faces.py` describes immutable copiable front/back definitions.
+Schema one retains fixed predefined-token faces and their typed ability profile.
+Schema two retains complete compiled copiable values, activation catalogs and
+source provenance for token copies of represented Oracle double-faced cards.
+Physical orientation identifiers remain distinct even when copy effects give
+both sides the same name or characteristics. Characteristic readers select the active face;
+standard token activation delegates payment, stack resolution and transformation
+to their existing owners. Transformation preserves the object and uses the
+ordinary activation count snapshot. Token creation alone establishes physical
+front/back identity, stored separately from layer-one copied characteristics.
+Created token copies retain both current copiable faces and the current physical
+orientation, without copying counters or source cleanup/designation state.
+Typed copy exceptions apply to each face. An entry-copy replacement or ongoing
+copy effect copies the face currently up; it neither creates nor removes
+physical faces. A single-faced copy may pay for the copied transform ability,
+which resolves without transforming. An existing double-faced token can
+transform under a uniform copy effect while retaining those copied values;
+cleanup restores its own characteristics in its current physical orientation.
+The read-only `token_copy_faces.py` planner captures both physical Oracle faces
+through detached characteristic views when a current token-copy instruction
+creates the token. It reads the original physical card definition separately
+from any current copied Oracle identity. Copy exceptions become creation values
+on both faces. A merged permanent supplies one copied characteristic set and no
+physical double faces. Tokens created with an instant or sorcery face cannot
+transform, including under a later creature copy effect.
+
+Face-down copy values and identity use the independent face-down execution
+mode described below. The shared readers and copy planners honor that mode
+even when general `token_copy_value_version` provenance is absent.
+
+Permanent spell-copy capture uses the same detached face reader. Both compiled
+faces and the current orientation travel with the existing current-or-departure
+spell source, so a countered original cannot be replaced by its new incarnation.
+The existing copy-object owner establishes physical creation identity on the
+noncard stack object. A copy of that copy reads its explicit creation data;
+missing identity or malformed nested faces reject. On resolution the same
+object becomes a token through the existing stack and zone owners. The
+stack-to-battlefield exception retains its physical face data and copy-value
+mode without producing a token-creation occurrence. Historical absence retains
+the former single-face spell-copy execution and replay.
+Anonymous noncard spell copies have no physical-card record. Their existing
+builtin resolution provenance is unchanged; no program identity is inferred
+from a hidden Oracle ID or a serialized semantic key. Current-mode empty
+face-down spell resolution instead validates its exact builtin method,
+current complete source admission, descriptor fingerprint and status values.
+Its current creature characteristics govern resolution even when the physical
+card is a land. Invalid method frames fail closed. Historical absence retains
+the previous copy values and printed-type resolution boundary.
+
+`token_creation_identity.py` owns prospective identity, copiable snapshots and
+entry-preview values through a read-only port. The token creation owner retains
+ref allocation, entry mutation, counter commitment and event dispatch.
+Individual `token.created` occurrences describe actual creation, separately
+from battlefield entry. One `tokens.created` fact describes a nonempty committed
+creation instruction, its creator, final creature count and prior creation
+history. It joins the same APNAP trigger batch after all new objects exist.
+Per-token, one-or-more and first-event clauses therefore keep distinct
+cardinality. Resolving a copied permanent spell remains outside creation.
+The batch fact adds no state field or individual-event context field.
+Preview and commitment use the same canonical copiable snapshot planner.
+Current token-copy value mode is version one. Historical absence retains the
+former direct-copy payload and characteristic-read precedence; the mode is
+pinned by checkpoint and record provenance. See
+[ADR 0147](../adr/0147-versioned-token-copy-values.md).
+
+Effect-generated entry counters travel with the creation instruction into the
+existing entry replacement tree. Multiplication and additional-token replacement
+retain that instruction, while each resulting token keeps its own definition.
+Counter replacements finish before entry events. Incubate lowers fixed counts
+or existing typed numeric producers to one source-bound `IncubateIntent` per
+incubation. The existing replacement continuation retains its resolved amount,
+and `semantic_runtime/creation_execution.py` delegates creation-family intents
+to their owning transaction without adding mutation paths to the generic executor.
+The controller and source remain bound. A printed second incubation follows as a separate
+instruction with that same amount; it has its own entry transaction and never
+repeats an already committed creation. Zero still creates the noncreature front.
+Unrepresented quantities, source bindings and sibling material remain residual.
+
 `cost_payments.py` shares affordability and accepted manual/automatic mana
 payments. It delegates mana activation and provenance mutation to their existing
 owners. Live spending permissions come from the trusted action-permission
@@ -204,6 +539,10 @@ coordinates the existing object-state owner and canonical timestamp clock before
 counter or trigger observers run. Current checkpoints explicitly pin face-status
 timestamp semantics; historical absence retains the previous timestamp under
 [ADR 0150](../adr/0150-versioned-face-status-timestamps.md).
+Composed permanents additionally expose their current inherited printed prices
+through the detached view and source selectors described above; the retained
+original method does not choose a different component's price or Megamorph
+effect.
 
 Printed fixed nonmana Morph prices share that same action and whole-source
 admission. Typed costs query current hand colors or controlled subtypes and
@@ -930,6 +1269,13 @@ otherwise the effect preserves colors. Membership remains live for entering
 lands and subtype changes. Counters and ordinary modifiers apply after the
 base setting. Existing control history governs attack and tap-symbol legality,
 and existing World-rule timestamps remain authoritative.
+
+Fixed settings can select designated commander creatures owned or controlled
+by the source's controller through the existing public query binder. Target
+ownership and control remain distinct, and noncreature commanders and ordinary
+creatures do not match that subject. General ownership predicates remain outside
+the setting grammar. Type additions and base P/T settings retain their separate
+layers, with counters applied afterward.
 
 Fixed settings declare their earliest source-participation layer from the
 validated modifier. Type-producing settings participate from layer 4, color
@@ -1680,6 +2026,10 @@ Flanking and Ring triggers retain their own sealed source and blocker facts.
 This post-entry primitive does not choose an attacker or expose a player
 command; source-specific entry choices and compiler grammar require their own
 typed integration.
+
+Blocking counterpart snapshots capture each public characteristic term once;
+multiple instances of a keyword remain independent abilities on the object.
+Saved snapshots still reject duplicated terms and malformed participant facts.
 
 Rampage uses the same sealed becomes-blocked transition and retains each typed
 instance independently. Its rules helper counts the original attacker's current

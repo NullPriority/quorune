@@ -16,6 +16,28 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("declining a resolving cast ignores its targets and additional payments", () => {
+  const cast: ChoiceForm = {
+    v: 1, submit_label: "Choose",
+    fields: [{ name: "choice", control: "select", required: true,
+      options: [{ value: "cast", label: "Cast" }, { value: "decline", label: "Decline" }] }],
+    variants: { field: "cost_option", default: "miracle+squad", when: { field: "choice", value: "cast" },
+      options: [{ value: "miracle+squad", label: "Miracle with Squad", fields: [
+        { name: "squad_count", control: "integer", minimum: 1, required: true },
+        { name: "targets", control: "targets", schema: { groups: [
+          { id: "target", min: 1, max: 1, legal_refs: ["B"] }] } },
+      ] }] },
+  };
+  assert.deepEqual(activeFields(cast, { choice: "decline" }).map((field) => field.name), ["choice"]);
+  assert.deepEqual(validateChoices(cast, { choice: "decline" }), []);
+  assert.deepEqual(executableChoices(cast, { choice: "decline", cost_option: "miracle+squad",
+    squad_count: 3, targets: { target: ["B"] } }), { choice: "decline" });
+  assert.ok(validateChoices(cast, { choice: "cast", cost_option: "miracle+squad" }).length > 0);
+  const accepted = { choice: "cast", cost_option: "miracle+squad", squad_count: 1, targets: { target: ["B"] } };
+  assert.deepEqual(validateChoices(cast, accepted), []);
+  assert.deepEqual(executableChoices(cast, accepted), accepted);
+});
+
 test("Per-extra-target prices match the chosen count as well as static target taxes", () => {
   const field = { name: "targets", control: "targets", schema: { groups: [{ id: "target", min: 0, max: 9,
     legal_refs: ["TAXED", "ORDINARY", "THIRD"] }] }, target_costs: {

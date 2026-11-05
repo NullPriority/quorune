@@ -3,12 +3,35 @@ from __future__ import annotations
 """Sealed public incarnation for one counter-result occurrence object."""
 
 from collections.abc import Mapping
+from .damage_recipient_model import (DAMAGE_PERMANENT_OBJECT,DAMAGE_PERMANENT_CONTEXT,
+    uses_damaged_permanent,capture_damaged_permanent)
 
 EVENT_COUNTER_OBJECT='$event.counter_object'
 EVENT_COUNTER_CONTEXT='event_counter_recipient'
+BLOCK_COUNTERPART_OBJECT = '$event.block_counterpart'
+BLOCK_COUNTERPART_CONTEXT = 'block_counterpart_recipient'
 
 
 def event_counter_recipient_context(program,event,context):
+    if uses_damaged_permanent(program.effects):return capture_damaged_permanent(event,context)
+    def uses_pair(value):
+        if isinstance(value, Mapping):return any(uses_pair(child) for child in value.values())
+        if isinstance(value, (list, tuple)):return any(uses_pair(child) for child in value)
+        return value == BLOCK_COUNTERPART_OBJECT
+    if uses_pair(program.effects):
+        from .block_transitions import BlockTransitionEvent
+        transition = BlockTransitionEvent.from_dict(context.get('block_transition'))
+        reference = context.get('card')
+        counterpart = context.get('blocked_attacker') if event == 'creature.blocks' else context.get('blocking_creature') if event == 'creature.becomes_blocked_by' else None
+        participants = {participant.reference: participant for participant in transition.participants}
+        actor, other = participants.get(reference), participants.get(counterpart)
+        if actor is None or other is None:
+            raise ValueError('Block counterpart requires two sealed transition participants')
+        attacker, blocker = (other, actor) if event == 'creature.blocks' else (actor, other)
+        if not any(row.attacker_object_id == attacker.object_id and row.blocker_object_id == blocker.object_id
+                   for row in transition.assignments):
+            raise ValueError('Block counterpart is not the selected blocking pair')
+        return {BLOCK_COUNTERPART_CONTEXT: {'reference': other.reference, 'logical_object_id': other.logical_object_id}}
     def contains(value):
         if isinstance(value,Mapping):return any(contains(v) for v in value.values())
         if isinstance(value,(list,tuple)):return any(contains(v) for v in value)
@@ -40,6 +63,21 @@ def _resolve_public_incarnation(host,value):
 
 def resolve_event_counter_recipient(host,item):
     return _resolve_public_incarnation(host,item.context.get(EVENT_COUNTER_CONTEXT))
+
+
+def resolve_block_counterpart_recipient(host, item):
+    return _resolve_public_incarnation(host, item.context.get(BLOCK_COUNTERPART_CONTEXT))
+
+
+def resolve_sealed_event_object_value(host, item, value):
+    if value==DAMAGE_PERMANENT_OBJECT:
+        return True,_resolve_public_incarnation(host,item.context.get(DAMAGE_PERMANENT_CONTEXT))
+    if value == BLOCK_COUNTERPART_OBJECT:
+        return True, resolve_block_counterpart_recipient(host, item)
+    if value in {'$event.entry_object', EVENT_COUNTER_OBJECT, '$event.permanent_object'}:
+        resolver = resolve_entry_event_counter_recipient if value == '$event.entry_object' else resolve_event_counter_recipient
+        return True, resolver(host, item)
+    return False, None
 
 
 def resolve_entry_event_counter_recipient(host,item):

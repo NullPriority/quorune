@@ -19,6 +19,50 @@ to-hand draws, prohibited and empty-library attempts, draw history/events, the
 represented Dredge mill-and-return result, and closed actions tied to the exact
 ordinarily drawn object.
 
+`drawing/miracle_model.py` defines the staged fixed-mana declaration and
+distinct prospective-library and revealed-hand values. A committed draw
+changes the logical object identity. The drawer records draw provenance and
+does not determine a copied trigger's controller. These values grant no
+casting authority. The fixed ordinary-mana lifecycle discovers one complete
+current source, suspends the enclosing draw for its private reveal choice,
+and casts only during the linked trigger's resolution. Variable or complex
+costs, granted or duplicated declarations and unrepresented faces retain their
+material residuals.
+
+`drawing/miracle_continuation.py` separately models an intrinsic reveal decision
+with the original draw request, replacement journal, instruction tail, and
+previous battlefield-source reveal choices. It reconstructs the ordinary draw
+through the existing replacement owner. Its closed schema cannot be decoded as
+a battlefield-source reveal continuation and grants no gameplay permission.
+
+`drawing/miracle_discovery.py` queries the complete current source program and
+the actual per-player turn draw history. The intrinsic descriptor belongs to
+the existing draw-reveal component registry. Both linked abilities require
+complete-card admission; recognizing the descriptor alone cannot admit a card.
+
+`drawing/miracle_coordination.py` suspends only an ordinary first draw after
+existing battlefield-source choices. It retains instruction-tail actions
+separately from that card's selected reveal policies. The draw transaction
+revalidates the opportunity, reveals before movement, and dispatches the linked
+event with the new hand identity. `drawing/miracle_triggers.py` binds that
+identity to the original trigger. Ongoing disclosure is a pure query over live
+and pending original triggers; copies retain the cast subject without extending
+the original reveal. Retirement never restores an old audience over another
+source's reveal or erases historical knowledge.
+
+`selection/fixed_resolving_cast.py` owns the shared immutable fixed-cost option
+loop also used by Madness. Producer-specific source, complete-program and
+resolution-window checks stay with each producer; this helper grants no casting
+authority. It retains ordinary face, cost, Aura and target handling.
+
+`drawing/miracle_casting.py` binds the exact revealed hand object to one live
+resolving trigger and its current controller. The controller may differ from
+the drawer when the trigger is copied. A selected cost comes from the canonical
+fixed alternative and additional-cost options. The canonical cast proposal and
+commit preserve target legality, restrictions, costs and normal spell priority.
+The internal resolving-hand permission does not create an ordinary hand casting
+method. A card that leaves and returns to hand cannot reuse the older trigger.
+
 After an ordinary draw commits, `player_result_events.py` derives one immutable
 public occurrence with the drawer, controller-relative ordinal, and own-draw-
 step facts. It dispatches the ordinary draw, exact second draw, and represented
@@ -35,6 +79,14 @@ collects live CR 121.9 policies only after the result remains an ordinary draw,
 and resumes from the exact remaining count without growing the Python call stack. The same trampoline
 continues an APNAP batch, draw-step entry, or the exact next spell instruction.
 `drawing/continuation.py` owns that strict immutable Game Record v3 value.
+
+`drawing/reveal_coordination.py` owns battlefield reveal-policy discovery,
+private reveal/decline decisions and exact source validation. Its completion
+delegates card and history changes to the draw transaction, then returns to
+the existing instruction trampoline. The coordinator reexports the established
+entry points. [ADR 0145](../adr/0145-draw-reveal-choice-coordination.md) records
+that ownership boundary; intrinsic card sources cannot use the existing
+battlefield-source policy merely by changing its active zone.
 Historical v3 Dredge continuations keep an explicit validated compatibility
 path. That adapter revalidates the recorded source and count against the live
 trusted `DredgeDraw` component; it does not reparse Oracle text or silently

@@ -249,9 +249,11 @@ class MassDestructionCompilerTests(unittest.TestCase):
                 self.assertEqual(text, text[node.span.start : node.span.end])
 
     def test_unsupported_mass_destruction_variants_remain_residuals(self):
+        self.assertIsNotNone(mass_destruction_effect_template('Destroy all nonwhite creatures.'))
+        self.assertEqual('exact',self.compile('Destroy all nonwhite creatures.').status)
         unsupported = (
             "Destroy all creatures with mana value 3 or less.",
-            "Destroy all nonwhite creatures.",
+            "Destroy all nonwhite creatures that attacked this turn.",
             "Destroy all non-Human creatures.",
             "Destroy all creatures that attacked this turn.",
             "Destroy all creatures with counters on them.",

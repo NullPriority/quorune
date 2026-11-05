@@ -390,9 +390,11 @@ def _apply_drain_each_opponent(
 
 
 from .fractional_life import apply_life_loss
+from .life_total_setting import apply_set_life_total
 
 
 HANDLERS = {
+    'set_life_total': apply_set_life_total,
     "drain_each_opponent": _apply_drain_each_opponent,
     "drain_opponent": _apply_drain_opponent,
     _LIFE_OPERATION: _apply_life,

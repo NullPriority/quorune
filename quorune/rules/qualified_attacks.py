@@ -1,6 +1,7 @@
 """Seal public attack qualifications and require their declared capability."""
 
 from collections.abc import Mapping
+from types import SimpleNamespace
 
 from ..qualified_attack_model import (ATTACK_FACT_PREFIX, ATTACK_FACT_COLLECTIONS,
     ATTACK_FACT_BOOLEANS, ATTACK_FACT_NUMBERS, QUALIFIED_ATTACK_CAPABILITY, qualified_attack_facts_version)
@@ -21,6 +22,14 @@ def attack_characteristic_context(host, card):
 
 
 def qualified_attack_runtime_dependencies(program):
+    from .event_subscriptions import FixedEventSubscriptionSet
+    subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
+    if subscriptions is not None:
+        required=set()
+        for subscription in subscriptions.subscriptions:
+            branch=SimpleNamespace(event=subscription.event,event_condition=subscription.condition)
+            required.update(qualified_attack_runtime_dependencies(branch))
+        return tuple(sorted(required))
     found = False
     version = False
     def visit(value):

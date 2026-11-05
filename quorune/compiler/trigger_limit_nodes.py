@@ -6,7 +6,8 @@ from dataclasses import replace
 import re
 from typing import Any, Callable, Mapping
 
-from ..rules.trigger_limits import TriggerLimitSpec, TRIGGER_ONCE_PER_TURN_CAPABILITY, supported_trigger_limit_subscriptions
+from ..rules.trigger_limits import (TriggerLimitSpec,trigger_limit_capabilities,
+    departure_trigger_limit_event,supported_trigger_limit_subscriptions)
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .dependency_gate import dependency_gate
 from .ir_model import OracleNode, append_residual
@@ -23,17 +24,20 @@ def limited_trigger_node(*, line: str, material_line: str, compile_inner: Callab
     private_residuals = []
     inner_arguments.update(line=match["body"], material_line=match["body"], residuals=private_residuals)
     node = compile_inner(**inner_arguments)
-    if node is None or not node.exact or node.kind != "triggered_ability" or node.active_zone != "battlefield" or not supported_trigger_limit_subscriptions(node.event,node.event_condition):
+    if node is None or not node.exact or node.kind != "triggered_ability" or node.active_zone != "battlefield":
         return None
+    if supported_trigger_limit_subscriptions(node.event,node.event_condition):limit=TriggerLimitSpec()
+    elif departure_trigger_limit_event(node.event,node.event_condition):limit=TriggerLimitSpec(2,source_scope='event_incarnation')
+    else:return None
     gate = dependency_gate(mechanics=node.mechanics, effects=node.effects, target_schema=node.target_schema,
         trusted_mechanics=arguments["trusted_mechanics"], capability_registry=arguments["capability_registry"],
-        capability_profile=arguments["capability_profile"], explicit_capabilities=(*node.capability_dependencies,TRIGGER_ONCE_PER_TURN_CAPABILITY))
+        capability_profile=arguments["capability_profile"], explicit_capabilities=(*node.capability_dependencies,*trigger_limit_capabilities(limit.to_dict())))
     residual_ids = ()
     if gate.blockers:
         residual_ids = (append_residual(arguments["residuals"],kind="dependency_contract",text=line,span=node.span,
             reason="trigger use limit depends on untrusted capability contracts",blockers=gate.blockers),)
     closure = gate.closure
-    return replace(node,text=line,trigger_limit=TriggerLimitSpec().to_dict(),exact=not gate.blockers,
+    return replace(node,text=line,trigger_limit=limit.to_dict(),exact=not gate.blockers,
         runtime_coverage=tuple(dict.fromkeys((*node.runtime_coverage,CURRENT_ABILITY_FRAGMENT_COVERAGE))),
         residual_ids=residual_ids,capability_dependencies=gate.capabilities,
         capability_closure=closure.reachable if closure else (),capability_profile=closure.profile if closure else None,

@@ -13,6 +13,9 @@ from ..target_cardinality import (
 
 
 def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if isinstance(target_schema,Mapping) and {'distinct_controllers','retain_controller'}.intersection(target_schema):
+        from .per_player_target_sets import per_player_target_node_capabilities
+        return per_player_target_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
     if ANY_NUMBER_TARGET_MECHANIC not in mechanic_ids or not isinstance(target_schema, Mapping):
         return ()
     try:

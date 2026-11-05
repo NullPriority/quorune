@@ -210,6 +210,13 @@ component. A suspended continuation validates that prospective child against
 its parent zone event and the unchanged origin incarnation; it does not require
 the card to occupy the replacement destination before the parent event commits.
 
+Incubate carries a resolved `EffectEntryCounter` into the token owner's
+prospective entry transaction. The Incubator front is a noncreature artifact
+when entry-counter permissions and replacements inspect it. Zero counters still
+create that front, and each repeated incubation has a separate transaction.
+These counters exist before entry events; the separately instructed
+post-creation counter owner does not implement this keyword action.
+
 Devour adds a typed optional selection of controlled battlefield permanents to
 that entry tree. Fixed creature, artifact and Food multipliers, and a multiplier
 equal to the selected creature count, produce counters without moving objects
@@ -782,6 +789,18 @@ specific Flying, Haste, Trample, Hexproof, Indestructible, or other mechanic
 capability. Parameterized keyword variants and same-layer dependency cases
 outside the current continuous-effect model fail closed.
 
+Finality is a separate CR 122.1h counter rule. `rules/finality_counters.py`
+collects one ordinary destination replacement for a permanent with a positive
+finality count, independently of its printed abilities. It matches only that
+logical incarnation moving from battlefield to graveyard and redirects the
+movement to exile through the existing replacement tree and zone owner.
+Other applicable ordinary replacements remain an affected-player choice;
+existing self-replacement priority applies first. Removing the final counter
+ends this effect, and counters do not follow a card into a new zone. Commander
+exile retains the existing post-movement owner choice. Actual counter-producing
+descriptors require `counter.rule.finality` even when their annotations omit
+it; the counter is not treated as an ordinary keyword counter.
+
 The interaction inventory treats the counter-to-keyword boundary as
 high-risk wherever it crosses another rules owner. Current focused composition
 evidence covers replacement-aware placement before the ability appears,
@@ -1047,3 +1066,20 @@ Current aggregate corpus counts and remaining blockers are generated in
 [`docs/COMPILER_COVERAGE_STATUS.md`](../COMPILER_COVERAGE_STATUS.md). They
 measure represented behavior against the pinned corpus, not matchup results or
 complete Oracle correctness.
+
+Mandatory source-counter removal has a separate compiler shape from direct
+target removal. A represented battlefield trigger may lower a positive fixed
+count and one named counter kind to the same source incarnation without a
+target schema. Source pronouns require a source-specific event; ambiguous
+event-object references remain residual. The existing typed removal handler
+validates the resolved instruction before omitting an unavailable incarnation,
+so departure and reentry cannot redirect the effect to the returned object.
+This shape requires its own capability closure before complete CardProgram
+admission; parser and handler evidence alone do not grant gameplay support.
+
+All-of-one-kind source removal uses the version-two `remove_all_counters`
+descriptor from [ADR 0140](../adr/0140-named-kind-counter-removal.md). It carries
+one canonical counter name and no amount. The existing all-counter transaction
+validates the full counter map, snapshots and revalidates the selected kind,
+and commits only that kind. No matching counters is a no-op. The original
+all-kinds descriptor omits the selector and retains its interpretation.

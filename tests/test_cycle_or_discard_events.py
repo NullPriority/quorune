@@ -299,7 +299,7 @@ class CycleOrDiscardRuntimeTests(unittest.TestCase):
                 program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
                     capability_registry=self.registry, capability_profile='commander_review')
                 bound = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-                expected = record.name != 'Cunning Survivor'
+                expected = True
                 self.assertEqual(expected, bound['strict_capability_ready'], program.residuals)
                 semantics = SemanticRegistry()
                 register_generated_programs(self.db, semantics, (record,), trust_level='provisional',

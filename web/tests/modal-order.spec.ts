@@ -1,4 +1,5 @@
 import { expect, test, type Browser, type Page, type TestInfo } from "@playwright/test";
+import { startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
   driveUntil,
@@ -86,7 +87,7 @@ async function startDuel(browser: Browser) {
   await opponent.getByTestId("join-room").click();
   await submitDeck(host, "Modal order", "Modal Choice Witness", modalDeck);
   await submitDeck(opponent, "Modal defender", "Yargle and Multani", defenderDeck);
-  await host.getByTestId("start-game").click();
+  await startRoomGame(host);
   return { hostContext, opponentContext, host, opponent };
 }
 

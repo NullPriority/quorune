@@ -6,10 +6,16 @@ class FixedCounterTriggerEvent(str, Enum):
     """Closed normalized event families accepted by this compiler slice."""
 
     STEP_BEGIN = "step.begin"
+    CREATURE_EXPLORES = 'creature.explores'
+    SOURCE_MUTATED = 'permanent.mutated.self'
+    PLAYER_COMMITTED_CRIME = 'player.committed_crime'
+    TOKEN_CREATED = 'token.created'
+    TOKENS_CREATED = 'tokens.created'
     SPELL_MANA_PAID = 'spell.mana_paid'
     CONTROLLED_LAND_ENTER = "land.enter"
     CONTROLLER_SPELL_CAST = "spell.cast"
     SOURCE_ATTACKS = "creature.attacks"
+    ATTACKER_UNBLOCKED = 'creature.unblocked'
     CONTROLLER_LIFE_GAIN = "life.gained"
     CONTROLLER_CARD_DRAW = "card.drawn"
     CONTROLLER_SECOND_DRAW = "card.second_draw"
@@ -30,6 +36,7 @@ class FixedCounterTriggerEvent(str, Enum):
     PUBLIC_ATTACKS = "creature.attacks"
     CREATURE_BLOCKS = "creature.blocks"
     CREATURE_BECOMES_BLOCKED = "creature.becomes_blocked"
+    CREATURE_BECOMES_BLOCKED_BY = 'creature.becomes_blocked_by'
     CARD_CYCLED = "card.cycled"
     SOURCE_CYCLED = "card.cycled.self"
     CARD_LEAVE_GRAVEYARD = "card.leave_graveyard"

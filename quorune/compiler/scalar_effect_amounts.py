@@ -87,8 +87,22 @@ def _characteristic(value: str, *, source_name: str, body: str, schema: Any,
 def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed: Callable,
                                  event: str | None = None, source_event: bool = False):
     """Only replace result slots after complete consumption and fixed-shape proof."""
+    from .source_counter_modifiers import source_counter_modifier_template
+    counter=source_counter_modifier_template(text,source_name=source_name,compile_fixed=compile_fixed,
+        compile_scalar=scalar_effect_amount_template,event=event,source_event=source_event)
+    if counter is not None:return counter
+    from .created_token_cleanup_templates import scalar_created_token_cleanup_template
+    cleanup = scalar_created_token_cleanup_template(text, compile_inner=scalar_effect_amount_template,
+        source_name=source_name, compile_fixed=compile_fixed, event=event, source_event=source_event)
+    if cleanup is not None:return cleanup
     from .target_hand_amount_templates import normalized_target_hand_damage
     normalized = normalized_target_hand_damage(text.strip(),source_name)
+    tokens=re.fullmatch(r'Create a number of (?P<definition>[^.]+? tokens?) equal to (?P<value>[^.]+?)\.?',normalized,re.I)
+    if tokens is not None:normalized=f"Create X {tokens['definition']}, where X is {tokens['value']}."
+    token_counter=re.fullmatch(r'Create (?:a|an|one) (?P<definition>[^.]+? token(?: with [^.]+?)?) for each (?P<value>[^.]+? counters? on [^.]+?)\.',normalized,re.I)
+    if token_counter is not None:
+        definition=re.sub(r'\btoken\b','tokens',token_counter['definition'],count=1,flags=re.I)
+        normalized=f"Create X {definition}, where X is the number of {token_counter['value']}."
     definition = re.fullmatch(r"(?P<body>[^.]+?), where X is (?:equal to )?(?P<value>.+?)\.?", normalized, re.I)
     producer = None
     multiplier = 1
@@ -158,6 +172,19 @@ def scalar_effect_amount_template(text: str, *, source_name: str, compile_fixed:
         from ..cast_event_amounts import CAST_MANA_VALUE_MECHANIC
         additional=(*additional,CAST_MANA_VALUE_MECHANIC)
     return fixed[0], tuple(project(effect) for effect in fixed[1]), fixed[2], tuple(dict.fromkeys((*fixed[3], SCALAR_AMOUNT_MECHANIC,*additional)))
+
+
+def source_scalar_effect_amount_template(text,*,source_name,event,compile_fixed):
+    """Bind source information before wrapping an optional atomic result."""
+    def scalar(body):
+        return scalar_effect_amount_template(body,source_name=source_name,event=event,
+            source_event=True,compile_fixed=compile_fixed)
+    result=scalar(text)
+    if result is not None:return result
+    from .optional_effect_templates import fixed_optional_effect_template
+    optional=fixed_optional_effect_template(text,
+        compile_effect=lambda body:scalar(body) or (None,(),None,()))
+    return optional.compiled() if optional is not None else None
 
 
 def scalar_amount_shape_context(effects, mechanics):

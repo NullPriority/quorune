@@ -10,7 +10,7 @@ from .public_quantity_mana import public_quantity_mana_template
 
 def public_quantity_mana_effect_template(text, *, source_name):
     output = public_quantity_mana_template(text, source_name=source_name)
-    if output is None or output.selection != 'fixed' or output.restriction is not None:
+    if output is None or output.restriction is not None:
         return None
     if isinstance(output.amount, (CharacteristicQuantitySpec, LiveBattlefieldQuantitySpec)):
         try:
@@ -21,6 +21,10 @@ def public_quantity_mana_effect_template(text, *, source_name):
     else:
         amount = output.amount.to_dict()
         marker = 'scalar-effect-amount'
+    if output.selection!='fixed':
+        from ..variable_resolution_mana_model import VariableResolutionManaChoiceSpec
+        spec=VariableResolutionManaChoiceSpec('one_color' if output.selection=='choose_one' else 'combination',output.colors,amount)
+        return ('public-quantity-resolution-mana-choice-v3',(spec.effect(),),None,('public-quantity-mana',marker,'variable-resolution-mana-choice'))
     return ('public-quantity-resolution-mana-v1',
         ({'op':'mana','player':'$controller','color':output.colors[0],'amount':amount,'source':'$source'},),
         None, ('public-quantity-mana', marker))

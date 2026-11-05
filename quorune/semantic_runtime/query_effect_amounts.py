@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol
 
 from ..dynamic_characteristics import query_characteristic_count
@@ -35,6 +35,20 @@ class _ResolutionQuantitySource:
     ref: str
 
 
+def _live_quantity_source(host, item, quantity):
+    """Exclude the original source object, never its later incarnation."""
+    source_id = getattr(item, 'source_object_id', None) or getattr(item, 'card_object_id', None)
+    source = host.state.cards.get(source_id)
+    if quantity.exclude_source:
+        context = getattr(item, 'context', None)
+        identity = context.get('source_logical_object_id') if isinstance(context, Mapping) else None
+        if type(identity) is not str or not identity:
+            raise PublicQueryAmountError('Source-excluding quantity requires its captured logical identity')
+        if source is None or source.logical_object_id != identity:
+            quantity = replace(quantity, exclude_source=False)
+    return quantity, source.ref if source is not None else None
+
+
 def resolve_public_query_amount(
     host: PublicQueryAmountHost,
     value: Mapping[str, Any],
@@ -64,10 +78,8 @@ def resolve_public_query_amount(
                 raise PublicQueryAmountError("Declared amount continuation changed its identity or value")
             return spec.coefficient * previous["value"]
     if isinstance(spec.quantity, LiveBattlefieldQuantitySpec):
-        source_id = getattr(item, 'source_object_id', None) or getattr(item, 'card_object_id', None)
-        source = host.state.cards.get(source_id)
-        count = current_live_battlefield_count(host, controller, spec.quantity,
-            source_ref=source.ref if source is not None else None)
+        quantity, source_ref = _live_quantity_source(host, item, spec.quantity)
+        count = current_live_battlefield_count(host, controller, quantity, source_ref=source_ref)
     else:
         count = query_characteristic_count(host, _ResolutionQuantitySource(controller=controller, ref=stack_ref), spec.quantity)
     if type(count) is not int or count < 0:

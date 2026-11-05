@@ -235,12 +235,32 @@ def _scheduled_pair_spec(material_line, *, card_name):
         capabilities=tuple(sorted(dependencies)))
 
 
+def _source_block_pair_spec(material_line):
+    paired = re.fullmatch(r'(?:When|Whenever) this creature blocks or becomes blocked by a creature, (?P<body>.+)', material_line, re.I)
+    if paired is not None:
+        subscriptions = (
+            FixedEventSubscription('creature.blocks', _source_condition(
+                {'field': 'blocked_attacker', 'op': 'truthy', 'value': True})),
+            FixedEventSubscription('creature.becomes_blocked_by', _source_condition()),
+        )
+        return _spec('creature.blocks', 'source_block_pair_counterpart', paired['body'],
+            'fixed-source-block-pair-trigger-v1', 'trigger-event-normalized-public-action',
+            condition=fixed_event_subscription_condition(subscriptions),
+            capabilities=('trigger.subscription.fixed_multi_event', 'trigger.event.block_pair_counterpart'))
+
+    from .qualified_block_pairs import qualified_block_pair_spec
+    return qualified_block_pair_spec(material_line)
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
     card_name: str | None = None,
 ) -> FixedPublicEventBindingSpec | None:
     """Parse one exact two-event source subscription with one active zone."""
+
+    paired = _source_block_pair_spec(material_line)
+    if paired is not None:return paired
 
     scheduled = _scheduled_pair_spec(material_line, card_name=card_name)
     if scheduled is not None:

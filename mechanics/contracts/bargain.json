@@ -1,24 +1,27 @@
 {
   "schema_version": 1,
-  "contract_version": 1,
+  "contract_version": 2,
   "mechanic_id": "bargain",
   "official_name": "Bargain",
   "effective_date": "2026-08-07",
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
   "rule_references": [
+    "118.7a",
+    "118.8a",
+    "118.8d",
+    "400.7",
     "601.2a",
     "601.2b",
     "601.2c",
     "601.2f",
     "601.2h",
+    "607.1",
     "701.21a",
     "702.166",
     "702.166a",
     "702.166b",
     "702.166c",
     "702.166d",
-    "607.1",
-    "400.7",
     "707.10"
   ],
   "glossary_references": [
@@ -66,12 +69,14 @@
     "costs": [
       "sacrifice one controlled artifact OR enchantment OR token",
       "decline retains ordinary casting",
-      "tapped and summoning-sick objects can pay"
+      "tapped and summoning-sick objects can pay",
+      "fixed generic self discount qualified by the declared linked instance before payment; colored obligations and printed mana value unchanged"
     ],
     "timing": [
       "Bargain is declared under CR702.166b before cost payment",
       "costs commit or command rolls back",
-      "linked entry result reads original entry facts"
+      "linked entry result reads original entry facts",
+      "total-cost determination applies the linked discount after declaration and before sacrifice commitment"
     ],
     "targets": [
       "price is nontargeted",
@@ -120,7 +125,8 @@
     "same-target replacement and appended keywords",
     "spell copy and ordinary permanent copy",
     "departure/unpaid reentry",
-    "Role and mana results"
+    "Role and mana results",
+    "linked fixed generic paid/unpaid discount, zero generic with colored obligations, redirected price, counter and bounce/draw results"
   ],
   "witness_cards": [
     {
@@ -222,21 +228,28 @@
     "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
     "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
     "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
-    "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+    "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs",
+    "test_original_hamlet_paid_cast_uses_reduced_offer_and_preserves_colored_price",
+    "test_original_ice_out_zero_generic_still_pays_blue_and_counters_actual_spell",
+    "test_original_stopgap_reduced_cast_returns_nonland_then_draws",
+    "test_original_hamlet_unpaid_cast_keeps_price_and_insufficient_colored_mana_is_not_offered",
+    "test_declared_discount_codec_and_dependencies_fail_closed",
+    "test_linked_generic_discount_keeps_source_span_and_excludes_unlinked_grammar"
   ],
   "implementation": {
     "component": "FixedBargainSpec, DeclaredCastCostFacts, schema-five ordinary zone-cost union, linked ordinary condition/entry owners",
-    "version": "linked-bargain-v1",
+    "version": "linked-bargain-v2",
     "capability_ids": [
       "casting.additional_cost.permanent_union",
       "casting.additional_cost.declared_instance",
-      "casting.additional_cost.bargain"
+      "casting.additional_cost.bargain",
+      "casting.cost.self_public_reduction"
     ],
-    "supported_slice": "One printed optional Bargain on a complete normal source, independently closed self-entry results and complete same-target fixed spell branches."
+    "supported_slice": "One printed optional Bargain on a complete normal source, independently closed self-entry results and complete same-target fixed spell branches. Fixed generic self discounts qualify through immutable declared-cost facts and the shared total-cost planner."
   },
   "known_blockers": [
     "unrepresented conditional announcement targets",
-    "conditional discounts",
+    "variable or colored Bargain discounts",
     "other unrepresented linked bodies",
     "multiple/granted instances and mixed consuming prices",
     "unrepresented source layouts",

@@ -100,6 +100,25 @@ class ScalarChoice:
 
 
 @dataclass(frozen=True, slots=True)
+class CastOrDeclineChoice:
+    cast_options: tuple[FrozenMap, ...]
+
+    def __post_init__(self):
+        options = tuple(option if isinstance(option, FrozenMap) else FrozenMap(option)
+                        for option in self.cast_options)
+        ids = [option.get('id') for option in options]
+        if (any(type(value) is not str or not value for value in ids)
+                or len(ids) != len(set(ids))):
+            raise SemanticChoiceError('Resolving cast options require unique current IDs')
+        object.__setattr__(self, 'cast_options', options)
+
+    def choice_schema(self):
+        return {'field':'choice','legal_values':['cast','decline'] if self.cast_options else ['decline'],
+                'cast_options':[thaw_value(option) for option in self.cast_options],
+                'cast_options_when':{'field':'choice','value':'cast'}}
+
+
+@dataclass(frozen=True, slots=True)
 class ObjectChoice:
     field_name: str
     legal_refs: tuple[str, ...]
@@ -338,13 +357,15 @@ class ManaBundleChoice:
     field_name: str
     colors: tuple[str, ...]
     amount: int
+    schema_version: int = 1
 
     def __post_init__(self):
         object.__setattr__(self,'colors',tuple(self.colors))
         _string(self.field_name,field_name='mana field_name')
         if (not self.colors or len(set(self.colors))!=len(self.colors)
                 or any(type(color) is not str or color not in ('W','U','B','R','G') for color in self.colors)
-                or type(self.amount) is not int or not 1<=self.amount<=10):
+                or type(self.schema_version) is not int or self.schema_version not in {1,2}
+                or type(self.amount) is not int or self.amount<1 or self.schema_version==1 and self.amount>10):
             raise SemanticChoiceError('Mana bundle choice requires fixed positive output in colors')
 
     def choice_schema(self):
@@ -444,6 +465,7 @@ class ReferenceSetChoice:
 
 ChoiceModel = (
     ScalarChoice
+    | CastOrDeclineChoice
     | ObjectChoice
     | TargetAssignmentChoice
     | OrderingChoice

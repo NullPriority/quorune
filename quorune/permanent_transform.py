@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Canonical logical-object-aware CR 701.27 transform mutation."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass,replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from .card_program_faces import program_matches_face, selected_face_id
@@ -14,6 +14,8 @@ from .day_night_model import (
 from .model import CardInstance, StackItem
 from .trigger_processing import enqueue_trigger_batch
 from .transform_timestamp_model import transform_timestamp_version,ordered_transform_cards
+from .defined_token_faces import defined_token_definition
+from .rules.composition_faces import PreparedCompositionTransform
 
 
 TRANSFORM_OPERATION = "transform"
@@ -98,12 +100,13 @@ def current_day_night_bound_mode(
     host: PermanentTransformHost,
     card: CardInstance,
 ) -> DayNightBoundMode | None:
-    """Return the applicable compiled bound ability on the current face."""
+    """Return the eligible bound face of an ordinary double-faced card permanent."""
 
     if (
         card.zone != "battlefield"
         or card.phased_out
         or card.face_down
+        or getattr(card,'permanent_composition',None) is not None
         or card.object_kind != "card"
         or card.annotations.get("copied_from") is not None
         or card.annotations.get("copy_overrides") is not None
@@ -186,6 +189,12 @@ def trusted_daybound_entry_face(
 
 
 def _other_face(host: PermanentTransformHost, card: CardInstance) -> tuple[str, str] | None:
+    definition = defined_token_definition(card)
+    if definition is not None:
+        if definition.schema_version==2 and any({'instant','sorcery'}.intersection(host._type_parts(face.type_line)[0])
+                for face in (definition.front,definition.back)):return None
+        current = definition.current_face(card.active_face)
+        return current.name, definition.other_face(current.name).name
     record = host.card_record(card)
     faces = tuple(getattr(record, "faces", ())) if record is not None else ()
     if (
@@ -215,7 +224,7 @@ def _prepared_transform_faces(
     *,
     expected_transform_count: int | None,
     day_night_instruction: bool,
-) -> tuple[str,str] | None:
+) -> tuple[str,str] | PreparedCompositionTransform | None:
     """Validate one face change before any member of its batch commits."""
 
     timestamp_version=transform_timestamp_version(getattr(host.state,'transform_timestamp_version',None))
@@ -233,17 +242,23 @@ def _prepared_transform_faces(
         raise PermanentTransformError(
             "Expected transform count must be nonnegative or null"
         )
+    if (card.zone!='battlefield' or card.phased_out or card.face_down
+            or expected_transform_count is not None and card.transform_count!=expected_transform_count):
+        return None
+    if card.permanent_composition is not None:
+        from .composition_face_changes import prepare_composition_transform_instruction
+        try:
+            return prepare_composition_transform_instruction(host,card,expected_transform_count=expected_transform_count,
+                day_night_instruction=day_night_instruction)
+        except ValueError as exc:raise PermanentTransformError(str(exc)) from exc
+    try:
+        defined = defined_token_definition(card)
+    except ValueError as exc:
+        raise PermanentTransformError(str(exc)) from exc
     if (
-        card.zone != "battlefield"
-        or card.phased_out
-        or card.face_down
-        or card.object_kind != "card"
-        or card.annotations.get("copied_from") is not None
-        or card.annotations.get("copy_overrides") is not None
-        or (
-            expected_transform_count is not None
-            and card.transform_count != expected_transform_count
-        )
+        (card.object_kind != "card" and defined is None)
+        or (card.annotations.get("copied_from") is not None and defined is None)
+        or (card.annotations.get("copy_overrides") is not None and defined is None)
         or (
             not day_night_instruction
             and current_day_night_bound_mode(host, card) is not None
@@ -254,6 +269,13 @@ def _prepared_transform_faces(
 
 
 def _commit_transform_faces(host,card,faces):
+    if isinstance(faces,PreparedCompositionTransform):
+        from .zone_transitions import ZoneTransitionOwner
+        before=str(host._effective_card_data(card).get('name') or '')
+        ZoneTransitionOwner(host).commit_composition_transform(faces)
+        after=str(host._effective_card_data(card).get('name') or '')
+        return PermanentTransformResult(card.object_id,card.ref,card.logical_object_id,
+            before,after,card.transform_count,card.controller)
     timestamp_version=transform_timestamp_version(getattr(host.state,'transform_timestamp_version',None))
     previous_face, current_face = faces
     if timestamp_version==1:
@@ -303,10 +325,18 @@ def commit_transform_batch(
             day_night_instruction=day_night_instruction) for card in cards}
         cards=tuple(card for card in cards if plans[card.object_id] is not None)
         if len(cards)>1:cards=ordered_transform_cards(cards,host.apnap_order())
+        composed_names={card.object_id:str(host._effective_card_data(card).get('name') or '')
+            for card in cards if isinstance(plans[card.object_id],PreparedCompositionTransform)}
         from .transform_timestamp_order import select_transform_timestamp_cards
-        cards=select_transform_timestamp_cards(host,cards,reason=reason,day_night_instruction=day_night_instruction,
+        timestamped=tuple(card for card in cards if card.object_id not in composed_names)
+        ordered=select_transform_timestamp_cards(host,timestamped,reason=reason,day_night_instruction=day_night_instruction,
             expected_counts=expected)
+        remaining=iter(ordered)
+        cards=tuple(card if card.object_id in composed_names else next(remaining) for card in cards)
         results=tuple(_commit_transform_faces(host,card,plans[card.object_id]) for card in cards)
+        results=tuple(replace(result,previous_face=composed_names[result.object_id],
+            current_face=str(host._effective_card_data(host.state.cards[result.object_id]).get('name') or ''))
+            if result.object_id in composed_names else result for result in results)
     else:
         results=tuple(result for card in cards if (result:=transform_permanent(host,card,
             expected_transform_count=expected.get(card.object_id),day_night_instruction=day_night_instruction)) is not None)

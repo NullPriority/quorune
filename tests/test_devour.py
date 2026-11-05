@@ -583,7 +583,7 @@ class DevourRuntimeTests(unittest.TestCase):
         for dependency in ('zone.entry.devour','counter.placement.quantity_replacement','zone.change.destination_replacement','trigger.event.normalized_zone_change','trigger.placement.apnap'):
             changed=json.loads(json.dumps(raw));next(r for r in changed['capabilities'] if r['id']==dependency).update(status='blocked',blockers=['Devour dependency omitted'])
             self.assertNotEqual('exact',compile_oracle_card(record('Devour 2','Creature'),capability_registry=CapabilityRegistry(changed)).status)
-        with patch('quorune.compiler.devour_nodes.devour_keyword_nodes',return_value=None):
+        with patch('quorune.compiler.entry_keyword_nodes.devour_keyword_nodes',return_value=None):
             self.assertNotEqual('exact',compile_oracle_card(record('Devour 2','Creature'),capability_registry=self.registry).status)
         method='test_actual_slime_chooses_public_sacrifices_before_one_entry_with_private_loaded_replay'
         with patch('quorune.semantic_runtime.zone_replacements.devour_replacement_effects',return_value=()):

@@ -997,14 +997,15 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
                 assert_dies_event()
 
     def test_commander_identity_mutant_is_killed(self):
+        from quorune import commander as commander_owner
         def assert_physical_designations_remain_separate() -> None:
-            first = damage_module.commander_damage_key(
+            first = commander_owner.commander_damage_key(
                 source_is_commander=True,
                 designation_id="commander:A:1",
                 oracle_id="shared-oracle-id",
                 identity_version=2,
             )
-            second = damage_module.commander_damage_key(
+            second = commander_owner.commander_damage_key(
                 source_is_commander=True,
                 designation_id="commander:C:1",
                 oracle_id="shared-oracle-id",
@@ -1022,7 +1023,7 @@ class CapabilityImplementationMutationTests(unittest.TestCase):
             )
 
         with patch.object(
-            damage_module,
+            commander_owner,
             "commander_damage_key",
             oracle_identity_mutant,
         ):

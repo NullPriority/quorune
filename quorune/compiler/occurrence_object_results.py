@@ -10,6 +10,35 @@ OCCURRENCE_OBJECT='$event.permanent_object'
 
 
 def occurrence_object_result(binding,body,*,effect_template,card_name):
+    if binding.variant == 'source_block_pair_counterpart':
+        moved=re.fullmatch(r"(?P<destroy>Destroy that creature\.)(?P<prohibit> It can['’]t be regenerated\.)?|(?P<bounce>Return that creature to its owner's hand\.)",body,re.I)
+        if moved is not None:
+            from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
+            op='bounce' if moved['bounce'] else 'destroy'
+            instruction={'op':op,'card':BLOCK_COUNTERPART_OBJECT}
+            if moved['prohibit']:instruction['regeneration_prohibited']=True
+            return ('fixed-block-counterpart-zone-result-v1',(instruction,),None,
+                ('return-to-owner-hand',) if op=='bounce' else ('destroy',*(('regeneration-prohibition',) if moved['prohibit'] else ()))),False
+        damage = re.fullmatch(r'this creature deals (?P<amount>[1-9][0-9]*) damage to that creature\.', body, re.I)
+        if damage is not None:
+            from .damage_templates import source_pronoun_damage_effect_template
+            from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
+            leaf = source_pronoun_damage_effect_template('It deals ' + damage['amount'] + ' damage to target creature.')
+            if leaf is None:
+                return None
+            template, effects, schema, mechanics = leaf.compiled()
+            return (template, ({**effects[0], 'target': BLOCK_COUNTERPART_OBJECT},), None,
+                    tuple(mechanic for mechanic in mechanics if mechanic != 'cr-115-targets')), True
+        from .fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate
+        from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
+        match = re.fullmatch(r'that creature gains (?P<keyword>[a-z ]+) until end of turn\.', body, re.I)
+        keyword = match['keyword'].title() if match is not None else None
+        if keyword not in FIXED_CHARACTERISTIC_KEYWORDS:
+            return None
+        from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
+        template, effects, schema, mechanics = FixedSourceCharacteristicsTemplate(
+            source_kind='block-counterpart', keywords=(keyword,)).compiled()
+        return (template, ({**effects[0], 'card': BLOCK_COUNTERPART_OBJECT},), None, mechanics), True
     tap = binding.event.value in {'permanent.tap','permanent.untap'} and binding.variant in {'public_tap_state_transition','source_public_tap_state_transition'}
     receiving = binding.variant in RECEIVED_PERMANENT_VARIANTS and binding.event.value in {RECEIVED_DAMAGE_EVENT,RECEIVED_COMBAT_DAMAGE_EVENT,'permanent.tap'}
     if not tap and not receiving:return None

@@ -1,6 +1,7 @@
 import type { ChoiceForm, JsonValue } from "./generated/protocol";
 import {
   activeFields,
+  activeVariants,
   choicesWithDefaults,
   copyTargetGroups,
   copyTargetSlots,
@@ -757,7 +758,7 @@ function ChoiceControl({
 }
 
 export function ChoiceFormView({ form, values, onChange, labelFor }: Props) {
-  const variants = record(form.variants);
+  const variants = activeVariants(form, values);
   const selector = text(variants.field || "cost_option");
   const variantOptions = list(variants.options).map(record);
   return (

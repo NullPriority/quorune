@@ -71,6 +71,23 @@ their live evaluation. Compare the resulting presence effects with full
 collection and retain current-ability removal, malformed-descriptor, action,
 save/load and replay controls.
 
+Target-candidate enumeration and Aura-target reference queries share the existing
+characteristic read frame across their synchronous query. Each query releases its
+completed characteristic views on return, so later commands recompute after
+reattachment, removal, control, visibility or characteristic changes. Compare the
+same real-action witness from identical initial identities and retain its full
+authoritative hashes, projection, rejected-command rollback and replay assertions.
+Local witness timings establish a local opportunity; complete protected runs
+establish the pipeline result.
+
+Browser startup helpers await the accepted room-start response before checking
+the projected hand. The response wait uses the existing journey deadline;
+ordinary projection assertions retain their shorter timeout. A held-response
+control proves startup cannot finish on the click alone. Four-deck private
+mulligan journeys use the same cold-start budget as the shared-cookie journey.
+Synthetic continuous-effect fixtures use `PlayerState`'s complete zone mapping
+so adding a legitimate source zone cannot leave a partial fixture behind.
+
 Whole-program cohort probes lazily construct one built-in semantic registry
 per measurement and reuse it for read-only compilation of that measurement's
 cards. Separate measurements construct fresh registries, and probes with no
@@ -239,6 +256,11 @@ selection. Before push, inspect what CI will select:
 ```powershell
 .\.venv\Scripts\python.exe scripts/quick_gate.py --dry-run
 ```
+
+The normal inventory includes the same bounded pre-corpus source and contract
+checks as the publication hook, including explicit text encodings and complete
+test routing. These obligations are visible before generated finalization;
+the broader affected behavioral set remains a public CI responsibility.
 
 `platform/change-impact-policy.json` is the versioned many-to-many path/check
 policy consumed by `scripts/change_impact.py`, `scripts/quick_gate.py`, and
@@ -483,7 +505,7 @@ generators and their downstream automatic or derived-only consumers until a
 bounded pass changes nothing. A requested database-backed corpus rebuild occurs
 only on the first pass because the DAG already orders all of its consumers
 afterward. It then runs all freshness checks, documentation validation, and
-diff hygiene. Pass `--db <path>` or set
+staged and unstaged diff hygiene. Pass `--db <path>` or set
 `MTG_CARD_DB` when a card-data-backed frontier or full reusable-piece rebuild is
 required. The manifest owns the full/Commander Oracle and CardProgram census
 before the card-unlock frontier, so the frontier cannot compare current source
@@ -561,6 +583,11 @@ receipts plus the transition-measurement receipt are content identities with no
 feature-commit field. They survive squash, so review, merge, and the next
 selector pass require neither a merge-commit association nor a bookkeeping
 follow-up.
+A compiler correction within the same unpublished delivery keeps its bundle,
+candidate, and measurement identities. Update the compiler and transition
+identities to describe the corrected source. The history owner authenticates
+the original durable-main base before replacing the unpublished outcome;
+renaming the bundle would instead declare a different delivery.
 A prediction keeps its original measurement frontier when conservative main
 updates advance an unmerged delivery's outcome base. The producer recovers
 that exact frontier through validated non-harvest receipt links and checks its
@@ -666,6 +693,11 @@ Pull-request CI remains check-only and authoritative.
 Keep generated-governance tests tied to identities from the canonical manifest
 or registry rather than separately maintained totals or copied identifier sets.
 Those literals turn every legitimate promotion into an unrelated CI repair.
+Shared target-player sequence changes select the existing bound-reference,
+affected-player discard and player-counter compiler classes in both normal
+and pre-corpus plans.
+These bounded checks catch changed producer ownership and dependency claims
+before corpus generation; native certification still runs in public CI.
 Compiler-only tests should construct their input `CardRecord` directly; only
 runtime integration tests should require the compact CI card database. When a
 database-backed fixture is genuinely required, identify every workflow and
@@ -684,6 +716,13 @@ malformed, contains duplicate, missing, escaping, or noncanonical paths, or a
 registered consumer reintroduces its own `--fixture` list. Add a required
 fixture once to the manifest; all consumers retain isolated output paths while
 receiving the same composed card set automatically.
+
+After editing fixture payloads, build that composed database locally as well as
+validating the manifest. The build rejects inconsistent records for one Oracle
+ID across files, including empty face encodings and metadata differences that
+isolated test databases cannot expose. Reuse the existing canonical record for
+shared controls; preserve rules text, characteristics and supported format
+legality when reconciling metadata.
 
 `python scripts/build_test_database.py validate-ci-dependencies` proves that
 the set is sufficient. The structural analyzer discovers exact `CardDatabase`

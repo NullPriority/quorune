@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from quorune.carddb import CardDatabase
+from quorune.frontier_storage import pack_frontier_document, unpack_frontier_document
 from quorune.compiler.unlock_frontier import (
     build_card_unlock_frontier,
     render_card_unlock_frontier_markdown,
@@ -108,16 +109,16 @@ def _canonical_gzip(payload: bytes) -> bytes:
 
 
 def _canonical_report_bytes(report: dict) -> bytes:
-    return (stable_json(report) + "\n").encode("utf-8")
+    return (stable_json(pack_frontier_document(report)) + "\n").encode("utf-8")
 
 
 def _load_tracked() -> tuple[dict, bytes, str]:
     if not JSON_GZIP_OUTPUT.exists() or not MARKDOWN_OUTPUT.exists():
         raise ValueError("Card-unlock frontier artifacts are missing")
     try:
-        report = json.loads(
+        report = unpack_frontier_document(json.loads(
             gzip.decompress(JSON_GZIP_OUTPUT.read_bytes()).decode("utf-8")
-        )
+        ))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError("Card-unlock frontier gzip JSON is invalid") from exc
     validate_card_unlock_frontier(report)
@@ -134,9 +135,16 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
+    mode.add_argument("--repack", action="store_true", help="Losslessly repack a validated current frontier without compiling cards")
     parser.add_argument("--db", type=Path)
     parser.add_argument("--limit", type=int)
     args = parser.parse_args()
+    if args.repack:
+        report, encoded, markdown = _load_tracked()
+        _snapshot_freshness(report)
+        JSON_GZIP_OUTPUT.write_bytes(encoded)
+        MARKDOWN_OUTPUT.write_text(markdown, encoding="utf-8", newline="\n")
+        return 0
     if args.write:
         if args.db is None:
             parser.error("--write requires --db")

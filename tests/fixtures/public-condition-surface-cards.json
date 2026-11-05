@@ -7,7 +7,7 @@
       "oracle_id": "406247ee-2b86-4068-b5fa-65cdc83a82f4",
       "name": "Shardmage's Rescue",
       "mana_cost": "{W}",
-      "type_line": "Enchantment \u2014 Aura",
+      "type_line": "Enchantment — Aura",
       "oracle_text": "Flash\nEnchant creature you control\nAs long as this Aura entered this turn, enchanted creature has hexproof.\nEnchanted creature gets +1/+1.",
       "power": null,
       "toughness": null,
@@ -57,7 +57,7 @@
       "oracle_id": "731898d3-465b-4ecb-a346-b91881714ebc",
       "name": "Saddled Rimestag",
       "mana_cost": "{1}{G}",
-      "type_line": "Snow Creature \u2014 Elk",
+      "type_line": "Snow Creature — Elk",
       "oracle_text": "This creature gets +2/+2 as long as you had another creature enter the battlefield under your control this turn.",
       "power": "2",
       "toughness": "2",
@@ -104,7 +104,7 @@
       "oracle_id": "854278bc-2bcf-45dd-abd5-6aca7a1e5fc9",
       "name": "Aang, A Lot to Learn",
       "mana_cost": "{2}{G/W}",
-      "type_line": "Legendary Creature \u2014 Human Avatar Ally",
+      "type_line": "Legendary Creature — Human Avatar Ally",
       "oracle_text": "Aang has vigilance as long as there's a Lesson card in your graveyard.\nWhenever another creature you control dies, put a +1/+1 counter on Aang.",
       "power": "3",
       "toughness": "2",
@@ -153,7 +153,7 @@
       "oracle_id": "9b0bc2d3-d64b-455a-a258-d3c91892f1a7",
       "name": "Beasts of Bogardan",
       "mana_cost": "{4}{R}",
-      "type_line": "Creature \u2014 Beast",
+      "type_line": "Creature — Beast",
       "oracle_text": "Protection from red\nThis creature gets +1/+1 as long as an opponent controls a nontoken white permanent.",
       "power": "3",
       "toughness": "3",
@@ -202,7 +202,7 @@
       "oracle_id": "aa0c6fea-c90c-4b65-aa1e-18e5b34ea6e3",
       "name": "Eldrazi Aggressor",
       "mana_cost": "{2}{R}",
-      "type_line": "Creature \u2014 Eldrazi Drone",
+      "type_line": "Creature — Eldrazi Drone",
       "oracle_text": "Devoid (This card has no color.)\nThis creature has haste as long as you control another colorless creature.",
       "power": "2",
       "toughness": "3",
@@ -249,7 +249,7 @@
       "oracle_id": "bd9f2c84-0589-4ffe-9bff-ea74be4f77a4",
       "name": "Skyshroud Elite",
       "mana_cost": "{G}",
-      "type_line": "Creature \u2014 Elf",
+      "type_line": "Creature — Elf",
       "oracle_text": "This creature gets +1/+2 as long as an opponent controls a nonbasic land.",
       "power": "1",
       "toughness": "1",
@@ -296,7 +296,7 @@
       "oracle_id": "cbbea4e2-4b36-4965-89b6-00d2a564f146",
       "name": "First-Time Flyer",
       "mana_cost": "{1}{U}",
-      "type_line": "Creature \u2014 Human Pilot Ally",
+      "type_line": "Creature — Human Pilot Ally",
       "oracle_text": "Flying\nThis creature gets +1/+1 as long as there's a Lesson card in your graveyard.",
       "power": "1",
       "toughness": "2",
@@ -345,7 +345,7 @@
       "oracle_id": "d17a1109-3a7f-4a39-b602-155da819235f",
       "name": "Bellowing Elk",
       "mana_cost": "{3}{G}",
-      "type_line": "Creature \u2014 Elk",
+      "type_line": "Creature — Elk",
       "oracle_text": "As long as you had another creature enter the battlefield under your control this turn, this creature has trample and indestructible.",
       "power": "4",
       "toughness": "2",
@@ -392,7 +392,7 @@
       "oracle_id": "1bbddbd2-9c85-4a1d-87aa-0c2eb2e0fb73",
       "name": "Wandering Ones",
       "mana_cost": "{U}",
-      "type_line": "Creature \u2014 Spirit",
+      "type_line": "Creature — Spirit",
       "oracle_text": "",
       "power": "1",
       "toughness": "1",
@@ -440,7 +440,7 @@
       "oracle_id": "02418479-9455-417f-a6a1-004356faff37",
       "name": "Tundra",
       "mana_cost": "",
-      "type_line": "Land \u2014 Plains Island",
+      "type_line": "Land — Plains Island",
       "oracle_text": "({T}: Add {W} or {U}.)",
       "power": null,
       "toughness": null,
@@ -573,13 +573,13 @@
       "produced_mana": [],
       "released_at": "2023-01-13",
       "toughness": "2",
-      "type_line": "Artifact Creature \u2014 Thopter"
+      "type_line": "Artifact Creature — Thopter"
     },
     {
       "oracle_id": "f9e668f9-21af-4fd8-9a37-6505ab2234e3",
       "name": "Elemental Summoning",
       "mana_cost": "{3}{U/R}{U/R}",
-      "type_line": "Sorcery \u2014 Lesson",
+      "type_line": "Sorcery — Lesson",
       "oracle_text": "Create a 4/4 blue and red Elemental creature token.",
       "power": null,
       "toughness": null,
@@ -792,7 +792,7 @@
       "oracle_id": "b3b9a87d-cb95-435c-90b6-037406cab32e",
       "name": "Elite Vanguard",
       "mana_cost": "{W}",
-      "type_line": "Creature \u2014 Human Soldier",
+      "type_line": "Creature — Human Soldier",
       "oracle_text": "",
       "power": "2",
       "toughness": "1",
@@ -927,7 +927,7 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Island"
+      "type_line": "Basic Land — Island"
     },
     {
       "cmc": 0.0,
@@ -974,7 +974,154 @@
       ],
       "released_at": "2026-06-26",
       "toughness": null,
-      "type_line": "Basic Land \u2014 Mountain"
+      "type_line": "Basic Land — Mountain"
+    },
+    {
+      "oracle_id": "1de17747-27e8-40bb-b6f7-6d5402d4705c",
+      "name": "Earth Rumble Wrestlers",
+      "mana_cost": "{3}{R/G}",
+      "cmc": 4.0,
+      "type_line": "Creature — Human Warrior Performer",
+      "oracle_text": "Reach\nThis creature gets +1/+0 and has trample as long as you control a land creature or a land entered the battlefield under your control this turn.",
+      "power": "3",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "R"
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "keywords": [
+        "Reach"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-11-21",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "name": "Dryad Arbor",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Land Creature — Forest Dryad",
+      "oracle_text": "(This land isn't a spell, it's affected by summoning sickness, and it has \"{T}: Add {G}.\")",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "G"
+      ],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
     }
   ],
   "rulings": [
@@ -982,19 +1129,19 @@
       "oracle_id": "731898d3-465b-4ecb-a346-b91881714ebc",
       "published_at": "2019-06-14",
       "source": "wotc",
-      "comment": "Saddled Rimestag\u2019s effect checks each turn whether it applies during that turn. It doesn\u2019t check only during the turn it enters the battlefield."
+      "comment": "Saddled Rimestag’s effect checks each turn whether it applies during that turn. It doesn’t check only during the turn it enters the battlefield."
     },
     {
       "oracle_id": "731898d3-465b-4ecb-a346-b91881714ebc",
       "published_at": "2019-06-14",
       "source": "wotc",
-      "comment": "Saddled Rimestag\u2019s effect applies even if the other creature entered the battlefield under your control before Saddled Rimestag entered the battlefield, and it continues to apply even if that creature leaves the battlefield."
+      "comment": "Saddled Rimestag’s effect applies even if the other creature entered the battlefield under your control before Saddled Rimestag entered the battlefield, and it continues to apply even if that creature leaves the battlefield."
     },
     {
       "oracle_id": "731898d3-465b-4ecb-a346-b91881714ebc",
       "published_at": "2019-06-14",
       "source": "wotc",
-      "comment": "Saddled Rimestag doesn\u2019t get more than +2/+2 if you had more than one other creature enter the battlefield under your control during a turn."
+      "comment": "Saddled Rimestag doesn’t get more than +2/+2 if you had more than one other creature enter the battlefield under your control during a turn."
     },
     {
       "oracle_id": "854278bc-2bcf-45dd-abd5-6aca7a1e5fc9",
@@ -1012,13 +1159,13 @@
       "oracle_id": "d17a1109-3a7f-4a39-b602-155da819235f",
       "published_at": "2019-06-14",
       "source": "wotc",
-      "comment": "Bellowing Elk\u2019s effect checks each turn whether it applies during that turn. It doesn\u2019t check only during the turn it enters the battlefield."
+      "comment": "Bellowing Elk’s effect checks each turn whether it applies during that turn. It doesn’t check only during the turn it enters the battlefield."
     },
     {
       "oracle_id": "d17a1109-3a7f-4a39-b602-155da819235f",
       "published_at": "2019-06-14",
       "source": "wotc",
-      "comment": "Bellowing Elk\u2019s effect applies even if the other creature entered the battlefield under your control before Bellowing Elk entered the battlefield, and it continues to apply even if that creature leaves the battlefield."
+      "comment": "Bellowing Elk’s effect applies even if the other creature entered the battlefield under your control before Bellowing Elk entered the battlefield, and it continues to apply even if that creature leaves the battlefield."
     },
     {
       "oracle_id": "02418479-9455-417f-a6a1-004356faff37",
@@ -1054,7 +1201,7 @@
       "oracle_id": "f9e668f9-21af-4fd8-9a37-6505ab2234e3",
       "published_at": "2021-04-16",
       "source": "wotc",
-      "comment": "Although you may want to include Lessons in your sideboard if you\u2019re playing with cards that instruct you to learn, Lesson cards can be included in your main deck like other instant or sorcery cards."
+      "comment": "Although you may want to include Lessons in your sideboard if you’re playing with cards that instruct you to learn, Lesson cards can be included in your main deck like other instant or sorcery cards."
     },
     {
       "oracle_id": "f9e668f9-21af-4fd8-9a37-6505ab2234e3",
@@ -1073,6 +1220,48 @@
       "published_at": "2012-10-01",
       "source": "wotc",
       "comment": "You must be able to target a card in a graveyard to cast Cremate."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2011-09-22",
+      "source": "wotc",
+      "comment": "If Dryad Arbor is changed into another basic land type (such as by Sea's Claim), it continues to be a creature and a Dryad."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2013-06-07",
+      "source": "wotc",
+      "comment": "Although originally printed with a characteristic-defining ability that defined its color, this card now has a color indicator. This color indicator can't be affected by text-changing effects (such as the one created by Crystal Spray), although color-changing effects can still overwrite it."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If Dryad Arbor is changed into another basic land type, it continues to be a green Dryad creature."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Due to its color indicator (appearing to the left of its type line), Dryad Arbor is green. Color indicators apply in all zones, not just the battlefield."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Dryad Arbor is played as a land. It doesn't use the stack, it's not a spell, it can't be responded to, it has no mana cost, and it counts as your land play for the turn."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "Forest is a land type and Dryad is a creature type."
+    },
+    {
+      "oracle_id": "e996cd67-739c-40f4-b276-0042acf26c71",
+      "published_at": "2021-03-19",
+      "source": "wotc",
+      "comment": "If a Dryad Arbor gains flash, or you have the ability to play Dryad Arbor as though it had flash (due to Teferi, Mage of Zhalfir or Scout's Warning, for example), you can ignore the normal timing rules for when during your turn you can play a land, but not any other restrictions. You can't play Dryad Arbor during another player's turn, and you can't play Dryad Arbor if you don't have any land plays remaining."
     }
   ]
 }

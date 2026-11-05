@@ -115,7 +115,8 @@ def capture_departure_trigger_sources(
 
 def _damage_source_characteristics(host, source):
     from .rules.stack_damage_sources import capture_damage_source_characteristics
-    return capture_damage_source_characteristics(host, source)
+    from .rules.permanent_event_state import permanent_event_characteristics
+    return permanent_event_characteristics(host,source,capture_damage_source_characteristics(host, source))
 
 
 def dispatch_zone_change_occurrence(
@@ -179,7 +180,9 @@ def record_zone_change_history(
     """Record one committed occurrence without discovering its triggers."""
 
     history=getattr(host.state,'turn_history',None)
-    if occurrence.destination=='graveyard' and occurrence.origin!='graveyard' and occurrence.card_object and getattr(history,'arrival_history_version',None)==1:
+    permanent=occurrence.composition is None or occurrence.composition.permanent_departure
+    physical=occurrence.composition is None or occurrence.composition.physical_arrival
+    if physical and occurrence.destination=='graveyard' and occurrence.origin!='graveyard' and occurrence.card_object and getattr(history,'arrival_history_version',None)==1:
         types=set(sealed_public_characteristic_facts(occurrence.current_characteristics)['types']) if history.graveyard_type_history_version==1 else set()
         host._record_turn_history('card_arrived_graveyard',actor=occurrence.owner,
             object_incarnation=occurrence.current_logical_object_id,types=types,origin=occurrence.origin)
@@ -219,7 +222,7 @@ def record_zone_change_history(
     moved = occurrence.origin != occurrence.destination
     history = getattr(getattr(host, "state", None), "turn_history", None)
     if (
-        moved and occurrence.origin == "battlefield"
+        permanent and moved and occurrence.origin == "battlefield"
         and getattr(history, "departure_history_version", None) == 1
     ):
         host._record_turn_history(
@@ -241,6 +244,7 @@ def record_zone_change_history(
         moved
         and occurrence.origin == "battlefield"
         and occurrence.transition_kind is ZoneTransitionKind.SACRIFICE
+        and permanent
     ):
         host._record_turn_history(
             "permanent_sacrificed",

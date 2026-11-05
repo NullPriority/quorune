@@ -301,15 +301,17 @@ class CounterMaximumRuntimeTests(unittest.TestCase):
             "Copy Maximum",
             maximum_fragment("dream", 7),
         )
-        subject.annotations["copy_overrides"] = {
+        subject.annotations["copy_overrides"].update({
             "name": "Copied Maximum",
             "type_line": "Creature — Shapeshifter",
             "ability_fragments": [maximum_fragment("dream", 5)],
-        }
+        })
         subject.annotations["granted_ability_fragments"] = [
             maximum_fragment("dream", 3)
         ]
         subject.counters["dream"] = 8
+
+        self.assertEqual(2, engine._numeric_stat(subject.object_id, "toughness"))
 
         self.assertFalse(engine._stabilize())
         self.assertEqual(3, subject.counters["dream"])

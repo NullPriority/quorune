@@ -43,6 +43,9 @@ def dispatch_normalized_spell_copy_event(
 
     from .rules.target_announcements import dispatch_target_announcements
     dispatch_target_announcements(host, copied)
+    if copied.kind=='triggered_ability':
+        from .rules.crime import record_crime_for_stack_placement
+        record_crime_for_stack_placement(host,copied)
     if copied.kind != "spell_copy":
         return []
     if not copied.card_object_id:

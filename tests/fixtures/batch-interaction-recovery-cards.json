@@ -2347,8 +2347,9 @@
       "name": "Invasion of Karsus // Refraction Elemental",
       "piece_ids": [
         "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.event_binding.normalized-event-binding",
+        "residual.event_binding.intervening-if-and-reflexive-trigger-grammar"
       ]
     },
     {
@@ -2356,8 +2357,9 @@
       "name": "Invasion of Kaldheim // Pyre of the World Tree",
       "piece_ids": [
         "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
+        "residual.continuous_layer.continuous-effect-layers-and-dependencies",
+        "residual.event_binding.normalized-event-binding",
+        "residual.event_binding.intervening-if-and-reflexive-trigger-grammar"
       ]
     },
     {

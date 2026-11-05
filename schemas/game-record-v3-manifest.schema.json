@@ -1,8 +1,478 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://mtg-commander-sim.local/schemas/game-record-v3-manifest.schema.json",
-  "title": "MTG Commander Game Record v3 manifest",
-  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "card_programs": {
+      "additionalProperties": false,
+      "properties": {
+        "block_characteristics_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "fingerprints": {
+          "additionalProperties": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "schema_version": {
+          "const": 2
+        },
+        "trust": {
+          "additionalProperties": {
+            "additionalProperties": false,
+            "properties": {
+              "fingerprint": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              },
+              "strict_capability_ready": {
+                "type": "boolean"
+              },
+              "trust_basis": {
+                "enum": [
+                  "capability_closed",
+                  "legacy_reviewed",
+                  "mixed",
+                  "provisional",
+                  "unresolved",
+                  "non_rules_governed"
+                ]
+              },
+              "trust_closure_fingerprint": {
+                "pattern": "^[0-9a-f]{64}$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "fingerprint",
+              "trust_basis",
+              "trust_closure_fingerprint",
+              "strict_capability_ready"
+            ],
+            "type": "object"
+          },
+          "type": "object"
+        },
+        "unblocked_attacker_event_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema_version",
+        "fingerprints"
+      ],
+      "type": "object"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "draw": {
+      "type": "boolean"
+    },
+    "ended_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "engine_version": {
+      "type": "string"
+    },
+    "final_state_hash": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "format": {
+      "additionalProperties": true,
+      "properties": {
+        "battle_cry_resolution_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "cast_source_placement_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "characteristic_query_boundary_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "commander_damage_identity_version": {
+          "enum": [
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        "crime_history_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "explore_action_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "face_status_timestamp_version": {
+          "const": 1,
+          "type": "integer"
+        },
+        "first_player_draws": {
+          "type": "boolean"
+        },
+        "free_mulligans": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "library_selection_knowledge_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "name": {
+          "const": "commander"
+        },
+        "permanent_event_state_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
+        "profile": {
+          "enum": [
+            "commander_duel",
+            "commander_multiplayer"
+          ]
+        },
+        "review_profile": {
+          "const": "commander_review"
+        },
+        "starting_life": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "transform_timestamp_version": {
+          "const": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "review_profile",
+        "profile",
+        "starting_life",
+        "free_mulligans",
+        "first_player_draws"
+      ],
+      "type": "object"
+    },
+    "game_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "migrated_at": {
+      "type": "string"
+    },
+    "player_count": {
+      "maximum": 6,
+      "minimum": 2,
+      "type": "integer"
+    },
+    "players": {
+      "maxItems": 6,
+      "minItems": 2,
+      "type": "array"
+    },
+    "protocol_version": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "record_schema_version": {
+      "const": 3
+    },
+    "record_type": {
+      "const": "mtg-commander-game"
+    },
+    "replay": {
+      "properties": {
+        "card_program_fingerprints": {
+          "additionalProperties": {
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "engine_version": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "command_replay",
+            "commands",
+            "legacy_snapshot"
+          ]
+        },
+        "semantics_fingerprint": {
+          "type": "string"
+        },
+        "verification": {
+          "enum": [
+            "not_run",
+            "pass",
+            "fail",
+            "snapshot_only"
+          ]
+        }
+      },
+      "required": [
+        "mode",
+        "verification",
+        "engine_version",
+        "semantics_fingerprint"
+      ],
+      "type": "object"
+    },
+    "review": {
+      "properties": {
+        "classification": {
+          "type": "string"
+        },
+        "eligible": {
+          "type": "boolean"
+        },
+        "matchup_evidence": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "classification",
+        "eligible"
+      ],
+      "type": "object"
+    },
+    "runtime_trust": {
+      "additionalProperties": false,
+      "properties": {
+        "capability_evidence_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "capability_registry_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "runtime_component_inventory": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "capability_dependencies": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "event": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "family": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "handler_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "rule_references": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "schema_version": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "handler_id",
+              "schema_version",
+              "family",
+              "event",
+              "rule_references",
+              "capability_dependencies"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "runtime_component_registry_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": 1
+        },
+        "semantic_handler_inventory": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "capability_dependencies": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "family": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "handler_id": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "operation": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "rule_references": {
+                "items": {
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "schema_version": {
+                "minimum": 1,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "operation",
+              "handler_id",
+              "schema_version",
+              "family",
+              "rule_references",
+              "capability_dependencies"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "semantic_handler_registry_fingerprint": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "capability_registry_fingerprint",
+        "capability_evidence_fingerprint",
+        "semantic_handler_registry_fingerprint",
+        "semantic_handler_inventory",
+        "runtime_component_registry_fingerprint",
+        "runtime_component_inventory"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 3
+    },
+    "scryfall": {
+      "type": "object"
+    },
+    "seed": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "semantics_fingerprint": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "semantics_registry": {
+      "properties": {
+        "hash": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "schema_version": {
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "schema_version",
+        "hash"
+      ],
+      "type": "object"
+    },
+    "started_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "state_version": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "status": {
+      "enum": [
+        "in_progress",
+        "complete"
+      ]
+    },
+    "trace_level": {
+      "enum": [
+        "minimal",
+        "standard",
+        "debug"
+      ]
+    },
+    "turn_order": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 6,
+      "minItems": 2,
+      "type": "array"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "winner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
   "required": [
     "schema_version",
     "record_schema_version",
@@ -21,196 +491,6 @@
     "replay",
     "review"
   ],
-  "properties": {
-    "schema_version": {"const": 3},
-    "record_schema_version": {"const": 3},
-    "record_type": {"const": "mtg-commander-game"},
-    "game_id": {"type": "string", "minLength": 1},
-    "engine_version": {"type": "string"},
-    "state_version": {"type": "integer", "minimum": 1},
-    "protocol_version": {"type": "integer", "minimum": 1},
-    "format": {
-      "type": "object",
-      "required": ["name", "review_profile", "profile", "starting_life", "free_mulligans", "first_player_draws"],
-      "properties": {
-        "name": {"const": "commander"},
-        "review_profile": {"const": "commander_review"},
-        "profile": {"enum": ["commander_duel", "commander_multiplayer"]},
-        "starting_life": {"type": "integer", "minimum": 1},
-        "free_mulligans": {"type": "integer", "minimum": 0},
-        "first_player_draws": {"type": "boolean"},
-        "cast_source_placement_version": {"type": "integer", "const": 1},
-        "explore_action_version": {"type": "integer", "const": 1},
-        "transform_timestamp_version": {"type": "integer", "const": 1},
-        "face_status_timestamp_version": {"type": "integer", "const": 1},
-        "library_selection_knowledge_version": {"type": "integer", "enum": [0, 1]},
-        "characteristic_query_boundary_version": {"type": "integer", "enum": [0, 1]},
-        "commander_damage_identity_version": {
-          "type": "integer",
-          "enum": [1, 2]
-        }
-      },
-      "additionalProperties": true
-    },
-    "players": {"type": "array", "minItems": 2, "maxItems": 6},
-    "player_count": {"type": "integer", "minimum": 2, "maximum": 6},
-    "turn_order": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 6},
-    "seed": {"type": ["integer", "null"]},
-    "trace_level": {"enum": ["minimal", "standard", "debug"]},
-    "semantics_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "semantics_registry": {
-      "type": "object",
-      "required": ["schema_version", "hash"],
-      "properties": {
-        "schema_version": {"type": "integer", "minimum": 1},
-        "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-      }
-    },
-    "card_programs": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["schema_version", "fingerprints"],
-      "properties": {
-        "schema_version": {"const": 2},
-        "fingerprints": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{64}$"
-          }
-        },
-        "trust": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "fingerprint",
-              "trust_basis",
-              "trust_closure_fingerprint",
-              "strict_capability_ready"
-            ],
-            "properties": {
-              "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-              "trust_basis": {
-                "enum": [
-                  "capability_closed",
-                  "legacy_reviewed",
-                  "mixed",
-                  "provisional",
-                  "unresolved",
-                  "non_rules_governed"
-                ]
-              },
-              "trust_closure_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-              "strict_capability_ready": {"type": "boolean"}
-            }
-          }
-        }
-      }
-    },
-    "runtime_trust": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "schema_version",
-        "capability_registry_fingerprint",
-        "capability_evidence_fingerprint",
-        "semantic_handler_registry_fingerprint",
-        "semantic_handler_inventory",
-        "runtime_component_registry_fingerprint",
-        "runtime_component_inventory"
-      ],
-      "properties": {
-        "schema_version": {"const": 1},
-        "capability_registry_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "capability_evidence_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "semantic_handler_registry_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "semantic_handler_inventory": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "operation",
-              "handler_id",
-              "schema_version",
-              "family",
-              "rule_references",
-              "capability_dependencies"
-            ],
-            "properties": {
-              "operation": {"type": "string", "minLength": 1},
-              "handler_id": {"type": "string", "minLength": 1},
-              "schema_version": {"type": "integer", "minimum": 1},
-              "family": {"type": "string", "minLength": 1},
-              "rule_references": {"type": "array", "items": {"type": "string", "minLength": 1}},
-              "capability_dependencies": {"type": "array", "items": {"type": "string", "minLength": 1}}
-            }
-          }
-        },
-        "runtime_component_registry_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "runtime_component_inventory": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "handler_id",
-              "schema_version",
-              "family",
-              "event",
-              "rule_references",
-              "capability_dependencies"
-            ],
-            "properties": {
-              "handler_id": {"type": "string", "minLength": 1},
-              "schema_version": {"type": "integer", "minimum": 1},
-              "family": {"type": "string", "minLength": 1},
-              "event": {"type": "string", "minLength": 1},
-              "rule_references": {"type": "array", "items": {"type": "string", "minLength": 1}},
-              "capability_dependencies": {"type": "array", "items": {"type": "string", "minLength": 1}}
-            }
-          }
-        }
-      }
-    },
-    "scryfall": {"type": "object"},
-    "created_at": {"type": "string"},
-    "updated_at": {"type": "string"},
-    "started_at": {"type": ["string", "null"]},
-    "ended_at": {"type": ["string", "null"]},
-    "migrated_at": {"type": "string"},
-    "status": {"enum": ["in_progress", "complete"]},
-    "winner": {"type": ["string", "null"]},
-    "draw": {"type": "boolean"},
-    "final_state_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "replay": {
-      "type": "object",
-      "required": ["mode", "verification", "engine_version", "semantics_fingerprint"],
-      "properties": {
-        "mode": {"enum": ["command_replay", "commands", "legacy_snapshot"]},
-        "verification": {"enum": ["not_run", "pass", "fail", "snapshot_only"]},
-        "engine_version": {"type": "string"},
-        "semantics_fingerprint": {"type": "string"},
-        "card_program_fingerprints": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "pattern": "^[0-9a-f]{64}$"
-          }
-        }
-      }
-    },
-    "review": {
-      "type": "object",
-      "required": ["classification", "eligible"],
-      "properties": {
-        "classification": {"type": "string"},
-        "eligible": {"type": "boolean"},
-        "matchup_evidence": {"type": "boolean"}
-      }
-    }
-  },
-  "additionalProperties": true
+  "title": "MTG Commander Game Record v3 manifest",
+  "type": "object"
 }

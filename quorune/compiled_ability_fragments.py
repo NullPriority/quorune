@@ -115,6 +115,9 @@ def compiled_static_ability_fragments(
             or CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
         }
     )
+    if card.zone=='graveyard':
+        programs_by_key.update({program.key:program for program in host.semantics.programs_for_oracle(
+            record.oracle_id,active_zone='graveyard') if CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage})
     for program in (
         programs_by_key[key] for key in sorted(programs_by_key)
     ):

@@ -22,11 +22,32 @@ from .model import (
 )
 
 
+def _represented_payment_player_selection(effect, *, actor, query):
+    """Check a resolved affected-player choice without inspecting its objects."""
+    players=effect.get('players')
+    if (effect.get('actor')!=actor or not isinstance(players,(list,tuple))
+            or any(type(player)is not str or player not in query.seats for player in players)
+            or len(players)!=len(set(players))):
+        raise SemanticChoiceError('Optional affected-player selection has an invalid origin or participant')
+    restored={**effect,'actor':'$controller','players':['$controller']}
+    if effect.get('then')=='discard':
+        from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
+        owned=fixed_affected_player_discard_node_capabilities(effects=(restored,),target_schema=None,
+            mechanic_ids=('fixed-affected-player-discard','cr-402-hand'),allow_controller=True)
+    elif effect.get('then')=='sacrifice':
+        from ..rules.affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
+        owned=fixed_affected_player_sacrifice_node_capabilities(effects=(restored,),target_schema=None,
+            mechanic_ids=('fixed-affected-player-sacrifice','sacrifice'))
+    else:owned=()
+    if not owned:raise SemanticChoiceError('Optional affected-player selection is outside its closed primitive')
+
+
 def _represented_effect(
     effect: Mapping[str, Any],
     *,
     actor: str,
     query: SemanticChoiceQuery,
+    allow_event_player_results: bool = False,
 ) -> None:
     operation = effect.get("op")
     if type(operation) is not str or not operation:
@@ -45,6 +66,9 @@ def _represented_effect(
             raise SemanticChoiceError("Optional controller random discard instruction is malformed")
         return
     if operation == "choose_cards_apnap":
+        if allow_event_player_results and effect.get('players') not in ([actor],(actor,)):
+            _represented_payment_player_selection(effect,actor=actor,query=query)
+            return
         from ..rules.affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
         restored={**effect,'actor':'$controller','players':['$controller']}
         if effect.get('actor')!=actor or not isinstance(effect.get('players'),(list,tuple)) or list(effect['players'])!=[actor] or not fixed_affected_player_discard_node_capabilities(effects=(restored,),target_schema=None,mechanic_ids=('fixed-affected-player-discard','cr-402-hand'),allow_controller=True):

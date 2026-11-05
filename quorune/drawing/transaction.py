@@ -16,6 +16,7 @@ from .model import (
     RevealDrawnCardBySource,
     validate_prepared_draw,
 )
+from .miracle_model import MiracleDrawOpportunity, MIRACLE_TRIGGER_EVENT
 
 
 _DREDGE_KIND = "dredge"
@@ -327,6 +328,8 @@ def _apply_drawn_card_actions(
 def _commit_ordinary_draw(
     host: DrawCommitHost,
     prepared: PreparedDrawEvent,
+    *,
+    miracle: MiracleDrawOpportunity | None = None,
 ) -> DrawCommitResult:
     resolution = prepared.resolution
     if resolution is None:
@@ -358,13 +361,30 @@ def _commit_ordinary_draw(
         isinstance(action, RevealDrawnCardBySource)
         for action in resolution.post_draw_actions
     )
+    if miracle is not None:
+        card.revealed_to = sorted(host.state.players)
+        host._log(
+            resolution.player, "card.draw.reveal", f"{resolution.player} revealed {card.printed_name}.",
+            {"object": card.ref, "card": card.printed_name, "source": card.ref, "reason": "Miracle"},
+            importance=2, changed_objects=[card.object_id], changed_players=[resolution.player],
+        )
     host.move_card(
         object_id,
         "hand",
         reason=resolution.reason,
         log=False,
-        reveal_to=(sorted(host.state.players) if source_linked_reveal else None),
+        reveal_to=(sorted(host.state.players) if source_linked_reveal or miracle is not None else None),
     )
+    if miracle is not None:
+        # CR121.9's reveal occurs before movement. The normalized linked event
+        # captures the resulting hand incarnation before ordinary draw triggers.
+        # Its ongoing disclosure is derived from the original trigger's live
+        # presence, independently of other revealed_to sources and known_to.
+        card.revealed_to = sorted(host.state.players) if source_linked_reveal else []
+        host._dispatch_semantic_event(
+            MIRACLE_TRIGGER_EVENT.removesuffix(".self"),
+            {"card": card.ref, "player": resolution.player, "miracle_opportunity": miracle.to_dict()},
+        )
     _record_draw(host, prepared, object_id)
     _apply_drawn_card_actions(host, prepared, object_id, type_line)
     return DrawCommitResult(
@@ -446,6 +466,8 @@ def _commit_dredge(
 def commit_prepared_draw_result(
     host: DrawCommitHost,
     prepared: PreparedDrawEvent,
+    *,
+    miracle: MiracleDrawOpportunity | None = None,
 ) -> DrawCommitResult:
     """Validate and commit exactly one replacement-resolved draw event."""
 
@@ -454,8 +476,14 @@ def commit_prepared_draw_result(
     resolution = prepared.resolution
     if resolution is None:
         raise DrawError("A pending draw cannot commit")
+    if miracle is not None:
+        from .miracle_discovery import discover_miracle_draw
+        if (not isinstance(miracle, MiracleDrawOpportunity) or resolution.kind != "draw"
+                or discover_miracle_draw(host, player=resolution.player,
+                                         event_id=prepared.request.event_id) != miracle):
+            raise DrawError("Miracle reveal lost its complete current draw opportunity")
     if resolution.kind == "draw":
-        return _commit_ordinary_draw(host, prepared)
+        return _commit_ordinary_draw(host, prepared, miracle=miracle)
     if resolution.kind == "prevented":
         host._log(
             resolution.player,

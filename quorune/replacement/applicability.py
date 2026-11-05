@@ -142,6 +142,10 @@ def replacement_choice(
     if counter_event_is_prohibited(event):
         return None
     values=canonical_effects(effects)
+    from .composition_scope import replacement_condition_event
+    def matches(effect):
+        try:return condition_matches(effect.conditions,replacement_condition_event(event,effect))
+        except (ValueError,TypeError,KeyError) as exc:raise ReplacementEffectError(str(exc)) from exc
     used_occurrences={effect.occurrence_id for effect in values if effect.effect_id in event.applied_effects and effect.occurrence_id is not None}
     applicable = _deduplicate_explicit_application_groups([
         effect
@@ -149,7 +153,7 @@ def replacement_choice(
         if effect.event_kind == event.kind
         and effect.effect_id not in event.applied_effects
         and (effect.occurrence_id is None or effect.occurrence_id not in used_occurrences)
-        and condition_matches(effect.conditions, event)
+        and matches(effect)
     ])
     if not applicable:
         return None

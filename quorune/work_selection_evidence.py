@@ -901,11 +901,13 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 
 def _read_gzip_json(path: Path) -> dict[str, Any]:
+    from quorune.frontier_storage import unpack_frontier_document
+
     if not path.is_file():
         raise WorkSelectionError(f"Missing work-selection input: {path}")
     try:
         with gzip.open(path, "rt", encoding="utf-8") as handle:
-            value = json.load(handle)
+            value = unpack_frontier_document(json.load(handle))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise WorkSelectionError(f"Invalid work-selection input: {path}") from exc
     if not isinstance(value, dict):

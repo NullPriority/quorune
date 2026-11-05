@@ -107,7 +107,11 @@ def _runtime_stat_amount(value):
     if not isinstance(value, Mapping):
         raise ValueError('Resolution-set stat amount requires an integer or typed quantity')
     kind = value.get('kind')
-    if kind == CAST_X_AMOUNT_KIND:
+    if kind=='source_entry_x_amount':
+        from ..entry_x_amount_model import EntryXAmountSpec,ENTRY_X_AMOUNT_CAPABILITY
+        spec=EntryXAmountSpec.from_dict(value)
+        required={ENTRY_X_AMOUNT_CAPABILITY,DECLARED_AMOUNT_CAPABILITY}
+    elif kind == CAST_X_AMOUNT_KIND:
         spec = CastXAmountSpec.from_dict(value)
         required = {DECLARED_AMOUNT_CAPABILITY}
     elif kind == PUBLIC_QUERY_AMOUNT_KIND:

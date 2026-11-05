@@ -61,7 +61,7 @@ _PUBLIC_ATTACK_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _PUBLIC_BLOCK_TRIGGER = re.compile(
-    r"^Whenever (?P<subject>this creature|a creature you control with defender) "
+    r"^(?:When|Whenever) (?P<subject>this creature|a creature you control with defender) "
     r"(?P<event>blocks|becomes blocked)"
     r"(?P<blocked> a creature with flying| by a creature)?, (?P<body>.+)$",
     re.IGNORECASE,
@@ -169,7 +169,7 @@ class FixedPublicEventBindingSpec:
                 self, field
             ):
                 raise ValueError("Public event binding identities must be nonempty")
-        if self.active_zone not in {"battlefield", "hand"}:
+        if self.active_zone not in {"battlefield", "hand", "graveyard"}:
             raise ValueError("Public event bindings require a closed active zone")
         if not isinstance(self.capabilities, tuple) or any(
             type(value) is not str or not value
@@ -897,7 +897,8 @@ def _public_damage_spec(
 ) -> FixedPublicEventBindingSpec | None:
     match = _PUBLIC_DAMAGE_TRIGGER.fullmatch(material_line)
     if match is None:
-        return None
+        from .damage_permanent_event_bindings import damage_permanent_binding_spec
+        return damage_permanent_binding_spec(material_line,card_name=card_name)
     subject = " ".join(match.group("subject").casefold().split())
     subject_condition = _damage_subject_condition(subject, card_name=card_name)
     if subject_condition is None:
@@ -975,6 +976,9 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
         subject != "this creature" or event != "becomes blocked"
     ):
         return None
+    if blocked_by_creature and re.search(r'\bthat creature\b',match.group('body'),re.I):
+        from .qualified_block_pairs import qualified_block_pair_spec
+        return qualified_block_pair_spec(material_line)
     return _spec(
         "creature.blocks" if event == "blocks" else "creature.becomes_blocked",
         (

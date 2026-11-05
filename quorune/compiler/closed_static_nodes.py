@@ -35,6 +35,10 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     Synthetic token abilities use the record-free dispatcher below and cannot
     acquire a printed additional-cost instance from their creating card.
     """
+    from .bargain_nodes import bargain_reduction_node
+    reduction=bargain_reduction_node(record=record,node_id=node_id,line=line,material_line=material_line,
+        span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
+    if reduction is not None:return reduction
     from .target_count_cost_nodes import target_count_cost_static_node
     target_price=target_count_cost_static_node(record=record,node_id=node_id,line=line,material_line=material_line,
         span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)

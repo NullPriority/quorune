@@ -2119,7 +2119,7 @@ class OracleIRTests(unittest.TestCase):
         )
         ir = compile_oracle_card(record)
         self.assertEqual("unresolved", ir.status)
-        self.assertEqual("trigger", ir.material_residuals[0].kind)
+        self.assertEqual("trigger_effect", ir.material_residuals[0].kind)
         self.assertFalse(generated_programs(self.db, record))
 
     def test_self_pump_and_basic_token_creation_lower_generically(self):

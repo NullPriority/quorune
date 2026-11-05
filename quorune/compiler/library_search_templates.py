@@ -356,7 +356,9 @@ def fixed_library_search_effect_template(
         destination=destination,
     )
     if query is None:
-        return None
+        # A reveal pronoun can make the broad quality capture span a counted
+        # predicate. Let its complete, separately validated production decide.
+        return fixed_counted_library_search_effect_template(text)
     enters_tapped = bool(match.group("tapped"))
     if count > 1 and not (
         enters_tapped

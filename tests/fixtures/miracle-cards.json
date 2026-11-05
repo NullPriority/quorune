@@ -1,0 +1,651 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "intrinsic_miracle_originals",
+  "source": "Pinned original Commander Oracle records and rulings; no name-based token selection.",
+  "cards": [
+    {
+      "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5",
+      "name": "Counterspell",
+      "mana_cost": "{U}{U}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target spell.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-09-27",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "8f32ceb2-92c2-4dde-bf73-40bb79c3fcef",
+      "name": "Inspiration",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Target player draws two cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-04-15",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fb1d521f-cb64-4b87-b3f4-a74e91a60349",
+      "name": "Noose Constrictor",
+      "mana_cost": "{1}{G}",
+      "cmc": 2.0,
+      "type_line": "Creature — Snake",
+      "oracle_text": "Reach\nDiscard a card: This creature gets +1/+1 until end of turn.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Reach"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "797155cd-faf4-4321-8629-c8c352392748",
+      "name": "Reclaim",
+      "mana_cost": "{G}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Put target card from your graveyard on top of your library.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-07-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "name": "Sister Repentia",
+      "mana_cost": "{3}{W}{B}",
+      "cmc": 5.0,
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "Martyrdom — When this creature dies, you gain 2 life and draw two cards.\nMiracle {W}{B} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "power": "5",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Miracle",
+        "Martyrdom"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "name": "Stifle",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Instant",
+      "oracle_text": "Counter target activated or triggered ability. (Mana abilities can't be targeted.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-06-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "name": "Think Twice",
+      "mana_cost": "{1}{U}",
+      "type_line": "Instant",
+      "oracle_text": "Draw a card.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2026-06-26",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flashback"
+      ],
+      "produced_mana": [],
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "oracle_id": "78260893-c443-44c8-ab45-ce86ef347d98",
+      "name": "Thunderous Wrath",
+      "mana_cost": "{4}{R}{R}",
+      "cmc": 6.0,
+      "type_line": "Instant",
+      "oracle_text": "Thunderous Wrath deals 5 damage to any target.\nMiracle {R} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Miracle"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-03-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "name": "Zephyrim",
+      "mana_cost": "{3}{W}",
+      "type_line": "Creature — Human Warrior",
+      "oracle_text": "Squad {2} (As an additional cost to cast this spell, you may pay {2} any number of times. When this creature enters, create that many tokens that are copies of it.)\nFlying, vigilance\nMiracle {1}{W} (You may cast this card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Miracle",
+        "Vigilance",
+        "Squad"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-10-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 4.0
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the card with miracle leaves your hand before the triggered ability resolves, you won't be able to cast it using its miracle ability."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You can cast a card for its miracle cost only as the miracle triggered ability resolves. If you don't want to cast it at that time (or you can't cast it, perhaps because there are no legal targets available), you won't be able to cast it later for the miracle cost."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You can reveal and cast a card with miracle on any turn, not just your own, if it's the first card you've drawn that turn."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "It's important to reveal a card with miracle before it is mixed with the other cards in your hand."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Multiple card draws are always treated as a sequence of individual card draws. For example, if you haven't drawn any cards yet during a turn and cast a spell that instructs you to draw three cards, you'll draw them one at a time. Only the first card drawn this way may be revealed and cast using its miracle ability."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Miracle is an alternative cost to cast the spell with miracle. It can't be combined with other alternative costs, such as casting a spell \"without paying its mana cost.\""
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You don't have to reveal a drawn card with miracle if you don't wish to cast it at that time."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a miracle cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You cast the card with miracle during the resolution of the triggered ability. Ignore any timing rules based on the card's type."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If an effect puts a card into your hand without using the word \"draw,\" the card wasn't drawn."
+    },
+    {
+      "oracle_id": "24e9a1cb-b58b-491f-9d08-3f039a86851e",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You still draw the card, whether you use the miracle ability or not. Any ability that triggers whenever you draw a card, for example, will trigger. If you don't cast the card using its miracle ability, it will remain in your hand."
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "It can target delayed triggered abilities. For example, a card that says \"Whenever a player cycles a card, you may exile target creature. If you do, return that creature to the battlefield at the beginning of the end step.\" triggers when a player cycles a card and creates a delayed trigger that happens at the beginning of the end step. You can choose to target the \"at the beginning of the end step\" trigger when it is placed on the stack at end of turn."
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "An activated ability has a \"Cost: Effect\" format. Look for the colon. A triggered ability starts with \"when\", \"whenever\", or \"at\"."
+    },
+    {
+      "oracle_id": "b3b00911-ece7-4484-bc36-f211ce72b6cc",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Turn-based actions and special actions like the normal card draw, combat damage, or turning a face-down creature face up can't be targeted."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "A spell cast using flashback will always be exiled afterward, whether it resolves, is countered, or leaves the stack in some other way."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a flashback cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined only by its mana cost, no matter what the total cost to cast the spell was."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You must still follow any timing restrictions and permissions, including those based on the card's type. For instance, you can cast a sorcery using flashback only when you could normally cast a sorcery."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card with flashback is put into your graveyard during your turn, you can cast it if it's legal to do so before any other player can take any actions."
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "\"Flashback [cost]\" means \"You may cast this card from your graveyard by paying [cost] rather than paying its mana cost\" and \"If the flashback cost was paid, exile this card instead of putting it anywhere else any time it would leave the stack.\""
+    },
+    {
+      "oracle_id": "fa85c5a2-8e83-4624-a35a-a0bbf17ecbb4",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "You can cast a spell using flashback even if it was somehow put into your graveyard without having been cast."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You can cast a card for its miracle cost only as the miracle triggered ability resolves. If you don't want to cast it at that time (or you can't cast it, perhaps because there are no legal targets available), you won't be able to cast it later for the miracle cost."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Multiple card draws are always treated as a sequence of individual card draws. For example, if you haven't drawn any cards yet during a turn and cast a spell that instructs you to draw three cards, you'll draw them one at a time. Only the first card drawn this way may be revealed and cast using its miracle ability."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "The tokens created by the squad ability aren't \"cast,\" so any abilities that trigger when a spell is cast won't trigger for the copies."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "It's important to reveal a card with miracle before it is mixed with the other cards in your hand."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the spell is countered, the squad ability will not trigger, and no tokens will be created."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You can reveal and cast a card with miracle on any turn, not just your own, if it's the first card you've drawn that turn."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a miracle cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell remains unchanged, no matter what the total cost to cast it was."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You may pay the squad cost any number of times. You will get a token that is a copy of that permanent for each time you paid the squad cost."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You still draw the card, whether you use the miracle ability or not. Any ability that triggers whenever you draw a card, for example, will trigger. If you don't cast the card using its miracle ability, it will remain in your hand."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If the card with miracle leaves your hand before the triggered ability resolves, you won't be able to cast it using its miracle ability."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "See also \"New Keyword Ability: Squad\" and \"Returning Keyword Ability: Miracle\" in the General Notes section."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If, for some reason, the creature doesn't have the squad ability when it's on the battlefield, the ability won't trigger, even if you've paid the squad cost one or more times."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You don't have to reveal a drawn card with miracle if you don't wish to cast it at that time."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If you cast Zephyrim for its miracle cost, you may also choose to pay its squad cost one or more times."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "You cast the card with miracle during the resolution of the triggered ability. Ignore any timing rules based on the card's type."
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "Miracle is an alternative cost to cast the spell with miracle. It can't be combined with other alternative costs, such as casting a spell \"without paying its mana cost.\""
+    },
+    {
+      "oracle_id": "d29551ab-e314-4872-9fc5-fe9a442dc8a9",
+      "published_at": "2022-10-07",
+      "source": "wotc",
+      "comment": "If an effect puts a card into your hand without using the word \"draw,\" the card wasn't drawn."
+    }
+  ]
+}

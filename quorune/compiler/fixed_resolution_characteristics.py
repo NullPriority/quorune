@@ -29,7 +29,7 @@ def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,
     if normalized.casefold().startswith(("target ","another target ")):
         spec = direct_permanent_target_spec(normalized)
         return ({"card":"$target.0"},spec.to_target_schema()) if spec is not None else None
-    source = re.fullmatch(r"this (?P<kind>artifact|creature|enchantment|land|permanent)",normalized,re.I)
+    source = re.fullmatch(r"this (?P<kind>artifact|creature|enchantment|land|permanent|planeswalker)",normalized,re.I)
     if source is not None or SourceReferenceSpec(source_name).matches(normalized):
         if source_is_permanent is not True:return None
         if source is not None and source['kind'].casefold() != 'permanent' and source['kind'].casefold() not in source_card_types:return None
@@ -58,14 +58,14 @@ def fixed_resolution_characteristics_effect_template(
     prefix = re.fullmatch(r"Until end of turn, (?P<body>.+)",normalized,re.I)
     if prefix is not None:body=prefix['body']
     else:
-        suffix=re.fullmatch(r"(?P<body>.+?) until end of turn(?P<rider>\. (?:It's|They're) still (?:a land|lands)\.)?\.?",normalized,re.I)
+        suffix=re.fullmatch(r"(?P<body>.+?) until end of turn(?P<rider>\. (?:It's|They're) still (?:a land|lands|a planeswalker|planeswalkers)\.)?\.?",normalized,re.I)
         if suffix is None:return None
         body=suffix['body']+(suffix['rider'] or '')
     body=body.rstrip('.')
     retains=False
-    if re.search(r"(?:\. (?:It's|They're) still (?:a land|lands)| that's still a land)$",body,re.I):
+    if re.search(r"(?:\. (?:It's|They're) still (?:a land|lands|a planeswalker|planeswalkers)| that's still a (?:land|planeswalker))$",body,re.I):
         retains=True
-        body=re.sub(r"(?:\. (?:It's|They're) still (?:a land|lands)| that's still a land)$",'',body,flags=re.I)
+        body=re.sub(r"(?:\. (?:It's|They're) still (?:a land|lands|a planeswalker|planeswalkers)| that's still a (?:land|planeswalker))$",'',body,flags=re.I)
     if re.search(r" in addition to (?:its|their) other types$",body,re.I):
         retains=True
         body=re.sub(r" in addition to (?:its|their) other types$",'',body,flags=re.I)

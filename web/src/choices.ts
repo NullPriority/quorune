@@ -91,9 +91,16 @@ function initialField(field: ChoiceField): JsonValue | undefined {
   return undefined;
 }
 
+export function activeVariants(form: ChoiceForm, values: ChoiceValues): Record<string, JsonValue> {
+  const variants = record(form.variants);
+  const when = record(variants.when);
+  if (Object.keys(when).length && values[stringValue(when.field)] !== when.value) return {};
+  return variants;
+}
+
 export function activeFields(form: ChoiceForm, values: ChoiceValues): ChoiceField[] {
   const fields = form.fields.map((field) => record(field));
-  const variants = record(form.variants);
+  const variants = activeVariants(form, values);
   const options = list(variants.options);
   if (!options.length) return fields.map((field) => resolveDependentField(field, values));
   const selector = stringValue(variants.field || "cost_option");
@@ -571,7 +578,7 @@ export function executableChoices(form: ChoiceForm, values: ChoiceValues): Choic
     if (name) permitted.add(name);
     if (field.control === "targets") permitted.add("modes");
   }
-  const variants = record(form.variants);
+  const variants = activeVariants(form, values);
   if (list(variants.options).length) permitted.add(stringValue(variants.field || "cost_option"));
   const result: ChoiceValues = {};
   for (const [name, value] of Object.entries(values)) {

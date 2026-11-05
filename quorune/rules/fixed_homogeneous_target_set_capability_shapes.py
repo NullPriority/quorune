@@ -103,6 +103,25 @@ def fixed_homogeneous_target_set_node_capabilities(
     effect = effects[0]
     operation = effect.get("op")
     maximum = effect.get("maximum_targets")
+    if operation=='reanimate_targets':
+        from ..compiler.reanimation_templates import (FIXED_TARGET_REANIMATION_SET_CAPABILITY,
+            FIXED_TARGET_REANIMATION_SET_MECHANIC)
+        from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
+        if (FIXED_TARGET_REANIMATION_SET_MECHANIC not in mechanics
+                or set(effect)!={'op','cards','maximum_targets','schema_version','battlefield_controller','battlefield_tapped'}
+                or effect.get('cards')!='$targets' or type(maximum) is not int or not 2<=maximum<=6
+                or type(effect.get('schema_version')) is not int or effect['schema_version']!=1
+                or effect.get('battlefield_controller') not in ('actor','owner')
+                or type(effect.get('battlefield_tapped')) is not bool):return ()
+        normalized=_singular_schema(target_schema);bounds=_target_bounds(dict(target_schema or {}))
+        if normalized is None or bounds is None or bounds[1]!=maximum:return ()
+        singular,_same_owner=normalized
+        scalar={'op':'reanimate','card':'$target.0','controller':
+            '$target.owner.0' if effect['battlefield_controller']=='owner' else '$controller',
+            'tapped':effect['battlefield_tapped']}
+        owned=fixed_target_reanimation_node_capabilities(effects=(scalar,),target_schema=singular,mechanic_ids=mechanics)
+        return (FIXED_HOMOGENEOUS_TARGET_SET_CAPABILITY,FIXED_TARGET_REANIMATION_SET_CAPABILITY,*owned,
+            'target.revalidate_resolution') if owned else ()
     if (
         operation not in _OPERATION_CAPABILITIES
         or _OPERATION_MECHANICS[str(operation)] not in mechanics

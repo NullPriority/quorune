@@ -8,9 +8,11 @@ from typing import Any, Mapping, Protocol, Sequence
 from ..card_program_faces import program_matches_face, selected_face_id, prospective_face_view
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from ..commander_zones import (
-    commander_hand_library_replacement_effect,
+    commander_hand_library_replacement_effects,
+    capture_composed_commander_zone_components,
     CommanderZoneError,
 )
+from ..composition_replacements import capture_composed_card_zone_components
 from ..entry_counters import (
     EntryCounterError,
     EffectEntryCounter,
@@ -44,6 +46,7 @@ from ..turn_history import opponent_was_dealt_damage_this_turn
 from ..flashback import flashed_back_subject_replacements
 from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
+from ..rules.finality_counters import finality_counter_replacement
 from ..zone_trigger_events import ZoneTransitionKind
 from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -591,9 +594,8 @@ def collect_zone_change_replacement_effects(
             or source.controller not in host.active_seats
         ):
             continue
-        unearth_replacement = unearthed_leave_replacement(source)
-        if unearth_replacement is not None:
-            effects.append(unearth_replacement)
+        for replacement in (unearthed_leave_replacement(source),finality_counter_replacement(source)):
+            if replacement is not None:effects.append(replacement)
         record = host.card_record(source)
         if record is None:
             continue
@@ -913,6 +915,8 @@ def _zone_change_snapshot_subjects(
                     ),
                     is_commander=bool(card.is_commander),
                     commander_designation_id=card.commander_designation_id,
+                    commander_components=capture_composed_commander_zone_components(card),
+                    card_components=capture_composed_card_zone_components(card),
                     **prospective_multikicker_fields(host, card, destination),
                 )
             )
@@ -1024,20 +1028,7 @@ def _zone_change_snapshot_effects(
                         component_id=f"{program.key}:{descriptor_index}",
                     )
                 )
-    try:
-        commander_effects = tuple(
-            effect
-            for subject in subjects
-            for effect in (
-                commander_hand_library_replacement_effect(subject),
-            )
-            if effect is not None
-        )
-    except CommanderZoneError as exc:
-        raise ZoneReplacementError(str(exc)) from exc
-    return tuple(
-        sorted(
-            (
+    effects=(
                 *ambient_effects,
                 *flashed_back_subject_replacements(subject_cards, (subject.object_id for subject in subjects)),
                 *fixed_cast_lifecycle_subject_replacements(
@@ -1052,11 +1043,15 @@ def _zone_change_snapshot_effects(
                 *(effect for subject in subjects for effect in entry_reveal_replacement_effects(host, subject)),
                 *(effect for subject in subjects for effect in devour_replacement_effects(host, subject,prospective_objects=prospective_objects)),
                 *subject_effects,
-                *commander_effects,
-            ),
-            key=lambda effect: effect.effect_id,
-        )
     )
+    from ..replacement.operations import SetField
+    transitions=sum(isinstance(operation,SetField) and operation.field=="destination"
+        for effect in effects if effect.event_kind=="zone.change" for operation in effect.operations)
+    try:
+        commanders=tuple(effect for subject in subjects
+            for effect in commander_hand_library_replacement_effects(subject,maximum_destination_changes=transitions))
+    except CommanderZoneError as exc:raise ZoneReplacementError(str(exc)) from exc
+    return tuple(sorted((*effects,*commanders),key=lambda effect:effect.effect_id))
 
 
 def capture_zone_change_replacement_snapshot(
@@ -1457,6 +1452,9 @@ def log_applied_zone_replacements(
             )
         if replacement.event_kind != "zone.change":
             continue
+        from ..replacement.composition_scope import card_only_replacement,card_component_event
+        scoped_event=card_component_event(prepared.event) if card_only_replacement(replacement) else None
+        scoped_counters=tuple(scoped_event.children) if scoped_event is not None else prepared.counter_events
         host._log(
             None,
             "replacement.apply",
@@ -1469,7 +1467,8 @@ def log_applied_zone_replacements(
                 "effect_id": replacement.effect_id,
                 "object": card.ref,
                 "replaced_destination": requested_destination,
-                "destination": card.zone,
+                "destination": scoped_event.payload['destination'] if scoped_event is not None else card.zone,
+                **({'component_scope':'cards'} if scoped_event is not None else {}),
                 _COUNTERS_FIELD: [
                     {
                         "name": str(
@@ -1477,7 +1476,7 @@ def log_applied_zone_replacements(
                         ),
                         "amount": int(event.payload.get("amount", 0)),
                     }
-                    for event in prepared.counter_events
+                    for event in scoped_counters
                     if event.payload.get("source")
                     == replacement.source_id
                 ],

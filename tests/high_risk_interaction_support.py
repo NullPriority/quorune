@@ -50,11 +50,11 @@ _WITNESSES = {
         "{2}",
     ),
     "bound-effect-replacement-boundary": _Witness(
-        "Generic Bound Effect Replacement Boundary Fixture",
-        "Artifact",
-        "Skip your draw step.\n"
-        "{1}: Target player draws two cards and loses 2 life.",
-        "{2}",
+        'Generic Bound Effect Replacement Boundary Fixture',
+        'Artifact',
+        'Skip your draw step.\n'
+        '{1}: Untap target creature. It gains flying until end of turn.',
+        '{2}',
     ),
     "temporary-target-replacement-boundary": _Witness(
         "Generic Temporary Target Replacement Boundary Fixture",
@@ -95,15 +95,12 @@ _WITNESSES = {
         ("Spell mastery",),
     ),
     "reanimation-multiple-target-boundary": _Witness(
-        "Generic Multiple-Target Reanimation Boundary Fixture",
-        "Sorcery",
-        "Return up to three target creature cards with mana value 1 or less "
-        "from your graveyard to the battlefield.\n"
-        "Forecast — {5}{W}, Reveal this card from your hand: Return target "
-        "creature card with mana value 1 or less from your graveyard to the "
-        "battlefield. (Activate only during your upkeep and only once each turn.)",
-        "{2}{W}",
-        ("Forecast",),
+        'Generic Aggregate Mana Value Reanimation Boundary Fixture',
+        'Sorcery',
+        'Return up to three target creature cards with total mana value 1 or less from your graveyard to the battlefield.\n'
+        'Forecast — {5}{W}, Reveal this card from your hand: Return target creature card with mana value 1 or less from your graveyard to the battlefield. (Activate only during your upkeep and only once each turn.)',
+        '{2}{W}',
+        keywords=('Forecast',),
     ),
     "fixed-query-grant-entry-replacement": _Witness(
         "Generic Query Grant Entry Replacement Fixture",
@@ -258,17 +255,13 @@ _WITNESSES = {
         ("Enchant",),
     ),
     "starforged-sword": _Witness(
-        "Starforged Sword",
-        "Artifact — Equipment",
-        "Gift a tapped Fish (You may promise an opponent a gift as you cast "
-        "this spell. If you do, when it enters, they create a tapped 1/1 blue "
-        "Fish creature token.)\n"
-        "When this Equipment enters, if the gift was promised, attach this "
-        "Equipment to target creature you control.\n"
-        "Equipped creature gets +3/+3 and loses flying.\n"
-        "Equip {3}",
-        "{4}",
-        ("Gift", "Equip"),
+        'Generic Equipment Replacement Ordering Boundary',
+        'Artifact — Equipment',
+        'Equipped creature gets +3/+3 and loses flying.\n'
+        "If equipped creature would die, put it on top of its owner's library instead.\n"
+        'Equip {3}',
+        '{4}',
+        keywords=('Equip',),
     ),
     "stoneforge-masterwork": _Witness(
         "Generic Equip Chosen Name Continuous Boundary Fixture",
@@ -710,16 +703,14 @@ _WITNESSES = {
         toughness="5",
     ),
     "ovinomancer": _Witness(
-        "Ovinomancer",
-        "Creature — Human Wizard",
-        "When this creature enters, sacrifice it unless you return three basic "
-        "lands you control to their owner's hand.\n"
-        "{T}, Return this creature to its owner's hand: Destroy target "
-        "creature. It can't be regenerated. That creature's controller "
-        "creates a 0/1 green Sheep creature token.",
-        "{2}{U}",
-        power="0",
-        toughness="1",
+        'Generic Conditional Phase Regeneration Boundary',
+        'Creature — Human Wizard',
+        'At the beginning of your third main phase, if you discarded more creature cards than noncreature cards this turn, draw a card.\n'
+        "When this creature enters, sacrifice it unless you return three basic lands you control to their owner's hand.\n"
+        "{T}, Return this creature to its owner's hand: Destroy target creature. It can't be regenerated. That creature's controller creates a 0/1 green Sheep creature token.",
+        '{2}{U}',
+        power='0',
+        toughness='1',
     ),
     "kirtars-wrath": _Witness(
         "Kirtar's Wrath",
@@ -747,39 +738,24 @@ _WITNESSES = {
         "2",
     ),
     "gideon-oathsworn": _Witness(
-        "Gideon, the Oathsworn",
-        "Legendary Planeswalker — Gideon",
-        "Whenever you attack with two or more non-Gideon creatures, put a "
-        "+1/+1 counter on each of those creatures.\n"
-        "+2: Until end of turn, Gideon becomes a 5/5 white Soldier creature "
-        "that's still a planeswalker. Prevent all damage that would be dealt "
-        "to him this turn. (He can't attack if he was cast this turn.)\n"
-        "−9: Exile Gideon and each creature your opponents control.",
-        "{4}{W}{W}",
-        loyalty="4",
+        'Generic Duration Dynamic Prevention Boundary',
+        'Instant',
+        'Until end of turn, the next time a source of your choice with mana value greater than the number of creatures you control would deal damage to you, prevent that damage.',
+        '{W}',
     ),
     "gideon-ally-of-zendikar": _Witness(
-        "Gideon, Ally of Zendikar",
-        "Legendary Planeswalker — Gideon",
-        "+1: Until end of turn, Gideon becomes a 5/5 Human Soldier Ally "
-        "creature with indestructible that's still a planeswalker. Prevent "
-        "all damage that would be dealt to him this turn.\n"
-        "0: Create a 2/2 white Knight Ally creature token.\n"
-        "−4: You get an emblem with \"Creatures you control get +1/+1.\"",
-        "{2}{W}{W}",
-        loyalty="4",
+        'Generic Token Dynamic Prevention Boundary',
+        'Artifact',
+        '{1}: Create a 2/2 white Knight Ally creature token.\n'
+        '{1}: The next time a source of your choice with mana value greater than the number of creatures you control would deal damage to you this turn, prevent that damage.',
+        '{3}',
     ),
     "gideon-jura": _Witness(
-        "Gideon Jura",
-        "Legendary Planeswalker — Gideon",
-        "+2: During target opponent's next turn, creatures that player "
-        "controls attack Gideon Jura if able.\n"
-        "−2: Destroy target tapped creature.\n"
-        "0: Until end of turn, Gideon Jura becomes a 6/6 Human Soldier "
-        "creature that's still a planeswalker. Prevent all damage that "
-        "would be dealt to him this turn.",
-        "{3}{W}{W}",
-        loyalty="6",
+        'Generic Destruction Dynamic Prevention Boundary',
+        'Artifact',
+        '{1}: Destroy target tapped creature.\n'
+        '{1}: The next time a source of your choice with mana value greater than the number of creatures you control would deal damage to you this turn, prevent that damage.',
+        '{3}',
     ),
     "gideon-champion-of-justice": _Witness(
         "Gideon, Champion of Justice",
@@ -839,12 +815,12 @@ _WITNESSES = {
         "{6}",
     ),
     "kindred-discovery": _Witness(
-        "Generic Kindred Discovery Compound Entry Boundary Fixture",
-        "Enchantment",
-        "As this enchantment enters, choose two creature types.\n"
-        "Whenever a creature you control of the chosen type enters or attacks, "
-        "draw a card.",
-        "{3}{U}{U}",
+        'Generic Kindred Discovery Compound Entry Boundary Fixture',
+        'Enchantment',
+        'As this enchantment enters, choose two creature types.\n'
+        'Whenever a creature you control of the chosen type enters or attacks, draw a card.\n'
+        'At the beginning of your third main phase, if you discarded more creature cards than noncreature cards this turn, draw a card.',
+        '{3}{U}{U}',
     ),
     "teferis-moat": _Witness(
         "Generic Teferis Moat Compound Entry Boundary Fixture",
@@ -929,6 +905,31 @@ _WITNESSES = {
         "{1}{G}{U}",
         power="2",
         toughness="3",
+    ),
+    "indestructible-dynamic-prevention-boundary": _Witness(
+        "Generic Indestructible Dynamic Prevention Boundary", "Creature — Human",
+        "Indestructible\n{1}: The next time a source of your choice with mana value greater than "
+        "the number of creatures you control would deal damage to you this turn, prevent that damage.",
+        "{2}", ("Indestructible",), power="1", toughness="1",
+    ),
+    "control-replacement-boundary": _Witness(
+        "Generic Fixed Control Replacement Boundary", "Artifact",
+        "Skip your draw step.\n{1}: Gain control of target creature until end of turn. "
+        "Untap that creature. It gains haste until end of turn.", "{3}",
+    ),
+    "quantity-mana-replacement-boundary": _Witness(
+        "Generic Public Quantity Mana Replacement Boundary", "Artifact",
+        "Skip your draw step.\n{T}: Add {G} for each creature you control.", "{3}",
+    ),
+    "land-untap-replacement-boundary": _Witness(
+        "Generic Land Untap Replacement Boundary", "Artifact",
+        "Skip your draw step.\n{1}: Untap up to three lands you control.", "{3}",
+    ),
+    "resolution-mana-replacement-boundary": _Witness(
+        "Generic Resolution Mana Replacement Boundary", "Creature — Human",
+        "When this creature enters, add {R}{R}.\n"
+        "When this creature enters, add one mana of any color.\nSkip your draw step.",
+        "{3}", power="2", toughness="2",
     ),
 }
 
@@ -1753,6 +1754,16 @@ def _record(key: str) -> CardRecord:
         faces=(),
         raw={},
     )
+
+
+def boundary_record(database: CardDatabase, name: str) -> CardRecord:
+    """Resolve explicit synthetic controls and actual pinned originals in one place."""
+    if name in _WITNESSES:
+        return _record(name)
+    record = database.lookup(name)
+    if record is None:
+        raise AssertionError(f"Missing original boundary record: {name}")
+    return record
 
 
 def _observed_piece_ids(row: dict) -> set[str]:

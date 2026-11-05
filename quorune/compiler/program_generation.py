@@ -4,6 +4,7 @@ from .fixed_instruction_program_closure import is_closed_fixed_instruction_progr
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program
+from ..rules.alternative_discard_shapes import is_closed_alternative_discard_program
 from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
 from ..rules.source_keyword_choice_shapes import is_closed_source_keyword_choice_program
@@ -1206,6 +1207,11 @@ def _is_closed_fixed_owner_zone_move_program(program: SemanticProgram) -> bool:
 
 
 def _closed_effect_recognizers():
+    from ..rules.target_player_sequences import is_closed_target_player_sequence_program
+    from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
+    from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
+    from ..rules.per_player_target_sets import is_closed_per_player_target_program
+    from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
     from ..rules.library_order_shapes import is_closed_fixed_library_order_program
     from ..rules.all_kind_counter_shapes import is_closed_all_kind_counter_program
@@ -1214,6 +1220,11 @@ def _closed_effect_recognizers():
     from ..rules.fuse_shapes import closed_fused_program
     from ..rules.library_search_rule_shapes import is_closed_library_search_prohibition_program
     return (
+        is_closed_target_player_sequence_program,
+        is_closed_target_set_result_sequence_program,
+        is_closed_reanimation_entry_counter_program,
+        is_closed_per_player_target_program,
+        is_closed_compiled_emblem_program,
         is_closed_fixed_land_untap_choice_program,
         is_closed_all_kind_counter_program,
         is_closed_quantified_counter_target_program,
@@ -1225,6 +1236,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_owner_zone_move_program,
         is_closed_fixed_instruction_program,
         is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program,
+        is_closed_alternative_discard_program,
         is_closed_reanimation_effect_program,
         is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,
         is_closed_fixed_modal_program,

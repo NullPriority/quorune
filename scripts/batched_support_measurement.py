@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from quorune.card_programs import bind_card_program_runtime
+from quorune.frontier_storage import unpack_frontier_document
 from quorune.card_programs.adapters import compile_best_available_card_program
 from scripts.cohort_compilation import compile_cohort_card as compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
@@ -26,7 +27,7 @@ def current_census_delivery_measurement(
 ) -> dict[str, Any]:
     if probe_id != PROBE_ID or database is None:
         raise ValueError("Delivery measurement requires its versioned probe and pinned database")
-    current = json.loads(gzip.decompress(FRONTIER.read_bytes()))
+    current = unpack_frontier_document(json.loads(gzip.decompress(FRONTIER.read_bytes())))
     registry = load_default_capability_registry()
     if (current.get("capability_registry_fingerprint") != registry.fingerprint
             or current.get("capability_evidence_fingerprint") != registry.evidence_fingerprint

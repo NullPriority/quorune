@@ -39,6 +39,8 @@ def _occurrence_player(event,condition,variant,subject):
         return '$context.previous_controller' if event=='creature.dies' else None
     if subject=='defending player':
         if event=='creature.attacks' and (variant=='source_attacks' or variant.startswith('public_attack_')):player='$context.defending_player'
+        elif event=='creature.becomes_blocked' and variant in {'this_creature_becomes_blocked','this_creature_becomes_blocked_by_creature'}:player='$context.defending_player'
+        elif event=='creature.unblocked' and variant=='source_attacks_unblocked':player='$context.defending_player'
         else:return None
     elif event=='card.discarded':player='$context.previous_controller'
     elif event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}:player='$context.controller'

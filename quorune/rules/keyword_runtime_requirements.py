@@ -56,13 +56,13 @@ def _fragment_descriptor_requirements(value):
             if owner is not None: own.add(owner)
             if value.get('kind') == 'declaration_requirement' and fragment.condition is not None:
                 own.add('continuous.characteristics.fixed_public_state')
-        if value.get('kind') == 'static_component':
+        if value.get('kind') in {'static_component','copiable_program_source','copiable_static_instance','trigger_multiplier'}:
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
         if value.get('kind')=='bound_static_declaration_rules':
             own.update(ability_fragment_from_dict(value).required_capabilities())
-        if value.get('kind') in {'granted_activated','attached_untap_restraint','enchanted_player_attack_requirement','activation_prohibition'}:
+        if value.get('kind') in {'granted_activated','attached_untap_restraint','enchanted_player_attack_requirement','activation_prohibition','mutate'}:
             fragment = ability_fragment_from_dict(value)
             owner = getattr(fragment, 'capability_id', None)
             if owner is not None: own.add(owner)
@@ -102,7 +102,7 @@ def keyword_runtime_dependencies(program):
             value.get('handler_id') == 'modification.cast-cost.targeted-fixed.v1' for value in program.handlers):
         from ..static_component_scope import GRANTED_STATIC_COST_CAPABILITY
         required.add(GRANTED_STATIC_COST_CAPABILITY)
-    if (program.provenance.get('granted_only') and program.event == 'characteristics.evaluate'
+    if (program.provenance.get('granted_only') and program.active_zone != 'command' and program.event == 'characteristics.evaluate'
             and program.ability_id.startswith('static:granted:')):
         from ..rules.granted_characteristic_shapes import granted_characteristic_handlers_are_closed
         from ..static_component_scope import GRANTED_STATIC_CHARACTERISTIC_CAPABILITY

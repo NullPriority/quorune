@@ -16,6 +16,8 @@ from ..replacement_effects import (
     ReplacementSelection,
 )
 from ..zone_trigger_events import ZoneTransitionKind
+from ..composition_commander_replacement_model import CommanderZoneComponent,commander_subject_components
+from ..composition_zone_replacement_model import CardZoneComponent,card_zone_components
 _EXILE_ZONE = "exile"
 _LIBRARY_ZONE = "library"
 SUPPORTED_ZONE_DESTINATIONS = frozenset(
@@ -156,6 +158,17 @@ def _frozen_multikicker_payment(value, origin, destination, cast_option):
     return FrozenMap(fact)
 
 
+def _validated_commander_subject_components(subject):
+    if type(subject.is_commander) is not bool:
+        raise ZoneReplacementError('Zone replacement commander state must be boolean')
+    if subject.commander_designation_id=='':
+        raise ZoneReplacementError('Commander designation identity cannot be empty')
+    if subject.commander_designation_id is not None and not subject.is_commander:
+        raise ZoneReplacementError('Only a commander subject may carry a designation')
+    try:return commander_subject_components(subject.commander_components,is_commander=subject.is_commander,owner=subject.owner)
+    except ValueError as exc:raise ZoneReplacementError(str(exc)) from exc
+
+
 @dataclass(frozen=True, slots=True)
 class ZoneChangeSubjectSnapshot:
     object_id: str
@@ -186,8 +199,19 @@ class ZoneChangeSubjectSnapshot:
     multikicker_paid: FrozenMap | None = None
     prospective_subject: bool = False
     counter_permissions: CounterPermissionSnapshot = ALLOW_ALL_COUNTERS
+    commander_components: tuple[CommanderZoneComponent,...] = ()
+    card_components: tuple[CardZoneComponent,...] = ()
 
     def __post_init__(self) -> None:
+        object.__setattr__(self,'commander_components',_validated_commander_subject_components(self))
+        if not isinstance(self.card_components,(list,tuple)):
+            raise ZoneReplacementError('Physical card scope must be an array of captured identities')
+        if self.card_components:
+            if self.is_card_object or self.origin!='battlefield':
+                raise ZoneReplacementError('Only departing token permanents carry physical card scope')
+            try:object.__setattr__(self,'card_components',card_zone_components(self.card_components))
+            except ValueError as exc:raise ZoneReplacementError(str(exc)) from exc
+        else:object.__setattr__(self,'card_components',())
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):
             raise ZoneReplacementError('Entry counter permissions require a typed immutable snapshot')
         required = (
@@ -206,18 +230,6 @@ class ZoneChangeSubjectSnapshot:
         if self.controller == "" or self.destination_controller == "":
             raise ZoneReplacementError(
                 "Zone replacement controllers cannot be empty"
-            )
-        if type(self.is_commander) is not bool:
-            raise ZoneReplacementError(
-                "Zone replacement commander state must be boolean"
-            )
-        if self.commander_designation_id == "":
-            raise ZoneReplacementError(
-                "Commander designation identity cannot be empty"
-            )
-        if self.commander_designation_id is not None and not self.is_commander:
-            raise ZoneReplacementError(
-                "Only a commander subject may carry a designation"
             )
         if self.destination not in SUPPORTED_ZONE_DESTINATIONS:
             raise ZoneReplacementError(

@@ -119,7 +119,7 @@ def fixed_context_player_discard_node_capabilities(*, effects, target_schema, me
     if FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC not in set(mechanic_ids) or len(effects) != 1 or target_schema is not None:
         return ()
     effect = effects[0]
-    if effect.get("players") not in (["$context.player"], ["$context.target"]) or type(effect.get("count")) is not int or effect.get("count") not in {1, 2, 3}:
+    if effect.get("players") not in (["$context.player"], ["$context.target"],["$context.defending_player"]) or type(effect.get("count")) is not int or effect.get("count") not in {1, 2, 3}:
         return ()
     restored = {**effect, "players": ["$controller"]}
     required = fixed_affected_player_discard_node_capabilities(
@@ -149,6 +149,9 @@ def is_closed_fixed_bound_discard_program(program):
         return isinstance(children, (list, tuple)) and any(guarantees(child, field, value) for child in children)
 
     players = program.effects[0]["players"]
+    if players==['$context.defending_player']:
+        from .event_player_result_shapes import _event_player_reference_is_closed
+        return _event_player_reference_is_closed(program,'$context.defending_player')
     if players == ["$context.target"]:
         return program.event in {"damage.dealt", "damage.dealt.self"} and guarantees(program.event_condition, "target_kind", "player")
     return program.event == "step.begin" and guarantees(program.event_condition, "step", "upkeep")

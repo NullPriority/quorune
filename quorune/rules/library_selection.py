@@ -69,6 +69,7 @@ class LibrarySelectionArrangement:
     remainder_destination: str
     remainder_order: str
     selected_destination: str='hand'
+    entry_tapped: bool=False
 
     def __post_init__(self) -> None:
         looked = tuple(self.looked)
@@ -85,7 +86,9 @@ class LibrarySelectionArrangement:
                 "library_bottom",
                 "exile",
             }
-            or self.selected_destination not in {'hand','library_top'}
+            or self.selected_destination not in {'hand','library_top','battlefield'}
+            or type(self.entry_tapped) is not bool
+            or self.entry_tapped and self.selected_destination!='battlefield'
             or (self.selected_destination=='library_top')!=(self.remainder_destination=='exile')
             or self.remainder_order not in {"chosen", "random"}
         ):
@@ -217,6 +220,12 @@ def commit_library_selection(
     if arrangement.selected_destination=='library_top':
         return _commit_top_exile_selection(host,actor=actor,player=player,arrangement=arrangement,cards=cards,
             reason=reason,replacement_selections=replacement_selections)
+    if arrangement.selected_destination=='battlefield':
+        from .library_battlefield_entry import commit_library_battlefield_selection
+        return commit_library_battlefield_selection(host,actor=actor,player=player,arrangement=arrangement,
+            cards=cards,reason=reason,source_stack_ref=source_stack_ref,
+            looked_are_public=looked_are_public,selected_are_public=selected_are_public,
+            replacement_selections=replacement_selections)
     changes = [
         (cards[ref].object_id, "hand")
         for ref in arrangement.selected_refs

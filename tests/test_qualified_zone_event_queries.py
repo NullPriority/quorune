@@ -97,10 +97,15 @@ class QualifiedZoneEventCompilerTests(unittest.TestCase):
         self.assertIsNotNone(node.event_condition)
 
     def test_qualified_zone_event_exclusions_remain_residual(self):
+        from quorune.compiler.qualified_zone_event_bindings import qualified_public_zone_event_binding_spec
+        chosen="Whenever a creature of the chosen type enters, draw a card."
+        self.assertIsNone(qualified_public_zone_event_binding_spec(chosen))
+        promoted=self.compile(chosen)
+        self.assertEqual('exact',promoted.status,promoted.material_residuals)
+        self.assertIn('trigger.event.chosen_creature_type',promoted.faces[0].nodes[0].capability_dependencies)
         excluded = (
             "Whenever one or more legendary creatures you control enter, draw a card for each of them.",
             "Whenever a creature with two +1/+1 counters on it dies, draw a card.",
-            "Whenever a creature of the chosen type enters, draw a card.",
             "Whenever a creature with power greater than this creature's power dies, draw a card.",
             "Whenever a creature card of the chosen type is put into your graveyard from anywhere, draw a card.",
             "Whenever another red creature you control enters, draw a card. This ability triggers only once during your turn.",

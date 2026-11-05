@@ -11,6 +11,42 @@ from .fixed_entry_return_requirements import fixed_entry_return_effect_template
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    if _allow_payment:
+        from .source_sacrifice_payments import normalized_source_sacrifice_payment_text
+        body=normalized_source_sacrifice_payment_text(binding,body,card_name=card_name)
+    from .event_player_target_results import event_player_target_result
+    defending_target=event_player_target_result(binding,body,compile_result=lambda text: binding_effect_template(
+        binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,
+        source_counter_variants=source_counter_variants,_allow_optional=_allow_optional))
+    if defending_target is not None:return defending_target
+    return _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
+        _allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=_allow_optional)
+
+
+def _binding_result_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .graveyard_self_return import graveyard_self_return_result
+    returned=graveyard_self_return_result(binding,body,card_name=card_name)
+    if returned is not None:return returned
+    from .delayed_object_templates import delayed_object_result
+    delayed=delayed_object_result(binding,body,card_name=card_name)
+    if delayed is not None:return delayed
+    from .source_counter_quantity_sequences import source_bound_sequence_result
+    source_sequence=source_bound_sequence_result(binding,body,card_name=card_name,effect_template=effect_template)
+    if source_sequence is not None:return source_sequence
+    from .source_self_effect_templates import source_cycled_optional_damage_result
+    cycled_damage = source_cycled_optional_damage_result(binding, body) if _allow_optional and _allow_payment else None
+    if cycled_damage is not None:
+        return cycled_damage, False
+    from .counter_removal_templates import fixed_source_counter_removal_effect_template, all_named_source_counter_removal_effect_template
+    source_pronoun = binding.event.value.endswith('.self') or binding.variant in {
+            'source_attacks', 'this_creature_blocks', 'this_creature_becomes_blocked',
+            'source_dealt_damage', 'source_received_combat_damage',
+        }
+    if binding.active_zone == 'battlefield' and _allow_optional and _allow_payment:
+        for compile_removal in (fixed_source_counter_removal_effect_template, all_named_source_counter_removal_effect_template):
+            source_removal = compile_removal(body, card_name=card_name, allow_source_pronoun=source_pronoun)
+            if source_removal is not None:
+                return source_removal, False
     if _allow_optional:
         from .binding_optional_results import binding_aware_optional_result
         optional = binding_aware_optional_result(body, compile_child=lambda text: binding_effect_template(binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=False))
@@ -36,6 +72,7 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     source_counter = public_event_source_counter_result(
         binding, body, effect_template=effect_template, card_name=card_name,
         accepted_variants=source_counter_variants,
+        allow_source_pronoun=source_pronoun,
     )
     if source_counter is not None:return source_counter
     from .event_counter_results import public_event_target_counter_result
@@ -83,7 +120,9 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         )
         if payment is not None:
             return payment
-    from .affected_player_discard_templates import damage_player_discard_result
+    from .affected_player_discard_templates import damage_player_discard_result,defending_player_discard_result
+    defending_discard=defending_player_discard_result(binding,body)
+    if defending_discard is not None:return defending_discard
     discard = damage_player_discard_result(binding, body)
     if discard is not None:
         return discard

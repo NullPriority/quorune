@@ -114,6 +114,9 @@ class SemanticChoiceQuery(
     @property
     def explore_action_version(self) -> int | None: ...
 
+    @property
+    def explore_source_types(self) -> tuple[str, ...] | None: ...
+
     def player_life(self, seat: str) -> int: ...
 
     def player_counter(self, seat: str, counter: str) -> int: ...
@@ -147,6 +150,9 @@ class SemanticChoiceQuery(
     def damage_source_candidate_refs(self) -> tuple[str, ...]: ...
 
     def token_creation_preview(self) -> tuple[Mapping[str, Any], ...]: ...
+
+    @property
+    def attacking_token_entry_allowed(self) -> bool: ...
 
     @property
     def damage_source_candidates_are_complete(self) -> bool: ...
@@ -190,16 +196,27 @@ class SnapshotSemanticChoiceQuery:
     ring_choice_plans: FrozenMap = field(default_factory=FrozenMap)
     resolution_source: SemanticSourceContext | None = None
     explore_action_version: int | None = None
+    explore_source_types: tuple[str, ...] | None = None
     resolution_source_is_physical_card: bool | None = None
     apnap_order: tuple[str, ...] = ()
     discard_hand_inputs: FrozenMap | None = None
+    attacking_token_entry_allowed: bool = False
 
     def __post_init__(self) -> None:
+        if type(self.attacking_token_entry_allowed) is not bool:
+            raise ValueError('Attacking token entry fact must be boolean')
         if self.discard_hand_inputs is not None and not isinstance(self.discard_hand_inputs, FrozenMap):
             object.__setattr__(self, 'discard_hand_inputs', FrozenMap(self.discard_hand_inputs))
         if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:
             raise ValueError('Physical resolving-card facts must be boolean or absent')
         explore_action_version(self.explore_action_version)
+        if self.explore_source_types is not None and (
+            type(self.explore_source_types) is not tuple
+            or any(type(value) is not str or not value or value != value.casefold()
+                   for value in self.explore_source_types)
+            or len(set(self.explore_source_types)) != len(self.explore_source_types)
+        ):
+            raise ValueError('Explore source types require immutable canonical terms or unavailable')
         if self.resolution_source is not None and not isinstance(self.resolution_source, SemanticSourceContext):
             raise ValueError('Choice resolution source requires an immutable typed snapshot')
         if not isinstance(self.counter_permissions, CounterPermissionSnapshot):

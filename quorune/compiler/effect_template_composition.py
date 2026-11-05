@@ -42,6 +42,24 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        from .reveal_until_library_selection_templates import reveal_until_library_selection_effect_template
+        reveal_until=reveal_until_library_selection_effect_template(body)
+        if reveal_until is not None:return reveal_until
+        from .discover_templates import discover_effect_template
+        discover=discover_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
+            forbid_public_x=forbid_public_x,**source_context)
+        if discover is not None:return discover
+        from .library_battlefield_templates import library_battlefield_selection_effect_template
+        battlefield=library_battlefield_selection_effect_template(body)
+        if battlefield is not None:return battlefield
+        from .variable_library_selection_templates import variable_library_selection_effect_template
+        inspection=variable_library_selection_effect_template(body,source_name=card_name,
+            cast_x_available=cast_x_available,forbid_public_x=forbid_public_x,**source_context)
+        if inspection is not None:return inspection
+        from .incubate_templates import incubate_effect_template
+        incubate=incubate_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
+            forbid_public_x=forbid_public_x,**source_context)
+        if incubate is not None:return incubate
         from .created_token_counters import created_token_counter_effect_template
         created=created_token_counter_effect_template(body,source_name=card_name,cast_x_available=cast_x_available,
             forbid_public_x=forbid_public_x,**source_context)
@@ -78,6 +96,10 @@ def reviewed_contextual_effect_template(
             return replacement
 
     # Preserve the certified v1 one-mana/one-leaf payload before using v2.
+    from .source_animation_prevention import source_animation_prevention_template
+    animation = source_animation_prevention_template(text, card_name=card_name,
+        source_context=source_context, compile_clause=atomic_with_characteristics)
+    if animation is not None:return animation
     legacy_payment=fixed_optional_mana_payment_template(text,compile_effect=atomic_with_characteristics)
     if legacy_payment is not None:
         from ..rules.fixed_effect_clause_shapes import fixed_optional_mana_payment_node_capabilities
@@ -114,6 +136,9 @@ def reviewed_effect_template_composition(
 ) -> CompiledEffectTemplate:
     """Compile one reviewed effect or a closed composition of those effects."""
 
+    from .face_up_effect_templates import targeted_face_up_template
+    face_up=targeted_face_up_template(text)
+    if face_up is not None:return face_up
     from .fixed_stack_spell_copy import fixed_stack_spell_copy_template
     spell_copy = fixed_stack_spell_copy_template(text)
     if spell_copy is not None:
@@ -121,6 +146,15 @@ def reviewed_effect_template_composition(
     atomic = compile_atomic(text)
     if atomic[0] is not None:
         return atomic
+    from .source_counter_quantity_sequences import source_counter_quantity_sequence
+    source_quantity=source_counter_quantity_sequence(text,card_name=source_name,compile_fixed=compile_fixed)
+    if source_quantity is not None:return source_quantity
+    from .target_player_sequences import fixed_target_player_sequence_template
+    player_sequence=fixed_target_player_sequence_template(text)
+    if player_sequence is not None:return player_sequence
+    from .target_set_result_sequences import target_set_result_sequence_template
+    shared_set=target_set_result_sequence_template(text,compile_independent=compile_atomic)
+    if shared_set is not None:return shared_set
     from .prepared_creature_power_damage import prepared_creature_power_damage_template
     prepared_damage = prepared_creature_power_damage_template(
         text, source_name=source_name, compile_atomic=compile_atomic,

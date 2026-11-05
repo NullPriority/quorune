@@ -315,6 +315,7 @@ class CharacteristicEvaluationHostMixin:
                 copy_overrides = source.annotations.get("copy_overrides")
                 has_local_component_changes = bool(
                     source.annotations.get("granted_ability_fragments")
+                    or source.permanent_composition is not None
                     or source.face_down
                     or (
                         isinstance(copy_overrides, Mapping)
@@ -396,6 +397,15 @@ class CharacteristicEvaluationHostMixin:
         from .rules.granted_characteristic_shapes import granted_characteristic_occurrences
         return granted_characteristic_occurrences(fragments.get(source.object_id, ()), keys.get(source.object_id, ()))
 
+    def _copied_characteristic_occurrences(self,source,fragments,keys):
+        from .composition_characteristics import copied_static_component_instances
+        return copied_static_component_instances(fragments.get(source.object_id,()),keys.get(source.object_id,()))
+
+    def _copied_static_source_fragments(self,source):
+        from .composition_characteristics import copied_static_source_fragments
+        return memoized_characteristic_read(self,('copied-static-source',source.object_id,source.logical_object_id),
+            lambda:copied_static_source_fragments(self,source),identity=source)
+
     def _static_component_candidate_effects(
         self,
     ) -> tuple[ContinuousEffect, ...]:
@@ -423,6 +433,7 @@ class CharacteristicEvaluationHostMixin:
                 maximum_layer=Layer.ABILITY,static_component_presence_only=presence_only,
                 public_object_resolver=partial(self._public_object_query_result,_enforce_static_component_applicability=False),
                 quantity_resolver=partial(query_characteristic_count,self,_enforce_static_component_applicability=False),
+                copied_static_source_resolver=self._copied_static_source_fragments,
                 generated_effect_sources=sources)
         sources={}
         effects=(*ring_legendary_effects(current_ring_rule_views(self)),*collect(True,sources))
@@ -708,11 +719,16 @@ class CharacteristicEvaluationHostMixin:
                         else None
                     ),
                     early_static_component_resolver=self._static_component_keys_at_layer,
+                    copied_static_source_resolver=self._copied_static_source_fragments,
                     ability_source_participation=(self._static_component_presence_at_ability_start
                         if static_component_key_map is not None else None),
                     granted_characteristic_resolver=(
                         (lambda source: self._granted_characteristic_occurrences(source,
                             static_component_fragments, static_component_key_map))
+                        if static_component_fragments is not None else None),
+                    copied_characteristic_resolver=(
+                        (lambda source:self._copied_characteristic_occurrences(source,
+                            static_component_fragments,static_component_key_map))
                         if static_component_fragments is not None else None),
                 ),
             )

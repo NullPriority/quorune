@@ -79,8 +79,8 @@ class StaticRuntimeTemplate:
     mechanics: tuple[str, ...] = ()
 
 
-def _trigger_multiplier_template(text: str) -> StaticRuntimeTemplate | None:
-    compiled = static_trigger_multiplier_handler(text)
+def _trigger_multiplier_template(text: str,source_name=None) -> StaticRuntimeTemplate | None:
+    compiled = static_trigger_multiplier_handler(text,source_name=source_name)
     if compiled is None:
         return None
     return StaticRuntimeTemplate(
@@ -712,7 +712,7 @@ def static_runtime_template(
         )
         if counter_maximum is not None:
             return counter_maximum
-        trigger_multiplier = _trigger_multiplier_template(text)
+        trigger_multiplier = _trigger_multiplier_template(text,source_name)
         if trigger_multiplier is not None:
             return trigger_multiplier
         counter_quantity = (

@@ -3,13 +3,15 @@ from __future__ import annotations
 from copy import deepcopy
 import gzip
 import json
+import tempfile
 from math import comb
 from pathlib import Path
 import unittest
 from unittest.mock import patch
 
 from common import DB_PATH
-from quorune.carddb import CardDatabase
+from quorune.carddb import CardDatabase, CardRecord
+from quorune.oracle_ir import compile_oracle_card
 from quorune.compiler.unlock_frontier import (
     BASE_RESIDUAL_FAMILIES,
     MAX_BUNDLE_FAMILIES,
@@ -25,6 +27,7 @@ from quorune.rules.capabilities import (
 )
 from quorune.semantics import SemanticRegistry
 from scripts.update_card_unlock_frontier import _canonical_gzip
+from quorune.frontier_storage import pack_frontier_document, unpack_frontier_document
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,7 +48,75 @@ def _contracts() -> list[dict]:
     )
 
 
+def _trigger_diagnostic_record(text):
+    return CardRecord(
+        oracle_id='00000000-0000-4000-8000-00000000d603',name='Trigger Diagnostic Witness',
+        mana_cost='{2}{W}',mana_value=3.0,type_line='Creature — Wizard',oracle_text=text,
+        power='2',toughness='2',loyalty=None,defense=None,colors=('W',),color_identity=('W',),
+        keywords=(),produced_mana=(),layout='normal',released_at='2026-08-07',
+        legalities={'commander':'legal'},faces=(),raw={},
+    )
+
+
 class ResidualClassifierTests(unittest.TestCase):
+    def test_partial_or_event_prefix_does_not_claim_the_whole_event_is_bound(self):
+        ir=compile_oracle_card(_trigger_diagnostic_record(
+            'Whenever another creature dies, or a creature card leaves your graveyard, draw a card.'),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        self.assertNotEqual('exact',ir.status)
+        residual,=ir.material_residuals
+        self.assertEqual('trigger',residual.kind)
+        self.assertTrue(any(family.startswith('event_binding:') for family in canonical_residual_families(residual)))
+
+    def test_known_nonself_event_keeps_its_binding_when_only_the_result_is_unknown(self):
+        ir=compile_oracle_card(_trigger_diagnostic_record(
+            'Whenever you cast an instant or sorcery spell, return the sun to your pocket.'),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('spell.cast',node.event)
+        self.assertFalse(node.exact)
+        self.assertFalse(node.lowerable)
+        residual,=ir.material_residuals
+        self.assertEqual('trigger_effect',residual.kind)
+        self.assertIn('effect_clause:return',canonical_residual_families(residual))
+        self.assertFalse(any(family.startswith('event_binding:') for family in canonical_residual_families(residual)))
+
+    def test_known_trigger_event_reports_result_blockers_without_admitting_body(self):
+        text=("When this creature enters, you may exile target creature if it attacked or blocked this turn. "
+              "Return that card to the battlefield under its owner's control at the beginning of the next end step.")
+        ir=compile_oracle_card(_trigger_diagnostic_record(text),
+            capability_registry=load_default_capability_registry(),capability_profile='commander_review')
+        node=ir.faces[0].nodes[0]
+        self.assertEqual('permanent.enter.self',node.event)
+        self.assertFalse(node.exact)
+        self.assertFalse(node.lowerable)
+        self.assertNotEqual('exact',ir.status)
+        residual,=ir.material_residuals
+        self.assertEqual('trigger_effect',residual.kind)
+        self.assertEqual(text,residual.text)
+        self.assertEqual(text,text[residual.span.start:residual.span.end])
+        families=canonical_residual_families(residual)
+        self.assertIn('effect_clause:exile',families)
+        self.assertIn('effect_clause:return',families)
+        self.assertIn('effect_clause:ordered-effect-composition',families)
+        self.assertFalse(any(family.startswith('event_binding:') for family in families),families)
+
+    def test_unknown_event_keeps_event_blockers_and_exact_trigger_stays_exact(self):
+        registry=load_default_capability_registry()
+        unknown=compile_oracle_card(_trigger_diagnostic_record(
+            'Whenever this creature conquers an unexplored star, draw a card.'),
+            capability_registry=registry,capability_profile='commander_review')
+        self.assertNotEqual('exact',unknown.status)
+        residual,=unknown.material_residuals
+        self.assertEqual('trigger',residual.kind)
+        self.assertTrue(any(family.startswith('event_binding:')
+            for family in canonical_residual_families(residual)))
+        exact=compile_oracle_card(_trigger_diagnostic_record('When this creature enters, draw a card.'),
+            capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',exact.status)
+        self.assertFalse(exact.material_residuals)
+        self.assertEqual('permanent.enter.self',exact.faces[0].nodes[0].event)
+
     def test_fixed_mana_flashback_cost_literals_share_one_grammar_family(self):
         families = {
             canonical_residual_families(
@@ -381,6 +452,102 @@ class CardUnlockFrontierTests(unittest.TestCase):
         self.assertEqual(encoded, _canonical_gzip(payload))
         self.assertEqual(b"\x00\x00\x00\x00", encoded[4:8])
         self.assertEqual(payload, gzip.decompress(encoded))
+
+
+class FrontierStorageTests(unittest.TestCase):
+    def document(self):
+        return {"fingerprint": "unchanged semantic identity", "cards": [
+            {"oracle_id": "first", "abilities": [{"blockers": {
+                "runtime_component_ids": ["owner.z", "owner.a", "owner.z"]}}]},
+            {"oracle_id": "second", "abilities": [{"blockers": {
+                "runtime_component_ids": ["owner.a"]}}]}],
+            "metadata": {"unicode": "Æther", "false": False, "nothing": None}}
+
+    def test_lossless_storage_keeps_every_field_order_and_semantic_fingerprint(self):
+        source = self.document()
+        before = deepcopy(source)
+        packed = pack_frontier_document(source)
+        self.assertEqual(before, source)
+        self.assertEqual(["owner.a", "owner.z"], packed["runtime_components"])
+        restored = unpack_frontier_document(json.loads(json.dumps(packed)))
+        self.assertEqual(source, restored)
+        self.assertEqual(pack_frontier_document(restored), packed)
+        restored["cards"][0]["abilities"][0]["blockers"]["runtime_component_ids"].append("local edit")
+        self.assertEqual(["owner.a"], restored["cards"][1]["abilities"][0]["blockers"]["runtime_component_ids"])
+        self.assertEqual(packed, pack_frontier_document(before))
+
+    def test_historical_expanded_documents_remain_readable(self):
+        source = self.document()
+        self.assertEqual(source, unpack_frontier_document(source))
+        self.assertEqual({"fingerprint": "empty"}, unpack_frontier_document(
+            pack_frontier_document({"fingerprint": "empty"})))
+
+    def test_invalid_versions_tables_and_ambiguous_envelopes_fail_closed(self):
+        good = pack_frontier_document(self.document())
+        variants = [{**good, "frontier_storage_version": version} for version in (True, 0, 2, "1")]
+        variants += [{**good, "unexpected": 1}, {**good, "document": []}]
+        variants += [{**good, "runtime_components": table} for table in
+                     (None, ["owner.z", "owner.a"], ["owner.a", "owner.a"], [1])]
+        for value in variants:
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                unpack_frontier_document(value)
+
+    def test_invalid_component_references_and_unused_table_entries_fail_closed(self):
+        good = pack_frontier_document(self.document())
+        for refs in ([True], [-1], [2], ["0"], None):
+            value = deepcopy(good)
+            value["document"]["cards"][0]["abilities"][0]["blockers"]["runtime_component_refs"] = refs
+            with self.subTest(refs=refs), self.assertRaises(ValueError):
+                unpack_frontier_document(value)
+        value = deepcopy(good)
+        value["runtime_components"].append("owner.zz")
+        with self.assertRaisesRegex(ValueError, "unused"):
+            unpack_frontier_document(value)
+        value = deepcopy(good)
+        value["document"]["cards"][0]["abilities"][0]["blockers"]["runtime_component_ids"] = []
+        with self.assertRaisesRegex(ValueError, "ambiguous"):
+            unpack_frontier_document(value)
+
+    def test_encoder_rejects_already_packed_or_ambiguous_input(self):
+        for value in ([], {"runtime_component_refs": []}, {"runtime_component_ids": [False]},
+                      {"frontier_storage_version": 1}):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                pack_frontier_document(value)
+
+    def test_harvest_reader_preserves_historical_and_packed_semantic_receipts(self):
+        from scripts.harvest_outcome_history import _json_object
+        source = self.document()
+        legacy = _canonical_gzip(json.dumps(source).encode())
+        packed = _canonical_gzip(json.dumps(pack_frontier_document(source)).encode())
+        self.assertEqual(source, _json_object(legacy, "legacy frontier", compressed=True))
+        self.assertEqual(source, _json_object(packed, "packed frontier", compressed=True))
+
+    def test_repository_consumers_expand_current_and_historical_documents(self):
+        from quorune.reusable_pieces.generation import load_json
+        from quorune.work_selection_evidence import _read_gzip_json
+        from scripts.update_work_selection_cohort_measurements import _decode_frontier
+        source = self.document()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/"frontier.json.gz"
+            for document in (source, pack_frontier_document(source)):
+                raw = _canonical_gzip(json.dumps(document).encode())
+                path.write_bytes(raw)
+                self.assertEqual(source, load_json(path))
+                self.assertEqual(source, _read_gzip_json(path))
+                self.assertEqual(source, _decode_frontier(raw, label="frontier"))
+
+    def test_repack_rejects_stale_snapshot_before_any_output_write(self):
+        import scripts.update_card_unlock_frontier as owner
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/"frontier.gz"
+            path.write_bytes(b"unchanged output")
+            with patch.object(owner, "_load_tracked", return_value=(self.document(), b"new", "new")), \
+                    patch.object(owner, "_snapshot_freshness", side_effect=ValueError("stale census")), \
+                    patch.object(owner, "JSON_GZIP_OUTPUT", path), \
+                    patch("sys.argv", ["update_card_unlock_frontier.py", "--repack"]):
+                with self.assertRaisesRegex(ValueError, "stale census"):
+                    owner.main()
+            self.assertEqual(b"unchanged output", path.read_bytes())
 
 
 if __name__ == "__main__":

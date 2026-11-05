@@ -577,6 +577,9 @@ def build_action_form(
 
     fields = _schema_fields(action.get("choice_schema"), context)
     variants = _variant_form(action.get("cost_options"), context)
+    if decision_kind=='choice.apnap' and 'discard_options' in context:
+        variants=_variant_form(context['discard_options'],context)
+        if variants is not None:variants.update(field='discard_mode',label='Discard option')
     if variants is None and isinstance(action.get("choice_schema"), Mapping):
         variants = _variant_form(
             action["choice_schema"].get("cast_options"), context
@@ -602,6 +605,13 @@ def build_action_form(
         ),
     }
     if variants is not None:
+        schema = action.get("choice_schema")
+        condition = schema.get("cast_options_when") if isinstance(schema, Mapping) else None
+        if condition is not None:
+            if (not isinstance(condition, Mapping) or set(condition) != {"field", "value"}
+                    or any(type(condition[key]) is not str or not condition[key] for key in condition)):
+                return None
+            variants["when"] = copy.deepcopy(dict(condition))
         result["variants"] = variants
     return result
 

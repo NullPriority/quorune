@@ -18,7 +18,7 @@ class DamageSourceIdentityOwnerTests(unittest.TestCase):
         from quorune.trigger_discovery import semantic_event_matches
         host=SimpleNamespace(active_seats=('A','B','C','D'),state=SimpleNamespace(active_player='A'))
         for head in ('this creature deals combat damage to a player','this creature deals combat damage to an opponent',
-                'this creature deals damage to an opponent','Generic Source deals damage to a player'):
+                'this creature deals damage to an opponent','this creature deals damage to a player','Generic Source deals damage to a player'):
             with self.subTest(head=head):
                 binding=fixed_counter_trigger_binding('Whenever '+head+', draw a card.',card_name='Generic Source')
                 self.assertIsNotNone(binding)

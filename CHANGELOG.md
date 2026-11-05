@@ -20,6 +20,47 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Pay optional source-sacrifice costs through the existing payment and zone
+  owners. Retain the original incarnation, current payer control, owner
+  destination and sealed player for the result; a returned source cannot pay.
+
+- Reuse sealed occurrence-player target relations for the damaged player and
+  spell caster. Add the represented noncombat source-damage-to-player head,
+  with the same source-incarnation guard as other source damage triggers.
+
+- Compile represented single-permanent targets controlled by an attacker's
+  defending player through the existing target owner. Preserve the particular
+  defender at announcement and recheck current control before resolution.
+
+- Bind fixed life, mill, discard and sacrifice results to the actual defending
+  player of a blocked or unblocked attacker. Preserve private affected-player
+  choices, once-per-attacker timing and the existing Afflict instruction owner.
+
+- Emit unblocked-attacker occurrences after blocker declarations, including
+  zero-pair declarations and creatures put into combat attacking. Preserve
+  historical absence, queued source identity and blocked history after removal.
+
+- Bind represented blocking-pair qualifiers to sealed declaration-time color,
+  type, subtype and numeric facts. Retain exact counterpart identities,
+  per-pair multiplicity, delayed consequences and historical event shapes.
+
+- Schedule fixed source, blocking-counterpart and damaged-creature destruction, sacrifice and
+  owner-hand return through the existing delayed-trigger owner. Preserve the
+  creating controller, source departure, original recipient incarnation and
+  ordinary response windows. Add versioned fixed source-counter placement and
+  removal with their existing primitive capability and mutation owners.
+
+- Compile optional sacrifice-another payments through the existing fixed-cost
+  owner, excluding the original source and retaining current control, owner
+  destinations, replacement handling and conditional result timing.
+
+- Compile control-before-keyword creature targets through the existing typed
+  predicate, preserving the same control and keyword checks at selection and
+  resolution after ability changes.
+
+- Lower source-specific counter pronouns through the existing incarnation-pinned
+  counter producer, including counters from inherited mutation abilities. Keep
+  event recipients separate and skip the old source after departure and reentry.
 - Bind source-self damage triggers to their original logical incarnation so a
   returned object cannot trigger from an old ability's damage. Preserve actual
   damage, same-object control changes and already-created triggers.
@@ -27,6 +68,27 @@ maintenance: "hand-maintained"
 - Hide randomized library remainder positions from all players and keep an
   owner's chosen bottom ordering private after a public reveal. Preserve
   legitimate singleton knowledge and version the correction for exact replay.
+
+- Cast complete supported Mutate originals through fixed ordinary or hybrid
+  alternatives, retaining same-spell-owner targeting, spell-controller merge
+  choices, no-entry physical incorporation, inherited mutation abilities and
+  illegal-target creature fallback. Preserve copied-spell ownership and token
+  outcomes, actual execution provenance, private choices and exact replay.
+
+- Represent typed source and causal-event trigger modifiers and prohibitions,
+  retaining event-time source views, independent additive instances, target
+  choices, usage limits and exact replay through existing trigger owners.
+
+- Track explicit once-per-turn departure triggers by their event-time source
+  incarnation, preserving spent use after simultaneous source departure and
+  refreshing it on reentry. Retain existing quota formats, APNAP, rollback and
+  replay through the shared usage and trigger-batch owners.
+
+- Reveal a controller's consecutive library prefix through a fixed qualifying
+  match count, retaining no-match and short-library results, matching hand or
+  tapped battlefield movement, existing partition choices and private remainder
+  order. Delegate movement and replay through the existing library owners.
+
 
 - Return untargeted random subsets from the resolving controller's graveyard
   through shared keyed selection and simultaneous zone transitions, retaining

@@ -222,10 +222,18 @@ class FixedHomogeneousTargetSetCompilerTests(unittest.TestCase):
                 self.assertEqual(text, text[node.span.start : node.span.end])
 
     def test_fixed_homogeneous_target_set_grammar_stays_closed(self):
+        composed = "Return two target creatures to their owners' hands, then draw a card."
+        self.assertIsNone(fixed_homogeneous_target_set_effect_template(composed))
+        ir = self.compile(composed)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(["return_permanent_targets_to_owner_hand", "draw"],
+                         [effect["op"] for effect in node.effects])
+        self.assertIn(FIXED_HOMOGENEOUS_TARGET_SET_CAPABILITY, node.capability_dependencies)
         unsupported = (
             "Destroy target creature and target land.",
             "Exile up to X target cards from a graveyard.",
-            "Return two target creatures to their owners' hands, then draw a card.",
+            "Return two target creatures to their owners' hands, then rewrite history.",
             "Return up to three target creature cards with total mana value 3 or less from your graveyard to the battlefield.",
             "Destroy two targets.",
             "Tap seven target creatures.",
@@ -1146,6 +1154,8 @@ class EmptyFixedTargetBatchModelTests(unittest.TestCase):
         for handler in FIXED_TARGET_SET_HANDLERS:
             for refs in ([], ['B1']):
                 effect = {'op':handler.operation, 'cards':refs, 'maximum_targets':2}
+                if handler.operation == 'reanimate_targets':
+                    effect.update(schema_version=1,battlefield_controller='actor',battlefield_tapped=False)
                 plan = handler.lower(effect, context)
                 self.assertEqual(int(bool(refs)), len(plan.intents), handler.operation)
                 self.assertEqual(handler.operation, plan.operation)
@@ -1155,6 +1165,8 @@ class EmptyFixedTargetBatchModelTests(unittest.TestCase):
             seats='ABCD', active_seats='ABCD', apnap_order='ABCD')
         for handler in FIXED_TARGET_SET_HANDLERS:
             source = {'op':handler.operation, 'cards':[], 'maximum_targets':2}
+            if handler.operation == 'reanimate_targets':
+                source.update(schema_version=1,battlefield_controller='actor',battlefield_tapped=False)
             for change in ({'unknown':1}, {'op':'invented'}, {'maximum_targets':True},
                     {'maximum_targets':0}, {'cards':['B1','B1']}, {'reason':False}):
                 with self.assertRaises(SemanticNodeError): handler.lower({**source,**change}, context)

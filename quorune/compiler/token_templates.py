@@ -9,6 +9,7 @@ from ..ability_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     SpellCastKeywordTriggerKind,
     SpellCastKeywordTriggerSpec,
+    ToxicSpec,
     ability_fragment_to_dict,
 )
 from ..fixed_token_production import (
@@ -82,7 +83,7 @@ _FIXED_CREATURE_TOKEN = re.compile(
     r"(?: and (?P<second_color>white|blue|black|red|green))? "
     r"(?P<subtypes>[A-Za-z][A-Za-z' -]*?) "
     r"(?P<card_types>(?:(?:artifact|enchantment) )*)creature tokens?"
-    r"(?: with (?P<keywords>[A-Za-z ,'-]+))?\.?$",
+    r"(?: with (?P<keywords>[A-Za-z0-9 ,'-]+))?\.?$",
     re.IGNORECASE,
 )
 _FIXED_PREDEFINED_TOKEN = re.compile(
@@ -220,7 +221,11 @@ def _fixed_keyword_list(value: str | None) -> tuple[str, ...] | None:
     if (
         not keywords
         or len(keywords) != len(set(keywords))
-        or any(keyword not in _CREATURE_TOKEN_KEYWORDS for keyword in keywords)
+        or any(
+            keyword not in _CREATURE_TOKEN_KEYWORDS
+            and re.fullmatch(r"toxic [1-9]\d*", keyword) is None
+            for keyword in keywords
+        )
     ):
         return None
     return keywords
@@ -351,6 +356,12 @@ def _single_fixed_token_creation_effect_template(
     if 'prowess' in keywords:
         characteristics.setdefault('ability_fragments', []).append(ability_fragment_to_dict(
             SpellCastKeywordTriggerSpec(kind=SpellCastKeywordTriggerKind.PROWESS)))
+    for keyword in keywords:
+        toxic = re.fullmatch(r"toxic (?P<value>[1-9]\d*)", keyword)
+        if toxic is not None:
+            characteristics.setdefault("ability_fragments", []).append(
+                ability_fragment_to_dict(ToxicSpec(value=int(toxic["value"])))
+            )
     return FixedTokenCreationTemplate(
         template_id="create-fixed-creature-token-v2",
         effect={
@@ -361,7 +372,10 @@ def _single_fixed_token_creation_effect_template(
             **({"tapped": True} if creature.group("tapped") else {}),
             "characteristics": characteristics,
         },
-        mechanics=("cr-111-tokens", *keywords),
+        mechanics=tuple(dict.fromkeys((
+            "cr-111-tokens",
+            *("toxic" if keyword.startswith("toxic ") else keyword for keyword in keywords),
+        ))),
     )
 
 
@@ -468,11 +482,16 @@ def fixed_token_creation_effect_template(
 
     A single fixed definition or an unambiguous two- or three-definition
     simultaneous nontargeted batch is accepted. Dynamic quantities,
-    source-relative or modified copies, open ability text, attachments,
-    attacking tokens, and compound non-token instructions remain residual.
+    source-relative or modified copies, open ability text, attachments, and
+    compound non-token instructions remain residual. Complete ordinary attacking
+    riders use the closed public destination choice over the fixed definition.
     """
 
-    return _single_fixed_token_creation_effect_template(
+    from .attacking_token_results import fixed_attacking_token_template
+    from .created_token_cleanup_templates import created_token_cleanup_template
+    cleanup = created_token_cleanup_template(text, compile_inner=fixed_token_creation_effect_template)
+    attacking = fixed_attacking_token_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
+    return cleanup or attacking or _single_fixed_token_creation_effect_template(
         text
     ) or _fixed_token_batch_creation_effect_template(text)
 

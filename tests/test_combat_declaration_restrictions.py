@@ -2496,7 +2496,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
             ]["domains"]
             self.assertIn(attacker.ref, domains)
 
-            attacker.annotations["copy_overrides"] = {"colors": ["B"]}
+            attacker.annotations["copy_overrides"]["colors"] = ["B"]
             self.assertEqual(
                 ["B"],
                 engine._effective_card_data(attacker)["colors"],
@@ -2511,6 +2511,7 @@ class CombatDeclarationRestrictionTests(unittest.TestCase):
                 )
             )
             from quorune.rules.temporary_declaration_restrictions import current_declaration_restrictions
+            self.assertIn("creature", engine._public_object_query_result(attacker).types)
             self.assertTrue(any(p.giver is source and p.source is attacker
                 for p in current_declaration_restrictions(engine,error_type=AssertionError)))
             before = authoritative_state_hash(engine.state)

@@ -15,6 +15,14 @@ def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],targe
     from .fixed_controller_effect_shapes import fixed_controller_effect_sequence_node_capabilities,fixed_counter_controller_effect_sequence_node_capabilities
     mechanics=set(mechanic_ids)-{FIXED_EFFECT_PAYMENT_MECHANIC}
     if len(effects)==1:
+        from .affected_player_discard_capability_shapes import fixed_context_player_discard_node_capabilities
+        from .event_player_result_shapes import fixed_event_player_result_node_capabilities
+        from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
+        from .mill_capability_shapes import fixed_mill_node_capabilities
+        for resolver in (fixed_context_player_discard_node_capabilities,fixed_event_player_result_node_capabilities,
+                         event_player_sacrifice_node_capabilities,fixed_mill_node_capabilities):
+            result=resolver(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+            if result:return result
         if effects[0].get('op')=='fixed_library_selection':
             from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
             return fixed_library_selection_node_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
@@ -25,11 +33,41 @@ def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],targe
             if result:return result
         return closed_effect_component_capabilities(effects,target_schema=target_schema,mechanics=mechanics)
     from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities
+    from .target_player_sequences import target_player_sequence_node_capabilities
+    from .target_set_result_sequences import target_set_result_sequence_capabilities
     for resolver in (fixed_controller_effect_sequence_node_capabilities,fixed_counter_controller_effect_sequence_node_capabilities,
-                     fixed_effect_clause_sequence_node_capabilities,closed_effect_program_node_capabilities):
+                     fixed_effect_clause_sequence_node_capabilities,target_player_sequence_node_capabilities,
+                     target_set_result_sequence_capabilities,closed_effect_program_node_capabilities):
         result=resolver(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
         if result:return result
     return ()
+
+
+def fixed_payment_event_player_runtime_dependencies(program):
+    """Keep occurrence-player proof when a closed result sits behind a cost."""
+    players={'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
+    def references(value):
+        if isinstance(value,Mapping):return set().union(*(references(child) for child in value.values()))
+        if isinstance(value,(tuple,list)):return set().union(*(references(child) for child in value))
+        return {value} if isinstance(value,str) and value in players else set()
+    required=set()
+    from .event_player_result_shapes import _event_player_reference_is_closed
+    def visit(value):
+        if isinstance(value,Mapping):
+            if value.get('op')==OPTIONAL_MANA_PAYMENT_OPERATION and value.get('schema_version')==2:
+                payment=value.get('payment')
+                if not isinstance(payment,Mapping):raise ValueError('Fixed payment descriptor is unavailable')
+                refs=references(value.get('effects',()))
+                if refs or payment.get('kind')=='source_sacrifice':
+                    owned=fixed_effect_payment_node_capabilities(effects=(value,),target_schema=program.target_schema,mechanic_ids=program.coverage)
+                    if not owned or any(not _event_player_reference_is_closed(program,ref) for ref in refs):
+                        raise ValueError('Fixed payment result lacks its closed occurrence-player scope')
+                    required.update(owned)
+            for child in value.values():visit(child)
+        elif isinstance(value,(tuple,list)):
+            for child in value:visit(child)
+    visit(program.effects)
+    return tuple(sorted(required))
 
 
 def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,
@@ -54,7 +92,7 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
         if payment is not None and (
             payment.kind in {'discard','exile','mana_discard'} and payment.predicate.owner != '$controller'
             or payment.kind in {'sacrifice','tap'} and payment.predicate.controller != '$controller'
-            or payment.kind=='remove_source_counter' and payment.source_ref!='$source.zone_object'
+            or payment.kind in {'remove_source_counter','source_sacrifice'} and payment.source_ref!='$source.zone_object'
         ):
             return ()
         return spec.capabilities
@@ -65,7 +103,8 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
     if payment.kind in {'discard','exile','mana_discard'}and payment.predicate.owner!='$controller':return ()
     if payment.kind in {'sacrifice','tap'}and payment.predicate.controller!='$controller':return ()
-    if payment.kind=='remove_source_counter' and payment.source_ref!='$source.zone_object':return ()
+    if payment.kind=='sacrifice' and payment.schema_version==6 and payment.predicate.exclude_ref!='$source.zone_object':return ()
+    if payment.kind in {'remove_source_counter','source_sacrifice'} and payment.source_ref!='$source.zone_object':return ()
     nested=wrapper['effects']
     if not isinstance(nested,(list,tuple))or not 1<=len(nested)<=4 or any(not isinstance(e,Mapping)or e.get('op')in {'offer_optional_effect',OPTIONAL_MANA_PAYMENT_OPERATION}for e in nested):return ()
     dependencies=set(payment.capabilities)

@@ -9,10 +9,37 @@ maintenance: "hand-maintained"
 
 # Target legality and protection
 
+The target-language owner relation `spell_owner` reads the acting spell's explicit
+owner, independently of the spell controller and target controller. Live spell
+copies use their existing noncard object ownership; unavailable ownership rejects
+instead of becoming the current controller. The fact is ephemeral and leaves the
+version-one serialized ability-source binding unchanged. Runtime dependency
+inference requires `target.object.same_spell_owner` for this relation even when
+annotations omit it. Human and Changeling targets remain excluded from Mutate.
+Changing a spell's controller preserves its owner. A copy receives its own owner
+from the player under whose control it is created.
+
+Intrinsic Mutate cost metadata uses the existing ability-fragment registry and
+the shared fixed ordinary/hybrid mana expansion. Its copied fragment contains
+only the closed mana-cost value and version, not an Oracle line for runtime
+parsing. `rules/casting/mutate_costs.py` binds a complete, current face before
+adding typed alternatives to the ordinary cost pipeline. The chosen cost pins
+its target schema and payment marker into the existing stack context.
+`casting.mutate.fixed_mana` owns the declared alternative, target, physical merge
+and ordinary-creature fallback. Copies retain the declared alternative and use
+the existing copy object's owner when their targets are revalidated. Every other
+material ability still requires complete-card admission; metadata alone does not
+admit an otherwise partial original.
+
 Quorune uses one server-side target predicate for offer generation, submitted
 command validation, and resolution-time revalidation. A client receives only
 the legal public references in its current action schema and cannot substitute
 an authoritative object identifier or bypass the same predicate at commit.
+The shared compiler grammar accepts the control qualifier before or after one
+supported `with`/`without` keyword qualifier. Both orders lower to the same typed
+conjunction. Offers, submitted targets and resolution revalidation require both
+current control and the current keyword fact; unknown or compound keyword tails
+remain outside the closed grammar.
 
 Printed Protection lists with repeated `from` clauses compile to independent
 typed qualities, including comma-separated color and creature-subtype lists.
@@ -179,6 +206,41 @@ for all other targets. This represents cards chosen from a single graveyard;
 it does not expose hidden zones or create a general relational-target grammar.
 
 ## Copied target decisions
+
+Separate printed occurrences of `target` retain separate groups. The same
+object may fill each unqualified occurrence when it meets each predicate;
+`another target` in the second of two independent clauses requires distinct
+objects. The compiler preserves the source spans and passes that constraint
+to the existing spell-composition certificate and target planner. Each scalar
+result uses only its own group. An illegal target in one role does not suppress
+another legal role, and a copy rebinds each role under the existing per-group
+chosen-count rules.
+
+An ordered same-set result program announces targets once. Its `them` or
+`those` follow-ups consume the same surviving original target incarnations;
+each instruction does not discover a fresh set. A returned card with the same
+public reference receives neither instruction for its departed incarnation.
+The initial optional empty choice still permits independent following
+instructions, while losing all chosen targets stops the spell. Copies use
+the existing fixed-count and new-target authority for that same shared set.
+
+Optional one-per-player permanent selections use the existing announced target
+count and one simultaneous homogeneous result. `distinct_controllers: true`
+requires selected permanents to have different controllers at announcement;
+`retain_controller: true` revalidates each selected permanent against its
+recorded controller. A change to another opponent's control makes that target
+illegal even when it still meets the ordinary opponent predicate. Other legal
+targets resolve, and an initially empty selection remains a legal choice.
+Both flags are strict booleans and require `target.set.one_per_player`, inferred
+from the actual schema independently of capability annotations. Ordinary target
+groups omit these flags and retain their existing serialized shape.
+
+Copies retain the original chosen count and snapshots. Keeping all original
+targets may retain illegal targets; newly chosen targets satisfy the copy
+controller's current domain and the distinct-controller relation. Departed
+original incarnations do not become new targets through reference reuse.
+Mandatory selections for every player and result bodies without an existing
+closed homogeneous owner remain residual.
 
 Copied spells and abilities retain their selected modes and original target
 count in each group. `selection/copy_targets.py` binds those decisions to the

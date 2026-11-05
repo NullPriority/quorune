@@ -42,6 +42,13 @@ apply; it does not alter remembered reveal or private-inspection facts. Public
 hands use the existing card view and known-hand field, including for spectators,
 and do not expose library order or another player's decision capability.
 
+The fixed-mana Miracle boundary derives its source-specific hand disclosure from
+the exact hand incarnation and original live or pending trigger. A copied
+trigger does not extend that original disclosure. Projection also exposes the
+currently revealed card to spectators, while the original drawer alone receives
+the preceding private reveal choice. Ending the original scope does not change
+another reveal or erase remembered knowledge.
+
 - Projection occurs before transport serialization, hashing, or patch
   generation.
 - Raw capabilities, physical card IDs, incarnation/timestamp internals,

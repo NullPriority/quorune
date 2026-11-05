@@ -26,7 +26,7 @@ from quorune.continuous_effects import (
     evaluate_continuous_effects,
 )
 from quorune.object_predicate import ObjectQuerySpec
-from quorune.model import CardInstance
+from quorune.model import CardInstance, PlayerState
 
 
 BASELINE = ROOT / "platform" / "continuous-effect-performance-baseline.json"
@@ -74,9 +74,8 @@ def _fixture(players: int, permanents: int, descriptors: int):
                     handlers=[_descriptor() for _ in range(descriptors)],
                 ),
             )
-        player_rows[seat] = SimpleNamespace(
-            zones={"battlefield": battlefield,"graveyard":[],"exile":[]}
-        )
+        player_rows[seat] = PlayerState(seat=seat, name=f"Benchmark {seat}")
+        player_rows[seat].zones["battlefield"] = battlefield
 
     class Semantics:
         def runtime_handler_programs_for_oracle(

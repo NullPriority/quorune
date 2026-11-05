@@ -28,18 +28,18 @@ class ActualLifeTransferHandler:
         if (not isinstance(effect,Mapping) or set(effect)!=({'op','schema_version','player','amount'}|({'stage'} if gain_stage else set()))
                 or effect['op']!=self.operation or type(effect['schema_version']) is not int or effect['schema_version']!=1
                 or effect['player']!=context.actor or context.actor not in context.query.active_seats
-                or type(effect['amount']) is not int or effect['amount']<(0 if gain_stage else 1)):
+                or type(effect['amount']) is not int or effect['amount']<0):
             raise SemanticChoiceError('Actual life transfer requires its fixed controller and amount')
         if gain_stage:
             intents=(LifeChangeIntent(context.actor,context.actor,effect['amount'],context.stack_label,context.source_ref),) if effect['amount'] else ()
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),preparation_intents=intents,
                 auto_continue=AutoContinue(reason='Actual opponent life loss transferred'))
         opponents=tuple(p for p in context.query.active_seats if p!=context.actor)
-        intents=(LifeLossBatchIntent(context.actor,opponents,effect['amount'],context.stack_label,context.source_ref),) if opponents else ()
+        intents=(LifeLossBatchIntent(context.actor,opponents,effect['amount'],context.stack_label,context.source_ref),) if opponents and effect['amount'] else ()
         gain=FrozenMap({**dict(effect),'stage':'gain','amount':0})
         return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),preparation_intents=intents,
             auto_continue=AutoContinue(reason='Opponent life loss committed before its actual-total gain',
-                prepend_effects=(gain,),amount_from_result=IntentResultAmount(0,0,'amount') if opponents else None))
+                prepend_effects=(gain,),amount_from_result=IntentResultAmount(0,0,'amount') if intents else None))
 
     def complete(self,continuation,response,query):
         raise SemanticChoiceError('Actual life transfer never issues an external choice')

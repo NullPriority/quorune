@@ -122,7 +122,11 @@ class FixedManaMorphModelTests(unittest.TestCase):
         card=CardInstance(object_id='FACE',ref='FACE',oracle_id='face-source',printed_name='Face fixture',
             owner='A',controller='B',zone='battlefield',zone_timestamp=4,face_down=True,counters={'charge':2},
             marked_damage=1,tapped=True,acquired_control_turn_count=3)
-        state.cards[card.object_id]=card;owner=ZoneTransitionOwner(SimpleNamespace(state=state))
+        from test_granted_skulk import record as fixture_record
+        from quorune.zone_trigger_events import type_parts
+        printed=replace(fixture_record('Morph {2}','Creature — Human'),oracle_id=card.oracle_id,name=card.printed_name)
+        database=SimpleNamespace(by_oracle_id=lambda oracle_id: printed if oracle_id==printed.oracle_id else None)
+        state.cards[card.object_id]=card;owner=ZoneTransitionOwner(SimpleNamespace(state=state,card_db=database,_type_parts=type_parts))
         identity=card.logical_object_id
         owner.turn_face_up(card,viewers=('A','B'))
         self.assertEqual((10,10,False,identity,{'charge':2},1,True,3),

@@ -108,7 +108,14 @@ database.
 Start with the smallest regression that proves the defect or missing behavior.
 Run that test red before the implementation when practical, then green at the
 final diff. Run the affected focused module and directly relevant interaction
-tests. Inspect the deterministic local quick-gate plan before executing it:
+tests.
+
+For a grammar expansion, run the owning compiler test class once before the
+public source freeze. Turn a newly supported former negative into an explicit
+positive witness and keep a still-unsupported neighbor. This catches stale
+boundary expectations before spending a protected CI run on them.
+
+Inspect the deterministic local quick-gate plan before executing it:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts/quick_gate.py --dry-run

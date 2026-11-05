@@ -38,10 +38,49 @@
     "cost_schema": {"type": ["object", "null"]},
     "event_condition": {"type": ["object", "null"]},
     "trigger_limit": {
-      "type": ["object", "null"],
-      "properties": {"schema_version": {"const": 1}, "kind": {"const": "once_per_turn"}},
-      "required": ["schema_version", "kind"],
-      "additionalProperties": false
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schema_version": {
+              "type": "integer",
+              "const": 1
+            },
+            "kind": {
+              "const": "once_per_turn"
+            }
+          },
+          "required": [
+            "schema_version",
+            "kind"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "schema_version": {
+              "type": "integer",
+              "const": 2
+            },
+            "kind": {
+              "const": "once_per_turn"
+            },
+            "source_scope": {
+              "const": "event_incarnation"
+            }
+          },
+          "required": [
+            "schema_version",
+            "kind",
+            "source_scope"
+          ],
+          "additionalProperties": false
+        }
+      ]
     },
     "coverage": {"type": "array", "items": {"type": "string"}},
     "capability_dependencies": {

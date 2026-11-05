@@ -331,7 +331,10 @@
         "scripts/update_card_unlock_frontier.py",
         "--check"
       ],
-      "write": null,
+      "write": [
+        "scripts/update_card_unlock_frontier.py",
+        "--repack"
+      ],
       "write_with_database": [
         "scripts/update_card_unlock_frontier.py",
         "--write",
@@ -344,7 +347,8 @@
       ],
       "input_paths": [],
       "implementation_inputs": [
-        "scripts/update_card_unlock_frontier.py"
+        "scripts/update_card_unlock_frontier.py",
+        "quorune/frontier_storage.py"
       ],
       "database_identity": "pinned-card-database",
       "execution_class": "fanout",
@@ -384,7 +388,8 @@
         "scripts/batched_support_measurement.py",
         "scripts/counted_library_search_measurement.py",
         "scripts/typed_grant_carrier_measurement.py",
-        "scripts/cohort_compilation.py"
+        "scripts/cohort_compilation.py",
+        "quorune/frontier_storage.py"
       ],
       "database_identity": "pinned-card-database",
       "execution_class": "reusable",
@@ -456,7 +461,8 @@
         "quorune/work_selection.py",
         "quorune/work_selection_bundles.py",
         "scripts/harvest_outcome_history.py",
-        "scripts/update_rules_scheduler.py"
+        "scripts/update_rules_scheduler.py",
+        "quorune/frontier_storage.py"
       ],
       "database_identity": "none",
       "execution_class": "scheduler",
@@ -635,7 +641,8 @@
       ],
       "input_paths": [],
       "implementation_inputs": [
-        "scripts/update_reusable_piece_matrix.py"
+        "scripts/update_reusable_piece_matrix.py",
+        "quorune/frontier_storage.py"
       ],
       "database_identity": "pinned-card-database",
       "execution_class": "reusable",

@@ -29,6 +29,42 @@ def _permanent_occurrence_subscriptions(program):
 
 
 def occurrence_object_runtime_dependencies(program):
+    from .damage_permanent_recipients import damage_permanent_runtime_dependencies
+    damaged=damage_permanent_runtime_dependencies(program)
+    if damaged:return damaged
+    def counterpart(value):
+        if isinstance(value, Mapping):return any(counterpart(child) for child in value.values())
+        if isinstance(value, (list, tuple)):return any(counterpart(child) for child in value)
+        return value == '$event.block_counterpart'
+    if counterpart(program.effects):
+        from .node_capability_shapes import fixed_source_characteristics_node_capabilities
+        from .damage_capability_shapes import fixed_damage_node_capabilities
+        from ..delayed_object_model import delayed_object_node_capabilities
+        subscriptions = FixedEventSubscriptionSet.from_condition(program.event_condition)
+        pairs=tuple((child.event,child.condition) for child in subscriptions.subscriptions) if subscriptions else ((program.event,program.event_condition),)
+        def guarantees(condition, field, operation, value):
+            if not isinstance(condition, Mapping):return False
+            if condition.get('field') == field and condition.get('op') == operation and condition.get('value') == value:
+                return True
+            if isinstance(condition.get('all'), (list, tuple)):
+                return any(guarantees(child, field, operation, value) for child in condition['all'])
+            return False
+        if (program.event not in {'creature.blocks','creature.becomes_blocked_by'} or program.active_zone != 'battlefield'
+                or program.target_schema is not None or not pairs
+                or {event for event,_condition in pairs} not in ({'creature.blocks'},{'creature.becomes_blocked_by'},{'creature.blocks','creature.becomes_blocked_by'})
+                or any(not guarantees(condition,'card','eq','$source.ref') for _event,condition in pairs)
+                or any(event=='creature.blocks' and not guarantees(condition,'blocked_attacker','truthy',True) for event,condition in pairs)):
+            raise ValueError('Block counterpart requires the closed source-specific per-creature subscriptions')
+        required = (fixed_source_characteristics_node_capabilities(effects=program.effects,
+            target_schema=None, mechanic_ids=program.coverage)
+            or fixed_damage_node_capabilities(effects=program.effects, target_schema=None, mechanic_ids=program.coverage)
+            or delayed_object_node_capabilities(effects=program.effects, target_schema=None, mechanic_ids=program.coverage))
+        if not required:
+            required=block_counterpart_zone_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
+        if not required:
+            raise ValueError('Block counterpart requires one independently closed untargeted result')
+        return tuple(sorted(set(required) | {'trigger.event.block_pair_counterpart','trigger.event.normalized_public_action'}
+            | ({'trigger.subscription.fixed_multi_event'} if subscriptions else set())))
     attached=any(e.get('op')=='destroy' and isinstance(e.get('card'),Mapping) and e['card'].get('kind')=='source_attachment' for e in program.effects)
     if attached:
         from ..attachment_references import AttachmentReferenceSpec
@@ -72,4 +108,17 @@ def occurrence_object_node_capabilities(*,effects,target_schema,mechanic_ids):
         'target':{'kind':'occurrence_controller_information','schema_version':1}}
     if effect==expected and 'cr-122-counters' in mechanics and type(effect.get('amount')) is int and type(effect['target'].get('schema_version')) is int:
         return ('resolution.event_object.fixed_result','counter.producer.fixed_player_effect','resolution.target_controller_information')
+    return ()
+
+
+def block_counterpart_zone_capabilities(*,effects,target_schema,mechanic_ids):
+    if target_schema is not None or len(effects)!=1:return ()
+    effect=effects[0]
+    if effect=={'op':'bounce','card':'$event.block_counterpart'} and 'return-to-owner-hand'in mechanic_ids:
+        return ('permanent.return.owner_hand','trigger.event.block_pair_counterpart')
+    if 'destroy'not in mechanic_ids:return ()
+    for prohibited in (False,True):
+        expected={'op':'destroy','card':'$event.block_counterpart',**({'regeneration_prohibited':True} if prohibited else {})}
+        if effect==expected:return ('permanent.destroy.effect','trigger.event.block_pair_counterpart',
+            *(('permanent.destroy.regeneration_prohibition',) if prohibited else ()))
     return ()

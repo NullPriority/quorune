@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .control_capability_shapes import fixed_control_node_capabilities
+from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .temporary_cast_restrictions import temporary_cast_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
@@ -33,6 +34,10 @@ from .fixed_controller_effect_shapes import fixed_life_node_capabilities
 from .fixed_resolution_mana_shapes import fixed_resolution_mana_choice_capabilities, fixed_resolution_mana_capabilities
 from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
 from .created_token_counter_shapes import created_token_counter_node_capabilities
+from .incubate_capability_shapes import incubate_node_capabilities
+from .discover_capability_shapes import discover_node_capabilities
+from .variable_library_selection_shapes import variable_library_selection_node_capabilities
+from .reveal_until_library_selection_shapes import reveal_until_library_selection_node_capabilities
 from .linked_exile_return_shapes import linked_exile_return_node_capabilities
 from .fixed_resolution_characteristic_shapes import (
     fixed_resolution_characteristic_set_node_capabilities,
@@ -101,6 +106,7 @@ from .node_capability_shapes import (
     fixed_source_effect_sequence_node_capabilities,
 )
 from .self_return_capability_shapes import fixed_self_return_node_capabilities
+from .graveyard_self_return import graveyard_self_return_node_capabilities
 from .temporary_target_interaction_shapes import temporary_target_interaction_node_capabilities
 from ..compiler.optional_effect_templates import (
     FIXED_OPTIONAL_EFFECT_CAPABILITY,
@@ -120,10 +126,15 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    graveyard_return_choice_node_capabilities,
     fixed_land_untap_choice_capabilities,
     fixed_library_order_capabilities,
     fixed_stack_spell_copy_node_capabilities,
     created_token_counter_node_capabilities,
+    incubate_node_capabilities,
+    discover_node_capabilities,
+    variable_library_selection_node_capabilities,
+    reveal_until_library_selection_node_capabilities,
     fixed_resolution_mana_choice_capabilities,
     fixed_resolution_mana_capabilities,
     all_kind_counter_component_capabilities,
@@ -175,6 +186,7 @@ _COMPONENT_RESOLVERS = (
     fixed_scry_node_capabilities,
     fixed_surveil_node_capabilities,
     fixed_self_return_node_capabilities,
+    graveyard_self_return_node_capabilities,
     fixed_mill_node_capabilities,
     fixed_library_search_node_capabilities,
     fixed_type_to_hand_search_node_capabilities,
@@ -236,30 +248,17 @@ def closed_effect_component_capabilities(
     )
     if optional:
         return optional
+    from .target_player_sequences import target_player_sequence_node_capabilities
+    from .target_set_result_sequences import target_set_result_sequence_capabilities
+    for resolver in (target_player_sequence_node_capabilities,target_set_result_sequence_capabilities):
+        owned=resolver(effects=effects,target_schema=target_schema,mechanic_ids=mechanics)
+        if owned:return owned
     dependencies: set[str] = set()
     for resolver in _COMPONENT_RESOLVERS:
         component_mechanics = mechanics
         if resolver is fixed_token_creation_node_capabilities:
-            characteristics = (
-                effects[0].get("characteristics")
-                if len(effects) == 1
-                else None
-            )
-            keywords = (
-                characteristics.get("keywords", ())
-                if isinstance(characteristics, Mapping)
-                else ()
-            )
-            component_mechanics = {
-                "cr-111-tokens",
-                *(
-                    str(keyword).casefold()
-                    for keyword in keywords
-                    if isinstance(keyword, str)
-                ),
-            }
-            if len(effects) == 1 and ("copy_spec" in effects[0] or effects[0].get("op") == "populate"):
-                component_mechanics = mechanics
+            from .token_creation_capability_shapes import token_creation_component_mechanics
+            component_mechanics = token_creation_component_mechanics(effects, mechanics)
         elif resolver is self_regeneration_node_capabilities:
             component_mechanics = {
                 "regenerate",

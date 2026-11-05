@@ -197,9 +197,11 @@ def _blobs(
 
 
 def _json_object(raw: bytes, label: str, *, compressed: bool = False) -> dict:
+    from quorune.frontier_storage import unpack_frontier_document
+
     try:
         payload = gzip.decompress(raw) if compressed else raw
-        value = json.loads(payload)
+        value = unpack_frontier_document(json.loads(payload)) if compressed else json.loads(payload)
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise HarvestOutcomeHistoryError(f"Invalid {label}") from exc
     if not isinstance(value, dict):

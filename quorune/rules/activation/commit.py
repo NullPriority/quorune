@@ -871,6 +871,8 @@ def _commit_activation_costs_and_stack(
     if announcement is None:host.state.stack.append(item)
     from ..target_announcements import dispatch_target_announcements
     dispatch_target_announcements(host, item)
+    from ..crime import record_crime_for_stack_placement
+    record_crime_for_stack_placement(host,item)
     collect_ward_occurrences(host, item)
     host._log(
         proposal.seat,

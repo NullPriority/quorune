@@ -616,6 +616,7 @@ class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):
         return session
 
     def test_transforming_query_characteristics_keep_replacement_siblings_fail_closed(self):
+        from dataclasses import replace
         capabilities = load_default_capability_registry()
         cases = (
             transforming_query_saga(
@@ -635,7 +636,11 @@ class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):
                 color="G",
             ),
         )
-        for record in cases:
+        boundary=replace(cases[0],oracle_id='fixture:query-self-replacement-boundary',
+            name='Generic Query Modifier Replacement Boundary',layout='normal',faces=(),
+            type_line='Creature — Spirit',keywords=(),oracle_text=(
+                'This creature gets +1/+1 for each land you control.\nSkip your draw step.'))
+        for record in (*cases,boundary):
             with self.subTest(name=record.name):
                 program = compile_card_program(
                     _NoRulingsDatabase(),
@@ -656,13 +661,9 @@ class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):
                     for residual in program.residuals
                     for blocker in residual["blockers"]
                 }
-                self.assertGreaterEqual(
-                    blockers,
-                    {
-                        "replacement applicability",
-                        "self-replacement and prevention ordering",
-                    },
-                )
+                expected=({'ordinary Saga chapter event binding','exact typed chapter effect body'} if record.faces else
+                    {'replacement applicability','self-replacement and prevention ordering'})
+                self.assertGreaterEqual(blockers,expected)
                 binding = bind_card_program_runtime(
                     program,
                     capability_registry=capabilities,

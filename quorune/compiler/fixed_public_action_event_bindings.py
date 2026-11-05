@@ -538,11 +538,16 @@ def _qualified_damage_match_spec(match, *, singular: bool):
     if parsed is None or parsed[0] != 'source_controller' or parsed[2]:
         return None
     query = parsed[1]
+    state=query.state_predicate
+    if state is not None and not singular:return None
+    if state is not None and (state.entered_this_turn or state.counter_name is not None
+            or state.minimum_total_counter_count is not None):return None
     projected = ObjectQuerySpec(zones=('battlefield',), types_all=query.types_all,
         types_any=query.types_any, excluded_types=query.excluded_types,
         subtypes_all=query.subtypes_all, subtypes_any=query.subtypes_any,
         excluded_subtypes=query.excluded_subtypes, colors_all=query.colors_all,
-        colors_any=query.colors_any, colorless=query.colorless, supertypes_all=query.supertypes_all)
+        colors_any=query.colors_any, colorless=query.colorless, supertypes_all=query.supertypes_all,
+        state_predicate=state)
     if query != projected:
         return None
     conditions = [
@@ -550,6 +555,12 @@ def _qualified_damage_match_spec(match, *, singular: bool):
         {'field':'source_zone','op':'eq','value':'battlefield'},
         {'field':'target_kind','op':'eq','value':'player'},
     ]
+    if state is not None:
+        from ..permanent_event_state_model import PERMANENT_EVENT_STATE_PREFIX
+        conditions.append({'field':'source_'+PERMANENT_EVENT_STATE_PREFIX+'version','op':'eq','value':1})
+        conditions.extend({'field':'source_'+PERMANENT_EVENT_STATE_PREFIX+name,'op':'eq','value':getattr(state,name)}
+            for name in ('tapped','attacking','blocking','enchanted','equipped','modified','monstrous')
+            if getattr(state,name) is not None)
     if match['combat']:
         conditions.append({'field':'combat','op':'truthy','value':True})
     if match['recipient'].casefold() == 'an opponent':
@@ -558,7 +569,8 @@ def _qualified_damage_match_spec(match, *, singular: bool):
     conditions.extend(public_event_query_conditions(query, prefix='source_'))
     return _spec('damage.dealt', QUALIFIED_DAMAGE_SINGULAR_VARIANT if singular else QUALIFIED_DAMAGE_BATCH_VARIANT, match['body'],
         'fixed-counter-public-damage-trigger-v1', 'trigger-event-normalized-damage',
-        condition=_all_conditions(*conditions), capabilities=(QUALIFIED_DAMAGE_SINGULAR_CAPABILITY if singular else QUALIFIED_DAMAGE_BATCH_CAPABILITY,))
+        condition=_all_conditions(*conditions), capabilities=(QUALIFIED_DAMAGE_SINGULAR_CAPABILITY if singular else QUALIFIED_DAMAGE_BATCH_CAPABILITY,
+            *(('trigger.event.state_qualified_damage',) if state is not None else ())))
 
 
 def _qualified_damage_batch_spec(text: str):

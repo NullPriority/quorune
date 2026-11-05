@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Protocol
 
+from ..characteristic_read_frames import characteristic_read_method
+
 from ..attachments import (
     attach_objects,
     attach_to_player,
@@ -93,6 +95,7 @@ def _protection_allows_attachment(
     return verdict is ProtectionVerdict.ALLOWED
 
 
+@characteristic_read_method
 def legal_aura_target_refs(
     host: AuraRuntimeHost,
     aura: CardInstance,

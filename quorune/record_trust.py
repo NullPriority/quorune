@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import copy
 import json
+from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any, Callable, Iterable, Mapping
 
 from .card_programs import semantic_program_execution_provenance
@@ -35,18 +37,39 @@ def verified_replay_inputs(
     return manifest, semantics
 
 
+@dataclass(frozen=True,slots=True)
+class StackResolutionInputs(Mapping[str,Any]):
+    stack_items: Mapping[str,Any]
+    physical_cards: Mapping[str,Any]
+
+    def __getitem__(self,key):return self.stack_items[key]
+
+    def __iter__(self):return iter(self.stack_items)
+
+    def __len__(self):return len(self.stack_items)
+
+
+def capture_stack_resolution_inputs(state: Any) -> StackResolutionInputs:
+    """Retain actual command-local sources without eager binding or DB queries."""
+    items={item.ref:item for item in state.stack}
+    cards={ref:state.cards.get(item.card_object_id) for ref,item in items.items()}
+    return StackResolutionInputs(MappingProxyType(items),MappingProxyType(cards))
+
+
 def resolved_semantic_execution_provenance_rows(
     engine: Any, *, events: Iterable[Any], before_event_sequence: int,
-    before_stack_items: Mapping[str, Any], capability_profile: str,
+    before_stack_items: Mapping[str, Any] | StackResolutionInputs, capability_profile: str,
 ) -> list[dict[str, Any]]:
     """Bind actual resolution rows with fresh inputs only when they are needed."""
     rows = []
     capabilities = None
+    captured=before_stack_items if isinstance(before_stack_items,StackResolutionInputs) else None
+    items=captured.stack_items if captured is not None else before_stack_items
     for event in events:
         if event.event_id <= before_event_sequence or event.code != "stack.resolve":
             continue
         stack_ref = str(event.details.get("stack") or "")
-        item = before_stack_items.get(stack_ref)
+        item = items.get(stack_ref)
         if item is None or not item.semantic_key:
             continue
         if capabilities is None:
@@ -54,6 +77,7 @@ def resolved_semantic_execution_provenance_rows(
         rows.append(semantic_execution_provenance_row(
             engine, item.semantic_key, capability_registry=capabilities,
             profile=capability_profile, stack_item=item,
+            physical_card=captured.physical_cards.get(stack_ref) if captured is not None else None,
         ))
     return rows
 
@@ -98,6 +122,7 @@ def implicit_semantic_execution_provenance(
     *,
     stack_item: Any | None = None,
     include_spell_copies: bool = False,
+    physical_card: Any = None,
 ) -> dict[str, Any] | None:
     """Describe a core generic spell fallback without inventing a program."""
 
@@ -111,7 +136,7 @@ def implicit_semantic_execution_provenance(
             continue
         if (item.kind != 'spell' and not (include_spell_copies and item.kind == 'spell_copy')) or not item.card_object_id:
             continue
-        record = physical_stack_record(engine, item)
+        record = physical_stack_record(engine, item, physical_card=physical_card)
         if record is None:
             continue
         face=next((f for f in record.faces if f.get('name')==item.chosen_face),None) if record.faces else None
@@ -119,7 +144,7 @@ def implicit_semantic_execution_provenance(
         expected_key = f"{record.oracle_id}:spell:{face['name'] if face else 'front'}"
         if semantic_key != expected_key:
             continue
-        resolution = trusted_generic_empty_resolution(engine, item, None)
+        resolution = trusted_generic_empty_resolution(engine, item, None, physical_card=physical_card)
         if resolution is None:
             continue
         return {
@@ -138,6 +163,7 @@ def semantic_execution_provenance_row(
     capability_registry: Any,
     profile: str,
     stack_item: Any | None = None,
+    physical_card: Any = None,
 ) -> dict[str, Any]:
     """Record one resolved registered program or trusted core fallback."""
 
@@ -165,6 +191,7 @@ def semantic_execution_provenance_row(
         semantic_key,
         stack_item=stack_item,
         include_spell_copies=True,
+        physical_card=physical_card,
     )
     if implicit is not None:
         return {"key": semantic_key, **implicit}

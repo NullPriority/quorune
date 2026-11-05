@@ -43,11 +43,11 @@ _FIXED_DELAYED_TOKEN = re.compile(
 )
 _FIXED_NAMED_TOKEN = re.compile(
     r"^(?P<body>Create .+?) named "
-    r"(?P<name>[A-Za-z][A-Za-z' -]*)\.?$",
+    r"(?P<name>[A-Za-z][A-Za-z' -]*)\.?$", re.IGNORECASE,
 )
 _FIXED_LEGENDARY_NAMED_TOKEN = re.compile(
     r"^Create (?P<name>[A-Za-z][A-Za-z' -]*), a legendary "
-    r"(?P<body>\d+/\d+ .+? creature token)\.?$",
+    r"(?P<body>\d+/\d+ .+? creature token)\.?$", re.IGNORECASE,
 )
 _FIXED_POSTPOSED_COLOR_TOKEN = re.compile(
     r"^Create (?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|"
@@ -57,7 +57,7 @@ _FIXED_POSTPOSED_COLOR_TOKEN = re.compile(
     re.IGNORECASE,
 )
 _FIXED_TOKEN_DECLARATION = re.compile(
-    r'^(?P<body>Create .+? creature tokens?) with "(?P<ability>'
+    r'^(?P<body>Create .+? creature tokens?(?: with [A-Za-z0-9 ,\'-]+)?) (?:with|and) "(?P<ability>'
     r"This token can't (?:block|be blocked)\.)\"\.?$",
 )
 
@@ -220,6 +220,7 @@ def _fixed_declaration_token_template(
         return None
     characteristics = dict(inner.effect.get("characteristics") or {})
     characteristics["ability_fragments"] = [
+        *characteristics.get("ability_fragments", []),
         ability_fragment_to_dict(parsed.template)
     ]
     return _copy_template(
@@ -266,6 +267,8 @@ def _fixed_named_token_template(
         )
     named = _FIXED_NAMED_TOKEN.fullmatch(normalized)
     if named is None:
+        return None
+    if re.search(r"\b(?:that's|that is|that are)\b", named.group('name'), re.IGNORECASE):
         return None
     inner = compile_inner(named.group("body") + ".")
     if inner is None or inner.target_schema is not None:

@@ -35,6 +35,41 @@ def copy_host():
 
 
 class EventSpellCopyCompilerTests(unittest.TestCase):
+    def test_event_permanent_spell_copy_requires_verified_physical_face_dependency(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index,discover_tests
+        record=query_record('Whenever you cast a creature spell, copy it.')
+        self.assertEqual('exact',compile_oracle_card(record,capability_registry=load_default_capability_registry()).status)
+        raw=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        next(row for row in raw['capabilities'] if row['id']=='token.creation.defined_transforming').update(
+            status='blocked',blockers=['Physical spell-copy faces withdrawn'])
+        registry=CapabilityRegistry(raw)
+        index=build_index(registry_value=raw,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
+        self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=registry).status)
+        control=replace(query_record('Draw a card.'),type_line='Instant')
+        self.assertEqual('exact',compile_oracle_card(control,capability_registry=registry).status)
+
+    def test_spell_source_codec_rejects_malformed_physical_faces_and_orphan_orientation(self):
+        from quorune.rules.event_spell_copy import decode_event_spell_copy_source
+        from test_incubate_rules import DefinedTokenFaceTests
+        from quorune.defined_token_faces import DefinedTransformingToken,DEFINED_TOKEN_FACES_FIELD,DEFINED_TOKEN_ACTIVE_FACE_FIELD
+        host,card,item=copy_host()
+        fixture=DefinedTokenFaceTests()
+        faces=DefinedTransformingToken(fixture.copied_face(),fixture.copied_face('physical-back'),schema_version=2).to_dict()
+        source=capture_event_spell_copy_source(host,item)
+        values={**dict(source.characteristics),'type_line':'Creature',DEFINED_TOKEN_FACES_FIELD:faces,
+            DEFINED_TOKEN_ACTIVE_FACE_FIELD:'physical-front'}
+        valid=replace(source,characteristics=values)
+        self.assertEqual(valid,decode_event_spell_copy_source(valid.to_dict()))
+        for changed in ({**values,DEFINED_TOKEN_FACES_FIELD:{**faces,'schema_version':True}},
+                {**values,DEFINED_TOKEN_ACTIVE_FACE_FIELD:'unknown-face'},
+                {key:value for key,value in values.items() if key!=DEFINED_TOKEN_FACES_FIELD}):
+            with self.subTest(changed=changed),self.assertRaises(ValueError):
+                decode_event_spell_copy_source(replace(source,characteristics=changed).to_dict())
     def test_closed_source_codec_preserves_copiable_choices_without_execution_progress(self):
         host,card,original=copy_host();source=capture_event_spell_copy_source(host,original)
         self.assertEqual(source,EventSpellCopySource.from_dict(source.to_dict()));self.assertEqual(3,source.item().x_value)

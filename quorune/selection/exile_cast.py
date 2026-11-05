@@ -53,9 +53,7 @@ _ONE_SHOT_EXILE_CAST_PRODUCERS = frozenset(
     }
 )
 _MANA_SYMBOL_RE = re.compile(r"\{([^{}]+)\}")
-_PUBLIC_COST_OPTION_FIELDS = frozenset(
-    {"id", "kind", "requirements", "choice_schema", "label"}
-)
+from .fixed_resolving_cast import PUBLIC_COST_OPTION_FIELDS as _PUBLIC_COST_OPTION_FIELDS
 
 
 def _one_shot_semantic_key(producer: str) -> str:
@@ -452,83 +450,11 @@ class OneShotExileCastChoiceOwnerMixin:
             or compiled_fixed_madness_spec(self, card) != spec
         ):
             return ()
-        record = self.card_record(card)
-        if record is None:
-            return ()
-        result: list[dict[str, Any]] = []
-        for face in self._cast_faces(record, required_face=None):
-            face_name = str(face.get("name") or "") if face else None
-            type_line = (
-                str(face.get("type_line") or "") if face else record.type_line
-            )
-            if type_line_has_card_type(type_line, "land"):
-                continue
-            semantic_key = f"{record.oracle_id}:spell:{face_name or 'front'}"
-            program = self.semantics.get(semantic_key)
-            is_instant_or_sorcery = any(
-                type_line_has_card_type(type_line, card_type)
-                for card_type in ("instant", "sorcery")
-            )
-            if program is not None and not self.semantic_program_is_current_trusted(
-                program
-            ):
-                continue
-            if program is None and (
-                is_instant_or_sorcery or not self._trusted_generic_spell(record)
-            ):
-                continue
-            try:
-                aura_target_schema = _aura_spell_target_schema(
-                    type_line=type_line,
-                    enchant_spec=self._compiled_enchant_spec(
-                        card,
-                        face_name=face_name,
-                    ),
-                    reviewed_target_schema=(
-                        getattr(program, "target_schema", None)
-                    ),
-                )
-            except CastProposalError:
-                continue
-            options = self._cast_cost_options(
-                actor,
-                card,
-                program,
-                hint=True,
-                alternative_base=spec.fixed_cost_option(),
-                cast_type_line=type_line,
-                suppress_source_costs=True,
-            )
-            for option in options:
-                if option.get("id") != FixedCastLifecycleKind.MADNESS.value:
-                    continue
-                target_specification = (
-                    dict(option["target_schema"])
-                    if isinstance(option.get("target_schema"), Mapping)
-                    else dict(aura_target_schema)
-                    if aura_target_schema is not None
-                    else program.target_schema if program is not None else None
-                )
-                public_target_schema = None
-                if target_specification is not None:
-                    public_target_schema = self._public_target_schema(
-                        actor,
-                        target_specification,
-                        acting_source=spell_targeting_source(self,prospective_cast_card(self,card,face_name)), source_ref=card.ref,
-                    )
-                    if public_target_schema is None:
-                        continue
-                public_option = {
-                    key: copy.deepcopy(value)
-                    for key, value in option.items()
-                    if key in _PUBLIC_COST_OPTION_FIELDS
-                }
-                if face_name is not None:
-                    public_option["face"] = face_name
-                if public_target_schema is not None:
-                    public_option["target_schema"] = public_target_schema
-                result.append(public_option)
-        return tuple(result)
+        from .fixed_resolving_cast import fixed_resolving_cast_options
+        return fixed_resolving_cast_options(
+            self, actor=actor, card=card, cost_option=spec.fixed_cost_option(),
+            option_id=FixedCastLifecycleKind.MADNESS.value,
+        )
 
     def madness_choice_intent(self, intent: MadnessChoiceIntent) -> None:
         if not isinstance(intent, MadnessChoiceIntent):

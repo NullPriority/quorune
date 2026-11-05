@@ -348,7 +348,11 @@ class PublicZoneConditionRuntimeTests(unittest.TestCase):
         s = self.session(754116)
         avatar = self.add(s.engine, 'Avatar of Will', zone='hand')
         self.assertTrue(self.binding(s, avatar)['strict_capability_ready'])
-        for name in ('Rekindled Flame', 'Shelldock Isle'):
+        flame=self.add(s.engine,'Rekindled Flame',zone='hand')
+        flame_ir=compile_oracle_card(self.db.lookup(flame.printed_name),capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',flame_ir.status,flame_ir.material_residuals)
+        self.assertTrue(self.binding(s,flame)['strict_capability_ready'])
+        for name in ('Shelldock Isle',):
             ir = compile_oracle_card(self.db.lookup(name), capability_registry=self.registry, capability_profile='commander_review')
             self.assertNotEqual('exact', ir.status, name)
             self.assertTrue(ir.material_residuals)

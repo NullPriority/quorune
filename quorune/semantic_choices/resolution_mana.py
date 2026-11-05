@@ -4,14 +4,16 @@ from __future__ import annotations
 
 from typing import Mapping
 from ..resolution_mana_model import MANA_COLORS,ResolutionManaChoiceSpec
+from ..variable_resolution_mana_model import VariableResolutionManaChoiceSpec
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.intents import AddManaIntent
 from .model import (ManaBundleChoice,ScalarChoice,SemanticChoiceError,SemanticChoiceRequest,
-    SemanticChoicePreparation,SemanticChoiceCompletion)
+    SemanticChoicePreparation,SemanticChoiceCompletion,AutoContinue)
 
 
 def _validated(effect,query,*,continuation=False):
-    try:spec=ResolutionManaChoiceSpec.from_effect(effect,continuation=continuation)
+    try:spec=(VariableResolutionManaChoiceSpec.from_effect(effect,continuation=continuation,resolved=True)
+        if effect.get('schema_version')==3 else ResolutionManaChoiceSpec.from_effect(effect,continuation=continuation))
     except (TypeError,ValueError,KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
     actor=effect['_choice_actor'] if continuation else effect['player']
     if actor not in query.active_seats or effect['player']!=actor or continuation and effect['source']!=effect['_source_ref']:
@@ -23,12 +25,14 @@ def prepare_resolution_mana(effect,context):
     spec,actor=_validated(effect,context.query)
     if actor!=context.actor or effect['source']!=context.source_ref:
         raise SemanticChoiceError('Resolution mana controller or source does not match its parent')
-    choice=(ScalarChoice(field_name='choice',legal_values=MANA_COLORS) if spec.selection=='one_color'
-        else ManaBundleChoice(field_name='mana',colors=MANA_COLORS,amount=spec.amount))
+    colors=spec.colors if isinstance(spec,VariableResolutionManaChoiceSpec) else MANA_COLORS
+    if spec.amount==0:return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),auto_continue=AutoContinue(reason='Zero mana requires no color choice'))
+    choice=(ScalarChoice(field_name='choice',legal_values=colors) if spec.selection=='one_color'
+        else ManaBundleChoice(field_name='mana',colors=colors,amount=spec.amount,schema_version=2 if isinstance(spec,VariableResolutionManaChoiceSpec) else 1))
     return SemanticChoicePreparation(request=SemanticChoiceRequest(
         prompt='Choose the color of the mana.' if spec.selection=='one_color' else 'Choose how to divide the mana among colors.',
         choice=choice,public_context=FrozenMap({'stack':context.stack_ref,'operation':'choose_mana',
-            'selection':spec.selection,'amount':spec.amount,'colors':MANA_COLORS})),
+            'selection':spec.selection,'amount':spec.amount,'colors':colors})),
         continuation_effect=FrozenMap({**dict(effect),'_choice_actor':actor,'_source_ref':context.source_ref}))
 
 
@@ -38,14 +42,15 @@ def complete_resolution_mana(continuation,response,query):
     allowed={field,'action','action_id','a','cap','reason','plan','next','choice_schema'}
     if set(response)-allowed:raise SemanticChoiceError('Resolution mana response has unknown fields')
     value=response.get(field)
+    colors=spec.colors if isinstance(spec,VariableResolutionManaChoiceSpec) else MANA_COLORS
     if spec.selection=='one_color':
-        if type(value) is not str or value not in MANA_COLORS:raise SemanticChoiceError('Choose one of the five mana colors')
+        if type(value) is not str or value not in colors:raise SemanticChoiceError('Choose one of the represented mana colors')
         bundle={value:spec.amount}
     else:
-        if (not isinstance(value,Mapping) or not value or not set(value)<=set(MANA_COLORS)
+        if (not isinstance(value,Mapping) or not value or not set(value)<=set(colors)
                 or any(type(n) is not int or n<0 for n in value.values()) or sum(value.values())!=spec.amount):
             raise SemanticChoiceError('Mana allocation must contain exactly the printed amount in colors')
         bundle=value
     return SemanticChoiceCompletion(intents=tuple(AddManaIntent(player=actor,color=color,amount=bundle[color],
         actor=actor,reason='Fixed resolution mana choice',source_ref=effect['source'])
-        for color in MANA_COLORS if bundle.get(color,0)))
+        for color in colors if bundle.get(color,0)))

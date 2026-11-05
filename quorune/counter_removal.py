@@ -152,12 +152,13 @@ class CounterRemovalEffectPlan:
 
 @dataclass(frozen=True, slots=True)
 class AllCounterRemovalEffectPlan:
-    """One identity-pinned removal of every counter on one permanent."""
+    """One identity-pinned removal of all kinds or one selected kind."""
 
     object_id: str
     expected_zone: str
     expected_logical_object_id: str
     removal_plan: CounterRemovalPlan
+    counter_name: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.object_id) is not str or not self.object_id:
@@ -179,11 +180,21 @@ class AllCounterRemovalEffectPlan:
             raise CounterRemovalError(
                 "All-counter removal requires one typed removal plan"
             )
+        if self.counter_name is not None:
+            if type(self.counter_name) is not str:
+                raise CounterRemovalError('Named-kind removal requires a canonical counter name')
+            try:
+                normalized = normalized_counter_name(self.counter_name)
+            except CounterStateError as exc:
+                raise CounterRemovalError(str(exc)) from exc
+            if normalized != self.counter_name:
+                raise CounterRemovalError('Named-kind removal requires a canonical counter name')
         if any(
             removal.object_id != self.object_id
             or removal.expected_zone != self.expected_zone
             or removal.expected_logical_object_id
             != self.expected_logical_object_id
+            or self.counter_name is not None and removal.counter_name != self.counter_name
             for removal in self.removal_plan.removals
         ):
             raise CounterRemovalError(
@@ -396,6 +407,7 @@ def plan_all_counter_removal_effect(
     object_id: str,
     expected_zone: str = "battlefield",
     expected_logical_object_id: str,
+    counter_name: str | None = None,
 ) -> AllCounterRemovalEffectPlan:
     """Snapshot and preflight every positive counter on one permanent."""
 
@@ -405,6 +417,16 @@ def plan_all_counter_removal_effect(
         expected_zone=expected_zone,
         expected_logical_object_id=expected_logical_object_id,
     )
+    if counter_name is not None:
+        if type(counter_name) is not str:
+            raise CounterRemovalError('Named-kind removal requires a canonical counter name')
+        try:
+            normalized = normalized_counter_name(counter_name)
+        except CounterStateError as exc:
+            raise CounterRemovalError(str(exc)) from exc
+        if normalized != counter_name:
+            raise CounterRemovalError('Named-kind removal requires a canonical counter name')
+        counters = tuple(row for row in counters if row[0] == counter_name)
     removal_plan = plan_counter_removals(
         host,
         tuple(
@@ -423,6 +445,7 @@ def plan_all_counter_removal_effect(
         expected_zone=expected_zone,
         expected_logical_object_id=expected_logical_object_id,
         removal_plan=removal_plan,
+        counter_name=counter_name,
     )
 
 
@@ -517,6 +540,8 @@ def validate_all_counter_removal_effect_plan(
         expected_zone=plan.expected_zone,
         expected_logical_object_id=plan.expected_logical_object_id,
     )
+    if plan.counter_name is not None:
+        current = tuple(row for row in current if row[0] == plan.counter_name)
     planned = tuple(
         (removal.counter_name, removal.amount)
         for removal in plan.removal_plan.removals

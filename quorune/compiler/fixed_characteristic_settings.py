@@ -197,4 +197,5 @@ def fixed_characteristic_setting_handler(text: str, *, source_name: str | None =
         return None
     return ("static-fixed-characteristic-setting-v2" if descriptor['schema_version'] == 2 else "static-fixed-characteristic-setting-v1",
         descriptor, tuple(sorted({SETTING_CAPABILITY, *_attached_ability_capabilities((*modifier["add_abilities"],*modifier["remove_abilities"])),
+        *(('state_query.commander.designation',) if target['predicate'].get('commander') is True else ()),
         *(('continuous.characteristics.fixed_public_state',) if version == 2 else ())})))

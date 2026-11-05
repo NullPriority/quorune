@@ -1,4 +1,6 @@
 from __future__ import annotations
+from .compiler.entry_x_results import entry_x_trigger_node_compiler
+from .source_entry_cast_information import source_entry_cast_runtime_coverage
 
 import hashlib
 import json
@@ -174,7 +176,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v681"
+ORACLE_COMPILER_VERSION = "oracle-ir-v684"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -275,7 +277,7 @@ def _effect_template(
     draw_template = fixed_draw_effect_template(normalized)
     if draw_template is not None:
         return draw_template
-    player_result = fixed_player_result_template(normalized)
+    player_result = fixed_player_result_template(normalized,source_name=card_name)
     if player_result is not None:
         return player_result.compiled()
     mill_template = fixed_mill_effect_template(normalized)
@@ -668,10 +670,10 @@ def _keyword_nodes(
     capability_profile: str,
     residuals: list[OracleResidual],
 ) -> tuple[OracleNode, ...]:
-    from .compiler.devour_nodes import devour_keyword_nodes
-    devour=devour_keyword_nodes(node_id=node_id,line=line,material_line=material_line,span=span,
+    from .compiler.entry_keyword_nodes import compound_entry_keyword_nodes
+    entry_keyword=compound_entry_keyword_nodes(record=record,node_id=node_id,line=line,material_line=material_line,span=span,printed_card_types=printed_card_types,
         capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
-    if devour is not None:return devour
+    if entry_keyword is not None:return entry_keyword
     chapter_nodes = ordinary_saga_chapter_nodes(node_id=node_id, line=line, material_line=material_line, span=span, card_name=card_name, printed_subtypes=printed_subtypes, declared_chapters=saga_chapters, trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals, effect_template=effect_template)
     if chapter_nodes is not None: return chapter_nodes
 
@@ -681,10 +683,13 @@ def _keyword_nodes(
     ) or fixed_keyword_event_effect_mechanics(material_line, keywords)
     if mechanics is None:
         return ()
+    if 'ravenous' in mechanics:
+        from .compiler.ravenous_nodes import unsupported_ravenous_node
+        return (unsupported_ravenous_node(node_id=node_id,line=line,span=span,mechanics=mechanics,residuals=residuals),)
 
     multi_nodes = multi_keyword_nodes(**locals(), compile_single_keyword=_keyword_node_for_mechanics)
     if multi_nodes is not None: return multi_nodes
-    if mechanics in {("madness",), ("partner with",), ("learn",)}: return ()
+    if mechanics in {("madness",), ("miracle",), ("partner with",), ("learn",)}: return ()
 
     keyword_event_effect = fixed_keyword_event_effect_node(node_id=node_id, line=line, material_line=material_line, span=span, mechanics=mechanics, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     if keyword_event_effect is not None: return (keyword_event_effect,)
@@ -875,28 +880,24 @@ def _trigger_node(
         recognized = True
     elif trigger:
         event_phrase = trigger.group("event").casefold()
-        from .compiler.scalar_effect_amounts import scalar_effect_amount_template
-        source_bound_effect = scalar_effect_amount_template(trigger.group("body"), source_name=card_name,
-            event={"enters":"permanent.enter", "dies":"creature.dies", "leaves the battlefield":"permanent.leave"}[event_phrase],
-            source_event=True, compile_fixed=lambda text: effect_template(text, card_name=card_name)) or source_self_contextual_effect_template(
-            trigger.group("body"),
-            card_name=card_name,
-            event_phrase=event_phrase, compile_effect=effect_template,
-        )
-        template, effects, target_schema, mechanics = (
-            source_bound_effect
-            if source_bound_effect is not None
-            else effect_template(
-                trigger.group("body"),
-                card_name=card_name,
-            )
-        )
+        from .compiler.source_self_effect_templates import compile_source_self_zone_effect
+        template,effects,target_schema,mechanics,event_condition=compile_source_self_zone_effect(
+            trigger.group('body'),card_name=card_name,event_phrase=event_phrase,effect_template=effect_template)
         event = {
             "enters": "permanent.enter.self",
             "dies": "creature.dies.self",
             "leaves the battlefield": "permanent.leave.self",
         }[event_phrase]
         recognized = True
+    diagnostic_binding = None
+    if not recognized:
+        from .compiler.fixed_counter_trigger_nodes import fixed_counter_trigger_binding
+        diagnostic_binding = fixed_counter_trigger_binding(material_line, card_name=card_name)
+        if diagnostic_binding is not None:
+            event = diagnostic_binding.event.value
+            event_condition = diagnostic_binding.event_condition
+    diagnostic_body = trigger.group("body") if trigger is not None else diagnostic_binding.body if diagnostic_binding is not None else ""
+    event_known = (recognized or diagnostic_binding is not None) and not re.match(r"or\b", diagnostic_body, re.IGNORECASE)
     dependencies = (
         "cr-603-handling-triggered-abilities",
         *(
@@ -935,15 +936,15 @@ def _trigger_node(
         residual_ids = (
             _residual(
                 residuals,
-                kind="trigger",
+                kind="trigger_effect" if event_known else "trigger",
                 text=line,
                 span=span,
                 reason=(
                     "trigger effect has no exact generic template"
-                    if recognized
+                    if event_known
                     else "trigger condition/event binding is not exact"
                 ),
-                blockers=(
+                blockers=() if event_known else (
                     "normalized event binding",
                     "intervening-if and reflexive-trigger grammar",
                 ),
@@ -955,7 +956,7 @@ def _trigger_node(
         kind="triggered_ability",
         text=line,
         span=span,
-        active_zone="battlefield",
+        active_zone=diagnostic_binding.active_zone if diagnostic_binding is not None else "battlefield",
         event=event,
         lowerable=recognized and template is not None,
         exact=recognized and template is not None and not gate.blockers,
@@ -963,6 +964,7 @@ def _trigger_node(
         effects=effects,
         target_schema=target_schema,
         event_condition=event_condition,
+        runtime_coverage=source_entry_cast_runtime_coverage(event_condition),
         mechanics=dependencies,
         residual_ids=residual_ids,
         capability_dependencies=gate.capabilities,
@@ -1162,7 +1164,7 @@ def _compile_face(
      source_attachment_relation) = _face_type_context(type_line)
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
-    contextual_trigger_node = partial(_trigger_node, effect_template=contextual_trigger_effect_template)
+    contextual_trigger_node = entry_x_trigger_node_compiler(record,trigger_node=_trigger_node,ordinary_effect=contextual_trigger_effect_template,match_source=_source_self_zone_trigger_match)
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
     from .compiler import station_context_nodes as station_context_owner
     material_rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, material_rows)
@@ -1183,12 +1185,11 @@ def _compile_face(
         )
         if typed_face is not None:
             return cipher_context_owner.apply_cipher_context(typed_face, cipher_context, capability_registry=capability_registry, capability_profile=capability_profile)
-    modal_blocks = fixed_nonrepeating_modal_context_blocks(
-        material_rows=material_rows, face_id=face_id, oracle_text=oracle_text, card_name=face_name or record.name, type_line=type_line, keywords=keywords,
-        trusted_mechanics=trusted_mechanics, capability_registry=capability_registry, capability_profile=capability_profile,
-        effect_template=contextual_effect_template,
-        activated_or_event_node=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node,
-    )
+    from .compiler.independent_target_rows import prepare_target_clause_context,mark_independent_target_nodes
+    material_rows,distinct_target_spans,modal_blocks=prepare_target_clause_context(material_rows,spell=spell,face_id=face_id,oracle_text=oracle_text,
+        card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
+        capability_registry=capability_registry,capability_profile=capability_profile,effect_template=contextual_effect_template,
+        activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node)
     for index, row in (_class_context.class_compilation_rows(class_context, material_rows) if class_context is not None else _leveler_compilation_rows(leveler_context, material_rows)):
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue
@@ -1369,6 +1370,7 @@ def _compile_face(
                 residual_ids=(residual_id,),
             )
         )
+    nodes=mark_independent_target_nodes(nodes,distinct_target_spans)
     resolved_nodes = _class_context.apply_class_context(context=class_context, oracle_id=record.oracle_id, face_id=face_id, material_rows=material_rows, printed_keywords=keywords, nodes=reject_cast_cost_composition(restrict_temporary_interaction_context(record, face_id, nodes, residuals), residuals), residuals=residuals, capability_registry=capability_registry, capability_profile=capability_profile)
     resolved_nodes = station_context_owner.apply_station_context(context=station_context, oracle_id=record.oracle_id,
         face_id=face_id, oracle_text=oracle_text, material_rows=material_rows, nodes=resolved_nodes,

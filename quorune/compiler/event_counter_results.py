@@ -40,30 +40,33 @@ def public_event_target_counter_result(binding, body, *, effect_template, card_n
     return (compiled[0], compiled[1], compiled[2], (*compiled[3], PUBLIC_TARGET_COUNTER_MECHANIC)), True
 
 
-def public_event_source_counter_result(binding, body, *, effect_template, card_name, accepted_variants=()):
+def public_event_source_counter_result(binding, body, *, effect_template, card_name, accepted_variants=(), allow_source_pronoun=False):
     """Bind one printed fixed source result independently from the event object."""
-    from ..rules.source_references import SourceReferenceSpec
-    if binding.variant not in accepted_variants:
+    if binding.variant not in accepted_variants or re.search(r'\bcounters?\b', body, re.I) is None:
         return None
-    match = re.fullmatch(
-        r'Put (?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|[1-9][0-9]*) '
-        r'(?P<counter>[^.]+?) counters? on (?P<subject>this (?:creature|artifact|permanent)|'
-        + SourceReferenceSpec(card_name).regex_pattern + r')\.', body, re.I,
-    )
-    if match is None:
-        return None
+    if allow_source_pronoun:
+        from .source_self_effect_templates import normalized_source_result_body
+        body=normalized_source_result_body(body) or body
     compiled = effect_template(body, card_name=card_name)
-    if compiled[0] is None or compiled[2] is not None or len(compiled[1]) != 1:
+    if compiled[0] is None or compiled[2] is not None:
         return None
-    effect = compiled[1][0]
+    from ..rules.fixed_controller_effect_shapes import fixed_counter_controller_effect_sequence_node_capabilities
+    sequence = fixed_counter_controller_effect_sequence_node_capabilities(
+        effects=compiled[1], target_schema=None, mechanic_ids=compiled[3])
+    if len(compiled[1]) != 1 and not sequence:
+        return None
+    counters = [effect for effect in compiled[1] if effect.get('op') == 'place_counters']
+    if len(counters) != 1:
+        return None
+    effect = counters[0]
     if (set(effect) != {'op', 'card', 'counter', 'amount', 'source'}
             or effect.get('op') != 'place_counters' or effect.get('source') != '$source'
             or type(effect.get('counter')) is not str or not effect['counter']
             or effect.get('card') not in ('$source', '$source.zone_object')
             or type(effect.get('amount')) is not int or effect['amount'] < 1):
         return None
-    return ('fixed-public-event-source-counter-v1',
-            ({**effect, 'card': '$source.zone_object'},), None,
+    return (compiled[0] if sequence else 'fixed-public-event-source-counter-v1',
+            tuple({**child, 'card': '$source.zone_object'} if child is effect else child for child in compiled[1]), None,
             (*compiled[3], PUBLIC_SOURCE_COUNTER_MECHANIC)), True
 
 

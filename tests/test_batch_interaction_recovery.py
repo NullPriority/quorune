@@ -3,6 +3,7 @@ from __future__ import annotations
 """Independent runtime composition and complete-card admission witnesses."""
 
 import json
+from dataclasses import replace
 from pathlib import Path
 import tempfile
 import unittest
@@ -217,6 +218,24 @@ class BatchInteractionRecoveryTests(unittest.TestCase):
                 self.assertFalse(binding['strict_capability_ready'])
                 self.assertFalse(binding['compatible_ready'])
                 self.assertTrue(binding['blockers'])
+        # Battle/Siege rules remain unrepresented; retain the separate damage
+        # and replacement boundary with an explicit constructed control.
+        card=replace(self.db.lookup('Invasion of Karsus // Refraction Elemental'),
+            oracle_id='fixture:stack-source-damage-replacement',
+            name='Generic Stack Source Damage Replacement Boundary',faces=(),layout='normal',
+            type_line='Creature — Elemental',power='2',toughness='2',
+            oracle_text='When this creature enters, it deals 1 damage to any target.\nSkip your draw step.')
+        ir=compile_oracle_card(card,capability_registry=self.registry,capability_profile='commander_review')
+        program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
+            capability_registry=self.registry,capability_profile='commander_review')
+        unlock=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')
+        self.assertLessEqual({'capability.damage.source.stack_current_or_lki',
+            'residual.replacement.replacement-applicability',
+            'residual.replacement.self-replacement-and-prevention-ordering'},_observed_piece_ids(unlock))
+        self.assertTrue(ir.material_residuals)
+        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
+        self.assertFalse(binding['strict_capability_ready']);self.assertFalse(binding['compatible_ready'])
+        self.assertTrue(binding['blockers'])
 
     def test_promoted_originals_close_while_shared_replacement_boundary_stays_rejected(self):
         data = json.loads((ROOT / 'tests/fixtures/batch-interaction-recovery-cards.json').read_text(encoding='utf-8'))

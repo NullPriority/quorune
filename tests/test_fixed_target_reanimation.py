@@ -25,7 +25,7 @@ from quorune.rules.capabilities import CapabilityRegistry
 from quorune.rules.reanimation_capability_shapes import (
     fixed_target_reanimation_node_capabilities,
 )
-from quorune.semantics import SemanticProgram
+from quorune.semantics import SemanticProgram,SemanticRegistry
 from quorune.targets import TargetGroup
 from scripts.build_test_database import build_fixture_database
 
@@ -224,12 +224,17 @@ class FixedTargetReanimationCompilerTests(unittest.TestCase):
             )
 
     def test_reanimation_unsupported_and_malformed_shapes_fail_closed(self):
+        from quorune.rules.capabilities import load_default_capability_registry
+        promoted='Return target creature card from your graveyard to the battlefield with a finality counter on it.'
+        self.assertIsNone(fixed_target_reanimation_effect_template(promoted))
+        self.assertEqual('exact',compile_oracle_card(card_record(promoted),
+            capability_registry=load_default_capability_registry()).status)
         unsupported = (
             "Return a creature card from your graveyard to the battlefield.",
             "Return all Aura cards from your graveyard to the battlefield.",
             "Return target instant card from your graveyard to the battlefield.",
             "Return target creature card with mana value X or less from your graveyard to the battlefield.",
-            "Return target creature card from your graveyard to the battlefield with a finality counter on it.",
+            "Return target creature card from your graveyard to the battlefield with a shield counter on it.",
             "Return target creature card from your graveyard to the battlefield. It gains haste.",
             "Put target creature card from a graveyard onto the battlefield.",
         )
@@ -778,3 +783,215 @@ class FixedTargetReanimationRuntimeTests(_RuntimeBase):
             self.assertNotIn(target.object_id, rendered)
             self.assertNotIn(target.logical_object_id, rendered)
         self.assert_replays(session, "fixed-target-reanimation-four-player")
+
+
+class FixedTargetReanimationSetCompilerTests(unittest.TestCase):
+    def test_fixed_plural_reanimation_lifts_the_scalar_predicate_and_requires_all_owners(self):
+        from dataclasses import replace
+        from test_qualified_zone_event_queries import query_record
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.compiler.fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
+        source=replace(query_record('Return up to three target creature cards with mana value 1 or less from your graveyard to the battlefield.'),
+            type_line='Sorcery',power=None,toughness=None)
+        registry=load_default_capability_registry()
+        ir=compile_oracle_card(source,capability_registry=registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status)
+        node=ir.faces[0].nodes[0]
+        self.assertEqual({'op':'reanimate_targets','cards':'$targets','maximum_targets':3,'schema_version':1,
+            'battlefield_controller':'actor','battlefield_tapped':False},dict(node.effects[0]))
+        self.assertEqual(3,node.target_schema['up_to'])
+        self.assertEqual(1,node.target_schema['mana_value_max'])
+        raw=json.loads(REGISTRY_PATH.read_text(encoding='utf8'))
+        for dependency in ('zone.reanimate.fixed_target_set','zone.reanimate.fixed_target',
+                           'resolution.effect.fixed_homogeneous_target_set','zone.change.destination_replacement'):
+            changed=deepcopy(raw);row=next(row for row in changed['capabilities'] if row['id']==dependency)
+            row['status']='blocked';row['blockers']=['Withdrawn target-set owner']
+            self.assertNotEqual('exact',compile_oracle_card(source,capability_registry=CapabilityRegistry(changed),
+                capability_profile='commander_review').status)
+        with patch('quorune.compiler.resolution_effect_templates.fixed_homogeneous_target_set_effect_template',return_value=None):
+            self.assertNotEqual('exact',compile_oracle_card(source,capability_registry=registry,
+                capability_profile='commander_review').status)
+        for text in ('Return up to three target creature cards with total mana value 3 or less from your graveyard to the battlefield.',
+                     'Return up to three target creature cards with different names from your graveyard to the battlefield.',
+                     'Return up to X target creature cards from your graveyard to the battlefield.'):
+            self.assertIsNone(fixed_homogeneous_target_set_effect_template(text))
+
+    def test_simultaneous_move_intent_has_typed_entry_policy_and_preserves_ordinary_defaults(self):
+        from dataclasses import FrozenInstanceError
+        from quorune.public_zone_moves import PublicBattlefieldController
+        from quorune.semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+        ordinary=MoveObjectsSimultaneouslyIntent('A',('ONE',),('graveyard',),'hand','Ordinary return')
+        self.assertIsNone(ordinary.battlefield_controller)
+        self.assertFalse(ordinary.battlefield_tapped)
+        returning=MoveObjectsSimultaneouslyIntent('A',('ONE','TWO'),('graveyard',),'battlefield','Batch return',
+            battlefield_controller=PublicBattlefieldController.ACTOR,battlefield_tapped=True)
+        self.assertEqual(('ONE','TWO'),returning.object_refs)
+        with self.assertRaises(FrozenInstanceError):returning.battlefield_tapped=False
+        for changes in ({'battlefield_controller':'actor'},
+                        {'battlefield_controller':PublicBattlefieldController.ACTOR,'destination':'hand'},
+                        {'battlefield_tapped':1},{'battlefield_controller':None,'battlefield_tapped':True}):
+            values={'actor':'A','object_refs':('ONE',),'expected_zones':('graveyard',),'destination':'battlefield',
+                'reason':'Batch return','battlefield_controller':PublicBattlefieldController.OWNER,'battlefield_tapped':False}
+            with self.assertRaises(ValueError):MoveObjectsSimultaneouslyIntent(**{**values,**changes})
+
+    def test_batch_handler_validates_empty_and_nonempty_instructions_and_retains_scalar_payloads(self):
+        from types import SimpleNamespace
+        from quorune.semantic_runtime.fixed_target_set_handlers import ReanimateFixedTargetSetHandler
+        from quorune.semantic_runtime.context import SemanticNodeError
+        from quorune.public_zone_moves import PublicBattlefieldController
+        from quorune.compiler.fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
+        context=SimpleNamespace(actor='A',default_reason='Return fixture',
+            query=SimpleNamespace(require_known_seat=lambda actor:self.assertEqual('A',actor)))
+        handler=ReanimateFixedTargetSetHandler()
+        effect={'op':'reanimate_targets','cards':['ONE','TWO'],'maximum_targets':3,'schema_version':1,
+            'battlefield_controller':'owner','battlefield_tapped':True}
+        intent=handler.lower(effect,context).intents[0]
+        self.assertEqual(('ONE','TWO'),intent.object_refs)
+        self.assertEqual(PublicBattlefieldController.OWNER,intent.battlefield_controller)
+        self.assertTrue(intent.battlefield_tapped)
+        self.assertEqual((),handler.lower({**effect,'cards':[]},context).intents)
+        for changes in ({'schema_version':True},{'battlefield_tapped':1},{'battlefield_controller':'you'},
+                        {'cards':['ONE','ONE']},{'cards':[],'maximum_targets':0},
+                        {'cards':[],'announced_target_count':True},{'cards':[],'unknown':True}):
+            with self.assertRaises(SemanticNodeError):handler.lower({**effect,**changes},context)
+        scalar=fixed_target_reanimation_effect_template('Return up to one target creature card from your graveyard to the battlefield.')
+        self.assertEqual(({'op':'reanimate','card':'$target.0','controller':'$controller','tapped':False},),scalar.compiled()[1])
+        self.assertIsNone(fixed_homogeneous_target_set_effect_template('Return up to one target creature card from your graveyard to the battlefield.'))
+        for text,controller,tapped in (
+                ('Return two target creature cards from your graveyard to the battlefield.','actor',False),
+                ("Put up to two target creature cards from a single graveyard onto the battlefield tapped under their owners' control.",'owner',True)):
+            template=fixed_homogeneous_target_set_effect_template(text)
+            self.assertIsNotNone(template)
+            self.assertEqual((controller,tapped),(template.effects[0]['battlefield_controller'],template.effects[0]['battlefield_tapped']))
+
+    def test_entry_policy_reaches_the_shared_zone_owner_without_inference(self):
+        from types import SimpleNamespace
+        from quorune.public_zone_moves import PublicBattlefieldController
+        from quorune.semantic_choices.intent_host import SemanticChoiceIntentHostMixin
+        from quorune.semantic_runtime.intents import MoveObjectsSimultaneouslyIntent
+        cards={ref:SimpleNamespace(ref=ref,object_id='object:'+ref,owner=owner)
+            for ref,owner in (('ONE','B'),('TWO','C'))}
+        calls=[]
+        host=SimpleNamespace(_resolve_object=lambda actor,ref,**kwargs:cards[ref],
+            _require_seat=lambda actor,**kwargs:self.assertEqual('A',actor),
+            _move_cards_simultaneously=lambda changes,**kwargs:calls.append((changes,kwargs)))
+        for policy in PublicBattlefieldController:
+            intent=MoveObjectsSimultaneouslyIntent('A',('ONE','TWO'),('graveyard',),'battlefield','Batch return',
+                battlefield_controller=policy,battlefield_tapped=True)
+            self.assertEqual(('ONE','TWO'),SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent(host,intent))
+            changes,arguments=calls[-1]
+            self.assertEqual([('object:ONE','battlefield'),('object:TWO','battlefield')],changes)
+            self.assertEqual({'object:ONE':'B' if policy is PublicBattlefieldController.OWNER else 'A',
+                'object:TWO':'C' if policy is PublicBattlefieldController.OWNER else 'A'},arguments['destination_controllers'])
+            self.assertTrue(arguments['tapped'])
+        ordinary=MoveObjectsSimultaneouslyIntent('A',('ONE',),('graveyard',),'hand','Ordinary return')
+        SemanticChoiceIntentHostMixin.move_objects_simultaneously_intent(host,ordinary)
+        self.assertNotIn('destination_controllers',calls[-1][1]);self.assertNotIn('tapped',calls[-1][1])
+
+
+class FixedTargetReanimationSetNativeTests(unittest.TestCase):
+    register_fixture_cards_on_add=True
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition,DeckEntry
+        from quorune.rules.capabilities import load_default_capability_registry
+        cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'plural-reanimation.sqlite3'
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
+            ROOT/'tests/fixtures/plural-reanimation-cards.json'],path)
+        cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
+        cls.deck=DeckDefinition('Plural reanimation',[DeckEntry('Generic Bound Commander',1,'commander'),
+            DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
+
+    @classmethod
+    def tearDownClass(cls):cls.db.close();cls.temp.cleanup()
+
+    def closed(self,card):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        program=compile_best_available_card_program(self.db,self.db.by_oracle_id(card.oracle_id),
+            semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
+        binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+
+    def test_original_proclamation_accepts_zero_or_multiple_targets_and_keeps_owner_legality(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        for index,choose in enumerate((False,True)):
+            with self.subTest(choose=choose):
+                session=H.session(self,959100+index);engine=session.engine
+                first=H.add(self,engine,'Memnite',zone='graveyard',ref='RETURN_MEMNITE')
+                second=H.add(self,engine,'Ornithopter',zone='graveyard',ref='RETURN_ORNITHOPTER')
+                enemy=H.add(self,engine,'Memnite',zone='graveyard',seat='B',ref='RETURN_ENEMY')
+                expensive=H.add(self,engine,'Wall of Omens',zone='graveyard',ref='RETURN_TOO_EXPENSIVE')
+                source=H.add(self,engine,'Proclamation of Rebirth',zone='hand');self.closed(source)
+                action=H.ready(self,session,source,{'W':1,'C':2});H.checkpoint(self,session)
+                legal=action['target_schema']['groups'][0]['legal_refs']
+                self.assertIn(first.ref,legal);self.assertIn(second.ref,legal)
+                self.assertNotIn(enemy.ref,legal);self.assertNotIn(expensive.ref,legal)
+                before=authoritative_state_hash(engine.state)
+                self.assertFalse(session.act('pilot:B',{'action_id':action['id'],'targets':[first.ref],'pay':'auto'}).ok)
+                self.assertFalse(session.act('pilot:A',{'action_id':action['id'],'targets':[enemy.ref],'pay':'auto'}).ok)
+                self.assertEqual(before,authoritative_state_hash(engine.state))
+                targets=[first.ref,second.ref] if choose else []
+                accepted=session.act('pilot:A',{'action_id':action['id'],'targets':targets,'pay':'auto'})
+                self.assertTrue(accepted.ok,accepted.summary);self.assertIsNone(H.resolve(self,session))
+                for card in (first,second):
+                    self.assertEqual('battlefield' if choose else 'graveyard',engine.state.cards[card.object_id].zone)
+                    if choose:
+                        self.assertEqual('A',engine.state.cards[card.object_id].controller)
+                        self.assertFalse(engine.state.cards[card.object_id].tapped)
+                self.assertEqual('graveyard',engine.state.cards[source.object_id].zone)
+                self.assertEqual('graveyard',engine.state.cards[enemy.object_id].zone)
+                H.replay(self,session,load=True)
+
+    def test_original_reveillark_return_waits_for_copy_choice_then_draws_once(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        session=H.session(self,959110);engine=session.engine
+        existing=H.add(self,engine,'Generic Bound Body',ref='EXISTING_COPY_BODY')
+        mirror=H.add(self,engine,'Mirror Image',zone='graveyard',ref='BATCH_RETURN_MIRROR')
+        wall=H.add(self,engine,'Wall of Omens',zone='graveyard',ref='BATCH_RETURN_WALL')
+        source=H.add(self,engine,'Reveillark',ref='LEAVING_REVEILLARK');self.closed(source)
+        secret=H.add(self,engine,'Generic Bound Growth',zone='library',ref='PRIVATE_RETURN_DRAW')
+        spell=H.add(self,engine,'Murder',zone='hand');self.closed(spell)
+        action=H.ready(self,session,spell,{'B':2,'C':1});H.checkpoint(self,session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'targets':[source.ref],'pay':'auto'}).ok)
+        self.assertIsNotNone(H.resolve(self,session))
+        self.assertEqual('graveyard',engine.state.cards[source.object_id].zone)
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[mirror.ref,wall.ref]}).ok)
+        self.assertIsNotNone(H.resolve(self,session))
+        self.assertEqual('replacement.order',session.state.pending_decision.kind)
+        for card in (mirror,wall):self.assertEqual('graveyard',engine.state.cards[card.object_id].zone)
+        self.assertEqual('library',engine.state.cards[secret.object_id].zone)
+        session=H.replay(self,session,load=True);engine=session.engine
+        options=session.packet('pilot:A',full=True)['decision']['ctx']['options']
+        self.assertFalse(any(wall.ref in row['id'] for row in options))
+        selected=next(row['id'] for row in options if existing.ref in row['id'] and not row['id'].startswith('decline:'))
+        before=authoritative_state_hash(engine.state)
+        self.assertFalse(session.act('pilot:B',{'action_id':'choose','replacement':selected}).ok)
+        self.assertFalse(session.act('pilot:A',{'action_id':'choose','replacement':'copy:'+wall.ref}).ok)
+        self.assertEqual(before,authoritative_state_hash(engine.state))
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','replacement':selected}).ok)
+        self.assertIsNone(H.resolve(self,session))
+        for card in (mirror,wall):
+            self.assertEqual('battlefield',engine.state.cards[card.object_id].zone)
+            self.assertEqual('A',engine.state.cards[card.object_id].controller)
+            self.assertFalse(engine.state.cards[card.object_id].tapped)
+        self.assertEqual('Generic Bound Body',engine.display_name(mirror.object_id))
+        self.assertEqual('hand',engine.state.cards[secret.object_id].zone)
+        self.assertNotIn(secret.printed_name,str(session.packet('pilot:B',full=True)))
+        H.replay(self,session,load=True)
+
+    def test_original_sigardian_savior_cast_guard_composes_with_targeted_batch_return(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        session=H.session(self,959120);engine=session.engine
+        first=H.add(self,engine,'Memnite',zone='graveyard',ref='SAVIOR_FIRST')
+        second=H.add(self,engine,'Ornithopter',zone='graveyard',ref='SAVIOR_SECOND')
+        source=H.add(self,engine,'Sigardian Savior',zone='hand');self.closed(source)
+        action=H.ready(self,session,source,{'W':2,'C':3});H.checkpoint(self,session)
+        self.assertTrue(session.act('pilot:A',{'action_id':action['id'],'pay':'auto'}).ok)
+        self.assertIsNotNone(H.resolve(self,session));self.assertEqual('battlefield',engine.state.cards[source.object_id].zone)
+        session=H.replay(self,session,load=True);engine=session.engine
+        self.assertTrue(session.act('pilot:A',{'action_id':'choose','targets':[first.ref,second.ref]}).ok)
+        self.assertIsNone(H.resolve(self,session))
+        for card in (first,second):self.assertEqual('battlefield',engine.state.cards[card.object_id].zone)
+        H.replay(self,session,load=True)

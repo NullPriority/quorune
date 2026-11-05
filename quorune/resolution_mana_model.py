@@ -36,5 +36,9 @@ class ResolutionManaChoiceSpec:
 def resolution_mana_choice_dependencies(value:Any)->tuple[str,...]:
     if not isinstance(value,Mapping) or value.get('op')!='choose_mana' or not ({'schema_version','selection','source'}&set(value)):
         return ()
+    if value.get('schema_version')==3:
+        from .variable_resolution_mana_model import VariableResolutionManaChoiceSpec,VARIABLE_RESOLUTION_MANA_CAPABILITY
+        VariableResolutionManaChoiceSpec.from_effect(value)
+        return (RESOLUTION_MANA_CHOICE_CAPABILITY,VARIABLE_RESOLUTION_MANA_CAPABILITY)
     ResolutionManaChoiceSpec.from_effect(value)
     return (RESOLUTION_MANA_CHOICE_CAPABILITY,)

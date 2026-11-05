@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .token_creation_queries import semantic_choice_token_creation_preview, token_creation_choice_facts
+
 from ..target_source import stack_targeting_source
 from ..ring_state import materialized_ring_choice_plans
 
@@ -21,7 +23,6 @@ from ..semantic_runtime import (
     IntentPlan,
     prepare_draw_resolution,
 )
-from ..token_creation import preview_token_creation
 from ..replacement_effects import ReplacementChoiceRequired
 from ..selection.copy_targets import copy_target_public_schema, prepare_copy_targets
 from ..targets import TargetGroup, available_modes, target_plan
@@ -211,6 +212,10 @@ class SemanticChoiceCoordinationMixin:
         effect: Mapping[str, Any],
         source_ref: str | None,
     ) -> tuple[str, ...]:
+        from ..rules.graveyard_return_choices import OPERATION, graveyard_return_candidates
+        if effect.get('op') == OPERATION:
+            try:return graveyard_return_candidates(self, actor, effect)
+            except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
         if effect.get("op") == "offer_soulbond_pair":
             from ..soulbond_model import SoulbondOpportunity
             from ..soulbond_state import opportunity_candidates
@@ -438,7 +443,17 @@ class SemanticChoiceCoordinationMixin:
         actor: str,
         effect: Mapping[str, Any],
         source_ref: str | None,
+        stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
+        if effect.get('op')=='discover_cast_choice':
+            from ..discover_casting import discover_cast_options
+            return discover_cast_options(self,item=stack_item,actor=actor,effect=effect)
+        if effect.get('op') == 'miracle_cast_choice':
+            from ..drawing.miracle_casting import miracle_cast_options
+            try:
+                return miracle_cast_options(self,item=stack_item,actor=actor,effect=effect)
+            except (ValueError, TypeError) as exc:
+                raise SemanticChoiceError(str(exc)) from exc
         if (
             str(effect.get("op") or "") != "madness_cast_choice"
             or source_ref is None
@@ -462,61 +477,7 @@ class SemanticChoiceCoordinationMixin:
             )
         )
 
-    def _semantic_choice_token_creation_preview(
-        self,
-        actor: str,
-        effect: Mapping[str, Any],
-    ) -> tuple[FrozenMap, ...]:
-        operation = str(effect.get("op") or "")
-        common: dict[str, Any]
-        if operation == 'create_role_token':
-            common = {'name': str(effect.get('name') or ''), 'quantity': 1, 'attacking_groups': (),
-                'characteristics': dict(effect.get('characteristics') or {})}
-        elif operation == "choose_attacking_token_destinations":
-            quantity = effect.get("quantity")
-            if type(quantity) is not int or quantity < 0:
-                return ()
-            common = {
-                "name": str(effect.get("name") or ""),
-                "quantity": quantity,
-                "tapped": True,
-                "attacking_groups": tuple("any" for _ in range(quantity)),
-                "characteristics": dict(
-                    effect.get("characteristics") or {}
-                ),
-            }
-        elif (
-            operation == "choose_myriad_token_destinations"
-            and effect.get("stage") == "destinations"
-        ):
-            opponents = effect.get("opponents")
-            if not isinstance(opponents, (list, tuple)):
-                return ()
-            groups = tuple(str(value) for value in opponents)
-            common = {
-                "name": "",
-                "quantity": len(groups),
-                "tapped": True,
-                "attacking_groups": groups,
-                "copy_of": str(effect.get("copy_of") or ""),
-                "copy_snapshot": (
-                    dict(effect["copy_snapshot"])
-                    if isinstance(effect.get("copy_snapshot"), Mapping)
-                    else None
-                ),
-            }
-        else:
-            return ()
-        selections = effect.get("_replacement_selections", ())
-        if not isinstance(selections, (list, tuple)):
-            return ()
-        resolved = preview_token_creation(
-            self,
-            actor,
-            **common,
-            replacement_selections=tuple(selections),
-        )
-        return tuple(FrozenMap(value) for value in resolved.specs)
+    _semantic_choice_token_creation_preview = semantic_choice_token_creation_preview
 
     def _semantic_choice_query(
         self,
@@ -549,11 +510,13 @@ class SemanticChoiceCoordinationMixin:
                 raise SemanticChoiceError(str(exc)) from exc
         from ..rules.library_search_rules import optional_search_permissions
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
+        from ..semantic_runtime.explore import materialize_explore_source_types
         return SnapshotSemanticChoiceQuery(
             resolution_source_is_physical_card=(
                 (self.state.cards[stack_item.card_object_id].object_kind == 'card')
                 if stack_item is not None and stack_item.card_object_id in self.state.cards else False),
             explore_action_version=getattr(self.state, 'explore_action_version', None),
+            explore_source_types=materialize_explore_source_types(self, stack_item, choice_effect),
             resolution_source=semantic_source_context(stack_item, self.state.cards) if stack_item is not None else None,
             ring_choice_plans=materialized_ring_choice_plans(self, actor, choice_effect),
             counter_permissions=collect_counter_permissions(self),
@@ -590,6 +553,7 @@ class SemanticChoiceCoordinationMixin:
                     actor,
                     choice_effect,
                     source_ref,
+                    stack_item=stack_item,
                 )
             ),
             canonical_names=self._semantic_choice_canonical_names(response),
@@ -635,11 +599,7 @@ class SemanticChoiceCoordinationMixin:
                     actor, object_rows
                 )
             ),
-            materialized_token_creation_preview=(
-                self._semantic_choice_token_creation_preview(
-                    actor, choice_effect
-                )
-            ),
+            **token_creation_choice_facts(self, actor, choice_effect),
             current_turn_sequence=self.state.turn_sequence,
             committed_discard_ids=(
                 tuple(event.object_incarnation for event in self._current_turn_history('card_discarded')
@@ -702,6 +662,8 @@ class SemanticChoiceCoordinationMixin:
         registry = default_semantic_choice_registry()
         try:
             effect = bind_connive_instruction(self, item, effect)
+            from ..drawing.miracle_casting import bind_miracle_cast_instruction
+            effect = bind_miracle_cast_instruction(item, effect)
         except (ValueError, TypeError, KeyError) as exc:
             raise GameRuleError(str(exc)) from exc
         handler = registry.handler_for_operation(str(effect.get("op") or ""))

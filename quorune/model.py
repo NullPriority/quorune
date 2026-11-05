@@ -5,6 +5,7 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Literal
+from .composition_storage import PermanentCompositionStorage
 
 from .damage_modifier_state import (
     DamagePreventionShield,
@@ -21,6 +22,10 @@ from .soulbond_model import SoulbondPair, canonical_pair_book
 from .spell_mana_counts import SpellManaSpentCounts, normalize_stack_mana_counts, spell_mana_counts_version
 from .ability_source_information import ability_source_information_version
 from .qualified_attack_model import qualified_attack_facts_version
+from .permanent_event_state_model import permanent_event_state_version
+from .battle_cry_resolution_model import battle_cry_resolution_version
+from .block_characteristic_model import block_characteristics_version
+from .unblocked_attacker_model import unblocked_attacker_event_version
 from .cast_face_offers import cast_face_offers_version
 from .cast_source_placement_model import cast_source_placement_version
 from .explore_action_model import explore_action_version
@@ -29,6 +34,7 @@ from .face_status_timestamp_model import face_status_timestamp_version
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
 from .characteristic_query_boundary_model import characteristic_query_boundary_version
+from .token_copy_value_model import token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
 
@@ -62,6 +68,7 @@ PrincipalRole = Literal["pilot", "arbiter", "analyst", "spectator", "admin"]
 PLAYER_COUNTERS_FIELD = "counters"
 
 TurnHistoryEventKind = Literal[
+    "crime_committed",
     "spell_mana_spent",
     "spell_cast",
     "card_discarded",
@@ -100,6 +107,11 @@ class TurnHistoryEvent:
     origin: str | None = None
 
     def __post_init__(self):
+        if self.kind=='crime_committed' and (type(self.actor) is not str or not self.actor
+                or type(self.target) is not str or not self.target or self.target_kind!='stack_object'
+                or type(self.amount) is not int or self.amount!=1 or self.object_incarnation is not None
+                or self.target_object_incarnation is not None or self.types or self.origin is not None):
+            raise ValueError('Crime history requires one completed player action and its exact stack identity')
         if self.kind=='spell_mana_spent' and (
                 type(self.actor) is not str or not self.actor or type(self.amount) is not int or self.amount<=0
                 or any(value is not None for value in (self.object_incarnation,self.target,self.target_kind,
@@ -149,6 +161,7 @@ class TurnHistory:
     spell_origin_history_version: int | None = None
     graveyard_type_history_version: int | None = None
     spell_mana_history_version: int | None = None
+    crime_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -162,7 +175,7 @@ class TurnHistory:
             raise ValueError("Unsupported departure-history version")
         if self.arrival_history_version is not None and (type(self.arrival_history_version) is not int or self.arrival_history_version!=1):raise ValueError('Unsupported arrival-history version')
         if self.mill_history_version is not None and (type(self.mill_history_version) is not int or self.mill_history_version!=1):raise ValueError('Unsupported mill-history version')
-        for mode in (self.spell_origin_history_version,self.graveyard_type_history_version,self.spell_mana_history_version):
+        for mode in (self.spell_origin_history_version,self.graveyard_type_history_version,self.spell_mana_history_version,self.crime_history_version):
             if mode is not None and (type(mode) is not int or mode!=1):raise ValueError('Unsupported qualified history version')
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
@@ -171,6 +184,8 @@ class TurnHistory:
             raise ValueError("Turn-history events must be typed")
         if self.spell_mana_history_version is None and any(event.kind=='spell_mana_spent' for event in self.events):
             raise ValueError('Spell-mana facts require complete payment history')
+        if self.crime_history_version is None and any(event.kind=='crime_committed' for event in self.events):
+            raise ValueError('Crime facts require complete initial-action history')
         previous_absent = self.previous_turn_sequence is None
         if previous_absent != (self.previous_active_player is None):
             raise ValueError(
@@ -209,6 +224,7 @@ class TurnHistory:
             **({"spell_origin_history_version":1} if self.spell_origin_history_version is not None else {}),
             **({"graveyard_type_history_version":1} if self.graveyard_type_history_version is not None else {}),
             **({"spell_mana_history_version":1} if self.spell_mana_history_version is not None else {}),
+            **({"crime_history_version":1} if self.crime_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -245,6 +261,7 @@ class TurnHistory:
             spell_origin_history_version=data.get("spell_origin_history_version"),
             graveyard_type_history_version=data.get("graveyard_type_history_version"),
             spell_mana_history_version=data.get("spell_mana_history_version"),
+            crime_history_version=data.get("crime_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)
@@ -363,6 +380,7 @@ class CardInstance:
     blocking: str | None = None
     battle_protector: str | None = None
     object_kind: ObjectKind = "card"
+    permanent_composition: PermanentCompositionStorage | None = None
 
     def __post_init__(self) -> None:
         """Keep legacy token state compatible with the typed object kind."""
@@ -434,6 +452,10 @@ class CardInstance:
             raise ValueError(
                 "Control-acquisition timestamp must be a nonnegative integer"
             )
+        if self.permanent_composition is not None:
+            if not isinstance(self.permanent_composition,PermanentCompositionStorage):
+                raise ValueError('Live permanent composition requires typed physical storage')
+            self.permanent_composition.validate_carrier(self)
 
     @property
     def logical_object_id(self) -> str:
@@ -455,6 +477,10 @@ class CardInstance:
 
     def to_dict(self) -> dict[str, Any]:
         payload = asdict(self)
+        if self.permanent_composition is None:
+            payload.pop('permanent_composition')
+        else:
+            payload['permanent_composition']=self.permanent_composition.to_dict()
         if self.source_continuity is None:
             payload.pop("source_continuity")
         if self.commander_designation_id is None:
@@ -487,6 +513,8 @@ class CardInstance:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "CardInstance":
         payload = dict(data)
+        if 'permanent_composition' in payload:
+            payload['permanent_composition']=PermanentCompositionStorage.from_dict(payload['permanent_composition'])
         if "source_continuity" in payload:
             payload["source_continuity"] = SourceContinuityHistory.from_dict(payload["source_continuity"])
         payload["goaded_by"] = [
@@ -1018,7 +1046,12 @@ class GameState:
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
     characteristic_query_boundary_version: int | None = 1
+    token_copy_value_version: int | None = 1
     qualified_attack_facts_version: int | None = 1
+    permanent_event_state_version: int | None = 1
+    battle_cry_resolution_version: int | None = 1
+    block_characteristics_version: int | None = 1
+    unblocked_attacker_event_version: int | None = 1
 
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
@@ -1033,7 +1066,12 @@ class GameState:
         face_down_characteristics_version(self.face_down_characteristics_version)
         library_selection_knowledge_version(self.library_selection_knowledge_version)
         characteristic_query_boundary_version(self.characteristic_query_boundary_version)
+        token_copy_value_version(self.token_copy_value_version)
         qualified_attack_facts_version(self.qualified_attack_facts_version)
+        permanent_event_state_version(self.permanent_event_state_version)
+        battle_cry_resolution_version(self.battle_cry_resolution_version)
+        block_characteristics_version(self.block_characteristics_version)
+        unblocked_attacker_event_version(self.unblocked_attacker_event_version)
         if self.tap_state_event_version is not None and (
             type(self.tap_state_event_version) is not int or self.tap_state_event_version != 1
         ):
@@ -1067,6 +1105,10 @@ class GameState:
             **({'spell_mana_counts_version':self.spell_mana_counts_version} if self.spell_mana_counts_version is not None else {}),
             **({'ability_source_information_version':self.ability_source_information_version} if self.ability_source_information_version is not None else {}),
             **({'qualified_attack_facts_version':self.qualified_attack_facts_version} if self.qualified_attack_facts_version is not None else {}),
+            **({'permanent_event_state_version':self.permanent_event_state_version} if self.permanent_event_state_version is not None else {}),
+            **({'battle_cry_resolution_version':self.battle_cry_resolution_version} if self.battle_cry_resolution_version is not None else {}),
+            **({'block_characteristics_version':self.block_characteristics_version} if self.block_characteristics_version is not None else {}),
+            **({'unblocked_attacker_event_version':self.unblocked_attacker_event_version} if self.unblocked_attacker_event_version is not None else {}),
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
             **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
@@ -1075,6 +1117,7 @@ class GameState:
             **({'face_down_characteristics_version':self.face_down_characteristics_version} if self.face_down_characteristics_version is not None else {}),
             **({'library_selection_knowledge_version':self.library_selection_knowledge_version} if self.library_selection_knowledge_version is not None else {}),
             **({'characteristic_query_boundary_version':self.characteristic_query_boundary_version} if self.characteristic_query_boundary_version is not None else {}),
+            **({'token_copy_value_version':self.token_copy_value_version} if self.token_copy_value_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1148,6 +1191,7 @@ class GameState:
             face_down_characteristics_version=face_down_characteristics_version(data.get('face_down_characteristics_version')),
             library_selection_knowledge_version=library_selection_knowledge_version(data.get('library_selection_knowledge_version')),
             characteristic_query_boundary_version=characteristic_query_boundary_version(data.get('characteristic_query_boundary_version')),
+            token_copy_value_version=token_copy_value_version(data.get('token_copy_value_version')),
             game_id=str(data["game_id"]),
             config=GameConfig.from_dict(data["config"]),
             players={seat: PlayerState.from_dict(player) for seat, player in data["players"].items()},
@@ -1164,6 +1208,10 @@ class GameState:
             ability_source_information_version=ability_source_information_version(data.get('ability_source_information_version')),
             cast_face_offers_version=cast_face_offers_version(data.get('cast_face_offers_version')),
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
+            permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
+            battle_cry_resolution_version=battle_cry_resolution_version(data.get('battle_cry_resolution_version')),
+            block_characteristics_version=block_characteristics_version(data.get('block_characteristics_version')),
+            unblocked_attacker_event_version=unblocked_attacker_event_version(data.get('unblocked_attacker_event_version')),
             commander_damage_identity_version=(
                 int(data["commander_damage_identity_version"])
                 if data.get("commander_damage_identity_version") is not None

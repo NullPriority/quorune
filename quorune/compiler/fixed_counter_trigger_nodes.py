@@ -1,4 +1,7 @@
 from __future__ import annotations
+from .token_creation_event_bindings import TOKEN_CREATION_VARIANTS
+from .crime_bindings import CRIME_VARIANTS
+from ..crime_model import crime_fact_dependencies
 
 from dataclasses import dataclass, replace
 from enum import Enum
@@ -48,6 +51,10 @@ from .tap_state_event_bindings import (
     TAP_STATE_EVENT_VARIANT, TAP_STATE_EVENT_VARIANTS,
     public_trigger_binding_spec, tap_state_bound_result,
 )
+from .chosen_color_event_bindings import CHOSEN_COLOR_CAST_VARIANTS
+from .chosen_type_event_bindings import CHOSEN_TYPE_EVENT_VARIANTS
+from .explore_event_bindings import CREATURE_EXPLORE_VARIANT
+from .mutate_event_bindings import MUTATE_SOURCE_VARIANT,MUTATE_TRIGGER_TEMPLATE
 
 
 FIXED_COUNTER_EVENT_TRIGGER_MECHANIC = "fixed-counter-event-trigger"
@@ -62,6 +69,8 @@ FIXED_SPELL_CAST_CHARACTERISTIC_MECHANIC = (
 )
 FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
     {
+        MUTATE_TRIGGER_TEMPLATE,
+        'fixed-counter-creature-explore-trigger-v1',
         "fixed-counter-step-trigger-v1",
         "fixed-counter-controlled-land-entry-trigger-v1",
         "fixed-counter-controller-spell-cast-trigger-v1",
@@ -138,6 +147,12 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
 )
 PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        *TOKEN_CREATION_VARIANTS,
+        *CRIME_VARIANTS,
+        *CHOSEN_COLOR_CAST_VARIANTS,
+        *CHOSEN_TYPE_EVENT_VARIANTS,
+        CREATURE_EXPLORE_VARIANT,
+        MUTATE_SOURCE_VARIANT,
         'player_expend',
         'public_waterbend',
         'public_ring_temptation', 'public_ring_bearer_choice',
@@ -203,6 +218,7 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 )
 MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
+        'source_block_pair_counterpart',
         "enchanted_creature_tap_or_received_damage",
         "independent_dual_event",
         "qualified_zone_event_pair",
@@ -311,7 +327,7 @@ _SOURCE_GRAVEYARD_TRIGGER = re.compile(
 )
 _SOURCE_DAMAGE_TRIGGER = re.compile(
     r"^Whenever this creature (?P<event>deals combat damage to a player|"
-    r"deals combat damage to an opponent|deals damage to an opponent|"
+    r"deals combat damage to an opponent|deals damage to a player|deals damage to an opponent|"
     r"is dealt damage), (?P<body>.+)$",
     re.IGNORECASE,
 )
@@ -514,7 +530,7 @@ class FixedCounterTriggerBinding:
                 raise ValueError(
                     "Public event triggers require typed owner identities"
                 )
-            if self.public_active_zone not in {None, "battlefield", "hand"}:
+            if self.public_active_zone not in {None, "battlefield", "hand", "graveyard"}:
                 raise ValueError(
                     "Public event triggers require a closed active zone"
                 )
@@ -584,6 +600,7 @@ class FixedCounterTriggerBinding:
                 "source_damage_opponent": (
                     "fixed-counter-source-damage-opponent-trigger-v1"
                 ),
+                "source_damage_player": "fixed-counter-source-damage-player-trigger-v1",
             }[self.variant]
         if self.zone_subject is not None and self.zone_subject.subtype is not None:
             return "fixed-counter-subtype-entry-trigger-v1"
@@ -1001,6 +1018,7 @@ def _source_event_trigger_binding(
                     "source_combat_damage_opponent"
                 ),
                 "deals damage to an opponent": "source_damage_opponent",
+                "deals damage to a player": "source_damage_player",
                 "is dealt damage": "source_dealt_damage",
             }[event],
             body=damage.group("body"),
@@ -1059,7 +1077,13 @@ def fixed_counter_trigger_binding(
     *,
     card_name: str | None = None,
     _source_normalized: bool = False,
+    _graveyard_self_return: bool = True,
 ) -> FixedCounterTriggerBinding | None:
+    if _graveyard_self_return:
+        from .graveyard_self_return import graveyard_self_return_binding
+        returned=graveyard_self_return_binding(material_line,card_name=card_name,compile_binding=lambda text:
+            fixed_counter_trigger_binding(text,card_name=card_name,_source_normalized=_source_normalized,_graveyard_self_return=False))
+        if returned is not None:return returned
     normalized = normalized_source_event_line(material_line, source_name=card_name, named_only=True) if not _source_normalized and card_name else None
     if normalized is not None:
         source_binding = fixed_counter_trigger_binding(normalized, card_name=card_name, _source_normalized=True)
@@ -1294,6 +1318,7 @@ def fixed_counter_event_trigger_node(
             *(('counter.producer.fixed_public_target_event',)
               if 'fixed-public-event-target-counter' in body_mechanics else ()),
             *binding.explicit_capabilities,
+            *crime_fact_dependencies(binding.public_state_condition.to_dict() if binding.public_state_condition is not None else None),
             *(
                 (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
                 if binding.public_state_condition is not None
@@ -1423,6 +1448,7 @@ def fixed_typed_event_effect_trigger_node(
         capability_profile=capability_profile,
         explicit_capabilities=(
             *binding.explicit_capabilities,
+            *crime_fact_dependencies(binding.public_state_condition.to_dict() if binding.public_state_condition is not None else None),
             *(
                 (FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY, *(('condition.creature.fixed_numeric_exists',) if binding.public_state_condition.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS else ()))
                 if binding.public_state_condition is not None

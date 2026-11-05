@@ -122,15 +122,18 @@ class PublicGraveyardCardTargetKind(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class PublicGraveyardCardTargetSpec:
-    """One immutable target predicate for a card in any graveyard."""
+    """One immutable target predicate for a card in a public graveyard."""
 
     kind: PublicGraveyardCardTargetKind
+    owner_relation: str = "any"
 
     def __post_init__(self) -> None:
         if not isinstance(self.kind, PublicGraveyardCardTargetKind):
             raise GraveyardCardTargetError(
                 "Public graveyard target kind must be a supported typed value"
             )
+        if type(self.owner_relation) is not str or self.owner_relation not in {"any", "you", "opponent"}:
+            raise GraveyardCardTargetError("Public graveyard target owner relation is unsupported")
 
     @property
     def slug(self) -> str:
@@ -140,7 +143,7 @@ class PublicGraveyardCardTargetSpec:
         schema: dict[str, Any] = {
             "zones": ["graveyard"],
             "categories": ["card"],
-            "owner_relation": "any",
+            "owner_relation": self.owner_relation,
             "count": 1,
         }
         if self.kind.types_any:
@@ -174,7 +177,8 @@ class PublicGraveyardCardTargetSpec:
         if (
             schema.get("zones") != ["graveyard"]
             or schema.get("categories") != ["card"]
-            or schema.get("owner_relation") != "any"
+            or type(schema.get("owner_relation")) is not str
+            or schema.get("owner_relation") not in {"any", "you", "opponent"}
             or type(schema.get("count")) is not int
             or schema.get("count") != 1
         ):
@@ -196,7 +200,7 @@ class PublicGraveyardCardTargetSpec:
             raise GraveyardCardTargetError(
                 "Public graveyard target type predicate is unsupported"
             )
-        spec = cls(matches[0])
+        spec = cls(matches[0], owner_relation=schema["owner_relation"])
         if spec.to_target_schema() != schema:
             raise GraveyardCardTargetError(
                 "Public graveyard target schema is not canonical"

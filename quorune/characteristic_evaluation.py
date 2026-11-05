@@ -22,6 +22,7 @@ from .ability_fragments import (
     canonical_ability_fragments,
 )
 from .abilities import ActivatedAbility
+from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD, defined_token_current_characteristics
 from .characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     ColorlessCharacteristicDefinitionSpec,
@@ -96,6 +97,8 @@ def _annotation_terms(
 ) -> tuple[dict[str, Any], list[str], list[str]]:
     temporary = dict(card.annotations.get("until_end_of_turn") or {})
     overrides = dict(card.annotations.get("copy_overrides") or {})
+    if DEFINED_TOKEN_FACES_FIELD in overrides:
+        overrides = defined_token_current_characteristics(card, overrides)
     added_types = [
         str(value).strip()
         for value in card.annotations.get("continuous_add_types", [])
@@ -297,6 +300,12 @@ def _all_creature_types_effect(
     )
 
 
+def _copy_layer_effects(card,overrides):
+    from .composition_characteristics import composition_copy_effect
+    return [effect for effect in (_copy_effect(card,overrides),composition_copy_effect(card))
+        if effect is not None]
+
+
 def _object_continuous_effects(
     card: CardInstance,
     overrides: Mapping[str, Any],
@@ -308,10 +317,7 @@ def _object_continuous_effects(
     has_all_colors_definition: bool,
     ignore_face_down: bool = False,
 ) -> list[ContinuousEffect]:
-    effects: list[ContinuousEffect] = []
-    copy_effect = _copy_effect(card, overrides)
-    if copy_effect is not None:
-        effects.append(copy_effect)
+    effects = _copy_layer_effects(card,overrides)
     face_down_values = card.annotations.get(MORPH_FACE_DOWN_ANNOTATION)
     if card.face_down and not ignore_face_down and face_down_values is not None:
         effects.append(
@@ -696,6 +702,7 @@ def evaluate_card_characteristics(
     )
     layered = bool(
         overrides
+        or card.permanent_composition is not None
         or added_types
         or added_subtypes
         or card.temporary_keywords

@@ -310,6 +310,10 @@ def reset_card_after_zone_change(
         )
         if destination=='stack':retained_annotation_keys.add('prepared_spell_copy')
     if stack_to_battlefield:
+        if card.is_token:
+            from .defined_token_faces import DEFINED_TOKEN_IDENTITY_FIELD
+            from .token_copy_value_model import TOKEN_COPY_VALUE_VERSION_FIELD
+            retained_annotation_keys.update({DEFINED_TOKEN_IDENTITY_FIELD,TOKEN_COPY_VALUE_VERSION_FIELD})
         retained_annotation_keys.update(
             {
                 "bestowed",

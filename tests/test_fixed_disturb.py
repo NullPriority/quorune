@@ -395,9 +395,10 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
                 self.assertEqual('battlefield', session.state.cards[source.object_id].zone)
                 self.replay(session, load=True)
 
-    def test_actual_token_back_copy_exiles_instead_of_dying(self):
+    def test_actual_token_back_copy_exiles_instead_of_dying(self, *, copy_value_version=1):
         from quorune.turn_history import current_turn_history_events
         session = self.session(70214608)
+        session.state.token_copy_value_version = copy_value_version
         engine = session.engine
         source = self.add(engine, 'Baithook Angler // Hook-Haunt Drifter', zone='graveyard', ref='disturb-token-source')
         copy = self.add(engine, 'Cackling Counterpart', zone='hand', ref='disturb-token-spell')
@@ -487,7 +488,8 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
             "Lantern Bearer // Lanterns' Lift", 'Beloved Beggar // Generous Soul',
             'Galedrifter // Waildrifter', 'Baithook Angler // Hook-Haunt Drifter',
             'Gutter Skulker // Gutter Shortcut', "Kindly Ancestor // Ancestor's Embrace",
-            'Chaplain of Alms // Chapel Shieldgeist',"Katilda, Dawnhart Martyr // Katilda's Rising Dawn"}
+            'Chaplain of Alms // Chapel Shieldgeist',"Katilda, Dawnhart Martyr // Katilda's Rising Dawn",
+            'Distracting Geist // Clever Distraction',"Dorothea, Vengeful Victim // Dorothea's Retribution"}
         for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if 'Disturb' not in raw['keywords']:
                 continue
@@ -508,6 +510,83 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
                     self.assertTrue(programs)
                     self.assertTrue(all(p.trust_level == 'trusted' for p in programs))
 
+    def advance_to(self, session, *, active, phase, step, decision=None):
+        for _ in range(160):
+            current=session.state.pending_decision
+            if (session.state.active_player,session.state.phase,session.state.step)==(active,phase,step) and (
+                    decision is None or current is not None and current.kind==decision):
+                return
+            self.assertIsNotNone(current)
+            command=({'action_id':'pass'} if current.kind=='priority' else
+                {'action_id':'attack','attackers':{}} if current.kind=='combat.attackers' else
+                {'action_id':'block','blocks':{}} if current.kind=='combat.blockers' else None)
+            self.assertIsNotNone(command,current.kind)
+            result=session.act(session.pending_principals()[0],command)
+            self.assertTrue(result.ok,result.summary)
+        self.fail('Disturb composition did not reach the expected combat boundary')
+
+    def test_original_disturb_granted_attack_belongs_to_recipient_controller_and_defender(self):
+        self.assert_original_disturb_granted_attack(token_result=False)
+
+    def test_original_dorothea_granted_attack_chooses_token_destination_and_cleans_up(self):
+        self.assert_original_disturb_granted_attack(token_result=True)
+
+    def assert_original_disturb_granted_attack(self, *, token_result):
+        # CR 303.4/603.3a/508: B controls the ability granted by A's Aura.
+        session=self.session(70214660+token_result)
+        name=("Dorothea, Vengeful Victim // Dorothea's Retribution" if token_result else
+            'Distracting Geist // Clever Distraction')
+        aura=self.add(session.engine,name,zone='graveyard',ref='disturb-granted-aura')
+        body=self.add(session.engine,'Generic Bound Body',seat='B',ref='disturb-granted-attacker')
+        defender=self.add(session.engine,'Generic Bound Body',seat='C',ref='disturb-actual-defender')
+        other=self.add(session.engine,'Generic Bound Body',seat='D',ref='disturb-other-defender')
+        private=self.add(session.engine,'Generic Bound Growth',seat='D',zone='hand',ref='disturb-granted-private')
+        self.assert_closed(session,aura)
+        self.prepare(session,mana={'C':4,'W':1,'U':1})
+        self.checkpoint(session)
+        self.disturb(session,aura,[body.ref]);self.resolve(session)
+        self.assertEqual(body.object_id,session.state.cards[aura.object_id].attached_to)
+        self.advance_to(session,active='B',phase='combat',step='declare_attackers',decision='combat.attackers')
+        result=session.act('pilot:B',{'action_id':'attack','attackers':{body.ref:'C'}})
+        self.assertTrue(result.ok,result.summary)
+        if token_result:
+            self.assertEqual('semantic.choice',self.resolve(session).kind)
+            self.assertEqual(['pilot:B'],session.pending_principals())
+            self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+            self.reject(session,'choose','A',attacking={'attacking:0':'D'})
+            self.reject(session,'choose','B',attacking={'attacking:0':'B'})
+            session=self.replay(session,load=True)
+            result=session.act('pilot:B',{'action_id':'choose','attacking':{'attacking:0':'D'}})
+            self.assertTrue(result.ok,result.summary);self.resolve(session)
+            token,=[card for card in session.state.cards.values() if card.is_token and card.zone=='battlefield']
+            self.assertEqual(('B','B',True,'D'),(token.owner,token.controller,token.tapped,token.attacking))
+            self.assertEqual((4,4),tuple(session.engine._numeric_stat(token.object_id,k) for k in ('power','toughness')))
+            self.assertIn('flying',session.engine._combat_keywords(token))
+            self.assertEqual('D',session.state.combat.attackers[token.object_id])
+            session=self.replay(session,load=True)
+        else:
+            self.assertEqual('semantic.target',self.resolve(session).kind)
+            self.assertEqual(['pilot:B'],session.pending_principals())
+            self.reject(session,'choose','A',targets=[defender.ref])
+            self.reject(session,'choose','B',targets=[other.ref])
+            self.assertFalse(session.state.cards[defender.object_id].tapped)
+            session=self.replay(session,load=True)
+            result=session.act('pilot:B',{'action_id':'choose','targets':[defender.ref]})
+            self.assertTrue(result.ok,result.summary);self.resolve(session)
+            self.assertTrue(session.state.cards[defender.object_id].tapped)
+            self.assertFalse(session.state.cards[other.object_id].tapped)
+        before=session.state.players['C'].life
+        other_before=session.state.players['D'].life
+        self.advance_to(session,active='B',phase='postcombat_main',step='main')
+        self.assertEqual(before-2,session.state.players['C'].life)
+        self.assertEqual(other_before-(4 if token_result else 0),session.state.players['D'].life)
+        if token_result:
+            self.assertEqual('outside',session.state.cards[token.object_id].zone)
+        self.assertEqual('battlefield',session.state.cards[aura.object_id].zone)
+        for viewer in 'ABC':
+            self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+viewer,full=True)))
+        self.replay(session,load=True)
+
     def test_omitted_current_source_replacement_keeps_admission_but_changes_counter_result(self):
         from quorune.semantic_runtime.zone_replacements import ZoneChangeReplacementRegistry
         original = ZoneChangeReplacementRegistry.subject_replacement_effects
@@ -526,7 +605,7 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
         self.assertIn("self.assertEqual('exile'", result.failures[0][1])
 
     def test_omitted_copied_face_provenance_is_detected_by_actual_token_departure(self):
-        from quorune import engine as engine_module
+        from quorune import ability_fragment_host as engine_module
         from quorune.entry_copy import COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD
         original = engine_module.copiable_card_characteristics
 
@@ -537,10 +616,27 @@ class FixedDisturbRuntimeTests(unittest.TestCase):
             return values
 
         with mock.patch.object(engine_module, 'copiable_card_characteristics', omitted):
-            # Provenance loss now fails the canonical prepared-move guard
-            # before a wrong graveyard transition can commit.
+            # Historical absence uses the old single-face snapshot path.
+            # Its provenance loss must fail before a wrong move can commit.
             with self.assertRaisesRegex(AssertionError, 'Prepared zone replacement does not match the proposed move'):
-                type(self)('test_actual_token_back_copy_exiles_instead_of_dying').test_actual_token_back_copy_exiles_instead_of_dying()
+                type(self)('test_actual_token_back_copy_exiles_instead_of_dying').test_actual_token_back_copy_exiles_instead_of_dying(copy_value_version=None)
+
+    def test_legacy_copy_value_absence_preserves_back_face_departure_and_replay(self):
+        self.test_actual_token_back_copy_exiles_instead_of_dying(copy_value_version=None)
+
+    def test_current_copy_keeps_physical_face_without_legacy_value_fields(self):
+        from quorune import ability_fragment_host as owner
+        from quorune.entry_copy import COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD
+        capture = owner.copiable_card_characteristics
+
+        def without_legacy_fields(*args):
+            values = dict(capture(*args))
+            values.pop(COPIABLE_ORACLE_FIELD, None)
+            values.pop(COPIABLE_FACE_FIELD, None)
+            return values
+
+        with mock.patch.object(owner, 'copiable_card_characteristics', without_legacy_fields):
+            self.test_actual_token_back_copy_exiles_instead_of_dying()
 
     def test_graveyard_target_prohibition_allows_disturb_and_preserves_back_exile(self):
         session = self.session(70214690)

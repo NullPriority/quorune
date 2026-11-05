@@ -89,6 +89,10 @@ def _resolve_attachment_reference(
 
 def _resolve_typed_semantic_value(host, value, item):
     """Delegate typed amounts and public predicates to their narrow owners."""
+    if value['kind']=='source_entry_x_amount':
+        from ..entry_x_amount_model import resolve_entry_x_amount
+        try:return resolve_entry_x_amount(value,item)
+        except (ValueError,TypeError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value['kind'] in {'source_entry_designation_predicate','source_entry_designation_scope'}:
         from ..designation_prevention import resolve_designation_predicate
         try:return resolve_designation_predicate(value,item)
@@ -110,6 +114,10 @@ def _resolve_typed_semantic_value(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get('op')=='schedule_fixed_object_action':
+        from ..delayed_object_actions import bind_delayed_object_instruction
+        try:return bind_delayed_object_instruction(host,value,item)
+        except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
     if value.get('op')=='create_token_then_counters':
         from ..created_token_counter_model import validate_created_token_counter
         try:validate_created_token_counter(value)
@@ -166,7 +174,7 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if isinstance(value, Mapping) and value.get("kind") == "source_attachment":
         return _resolve_attachment_reference(host, value, item)
-    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
+    if isinstance(value, Mapping) and value.get('kind') in (PUBLIC_QUERY_AMOUNT_KIND, CAST_X_AMOUNT_KIND, SCALAR_AMOUNT_KIND, 'source_entry_x_amount','selected_target_count', 'source_entry_designation_predicate','source_entry_designation_scope'):
         return _resolve_typed_semantic_value(host, value, item)
     if isinstance(value, dict):
         return _resolve_effect_mapping(host, value, item)
@@ -200,10 +208,10 @@ def resolve_semantic_value(
         ):
             return None
         return source.ref
-    if value in {'$event.entry_object','$event.counter_object','$event.permanent_object'}:
-        from ..event_counter_reference import resolve_entry_event_counter_recipient,resolve_event_counter_recipient
-        try:return (resolve_entry_event_counter_recipient if value=='$event.entry_object' else resolve_event_counter_recipient)(host,item)
-        except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+    from ..event_counter_reference import resolve_sealed_event_object_value
+    try:matched, reference = resolve_sealed_event_object_value(host, item, value)
+    except ValueError as exc:raise SemanticNodeError(str(exc)) from exc
+    if matched:return reference
     if value == "$source.transform_count":
         count = getattr(item, "context", {}).get("source_transform_count")
         if type(count) is not int or count < 0:

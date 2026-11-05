@@ -1,6 +1,7 @@
 import { expect, test, type Browser, type BrowserContext, type Locator, type Page, type TestInfo } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { startRoomGame } from "./support/startup";
 import {
   annotateJourneyMetrics,
   currentDecisionId,
@@ -10,6 +11,7 @@ import {
 } from "./support/progress";
 
 const COLD_DECK_VALIDATION_TIMEOUT_MS = 90_000;
+const COLD_FOUR_PLAYER_JOURNEY_TIMEOUT_MS = 180_000;
 
 async function enter(page: Page, name: string) {
   await page.goto("/");
@@ -80,7 +82,7 @@ async function startFourPlayerGame(browser: Browser): Promise<{ contexts: Browse
     await submitDeck(pages[index], seat, seat === "A" || seat === "C" ? zimone : mishra);
   }
   await expect(pages[0].getByTestId("start-game")).toBeEnabled();
-  await pages[0].getByTestId("start-game").click();
+  await startRoomGame(pages[0]);
   for (let index = 0; index < pages.length; index += 1) {
     const page = pages[index];
     await expect(page.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
@@ -467,7 +469,7 @@ test("@smoke @browser-lifecycle @reconnect @lifecycle four shared-cookie browser
   // This journey cold-validates four full decks, persists stop/resume and four
   // mulligan declarations, reloads shared-cookie tabs, and records metrics.
   // Hosted filesystems can complete every assertion near the suite default.
-  test.setTimeout(180_000);
+  test.setTimeout(COLD_FOUR_PLAYER_JOURNEY_TIMEOUT_MS);
   const contexts: BrowserContext[] = [];
   const pages: Page[] = [];
   try {
@@ -518,7 +520,31 @@ test("@smoke @browser-lifecycle @reconnect @lifecycle four shared-cookie browser
     await submitDeck(pages[0], "A", zimone);
 
     await expect(pages[0].getByTestId("start-game")).toBeEnabled();
-    await pages[0].getByTestId("start-game").click();
+    // Hold the accepted response without sleeping. A click-only startup helper
+    // must not report completion before this exact request's receipt arrives.
+    let accepted!: () => void;
+    let deliver!: () => void;
+    let delivered!: () => void;
+    const acceptedAtServer = new Promise<void>((resolve) => { accepted = resolve; });
+    const releaseResponse = new Promise<void>((resolve) => { deliver = resolve; });
+    const responseDelivered = new Promise<void>((resolve) => { delivered = resolve; });
+    const startEndpoint = "**/api/v1/rooms/*/start";
+    await pages[0].route(startEndpoint, async (route) => {
+      const response = await route.fetch();
+      accepted();
+      await releaseResponse;
+      await route.fulfill({ response });
+      delivered();
+    });
+    let startupFinished = false;
+    const startup = startRoomGame(pages[0]).then(() => { startupFinished = true; });
+    await acceptedAtServer;
+    const finishedBeforeReceipt = startupFinished;
+    deliver();
+    await responseDelivered;
+    await startup;
+    await pages[0].unroute(startEndpoint);
+    expect(finishedBeforeReceipt).toBe(false);
     for (let index = 0; index < pages.length; index += 1) {
       const page = pages[index];
       await expect(page.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
@@ -728,7 +754,7 @@ test("@browser-lifecycle a shared-cookie 1v1 lobby can replace rooms, remove a p
     await submitDeck(opponent, "B", mishra);
     await expect(host.getByTestId("start-game")).toHaveText("Start duel");
     await expect(host.getByTestId("start-game")).toBeEnabled();
-    await host.getByTestId("start-game").click();
+    await startRoomGame(host);
     await expect(host.getByText("COMMANDER DUEL")).toBeVisible();
     await expect(opponent.getByText("COMMANDER DUEL")).toBeVisible();
     await expect(host.getByTestId("own-hand").locator(".hand-card")).toHaveCount(7);
@@ -844,7 +870,7 @@ test("@browser-rules @turn-draw an isolated-context duel presents exact turn sta
     await opponent.getByTestId("join-room").click();
     await submitNamedDeck(host, "Spire Garden timing", "Saskia the Unyielding", browserSpireGardenDeck);
     await submitNamedDeck(opponent, "Turn-state defender", "Yargle and Multani", browserNaturalWinnerDeck);
-    await host.getByTestId("start-game").click();
+    await startRoomGame(host);
 
     await ensureFullControl(host);
     await ensureFullControl(opponent);
@@ -999,7 +1025,7 @@ test("@browser-rules @mana-action a duel stabilizes land ETBs, permits a stack r
 
     await submitNamedDeck(host, "Trigger regression", "Mishra, Eminent One", browserTriggerDeck);
     await submitNamedDeck(opponent, "Response regression", "Zimone and Dina", browserResponseDeck);
-    await host.getByTestId("start-game").click();
+    await startRoomGame(host);
     await submitImmediateAction(host, "keep");
     await submitImmediateAction(opponent, "keep");
 
@@ -1154,7 +1180,7 @@ test("@browser-rules @combat a duel declares an attacker in the browser and appl
     await opponent.getByTestId("join-room").click();
     await submitNamedDeck(host, "Combat attacker", "Zimone and Dina", browserCombatDeck);
     await submitNamedDeck(opponent, "Combat defender", "Mishra, Eminent One", browserCombatDefenderDeck);
-    await host.getByTestId("start-game").click();
+    await startRoomGame(host);
     await submitImmediateAction(host, "keep");
     await submitImmediateAction(opponent, "keep");
 
@@ -1295,7 +1321,7 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
     await opponent.getByTestId("join-room").click();
     await submitNamedDeck(host, "Natural winner A", "Yargle and Multani", browserNaturalWinnerDeck);
     await submitNamedDeck(opponent, "Natural winner B", "Yargle and Multani", browserNaturalWinnerDeck);
-    await host.getByTestId("start-game").click();
+    await startRoomGame(host);
     await submitImmediateAction(host, "keep");
     await submitImmediateAction(opponent, "keep");
 
@@ -1548,6 +1574,9 @@ test("@browser-soak @natural-winner @persistence a trusted browser duel reaches 
 });
 
 test("@browser-lifecycle generic private choice form executes a penalized multiplayer mulligan", async ({ browser }, testInfo) => {
+  // Four-deck startup and repeated private choices share the same bounded
+  // cold-journey budget as the shared-cookie lifecycle witness.
+  test.setTimeout(COLD_FOUR_PLAYER_JOURNEY_TIMEOUT_MS);
   let contexts: BrowserContext[] = [];
   let metricsPages: Page[] = [];
   try {

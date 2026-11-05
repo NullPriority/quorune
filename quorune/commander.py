@@ -8,6 +8,7 @@ from typing import Any, Mapping, Protocol
 from .carddb import CardDatabase
 from .commander_pairing import validated_commander_counts
 from .deck import DeckDefinition
+from .commander_damage_identity_model import PhysicalCommanderDamageIdentity,PhysicalCommanderDamageIdentities
 from .model import (
     CONTROL_HISTORY_VERSION,
     CardInstance,
@@ -99,6 +100,43 @@ def commander_damage_key(
     return designation
 
 
+def commander_damage_keys(*,source_is_commander,designation_id,oracle_id,identity_version,physical_identities=None):
+    """Map one source to each physical ledger without multiplying damage."""
+    if physical_identities is None:
+        key=commander_damage_key(source_is_commander=source_is_commander,designation_id=designation_id,
+            oracle_id=oracle_id,identity_version=identity_version)
+        return () if key is None else (key,)
+    if not isinstance(physical_identities,PhysicalCommanderDamageIdentities):
+        raise CommanderIdentityError('Physical commander source identities must be typed')
+    try:physical_identities.validate_source(is_commander=source_is_commander,
+        designation_id=designation_id,oracle_id=oracle_id)
+    except ValueError as exc:raise CommanderIdentityError(str(exc)) from exc
+    return tuple(sorted({commander_damage_key(source_is_commander=True,designation_id=value.designation_id,
+        oracle_id=value.oracle_id,identity_version=identity_version) for value in physical_identities.commanders}))
+
+
+def _composed_commander_cards(card):
+    storage=getattr(card,'permanent_composition',None)
+    if storage is None:return None
+    storage.validate_carrier(card)
+    result=[]
+    for component,part in zip(storage.topology.components,storage.parts):
+        raw=part.card_state;designation=component.commander_designation_id
+        if (raw.get('commander_designation_id')!=designation
+                or raw['is_commander']!=(designation is not None)):
+            raise CommanderIdentityError('Stored commander designation contradicts its physical card')
+        if designation is not None:result.append(raw)
+    return tuple(result)
+
+
+def physical_commander_damage_identities(card):
+    """Read merged physical cards without assigning a designation to the root."""
+    cards=_composed_commander_cards(card)
+    if not cards:return None
+    return PhysicalCommanderDamageIdentities(tuple(PhysicalCommanderDamageIdentity(
+        raw['commander_designation_id'],raw['oracle_id']) for raw in cards))
+
+
 def commander_damage_source(
     state: CommanderStateView,
     damage_key: str,
@@ -109,6 +147,14 @@ def commander_damage_source(
     legacy = state.commander_damage_identity_version is None
     for card in state.cards.values():
         if not card.is_commander:
+            continue
+        physical=_composed_commander_cards(card)
+        if physical is not None:
+            for raw in physical:
+                candidate=raw['oracle_id'] if legacy else raw['commander_designation_id']
+                if candidate==key:
+                    return CommanderDamageSource(key,raw['commander_designation_id'],raw['oracle_id'],
+                        raw['printed_name'],raw['owner'],legacy)
             continue
         candidate = card.oracle_id if legacy else card.commander_designation_id
         if candidate != key:
@@ -270,7 +316,7 @@ def initial_commander_state(
         control_history_version=CONTROL_HISTORY_VERSION,
         tap_state_event_version=1,
         turn_history=TurnHistory(departure_history_version=1,arrival_history_version=1,mill_history_version=1,
-            spell_origin_history_version=1,graveyard_type_history_version=1,spell_mana_history_version=1),
+            spell_origin_history_version=1,graveyard_type_history_version=1,spell_mana_history_version=1,crime_history_version=1),
         active_player=None,
         phase="setup",
         step="mulligan",

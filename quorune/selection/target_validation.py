@@ -14,7 +14,7 @@ def _cost_representatives(host, plan, candidates, eligible_sets, required, extra
     """Keep enough interchangeable references for all structural relations."""
     limit = sum(group.min_targets for group in plan.groups) + extra_targets + 1
     owner_matters = any(group.same_owner for group in plan.groups)
-    controller_matters = bool(plan.same_player_groups)
+    controller_matters = bool(plan.same_player_groups) or any(group.distinct_controllers for group in plan.groups)
     signatures = {}
     for ref in dict.fromkeys(ref for refs in candidates.values() for ref in refs):
         snapshot = host._target_snapshot(ref) if owner_matters or controller_matters else {}
@@ -87,6 +87,30 @@ class TargetSnapshotQuery(Protocol):
     def _target_snapshot(self, ref: str) -> Mapping[str, Any]: ...
 
 
+def target_controller_matches_snapshot(host,group,ref,snapshot):
+    if not group.retain_controller:return True
+    controller=snapshot.get('controller')
+    return type(controller)is str and bool(controller) and host._target_snapshot(ref).get('controller')==controller
+
+
+def _distinct_target_controllers(host,group,chosen,copy_targets):
+    if not group.distinct_controllers:return
+    retained=copy_targets.retained_groups.get(group.group_id,()) if copy_targets is not None else ()
+    if copy_targets is not None and all(ref in retained for ref in chosen):return
+    controllers=[]
+    for ref in chosen:
+        current=host._target_snapshot(ref)
+        if ref in retained:
+            original=copy_targets.retained_snapshots[ref]
+            identity=('object_id','zone_change_counter')
+            if not all(key in original and current.get(key)==original[key] for key in identity):continue
+        controller=current.get('controller')
+        if type(controller)is not str or not controller:raise GameRuleError('Target controller relation is unavailable')
+        controllers.append(controller)
+    if len(controllers)!=len(set(controllers)):
+        raise GameRuleError('Selected permanents must have distinct controllers')
+
+
 @dataclass(frozen=True, slots=True)
 class CopyTargetValidation:
     """Facts captured from the original stack object, never client exemptions."""
@@ -143,6 +167,7 @@ def validate_grouped_target_assignment(
             legal.update(copy_targets.retained_groups.get(group.group_id, ()))
         if any(ref not in legal for ref in chosen):
             raise GameRuleError("Selected target is not legal for this target group")
+        _distinct_target_controllers(host,group,chosen,copy_targets)
         if group.same_owner and chosen:
             owners = [snapshot(ref).get("owner") for ref in chosen]
             if any(type(owner) is not str or not owner for owner in owners) or len(set(owners)) != 1:

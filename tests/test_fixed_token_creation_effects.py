@@ -199,9 +199,11 @@ class AdditionalPredefinedTokenCompilerTests(unittest.TestCase):
         frontier = analyze_card_unlocks(ir, program=program, program_error=None,
             capabilities=registry, profile='commander_review')
         self.assertEqual('residual', frontier['card_program_status'])
-        self.assertTrue({'replacement:replacement-applicability',
-                         'replacement:self-replacement-and-prevention-ordering'}
-                        <= set(frontier['minimum_known_blocker_set']))
+        # Squad is a repeating additional cost plus an entry copy trigger, not
+        # a replacement effect. Its actual printed keyword remains material.
+        self.assertTrue(any(residual.kind == 'static_ability'
+                            and residual.text.startswith('Squad ')
+                            for residual in ir.material_residuals))
         binding = bind_card_program_runtime(program, capability_registry=registry, profile='commander_review')
         self.assertFalse(binding['strict_capability_ready'])
         self.assertFalse(binding['compatible_ready'])
@@ -406,7 +408,7 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
             "Create X 1/1 green Saproling creature tokens.",
             "Create a token that's a copy of the chosen creature you control.",
             "Create an Unrepresented Role token attached to target creature you control.",
-            "Create two 1/1 white Soldier creature tokens that are tapped and attacking.",
+            "Create two 1/1 white Soldier creature tokens blocking target attacking creature.",
             "Create a 1/1 blue and red Otter creature token with prowess 2.",
             "Create a 3/3 colorless Golem artifact artifact creature token.",
             "Create 0 1/1 green Saproling creature tokens.",
@@ -426,6 +428,28 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_tapped_attacking_token_batch_has_complete_normal_admission(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        text = "Create two 1/1 white Soldier creature tokens that are tapped and attacking."
+        template = fixed_token_creation_effect_template(text)
+        self.assertIsNotNone(template)
+        self.assertEqual("choose_fixed_attacking_token_destinations", template.effect["op"])
+        self.assertEqual(2, template.effect["quantity"])
+        self.assertTrue(template.effect["tapped"])
+        record = token_record("Generic Attacking Soldier Batch", text, 470009)
+        ir = compile_oracle_card(record, capability_registry=self.capabilities,
+                                 capability_profile="commander_review")
+        self.assertEqual("exact", ir.status)
+        program = compile_best_available_card_program(
+            self.db, record, semantic_registry=SemanticRegistry(),
+            capability_registry=self.capabilities, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.capabilities,
+                                            profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
 
     def test_explicit_token_ability_compiles_as_source_pinned_typed_program(self):
         record = token_record(
@@ -711,7 +735,7 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
                     {program.trust_level for program in programs},
                 )
 
-        partial = {"Devouring Sugarmaw // Have for Dinner": "trigger"}
+        partial = {"Devouring Sugarmaw // Have for Dinner": "trigger_effect"}
         for name, residual_kind in partial.items():
             with self.subTest(name=name):
                 ir = compile_oracle_card(

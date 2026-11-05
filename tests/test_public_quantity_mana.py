@@ -87,8 +87,10 @@ class PublicQuantityManaCompilerTests(unittest.TestCase):
         for mutation in ({'schema_version':True},{'colors':['G','G']},{'selection':'arbitrary'},{'extra':0}):
             with self.subTest(mutation=mutation),self.assertRaises(ValueError):
                 PublicQuantityManaOutput.from_dict({**output,**mutation})
+        promoted='Add X mana in any combination of colors, where X is the number of creatures you control.'
+        self.assertEqual('exact',compile_oracle_card(replace(query_record(promoted),type_line='Sorcery'),capability_registry=load_default_capability_registry()).status)
         for text in ('Add {R} for each creature you control. You win the game.',
-                     'Add X mana in any combination of colors, where X is the number of creatures you control.'):
+                     'Add X mana in any combination of colors, where X is the remembered number.'):
             ir=compile_oracle_card(replace(query_record(text),type_line='Sorcery'),capability_registry=load_default_capability_registry())
             self.assertNotEqual('exact',ir.status)
 
@@ -107,6 +109,9 @@ class PublicQuantityManaCompilerTests(unittest.TestCase):
             for handler in node.handlers))
 
     def test_quantity_mana_missing_producer_and_handler_dependencies_fail_closed(self):
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from scripts.update_capability_evidence import build_index,discover_tests
         source=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         for cap in ('mana.production.public_quantity','quantity_expression.public_query_effect_amount',
                     'quantity_expression.scalar_effect_amount','activation.tap_untap_cost.haste'):
@@ -114,7 +119,11 @@ class PublicQuantityManaCompilerTests(unittest.TestCase):
             if cap != 'mana.production.public_quantity':
                 with self.assertRaises(CapabilityRegistryError):CapabilityRegistry(value)
                 continue
+            value=json.loads(json.dumps(source))
+            next(row for row in value['capabilities'] if row['id']==cap).update(status='blocked',blockers=['Public quantity mana owner withdrawn'])
             registry=CapabilityRegistry(value)
+            index=build_index(registry_value=value,declaration_source=read_evidence_document(ROOT/'platform/capability-evidence-declarations.json'),discovered_test_ids=set(discover_tests(ROOT).values()))
+            registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
             card=replace(query_record('{T}: Add {G} for each creature you control.'),type_line='Artifact')
             ir=compile_oracle_card(card,capability_registry=registry,capability_profile='commander_review')
             self.assertNotEqual('exact',ir.status)

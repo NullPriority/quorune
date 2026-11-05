@@ -63,13 +63,17 @@ class FaceDownCopyNativeTests(unittest.TestCase):
     def test_actual_morph_spell_copy_exposes_only_anonymous_status_values_to_opponents(self):
         self._morph_copy_journey(current=True)
 
+    def test_published_face_down_mode_preserves_privacy_without_general_copy_mode(self):
+        self._morph_copy_journey(current=True,copy_mode=None)
+
     def test_historical_absence_preserves_the_original_copy_representation_and_replay(self):
         self._morph_copy_journey(current=False)
 
-    def _morph_copy_journey(self,*,current):
+    def _morph_copy_journey(self,*,current,copy_mode=1):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
         from quorune.record import authoritative_state_hash
         session=H.session(self,70802701);engine=session.engine
+        engine.state.token_copy_value_version=copy_mode
         if not current:engine.state.face_down_characteristics_version=None
         observer=H.add(self,engine,'Generic Face Down Copy Observer',zone='hand',ref='OBSERVER')
         source=H.add(self,engine,'Lumithread Field',zone='hand',ref='HIDDEN_SOURCE')
@@ -112,9 +116,16 @@ class FaceDownCopyNativeTests(unittest.TestCase):
         H.replay(self,session,load=True)
 
     def test_actual_face_down_token_copy_keeps_listed_ward_and_pays_its_real_tax(self):
+        self._face_down_token_copy_journey()
+
+    def test_published_face_down_token_copy_keeps_ward_without_general_copy_mode(self):
+        self._face_down_token_copy_journey(copy_mode=None)
+
+    def _face_down_token_copy_journey(self,*,copy_mode=1):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
         from quorune.record import authoritative_state_hash
         session=H.session(self,70802703);engine=session.engine
+        engine.state.token_copy_value_version=copy_mode
         source=H.add(self,engine,'Defenestrated Phantom',zone='hand',ref='DISGUISE_SOURCE')
         copy_spell=H.add(self,engine,'Cackling Counterpart',zone='hand',ref='FD_PERMANENT_COPY')
         frog=H.add(self,engine,'Turn to Frog',seat='B',zone='hand',ref='WARD_TARGETING_SPELL')

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from .token_creation_intents import execute_token_creation_intent
 from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.control_intents import GainControlIntent, GainControlSetIntent
 from ..semantic_runtime.connive_intent import ConniveCompletedIntent
@@ -404,45 +405,8 @@ class SemanticChoiceIntentHostMixin:
         )
 
     def complete_explore_intent(self, intent: ExploreCompletedIntent) -> None:
-        explorer = next(
-            (
-                card
-                for card in self.state.cards.values()
-                if card.ref == intent.explorer_ref
-            ),
-            None,
-        )
-        changed_objects = (
-            [explorer.object_id]
-            if explorer is not None
-            and explorer.logical_object_id
-            == intent.explorer_logical_object_id
-            else []
-        )
-        details = {
-            "player": intent.player,
-            "explorer": intent.explorer_ref,
-            "explorer_logical_object_id": (
-                intent.explorer_logical_object_id
-            ),
-            "result": intent.result,
-            "reason": intent.reason,
-        }
-        if intent.revealed_card_ref is not None:
-            details["revealed_card"] = intent.revealed_card_ref
-        self._log(
-            intent.actor,
-            "explore.complete",
-            f"{intent.explorer_ref} explored for {intent.player}.",
-            details,
-            importance=2,
-            changed_objects=changed_objects,
-            changed_players=[intent.player],
-        )
-        self._dispatch_semantic_event(
-            "permanent.explores",
-            details,
-        )
+        from ..semantic_runtime.explore import commit_explore_completion
+        commit_explore_completion(self, intent)
 
     def complete_connive_intent(self, intent: ConniveCompletedIntent) -> None:
         retained = intent.conniver
@@ -564,30 +528,8 @@ class SemanticChoiceIntentHostMixin:
         self,
         intent: MoveObjectsSimultaneouslyIntent,
     ) -> tuple[str, ...]:
-        cards = tuple(
-            self._resolve_object(
-                intent.actor,
-                ref,
-                zones=set(intent.expected_zones),
-                owned_only=intent.owned_only,
-                controlled_only=intent.controlled_only,
-            )
-            for ref in intent.object_refs
-        )
-        self._move_cards_simultaneously(
-            [
-                (card.object_id, intent.destination)
-                for card in cards
-            ],
-            reason=intent.reason,
-            log=False,
-            replacement_selections=intent.replacement_selections,
-            transition_kinds={
-                card.object_id: intent.transition_kind
-                for card in cards
-            },
-        )
-        return tuple(card.ref for card in cards)
+        from .simultaneous_movement import commit_simultaneous_movement
+        return commit_simultaneous_movement(self,intent)
 
     def choose_one_rest_bottom_random_intent(
         self,
@@ -1074,6 +1016,7 @@ class SemanticChoiceIntentHostMixin:
                     object_id=card.object_id,
                     expected_zone="battlefield",
                     expected_logical_object_id=card.logical_object_id,
+                    counter_name=intent.counter_name,
                 ),
             )
         except CounterRemovalError as exc:
@@ -1253,94 +1196,7 @@ class SemanticChoiceIntentHostMixin:
         self,
         intent: CreateTokenIntent,
     ) -> tuple[str, ...]:
-        created_refs = tuple(
-            self.create_token(
-                intent.controller,
-                name=intent.name,
-                quantity=intent.quantity,
-                copy_of=intent.copy_of,
-                copy_snapshot=(
-                    thaw_value(intent.copy_snapshot)
-                    if intent.copy_snapshot is not None
-                    else None
-                ),
-                characteristics=thaw_value(intent.characteristics),
-                temporary_keywords=intent.temporary_keywords,
-                tapped=intent.tapped,
-                attacking=(
-                    intent.attacking_assignments
-                    if intent.attacking_assignments
-                    else None
-                ),
-                attacking_groups=intent.attacking_groups,
-                reason=intent.reason,
-                replacement_selections=intent.replacement_selections,
-            )
-        )
-        if not (
-            intent.sacrifice_at_end_step
-            or intent.sacrifice_on_controller_end_step
-            or intent.exile_at_end_of_combat
-        ):
-            return created_refs
-        for created_ref in created_refs:
-            created = self._resolve_object(
-                intent.actor,
-                created_ref,
-                zones={"battlefield"},
-                controlled_only=True,
-            )
-            condition: dict[str, Any] = (
-                {"phase": "combat", "step": "end_combat"}
-                if intent.exile_at_end_of_combat
-                else {"phase": "ending", "step": "end_step"}
-            )
-            if intent.sacrifice_on_controller_end_step:
-                condition["player"] = "controller"
-            schedule_delayed_trigger(
-                self,
-                controller=intent.controller,
-                label=(
-                    f"Exile {created.ref}"
-                    if intent.exile_at_end_of_combat
-                    else f"Sacrifice {created.ref}"
-                ),
-                event_kind="step.begin",
-                condition=condition,
-                stack_template={
-                    "label": (
-                        f"Myriad — exile {created.ref}"
-                        if intent.exile_at_end_of_combat
-                        else f"Sacrifice {created.ref}"
-                    ),
-                    **(
-                        {
-                            "context": {
-                                "dynamic_effects": [
-                                    {
-                                        "op": "move_if_in_zone",
-                                        "card": created.ref,
-                                        "from": "battlefield",
-                                        "destination": "exile",
-                                        "expected_zone_change_counter": (
-                                            created.zone_change_counter
-                                        ),
-                                        "expected_object_identity": (
-                                            created.logical_object_id
-                                        ),
-                                    }
-                                ]
-                            }
-                        }
-                        if intent.exile_at_end_of_combat
-                        else {"semantic_key": "builtin:sacrifice-source"}
-                    ),
-                },
-                source_object_id=created.object_id,
-                referred_object_ids=(created.object_id,),
-                once=True,
-            )
-        return created_refs
+        return execute_token_creation_intent(self, intent)
 
     def copy_controlled_tokens_intent(
         self,

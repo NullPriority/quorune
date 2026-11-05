@@ -7,6 +7,7 @@ import re
 
 from .commander_pairing_nodes import partner_with_keyword_nodes
 from .madness_nodes import madness_keyword_nodes
+from .miracle_nodes import miracle_keyword_nodes
 from .prototype_nodes import prototype_keyword_node
 from .enlist_nodes import enlist_keyword_node,enlist_reflexive_node
 from .cycling_nodes import typecycling_keyword_node
@@ -60,7 +61,7 @@ def multi_keyword_nodes(**values: Any):
     if enlist is not None:return (enlist,enlist_reflexive_node(**values))
     prototype=prototype_keyword_node(**values)
     if prototype is not None:return (prototype,)
-    for compiler in (partner_with_keyword_nodes, madness_keyword_nodes):
+    for compiler in (partner_with_keyword_nodes, madness_keyword_nodes, miracle_keyword_nodes):
         nodes = compiler(**values)
         if nodes is not None:
             return nodes

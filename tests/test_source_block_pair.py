@@ -152,7 +152,11 @@ class SourceBlockPairGrammarTests(unittest.TestCase):
         binding = fixed_public_multi_event_binding_spec('Whenever this creature blocks or becomes blocked, ' + body, card_name='Generic Source')
         self.assertIsNotNone(binding)
         self.assertEqual('source_blocks_or_becomes_blocked', binding.variant)
-        for prefix in ('Whenever this creature blocks or becomes blocked by a creature, ',
-                       'Whenever this creature blocks or becomes blocked by one or more Orcs, ',
+        paired=fixed_public_multi_event_binding_spec('Whenever this creature blocks or becomes blocked by a creature, '+body,card_name='Generic Source')
+        self.assertIsNotNone(paired)
+        self.assertEqual('source_block_pair_counterpart',paired.variant)
+        self.assertEqual({'creature.blocks','creature.becomes_blocked_by'},
+            {subscription['event'] for subscription in paired.condition['event_subscriptions']})
+        for prefix in ('Whenever this creature blocks or becomes blocked by one or more Orcs, ',
                        'Whenever another creature blocks or becomes blocked, '):
             self.assertIsNone(fixed_public_multi_event_binding_spec(prefix + body, card_name='Generic Source'))

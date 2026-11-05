@@ -46,8 +46,8 @@
     {
       "mechanic_id": "bargain",
       "path": "mechanics/contracts/bargain.json",
-      "sha256": "eab15878341a003add5296262ddb923a0f6f6647246a34eb7e4b9a231f715c11",
-      "version": 1
+      "sha256": "b515f4c6d93eea2478840b876fdc085d6fc1708e306a0dca480c8ea0055157bb",
+      "version": 2
     },
     {
       "mechanic_id": "cr-122-counters",
@@ -1221,18 +1221,18 @@
     {
       "category": "additional_rules",
       "contract_path": "mechanics/contracts/bargain.json",
-      "contract_sha256": "eab15878341a003add5296262ddb923a0f6f6647246a34eb7e4b9a231f715c11",
-      "contract_version": 1,
+      "contract_sha256": "b515f4c6d93eea2478840b876fdc085d6fc1708e306a0dca480c8ea0055157bb",
+      "contract_version": 2,
       "coverage_status": "tested",
       "dependencies": [
         "702"
       ],
       "implementation_component": "FixedBargainSpec, DeclaredCastCostFacts, schema-five ordinary zone-cost union, linked ordinary condition/entry owners",
-      "implementation_version": "linked-bargain-v1",
+      "implementation_version": "linked-bargain-v2",
       "kind": "keyword_ability",
       "known_blockers": [
         "unrepresented conditional announcement targets",
-        "conditional discounts",
+        "variable or colored Bargain discounts",
         "other unrepresented linked bodies",
         "multiple/granted instances and mixed consuming prices",
         "unrepresented source layouts",
@@ -1260,7 +1260,13 @@
         "test_actual_hellkite_bargain_mana_funds_real_activation_and_immediate_haste_attack",
         "test_actual_diminisher_witch_creates_controlled_cursed_role_on_opponent_creature",
         "test_actual_candy_grapple_bargained_copy_retains_choice_and_unpaid_spell_uses_normal_branch",
-        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs"
+        "test_actual_archons_glory_paid_keywords_add_to_buff_and_unpaid_result_still_buffs",
+        "test_original_hamlet_paid_cast_uses_reduced_offer_and_preserves_colored_price",
+        "test_original_ice_out_zero_generic_still_pays_blue_and_counters_actual_spell",
+        "test_original_stopgap_reduced_cast_returns_nonland_then_draws",
+        "test_original_hamlet_unpaid_cast_keeps_price_and_insufficient_colored_mana_is_not_offered",
+        "test_declared_discount_codec_and_dependencies_fail_closed",
+        "test_linked_generic_discount_keeps_source_span_and_excludes_unlinked_grammar"
       ],
       "trust_level": "untrusted"
     },

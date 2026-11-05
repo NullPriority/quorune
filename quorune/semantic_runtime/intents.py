@@ -14,6 +14,7 @@ from .zone_move_intent import ZoneMoveIntent, _freeze_replacement_selections
 from .counter_movement_intent import MoveCountersIntent
 from .connive_intent import ConniveCompletedIntent
 from .ring_intent import BeginRingTemptationIntent, CompleteRingBearerIntent
+from .creation_intents import CreateCompiledEmblemIntent, CreateRegenerationShieldIntent
 from .champion_intent import ChampionExileIntent, ReturnLinkedAbilityExileIntent
 from .energy_payment import PayEnergyIntent
 from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
@@ -22,7 +23,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
 
 from ..affected_permanents import AffectedPermanentSetSpec
-from ..public_zone_moves import PublicZoneMoveSetSpec
+from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..impulse_access_model import ImpulseAccessDuration
@@ -37,8 +38,11 @@ from ..zone_object_keyword_model import (
     normalized_zone_object_keyword,
 )
 from ..zone_trigger_events import ZoneTransitionKind
+from .composition_intent import CompositionIntent,ResumeCompositionOrderIntent
 from .context import SemanticSourceContext
 from .madness_intent import MadnessChoiceIntent
+from .miracle_intent import MiracleCastChoiceIntent
+from ..discover_model import DiscoverCastIntent,DiscoverCleanupIntent
 
 
 _EXPLORE_LABEL = "Explore"
@@ -176,31 +180,6 @@ class UntapAllCreaturesIntent:
     reason: str
 
 
-@dataclass(frozen=True, slots=True)
-class CreateRegenerationShieldIntent:
-    actor: str
-    object_ref: str
-    logical_object_id: str | None
-    reason: str
-
-    def __post_init__(self) -> None:
-        if any(
-            type(value) is not str or not value
-            for value in (
-                self.actor,
-                self.object_ref,
-                self.reason,
-            )
-        ) or (
-            self.logical_object_id is not None
-            and (
-                type(self.logical_object_id) is not str
-                or not self.logical_object_id
-            )
-        ):
-            raise ValueError(
-                "Regeneration intents require actor, object, optional incarnation, and reason"
-            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -626,6 +605,7 @@ class ExploreCompletedIntent:
     ]
     reason: str
     revealed_card_ref: str | None = None
+    explorer_types: tuple[str, ...] | None = None
 
     def __post_init__(self) -> None:
         for label, value in (
@@ -646,6 +626,13 @@ class ExploreCompletedIntent:
             raise ValueError(
                 "Explore revealed-card reference must be nonempty or null"
             )
+        if self.explorer_types is not None and (
+            type(self.explorer_types) is not tuple
+            or any(type(value) is not str or not value or value != value.casefold()
+                   for value in self.explorer_types)
+            or len(set(self.explorer_types)) != len(self.explorer_types)
+        ):
+            raise ValueError('Explore completion types require immutable canonical terms or unavailable')
 
 
 @dataclass(frozen=True, slots=True)
@@ -659,6 +646,8 @@ class MoveObjectsSimultaneouslyIntent:
     owned_only: bool = False
     controlled_only: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    battlefield_controller: PublicBattlefieldController | None = None
+    battlefield_tapped: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -681,6 +670,10 @@ class MoveObjectsSimultaneouslyIntent:
             or not isinstance(self.transition_kind, ZoneTransitionKind)
             or type(self.owned_only) is not bool
             or type(self.controlled_only) is not bool
+            or type(self.battlefield_tapped) is not bool
+            or self.battlefield_controller is not None and (
+                not isinstance(self.battlefield_controller,PublicBattlefieldController) or self.destination!='battlefield')
+            or self.battlefield_controller is None and self.battlefield_tapped
         ):
             raise ValueError("Simultaneous object-move intent is malformed")
         object.__setattr__(self, "object_refs", tuple(self.object_refs))
@@ -999,6 +992,7 @@ class RemoveAllCountersIntent:
     object_ref: str
     reason: str
     source_ref: str | None = None
+    counter_name: str | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -1014,6 +1008,10 @@ class RemoveAllCountersIntent:
             raise ValueError(
                 "All-counter removal intent source must be a nonempty reference"
             )
+        if self.counter_name is not None:
+            from ..counter_names import normalized_counter_name
+            if type(self.counter_name) is not str or normalized_counter_name(self.counter_name) != self.counter_name:
+                raise ValueError('Named-kind removal intent requires a canonical counter name')
 
 
 @dataclass(frozen=True, slots=True)
@@ -1299,95 +1297,7 @@ class RetargetStackItemIntent:
             )
 
 
-@dataclass(frozen=True, slots=True)
-class CreateTokenIntent:
-    actor: str
-    controller: str
-    name: str
-    quantity: int
-    reason: str
-    characteristics: FrozenMap = field(default_factory=FrozenMap)
-    copy_of: str | None = None
-    copy_snapshot: FrozenMap | None = None
-    temporary_keywords: tuple[str, ...] = ()
-    tapped: bool = False
-    attacking_assignments: tuple[str, ...] = ()
-    attacking_groups: tuple[str, ...] = ()
-    sacrifice_at_end_step: bool = False
-    sacrifice_on_controller_end_step: bool = False
-    exile_at_end_of_combat: bool = False
-    replacement_selections: tuple[str | FrozenMap, ...] = ()
-
-    def __post_init__(self) -> None:
-        if any(
-            type(value) is not str or not value
-            for value in (self.actor, self.controller, self.reason)
-        ):
-            raise ValueError(
-                "Token-creation intents require actor, controller, and reason"
-            )
-        if type(self.quantity) is not int or self.quantity < 0:
-            raise ValueError("Token-creation quantity must be nonnegative")
-        if self.copy_of is not None and (
-            type(self.copy_of) is not str or not self.copy_of
-        ):
-            raise ValueError("Token-copy source must be nonempty or null")
-        if self.copy_snapshot is not None:
-            if self.copy_of is None:
-                raise ValueError("A token copy snapshot requires a copy source")
-            if not isinstance(self.copy_snapshot, FrozenMap):
-                if not isinstance(self.copy_snapshot, Mapping):
-                    raise ValueError("Token copy snapshot must be an object")
-                object.__setattr__(
-                    self, "copy_snapshot", FrozenMap(self.copy_snapshot)
-                )
-        if type(self.name) is not str or not (self.name or self.copy_of):
-            raise ValueError("Token creation requires a name or copy source")
-        keywords = tuple(self.temporary_keywords)
-        if (
-            any(type(value) is not str or not value for value in keywords)
-            or len(keywords) != len(set(keywords))
-        ):
-            raise ValueError(
-                "Temporary token keywords must be unique nonempty strings"
-            )
-        if (
-            type(self.sacrifice_at_end_step) is not bool
-            or type(self.sacrifice_on_controller_end_step) is not bool
-            or type(self.exile_at_end_of_combat) is not bool
-            or type(self.tapped) is not bool
-        ):
-            raise ValueError("Token sacrifice flags must be booleans")
-        assignments = tuple(self.attacking_assignments)
-        groups = tuple(self.attacking_groups)
-        malformed_plan = (
-            any(
-                type(value) is not str or not value
-                for value in (*assignments, *groups)
-            )
-            or (groups and len(groups) != self.quantity)
-            or (not groups and assignments and len(assignments) != self.quantity)
-            or (groups and len(assignments) < self.quantity)
-        )
-        if malformed_plan:
-            raise ValueError("Attacking token plan is malformed")
-        object.__setattr__(self, "temporary_keywords", keywords)
-        object.__setattr__(self, "attacking_assignments", assignments)
-        object.__setattr__(self, "attacking_groups", groups)
-        if not isinstance(self.characteristics, FrozenMap):
-            object.__setattr__(
-                self,
-                "characteristics",
-                FrozenMap(self.characteristics),
-            )
-        object.__setattr__(
-            self,
-            "replacement_selections",
-            _freeze_replacement_selections(
-                tuple(self.replacement_selections),
-                family="Token creation",
-            ),
-        )
+from .token_creation_intent import CreateTokenIntent
 
 
 @dataclass(frozen=True, slots=True)
@@ -1578,6 +1488,7 @@ SemanticIntent: TypeAlias = (
     | UntapAllCreaturesIntent
     | CreateRegenerationShieldIntent
     | DestroyPermanentIntent
+    | CompositionIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
     | ReturnPermanentToOwnerHandIntent
@@ -1594,6 +1505,7 @@ SemanticIntent: TypeAlias = (
     | RecordChoiceIntent
     | ConniveCompletedIntent
     | BeginRingTemptationIntent
+    | CreateCompiledEmblemIntent
     | CompleteRingBearerIntent
     | ChampionExileIntent
     | EncodeCipherIntent
@@ -1601,6 +1513,9 @@ SemanticIntent: TypeAlias = (
     | ZoneMoveIntent
     | MoveObjectsSimultaneouslyIntent
     | MadnessChoiceIntent
+    | MiracleCastChoiceIntent
+    | DiscoverCastIntent
+    | DiscoverCleanupIntent
     | ChooseOneRestBottomRandomIntent
     | ShuffleLibraryIntent
     | ReturnCardsToLibraryTopIntent

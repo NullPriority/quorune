@@ -27,6 +27,15 @@ replaces these facts with the destination snapshot; it recomputes block-pair
 and shared-color relations instead of inheriting the former recipient's scope.
 Empty source and redirection extensions preserve their legacy serialized form.
 
+Current execution also seals typed public permanent state from the canonical
+object query. Singular source-qualified damage subscriptions distinguish
+enchanted, equipped, modified, tapped and combat state without reading the
+object again after replacement. Under CR 700.9, Equipment and any counters
+qualify as modifications; an Aura qualifies only when its controller matches
+the permanent's controller. The optional versioned snapshot survives damage
+proposal serialization, replacement choices and final semantic dispatch.
+Historical records omit unknown facts; partial or coerced facts reject.
+
 Newly compiled battlefield-static damage components require their own current
 layer-6 ability component. Amount replacements, fixed prevention and
 redirection stop while that ability is removed and return when it is restored.
@@ -44,6 +53,14 @@ keywords such as lifelink; the resolving ability keeps its own controller.
 Current facts are read at the individual damage instruction after any paid
 prefix. Once a damage proposal is sealed, replacement-choice resumption retains
 that proposal's source facts.
+
+Marked source-specific Cycling damage binds the card in its committed
+post-discard zone under CR 702.29c. The original hand snapshot still selects the
+eligible printed ability, while its new stack frame retains the resulting
+incarnation and source facts. A later move pins that frame's immediate last
+known information through the ordinary zone owner. Unmarked historical frames
+retain their prior interpretation. This does not change the separately queued
+Cycling draw or the timing of target announcement and optional acceptance.
 
 Closed event-player damage instructions retain that source contract while
 addressing the sealed occurrence player. A draw or cast participant is not

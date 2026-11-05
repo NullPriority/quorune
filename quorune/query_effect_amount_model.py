@@ -155,10 +155,11 @@ class CastXAmountSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise PublicQueryAmountError("Unsupported cast-X amount version")
-        if type(self.coefficient) is not int or self.coefficient not in {-1, 1}:
-            raise PublicQueryAmountError("Cast-X result coefficients are exactly one or minus one")
+        allowed = {-1, 1} if self.schema_version == 1 else {-3, -2, 2, 3}
+        if type(self.coefficient) is not int or self.coefficient not in allowed:
+            raise PublicQueryAmountError("Cast-X result coefficient does not match its version")
 
     def to_dict(self) -> dict[str, Any]:
         return {"kind":CAST_X_AMOUNT_KIND,"schema_version":self.schema_version,"coefficient":self.coefficient}

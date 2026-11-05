@@ -7,6 +7,18 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..entry_x_amount_model import entry_x_amount_dependencies
+        if value.get('kind')=='source_entry_x_amount':return entry_x_amount_dependencies(value)
+        from ..rules.graveyard_self_return import graveyard_self_return_dependencies
+        returned=graveyard_self_return_dependencies(value)
+        if returned:return returned
+        from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
+        destruction=qualified_destruction_payload_dependencies(value)
+        if destruction:return destruction
+        from ..alternative_discard_model import alternative_discard_runtime_dependencies
+        alternative=alternative_discard_runtime_dependencies(value)
+        if alternative:return tuple(sorted({*alternative,*(cap for child in value.values()
+            for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
         if value.get('op') == 'creature_power_damage':
             from ..creature_power_damage_model import creature_power_damage_multiplier, CREATURE_POWER_DAMAGE_MULTIPLE_CAPABILITY
             if creature_power_damage_multiplier(value) == 2:
@@ -69,6 +81,16 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *resolution_mana_choice_dependencies(value))
         from ..created_token_counter_model import created_token_counter_payload_dependencies
         own = (*own, *created_token_counter_payload_dependencies(value))
+        from ..incubate_model import incubate_payload_dependencies
+        own = (*own,*incubate_payload_dependencies(value))
+        from ..discover_model import discover_payload_dependencies
+        own = (*own,*discover_payload_dependencies(value))
+        from ..variable_library_selection_model import variable_library_selection_payload_dependencies
+        own = (*own,*variable_library_selection_payload_dependencies(value))
+        from ..reveal_until_library_selection_model import reveal_until_selection_payload_dependencies
+        own = (*own,*reveal_until_selection_payload_dependencies(value))
+        from ..library_battlefield_model import library_battlefield_payload_dependencies
+        own = (*own,*library_battlefield_payload_dependencies(value))
         from ..public_zone_quantity_model import public_zone_quantity_dependencies
         own = (*own, *public_zone_quantity_dependencies(value))
         from ..prevention_recipient_sets import prevention_recipient_set_dependencies
@@ -83,6 +105,12 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *designation_predicate_dependencies(value))
         from ..rules.token_creation_capability_shapes import token_definition_payload_dependencies
         own = (*own, *token_definition_payload_dependencies(value,mechanics))
+        from ..rules.attacking_token_results import attacking_token_payload_dependencies
+        own = (*own, *attacking_token_payload_dependencies(value))
+        from ..rules.created_token_cleanup_shapes import created_token_cleanup_payload_dependencies
+        own = (*own, *created_token_cleanup_payload_dependencies(value))
+        from ..source_prevention import source_prevention_dependencies
+        own = (*own, *source_prevention_dependencies(value))
         from ..conditional_recipient_model import conditional_recipient_capabilities
         own = (*own, *conditional_recipient_capabilities(value))
         from ..public_zone_condition_model import public_zone_condition_capabilities

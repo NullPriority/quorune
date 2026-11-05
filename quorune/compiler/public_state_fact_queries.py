@@ -294,6 +294,8 @@ def fixed_public_fact_condition(
     """Parse one closed current public-fact threshold."""
 
     normalized = " ".join(text.strip().rstrip(".").split())
+    if normalized.casefold() in {"you've committed a crime this turn",'you have committed a crime this turn'}:
+        return _condition(FixedPublicStateFact.CONTROLLER_COMMITTED_CRIME_THIS_TURN)
     common = re.fullmatch(r'(?P<color>white|blue|black|red|green) is the most common color among all permanents or is tied for most common', normalized, re.I)
     if common is not None:
         return FixedPublicStateConditionSpec(FixedPublicStateConditionKind.PUBLIC_FACT_AT_LEAST,

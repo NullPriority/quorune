@@ -9,6 +9,8 @@ from ..object_predicate import object_query_capabilities
 from ..static_player_restriction_model import static_player_restriction_capabilities
 from ..conditional_recipient_model import conditional_recipient_capabilities
 from ..public_zone_condition_model import public_zone_condition_capabilities
+from ..public_history_query_model import public_history_query_dependencies
+from ..crime_model import crime_fact_dependencies
 from ..rules.conditional_free_cast_shapes import conditional_free_cast_capabilities
 from ..characteristic_fragments import characteristic_quantity_capabilities
 from .dependency_gate import dependency_gate, explicit_capabilities_gate
@@ -50,7 +52,8 @@ def runtime_handler_node(
     required = (*((capabilities,) if isinstance(capabilities, str) else capabilities),
                 *characteristic_quantity_capabilities(handlers), *object_query_capabilities(handlers),
                 *static_player_restriction_capabilities(handlers), *conditional_recipient_capabilities(handlers),
-                *public_zone_condition_capabilities(handlers), *conditional_free_cast_capabilities(handlers))
+                *public_zone_condition_capabilities(handlers), *conditional_free_cast_capabilities(handlers),
+                *public_history_query_dependencies(handlers),*crime_fact_dependencies(handlers))
     if mechanics:
         gate = dependency_gate(mechanics=mechanics, effects=(), target_schema=None,
             trusted_mechanics=frozenset(), capability_registry=capability_registry,

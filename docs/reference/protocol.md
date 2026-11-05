@@ -38,6 +38,15 @@ the same principal-scoped full and delta packets plus safe lifecycle metadata.
 The in-process and network paths share protocol and validation code; neither is
 a second rules interface.
 
+The intrinsic Miracle reveal decision exposes the prospective card and fixed
+cost only to its drawer. Acceptance publishes that card and queues its linked
+trigger. The later cast-or-decline decision belongs to the resolving trigger's
+current controller. Its server-issued cost variants carry the ordinary target
+and additional-cost fields used by the shared form and command validators.
+Cast-only fields are conditional on choosing to cast; declining needs no
+target or additional payment and does not submit inactive fields.
+Neither decision grants a general hand casting method.
+
 ## Command envelope
 
 [`schemas/command-envelope.schema.json`](../../schemas/command-envelope.schema.json)
@@ -49,6 +58,12 @@ is the network command authority. A command supplies:
 - one opaque, single-use capability;
 - the expected projected-view revision; and
 - only the delegated choices declared by that action.
+
+`permanent.composition_order` issues the current ordering pilot an `order`
+action with an exact `cards` permutation. Its generic ordered-reference form
+can include ordinary cards and physical components entering one destination
+together. Other pilots cannot submit that order; no subject moves until every
+required ordering choice is complete.
 
 The envelope cannot select a principal, seat, controller, effect operation,
 mana side effect, state field, or unadvertised cost. The service validates the

@@ -16,6 +16,7 @@ from ..query_effect_amount_model import (
 )
 from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
+from ..entry_x_amount_model import ENTRY_X_AMOUNT_KIND,EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,ENTRY_X_AMOUNT_CAPABILITY
 
 
 DECLARED_EFFECT_AMOUNT_MECHANIC = "declared-effect-amount"
@@ -31,7 +32,14 @@ _LIBRARY_DEFINITION = re.compile(
     re.IGNORECASE,
 )
 _X = re.compile(r"\bX\b")
+_SCALED_X = re.compile(r"\b(?P<scale>twice|two times|three times) X\b", re.I)
 _RESULT_FIELDS = {
+    'drain_opponent': ('amount',),
+    'drain_each_opponent': ('amount',),
+    'life_loss_then_gain_actual': ('amount',),
+    'discover': ('amount',),
+    'variable_library_selection': ('look_count',),
+    'incubate': ('amount',),
     'create_token_then_counters': ('amount',),
     'return_random_graveyard_cards': ('count',),
     "damage": ("amount",), "damage_fixed_set": ("amount",),
@@ -58,6 +66,13 @@ def _signed_number(value: Any) -> int | None:
     if type(value) is str and re.fullmatch(r"-?\d+", value):
         return int(value)
     return None
+
+
+def _fixed_x_projection(body: str, value: int) -> str:
+    """Reduce only the bounded source expression before fixed compilation."""
+    scaled = _SCALED_X.sub(
+        lambda match: str(value * (3 if match['scale'].lower() == 'three times' else 2)), body)
+    return _X.sub(str(value), scaled)
 
 
 def declared_effect_amount_template(
@@ -102,8 +117,10 @@ def declared_effect_amount_template(
         return None
     if _X.search(body) is None:
         return None
-    first = compile_fixed(_X.sub("2", body))
-    second = compile_fixed(_X.sub("3", body))
+    if quantity is not None and _SCALED_X.search(body) is not None:
+        return None
+    first = compile_fixed(_fixed_x_projection(body, 2))
+    second = compile_fixed(_fixed_x_projection(body, 3))
     if first[0] is None or second[0] is None or not first[3] or first[3] != second[3] or first[2] != second[2] or len(first[1]) != len(second[1]):
         return None
     binding_id = "x:" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:24]
@@ -118,13 +135,14 @@ def declared_effect_amount_template(
         if not _result_slot(operation, path):
             raise PublicQueryAmountError("X changed something other than a result slot")
         n, m = _signed_number(a), _signed_number(b)
-        if n not in {-2, 2} or m != n * 3 // 2 or type(a) is not type(b):
-            raise PublicQueryAmountError("X result did not preserve its signed unit coefficient")
+        if n not in {-6, -4, -2, 2, 4, 6} or m != n * 3 // 2 or type(a) is not type(b):
+            raise PublicQueryAmountError("X result did not preserve its bounded signed coefficient")
         replaced += 1
-        coefficient = 1 if n > 0 else -1
+        coefficient = n // 2
         return (
             PublicQueryAmountSpec(quantity=quantity, coefficient=coefficient, schema_version=2, binding_id=binding_id).to_dict()
-            if quantity is not None else CastXAmountSpec(coefficient=coefficient).to_dict()
+            if quantity is not None else CastXAmountSpec(
+                coefficient=coefficient, schema_version=1 if abs(coefficient) == 1 else 2).to_dict()
         )
 
     try:
@@ -144,7 +162,7 @@ def declared_effect_amount_template(
 
 def contains_declared_effect_amount(value: Any) -> bool:
     if isinstance(value, Mapping):
-        return (value.get("kind") == "scalar_effect_amount" and value.get("binding_id") is not None) or value.get("kind") == CAST_X_AMOUNT_KIND or (
+        return (value.get("kind") == "scalar_effect_amount" and value.get("binding_id") is not None) or value.get("kind") in {CAST_X_AMOUNT_KIND,ENTRY_X_AMOUNT_KIND} or (
             value.get("kind") == PUBLIC_QUERY_AMOUNT_KIND and value.get("schema_version") == 2
         ) or any(contains_declared_effect_amount(child) for child in value.values())
     return isinstance(value, (list,tuple)) and any(contains_declared_effect_amount(child) for child in value)
@@ -217,7 +235,7 @@ def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:
 
 def declared_amount_dependencies(mechanics: set[str]) -> set[str]:
     from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY, SCALAR_AMOUNT_MECHANIC
-    return ({DECLARED_AMOUNT_CAPABILITY} if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics else set()) | ({SCALAR_AMOUNT_CAPABILITY} if SCALAR_AMOUNT_MECHANIC in mechanics else set())
+    return ({DECLARED_AMOUNT_CAPABILITY} if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics else set()) | ({SCALAR_AMOUNT_CAPABILITY} if SCALAR_AMOUNT_MECHANIC in mechanics else set()) | ({ENTRY_X_AMOUNT_CAPABILITY} if ENTRY_X_AMOUNT_MECHANIC in mechanics else set())
 
 
 def is_closed_declared_amount_program(program: Any, *, required_dependencies: Sequence[str],
@@ -246,10 +264,12 @@ def declared_amount_shape_context(
     count = 0
     def project(value: Any, operation: str, path: tuple[str,...]) -> Any:
         nonlocal count
-        if isinstance(value, Mapping) and value.get("kind") in {CAST_X_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_KIND}:
+        if isinstance(value, Mapping) and value.get("kind") in {CAST_X_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_KIND,ENTRY_X_AMOUNT_KIND}:
             if not _result_slot(operation,path):
                 raise PublicQueryAmountError("Declared amount is outside a result slot")
-            if value["kind"] == CAST_X_AMOUNT_KIND:
+            if value['kind']==ENTRY_X_AMOUNT_KIND:
+                spec=EntryXAmountSpec.from_dict(value)
+            elif value["kind"] == CAST_X_AMOUNT_KIND:
                 spec = CastXAmountSpec.from_dict(value)
             else:
                 if "public-query-effect-amount" not in mechanics:
@@ -271,4 +291,4 @@ def declared_amount_shape_context(
         fixed = tuple(project(effect,str(effect.get("op") or ""),()) for effect in effects)
     except PublicQueryAmountError:
         return None
-    return (fixed, mechanics - {DECLARED_EFFECT_AMOUNT_MECHANIC,"public-query-effect-amount"}) if count else None
+    return (fixed, mechanics - {DECLARED_EFFECT_AMOUNT_MECHANIC,"public-query-effect-amount",ENTRY_X_AMOUNT_MECHANIC}) if count else None

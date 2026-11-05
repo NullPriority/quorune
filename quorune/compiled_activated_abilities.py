@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping, Protocol
 
 from .abilities import ActivatedAbility
+from .defined_token_faces import DEFINED_TOKEN_FACES_FIELD, defined_token_characteristic_values, defined_token_current_characteristics
 from .card_programs.admission import (
     descriptor_requires_complete_card_program,
     program_has_complete_card_program_admission,
@@ -38,12 +39,9 @@ def _face_id(record: Any, card: Any) -> str:
 def _custom_activated_abilities(
     card: Any,
 ) -> tuple[ActivatedAbility, ...] | None:
-    characteristics = dict(
-        card.annotations.get("object_characteristics")
-        or card.annotations.get("token_characteristics")
-        or card.annotations.get("copy_overrides")
-        or {}
-    )
+    characteristics = dict(defined_token_characteristic_values(card))
+    if DEFINED_TOKEN_FACES_FIELD in characteristics:
+        characteristics = defined_token_current_characteristics(card, characteristics)
     if "activated_abilities" not in characteristics:
         return None
     raw = characteristics.get("activated_abilities", ())

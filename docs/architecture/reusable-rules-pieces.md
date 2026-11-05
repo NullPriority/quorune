@@ -85,6 +85,15 @@ timestamp-free gzip. Validation rejects unknown relations or statuses, stale
 source fingerprints, duplicate identities, unclassified material abilities,
 stale joins, inflated interaction evidence, and noncanonical generated prose.
 
+The card-unlock frontier stores repeated runtime-component identities in one
+sorted dictionary. `quorune.frontier_storage.unpack_frontier_document` expands
+the versioned storage envelope before semantic validation or receipt comparison;
+historical expanded documents remain readable. Packing preserves every report
+field, array order, and semantic fingerprint. Invalid references, ambiguous
+fields, unsupported versions, and unused dictionary entries fail closed. The
+frontier owner's `--repack` mode validates the current snapshot and rewrites only
+this lossless representation, without compiling cards or changing support.
+
 ## Inspection and extension
 
 ```bash

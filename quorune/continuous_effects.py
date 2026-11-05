@@ -69,6 +69,7 @@ class CharacteristicState:
     _intrinsic_mana_abilities: tuple[ActivatedAbility, ...] = field(
         default=(), init=False, repr=False, compare=False
     )
+    _copied_static_tracking: bool = field(default=False,init=False,repr=False,compare=False)
 
     def snapshot(self) -> dict[str, Any]:
         result = {
@@ -275,9 +276,14 @@ def _as_words(value: Any) -> set[str]:
 def _apply_copy_values(
     state: CharacteristicState,
     value: Any,
+    *, effect_timestamp: int | None=None,
 ) -> None:
     if not isinstance(value, Mapping):
         raise ContinuousEffectError("copy_values requires an object")
+    from .composition_characteristics import tracks_copied_static_instances
+    state._copied_static_tracking=(state._copied_static_tracking
+        or tracks_copied_static_instances(state.ability_fragments)
+        or tracks_copied_static_instances(value.get('ability_fragments',())))
     has_explicit_executable_text = "executable_text" in value
     for key, replacement in value.items():
         if key == "text":
@@ -289,9 +295,9 @@ def _apply_copy_values(
         elif key == "abilities":
             state.abilities = [str(item) for item in replacement]
         elif key == "ability_fragments":
-            state.ability_fragments = list(
-                canonical_ability_fragments(replacement)
-            )
+            from .composition_characteristics import copied_static_fragments
+            state.ability_fragments = list(copied_static_fragments(replacement,effect_timestamp,
+                participating=state._copied_static_tracking))
         elif key == "activated_abilities":
             if not isinstance(replacement, (list, tuple)):
                 raise ContinuousEffectError(
@@ -418,7 +424,7 @@ def _apply_operation(
     op = operation.op
     value = operation.value
     if op == "copy_values":
-        _apply_copy_values(state, value)
+        _apply_copy_values(state,value,effect_timestamp=effect_timestamp)
         return
     if op == "face_down":
         _apply_face_down(state, value)

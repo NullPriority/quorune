@@ -46,12 +46,45 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
+    if relative=='quorune/created_token_cleanup_model.py':return 'domain'
+    if relative=='quorune/created_token_cleanup.py':return 'rules'
+    if relative=='quorune/battle_cry_resolution_model.py':return 'domain'
+    if relative=='quorune/battle_cry_resolution.py':return 'rules'
+    if relative=='quorune/entry_x_amount_model.py':return 'domain'
+    if relative=='quorune/ravenous_model.py':return 'domain'
+    if relative=='quorune/variable_resolution_mana_model.py':return 'rules'
+    if relative=='quorune/permanent_event_state_model.py':return 'domain'
+    if relative=='quorune/alternative_discard_model.py':return 'domain'
+    if relative=='quorune/delayed_object_model.py':return 'domain'
+    if relative=='quorune/block_characteristic_model.py':return 'domain'
+    if relative=='quorune/unblocked_attacker_model.py':return 'domain'
+    if relative=='quorune/damage_recipient_model.py':return 'domain'
+    if relative=='quorune/delayed_object_actions.py':return 'semantics'
+    if relative=='quorune/reanimation_entry_counters.py':return 'semantics'
     if relative in {'quorune/library_selection_knowledge_model.py','quorune/characteristic_query_boundary_model.py'}:return 'domain'
+    if relative in {'quorune/mutate_model.py','quorune/fixed_mana_model.py'}:return 'domain'
+    if relative=='quorune/trigger_participation_query_model.py':return 'domain'
+    if relative=='quorune/library_selection_knowledge_model.py':return 'domain'
+    if relative=='quorune/reveal_until_library_selection_model.py':return 'rules'
     if relative=='quorune/transform_order_model.py':return 'domain'
     if relative=='quorune/decision_completion.py':return 'adapter'
     if relative=='quorune/transform_timestamp_model.py':return 'domain'
     if relative=='quorune/face_status_timestamp_model.py':return 'domain'
     if relative=='quorune/face_down_characteristics_model.py':return 'domain'
+    if relative=='quorune/composition_batch_order_model.py':return 'domain'
+    if relative=='quorune/commander_damage_identity_model.py':return 'domain'
+    if relative=='quorune/composition_commander_replacement_model.py':return 'domain'
+    if relative=='quorune/composition_zone_replacement_model.py':return 'domain'
+    if relative=='quorune/life_total_setting_model.py':return 'domain'
+    if relative=='quorune/token_creation_batch_model.py':return 'domain'
+    if relative=='quorune/crime_model.py':return 'domain'
+    if relative in {'quorune/composition_departure_batch.py','quorune/composition_state_based_order.py'}:return 'rules'
+    if relative=='quorune/composition_characteristics.py':return 'rules'
+    if relative=='quorune/composition_replacements.py':return 'rules'
+    if relative=='quorune/composition_ordering.py':return 'rules'
+    if relative=='quorune/composition_departure_commit.py':return 'rules'
+    if relative=='quorune/composition_face_changes.py':return 'rules'
+    if relative=='quorune/game_object_store.py':return 'rules'
     if relative == 'quorune/characteristic_read_frames.py':
         return 'rules'
     if relative.startswith("server/") or relative == "simctl.py":
@@ -79,10 +112,19 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/state_trigger_model.py",
         "quorune/cast_source_placement_model.py",
         "quorune/library_order_model.py",
+        "quorune/source_entry_cast_information.py",
+        "quorune/permanent_composition.py",
+        "quorune/composition_snapshot.py",
+        "quorune/copiable_program_source.py",
+        "quorune/copiable_static_instance.py",
+        "quorune/composition_storage.py",
+        "quorune/composition_departure.py",
+        "quorune/composition_order_model.py",
         "quorune/untargeted_untap_model.py",
         "quorune/received_damage_model.py",
         "quorune/designation_event_model.py",
         "quorune/explore_action_model.py",
+        "quorune/token_copy_value_model.py",
         "quorune/station_symbol_model.py",
         "quorune/cipher_model.py",
         "quorune/target_count_cost_model.py",
@@ -173,6 +215,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/forecast_model.py",
         "quorune/declared_cast_cost_model.py",
         "quorune/declared_cost_conditions.py",
+        "quorune/declared_cost_reductions.py",
+        "quorune/face_up_effect_model.py",
         "quorune/overload_model.py",
         "quorune/spell_text_variants.py",
         "quorune/cleave_model.py",
@@ -479,6 +523,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/work_selection.py",
         "quorune/work_selection_bundles.py",
         "quorune/work_selection_common.py",
+        "quorune/frontier_storage.py",
         "quorune/work_selection_evidence.py",
         "quorune/work_selection_measurement.py",
         "quorune/saga_lifecycle.py",
@@ -517,18 +562,59 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative in {'quorune/unblocked_attacker_model.py','quorune/rules/unblocked_attackers.py',
+            'quorune/compiler/unblocked_attacker_bindings.py'}:return 'trigger_processing'
+    if relative in {'quorune/block_characteristic_model.py','quorune/rules/block_characteristics.py',
+            'quorune/compiler/qualified_block_pairs.py'}:return 'trigger_processing'
+    if relative in {'quorune/damage_recipient_model.py','quorune/compiler/damage_permanent_event_bindings.py',
+            'quorune/rules/damage_permanent_recipients.py'}:return 'trigger_processing'
+    if relative in {'quorune/delayed_object_model.py','quorune/delayed_object_actions.py',
+            'quorune/compiler/delayed_object_templates.py'}:return 'trigger_processing'
     if relative=='quorune/library_selection_knowledge_model.py':return 'search_target_and_choice'
     if relative=='quorune/characteristic_query_boundary_model.py':return 'continuous_effects'
+    if relative in {'quorune/rules/casting/mutate_costs.py','quorune/rules/mutate_resolution.py',
+            'quorune/semantic_runtime/mutate_intent.py'}:return 'casting_activation_and_costs'
+    if relative=='quorune/semantic_choices/mutate.py':return 'search_target_and_choice'
+    if relative=='quorune/compiler/mutate_event_bindings.py':return 'trigger_processing'
+    if relative in {'quorune/mutate_model.py','quorune/fixed_mana_model.py'}:return 'casting_activation_and_costs'
+    if relative in {'quorune/trigger_participation_query_model.py','quorune/rules/trigger_participation_queries.py','quorune/rules/trigger_participation_runtime.py'}:return 'trigger_processing'
+    if relative in {'quorune/library_selection_knowledge_model.py','quorune/reveal_until_library_selection_model.py','quorune/compiler/reveal_until_library_selection_templates.py','quorune/semantic_choices/reveal_until_library_selection.py','quorune/rules/reveal_until_library_selection_shapes.py'}:return 'search_target_and_choice'
+    if relative in {'quorune/rules/graveyard_return_choices.py', 'quorune/semantic_choices/graveyard_return.py'}:return 'search_target_and_choice'
+    if relative == 'quorune/rules/chosen_color_events.py':return 'trigger_processing'
     if relative=='quorune/face_down_characteristics_model.py':return 'zones_and_object_identity'
+    if relative=='quorune/commander_damage_identity_model.py':return 'commander_variant'
+    if relative=='quorune/composition_commander_replacement_model.py':return 'commander_variant'
+    if relative=='quorune/composition_zone_replacement_model.py':return 'zones_and_object_identity'
+    if relative=='quorune/life_total_setting_model.py':return 'life_state'
+    if relative=='quorune/token_creation_batch_model.py':return 'token_creation'
+    if relative=='quorune/crime_model.py':return 'targeting'
+    if relative=='quorune/composition_state_based_order.py':return 'state_based_actions'
+    if relative in {'quorune/composition_batch_order_model.py','quorune/composition_departure_batch.py'}:return 'zones_and_object_identity'
     if relative=='quorune/face_down_copy.py':return 'token_creation'
     if relative in {'quorune/transform_order_model.py','quorune/transform_timestamp_order.py'}:return 'day_night_and_transform'
     if relative=='quorune/decision_completion.py':return 'turn_priority_and_decisions'
     if relative=='quorune/transform_timestamp_model.py':return 'day_night_and_transform'
     if relative=='quorune/face_status_timestamp_model.py':return 'zones_and_object_identity'
-    if relative in {'quorune/expend_model.py','quorune/rules/casting/spell_mana_payments.py'}:return 'casting_activation_and_costs'
+    if relative=='quorune/composition_face_changes.py':return 'zones_and_object_identity'
+    if relative in {'quorune/declared_cost_reductions.py','quorune/rules/casting/declared_cost_reductions.py'}:
+        return 'casting_activation_and_costs'
+    if relative=='quorune/copiable_static_instance.py':return 'continuous_effects'
+    if relative in {'quorune/composition_characteristics.py','quorune/copiable_program_source.py'}:return 'continuous_effects'
+    if relative=='quorune/composition_replacements.py':return 'zones_and_object_identity'
+    if relative in {'quorune/composition_order_model.py','quorune/composition_ordering.py'}:return 'zones_and_object_identity'
+    if relative in {'quorune/composition_departure.py','quorune/composition_departure_commit.py'}:return 'zones_and_object_identity'
+    if relative=='quorune/game_object_store.py':return 'zones_and_object_identity'
+    if relative in {'quorune/composition_storage.py','quorune/rules/composition_merge.py','quorune/rules/composition_faces.py',
+            'quorune/rules/composition_face_up.py'}:return 'zones_and_object_identity'
+    if relative in {'quorune/composition_snapshot.py','quorune/rules/composition_capture.py'}:return 'zones_and_object_identity'
+    if relative=='quorune/permanent_composition.py':return 'zones_and_object_identity'
+    if relative=='quorune/source_entry_cast_information.py':return 'casting_activation_and_costs'
+    if relative=='quorune/rules/entry_cast_information.py':return 'casting_activation_and_costs'
+    if relative in {'quorune/expend_model.py','quorune/rules/casting/spell_mana_payments.py',
+            'quorune/rules/resolving_cast_payments.py'}:return 'casting_activation_and_costs'
     if relative == 'quorune/characteristic_read_frames.py':return 'card_characteristics'
     if relative == 'quorune/rules/granted_characteristic_shapes.py':return 'continuous_effects'
-    if relative == 'quorune/damage_prevention_permission.py':return 'damage'
+    if relative in {'quorune/damage_prevention_permission.py', 'quorune/source_prevention.py'}:return 'damage'
     if relative=="quorune/designation_prevention.py":return "damage"
     if relative=="quorune/attached_prevention_model.py":return "damage"
     if relative=="quorune/attachment_information.py":return "attachments"
@@ -568,7 +654,7 @@ def _owner(relative: str, layer: str) -> str:
                     "quorune/rules/self_graveyard_discard.py",
                     "quorune/rules/waterbend_payments.py"}:
         return "casting_activation_and_costs"
-    if relative in {"quorune/target_restrictions.py", "quorune/target_source.py"}:
+    if relative in {"quorune/target_restrictions.py", "quorune/target_source.py", "quorune/rules/spell_owner_targets.py"}:
         return "target_legality"
     if relative == "quorune/untap_selection.py":
         return "untap_step"
@@ -714,7 +800,7 @@ def _owner(relative: str, layer: str) -> str:
         return "activated_abilities"
     if relative == "quorune/unearth.py":
         return "graveyard_actions"
-    if relative == "quorune/self_zone_move.py":
+    if relative in {"quorune/self_zone_move.py", "quorune/emblems.py", "quorune/emblem_program_model.py", "quorune/emblem_programs.py"}:
         return "zones_and_object_identity"
     if relative == "quorune/connive.py":
         return "semantic_choices"
@@ -947,6 +1033,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/fixed_token_production.py",
         "quorune/created_token_counter_model.py",
         "quorune/standard_token_abilities.py",
+        "quorune/token_copy_faces.py",
         "quorune/token_creation.py",
     }:
         return "token_creation"
@@ -1018,6 +1105,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/work_selection.py",
         "quorune/work_selection_bundles.py",
         "quorune/work_selection_common.py",
+        "quorune/frontier_storage.py",
         "quorune/work_selection_evidence.py",
         "quorune/work_selection_measurement.py",
     }:

@@ -187,6 +187,8 @@ def mass_destruction_node_capabilities(
         if regeneration_prohibited is True
         else ()
     )
+    from .qualified_destruction import qualified_destruction_capabilities
+    query_capabilities=qualified_destruction_capabilities(spec.query)
     if targeted:
         if "cr-115-targets" not in mechanics or schema not in valid_player_schemas:
             return ()
@@ -194,12 +196,13 @@ def mass_destruction_node_capabilities(
             return ()
         return (
             "permanent.destroy.fixed_set",
+            *query_capabilities,
             *prohibition_capability,
             "target.revalidate_resolution",
         )
     if target_schema is not None or "cr-115-targets" in mechanics:
         return ()
-    return ("permanent.destroy.fixed_set", *prohibition_capability)
+    return ("permanent.destroy.fixed_set", *query_capabilities, *prohibition_capability)
 
 
 __all__ = [

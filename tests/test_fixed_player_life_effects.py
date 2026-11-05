@@ -206,7 +206,7 @@ class FixedPlayerLifeCompilerTests(unittest.TestCase):
         for text in (
             "Target player loses X life.",
             "Each player who controls a Zombie loses 1 life.",
-            "Target player's life total becomes 10.",
+            "Target player's life total becomes half their starting life total, rounded down.",
             "Exchange your life total with this creature's power.",
         ):
             with self.subTest(text=text):

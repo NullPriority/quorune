@@ -80,19 +80,21 @@ def fixed_controller_effect_clause(
 class FixedControllerEffectSequenceTemplate:
     effects: tuple[Mapping[str, Any], ...]
     mechanic_ids: tuple[str, ...]
+    target_schema: Mapping[str, Any] | None = None
+    template_id: str = "fixed-controller-draw-effect-sequence-v1"
 
     def compiled(
         self,
     ) -> tuple[
         str,
         tuple[Mapping[str, Any], ...],
-        None,
+        Mapping[str, Any] | None,
         tuple[str, ...],
     ]:
         return (
-            "fixed-controller-draw-effect-sequence-v1",
+            self.template_id,
             self.effects,
-            None,
+            self.target_schema,
             self.mechanic_ids,
         )
 
@@ -101,6 +103,11 @@ def fixed_controller_effect_sequence_template(
     text: str,
 ) -> FixedControllerEffectSequenceTemplate | None:
     """Lower exactly two ordered fixed effects, including one card draw."""
+
+    from .alternative_discard_templates import alternative_discard_effect_template
+    alternative = alternative_discard_effect_template(text)
+    if alternative is not None:
+        return FixedControllerEffectSequenceTemplate(alternative[1], alternative[3], alternative[2], alternative[0])
 
     clauses = _clauses(text)
     if clauses is None:

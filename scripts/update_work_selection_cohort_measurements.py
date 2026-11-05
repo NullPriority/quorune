@@ -19,6 +19,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from quorune.carddb import CardDatabase
+from quorune.frontier_storage import unpack_frontier_document
 from quorune.util import stable_json
 from quorune.work_selection_bundles import (
     bundle_measurement_fingerprint,
@@ -45,7 +46,7 @@ HARVEST_HISTORY = ROOT / "coverage" / "harvest-outcome-history.json"
 
 
 def _inputs() -> tuple[dict, dict, list[dict], dict[str, str]]:
-    frontier = json.loads(gzip.decompress(FRONTIER.read_bytes()))
+    frontier = unpack_frontier_document(json.loads(gzip.decompress(FRONTIER.read_bytes())))
     catalog = json.loads(POLICY.read_text(encoding="utf-8"))
     coverage = catalog["work_selection"]["coverage_family"]
     bundles = list(coverage["candidate_bundles"])
@@ -86,7 +87,7 @@ def _build(database: Path) -> dict:
 
 def _decode_frontier(raw: bytes, *, label: str) -> dict:
     try:
-        value = json.loads(gzip.decompress(raw))
+        value = unpack_frontier_document(json.loads(gzip.decompress(raw)))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         raise ValueError(f"{label} card frontier is malformed") from exc
     if not isinstance(value, dict):

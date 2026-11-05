@@ -310,6 +310,9 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    "life_loss_then_gain_actual",
+    'discover',
+    'reveal_until_library_selection',
     'choose_untap_lands',
     'order_library_top','shuffle_controller_library',
     'create_token_then_counters',
@@ -329,6 +332,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "counter_unless_pay",
     "create_damage_prevention_shield",
     "create_token",
+    "create_compiled_emblem",
     CREATURE_POWER_DAMAGE_OPERATION,
     "choose_damage_source",
     "choose_cards_apnap",
@@ -379,6 +383,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "fixed_impulse_access",
     "fixed_library_selection",
     "life",
+    "set_life_total",
     "lose_life",
     "lose_life_each_opponent",
     "mill",
@@ -431,6 +436,7 @@ def _activated_effect_dependency_gate(
                 "fixed-target-effect-sequence",
                 "fixed-source-effect-sequence",
                 "fixed-controller-effect-sequence",
+                "fixed-target-player-effect-sequence",
                 "fixed-counter-controller-effect-sequence",
                 "fixed-resolution-control",
                 "fixed-effect-clause-sequence",

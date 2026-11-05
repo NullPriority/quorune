@@ -69,7 +69,7 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
     resolve=counter_witnesses.CounterPlacementEventRuntimeTests.resolve
 
     def test_original_mana_replacement_carriers_fail_closed_at_whole_runtime_admission(self):
-        from high_risk_interaction_support import _observed_piece_ids
+        from high_risk_interaction_support import _observed_piece_ids, _record as boundary_record
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
@@ -77,9 +77,12 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
         residuals = {
             'residual.replacement.replacement-applicability',
             'residual.replacement.self-replacement-and-prevention-ordering'}
-        for oid in ('4b1da9aa-a30c-44b8-a10e-f9dc3fe70b6f','5b5bf1fa-6502-4790-b66b-f0f8504ebc7c',
+        records=[self.db.by_oracle_id(oid) for oid in ('4b1da9aa-a30c-44b8-a10e-f9dc3fe70b6f','5b5bf1fa-6502-4790-b66b-f0f8504ebc7c',
                 '907ae517-22d5-4ac7-bc3a-3f4d5eaeeb57','947b40a2-e272-4ef6-85fb-3d767a21bc7a',
-                'bdf476e5-1d57-4b17-b45b-d52fd75aadeb'):
+                'bdf476e5-1d57-4b17-b45b-d52fd75aadeb')]
+        records.append(boundary_record('resolution-mana-replacement-boundary'))
+        for record in records:
+            oid=record.oracle_id
             with self.subTest(oracle_id=oid):
                 pieces = {
                     ('capability.mana.activated.fixed_output'
@@ -87,7 +90,10 @@ class FixedResolutionManaRuntimeTests(unittest.TestCase):
                      else 'capability.mana.production.fixed_resolution'),
                     *residuals,
                 }
-                record = self.db.by_oracle_id(oid)
+                if any('Saga' in face.get('type_line','') for face in record.faces):
+                    pieces-=residuals
+                    pieces|={'residual.card_form.ordinary-saga-chapter-event-binding',
+                        'residual.effect_clause.exact-typed-chapter-effect-body'}
                 supported=record.name=='Cabal Ritual'
                 if supported:
                     pieces-=residuals
