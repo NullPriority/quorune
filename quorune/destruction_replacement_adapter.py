@@ -72,6 +72,7 @@ def prepare_replaced_destructions(
     host: Any, requests: Sequence[Any], *, cause: Any, actor: str | None,
     reason: str, regeneration_prohibited: bool,
     event_order: Sequence[str], replacement_selections: Sequence[str | Mapping[str, Any]],
+    require_all_selections: bool = True,
 ):
     from .destruction import DestructionDisposition, DestructionEntry, DestructionPlan
     protections = current_umbra_armor_protections(host)
@@ -97,6 +98,7 @@ def prepare_replaced_destructions(
         subjects, relevant, requested, batch_id=batch_id, apnap_order=host.apnap_order(),
         cause=cause.value, regeneration_prohibited=regeneration_prohibited,
         selections=tuple(thaw_value(value) for value in replacement_selections),
+        require_all_selections=require_all_selections,
         allow_bound_single_event=(
             cause.value == "effect"
             and getattr(host.state, "effect_destruction_replacement_version", None) == 1
@@ -119,8 +121,9 @@ def prepare_replaced_destructions(
     ordered += tuple(value for value in destroyed if value not in ordered)
     return DestructionPlan(
         cause, actor, reason, tuple(entries), plan_counter_changes(host, shield_changes),
-        regeneration_prohibited, ordered, (),
+        regeneration_prohibited, ordered, tuple(replacement_selections[resolved.consumed_selections:]),
         requested_object_ids=requested, replacement_subjects=subjects,
-        umbra_protections=relevant, destruction_replacement_selections=tuple(replacement_selections),
+        umbra_protections=relevant,
+        destruction_replacement_selections=tuple(replacement_selections[:resolved.consumed_selections]),
         damage_clear_object_ids=resolved.damage_clear_object_ids,
     )

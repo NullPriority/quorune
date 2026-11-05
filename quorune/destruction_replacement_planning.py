@@ -30,6 +30,7 @@ def resolve_destruction_replacements(
     regeneration_prohibited: bool = False,
     selections: Sequence[str | Mapping[str, object]] = (),
     allow_bound_single_event: bool = False,
+    require_all_selections: bool = True,
 ) -> ResolvedDestructionReplacements:
     """Replay decisions and expand mandatory Aura destruction before commit."""
     by_id = {subject.object_id: subject for subject in subjects}
@@ -93,7 +94,7 @@ def resolve_destruction_replacements(
                 additions.append(aura_id)
                 current_ids.append(aura_id)
         if not additions:
-            if consumed != len(supplied):
+            if require_all_selections and consumed != len(supplied):
                 raise ValueError("Destruction replacement selections contain unused decisions")
             return ResolvedDestructionReplacements(
                 current, effects, requested, tuple(sorted(damage_clear)),

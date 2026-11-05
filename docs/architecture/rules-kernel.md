@@ -847,8 +847,10 @@ also remain blockers; both aggregate mechanics remain partial.
 
 An effect destruction that expands through Umbra armor resolves its destruction
 choices before its resulting destination choices. The continuation retains the
-exact events for the destruction choices. The zone owner finishes preflight
-before committing damage clearing and movement for the batch.
+exact events for the destruction choices. For direct callers, the planner
+consumes unbound choices against the current destruction options before passing
+the remaining choices to the destination stage. The zone owner finishes
+preflight before committing damage clearing and movement for the batch.
 
 Capability lifecycle and replay hydration have narrowly declared compatibility
 ownership. All other rules helpers return values or operate through an

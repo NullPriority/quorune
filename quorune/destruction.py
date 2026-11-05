@@ -415,22 +415,28 @@ def _uses_effect_replacement_stages(host: DestructionHost, cause: DestructionCau
     )
 
 
-def _split_effect_replacement_selections(selections):
+def _bound_destruction_selection(selection):
     from .destruction_replacement_options import DESTRUCTION_EVENT_ID_PREFIX
 
+    event_id = selection.get("event_id") if isinstance(selection, Mapping) else None
+    return isinstance(event_id, str) and event_id.startswith(DESTRUCTION_EVENT_ID_PREFIX)
+
+
+def _split_effect_replacement_selections(selections):
     if not isinstance(selections, (list, tuple)):
         raise DestructionError("Destruction replacement selections must be a list")
-    destruction = []
+    pending_destruction = []
     destination = []
     for selection in _canonical_selections(selections):
         event_id = selection.get("event_id") if isinstance(selection, Mapping) else None
-        if isinstance(event_id, str) and event_id.startswith(DESTRUCTION_EVENT_ID_PREFIX):
-            if destination:
-                raise DestructionError("Destruction selections must precede destination selections")
-            destruction.append(selection)
-        else:
+        bound_destruction = _bound_destruction_selection(selection)
+        if destination and bound_destruction:
+            raise DestructionError("Destruction selections must precede destination selections")
+        if destination or (event_id is not None and not bound_destruction):
             destination.append(selection)
-    return tuple(destruction), tuple(destination)
+        else:
+            pending_destruction.append(selection)
+    return tuple(pending_destruction), tuple(destination)
 
 
 def _prepare_destruction_replacement_stages(host, requests, *, replacement_selections, **options):
@@ -447,17 +453,19 @@ def _prepare_destruction_replacement_stages(host, requests, *, replacement_selec
     destruction, destination = _split_effect_replacement_selections(replacement_selections)
     try:
         replaced = prepare_destruction_replacement_if_needed(
-            host, requests, replacement_selections=destruction, **options
+            host, requests, replacement_selections=destruction, require_all_selections=False, **options
         )
     except ReplacementChoiceRequired as exc:
         if destination:
             raise DestructionError("Destruction choices changed before destination resume") from exc
         raise
-    if replaced is not None:
-        return replace(replaced, replacement_selections=destination), destination
-    if destruction:
+    # Unbound IDs can serve either stage. The destruction planner consumes
+    # only selections for its actual pending choices.
+    remaining = destruction if replaced is None else replaced.replacement_selections
+    if any(_bound_destruction_selection(selection) for selection in remaining):
         raise DestructionError("Destruction selections no longer have applicable replacements")
-    return None, destination
+    destination = (*remaining, *destination)
+    return (replace(replaced, replacement_selections=destination) if replaced is not None else None), destination
 
 
 def prepare_destructions(
