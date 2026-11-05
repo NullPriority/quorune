@@ -8,7 +8,7 @@ from .preparation_model import (PrepareSpellSpec,PreparedDesignation,PREPARED_FI
 from .errors import GameRuleError
 
 
-def compiled_prepare_spell(host,card):
+def compiled_prepare_spell(host,card,*,record=None):
     """Read copiable alternatives independently from current ability presence."""
     from .entry_copy import copiable_oracle_id
     from .card_programs.admission import program_has_complete_card_program_admission
@@ -17,7 +17,7 @@ def compiled_prepare_spell(host,card):
     if card.face_down or values.get('is_prepare_spell') is True:return None
     if PREPARE_SPELL_FIELD in values:return PrepareSpellSpec.from_dict(values[PREPARE_SPELL_FIELD])
     if values:return None
-    record=host.card_record(card)
+    if record is None:record=host.card_record(card)
     if record is None or record.layout!='prepare' or len(record.faces)!=2:return None
     specs=[];handler=PreparationEntryHandler()
     for program in host.semantics.runtime_handler_programs_for_oracle(copiable_oracle_id(card),active_zone='all',event='zone.change'):

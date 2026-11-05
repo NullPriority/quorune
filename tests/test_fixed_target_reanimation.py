@@ -914,6 +914,87 @@ class FixedTargetReanimationSetNativeTests(unittest.TestCase):
         binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
         self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
 
+    def test_original_restoration_revalidates_before_entry_counters_and_partial_set_return(self):
+        from inherited_composition_fixture import InheritedNativeFixture as F
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        for mode in ('mode_1', 'mode_2'):
+            for respond in (False, True):
+                with self.subTest(mode=mode, response=respond):
+                    session = H.session(self, 959130 + 2 * int(mode == 'mode_2') + int(respond))
+                    engine = session.engine
+                    spell = H.add(self, engine, 'Graceful Restoration', zone='hand')
+                    first = H.add(self, engine, 'Memnite', zone='graveyard', ref='restore-first')
+                    second = H.add(self, engine, 'Ornithopter', zone='graveyard', ref='restore-second')
+                    enemy = H.add(self, engine, 'Memnite', seat='B', zone='graveyard', ref='restore-enemy')
+                    large = H.add(self, engine, 'Reveillark', zone='graveyard', ref='restore-large')
+                    response = H.add(self, engine, 'Cremate', seat='B', zone='hand', ref='restore-response')
+                    private = H.add(self, engine, 'Murder', seat='C', zone='hand', ref='restore-private')
+                    for card in (spell, first, second, enemy, large, response):
+                        self.closed(card)
+                    engine.state.players['B'].mana_pool['B'] = 1
+                    before_draws = len(engine.state.players['B'].draw_history)
+                    drawn_id = engine.state.players['B'].zones['library'][-1]
+                    action = H.ready(self, session, spell, {'C': 3, 'W': 1, 'B': 1})
+                    schema = action['target_schema']['mode_schemas'][mode]
+                    legal = schema['groups'][0]['legal_refs']
+                    self.assertIn(first.ref, legal)
+                    self.assertNotIn(enemy.ref, legal)
+                    if mode == 'mode_2':
+                        self.assertIn(second.ref, legal)
+                        self.assertNotIn(large.ref, legal)
+                    else:
+                        self.assertIn(large.ref, legal)
+                    H.checkpoint(self, session)
+                    command = {
+                        'action_id': action['id'], 'modes': [mode],
+                        'targets': [first.ref, second.ref] if mode == 'mode_2' else [first.ref],
+                        'pay': 'auto',
+                    }
+                    before = authoritative_state_hash(session.state)
+                    self.assertFalse(session.act('pilot:B', command).ok)
+                    self.assertFalse(session.act('pilot:A', {**command, 'targets': [enemy.ref]}).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    accepted = session.act('pilot:A', command)
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    if respond:
+                        for _ in range(4):
+                            if session.state.priority_player == 'B':
+                                break
+                            self.assertEqual('priority', session.state.pending_decision.kind)
+                            result = session.act(session.pending_principals()[0], {'action_id': 'pass'})
+                            self.assertTrue(result.ok, result.summary)
+                        self.assertEqual('B', session.state.priority_player)
+                        actions = session.packet('pilot:B', full=True)['decision']['ctx']['legal']['actions']
+                        exile = next(row for row in actions if row['id'] == 'cast:' + response.ref)
+                        self.assertIn(first.ref, exile['target_schema']['legal_refs'])
+                        accepted = session.act('pilot:B', {
+                            'action_id': exile['id'], 'targets': [first.ref], 'pay': 'auto',
+                        })
+                        self.assertTrue(accepted.ok, accepted.summary)
+                        F.resolve_top(self, session)
+                        self.assertEqual('exile', session.state.cards[first.object_id].zone)
+                        self.assertEqual('graveyard', session.state.cards[second.object_id].zone)
+                        self.assertEqual('stack', session.state.cards[spell.object_id].zone)
+                    session = H.replay(self, session, load=True)
+                    self.assertIsNone(H.resolve(self, session))
+                    self.assertEqual('exile' if respond else 'battlefield', session.state.cards[first.object_id].zone)
+                    self.assertEqual('battlefield' if mode == 'mode_2' else 'graveyard', session.state.cards[second.object_id].zone)
+                    self.assertEqual(int(mode == 'mode_1' and not respond),
+                        session.state.cards[first.object_id].counters.get('+1/+1', 0))
+                    self.assertEqual(0, session.state.cards[second.object_id].counters.get('+1/+1', 0))
+                    self.assertEqual('graveyard', session.state.cards[spell.object_id].zone)
+                    self.assertEqual('graveyard', session.state.cards[enemy.object_id].zone)
+                    self.assertEqual('graveyard', session.state.cards[large.object_id].zone)
+                    self.assertEqual(before_draws + int(respond), len(session.state.players['B'].draw_history))
+                    if respond:
+                        for viewer in 'ACD':
+                            self.assertNotIn(session.state.cards[drawn_id].ref,
+                                json.dumps(session.packet('pilot:' + viewer, full=True)))
+                    for viewer in 'ABD':
+                        self.assertNotIn(private.ref, json.dumps(session.packet('pilot:' + viewer, full=True)))
+                    H.replay(self, session, load=True)
+
     def test_original_proclamation_accepts_zero_or_multiple_targets_and_keeps_owner_legality(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
         for index,choose in enumerate((False,True)):

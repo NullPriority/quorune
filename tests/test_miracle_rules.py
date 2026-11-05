@@ -160,6 +160,70 @@ class MiracleRuntimeTests(unittest.TestCase):
             self.assertTrue(result.ok,result.summary)
         self.fail('Miracle witness top stack object did not resolve')
 
+    def test_original_miracle_nonland_target_revalidates_after_actual_response(self):
+        for respond in (False, True):
+            with self.subTest(response=respond):
+                session, first_id, second_id, _draw_id, private_id = self.begin_original_draw(
+                    70209501 + int(respond), name='Vanishment', a_mana={'U': 2},
+                    extras=(
+                        ('Grizzly Bears', 'battlefield', 'miracle-target-body'),
+                        ('Generic Bound Plains', 'battlefield', 'miracle-illegal-land'),
+                        ('Unsummon', 'hand', 'miracle-real-response'),
+                    ),
+                )
+                target = session.state.cards['fixture:miracle-target-body']
+                land = session.state.cards['fixture:miracle-illegal-land']
+                target_counter = target.zone_change_counter
+                for principal in ('pilot:C', 'pilot:D', 'spectator'):
+                    self.assertNotIn('Vanishment', json.dumps(session.packet(principal, full=True)))
+                self.reject(session, 'reveal', actor='D')
+                accepted = session.act('pilot:A', {'action_id': 'reveal'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual('semantic.choice', self.resolve(session).kind)
+                context = session.packet('pilot:A', full=True)['decision']['ctx']
+                option = next(row for row in context['cast_options'] if row['id'] == 'miracle')
+                legal = option['target_schema']['legal_refs']
+                self.assertIn(target.ref, legal)
+                self.assertNotIn(land.ref, legal)
+                self.reject(session, 'choose', choice='cast', targets=[land.ref], pay='auto')
+                self.reject(session, 'choose', actor='B', choice='cast', targets=[target.ref], pay='auto')
+                session = self.replay(session, load=True)
+                accepted = session.act('pilot:A', {
+                    'action_id': 'choose', 'choice': 'cast',
+                    'targets': [target.ref], 'pay': 'auto',
+                })
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual('stack', session.state.cards[first_id].zone)
+                self.assertEqual(1, session.state.players['A'].mana_pool['U'])
+                self.assertFalse(miracle_reveal_active(session.state, session.state.cards[first_id]))
+                if respond:
+                    self.priority_for(session)
+                    actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                    response = next(row for row in actions if row['id'] == 'cast:miracle-real-response')
+                    self.assertIn(target.ref, response['target_schema']['legal_refs'])
+                    accepted = session.act('pilot:A', {
+                        'action_id': response['id'], 'targets': [target.ref], 'pay': 'auto',
+                    })
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.resolve_top(session)
+                    self.assertEqual('hand', session.state.cards[target.object_id].zone)
+                    self.assertEqual(target_counter + 1, session.state.cards[target.object_id].zone_change_counter)
+                    self.assertEqual(1, len(session.state.stack))
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual('graveyard', session.state.cards[first_id].zone)
+                self.assertEqual('hand' if respond else 'library', session.state.cards[target.object_id].zone)
+                self.assertEqual(target_counter + 1, session.state.cards[target.object_id].zone_change_counter)
+                if not respond:
+                    self.assertEqual(target.object_id, session.state.players['A'].zones['library'][-1])
+                self.assertEqual('battlefield', session.state.cards[land.object_id].zone)
+                self.assertEqual('hand', session.state.cards[second_id].zone)
+                private = session.state.cards[private_id]
+                self.assertNotIn(private.ref, json.dumps(session.packet('pilot:C', full=True)))
+                self.assertIn(private.ref, json.dumps(session.packet('pilot:D', full=True)))
+                self.assertEqual('B', session.state.active_player)
+                self.replay(session, load=True)
+
     def test_original_miracle_waits_for_draw_completion_then_casts_pays_and_replays(self):
         session,first_id,second_id,draw_id,private_id=self.begin_original_draw()
         engine=session.engine;first=engine.state.cards[first_id]

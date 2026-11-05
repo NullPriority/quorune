@@ -57,13 +57,16 @@ def _custom_activated_abilities(
 def compiled_activated_abilities(
     host: CompiledActivatedAbilityHost,
     card: Any,
+    *,
+    record: Any = None,
 ) -> tuple[ActivatedAbility, ...]:
     """Return the current face's source-pinned activation catalog."""
 
     custom = _custom_activated_abilities(card)
     if custom is not None:
         return custom
-    record = host.card_record(card)
+    if record is None:
+        record = host.card_record(card)
     if record is None:
         return ()
     expected_face = _face_id(record, card)
@@ -134,11 +137,12 @@ def compiled_activated_ability_dicts(
     card: Any,
     *,
     error_type: type[Exception] | None = None,
+    record: Any = None,
 ) -> list[dict[str, Any]]:
     try:
         return [
             ability.to_dict()
-            for ability in compiled_activated_abilities(host, card)
+            for ability in compiled_activated_abilities(host, card, record=record)
         ]
     except ValueError as exc:
         if error_type is None:

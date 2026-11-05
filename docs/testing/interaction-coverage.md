@@ -45,6 +45,41 @@ Runtime-admission witnesses exercise the actual trust boundary, including a
 pause before unsupported resolution. Preserve the source's normal zone, legal
 timing, and sufficient payment so the witness isolates the unrepresented operation.
 A nearby accepted control demonstrates that the supported owner remains usable.
+Bounded material-sibling admission cohorts retain pinned original records and
+their rulings. Each declared residual pair must be observed in a normally
+constructed program that rejects both strict and compatible admission without
+a construction failure. A separate closed original control must retain normal
+admission for each represented capability. These checks establish admission
+behavior; pairs of executable capabilities still require composition evidence.
+
+Devour entry has an original-card target-revalidation witness: its entry
+counters and sacrifices persist when the triggered ability's sole target
+leaves, while CR 608.2b stops both the targeted loss and the independent life
+gain. The legal-target control still uses the entry counters. Current Equipment
+recipient reads also compose with a later temporary grant that includes a new
+attacking token, and an original Miracle reveal proceeds through the draw and
+cast choices to targeted damage. These declarations name their native witnesses.
+An original Miracle permanent-target witness also excludes land targets and
+distinguishes legal owner-library movement from a target bounced in response:
+the new hand incarnation stays in hand when every target becomes illegal.
+Original multi-ability carriers also retain branch-isolation witnesses. A
+one-per-opponent targeted spell draws nothing; its separate untargeted Cycling
+branch destroys all applicable artifacts before its private draw. Ordinary
+target cardinality does not constrain that trigger or become a draw target.
+Modal reanimation separately revalidates its sole-target entry-counter mode
+and its fixed target-set mode after an actual graveyard-exile response. The
+first mode applies no entry counters when its target is illegal; the second
+returns only surviving legal targets without borrowing the other mode's policy.
+A returned original graveyard spell also proceeds through normal casting and
+player or creature targeting, including a bounced-target response. Its consumed
+upkeep continuation cannot return it again after the spell reaches the graveyard.
+Original per-opponent destruction also composes with a legally cast Disturb
+Aura's own exile replacement while the other selected permanents reach their
+graveyards. A separately labeled constructed carrier exercises per-opponent
+destruction and a cycle-triggered mill through normal complete admission. The
+trigger mills every opponent before the private Cycling draw; it does not borrow
+the spell's target cardinality. These controls do not admit an unresolved
+original carrier or change the compound-result admission boundary.
 
 Every semantic scope expansion reviews newly reachable ambient interactions,
 even when no capability ID changes. An unchanged denominator is acceptable only

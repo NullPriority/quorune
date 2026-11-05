@@ -4,10 +4,11 @@ from ..card_program_faces import program_matches_face
 from ..station_symbol_model import STATION_SYMBOL_HANDLER, StationSymbolsSpec
 
 
-def compiled_station_symbols(host, card):
+def compiled_station_symbols(host, card, *, record=None):
     if card.face_down:
         return None
-    record = host.card_record(card)
+    if record is None:
+        record = host.card_record(card)
     # Read the intrinsic battlefield declaration even while the card is in
     # another zone; this does not execute its continuous effect there.
     for program in host.semantics.runtime_handler_programs_for_oracle(copiable_oracle_id(card), active_zone='battlefield', event='characteristics.evaluate'):

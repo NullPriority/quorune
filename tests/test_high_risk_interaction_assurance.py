@@ -44,6 +44,92 @@ from quorune.carddb import CardDatabase
 
 
 class HighRiskInteractionAssuranceTests(unittest.TestCase):
+    def test_current_original_material_siblings_fail_closed_at_normal_admission(self):
+        import json
+        from pathlib import Path
+        from high_risk_interaction_support import _observed_piece_ids
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.unlock_frontier import analyze_card_unlocks
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import load_default_capability_registry
+        from quorune.semantics import SemanticRegistry
+
+        root = Path(__file__).resolve().parents[1]
+        fixture = json.loads(
+            (root / 'tests/fixtures/material-sibling-admission-cards.json')
+            .read_text(encoding='utf-8')
+        )
+        declarations = json.loads(
+            (root / 'platform/reusable-piece-interaction-evidence.json')
+            .read_text(encoding='utf-8')
+        )
+        test_id = (
+            'tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.'
+            'test_current_original_material_siblings_fail_closed_at_normal_admission'
+        )
+        expected = {
+            tuple(row['piece_ids']) for row in declarations['declarations']
+            if row['test_id'] == test_id
+        }
+        self.assertTrue(expected)
+        self.assertTrue(all(
+            len(pair) == 2 and any(piece.startswith('residual.') for piece in pair)
+            for pair in expected
+        ))
+        registry = load_default_capability_registry()
+        semantics = SemanticRegistry()
+        analyses = {}
+        controls = fixture['accepted_control_ids']
+        ids = sorted(set(fixture['admission_candidate_ids']) | set(controls.values()))
+        for oid in ids:
+            card = self.db.by_oracle_id(oid)
+            ir = compile_oracle_card(
+                card, capability_registry=registry, capability_profile='commander_review',
+            )
+            program = compile_best_available_card_program(
+                self.db, card, semantic_registry=semantics,
+                capability_registry=registry, capability_profile='commander_review',
+            )
+            row = analyze_card_unlocks(
+                ir, program=program, program_error=None,
+                capabilities=registry, profile='commander_review',
+            )
+            binding = bind_card_program_runtime(
+                program, capability_registry=registry, profile='commander_review',
+            )
+            self.assertIsNone(row['hard_construction_failure'], card.name)
+            analyses[oid] = (card, _observed_piece_ids(row), program, binding)
+        for piece, oid in controls.items():
+            card, observed, _program, binding = analyses[oid]
+            with self.subTest(control=card.name, piece=piece):
+                self.assertIn(piece, observed)
+                self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+                self.assertTrue(binding['compatible_ready'], binding['blockers'])
+        for pair in sorted(expected):
+            represented = [piece for piece in pair if piece.startswith('capability.')]
+            for piece in represented:
+                self.assertIn(piece, controls)
+            closure = registry.closure(
+                [piece.removeprefix('capability.') for piece in represented],
+                profile='commander_review',
+            )
+            self.assertTrue(closure.trusted, closure.blockers)
+            witnesses = []
+            for oid in fixture['admission_candidate_ids']:
+                card, observed, program, binding = analyses[oid]
+                if (
+                    set(pair) <= observed and program.residuals
+                    and not binding['strict_capability_ready']
+                    and not binding['compatible_ready']
+                    and 'trust_basis:unresolved' in binding['blockers']
+                ):
+                    witnesses.append(card.name)
+            with self.subTest(pair=pair):
+                self.assertTrue(
+                    witnesses, 'No normally rejected original preserves both material pieces',
+                )
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.db = CardDatabase(DB_PATH)

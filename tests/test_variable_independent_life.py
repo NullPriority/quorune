@@ -169,8 +169,8 @@ class VariableIndependentLifeNativeTests(InheritedNativeFixture, unittest.TestCa
             self.assertNotIn(private_blue.ref, json.dumps(s.packet('pilot:'+viewer, full=True)))
         self.replay(s, load=True)
 
-    def test_actual_fell_beast_devours_before_targeting_and_uses_its_counter_amount(self):
-        s = self.session(119700725)
+    def fell_beast_after_devour(self, seed):
+        s = self.session(seed)
         spell = self.add(s.engine, 'Fell Beast of Mordor', zone='hand')
         bodies = [self.add(s.engine, 'Memnite', ref='devoured-'+str(i)) for i in range(2)]
         pride = self.add(s.engine, "Ajani's Pridemate")
@@ -190,11 +190,42 @@ class VariableIndependentLifeNativeTests(InheritedNativeFixture, unittest.TestCa
         result = s.act('pilot:A', command)
         self.assertTrue(result.ok, result.summary)
         self.resolve(s)
+        return s, spell, bodies, pride
+
+    def test_actual_fell_beast_devours_before_targeting_and_uses_its_counter_amount(self):
+        s, spell, bodies, pride = self.fell_beast_after_devour(119700725)
         self.target(s, 'A', ['B'])
         self.assertIsNone(self.resolve(s))
         self.assertEqual((42, 38, 40, 40), tuple(s.state.players[p].life for p in 'ABCD'))
         self.assertEqual(2, s.state.cards[spell.object_id].counters.get('+1/+1', 0))
         self.assertEqual(1, s.state.cards[pride.object_id].counters.get('+1/+1', 0))
+        self.assertTrue(all(s.state.cards[body.object_id].zone == 'graveyard' for body in bodies))
+        self.replay(s, load=True)
+
+    def test_actual_devour_trigger_with_departed_only_target_keeps_counters_without_life_gain(self):
+        # CR 702.82a completes entry before the trigger; CR 608.2b then
+        # prevents the entire targeted ability, including its untargeted gain.
+        s, spell, bodies, pride = self.fell_beast_after_devour(119700726)
+        self.target(s, 'A', ['B'])
+        self.assertEqual(1, self.trigger_count(s, spell))
+        trigger_ref = s.state.stack[-1].ref
+        self.priority(s, 'B')
+        result = s.act('pilot:B', {
+            'action_id': 'concede', 'choices': {'confirm_concede': True},
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(s.state.players['B'].in_game)
+        # CR 800.4a removes the departed player's stack objects, but this
+        # surviving controller's trigger must reach ordinary revalidation.
+        self.assertIn(trigger_ref, {item.ref for item in s.state.stack})
+        self.reject(s, 'B', {'action_id': 'pass'})
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertFalse(s.state.stack)
+        self.assertEqual((40, 40, 40), tuple(s.state.players[p].life for p in 'ACD'))
+        self.assertEqual('battlefield', s.state.cards[spell.object_id].zone)
+        self.assertEqual(2, s.state.cards[spell.object_id].counters.get('+1/+1', 0))
+        self.assertEqual(0, s.state.cards[pride.object_id].counters.get('+1/+1', 0))
         self.assertTrue(all(s.state.cards[body.object_id].zone == 'graveyard' for body in bodies))
         self.replay(s, load=True)
 

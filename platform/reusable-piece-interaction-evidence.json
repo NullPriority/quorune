@@ -21960,6 +21960,776 @@
       ],
       "interaction_order": 3,
       "assertion": "Original The Legend of Roku/Avatar Roku retains an exact mana-choice leaf while ordinary Saga/chapter residuals keep the complete program unresolved. Its advertised and submitted activation stays unavailable before payment; actual Quirion Sentinel retains normal mana choice, private projection, rollback and replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.attachment.aura.simple_object",
+        "residual.continuous_layer.granted-ability"
+      ],
+      "capability_ids": [
+        "attachment.aura.simple_object"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.attachment.aura.typed_restriction",
+        "residual.continuous_layer.granted-ability"
+      ],
+      "capability_ids": [
+        "attachment.aura.typed_restriction"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.attachment.equip.fixed_nonmana",
+        "residual.duration.until-end-of-turn"
+      ],
+      "capability_ids": [
+        "attachment.equip.fixed_nonmana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.continuous.attached.fixed_characteristics",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "continuous.attached.fixed_characteristics"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.continuous.characteristics.query_count_modifier",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "continuous.characteristics.query_count_modifier"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.lifecycle.fading",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "counter.lifecycle.fading"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.placement.quantity_replacement",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "counter.placement.quantity_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.producer.cumulative_upkeep_fixed_mana",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "counter.producer.cumulative_upkeep_fixed_mana"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.producer.fixed_keyword_entry",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "counter.producer.fixed_keyword_entry"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.all_effect",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "counter.removal.all_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.all_effect",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "counter.removal.all_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.all_named_source_effect",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "counter.removal.all_named_source_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.all_named_source_effect",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "counter.removal.all_named_source_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.fixed_effect",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "counter.removal.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.fixed_effect",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "counter.removal.fixed_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.fixed_source_effect",
+        "residual.replacement.replacement-applicability"
+      ],
+      "capability_ids": [
+        "counter.removal.fixed_source_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.counter.removal.fixed_source_effect",
+        "residual.replacement.self-replacement-and-prevention-ordering"
+      ],
+      "capability_ids": [
+        "counter.removal.fixed_source_effect"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.damage.amount.positive",
+        "residual.replacement.damage-prevention"
+      ],
+      "capability_ids": [
+        "damage.amount.positive"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.damage.result.multitype_permanent",
+        "residual.replacement.damage-prevention"
+      ],
+      "capability_ids": [
+        "damage.result.multitype_permanent"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.damage.source.stack_current_or_lki",
+        "residual.replacement.damage-prevention"
+      ],
+      "capability_ids": [
+        "damage.source.stack_current_or_lki"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.token.creation.fixed_definition",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "token.creation.fixed_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.token.creation.typed_ability_definition",
+        "residual.replacement.regeneration"
+      ],
+      "capability_ids": [
+        "token.creation.typed_ability_definition"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.change.self_graveyard_exile",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.change.self_graveyard_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.change.self_graveyard_exile",
+        "residual.target_or_choice.multiple-targets"
+      ],
+      "capability_ids": [
+        "zone.change.self_graveyard_exile"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.entry.devour",
+        "residual.target_or_choice.divided-damage-allocation"
+      ],
+      "capability_ids": [
+        "zone.entry.devour"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.entry.devour",
+        "residual.target_or_choice.multiple-damage-recipients"
+      ],
+      "capability_ids": [
+        "zone.entry.devour"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.entry.devour",
+        "residual.target_or_choice.multiple-targets"
+      ],
+      "capability_ids": [
+        "zone.entry.devour"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.entry.public_designation",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.entry.public_designation"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.exile.resolving_spell",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.exile.resolving_spell"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.mill.event_recipient",
+        "residual.target_or_choice.multiple-targets"
+      ],
+      "capability_ids": [
+        "zone.mill.event_recipient"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.mill.event_recipient",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.mill.event_recipient"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.reanimate.entry_counters",
+        "residual.card_form.ordinary-saga-chapter-event-binding"
+      ],
+      "capability_ids": [
+        "zone.reanimate.entry_counters"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.return.fixed_event_card",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.return.fixed_event_card"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.return.own_graveyard_choice",
+        "residual.card_form.ordinary-saga-chapter-event-binding"
+      ],
+      "capability_ids": [
+        "zone.return.own_graveyard_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.return.own_graveyard_choice",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.return.own_graveyard_choice"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.return.triggered_self_graveyard_hand",
+        "residual.target_or_choice.target-predicate"
+      ],
+      "capability_ids": [
+        "zone.return.triggered_self_graveyard_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "capability.zone.self_move.activated",
+        "residual.target_or_choice.conditional-effect"
+      ],
+      "capability_ids": [
+        "zone.self_move.activated"
+      ],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "fail_closed_runtime_admission",
+      "test_id": "tests.test_high_risk_interaction_assurance.HighRiskInteractionAssuranceTests.test_current_original_material_siblings_fail_closed_at_normal_admission",
+      "piece_ids": [
+        "residual.card_form.ordinary-saga-chapter-event-binding",
+        "residual.duration.until-end-of-turn"
+      ],
+      "capability_ids": [],
+      "interaction_order": 2,
+      "assertion": "Pinned original records expose both declared pieces and reject normal strict and compatible complete-program admission for material unresolved siblings without construction failure. The same test normally admits a closed original control for each represented capability. This is admission-boundary evidence, not supported gameplay of the residual pair."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_miracle_rules.MiracleRuntimeTests.test_original_miracle_waits_for_draw_completion_then_casts_pays_and_replays",
+      "piece_ids": [
+        "capability.target.public.player_or_damageable_permanent",
+        "capability.zone.draw.reveal_as_drawn"
+      ],
+      "capability_ids": [
+        "target.public.player_or_damageable_permanent",
+        "zone.draw.reveal_as_drawn"
+      ],
+      "interaction_order": 2,
+      "assertion": "An original Thunderous Wrath reveals during the first draw, waits for the draw sequence and its trigger, then legally casts for Miracle with a chosen opponent and deals five damage. Saved reveal/cast choices, rejected foreign or premature commands, private other draws and exact replay remain distinct."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_quantity_token_cleanup.QuantityTokenCleanupNativeTests.test_actual_rosette_later_grant_includes_the_new_untapped_attacking_token",
+      "piece_ids": [
+        "capability.attachment.reference.current_or_lki",
+        "capability.continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "capability_ids": [
+        "attachment.reference.current_or_lki",
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Actual equipped attacker reads its current attachment recipient, creates the untapped token attacking a different defender, and includes that new token in the later temporary Menace grant; both deal damage with exact replay. This declaration covers the current-reference composition."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_variable_independent_life.VariableIndependentLifeNativeTests.test_actual_devour_trigger_with_departed_only_target_keeps_counters_without_life_gain",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.entry.devour"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.entry.devour"
+      ],
+      "interaction_order": 2,
+      "assertion": "After original Devour entry and legal trigger targeting, the sole targeted opponent concedes. The surviving controller trigger remains pending through save/load and reaches ordinary target revalidation: the entire ability stops, no surviving life total changes, no life-gain observer fires, and entry counters and sacrifices persist with rejected departed-player command rollback and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_variable_independent_life.VariableIndependentLifeNativeTests.test_actual_fell_beast_devours_before_targeting_and_uses_its_counter_amount",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.entry.devour"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.entry.devour"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Fell Beast completes Devour entry before its targeted trigger is placed and resolves against the legal opponent for exactly its current entry counters, including the independent controller gain and life-gain observer, with save/load, foreign-command rollback and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_miracle_rules.MiracleRuntimeTests.test_original_miracle_nonland_target_revalidates_after_actual_response",
+      "piece_ids": [
+        "capability.target.permanent.characteristic_predicate",
+        "capability.zone.draw.reveal_as_drawn"
+      ],
+      "capability_ids": [
+        "target.permanent.characteristic_predicate",
+        "zone.draw.reveal_as_drawn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original first-draw Vanishment is normally admitted and cast through the actual Miracle reveal and cast choices. Its offered and submitted predicate excludes lands. A legal creature reaches its owner library top, while an actual Unsummon response preserves the new hand incarnation and makes the sole target illegal so Vanishment does not resolve. Both branches preserve foreign/illegal-command rollback, saved pending choices, private other draws and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_miracle_rules.MiracleRuntimeTests.test_original_miracle_nonland_target_revalidates_after_actual_response",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.draw.reveal_as_drawn"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.draw.reveal_as_drawn"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original first-draw Vanishment is normally admitted and cast through the actual Miracle reveal and cast choices. Its offered and submitted predicate excludes lands. A legal creature reaches its owner library top, while an actual Unsummon response preserves the new hand incarnation and makes the sole target illegal so Vanishment does not resolve. Both branches preserve foreign/illegal-command rollback, saved pending choices, private other draws and exact replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_per_player_target_native.PerPlayerTargetNativeTests.test_original_wave_keeps_targeted_spell_separate_from_cycling_trigger_and_draw",
+      "piece_ids": [
+        "capability.target.cardinality.any_number",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "target.cardinality.any_number",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normally admitted original Dismantling Wave keeps its ordinary one-per-opponent target set separate from Cycling. The ordinary spell rejects two same-controller targets, destroys only its selected artifact and does not draw. A second original then cycles without a target schema; its trigger destroys own and multiple same-controller artifacts before the separate private draw, with exact costs, actor rollback and saved replay between both resolutions. This is branch isolation, not a claim that Cycling uses the ordinary targets."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_per_player_target_native.PerPlayerTargetNativeTests.test_original_wave_keeps_targeted_spell_separate_from_cycling_trigger_and_draw",
+      "piece_ids": [
+        "capability.target.set.one_per_player",
+        "capability.zone.draw.library_to_hand"
+      ],
+      "capability_ids": [
+        "target.set.one_per_player",
+        "zone.draw.library_to_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normally admitted original Dismantling Wave keeps its ordinary one-per-opponent target set separate from Cycling. The ordinary spell rejects two same-controller targets, destroys only its selected artifact and does not draw. A second original then cycles without a target schema; its trigger destroys own and multiple same-controller artifacts before the separate private draw, with exact costs, actor rollback and saved replay between both resolutions. This is branch isolation, not a claim that Cycling uses the ordinary targets."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationSetNativeTests.test_original_restoration_revalidates_before_entry_counters_and_partial_set_return",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.reanimate.entry_counters"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.reanimate.entry_counters"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normally admitted original Graceful Restoration announces each mode against legal own-graveyard targets. An actual Cremate response makes the first target illegal: the sole-target entry-counter mode does not return it or apply counters, while the plural mode returns only its remaining legal target without borrowing the other mode counter instruction. Legal controls retain their proper entry policy; wrong-owner/power targets and foreign commands reject atomically, and response draws stay private through saved replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_fixed_target_reanimation.FixedTargetReanimationSetNativeTests.test_original_restoration_revalidates_before_entry_counters_and_partial_set_return",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.reanimate.fixed_target_set"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.reanimate.fixed_target_set"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normally admitted original Graceful Restoration announces each mode against legal own-graveyard targets. An actual Cremate response makes the first target illegal: the sole-target entry-counter mode does not return it or apply counters, while the plural mode returns only its remaining legal target without borrowing the other mode counter instruction. Legal controls retain their proper entry policy; wrong-owner/power targets and foreign commands reject atomically, and response draws stay private through saved replay."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_returned_original_cast_targets_players_and_revalidates_a_bounced_creature",
+      "piece_ids": [
+        "capability.target.public.player_or_damageable_permanent",
+        "capability.zone.return.triggered_self_graveyard_hand"
+      ],
+      "capability_ids": [
+        "target.public.player_or_damageable_permanent",
+        "zone.return.triggered_self_graveyard_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Rekindled Flame returns from its graveyard through a real upkeep continuation, then is normally cast during the controller main phase using actual red lands. Legal player and creature targets take four damage, while an actual Unsummon response preserves the new hand incarnation and makes the entire targeted spell stop. Illegal land targets and foreign commands roll back; the old upkeep frame cannot return the spell again, and private hands and saved replay remain principal-correct."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_graveyard_self_return_triggers.GraveyardSelfReturnNativeTests.test_returned_original_cast_targets_players_and_revalidates_a_bounced_creature",
+      "piece_ids": [
+        "capability.target.revalidate_resolution",
+        "capability.zone.return.triggered_self_graveyard_hand"
+      ],
+      "capability_ids": [
+        "target.revalidate_resolution",
+        "zone.return.triggered_self_graveyard_hand"
+      ],
+      "interaction_order": 2,
+      "assertion": "Original Rekindled Flame returns from its graveyard through a real upkeep continuation, then is normally cast during the controller main phase using actual red lands. Legal player and creature targets take four damage, while an actual Unsummon response preserves the new hand incarnation and makes the entire targeted spell stop. Illegal land targets and foreign commands roll back; the old upkeep frame cannot return the spell again, and private hands and saved replay remain principal-correct."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_per_player_target_native.PerPlayerTargetNativeTests.test_original_per_opponent_destroy_preserves_disturb_destination_replacement",
+      "piece_ids": [
+        "capability.target.cardinality.any_number",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.cardinality.any_number",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normally admitted original Kindly Ancestor legally casts transformed as its Aura using original Orrery permission, then original Dismantling Wave selects that Aura and different opposing artifacts. The Aura replaces its own graveyard destination with exile; its unselected host and other unselected permanents remain, its grant disappears, and the other targets reach their graveyards. Same-controller extra targets and foreign Disturb commands reject atomically; exact payment, active face, attachment, privacy and saved replay are retained."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_per_player_target_native.PerPlayerTargetNativeTests.test_closed_per_player_spell_does_not_constrain_its_separate_cycle_mill_trigger",
+      "piece_ids": [
+        "capability.target.cardinality.any_number",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "target.cardinality.any_number",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "An explicitly constructed, normally complete-admitted carrier has separate per-opponent destruction and cycle-triggered mill abilities. Its spell rejects two same-controller targets, destroys only its announced set and mills nothing. Cycling another normally admitted copy then mills exactly three cards for each opponent before its separate private draw; its ordinary target schema does not limit that trigger. Actual costs, actor rejection, saved intermediate resolutions and exact private replay are asserted. This is a constructed composition control, not whole-card support for the unresolved original Saga carrier."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_per_player_target_native.PerPlayerTargetNativeTests.test_original_per_opponent_destroy_preserves_disturb_destination_replacement",
+      "piece_ids": [
+        "capability.target.set.one_per_player",
+        "capability.zone.change.destination_replacement"
+      ],
+      "capability_ids": [
+        "target.set.one_per_player",
+        "zone.change.destination_replacement"
+      ],
+      "interaction_order": 2,
+      "assertion": "Normally admitted original Kindly Ancestor legally casts transformed as its Aura using original Orrery permission, then original Dismantling Wave selects that Aura and different opposing artifacts. The Aura replaces its own graveyard destination with exile; its unselected host and other unselected permanents remain, its grant disappears, and the other targets reach their graveyards. Same-controller extra targets and foreign Disturb commands reject atomically; exact payment, active face, attachment, privacy and saved replay are retained."
+    },
+    {
+      "evidence_class": "interaction",
+      "assurance_kind": "runtime_composition",
+      "test_id": "tests.test_per_player_target_native.PerPlayerTargetNativeTests.test_closed_per_player_spell_does_not_constrain_its_separate_cycle_mill_trigger",
+      "piece_ids": [
+        "capability.target.set.one_per_player",
+        "capability.zone.mill.fixed"
+      ],
+      "capability_ids": [
+        "target.set.one_per_player",
+        "zone.mill.fixed"
+      ],
+      "interaction_order": 2,
+      "assertion": "An explicitly constructed, normally complete-admitted carrier has separate per-opponent destruction and cycle-triggered mill abilities. Its spell rejects two same-controller targets, destroys only its announced set and mills nothing. Cycling another normally admitted copy then mills exactly three cards for each opponent before its separate private draw; its ordinary target schema does not limit that trigger. Actual costs, actor rejection, saved intermediate resolutions and exact private replay are asserted. This is a constructed composition control, not whole-card support for the unresolved original Saga carrier."
     }
   ],
   "schema_version": 2
