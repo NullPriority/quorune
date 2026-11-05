@@ -454,6 +454,12 @@ class UmbraArmorRepresentationReplayTests(unittest.TestCase):
                                         actor="B", reason="competing resource choice")
                 self.assertEqual("A", raised.exception.pending.choice.chooser)
                 choice = next(effect.effect_id for effect in raised.exception.effects if effect.effect_id.endswith(":" + selected))
+                before = authoritative_state_hash(session.state)
+                duplicate = {"effect_id": choice, "event_id": raised.exception.pending.event_id}
+                with self.assertRaises(DestructionError):
+                    prepare_destructions(engine, (request_for_card(body),), cause=DestructionCause.EFFECT,
+                        actor="B", reason="competing resource choice", replacement_selections=(choice, duplicate))
+                self.assertEqual(before, authoritative_state_hash(session.state))
                 plan = prepare_destructions(engine, (request_for_card(body),), cause=DestructionCause.EFFECT,
                     actor="B", reason="competing resource choice", replacement_selections=(choice,))
                 commit_destruction_plan(engine, plan)

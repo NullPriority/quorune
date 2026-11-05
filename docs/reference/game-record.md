@@ -891,6 +891,13 @@ readable descriptors do not independently establish historical execution.
 Records pinned to the prior runtime trust identity are explicitly rejected by
 the existing manifest-provenance check rather than silently reinterpreted.
 
+Fresh games record the optional version-one
+`effect_destruction_replacement_version` field. The existing replacement
+continuation retains event-bound destruction selections separately from their
+destination scope when reconstructing the batch. Damage clearing commits only
+after the movement preflight succeeds. An absent version preserves the
+historical selection and commit order.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads

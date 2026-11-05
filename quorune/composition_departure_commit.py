@@ -101,7 +101,7 @@ def _parent_occurrence(root,departure,plan,count,reason):
 
 
 
-def commit_prepared_composition_departures(owner,batch):
+def commit_prepared_composition_departures(owner,batch,*,damage_clears=()):
     """Commit all prepared physical and ordinary arrivals before publication."""
     from .composition_departure_batch import PreparedCompositionDepartureBatch,publish_composition_departure_batch
     from .composition_replacements import project_composition_counters
@@ -112,6 +112,10 @@ def commit_prepared_composition_departures(owner,batch):
     order=batch.request.ordered_ids(batch.orders)
     with owner.host.transaction():
         batch.validate_roots(owner)
+        if damage_clears:
+            from .damage_results import clear_damage_for_permanents
+
+            clear_damage_for_permanents(owner.host, damage_clears)
         groups=[]
         for group in batch.groups:
             captured=owner._capture_departure(group.plan.card,semantic_events=True)
@@ -174,7 +178,8 @@ def commit_prepared_composition_departures(owner,batch):
 
 
 def depart_composition(owner,object_id,destination,*,physical_order,chooser,actor,reason,
-        position='top',replacement_selections=(),transition_kind=ZoneTransitionKind.ORDINARY,prepared_replacement=None):
+        position='top',replacement_selections=(),transition_kind=ZoneTransitionKind.ORDINARY,
+        prepared_replacement=None,damage_clears=()):
     """Adapt the existing single-object port to the complete physical batch."""
     from .composition_departure_batch import prepare_composition_departure_batch
     _root,_storage,plan=_prepare(owner,object_id,destination,physical_order,chooser,actor,reason,
@@ -195,4 +200,4 @@ def depart_composition(owner,object_id,destination,*,physical_order,chooser,acto
         orders=tuple(tuple(ref for ref in refs if ref in allowed) for _group,allowed in batch.request.choices)
         batch=batch.with_orders(orders)
     except (KeyError,ValueError) as exc:raise GameRuleError(str(exc)) from exc
-    return commit_prepared_composition_departures(owner,batch)
+    return commit_prepared_composition_departures(owner,batch,damage_clears=damage_clears)

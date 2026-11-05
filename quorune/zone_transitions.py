@@ -1073,12 +1073,14 @@ class ZoneTransitionOwner:
         prepared_replacements: Mapping[str,PreparedZoneChange] | None = None,
         entry_faces: Mapping[str,str] | None = None,
         publish_events: bool = True,
+        damage_clears: Sequence[tuple[str, str]] = (),
     ) -> list[CardInstance]:
         if any(self.state.cards.get(object_id) is not None
                 and self.state.cards[object_id].permanent_composition is not None for object_id,_ in changes):
             from .composition_ordering import resolve_composition_departure_batch
             return resolve_composition_departure_batch(self,changes,reason=reason,replacement_selections=replacement_selections,
-                transition_kinds=transition_kinds,prepared_replacements=prepared_replacements)
+                transition_kinds=transition_kinds,prepared_replacements=prepared_replacements,
+                damage_clears=damage_clears)
         kinds = normalized_transition_kind_map(changes, transition_kinds)
         controllers = dict(destination_controllers or {})
         aura_targets = dict(aura_target_refs or {})
@@ -1088,6 +1090,10 @@ class ZoneTransitionOwner:
         changes,prepared,kinds,source_snapshot=self._prepare_simultaneous_zone_batch(changes,controllers,aura_targets,faces,
             tapped=tapped,effect_entry_counters=effect_entry_counters,replacement_selections=replacement_selections,
             kinds=kinds,prepared_replacements=prepared_replacements,log=log)
+        if damage_clears:
+            from .damage_results import clear_damage_for_permanents
+
+            clear_damage_for_permanents(self.host, damage_clears)
         if not changes:return []
         snapshots=self._commit_simultaneous_zone_batch(changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,reason=reason,log=log)
         return self._publish_simultaneous_zone_batch(snapshots,prepared,kinds,reason=reason,publish_events=publish_events)

@@ -31,8 +31,11 @@ class StateBasedDestinationReplacementTests(unittest.TestCase):
     def setUpClass(cls):
         cls.temp = tempfile.TemporaryDirectory()
         path = Path(cls.temp.name) / 'state-based-destination.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-                                ROOT/'tests/fixtures/state-based-destination-cards.json'], path)
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/state-based-destination-cards.json",
+            ROOT / "tests/fixtures/umbra-armor-cards.json",
+        ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition('State-based destination', [
@@ -293,6 +296,87 @@ class StateBasedDestinationReplacementTests(unittest.TestCase):
         self.assertEqual(('exile',1),(session.state.cards[auras[0].object_id].zone,session.state.cards[auras[0].object_id].counters.get('void',0)))
         self.assertEqual('battlefield',session.state.cards[auras[1].object_id].zone)
         self.replay(session)
+
+    def test_actual_effect_destruction_keeps_both_replacement_stages_atomic(self):
+        from quorune.attachments import attach_objects
+
+        session = self.session(750244)
+        body = self.add(session.engine, "Grizzly Bears", seat="B", ref="effect-umbra-body")
+        auras = [self.add(session.engine, name, seat="B") for name in ("Hyena Umbra", "Spider Umbra")]
+        for aura in auras:
+            attach_objects(session.state.cards, aura, body,
+                           source_timestamp=session.engine._next_zone_timestamp())
+        body.marked_damage = 1
+        sources = self.replacements(session)
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        spell = self.add(session.engine, "Day of Judgment", zone="hand")
+        self.cast(session, spell, [], {"C": 2, "W": 2})
+
+        def assert_uncommitted():
+            self.assertEqual(["pilot:B"], list(session.pending_principals()))
+            self.assertEqual(1, session.state.cards[body.object_id].marked_damage)
+            for card in (body, *auras, *sources):
+                self.assertEqual("battlefield", session.state.cards[card.object_id].zone)
+            self.assertNotIn(private.ref, json.dumps(session.packet("pilot:B", full=True)))
+
+        self.assertEqual("replacement.order", self.resolve(session).kind)
+        assert_uncommitted()
+        options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        selected = next(row["id"] for row in options if row["source"] == auras[0].object_id)
+        result = session.act("pilot:B", {"action_id": "choose", "replacement": selected})
+        self.assertTrue(result.ok, result.summary)
+
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        assert_uncommitted()
+        session = self.replay(session, load=True)
+        assert_uncommitted()
+        original = deepcopy(session.state.pending_decision.continuation)
+        prior, = original["effect"]["_replacement_selections"]
+        self.assertEqual(
+            {"effect_id": selected, "event_id": "destroy:" + body.logical_object_id},
+            prior,
+        )
+        options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        command = {"action_id": "choose", "replacement": options[0]["id"]}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:C", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+
+        retained = session.state.pending_decision.continuation["effect"]["_replacement_selections"]
+        retained[0]["event_id"] = "destroy:" + auras[1].logical_object_id
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session.state.pending_decision.continuation = original
+        assert_uncommitted()
+
+        result = session.act("pilot:B", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        current_body = session.state.cards[body.object_id]
+        self.assertEqual(("battlefield", 0, False), (
+            current_body.zone, current_body.marked_damage, current_body.tapped,
+        ))
+        first_aura = session.state.cards[auras[0].object_id]
+        self.assertEqual(("exile", 1), (first_aura.zone, first_aura.counters.get("void")))
+        self.assertEqual("battlefield", session.state.cards[auras[1].object_id].zone)
+        for card in (*sources, spell):
+            self.assertEqual("graveyard", session.state.cards[card.object_id].zone)
+        self.assertEqual("A", session.state.priority_player)
+        self.replay(session)
+
+    def test_effect_destruction_version_preserves_absent_historical_encoding(self):
+        from quorune.model import GameState
+
+        raw = self.session(750245).state.to_dict()
+        key = "effect_destruction_replacement_version"
+        self.assertEqual(1, raw[key])
+        self.assertEqual(raw, GameState.from_dict(raw).to_dict())
+        for malformed in (True, False, 0, 2, "1"):
+            with self.subTest(version=malformed), self.assertRaises(ValueError):
+                GameState.from_dict({**raw, key: malformed})
+        del raw[key]
+        self.assertEqual(raw, GameState.from_dict(raw).to_dict())
 
     def test_fresh_actual_prior_destruction_selection_omission_is_killed(self):
         from dataclasses import replace

@@ -10,6 +10,9 @@ from .replacement.operations import SetField
 from .umbra_armor_model import UmbraArmorProtection
 
 
+DESTRUCTION_EVENT_ID_PREFIX = "destroy:"
+
+
 @dataclass(frozen=True, slots=True)
 class DestructionReplacementSubject:
     object_id: str
@@ -61,7 +64,7 @@ def destruction_replacement_options(
     effects = []
     for subject in sorted(supplied, key=lambda value: value.object_id):
         events.append(ReplaceableEvent(
-            event_id="destroy:" + subject.logical_object_id, kind="permanent.destroy",
+            event_id=DESTRUCTION_EVENT_ID_PREFIX + subject.logical_object_id, kind="permanent.destroy",
             affected_player=None, affected_object=AffectedObject(subject.object_id, subject.owner, subject.controller),
             payload={"object_id": subject.object_id, "logical_object_id": subject.logical_object_id,
                      "disposition": "indestructible" if subject.indestructible else "destroy",
