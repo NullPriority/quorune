@@ -36,7 +36,7 @@ from .continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
     FixedPublicStateConditionSpec,
 )
-from .rules.event_subscriptions import FixedEventSubscriptionSet
+from .rules.event_subscriptions import FixedEventSubscriptionSet, intervening_recheck_condition
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
     EvolveCharacteristics,
@@ -744,7 +744,7 @@ def semantic_intervening_condition_matches(
         )
         and semantic_event_condition_matches(
             host,
-            program.event_condition,
+            intervening_recheck_condition(program, context=context, controller=controller),
             source=source,
             context=context,
         )

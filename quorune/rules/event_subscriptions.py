@@ -5,6 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
+from ..continuous_conditions import (
+    FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
+    FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+    FixedPublicStateConditionSpec,
+)
+from ..errors import GameRuleError
 from ..replacement.immutable import FrozenMap, freeze_value, thaw_value
 
 
@@ -13,6 +19,18 @@ EVENT_SUBSCRIPTIONS_FIELD = "event_subscriptions"
 
 class EventSubscriptionError(ValueError):
     """A serialized fixed multi-event subscription is malformed."""
+
+
+def _public_state_leaves(value: Any):
+    if isinstance(value, Mapping):
+        if value.get("field") == FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD:
+            yield value
+        else:
+            for child in value.values():
+                yield from _public_state_leaves(child)
+    elif isinstance(value, (list, tuple)):
+        for child in value:
+            yield from _public_state_leaves(child)
 
 
 @dataclass(frozen=True, slots=True)
@@ -92,6 +110,39 @@ class FixedEventSubscriptionSet:
             None,
         )
 
+    def with_shared_condition(self, condition: Mapping[str, Any]) -> FixedEventSubscriptionSet:
+        """Conjoin one shared predicate with each event's occurrence filter."""
+        return FixedEventSubscriptionSet(tuple(
+            FixedEventSubscription(
+                subscription.event,
+                {"all": [subscription.condition, condition]}
+                if subscription.condition is not None else condition,
+            )
+            for subscription in self.subscriptions
+        ))
+
+    def shared_public_state_condition(self) -> Mapping[str, Any] | None:
+        """Recover the one intervening predicate shared by every subscription."""
+        leaves = tuple(tuple(_public_state_leaves(sub.condition)) for sub in self.subscriptions)
+        if not any(leaves):
+            return None
+        if any(len(conditions) != 1 for conditions in leaves):
+            raise EventSubscriptionError("Each conditioned event requires one intervening predicate")
+        shared = leaves[0][0]
+        if (set(shared) != {"field", "op", "value", "condition"}
+                or shared["op"] != "truthy" or shared["value"] is not True):
+            raise EventSubscriptionError("The shared intervening predicate is malformed")
+        FixedPublicStateConditionSpec.from_dict(shared["condition"])
+        for sub in self.subscriptions:
+            condition = sub.condition
+            if condition == shared:
+                continue
+            terms = condition["all"] if set(condition) == {"all"} else ()
+            if (not isinstance(terms, tuple) or len(terms) != 2
+                    or not isinstance(terms[0], Mapping) or terms[1] != shared):
+                raise EventSubscriptionError("Conditioned events must conjoin the same intervening predicate")
+        return shared
+
     def to_condition(self) -> dict[str, Any]:
         return {
             EVENT_SUBSCRIPTIONS_FIELD: [
@@ -138,10 +189,31 @@ def fixed_event_subscription_condition(
     return FixedEventSubscriptionSet(tuple(subscriptions)).to_condition()
 
 
+def intervening_recheck_condition(program, *, context, controller):
+    """Select the persisted subscription's shared predicate for resolution."""
+    condition = program.event_condition
+    if (FIXED_PUBLIC_STATE_INTERVENING_COVERAGE not in program.coverage
+            or EVENT_SUBSCRIPTIONS_FIELD not in condition):
+        return condition
+    try:
+        subscriptions = FixedEventSubscriptionSet.from_condition(condition)
+        assert subscriptions is not None
+        shared = subscriptions.shared_public_state_condition()
+        if (shared is None or type(controller) is not str
+                or context.get('intervening_condition_controller') != controller
+                or not any(sub.event.removesuffix('.self') == context.get('event')
+                           for sub in subscriptions.subscriptions)):
+            raise EventSubscriptionError('Conditioned trigger lost its occurrence or locked controller')
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    return shared
+
+
 __all__ = [
     "EVENT_SUBSCRIPTIONS_FIELD",
     "EventSubscriptionError",
     "FixedEventSubscription",
     "FixedEventSubscriptionSet",
     "fixed_event_subscription_condition",
+    "intervening_recheck_condition",
 ]

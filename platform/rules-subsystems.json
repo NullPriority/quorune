@@ -7878,14 +7878,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v686-atomic-apnap-legend-state-based-choices",
-      "compiler_version": "oracle-ir-v686",
+      "transition_id": "oracle-ir-v687-conditioned-multi-event-triggers",
+      "compiler_version": "oracle-ir-v687",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct existing legend-rule keep choices to use surviving APNAP participants and finish all keeps before the simultaneous represented state-based departures. Bind current public identities and collected keeps to closed existing replacement and physical-ordering continuations, with command-scoped resume, rollback, private projection and an explicit historical replay mode. This correctness repair adds no Oracle grammar, exemption feature, new capability or original-card gain; no feature-delivery floor applies. Retain normal admission and canonical census evidence."
+      "non_harvest_reason": "Correct the existing public-state intervening conditions shared by several normalized events. Preserve each occurrence filter, the locked controller at resolution, and historical serialized programs. The affected originals already passed whole-program admission."
     },
     "forecast_corrections": [
       {

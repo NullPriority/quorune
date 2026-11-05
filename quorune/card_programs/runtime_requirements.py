@@ -139,11 +139,21 @@ def _event_query_runtime_requirements(program):
     if program.event.removesuffix('.self')==MUTATE_EVENT:required.add(MUTATE_CAPABILITY)
     if program.event==CRIME_EVENT:required.add(CRIME_CAPABILITY)
     required.update(crime_fact_dependencies((program.handlers,program.event_condition,program.effects,program.cost_schema)))
+    from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
     from ..rules.event_subscriptions import FixedEventSubscriptionSet
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
         if subscriptions is not None:
             required.add('trigger.subscription.fixed_multi_event')
+            shared = subscriptions.shared_public_state_condition()
+            coverage = set(program.coverage)
+            if shared is not None or FIXED_PUBLIC_STATE_INTERVENING_COVERAGE in coverage:
+                if shared is None or not {
+                    'intervening_condition', FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+                    'fixed_multi_event_subscription',
+                } <= coverage:
+                    raise ValueError('Conditioned subscriptions require complete intervening coverage')
+                required.add('trigger.condition.fixed_public_state')
             if any(child.event == 'spell.cast' for child in subscriptions.subscriptions):
                 required.add('trigger.event.normalized_spell_cast')
             if any(child.event.removesuffix('.self') == 'permanent.enter' for child in subscriptions.subscriptions):

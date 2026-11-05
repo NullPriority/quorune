@@ -182,6 +182,11 @@ the typed event condition. CardProgram V2 projects both trigger entries while
 retaining one semantic ability identity and one shared effect list. The runtime
 matches only the selected committed event and never splits or reparses the
 Oracle source line.
+When an intervening condition applies to both events, each subscription carries
+that condition alongside its own occurrence filter. Trigger discovery uses the
+selected subscription. Resolution rechecks the shared condition for the
+controller captured when the ability triggered. Saved programs keep their
+original condition descriptors.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

@@ -19,6 +19,7 @@ from ..continuous_conditions import (
     FixedPublicStateConditionSpec,
 )
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.event_subscriptions import FixedEventSubscriptionSet
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .trigger_result_templates import binding_effect_template
@@ -864,6 +865,9 @@ class FixedCounterTriggerBinding:
         }
         if condition is None:
             return public_condition
+        subscriptions = FixedEventSubscriptionSet.from_condition(condition)
+        if subscriptions is not None:
+            return subscriptions.with_shared_condition(public_condition).to_condition()
         return {"all": [condition, public_condition]}
 
 
