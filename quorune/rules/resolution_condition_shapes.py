@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..resolution_conditions import (
+    RESOLUTION_ALTERNATIVE_SCHEMA_VERSION,
     RESOLUTION_CONDITION_CAPABILITY,
     RESOLUTION_CONDITION_MECHANIC,
     RESOLUTION_CONDITION_OPERATION,
@@ -55,6 +56,8 @@ def resolution_condition_node_capabilities(
     if wrapper["player"] != "$controller":
         return ()
     prefix = effects[:-1]
+    if wrapper.get('schema_version') == RESOLUTION_ALTERNATIVE_SCHEMA_VERSION and len(prefix) > 1:
+        return ()
     controller_result=any(isinstance(child.get('target'),Mapping) and child['target'].get('kind')=='target_controller_information' for child in conditional)
     if controller_result and (wrapper.get('schema_version')!=6 or len(prefix)!=1
             or prefix[0].get('op')!='damage' or target_schema is None
@@ -85,8 +88,13 @@ def resolution_condition_node_capabilities(
     if len(targeted) > (2 if same_target else 1) or (target_schema is not None) != bool(targeted):
         return ()
     from ..public_history_query_model import public_history_query_dependencies
+    from ..public_zone_condition_model import public_zone_condition_capabilities
 
-    dependencies = {RESOLUTION_CONDITION_CAPABILITY, *public_history_query_dependencies(wrapper["condition"])}
+    dependencies = {
+        RESOLUTION_CONDITION_CAPABILITY,
+        *public_history_query_dependencies(wrapper["condition"]),
+        *public_zone_condition_capabilities(wrapper["condition"]),
+    }
     from ..land_entry_condition_model import land_entry_condition_capabilities
     dependencies.update(land_entry_condition_capabilities(_condition.to_dict()))
     if same_target:
@@ -134,11 +142,11 @@ def resolution_condition_node_capabilities(
     return tuple(sorted(dependencies))
 
 
-def same_target_self_replacement_runtime_dependencies(program):
-    if not any(effect.get('op')==RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') in {5,8,9,10,11} for effect in program.effects):
+def bound_resolution_condition_runtime_dependencies(program):
+    if not any(effect.get('op')==RESOLUTION_CONDITION_OPERATION and effect.get('schema_version') in {5,8,9,10,11,RESOLUTION_ALTERNATIVE_SCHEMA_VERSION} for effect in program.effects):
         return ()
     dependencies=resolution_condition_node_capabilities(effects=program.effects,target_schema=program.target_schema,
         mechanic_ids=program.coverage,cost_schema=program.cost_schema)
     if not dependencies:
-        raise ValueError('Same-target self-replacement lacks complete branch and target closure')
+        raise ValueError('Bound resolution condition lacks complete branch and target closure')
     return dependencies

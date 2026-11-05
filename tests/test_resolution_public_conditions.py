@@ -18,9 +18,44 @@ from quorune.deck import DeckDefinition, DeckEntry
 from quorune.record import authoritative_state_hash
 from scripts.build_test_database import build_fixture_database
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 
 
 class ResolutionPublicConditionCompilerTests(unittest.TestCase):
+    def test_public_alternative_preserves_prefix_and_validates_both_result_shapes(self):
+        from quorune.resolution_conditions import RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
+        from quorune.rules.resolution_condition_shapes import resolution_condition_node_capabilities
+
+        text = ("Target player mills three cards. Then if a graveyard has twenty or more cards in it, "
+                "you draw three cards. Otherwise, you draw a card.")
+        template, effects, target, mechanics = _reviewed_effect_template(text, card_name="Condition Witness")
+        self.assertEqual("fixed-resolution-public-alternative-v1", template)
+        mill, condition = effects
+        self.assertEqual("mill", mill["op"])
+        self.assertEqual(RESOLUTION_ALTERNATIVE_SCHEMA_VERSION, condition["schema_version"])
+        self.assertEqual((3, 1), (condition["effects"][0]["count"], condition["otherwise_effects"][0]["count"]))
+        self.assertEqual("any_graveyard_count_at_least", condition["condition"]["fact"])
+        dependencies = resolution_condition_node_capabilities(
+            effects=effects, target_schema=target, mechanic_ids=mechanics,
+        )
+        self.assertIn("state_query.public_zone.condition", dependencies)
+        self.assertNotIn("resolution.effect.fixed_public_self_replacement", dependencies)
+        for bad_branch in (
+            {**condition, "schema_version": 13.0},
+            {**condition, "otherwise_effects": [{"op": "unknown_operation"}]},
+            {**condition, "otherwise_effects": [condition["otherwise_effects"][0]] * 2},
+            {**condition, "otherwise_effects": [{**condition["otherwise_effects"][0], "player": "$target.0"}]},
+        ):
+            self.assertEqual((), resolution_condition_node_capabilities(
+                effects=(mill, bad_branch), target_schema=target, mechanic_ids=mechanics,
+            ))
+        for invalid in (
+            text.replace("you draw a card.", "target player draws a card."),
+            text.replace("you draw a card.", "you draw a card if it died this way."),
+            text + " Revise the result.",
+        ):
+            self.assertIsNone(_reviewed_effect_template(invalid, card_name="Condition Witness")[0])
+
     def test_dual_departure_usage_limit_remains_outside_supported_nondeparture_contract(self):
         from test_bound_effect_programs import record
         from quorune.oracle_ir import compile_oracle_card
@@ -328,7 +363,7 @@ class ResolutionPublicConditionCompilerTests(unittest.TestCase):
             "Draw a card. If you control an artifact, destroy target creature.",
             "Draw a card. If this creature has flying, draw a card.",
             "Draw a card. If you control another creature, draw a card.",
-            "Draw a card. If you control an artifact, draw a card. Otherwise, gain 3 life.",
+            "Draw a card. If you control an artifact, draw a card. Otherwise, target player gains 3 life.",
             "Draw a card. If you control an artifact, if you control a creature, draw a card.",
         ):
             with self.subTest(text=text):
@@ -874,6 +909,119 @@ class ResolutionPublicConditionRuntimeTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         self.assertEqual(1, engine._numeric_stat(target.object_id, "power"))
         self.assertEqual(1, sum(event.code == "card.draw" for event in session.state.events) - draws)
+        self.replay(session, load=True)
+
+
+class PublicAlternativeNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "public-alternatives.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/resolution-public-condition-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Public Alternatives", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 32),
+        ], ["Generic Bound Commander"])
+
+    def test_actual_cosmos_elixir_takes_only_one_branch_at_the_starting_life_boundary(self):
+        for initial_life in (37, 38):
+            with self.subTest(initial_life=initial_life):
+                session = self.session(716001)
+                session.state.config.semantic_policy = "trusted_only"
+                session.state.config.starting_life = 37
+                for seat in "ABCD":
+                    session.state.players[seat].life = 37
+                session.state.players["A"].life = initial_life
+                source = self.add(session.engine, "Cosmos Elixir")
+                self.assert_closed(session, source)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.until(session, lambda game: any(
+                    item.source_object_id == source.object_id for item in game.state.stack
+                ))
+                before = set(session.state.players["A"].zones["hand"])
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                drawn = set(session.state.players["A"].zones["hand"]) - before
+                self.assertEqual(39 if initial_life == 37 else 38, session.state.players["A"].life)
+                self.assertEqual(int(initial_life == 38), len(drawn))
+                for object_id in drawn:
+                    self.assertNotIn(session.state.cards[object_id].ref, json.dumps(
+                        session.packet("pilot:D", full=True)["state"],
+                    ))
+                self.replay(session, load=True)
+
+    def test_actual_gravelighter_draws_after_a_response_or_commits_one_apnap_sacrifice(self):
+        for response in (False, True):
+            with self.subTest(response=response):
+                session = self.session(716002)
+                session.state.config.semantic_policy = "trusted_only"
+                source = self.add(session.engine, "Gravelighter", zone="hand")
+                removal = self.add(session.engine, "Murder", seat="B", zone="hand")
+                bodies = {seat: self.add(session.engine, "Generic Bound Body", seat=seat,
+                                         ref=f"gravelighter-{seat}") for seat in "ABCD"}
+                self.assert_closed(session, source)
+                self.assert_closed(session, removal)
+                self.prepare(session, mana={"C": 2, "B": 1})
+                session.state.players["B"].mana_pool.update({"C": 1, "B": 2})
+                self.checkpoint(session)
+                self.cast(session, "A", source)
+                self.resolve_top(session)
+                trigger, = session.state.stack
+                self.assertEqual(source.object_id, trigger.source_object_id)
+                hand = len(session.state.players["A"].zones["hand"])
+                if response:
+                    self.cast(session, "B", removal, [bodies["D"].ref])
+                    self.resolve_top(session)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual(hand + 1, len(session.state.players["A"].zones["hand"]))
+                    self.assertEqual(["battlefield"] * 3 + ["graveyard"], [
+                        session.state.cards[card.object_id].zone for card in bodies.values()
+                    ])
+                else:
+                    self.assertIsNotNone(self.resolve(session))
+                    before = authoritative_state_hash(session.state)
+                    wrong = {"action_id": "choose", "cards": [bodies["B"].ref]}
+                    self.assertFalse(session.act("pilot:B", wrong).ok)
+                    self.assertFalse(session.act("pilot:A", wrong).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    for seat, card in bodies.items():
+                        self.assertEqual([f"pilot:{seat}"], list(session.pending_principals()))
+                        for other in set("ABCD") - {seat}:
+                            self.assertIsNone(session.packet(f"pilot:{other}", full=True)["decision"])
+                        result = session.act(f"pilot:{seat}", {"action_id": "choose", "cards": [card.ref]})
+                        self.assertTrue(result.ok, result.summary)
+                        if seat != "D":
+                            self.assertTrue(all(session.state.cards[row.object_id].zone == "battlefield"
+                                                for row in bodies.values()))
+                        if seat == "A":
+                            session = self.replay(session, load=True)
+                    self.assertEqual(hand, len(session.state.players["A"].zones["hand"]))
+                    self.assertTrue(all(session.state.cards[row.object_id].zone == "graveyard"
+                                        for row in bodies.values()))
+                self.assertEqual("battlefield", session.state.cards[source.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_targeted_mill_prefix_changes_the_branch_before_private_draw(self):
+        session = self.session(716003)
+        session.state.config.semantic_policy = "trusted_only"
+        source = self.add(session.engine, "Generic Public Alternative Mill", zone="hand")
+        self.assert_closed(session, source)
+        for object_id in tuple(session.state.players["B"].zones["library"][-17:]):
+            session.engine.move_card(object_id, "graveyard", log=False)
+        self.assertEqual(17, len(session.state.players["B"].zones["graveyard"]))
+        self.prepare(session, mana={"U": 1})
+        self.checkpoint(session)
+        hand = len(session.state.players["A"].zones["hand"])
+        self.cast(session, "A", source, ["B"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(20, len(session.state.players["B"].zones["graveyard"]))
+        self.assertEqual(hand + 2, len(session.state.players["A"].zones["hand"]))
         self.replay(session, load=True)
 
 

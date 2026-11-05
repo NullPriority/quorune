@@ -11,7 +11,7 @@ from ..cast_face_offers import OMEN_COVERAGE
 from ..omen import OMEN_CAPABILITY
 from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
 from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
-from ..rules.resolution_condition_shapes import same_target_self_replacement_runtime_dependencies
+from ..rules.resolution_condition_shapes import bound_resolution_condition_runtime_dependencies
 from ..rules.target_hand_count_shapes import target_hand_count_runtime_dependencies
 from ..rules.temporary_keyword_removal import temporary_keyword_removal_runtime_dependencies
 from ..rules.increment_condition import increment_runtime_dependencies
@@ -378,7 +378,7 @@ def program_dynamic_runtime_requirements(program):
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_cast_cost:invalid:{exc}')
     try:
-        required.update(same_target_self_replacement_runtime_dependencies(program))
+        required.update(bound_resolution_condition_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_same_target_replacement:invalid:{exc}')
     try:

@@ -2379,6 +2379,16 @@ effect owners; older instruction schemas retain their original wire fields.
 Copies evaluate public conditions for their resolving controller and current
 game information, while preserving the copied effect and legal target choices.
 
+An ordinary “if … otherwise” result uses schema 13 of the same condition
+instruction. One independently closed prefix may run first, with any target
+announced and revalidated through its existing owner. Both result branches
+close independently. Resolution reads the condition once and runs the selected
+branch through its ordinary effect owner, including any required player choices.
+The condition stays in the result for wording such as “draw a card if …” on a
+trigger. A condition about “a graveyard” reads each active player's graveyard
+separately and counts card objects, so a combined count across graveyards
+cannot satisfy it.
+
 The land-entry condition reads sealed entry events for the current turn and
 their entry-time controller and card types. A searched land qualifies; playing
 a land is not required. Another player's entry or a previous turn's entry does

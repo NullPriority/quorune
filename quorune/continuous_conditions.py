@@ -99,6 +99,7 @@ class FixedPublicStateFact(StrEnum):
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
     OPPONENT_OWNS_EXILED_CARD = 'opponent_owns_exiled_card'
     ANY_LIBRARY_COUNT_AT_MOST = 'any_library_count_at_most'
+    ANY_GRAVEYARD_COUNT_AT_LEAST = "any_graveyard_count_at_least"
     CONTROLLER_CONTROLS_OWN_COMMANDER = 'controller_controls_own_commander'
     PERMANENT_COLOR_IS_MOST_COMMON = 'permanent_color_is_most_common'
     CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES = (

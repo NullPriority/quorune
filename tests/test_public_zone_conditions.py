@@ -46,7 +46,8 @@ class PublicZoneConditionModelTests(unittest.TestCase):
         self.assertEqual(0, public_zone_fact_value(state, 'B', 'opponent_owns_exiled_card', None))
 
     def test_closed_fact_wire_rejects_identity_and_threshold_scope_drift(self):
-        for text in ('an opponent has no cards in hand', 'an opponent owns a card in exile', 'a library has twenty or fewer cards in it'):
+        for text in ('an opponent has no cards in hand', 'an opponent owns a card in exile', 'a library has twenty or fewer cards in it',
+                     'a graveyard has twenty or more cards in it', 'there are ten or more cards in a single graveyard'):
             condition = public_zone_condition(text)
             self.assertEqual(condition, FixedPublicStateConditionSpec.from_dict(json.loads(json.dumps(condition.to_dict()))))
             self.assertEqual((CAPABILITY,), public_zone_condition_capabilities(condition.to_dict()))
@@ -61,6 +62,23 @@ class PublicZoneConditionModelTests(unittest.TestCase):
                 'libraries have twenty or fewer cards total', 'an opponent has a red card in hand',
                 'you own a named card in exile', 'a library has X or fewer cards in it'):
             self.assertIsNone(public_zone_condition(text), text)
+
+    def test_single_graveyard_excludes_noncards_and_does_not_pool_seats(self):
+        state = self.state()
+        for player in state.players.values():
+            player.zones["graveyard"] = []
+        state.cards = {
+            object_id: SimpleNamespace(is_card_object=object_id not in {"token", "copy"})
+            for object_id in ("a", "b", "c", "d", "token", "copy")
+        }
+        state.players["A"].zones["graveyard"] = ["a", "b", "token", "copy"]
+        state.players["B"].zones["graveyard"] = ["c", "d"]
+        fact = "any_graveyard_count_at_least"
+        self.assertEqual(0, public_zone_fact_value(state, "A", fact, "3"))
+        state.players["A"].zones["graveyard"].append(state.players["B"].zones["graveyard"].pop())
+        self.assertEqual(1, public_zone_fact_value(state, "B", fact, "3"))
+        state.players["A"].in_game = False
+        self.assertEqual(0, public_zone_fact_value(state, "B", fact, "3"))
 
 
 NAMES = ('Warden of the Beyond', 'Guul Draz Specter', 'Isleback Spawn')
@@ -342,6 +360,45 @@ class PublicZoneConditionRuntimeTests(unittest.TestCase):
         self.assertEqual((8, 16), self.stats(s, source))
         self.assertIn('shroud', s.engine._combat_keywords(s.state.cards[source.object_id]))
         self.private_replay(s, private)
+
+    def test_actual_swimmer_and_visions_use_separate_live_graveyard_thresholds(self):
+        session = self.session(716004)
+        session.state.config.semantic_policy = "trusted_only"
+        swimmer = self.add(session.engine, "Swimmer in Nightmares")
+        first = self.add(session.engine, "Visions of Beyond", zone="hand", ref="visions-first")
+        second = self.add(session.engine, "Visions of Beyond", zone="hand", ref="visions-second")
+        mills = [self.add(session.engine, "Tome Scour", zone="hand", ref=f"visions-mill-{i}") for i in range(2)]
+        for card in (swimmer, first, *mills):
+            self.assertTrue(self.binding(session, card)["strict_capability_ready"])
+        for seat, count in (("A", 9), ("B", 9), ("C", 2)):
+            for object_id in tuple(session.state.players[seat].zones["library"][-count:]):
+                session.engine.move_card(object_id, "graveyard", log=False)
+        self.prepare(session, mana={"U": 4})
+        self.checkpoint(session)
+
+        self.assertEqual(1, self.stats(session, swimmer)[0])
+        before = set(session.state.players["A"].zones["hand"])
+        self.cast(session, first)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, len(set(session.state.players["A"].zones["hand"]) - before))
+        self.assertEqual(10, len(session.state.players["A"].zones["graveyard"]))
+        self.assertEqual(4, self.stats(session, swimmer)[0])
+        for mill in mills:
+            self.cast(session, mill, ["A"])
+            self.assertIsNone(self.resolve(session))
+        self.assertGreaterEqual(len(session.state.players["A"].zones["graveyard"]), 20)
+        self.assertEqual(4, self.stats(session, swimmer)[0])
+        before = set(session.state.players["A"].zones["hand"])
+        self.cast(session, second)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        drawn = set(session.state.players["A"].zones["hand"]) - before
+        self.assertEqual(3, len(drawn))
+        for object_id in drawn:
+            self.assertNotIn(session.state.cards[object_id].ref, json.dumps(
+                session.packet("pilot:D", full=True)["state"],
+            ))
+        self.replay(session, load=True)
 
     def test_existing_avatar_retains_full_support_and_unowned_carriers_remain_residual(self):
         from quorune.oracle_ir import compile_oracle_card
