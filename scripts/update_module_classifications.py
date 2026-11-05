@@ -46,6 +46,8 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
+    if relative=='quorune/state_based_legend_model.py':return 'domain'
+    if relative=='quorune/state_based_legend_choices.py':return 'rules'
     if relative=='quorune/created_token_cleanup_model.py':return 'domain'
     if relative=='quorune/created_token_cleanup.py':return 'rules'
     if relative=='quorune/battle_cry_resolution_model.py':return 'domain'
@@ -562,6 +564,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
+    if relative in {'quorune/state_based_legend_model.py','quorune/state_based_legend_choices.py'}:
+        return 'state_based_actions'
     if relative in {'quorune/unblocked_attacker_model.py','quorune/rules/unblocked_attackers.py',
             'quorune/compiler/unblocked_attacker_bindings.py'}:return 'trigger_processing'
     if relative in {'quorune/block_characteristic_model.py','quorune/rules/block_characteristics.py',

@@ -166,10 +166,12 @@ class CompositionStateBasedOrderContinuation:
         fields={'active_player','phase','step','turn_sequence','stack_refs','battlefield','turn_order','active_seats'}
         if (type(self.schema_version) is not int or self.schema_version!=1
                 or not isinstance(self.request,CompositionDepartureBatchRequest)
-                or not isinstance(self.state_based_frame,Mapping) or set(self.state_based_frame)!=fields
+                or not isinstance(self.state_based_frame,Mapping) or set(self.state_based_frame) not in (fields,fields|{'legend_choices'})
                 or not isinstance(self.orders,tuple) or len(self.orders)>len(self.request.choices)):
             raise ValueError('Composition state-based continuation fields are malformed')
         frame=FrozenMap(self.state_based_frame)
+        from .state_based_legend_model import legend_choices_from_frame
+        legend_choices_from_frame(frame)
         if (type(frame['turn_sequence']) is not int or frame['turn_sequence']<0
                 or any(not isinstance(frame[field],tuple) for field in ('active_seats','turn_order','stack_refs','battlefield'))
                 or any(type(frame[field]) is not str or not frame[field] for field in ('active_player','phase','step'))

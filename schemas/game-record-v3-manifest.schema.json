@@ -142,6 +142,13 @@
           "minimum": 0,
           "type": "integer"
         },
+        "legend_rule_choice_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
         "library_selection_knowledge_version": {
           "enum": [
             0,

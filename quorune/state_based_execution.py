@@ -223,6 +223,7 @@ class StateBasedExecutionPlan:
     state_changed: bool
     zone_replacements: tuple[tuple[str, PreparedZoneChange], ...] = ()
     composition_departure_batch: PreparedCompositionDepartureBatch | None = None
+    resolved_batch: StateBasedActionBatch | None = None
 
 
 def _prepare_counter_removals(
@@ -419,6 +420,7 @@ def prepare_state_based_execution(
         moving=frozenset(moved),
     )
     return StateBasedExecutionPlan(
+        resolved_batch=batch,
         destruction=destruction,
         ordinary_move_to_grave=ordinary,
         move_to_grave=moved,
@@ -450,6 +452,8 @@ def commit_state_based_zone_changes(
     from .composition_state_based_order import prepared_state_based_compositions
     with defer_conditional_cost_returns() as waiting,prepared_state_based_compositions(plan.composition_departure_batch):
         _commit_state_based_zone_changes(host,plan)
+        from .state_based_legend_choices import finish_state_based_legend_choices
+        finish_state_based_legend_choices(host)
     finish_conditional_cost_returns(host,waiting)
 
 

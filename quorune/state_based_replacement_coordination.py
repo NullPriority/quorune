@@ -24,6 +24,10 @@ def log_state_based_counter_annihilation(host: Any, batch: Any, changes: Sequenc
 
 def prepare_state_based_execution_or_choice(host: Any, batch: Any):
     from .state_based_execution import prepare_state_based_execution
+    from .state_based_legend_choices import coordinate_state_based_legend_choices
+    batch = coordinate_state_based_legend_choices(host, batch)
+    if batch is None:
+        return None
     selected = _CURRENT_SELECTIONS.get()
     zone_selected = _CURRENT_ZONE_SELECTIONS.get()
     _CURRENT_SELECTIONS.set(())
@@ -60,7 +64,8 @@ def prepare_state_based_zone_replacements(host, destruction, companions, saga_id
     return tuple(prepared.items())
 
 
-def state_based_replacement_frame(host: Any) -> dict[str, Any]:
+def state_based_replacement_frame(host: Any, *, include_legend_choices: bool = True) -> dict[str, Any]:
+    from .state_based_legend_choices import current_legend_choices
     battlefield = []
     for card in sorted(host.state.cards.values(), key=lambda value: value.object_id):
         if card.zone != "battlefield":
@@ -68,6 +73,7 @@ def state_based_replacement_frame(host: Any) -> dict[str, Any]:
         data = host._effective_card_data(card)
         from .ability_fragments import ability_fragment_to_dict, canonical_ability_fragments
         battlefield.append({
+            **({'name': data.get('name')} if getattr(host.state, 'legend_rule_choice_version', None) == 1 else {}),
             "object_id": card.object_id, "logical_object_id": card.logical_object_id,
             "controller": card.controller, "phased_out": card.phased_out,
             "attached_to": card.attached_to, "marked_damage": card.marked_damage,
@@ -76,7 +82,9 @@ def state_based_replacement_frame(host: Any) -> dict[str, Any]:
             "power": data.get("power"), "toughness": data.get("toughness"),
             "ability_fragments": [ability_fragment_to_dict(fragment) for fragment in canonical_ability_fragments(data.get("ability_fragments", ()))],
         })
-    return {"active_player": host.state.active_player, "phase": host.state.phase, "step": host.state.step,
+    return {**({'legend_choices': current_legend_choices().to_dict()}
+               if include_legend_choices and current_legend_choices() is not None else {}),
+            "active_player": host.state.active_player, "phase": host.state.phase, "step": host.state.step,
             "turn_sequence": host.state.turn_sequence, "stack_refs": [item.ref for item in host.state.stack],
             "battlefield": battlefield, "turn_order": list(host.state.turn_order),
             "active_seats": list(host.active_seats)}
@@ -102,6 +110,12 @@ def issue_state_based_replacement_choice(host: Any, required: Any, selections: S
 
 
 def resume_state_based_replacement(host: Any, restored: Any, selection: Any, *, error_type: type[Exception]) -> None:
+    from .state_based_legend_choices import state_based_legend_choices
+    with state_based_legend_choices(host, restored.state_based_frame.get('legend_choices')):
+        _resume_state_based_replacement(host, restored, selection, error_type=error_type)
+
+
+def _resume_state_based_replacement(host: Any, restored: Any, selection: Any, *, error_type: type[Exception]) -> None:
     frame = thaw_value(restored.state_based_frame)
     current = state_based_replacement_frame(host)
     if 'turn_order' not in frame:  # Retain the closed legacy frame contract.
@@ -126,8 +140,16 @@ def resume_state_based_replacement(host: Any, restored: Any, selection: Any, *, 
 def decode_state_based_replacement(continuation_type, value: Mapping[str, Any], batch: Any, effects: Any):
     frame = value["state_based_frame"]
     expected = {"active_player", "phase", "step", "turn_sequence", "stack_refs", "battlefield"}
-    if not isinstance(frame, Mapping) or set(frame) not in (expected, expected | {'turn_order', 'active_seats'}):
+    if not isinstance(frame, Mapping) or set(frame) not in (
+            expected, expected | {'turn_order', 'active_seats'},
+            expected | {'turn_order', 'active_seats', 'legend_choices'}):
         raise ReplacementEffectError("State-based replacement frame fields are malformed")
+    if 'legend_choices' in frame:
+        from .state_based_legend_model import legend_choices_from_frame
+        try:
+            legend_choices_from_frame(frame)
+        except (TypeError, ValueError) as exc:
+            raise ReplacementEffectError('State-based legend selections are malformed') from exc
     if (type(frame['active_player']) is not str or not frame['active_player']
             or type(frame["turn_sequence"]) is not int
             or frame["turn_sequence"] < 0 or not isinstance(frame["battlefield"], (list, tuple))):

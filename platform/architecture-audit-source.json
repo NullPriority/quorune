@@ -600,7 +600,9 @@
         "quorune/saga_lifecycle.py",
         "quorune/state_based_actions.py",
         "quorune/state_based_execution.py",
-        "quorune/engine.py"
+        "quorune/engine.py",
+        "quorune/state_based_legend_model.py",
+        "quorune/state_based_legend_choices.py"
       ],
       "status": "dedicated_evaluator_with_engine_mutation"
     },

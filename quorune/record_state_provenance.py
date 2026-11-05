@@ -17,7 +17,10 @@ from .record_control_history import (
 def format_state_versions(state: Any) -> dict[str, int]:
     """Return canonical manifest markers for additive state semantics."""
 
+    from .state_based_legend_model import legend_rule_choice_version
+    legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     return {
+        **({'legend_rule_choice_version': legend} if legend is not None else {}),
         "commander_damage_identity_version": commander_damage_identity_version(
             state.commander_damage_identity_version
         ),
@@ -131,6 +134,11 @@ def validate_state_versions(
     if (type(boundary) is not int or boundary not in {0,1}
             or boundary!=(characteristic_query_boundary_version(getattr(state,'characteristic_query_boundary_version',None)) or 0)):
         raise ValueError('Characteristic query boundary provenance does not match the initial checkpoint')
+    from .state_based_legend_model import legend_rule_choice_version
+    legend = format_value.get('legend_rule_choice_version', 0)
+    if (type(legend) is not int or legend not in {0, 1}
+            or legend != (legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None)) or 0)):
+        raise ValueError('Legend choice provenance does not match the initial checkpoint')
 
 
 __all__ = ["format_state_versions", "validate_state_versions"]
