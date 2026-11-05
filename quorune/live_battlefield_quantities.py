@@ -17,12 +17,23 @@ def current_live_battlefield_count(host, controller: str, spec: LiveBattlefieldQ
         controller=controller if spec.controller_relation == 'source_controller' else None,
         excluded_controllers=(controller,) if spec.controller_relation == 'source_opponents' else (),
         exclude_ref=source_ref if spec.exclude_source else None)
+    numeric = query.numeric_characteristic
+    membership = replace(query, numeric_characteristic=None) if numeric is not None else query
     count = 0
     for card in host.state.cards.values():
         if card.zone != 'battlefield' or card.phased_out:
             continue
-        data = host._effective_card_data(card)
-        row = object_query_result(card, data, type_parts=host._type_parts(str(data.get('type_line') or '')),
-            known_to_actor=True, attached_to_ref=None)
+        if spec.schema_version == 2:
+            if card.controller != controller:
+                continue
+            row = host._public_object_query_result(card, _maximum_layer=None)
+            if numeric is not None:
+                statistic = row.effective_power if numeric.characteristic.value == 'power' else row.effective_toughness
+                if statistic is None and object_matches_query(row, membership):
+                    raise ValueError('A counted creature has unavailable effective characteristics')
+        else:
+            data = host._effective_card_data(card)
+            row = object_query_result(card, data, type_parts=host._type_parts(str(data.get('type_line') or '')),
+                known_to_actor=True, attached_to_ref=None)
         count += object_matches_query(row, query)
     return count

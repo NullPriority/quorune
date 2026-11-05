@@ -4497,7 +4497,10 @@
         "quorune/semantic_runtime/query_effect_amounts.py",
         "quorune/public_quantity_mana_model.py",
         "quorune/public_quantity_mana_runtime.py",
-        "tests/fixtures/live-battlefield-quantity-cards.json"
+        "tests/fixtures/live-battlefield-quantity-cards.json",
+        "tests/fixtures/qualified-live-creature-count-cards.json",
+        "tests/test_qualified_live_creature_counts.py",
+        "quorune/compiler/declared_effect_amounts.py"
       ],
       "test_modules": [
         "test_declared_effect_amounts",
@@ -4507,7 +4510,8 @@
         "test_public_query_effect_amounts",
         "test_public_quantity_mana",
         "test_ordered_quantity_results",
-        "test_card_program_trust"
+        "test_card_program_trust",
+        "test_qualified_live_creature_counts"
       ]
     },
     {

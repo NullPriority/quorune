@@ -123,6 +123,11 @@ A trigger with an intervening condition checks at occurrence and resolution.
 An activation uses the same aggregate when generating and validating legal actions.
 An ordered conditional instruction reads the game after its preceding instruction applies.
 
+Qualified battlefield counts read current effective power, toughness, or
+represented modifications at the instruction that uses the count. A granted
+draw may read its own independent count. In an ordered spell, a later declared
+amount can read the hand after an earlier draw commits.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

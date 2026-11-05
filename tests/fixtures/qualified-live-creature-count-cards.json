@@ -1,0 +1,327 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Become the Avalanche",
+      "oracle_id": "e5fcbbaf-9431-4fa8-ac11-12ace1f2054c",
+      "oracle_text": "Draw a card for each creature you control with power 4 or greater. Then creatures you control get +X/+X until end of turn, where X is the number of cards in your hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{U}",
+      "name": "Biorganic Carapace",
+      "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95",
+      "oracle_text": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +2/+2 and has \"Whenever this creature deals combat damage to a player, draw a card for each modified creature you control.\" (Equipment, Auras you control, and counters are modifications.)\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-09-26",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Power-up",
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Gamma Grotesque",
+      "oracle_id": "b92b4894-0786-49a7-8003-d99393f080d4",
+      "oracle_text": "Vigilance (Attacking doesn't cause this creature to tap.)\nPower-up — {4}{G}{G}: Put three +1/+1 counters on this creature. Then draw a card for each creature you control with a counter on it. (Activate each power-up ability only once. Reduce the cost by its mana cost if it entered this turn.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "3",
+      "type_line": "Creature — Gamma Horror Villain"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Power-up",
+        "Reach"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Goliath, Mass Manipulator",
+      "oracle_id": "d06d7065-27e5-4119-a226-6f6d990d72c7",
+      "oracle_text": "Reach (This creature can block creatures with flying.)\nPower-up — {4}{G}: Put two +1/+1 counters on Goliath. Then draw a card for each creature you control with power 4 or greater. (Activate each power-up ability only once. Reduce the cost by his mana cost if he entered this turn.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Scientist Hero"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Enchant"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Pacifism",
+      "oracle_id": "5f5e0b10-c8cf-450c-bfd3-bcb0528ec330",
+      "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Enchantment — Aura"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Pygmy Kavu",
+      "oracle_id": "17407b73-0dbe-4a71-84ec-3aaca9651f5b",
+      "oracle_text": "When this creature enters, draw a card for each black creature your opponents control.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2001-02-05",
+      "toughness": "2",
+      "type_line": "Creature — Kavu"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "A creature that is equipped is considered modified no matter who controls the Equipment that's attached to it.",
+      "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with a counter on it is considered modified no matter what kind of counter it is or which player put it on that creature.",
+      "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "An Aura controlled by an opponent does not cause a creature you control to be modified.",
+      "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The number of modified creatures you control is counted at the time the ability resolves, not the time that damage was dealt.",
+      "oracle_id": "7d27c583-469c-42d7-a547-8c65654e9d95",
+      "published_at": "2025-09-19",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned qualified creature count originals and attachment control"
+}

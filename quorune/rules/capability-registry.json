@@ -52644,6 +52644,98 @@
     {
       "applicability": {
         "exclusions": [
+          "static layer counts",
+          "dynamic thresholds",
+          "hidden object predicates",
+          "unbound granted declarations"
+        ],
+        "inputs": [
+          "locked instruction controller",
+          "current public creature facts",
+          "one typed qualifier"
+        ],
+        "outputs": [
+          "nonnegative count at the applied instruction"
+        ],
+        "summary": "Count the controller current phased-in creatures with one fixed effective numeric comparison, modification, or any counter when an instruction applies."
+      },
+      "blockers": [],
+      "dependencies": [
+        "quantity_expression.live_battlefield_count",
+        "state_query.permanent.public_state_predicate"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the capability keeps the source-spanned amount residual. Runtime binding independently requires the versioned qualified count authority.",
+      "dependency_fail_closed_status": "passed",
+      "id": "quantity_expression.live_qualified_creature_count",
+      "implementation_components": [
+        "quorune.live_battlefield_quantity_model.LiveBattlefieldQuantitySpec",
+        "quorune.compiler.live_battlefield_quantities.resolution_quantity",
+        "quorune.live_battlefield_quantities.current_live_battlefield_count",
+        "quorune.characteristic_fragments.characteristic_quantity_capabilities",
+        "quorune.compiler.granted_program_bounds.granted_effect_values_are_closed"
+      ],
+      "implementation_mutation_rationale": "Unconditional membership fails the controlled numeric count witness. Native instructions also distinguish earlier counter changes and attachment loss.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_goliath_draw_counts_response_and_earlier_counters",
+        "test_original_gamma_draw_counts_any_counter_after_its_power_up",
+        "test_original_carapace_draw_rechecks_modification_after_equipment_departs"
+      ],
+      "multiplayer_tests": [
+        "test_original_goliath_draw_counts_response_and_earlier_counters",
+        "test_original_gamma_draw_counts_any_counter_after_its_power_up",
+        "test_original_carapace_draw_rechecks_modification_after_equipment_departs"
+      ],
+      "negative_tests": [
+        "test_qualified_live_count_uses_effective_creatures_and_kills_membership_mutant",
+        "test_qualified_live_count_codec_and_granted_binding_are_closed",
+        "test_qualified_draw_keeps_source_spans_and_requires_its_capability",
+        "test_original_goliath_draw_counts_response_and_earlier_counters",
+        "test_original_carapace_draw_rechecks_modification_after_equipment_departs"
+      ],
+      "official_rules": [
+        "107.1b",
+        "109.5",
+        "121.2",
+        "608.2h",
+        "613.4",
+        "700.9",
+        "702.26b"
+      ],
+      "positive_tests": [
+        "test_qualified_live_count_uses_effective_creatures_and_kills_membership_mutant",
+        "test_qualified_draw_keeps_source_spans_and_requires_its_capability",
+        "test_original_goliath_draw_counts_response_and_earlier_counters",
+        "test_original_gamma_draw_counts_any_counter_after_its_power_up",
+        "test_original_carapace_draw_rechecks_modification_after_equipment_departs"
+      ],
+      "privacy_tests": [
+        "test_original_goliath_draw_counts_response_and_earlier_counters"
+      ],
+      "replay_tests": [
+        "test_original_goliath_draw_counts_response_and_earlier_counters",
+        "test_original_gamma_draw_counts_any_counter_after_its_power_up",
+        "test_original_carapace_draw_rechecks_modification_after_equipment_departs"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "multiple, variable, hybrid and nonmana Multikicker costs",
           "arbitrary number-of-targets or other unsupported result grammar",
           "a different cost instance or an unpaid later incarnation"
@@ -78849,7 +78941,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 710,
+  "registry_version": 711,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

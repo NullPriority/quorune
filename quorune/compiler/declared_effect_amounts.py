@@ -263,6 +263,13 @@ def declared_amount_shape_context(
     effects: Sequence[Mapping[str, Any]], mechanics: set[str],
 ) -> tuple[tuple[Mapping[str, Any], ...], set[str]] | None:
     """Validate every symbolic path before asking existing fixed shape owners."""
+    from .public_query_effect_amounts import (
+        PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC,
+        contains_public_query_effect_amount,
+        public_query_amount_shape_context,
+    )
+    from ..rules.closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC
+
     count = 0
     def project(value: Any, operation: str, path: tuple[str,...]) -> Any:
         nonlocal count
@@ -289,8 +296,18 @@ def declared_amount_shape_context(
                 raise PublicQueryAmountError("Nested effect programs require their own declaration scopes")
             return deepcopy(value)
         return value
+    def project_instruction(effect: Mapping[str, Any]) -> Mapping[str, Any]:
+        if (contains_public_query_effect_amount(effect) and not contains_declared_effect_amount(effect)):
+            if not {CLOSED_EFFECT_PROGRAM_MECHANIC, PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC} <= mechanics:
+                raise PublicQueryAmountError("Independent amounts require a closed ordered instruction")
+            independent = public_query_amount_shape_context((effect,), {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC})
+            if independent is None:
+                raise PublicQueryAmountError("Independent instruction amount is malformed")
+            return independent[0][0]
+        return project(effect, str(effect.get("op") or ""), ())
+
     try:
-        fixed = tuple(project(effect,str(effect.get("op") or ""),()) for effect in effects)
+        fixed = tuple(project_instruction(effect) for effect in effects)
     except PublicQueryAmountError:
         return None
     return (fixed, mechanics - {DECLARED_EFFECT_AMOUNT_MECHANIC,"public-query-effect-amount",ENTRY_X_AMOUNT_MECHANIC}) if count else None

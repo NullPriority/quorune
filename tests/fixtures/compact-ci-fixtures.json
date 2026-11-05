@@ -760,6 +760,7 @@
     "tests/fixtures/qualified-graveyard-grant-cards.json",
     "tests/fixtures/qualified-hexproof-cards.json",
     "tests/fixtures/qualified-landwalk-cards.json",
+    "tests/fixtures/qualified-live-creature-count-cards.json",
     "tests/fixtures/qualified-public-history-cards.json",
     "tests/fixtures/qualified-quantity-cards.json",
     "tests/fixtures/qualified-quantity-retention-cards.json",

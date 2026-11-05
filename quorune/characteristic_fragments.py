@@ -786,7 +786,17 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
             if value['scope'] in {'controller_life_total','opponent_poison_counters'}:
                 own=(*own,'quantity_expression.current_player_value')
             if value['scope']=='attached_object':own=(*own,'quantity_expression.attached_object_value')
-        if value.get('kind')=='live_battlefield_quantity':own=(*own,'quantity_expression.live_battlefield_count')
+        if value.get('kind') == 'live_battlefield_quantity':
+            from .live_battlefield_quantity_model import (
+                LIVE_BATTLEFIELD_QUANTITY_CAPABILITY, LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY,
+                LiveBattlefieldQuantitySpec,
+            )
+            from .object_predicate import object_query_capabilities
+
+            live = LiveBattlefieldQuantitySpec.from_dict(value)
+            own = (*own, LIVE_BATTLEFIELD_QUANTITY_CAPABILITY)
+            if live.schema_version == 2:
+                own = (*own, LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY, *object_query_capabilities(live.query))
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
         if (value.get('kind')=='controller_has_citys_blessing'
                 and {'schema_version','amount','counter_name'}<=set(value)):
