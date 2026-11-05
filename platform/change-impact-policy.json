@@ -4685,6 +4685,11 @@
       "patterns": [
         "quorune/state_based_execution.py",
         "quorune/state_based_replacement_coordination.py",
+        "quorune/state_based_legend_choices.py",
+        "quorune/legend_rule_model.py",
+        "quorune/rules/legend_rule.py",
+        "quorune/compiler/legend_rule_templates.py",
+        "tests/fixtures/legend-rule-exemption-cards.json",
         "quorune/destruction.py",
         "quorune/regeneration.py",
         "tests/fixtures/regeneration-cards.json"
@@ -4695,6 +4700,9 @@
         "test_destruction_rules",
         "test_umbra_armor",
         "test_card_program_trust",
+        "test_legend_rule_exemptions",
+        "test_legend_rule_exemption_native",
+        "test_legend_state_based_choices",
         "test_game_record_v3"
       ]
     },

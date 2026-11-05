@@ -278,6 +278,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.ascend",
                 "ability.static.colorless_characteristic_definition",
                 "ability.static.counter_maximum",
+                "ability.static.legend_rule_exemption",
                 "ability.static.conditional_keyword",
                 "ability.static.declaration_cost",
                 "ability.static.declaration_requirement",

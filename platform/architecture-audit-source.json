@@ -602,7 +602,9 @@
         "quorune/state_based_execution.py",
         "quorune/engine.py",
         "quorune/state_based_legend_model.py",
-        "quorune/state_based_legend_choices.py"
+        "quorune/state_based_legend_choices.py",
+        "quorune/legend_rule_model.py",
+        "quorune/rules/legend_rule.py"
       ],
       "status": "dedicated_evaluator_with_engine_mutation"
     },

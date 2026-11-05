@@ -1689,6 +1689,14 @@ The legend rule groups current names of present legendary permanents under
 one controller. Nameless objects never share a name; display labels do not
 supply a rules name. Phased-out permanents do not participate in the group.
 
+Current legend choices use the ordinary scan to find possible conflicts.
+When one exists, the rules owner reads current abilities and public permanent
+characteristics within the same read frame. Typed global and controlled
+exemptions remove the affected objects before APNAP choice collection. An
+exempt token cannot serve as the keep choice for two matching nontoken legends.
+Removing the last applicable exemption restores the conflict at the next
+state-based check.
+
 Characteristic reads share completed results within one pure synchronous read
 frame. Host, object identity, layer boundary and face/applicability flags
 separate its keys. Returned data is copied, prospective identities stay alive

@@ -32,6 +32,7 @@ from ..ability_fragments import (
     ToxicSpec,
     ability_fragment_from_dict,
 )
+from ..legend_rule_model import LEGEND_RULE_CAPABILITY, LEGEND_RULE_HANDLER, LegendRuleExemptionSpec
 from ..enchant_spec import SimpleEnchantSpec, TypedEnchantSpec
 from ..enchant_spec import LinkedGraveyardCreatureEnchantSpec
 from ..declaration_fragments import DECLARATION_COMPONENT_CAPABILITY_ID
@@ -1159,6 +1160,26 @@ class ToxicAbilityFragmentHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class LegendRuleExemptionAbilityFragmentHandler:
+    handler_id: str = LEGEND_RULE_HANDLER
+    schema_version: int = 1
+    family: str = 'ability.static.legend_rule_exemption'
+    event: str = 'continuous'
+    rule_references: tuple[str, ...] = ('611.3a', '611.3b', '704.5j')
+    capability_dependencies: tuple[str, ...] = (LEGEND_RULE_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> LegendRuleExemptionSpec:
+        return _fragment(
+            descriptor, handler_id=self.handler_id, event=self.event,
+            expected_type=LegendRuleExemptionSpec,
+        )
+
+    def lower(self, descriptor, context) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
 class CounterMaximumAbilityFragmentHandler:
     handler_id: str = COUNTER_MAXIMUM_FRAGMENT_HANDLER_ID
     schema_version: int = 1
@@ -1455,6 +1476,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             LandwalkPermissionFragmentHandler(),
             CascadeAbilityFragmentHandler(),
             CounterMaximumAbilityFragmentHandler(),
+            LegendRuleExemptionAbilityFragmentHandler(),
             CounterProhibitionAbilityFragmentHandler(),
             DeclarationCostAbilityFragmentHandler(),
             DefenderPermissionAbilityFragmentHandler(),

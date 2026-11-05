@@ -106,6 +106,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own,*counter_prohibition_payload_dependencies(value,coverage=mechanics))
         from ..damage_prevention_permission import unpreventability_payload_dependencies
         own = (*own,*unpreventability_payload_dependencies(value,coverage=mechanics))
+        if value.get('kind') == 'legend_rule_exemption':
+            from ..legend_rule_model import legend_rule_payload_dependencies
+            own = (*own, *legend_rule_payload_dependencies(value))
         from ..rules.casting_additional_cost_groups import selected_zone_cost_payload_dependencies
         own = (*own, *selected_zone_cost_payload_dependencies(value))
         from ..fixed_effect_payment import compound_payment_payload_dependencies

@@ -26,6 +26,7 @@ from .counter_maximums import (
     effective_counter_maximums,
 )
 from .counter_permission import CounterPermissionError, FixedCounterProhibitionSpec
+from .legend_rule_model import LegendRuleExemptionSpec
 from .characteristic_fragments import (
     AllCreatureTypesCharacteristicDefinitionSpec,
     CharacteristicFragmentError,
@@ -783,6 +784,7 @@ StaticAbilityFragment: TypeAlias = (
     | StaticComponentSpec
     | StaticComponentScopeSpec
     | CounterMaximumSpec
+    | LegendRuleExemptionSpec
     | FixedCounterProhibitionSpec
     | TriggerMultiplierSpec
     | WardSpec
@@ -850,6 +852,8 @@ def ability_fragment_to_dict(
         kind = "static_component_scope"
     elif isinstance(fragment, CounterMaximumSpec):
         kind = "counter_maximum"
+    elif isinstance(fragment, LegendRuleExemptionSpec):
+        kind = 'legend_rule_exemption'
     elif isinstance(fragment, FixedCounterProhibitionSpec):
         kind = "counter_prohibition"
     elif isinstance(fragment, TriggerMultiplierSpec):
@@ -956,6 +960,11 @@ def ability_fragment_from_dict(
         try:
             return CounterMaximumSpec.from_dict(value["value"])
         except CounterMaximumError as exc:
+            raise AbilityFragmentError(str(exc)) from exc
+    if value['kind'] == 'legend_rule_exemption':
+        try:
+            return LegendRuleExemptionSpec.from_dict(value['value'])
+        except (TypeError, ValueError) as exc:
             raise AbilityFragmentError(str(exc)) from exc
     if value["kind"] == "counter_prohibition":
         try:
@@ -1069,6 +1078,7 @@ def canonical_ability_fragments(
                 StaticComponentSpec,
                 StaticComponentScopeSpec,
                 CounterMaximumSpec,
+                LegendRuleExemptionSpec,
                 FixedCounterProhibitionSpec,
                 TriggerMultiplierSpec,
                 WardSpec,

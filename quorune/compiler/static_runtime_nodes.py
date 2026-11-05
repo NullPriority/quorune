@@ -6,6 +6,7 @@ from typing import AbstractSet, Any, Mapping
 
 from ..rules.capabilities import CapabilityRegistry
 from ..object_predicate import object_query_capabilities
+from ..legend_rule_model import legend_rule_payload_dependencies
 from ..static_player_restriction_model import static_player_restriction_capabilities
 from ..conditional_recipient_model import conditional_recipient_capabilities
 from ..public_zone_condition_model import public_zone_condition_capabilities
@@ -53,7 +54,8 @@ def runtime_handler_node(
                 *characteristic_quantity_capabilities(handlers), *object_query_capabilities(handlers),
                 *static_player_restriction_capabilities(handlers), *conditional_recipient_capabilities(handlers),
                 *public_zone_condition_capabilities(handlers), *conditional_free_cast_capabilities(handlers),
-                *public_history_query_dependencies(handlers),*crime_fact_dependencies(handlers))
+                *public_history_query_dependencies(handlers),*crime_fact_dependencies(handlers),
+                *legend_rule_payload_dependencies(handlers))
     if mechanics:
         gate = dependency_gate(mechanics=mechanics, effects=(), target_schema=None,
             trusted_mechanics=frozenset(), capability_registry=capability_registry,
@@ -118,6 +120,15 @@ def static_runtime_node(
     from .devotion_templates import fixed_devotion_increase_handler
     from .token_templates import static_token_quantity_replacement_handler
     from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+    from .legend_rule_templates import static_legend_rule_exemption_handler
+    legend = (static_legend_rule_exemption_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if legend is not None:
+        return runtime_handler_node(node_id=node_id, line=line, span=span, compiled=legend,
+            kind='static_ability', event='continuous',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Legend-rule exemptions require their current static ability and state-based owner',
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     from .counter_permission_templates import static_counter_prohibition_handler
     from ..counter_permission import COUNTER_PROHIBITION_EVENT
     counter_prohibition = (static_counter_prohibition_handler(material_line, source_name=source_name)

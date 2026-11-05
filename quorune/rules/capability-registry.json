@@ -58663,6 +58663,93 @@
     {
       "applicability": {
         "exclusions": [
+          "conditional named-object counts",
+          "owned or opponent-relative predicates",
+          "changing unrelated state-based actions"
+        ],
+        "inputs": [
+          "current source ability and controller",
+          "typed public permanent predicate",
+          "current names, types, token status and live player order"
+        ],
+        "outputs": [
+          "closed immutable exemption fragment",
+          "nonexempt same-name legendary conflict groups"
+        ],
+        "summary": "Read unconditional source-pinned legend-rule exemptions from current effective abilities and controller, remove matching public permanents before ordinary grouping, and expire exemptions with current source presence. Original-card casting/copy/removal, pending owner choices and replay require native evidence."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "This static fragment adds no external capability dependency. Shared public queries and ordinary legend choices remain existing owners; withdrawal of this capability itself keeps whole compilation residual.",
+      "dependency_fail_closed_status": "not_applicable",
+      "id": "state_based.legend_rule.fixed_exemption",
+      "implementation_components": [
+        "quorune.legend_rule_model.LegendRuleExemptionSpec",
+        "quorune.compiler.legend_rule_templates.static_legend_rule_exemption_handler",
+        "quorune.semantic_runtime.ability_fragments.LegendRuleExemptionAbilityFragmentHandler",
+        "quorune.rules.legend_rule.detect_legend_conflicts",
+        "quorune.legend_rule_model.legend_rule_payload_dependencies",
+        "quorune.rules.legend_rule.capture_legend_rule_permanents",
+        "quorune.rules.legend_rule.current_legend_conflicts"
+      ],
+      "implementation_mutation_rationale": "Removing current exemption collection is killed by the independent no-conflict witness; grouping is read-only and zone mutation remains in existing owners.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_original_gallery_cast_copy_and_removal_reopens_current_legend_choice",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_qualified_source_uses_current_controller_after_actual_control_magic",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_subtype_exemption_ends_when_source_loses_its_current_ability",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_token_exemption_excludes_token_from_nonexempt_keep_choice",
+        "tests.test_legend_rule_exemptions.LegendRuleCurrentSnapshotTests.test_current_choice_owner_uses_exemption_filtered_groups",
+        "tests.test_legend_rule_exemptions.LegendRuleCurrentSnapshotTests.test_current_source_controller_and_phasing_recompute_qualified_groups"
+      ],
+      "multiplayer_tests": [
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_original_gallery_cast_copy_and_removal_reopens_current_legend_choice",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_qualified_source_uses_current_controller_after_actual_control_magic",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_subtype_exemption_ends_when_source_loses_its_current_ability",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_token_exemption_excludes_token_from_nonexempt_keep_choice"
+      ],
+      "negative_tests": [
+        "tests.test_legend_rule_exemptions.LegendRuleExemptionCompilerTests.test_source_spanned_node_keeps_scope_and_withdrawn_authority_fails_closed",
+        "tests.test_legend_rule_exemptions.LegendRuleExemptionModelTests.test_conditional_owned_opponent_and_unknown_subjects_remain_unrepresented"
+      ],
+      "official_rules": [
+        "101.1",
+        "611.3a",
+        "611.3b",
+        "704.3",
+        "704.5j"
+      ],
+      "positive_tests": [
+        "tests.test_legend_rule_exemptions.LegendRuleExemptionModelTests.test_closed_grammar_retains_global_token_creature_and_subtype_meanings",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_original_gallery_cast_copy_and_removal_reopens_current_legend_choice"
+      ],
+      "privacy_tests": [
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_original_gallery_cast_copy_and_removal_reopens_current_legend_choice"
+      ],
+      "replay_tests": [
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_original_gallery_cast_copy_and_removal_reopens_current_legend_choice",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_qualified_source_uses_current_controller_after_actual_control_magic",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_subtype_exemption_ends_when_source_loses_its_current_ability",
+        "tests.test_legend_rule_exemption_native.LegendRuleExemptionNativeTests.test_token_exemption_excludes_token_from_nonexempt_keep_choice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented simultaneous timestamp ordering",
           "missing controller or timestamp facts",
           "claimed original Role-token creation and layer definitions before their separate closure"
@@ -79027,7 +79114,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 714,
+  "registry_version": 715,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

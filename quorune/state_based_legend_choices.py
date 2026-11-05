@@ -6,6 +6,7 @@ from dataclasses import replace
 from contextlib import contextmanager
 from contextvars import ContextVar
 
+from .characteristic_read_frames import characteristic_read_method
 from .errors import GameRuleError
 from .replacement.immutable import FrozenMap
 from .state_based_legend_model import (
@@ -32,14 +33,19 @@ def state_based_legend_choices(host, plan):
         _CURRENT_KEEPS.reset(token)
 
 
+@characteristic_read_method
 def _current_groups(host) -> tuple[LegendConflictSnapshot, ...]:
-    order = {seat: index for index, seat in enumerate(host.apnap_order())}
+    from .rules.legend_rule import current_legend_conflicts
+
+    # An exemption can only remove candidates from a possible conflict.
+    if not host._legend_groups():
+        return ()
     return tuple(
-        LegendConflictSnapshot(seat, name, tuple(
+        LegendConflictSnapshot(group.controller, group.name, tuple(
             LegendCandidateSnapshot(object_id, host.state.cards[object_id].logical_object_id,
                                     host.state.cards[object_id].ref)
-            for object_id in sorted(ids)))
-        for seat, name, ids in sorted(host._legend_groups(), key=lambda row: (order[row[0]], row[1]))
+            for object_id in group.object_ids))
+        for group in current_legend_conflicts(host)
     )
 
 
