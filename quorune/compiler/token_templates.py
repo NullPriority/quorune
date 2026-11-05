@@ -489,6 +489,10 @@ def fixed_token_creation_effect_template(
 
     from .attacking_token_results import fixed_attacking_token_template
     from .created_token_cleanup_templates import created_token_cleanup_template
+
+    explicit_creator = re.match(r"^You\s+create\s+", text.lstrip(), re.IGNORECASE)
+    if explicit_creator is not None:
+        text = "Create " + text.lstrip()[explicit_creator.end():]
     cleanup = created_token_cleanup_template(text, compile_inner=fixed_token_creation_effect_template)
     attacking = fixed_attacking_token_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
     return cleanup or attacking or _single_fixed_token_creation_effect_template(

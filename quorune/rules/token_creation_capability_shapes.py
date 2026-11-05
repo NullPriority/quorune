@@ -42,6 +42,7 @@ from ..fixed_token_production import (
     afterlife_token_effect,
     clue_token_effect,
     sequential_investigate_count,
+    fixed_token_player_target_schema,
 )
 
 
@@ -50,11 +51,17 @@ _COLOR_ORDER = "WUBRG"
 
 
 def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
-    """Require the existing owner for an explicit creature definition.
+    """Infer fixed token and selected creator dependencies from the payload.
 
     Copy recipes keep their separate owner. Legacy token references without an
     explicit definition retain their existing compatibility path.
     """
+    targeted = (
+        isinstance(value, Mapping)
+        and value.get("op") == "create_token"
+        and "target" in value
+    )
+    target_dependencies = ("target.revalidate_resolution",) if targeted else ()
     if (isinstance(value,Mapping) and value.get('op')=='create_token'
             and isinstance(value.get('characteristics'),Mapping)
             and {'power','toughness'}<=set(value['characteristics'])
@@ -68,8 +75,9 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
         return (
             'token.creation.fixed_definition',
             *token_toxic_definition_dependencies(value['characteristics']),
+            *target_dependencies,
         )
-    return ()
+    return target_dependencies
 
 
 def token_toxic_definition_dependencies(characteristics: Mapping[str, Any]) -> tuple[str, ...]:
@@ -535,6 +543,77 @@ def _fixed_delayed_token_capabilities(
     )
 
 
+def _fixed_token_definition_node_capabilities(
+    effect: Mapping[str, Any],
+    target_schema: Mapping[str, Any] | None,
+    mechanics: set[str],
+) -> tuple[str, ...]:
+    """Validate one ordinary token definition and any selected creator."""
+    fixed_effect = effect
+    if target_schema is not None:
+        if not isinstance(target_schema, Mapping):
+            return ()
+        relation = target_schema.get("player_relation")
+        if (
+            effect.get("target") != "$target.0"
+            or "controller" in effect
+            or "cr-115-targets" not in mechanics
+            or relation not in ("any", "opponent")
+            or type(target_schema.get("count")) is not int
+            or dict(target_schema) != fixed_token_player_target_schema(relation)
+        ):
+            return ()
+        fixed_effect = dict(effect)
+        del fixed_effect["target"]
+        fixed_effect["controller"] = "$controller"
+    quantity = effect.get("quantity")
+    try:
+        expected_investigate = (
+            clue_token_effect(quantity) if type(quantity) is int else None
+        )
+        expected_afterlife = (
+            afterlife_token_effect(quantity) if type(quantity) is int else None
+        )
+    except FixedTokenProductionError:
+        expected_investigate = None
+        expected_afterlife = None
+    if (
+        INVESTIGATE_MECHANIC_ID in mechanics
+        and {
+            _TOKEN_MECHANIC,
+            FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+        }.issubset(mechanics)
+        and expected_investigate is not None
+        and dict(effect) == expected_investigate
+    ):
+        return (INVESTIGATE_CAPABILITY_ID,)
+    if (
+        AFTERLIFE_MECHANIC_ID in mechanics
+        and {
+            _TOKEN_MECHANIC,
+            FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+            "cr-603-handling-triggered-abilities",
+        }.issubset(mechanics)
+        and expected_afterlife is not None
+        and dict(effect) == expected_afterlife
+    ):
+        return (AFTERLIFE_CAPABILITY_ID,)
+    closure = _fixed_token_effect_closure(fixed_effect)
+    if closure is None:
+        return ()
+    capabilities, expected_mechanics = closure
+    typed_ability = TYPED_TOKEN_ABILITY_CAPABILITY_ID in capabilities
+    if typed_ability != (
+        TYPED_TOKEN_ABILITY_MECHANIC_ID in mechanics
+    ):
+        return ()
+    if _token_specific_mechanics(mechanics) == expected_mechanics:
+        if target_schema is not None:
+            return (*capabilities, "target.revalidate_resolution")
+        return capabilities
+    return ()
+
+
 def fixed_token_creation_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -591,55 +670,11 @@ def fixed_token_creation_node_capabilities(
             and _token_specific_mechanics(mechanics) == {_TOKEN_MECHANIC}
             else ()
         )
-    if target_schema is not None:
-        return ()
     if effect.get("op") == "create_token":
-        quantity = effect.get("quantity")
-        try:
-            expected_investigate = (
-                clue_token_effect(quantity) if type(quantity) is int else None
-            )
-            expected_afterlife = (
-                afterlife_token_effect(quantity) if type(quantity) is int else None
-            )
-        except FixedTokenProductionError:
-            expected_investigate = None
-            expected_afterlife = None
-        if (
-            INVESTIGATE_MECHANIC_ID in mechanics
-            and {
-                _TOKEN_MECHANIC,
-                FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
-            }.issubset(mechanics)
-            and expected_investigate is not None
-            and dict(effect) == expected_investigate
-        ):
-            return (INVESTIGATE_CAPABILITY_ID,)
-        if (
-            AFTERLIFE_MECHANIC_ID in mechanics
-            and {
-                _TOKEN_MECHANIC,
-                FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
-                "cr-603-handling-triggered-abilities",
-            }.issubset(mechanics)
-            and expected_afterlife is not None
-            and dict(effect) == expected_afterlife
-        ):
-            return (AFTERLIFE_CAPABILITY_ID,)
-        closure = _fixed_token_effect_closure(effect)
-        if closure is None:
-            return ()
-        capabilities, expected_mechanics = closure
-        typed_ability = TYPED_TOKEN_ABILITY_CAPABILITY_ID in capabilities
-        if typed_ability != (
-            TYPED_TOKEN_ABILITY_MECHANIC_ID in mechanics
-        ):
-            return ()
-        if _token_specific_mechanics(mechanic_ids) == expected_mechanics:
-            return capabilities
-        return ()
+        return _fixed_token_definition_node_capabilities(effect, target_schema, mechanics)
     if (
-        set(effect) != {"op", "controller", "tokens"}
+        target_schema is not None
+        or set(effect) != {"op", "controller", "tokens"}
         or effect.get("op") != "create_token_batch"
         or effect.get("controller") != "$controller"
     ):
@@ -752,6 +787,8 @@ def token_creation_component_mechanics(effects, parent_mechanics):
         return mechanics | {INVESTIGATE_MECHANIC_ID, FIXED_TOKEN_PRODUCTION_MECHANIC_ID}
     if len(effects) == 1 and ('copy_spec' in effect or effect.get('op') == 'populate'):
         return parent_mechanics
+    if "target" in effect and "cr-115-targets" in parent_mechanics:
+        mechanics.add("cr-115-targets")
     try:
         if effect.get('op') == 'choose_fixed_attacking_token_destinations':
             from .attacking_token_results import attacking_token_result_closure, ATTACKING_TOKEN_MECHANIC

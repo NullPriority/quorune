@@ -47,6 +47,18 @@ class FixedTokenCreationTemplate:
         )
 
 
+def fixed_token_player_target_schema(relation: str) -> dict[str, Any]:
+    """Describe the single player who creates an ordinary fixed token."""
+    if relation not in ("any", "opponent"):
+        raise FixedTokenProductionError("Unsupported token creator target relation")
+    return {
+        "zones": ["player"],
+        "categories": ["player"],
+        "player_relation": relation,
+        "count": 1,
+    }
+
+
 def _fixed_count(value: object, *, label: str) -> int:
     if type(value) is not int or not 1 <= value <= 20:
         raise FixedTokenProductionError(

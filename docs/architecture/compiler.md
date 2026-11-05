@@ -16,6 +16,13 @@ cleanup clauses keep their existing owners. An unconsumed `that's`/`that is`/
 `that are` state rider cannot become part of a token name; unsupported recipient
 or ability text remains residual.
 
+A closed fixed token definition may identify one target player or opponent as
+the creator. The ordinary public player target schema chooses and revalidates
+that recipient. The token transaction uses the chosen player's creation
+replacements, ownership, and entry control. An explicit “you create” uses the
+same controller binding as the ordinary imperative. Simultaneous creation by
+multiple players retains its separate semantic boundary.
+
 Scalar token-result definitions may precede a printed cleanup sentence. The
 cleanup adapter delegates the creation clause to the existing scalar owner,
 preserving its producer, result slots and source context, then attaches the

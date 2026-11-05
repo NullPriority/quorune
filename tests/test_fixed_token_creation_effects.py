@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 import copy
 from dataclasses import replace
 import json
@@ -8,7 +9,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import keep_all, load_assets, make_session, pass_current
+from common import ROOT, keep_all, load_assets, make_session, pass_current
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardRecord
 from quorune.compiled_activated_abilities import compiled_activated_abilities
 from quorune.damage import damage_proposal, resolve_damage_batch
@@ -428,6 +430,63 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
                 )
                 self.assertNotEqual("exact", ir.status)
                 self.assertTrue(ir.material_residuals)
+
+    def test_fixed_token_creator_target_requires_one_closed_player_and_revalidation(self):
+        from quorune.rules.token_creation_capability_shapes import (
+            fixed_token_creation_node_capabilities,
+            token_definition_payload_dependencies,
+        )
+
+        for subject, relation in (("target player", "any"), ("target opponent", "opponent")):
+            with self.subTest(subject=subject):
+                text = f"{subject} creates two tapped Treasure tokens."
+                template = fixed_token_creation_effect_template(text)
+                self.assertIsNotNone(template)
+                self.assertEqual("$target.0", template.effect["target"])
+                self.assertNotIn("controller", template.effect)
+                self.assertEqual(2, template.effect["quantity"])
+                self.assertTrue(template.effect["tapped"])
+                self.assertEqual(
+                    {"zones": ["player"], "categories": ["player"], "player_relation": relation, "count": 1},
+                    template.target_schema,
+                )
+                ir = compile_oracle_card(
+                    token_record("Generic Targeted Token Fixture", text, 711001),
+                    capability_registry=self.capabilities,
+                    capability_profile="commander_review",
+                )
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                self.assertIn("target.revalidate_resolution", ir.faces[0].nodes[0].capability_dependencies)
+                self.assertIn("target.revalidate_resolution", token_definition_payload_dependencies(template.effect))
+
+                for effect, schema in (
+                    ({**template.effect, "controller": "$controller"}, template.target_schema),
+                    ({**template.effect, "target": "$target.1"}, template.target_schema),
+                    (template.effect, None),
+                    (template.effect, {**template.target_schema, "count": True}),
+                    (template.effect, {**template.target_schema, "count": 2}),
+                    (template.effect, {**template.target_schema, "player_relation": "you"}),
+                    (template.effect, {**template.target_schema, "optional": True}),
+                ):
+                    self.assertEqual(
+                        (),
+                        fixed_token_creation_node_capabilities(
+                            effects=(effect,), target_schema=schema, mechanic_ids=set(template.mechanics),
+                        ),
+                    )
+
+    def test_explicit_fixed_token_creator_preserves_the_controller_and_closed_body(self):
+        implicit = fixed_token_creation_effect_template("Create a Mutagen token.")
+        self.assertIsNotNone(implicit)
+        self.assertEqual(implicit, fixed_token_creation_effect_template("you create a Mutagen token."))
+        for text in (
+            "Each opponent creates a Treasure token.",
+            "Another target player creates a Treasure token.",
+            "Target opponent creates X Treasure tokens.",
+            "Target player creates a token that's a copy of target creature you control.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_token_creation_effect_template(text))
 
     def test_tapped_attacking_token_batch_has_complete_normal_admission(self):
         from quorune.card_programs import bind_card_program_runtime
@@ -1930,6 +1989,115 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             "explores",
             abilities[0]["effect_text"],
         )
+
+
+class FixedTokenCreatorRuntimeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        database_path = Path(cls.temporary.name) / "fixed-token-creator.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database(
+            [
+                fixtures / "bound-effect-program-cards.json",
+                fixtures / "fixed-token-creation-cards.json",
+                fixtures / "additional-token-definition-cards.json",
+                fixtures / "incubate-cards.json",
+            ],
+            database_path,
+        )
+        cls.db = CardDatabase(database_path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Fixed token creator",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    @staticmethod
+    def tokens(session):
+        return [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+
+    def test_original_wanted_scoundrels_recipient_chooses_replacement_and_owns_tokens(self):
+        session = self.session(711010)
+        source = self.add(session.engine, "Wanted Scoundrels")
+        bolt = self.add(session.engine, "Lightning Bolt", zone="hand")
+        for seat in ("A", "B"):
+            self.add(session.engine, "Worldwalker Helm", seat=seat, ref=f"{seat}-helm")
+            self.add(session.engine, "Stridehangar Automaton", seat=seat, ref=f"{seat}-automaton")
+        self.assert_closed(session, source)
+        self.assert_closed(session, bolt)
+        self.prepare(session, mana={"R": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", bolt, [source.ref])
+
+        target = self.resolve(session)
+        self.assertEqual("semantic.target", target.kind)
+        self.assertEqual(["A"], target.actors)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        offer = session.packet("pilot:A", full=True)["decision"]["ctx"]["target_schema"]
+        self.assertEqual({"B", "C", "D"}, set(offer["legal_refs"]))
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": "choose", "targets": ["A"]})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.target(session, "A", ["B"])
+
+        replacement = self.resolve(session)
+        self.assertEqual("replacement.order", replacement.kind)
+        self.assertEqual(["B"], replacement.actors)
+        self.assertEqual([], self.tokens(session))
+        for seat in "ACD":
+            self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+        session = self.replay(session, load=True)
+        options = session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual(2, len(options))
+        before = authoritative_state_hash(session.state)
+        for principal, selection in (("pilot:A", options[0]["id"]), ("pilot:B", "stale-creator-choice")):
+            rejected = session.act(principal, {"action_id": "choose", "replacement": selection})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+
+        accepted = session.act("pilot:B", {"action_id": "choose", "replacement": options[0]["id"]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.settle(session)
+        tokens = self.tokens(session)
+        self.assertEqual(Counter({"Treasure": 2, "Map": 1, "Thopter": 1}), Counter(card.printed_name for card in tokens))
+        self.assertEqual({("B", "B")}, {(card.owner, card.controller) for card in tokens})
+        self.replay(session, load=True)
+
+    def test_original_prismari_command_targeted_creation_can_select_self_and_skips_departed_target(self):
+        for recipient in ("A", "B"):
+            with self.subTest(recipient=recipient):
+                session = self.session(711020 if recipient == "A" else 711021)
+                command = self.add(session.engine, "Prismari Command", zone="hand")
+                self.assert_closed(session, command)
+                self.prepare(session, mana={"C": 1, "U": 1, "R": 1})
+                self.checkpoint(session)
+                action = self.action(session, "A", command)
+                result = session.act("pilot:A", {
+                    "action_id": action["id"], "modes": ["mode_1", "mode_3"],
+                    "targets": ["C", recipient], "pay": "auto",
+                })
+                self.assertTrue(result.ok, result.summary)
+                if recipient == "B":
+                    self.priority(session, "B")
+                    result = session.act("pilot:B", {
+                        "action_id": "concede", "choices": {"confirm_concede": True},
+                    })
+                    self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(38, session.state.players["C"].life)
+                self.assertEqual("graveyard", session.state.cards[command.object_id].zone)
+                self.assertEqual(
+                    [("Treasure", "A", "A")] if recipient == "A" else [],
+                    [(card.printed_name, card.owner, card.controller) for card in self.tokens(session)],
+                )
+                self.replay(session, load=True)
 
 
 class TokenCopyRecipeModelTests(unittest.TestCase):

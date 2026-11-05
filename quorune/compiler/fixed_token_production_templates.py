@@ -11,6 +11,7 @@ from ..fixed_token_production import (
     FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
     FixedInvestigateSpec,
     FixedTokenCreationTemplate,
+    fixed_token_player_target_schema,
     FixedTokenProductionError,
     INVESTIGATE_MECHANIC_ID,
 )
@@ -39,6 +40,10 @@ _FIXED_COPY_TOKEN = re.compile(
 _FIXED_DELAYED_TOKEN = re.compile(
     r"^(?P<body>Create .+) "
     r"at the beginning of the next end step\.?$",
+    re.IGNORECASE,
+)
+_FIXED_TARGETED_CREATOR = re.compile(
+    r"Target (?P<relation>opponent|player) creates (?P<body>.+)",
     re.IGNORECASE,
 )
 _FIXED_NAMED_TOKEN = re.compile(
@@ -235,6 +240,35 @@ def _fixed_declaration_token_template(
     )
 
 
+def _fixed_targeted_creator_template(
+    normalized: str,
+    *,
+    compile_inner: Callable[[str], FixedTokenCreationTemplate | None],
+) -> FixedTokenCreationTemplate | None:
+    match = _FIXED_TARGETED_CREATOR.fullmatch(normalized)
+    if match is None:
+        return None
+    definition = compile_inner("Create " + match["body"])
+    if (
+        definition is None
+        or definition.target_schema is not None
+        or definition.effect.get("op") != "create_token"
+        or definition.effect.get("controller") != "$controller"
+        or {"copy_of", "copy_spec"} & definition.effect.keys()
+    ):
+        return None
+    relation = "opponent" if match["relation"].casefold() == "opponent" else "any"
+    effect = dict(definition.effect)
+    del effect["controller"]
+    effect["target"] = "$target.0"
+    return FixedTokenCreationTemplate(
+        template_id=f"create-fixed-token-for-target-{match['relation'].casefold()}-v1",
+        effect=effect,
+        mechanics=(*definition.mechanics, "cr-115-targets"),
+        target_schema=fixed_token_player_target_schema(relation),
+    )
+
+
 def _fixed_named_token_template(
     normalized: str,
     *,
@@ -332,6 +366,7 @@ def extended_fixed_token_creation_effect_template(
         _fixed_delayed_token_template,
         _fixed_declaration_token_template,
         _fixed_named_token_template,
+        _fixed_targeted_creator_template,
     ):
         compiled = compiler(normalized, compile_inner=compile_inner)
         if compiled is not None:
