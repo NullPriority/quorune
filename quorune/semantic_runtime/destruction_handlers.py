@@ -8,6 +8,7 @@ from ..affected_permanents import (
     AffectedPermanentSetSpec,
     PermanentControllerRelation,
 )
+from ..rules.destruction_result_model import DestructionFollowup
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
@@ -24,6 +25,7 @@ _SET_FIELDS = frozenset(
         "op",
         "source",
         "set",
+        "followup",
         "regeneration_prohibited",
         _REASON_FIELD,
         "_replacement_selections",
@@ -164,6 +166,7 @@ class DestroyPermanentSetHandler:
                 source_ref=source_ref,
                 regeneration_prohibited=regeneration_prohibited,
                 replacement_selections=tuple(raw_selections),
+                followup=DestructionFollowup.from_dict(effect["followup"]) if "followup" in effect else None,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

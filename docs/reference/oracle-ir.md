@@ -72,6 +72,14 @@ A returning incarnation never substitutes. Missing snapshots fail closed,
 while a known empty counter map yields zero. Version-one scalar descriptors
 retain their original field set and serialization.
 
+A destruction instruction with a committed-result quantity retains its fixed
+battlefield set and following instruction in one source-spanned node. The
+result uses the type, token status, and controller recorded before movement.
+It counts successful logical destructions after the destruction and destination
+choices, including a destruction redirected to exile. The following draw,
+life change, token creation, or source counter instruction receives that quantity
+after the destruction commits and any required physical order is complete.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

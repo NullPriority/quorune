@@ -20,6 +20,10 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if returned:return returned
         from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
         destruction=qualified_destruction_payload_dependencies(value)
+        if value.get("op") == "destroy_all" and "followup" in value:
+            from ..rules.destruction_result_model import DestructionFollowup
+
+            return (*destruction, *DestructionFollowup.from_dict(value["followup"]).capability_dependencies)
         if destruction:return destruction
         from ..alternative_discard_model import alternative_discard_runtime_dependencies
         alternative=alternative_discard_runtime_dependencies(value)

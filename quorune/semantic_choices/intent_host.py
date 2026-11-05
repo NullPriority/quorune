@@ -237,6 +237,7 @@ class SemanticChoiceIntentHostMixin:
             return resolve_destruction_set(
                 self,
                 actor=intent.actor,
+                followup=intent.followup,
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,

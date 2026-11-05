@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
 
 from ..affected_permanents import AffectedPermanentSetSpec
+from ..rules.destruction_result_model import DestructionFollowup
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
 from ..fixed_damage_set_model import FixedDamageSetSpec
@@ -217,8 +218,11 @@ class DestroyPermanentSetIntent:
     source_ref: str | None = None
     regeneration_prohibited: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    followup: DestructionFollowup | None = None
 
     def __post_init__(self) -> None:
+        if self.followup is not None and not isinstance(self.followup, DestructionFollowup):
+            raise ValueError("Destruction-set follow-up must be typed")
         if any(type(value) is not str or not value for value in (self.actor, self.reason)):
             raise ValueError(
                 "Destruction-set intents require actor and reason"

@@ -56,6 +56,12 @@ def defer_conditional_cost_returns():
         _DEFERRED_RETURNS.reset(token)
 
 
+def return_deferred_source_departures(host: Any, waiting: Sequence[Any]) -> tuple[Any, ...]:
+    bindings = tuple(binding for captured, _departures in waiting for binding in captured)
+    departures = tuple(dict.fromkeys(source for _captured, departed in waiting for source in departed))
+    return return_after_source_departures(host, bindings, departures) if bindings else ()
+
+
 def finish_conditional_cost_returns(host: Any, waiting: Sequence[Any]) -> bool:
     parent=_DEFERRED_RETURNS.get()
     if parent is not None:

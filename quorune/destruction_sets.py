@@ -17,6 +17,7 @@ from .destruction import (
     commit_destruction_plan,
     prepare_destructions,
 )
+from .rules.destruction_result_model import CommittedDestructionFollowup, DestructionFollowup
 from .object_query import ObjectQueryResult
 from .util import stable_json
 
@@ -128,12 +129,13 @@ def snapshot_destruction_set(
     actor: str,
     spec: AffectedPermanentSetSpec,
     source_ref: str | None = None,
+    object_rows: Sequence[ObjectQueryResult] | None = None,
 ) -> DestructionSetSnapshot:
     """Freeze the complete affected set before destruction preflight."""
 
     try:
         selected = select_affected_permanents(
-            query.affected_permanent_object_rows(actor),
+            query.affected_permanent_object_rows(actor) if object_rows is None else object_rows,
             spec,
             actor=actor,
             active_seats=query.affected_permanent_active_seats(),
@@ -165,7 +167,8 @@ def resolve_destruction_set(
     source_ref: str | None = None,
     regeneration_prohibited: bool = False,
     replacement_selections: Sequence[str | Mapping[str, Any]] = (),
-) -> DestructionResult:
+    followup: DestructionFollowup | None = None,
+) -> DestructionResult | CommittedDestructionFollowup:
     """Resolve one fixed affected set through the canonical destruction owner."""
 
     _nonempty(actor, field="Destruction set actor")
@@ -174,11 +177,18 @@ def resolve_destruction_set(
         raise DestructionSetError(
             "Destruction-set regeneration prohibition must be boolean"
         )
+    rows = None
+    counted = frozenset()
+    if followup is not None:
+        if not isinstance(followup, DestructionFollowup) or getattr(
+            host.state, "effect_destruction_replacement_version", None
+        ) != 1:
+            raise DestructionSetError("Destruction follow-up requires the current typed replacement transaction")
+        rows = host.affected_permanent_object_rows(actor)
+        count_snapshot = snapshot_destruction_set(host, actor=actor, spec=followup.scope, object_rows=rows)
+        counted = frozenset(permanent.object_id for permanent in count_snapshot.permanents)
     snapshot = snapshot_destruction_set(
-        host,
-        actor=actor,
-        spec=spec,
-        source_ref=source_ref,
+        host, actor=actor, spec=spec, source_ref=source_ref, object_rows=rows,
     )
     try:
         plan = prepare_destructions(
@@ -220,6 +230,8 @@ def resolve_destruction_set(
             sorted({value.controller for value in snapshot.permanents})
         ),
     )
+    if followup is not None:
+        return followup.from_committed_count(sum(object_id in counted for object_id in result.destroyed_object_ids))
     return result
 
 

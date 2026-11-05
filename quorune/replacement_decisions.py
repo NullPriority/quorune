@@ -236,6 +236,24 @@ def _validate_mana_payment_frame(
         )
 
 
+def _counted_destruction_plan(plan: IntentPlan) -> bool:
+    from .semantic_runtime.intents import DestroyPermanentSetIntent
+
+    return any(isinstance(intent, DestroyPermanentSetIntent) and intent.followup is not None for intent in plan.intents)
+
+
+def _execute_counted_destruction(host, plan, remaining):
+    from .conditional_exile_return import defer_conditional_cost_returns
+    from .rules.destruction_result_model import CommittedDestructionFollowup
+
+    with defer_conditional_cost_returns() as waiting:
+        result = execute_intent_plan(host, plan)
+    if not isinstance(result, CommittedDestructionFollowup):
+        raise ReplacementEffectError("Counted destruction did not produce its committed result")
+    effects = tuple(thaw_value(effect) for effect in result.effects)
+    return (*effects, *remaining), waiting
+
+
 def apply_effect_with_replacement_choice(
     host: ReplacementDecisionHost,
     item: Any,
@@ -255,10 +273,17 @@ def apply_effect_with_replacement_choice(
         copied_aura_token_selections(item, instruction_pointer=instruction_pointer)
     from .composition_order_model import CompositionOrderChoiceRequired
     from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
+    committed_followup = False
     try:
         with composition_resolution_actor(item.controller):
             if plan is None:
                 host.apply_effect(effect, actor=item.controller, as_cost=False)
+            elif _counted_destruction_plan(plan):
+                from .conditional_exile_return import return_deferred_source_departures
+
+                remaining, waiting = _execute_counted_destruction(host, plan, remaining)
+                committed_followup = True
+                return_deferred_source_departures(host, waiting)
             else:
                 execute_intent_plan(host, plan)
     except CompositionOrderChoiceRequired as required:
@@ -302,10 +327,13 @@ def apply_effect_with_replacement_choice(
             required=required,
         )
         return False
-    return (
-        item in host.state.stack
-        and host._semantic_pause_annotation() is None
-    )
+    can_continue = item in host.state.stack and host._semantic_pause_annotation() is None
+    if committed_followup and can_continue:
+        host._continue_resolution(
+            stack_ref=item.ref, effects=list(remaining), destination=destination,
+            note=note, instruction_pointer=instruction_pointer + 1,
+        )
+    return can_continue and not committed_followup
 
 
 def _replacement_selection(

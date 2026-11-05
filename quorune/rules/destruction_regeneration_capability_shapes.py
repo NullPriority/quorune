@@ -148,8 +148,19 @@ def mass_destruction_node_capabilities(
     ):
         return ()
     effect = effects[0]
+    from .destruction_result_model import DESTRUCTION_RESULT_MECHANIC, DestructionFollowup
+
+    has_followup = "followup" in effect
+    if has_followup != (DESTRUCTION_RESULT_MECHANIC in mechanics):
+        return ()
+    try:
+        result_caps = (
+            DestructionFollowup.from_dict(effect["followup"]).capability_dependencies if has_followup else ()
+        )
+    except (TypeError, ValueError):
+        return ()
     regeneration_prohibited = effect.get("regeneration_prohibited")
-    expected_fields = {"op", "source", "set"} | (
+    expected_fields = {"op", "source", "set"} | ({"followup"} if has_followup else set()) | (
         {"regeneration_prohibited"}
         if regeneration_prohibited is True
         else set()
@@ -198,11 +209,12 @@ def mass_destruction_node_capabilities(
             "permanent.destroy.fixed_set",
             *query_capabilities,
             *prohibition_capability,
+            *result_caps,
             "target.revalidate_resolution",
         )
     if target_schema is not None or "cr-115-targets" in mechanics:
         return ()
-    return ("permanent.destroy.fixed_set", *query_capabilities, *prohibition_capability)
+    return ("permanent.destroy.fixed_set", *query_capabilities, *prohibition_capability, *result_caps)
 
 
 __all__ = [

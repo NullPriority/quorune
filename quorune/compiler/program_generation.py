@@ -1094,7 +1094,8 @@ def _is_closed_self_regeneration_program(
 def _is_closed_mass_destruction_program(
     program: SemanticProgram,
 ) -> bool:
-    """Recognize only the reviewed fixed affected-set destruction family."""
+    """Recognize fixed-set destruction and its closed committed follow-ups."""
+    from ..rules.destruction_result_model import DESTRUCTION_RESULT_MECHANIC
 
     required = set(
         mass_destruction_node_capabilities(
@@ -1103,7 +1104,10 @@ def _is_closed_mass_destruction_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"destroy", "destroy-fixed-set", "cr-115-targets", "regeneration-prohibition"}
+                if value in {
+                    "destroy", "destroy-fixed-set", "cr-115-targets", "regeneration-prohibition",
+                    DESTRUCTION_RESULT_MECHANIC,
+                }
             ),
         )
     )

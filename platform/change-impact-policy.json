@@ -11706,6 +11706,11 @@
     {
       "id": "qualified-simultaneous-destruction",
       "patterns": [
+        "quorune/compiler/destruction_followup_templates.py",
+        "quorune/rules/destruction_result_model.py",
+        "quorune/semantic_runtime/destruction_handlers.py",
+        "tests/test_committed_destruction_followups.py",
+        "tests/fixtures/committed-destruction-followup-cards.json",
         "quorune/compiler/qualified_destruction_queries.py",
         "quorune/compiler/destruction_templates.py",
         "quorune/rules/qualified_destruction.py",
@@ -11715,6 +11720,7 @@
       ],
       "test_modules": [
         "test_qualified_destruction_queries",
+        "test_committed_destruction_followups",
         "test_mass_destruction_effect_clauses",
         "test_card_program_trust"
       ]

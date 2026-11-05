@@ -160,13 +160,10 @@ def validate_completed_choice_parent(host,value):
 
 def finish_choice_intent_returns(host, waiting, saved):
     from ..conditional_exile_return import (
-        return_after_source_departures, ConditionalReturnChoiceRequired, ConditionalReturnAuraChoiceRequired,
+        return_deferred_source_departures, ConditionalReturnChoiceRequired, ConditionalReturnAuraChoiceRequired,
         issue_conditional_return_choice,issue_conditional_aura_choice,
     )
-    bindings=tuple(binding for values,_sources in waiting for binding in values)
-    sources=tuple(dict.fromkeys(source for _values,identities in waiting for source in identities))
-    if not bindings:return False
-    try:return_after_source_departures(host,bindings,sources)
+    try:return_deferred_source_departures(host,waiting)
     except ConditionalReturnChoiceRequired as required:
         issue_conditional_return_choice(host,required,saved);return True
     except ConditionalReturnAuraChoiceRequired as required:
