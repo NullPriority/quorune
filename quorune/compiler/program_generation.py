@@ -1228,6 +1228,7 @@ def _closed_effect_recognizers():
     from ..rules.target_player_sequences import is_closed_target_player_sequence_program
     from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
     from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
+    from ..rules.revealed_library_top import is_closed_reveal_top_program
     from ..rules.per_player_target_sets import is_closed_per_player_target_program
     from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
@@ -1241,6 +1242,7 @@ def _closed_effect_recognizers():
         is_closed_target_player_sequence_program,
         is_closed_target_set_result_sequence_program,
         is_closed_reanimation_entry_counter_program,
+        is_closed_reveal_top_program,
         is_closed_per_player_target_program,
         is_closed_compiled_emblem_program,
         is_closed_fixed_land_untap_choice_program,

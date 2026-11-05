@@ -19,6 +19,7 @@ from .context import SemanticNodeError
 from .explore import explore_source_controller
 from .query_effect_amounts import resolve_public_query_amount, resolve_cast_x_amount
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND
+from ..rules.revealed_library_top import REVEAL_TOP_OPERATION
 from ..scalar_effect_amounts import resolve_scalar_effect_amount
 from .direct_target_fields import bound_mutation_target_overrides
 
@@ -118,7 +119,7 @@ def _resolve_effect_mapping(host, value, item):
         from ..delayed_object_actions import bind_delayed_object_instruction
         try:return bind_delayed_object_instruction(host,value,item)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-    if "followup" in value and value.get("op") in ("destroy_all", "move_public_zone_set"):
+    if "followup" in value and value.get("op") in ("destroy_all", "move_public_zone_set", REVEAL_TOP_OPERATION):
         preceding_action = {key: child for key, child in value.items() if key != "followup"}
         return {**_resolve_effect_mapping(host, preceding_action, item), "followup": value["followup"]}
     if value.get('op')=='create_token_then_counters':

@@ -344,6 +344,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "drain_opponent",
     "draw",
     "draw_each_player",
+    "reveal_each_library_top",
     "draw_with_actions",
     "destroy",
     "destroy_all",

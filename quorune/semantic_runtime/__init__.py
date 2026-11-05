@@ -400,9 +400,11 @@ from .zone_replacements import (
 @lru_cache(maxsize=1)
 def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .emblem_creation import CreateCompiledEmblemHandler
+    from .revealed_library_top import RevealEachLibraryTopHandler
     registry = SemanticHandlerRegistry(
         (
             CreateCompiledEmblemHandler(),
+            RevealEachLibraryTopHandler(),
             *GENERIC_HANDLERS,
             FixedLibraryShuffleHandler(),
             AscendSpellHandler(),

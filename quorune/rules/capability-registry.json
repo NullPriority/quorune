@@ -45598,6 +45598,101 @@
     {
       "applicability": {
         "exclusions": [
+          "Chosen players, reveal-until or more than one revealed card per player",
+          "Choices, moves, copies or additional follow-ups using the individual revealed cards",
+          "Any cast or mana-payment activation during the reveal"
+        ],
+        "inputs": [
+          "Current live APNAP order",
+          "One physical top card from each nonempty library",
+          "Closed counted follow-ups"
+        ],
+        "outputs": [
+          "Public reveal journal entries",
+          "Land and nonland results in printed order",
+          "Replacement-aware APNAP draws"
+        ],
+        "summary": "Reveal the top card of each player's library, resolve fixed land or nonland follow-ups, and then have each player draw one card."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.draw.library_to_hand"
+      ],
+      "dependency_fail_closed_rationale": "The runtime descriptor independently requires public reveal and each literal result. Withdrawing public reveal blocks the compound instruction and preserves ordinary draws.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.top.reveal_each_player_result",
+      "implementation_components": [
+        "quorune.compiler.revealed_library_top_templates.reveal_top_result_template",
+        "quorune.rules.revealed_library_top.RevealedLibraryTopSpec",
+        "quorune.semantic_runtime.revealed_library_top.RevealEachLibraryTopHandler",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.reveal_each_library_top_intent",
+        "quorune.replacement_decisions.apply_effect_with_replacement_choice"
+      ],
+      "implementation_mutation_rationale": "The count witness rejects a nonzero sentinel in place of the number of revealed nonland cards.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_enforcer_gets_counters_before_the_players_draw",
+        "test_actual_phabine_creates_before_pumping_and_ignores_empty_libraries",
+        "test_actual_rousing_counts_front_faces_and_finishes_apnap_after_dredge",
+        "test_actual_selvala_uses_the_stack_and_gains_life_once",
+        "test_actual_woodvine_pumps_only_the_controllers_current_attackers"
+      ],
+      "multiplayer_tests": [
+        "test_actual_phabine_creates_before_pumping_and_ignores_empty_libraries",
+        "test_actual_rousing_counts_front_faces_and_finishes_apnap_after_dredge",
+        "test_actual_woodvine_pumps_only_the_controllers_current_attackers"
+      ],
+      "negative_tests": [
+        "test_public_top_reveal_rejects_unsupported_or_unbound_instructions",
+        "test_public_top_reveal_withdrawal_retains_ordinary_draw"
+      ],
+      "official_rules": [
+        "119.9",
+        "121.2c",
+        "605.1a",
+        "608.2c",
+        "701.20a",
+        "701.20b",
+        "704.5b",
+        "712.8a"
+      ],
+      "positive_tests": [
+        "test_actual_enforcer_gets_counters_before_the_players_draw",
+        "test_actual_phabine_creates_before_pumping_and_ignores_empty_libraries",
+        "test_actual_rousing_counts_front_faces_and_finishes_apnap_after_dredge",
+        "test_actual_selvala_uses_the_stack_and_gains_life_once",
+        "test_actual_woodvine_pumps_only_the_controllers_current_attackers",
+        "test_public_top_reveal_has_the_full_source_span_and_ordered_result"
+      ],
+      "privacy_tests": [
+        "test_actual_rousing_counts_front_faces_and_finishes_apnap_after_dredge"
+      ],
+      "replay_tests": [
+        "test_actual_enforcer_gets_counters_before_the_players_draw",
+        "test_actual_phabine_creates_before_pumping_and_ignores_empty_libraries",
+        "test_actual_rousing_counts_front_faces_and_finishes_apnap_after_dredge",
+        "test_actual_selvala_uses_the_stack_and_gains_life_once",
+        "test_actual_woodvine_pumps_only_the_controllers_current_attackers"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "more than one top card",
           "target, opponent-only, shared-library, named, chosen, conditional, temporary, copied, granted, or text-changed permissions",
           "face-down nonlibrary objects",
@@ -78403,7 +78498,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 705,
+  "registry_version": 706,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

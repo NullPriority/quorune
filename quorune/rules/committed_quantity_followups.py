@@ -46,10 +46,16 @@ def fixed_followup_capabilities(effect: Mapping[str, Any]) -> tuple[str, ...]:
                 token_creation_component_mechanics,
             )
 
+            from .capabilities import capability_dependencies_for_node
+
             effects = (thaw_value(effect),)
-            return fixed_token_creation_node_capabilities(
-                effects=effects, target_schema=None, mechanic_ids=token_creation_component_mechanics(effects, set()),
-            )
+            mechanics = token_creation_component_mechanics(effects, set())
+            if fixed_token_creation_node_capabilities(
+                effects=effects, target_schema=None, mechanic_ids=mechanics,
+            ):
+                return capability_dependencies_for_node(
+                    effects=effects, target_schema=None, mechanic_ids=mechanics,
+                )
     return ()
 
 

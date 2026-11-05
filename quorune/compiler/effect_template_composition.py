@@ -147,6 +147,12 @@ def reviewed_effect_template_composition(
     if atomic[0] is not None:
         return atomic
     folded = text.casefold()
+    if "card revealed this way" in folded and "each player reveals" in folded:
+        from .revealed_library_top_templates import reveal_top_result_template
+
+        reveal_top = reveal_top_result_template(text, compile_literal=compile_atomic)
+        if reveal_top is not None:
+            return reveal_top
     if "destroyed this way" in folded or "exiled this way" in folded:
         from .destruction_followup_templates import destruction_followup_template
         from .public_exile_followup_templates import public_exile_followup_template

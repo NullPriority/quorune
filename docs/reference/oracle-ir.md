@@ -85,6 +85,14 @@ incarnations. The scope uses the public front-face characteristics before the
 move. A union counts one card once, and the resulting life, token, or source
 counter instruction runs in the chosen ability or modal sequence.
 
+A fixed multiplayer top-card reveal uses one actual card from each nonempty
+library of a player still in the game. The reveal uses the front face of a
+double-faced card. The resulting land and nonland counts drive the supported
+instructions in printed order before the ordinary APNAP draws. A draw
+replacement can change a later draw without changing the reveal results.
+An activated ability that adds mana and instructs a draw uses the stack
+under CR 605.1a.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;

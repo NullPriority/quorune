@@ -789,6 +789,7 @@
     "tests/fixtures/retained-owner-composition-cards.json",
     "tests/fixtures/reveal-entry-cards.json",
     "tests/fixtures/reveal-until-library-selection-cards.json",
+    "tests/fixtures/revealed-library-top-cards.json",
     "tests/fixtures/ring-original-cards.json",
     "tests/fixtures/scalar-effect-amount-cards.json",
     "tests/fixtures/scalar-mill-wording-cards.json",

@@ -25,6 +25,7 @@ from typing import Any, Literal, Mapping, TypeAlias
 from ..affected_permanents import AffectedPermanentSetSpec
 from ..rules.destruction_result_model import DestructionFollowup
 from ..rules.public_exile_result_model import PublicExileFollowup
+from ..rules.revealed_library_top import RevealedLibraryTopSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
 from ..fixed_damage_set_model import FixedDamageSetSpec
@@ -806,6 +807,13 @@ class RevealLibraryCardsIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class RevealEachLibraryTopIntent:
+    actor: str
+    reason: str
+    followup: RevealedLibraryTopSpec
+
+
+@dataclass(frozen=True, slots=True)
 class MoveLibraryCardsToBottomIntent:
     actor: str
     player: str
@@ -1534,6 +1542,7 @@ SemanticIntent: TypeAlias = (
     | PayLifeIntent
     | PayEnergyIntent
     | RevealLibraryCardsIntent
+    | RevealEachLibraryTopIntent
     | InspectHandIntent
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent

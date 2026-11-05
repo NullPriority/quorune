@@ -89,6 +89,14 @@ def copiable_card_characteristics(card, record, base):
     return result
 
 
+def library_reveal_printed_identity(record: CardRecord) -> tuple[str, str]:
+    """Read the public identity of the physical card before it changes zones."""
+    if record.faces and record.layout in {"modal_dfc", "transform", "adventure", "prepare"}:
+        front = record.faces[0]
+        return str(front["name"]), str(front["type_line"])
+    return record.name, record.type_line
+
+
 def base_card_characteristics(
     card: CardInstance,
     record: CardRecord | None,

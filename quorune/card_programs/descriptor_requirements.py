@@ -2,6 +2,29 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+def _committed_action_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    """Validate counts whose authority comes from an actual committed action."""
+    from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
+    destruction = qualified_destruction_payload_dependencies(value)
+    if value.get("op") == "destroy_all" and "followup" in value:
+        from ..rules.destruction_result_model import DestructionFollowup
+
+        return (*destruction, *DestructionFollowup.from_dict(value["followup"]).capability_dependencies)
+    if destruction:
+        return destruction
+    if value.get("op") == "move_public_zone_set" and "followup" in value:
+        from ..public_zone_moves import PublicZoneMoveSetSpec
+        from ..rules.public_exile_result_model import PublicExileFollowup
+
+        followup = PublicExileFollowup.from_dict(value["followup"])
+        followup.validate_move(PublicZoneMoveSetSpec.from_dict(value["set"]))
+        return followup.capability_dependencies
+    from ..rules.revealed_library_top import REVEAL_TOP_OPERATION, RevealedLibraryTopSpec
+    if value.get("op") == REVEAL_TOP_OPERATION:
+        return RevealedLibraryTopSpec.from_effect(value).capability_dependencies
+    return ()
+
+
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
@@ -18,20 +41,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies
         returned=graveyard_self_return_dependencies(value)
         if returned:return returned
-        from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
-        destruction=qualified_destruction_payload_dependencies(value)
-        if value.get("op") == "destroy_all" and "followup" in value:
-            from ..rules.destruction_result_model import DestructionFollowup
-
-            return (*destruction, *DestructionFollowup.from_dict(value["followup"]).capability_dependencies)
-        if destruction:return destruction
-        if value.get("op") == "move_public_zone_set" and "followup" in value:
-            from ..public_zone_moves import PublicZoneMoveSetSpec
-            from ..rules.public_exile_result_model import PublicExileFollowup
-
-            followup = PublicExileFollowup.from_dict(value["followup"])
-            followup.validate_move(PublicZoneMoveSetSpec.from_dict(value["set"]))
-            return followup.capability_dependencies
+        action_result = _committed_action_dependencies(value)
+        if action_result:
+            return action_result
         from ..alternative_discard_model import alternative_discard_runtime_dependencies
         alternative=alternative_discard_runtime_dependencies(value)
         if alternative:return tuple(sorted({*alternative,*(cap for child in value.values()

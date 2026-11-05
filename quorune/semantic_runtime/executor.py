@@ -112,6 +112,7 @@ from .intents import (
     ReorderLibraryTopIntent,
     RetargetStackItemIntent,
     RevealLibraryCardsIntent,
+    RevealEachLibraryTopIntent,
     SetCardDesignationIntent,
     SetPermanentTappedIntent,
     ProhibitNextUntapIntent,
@@ -203,6 +204,8 @@ class SemanticIntentSink(
         self,
         intent: RevealLibraryCardsIntent,
     ) -> tuple[str, ...]: ...
+
+    def reveal_each_library_top_intent(self, intent: RevealEachLibraryTopIntent) -> object: ...
 
     def inspect_hand_intent(
         self,
@@ -558,6 +561,7 @@ LibraryIntent = (
     | ShuffleLibraryIntent
     | ReturnCardsToLibraryTopIntent
     | RevealLibraryCardsIntent
+    | RevealEachLibraryTopIntent
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent
     | SurveilLibraryIntent
@@ -569,6 +573,7 @@ LIBRARY_INTENT_TYPES = (
     ShuffleLibraryIntent,
     ReturnCardsToLibraryTopIntent,
     RevealLibraryCardsIntent,
+    RevealEachLibraryTopIntent,
     MoveLibraryCardsToBottomIntent,
     ScryLibraryIntent,
     SurveilLibraryIntent,
@@ -590,6 +595,8 @@ def _execute_library_intent(
         return intent.player, sink.return_cards_to_library_top_intent(intent)
     if isinstance(intent, RevealLibraryCardsIntent):
         return intent.player, sink.reveal_library_cards_intent(intent)
+    if isinstance(intent, RevealEachLibraryTopIntent):
+        return intent.actor, sink.reveal_each_library_top_intent(intent)
     if isinstance(intent, MoveLibraryCardsToBottomIntent):
         return intent.player, sink.move_library_cards_to_bottom_intent(intent)
     if isinstance(intent, ScryLibraryIntent):
