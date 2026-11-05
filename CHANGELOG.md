@@ -20,6 +20,11 @@ maintenance: "hand-maintained"
 
 ## Unreleased
 
+- Collect legend-rule keep choices in surviving APNAP order before committing
+  the simultaneous state-based departures. Preserve collected keeps across
+  replacement and physical-ordering choices, reject stale continuations, and
+  retain the historical single-group path for older records.
+
 - Pay optional source-sacrifice costs through the existing payment and zone
   owners. Retain the original incarnation, current payer control, owner
   destination and sealed player for the result; a returned source cannot pay.

@@ -34,6 +34,7 @@ from .face_status_timestamp_model import face_status_timestamp_version
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
 from .characteristic_query_boundary_model import characteristic_query_boundary_version
+from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
@@ -1052,11 +1053,13 @@ class GameState:
     battle_cry_resolution_version: int | None = 1
     block_characteristics_version: int | None = 1
     unblocked_attacker_event_version: int | None = 1
+    legend_rule_choice_version: int | None = 1
 
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
+        legend_rule_choice_version(self.legend_rule_choice_version)
         ability_source_information_version(self.ability_source_information_version)
         cast_face_offers_version(self.cast_face_offers_version)
         cast_source_placement_version(self.cast_source_placement_version)
@@ -1109,6 +1112,7 @@ class GameState:
             **({'battle_cry_resolution_version':self.battle_cry_resolution_version} if self.battle_cry_resolution_version is not None else {}),
             **({'block_characteristics_version':self.block_characteristics_version} if self.block_characteristics_version is not None else {}),
             **({'unblocked_attacker_event_version':self.unblocked_attacker_event_version} if self.unblocked_attacker_event_version is not None else {}),
+            **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
             **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
@@ -1184,6 +1188,7 @@ class GameState:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameState":
         return cls(
+            legend_rule_choice_version=legend_rule_choice_version(data.get('legend_rule_choice_version')),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
             explore_action_version=explore_action_version(data.get('explore_action_version')),
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),

@@ -812,6 +812,24 @@ current state. Closed historical frames without the two seat arrays retain
 their original live-anchor constraint and cannot authorize an unknown anchor
 or a changed participant batch.
 
+Current games carry `legend_rule_choice_version: 1` in checkpoints and format
+provenance. A `state.legend` decision uses the closed
+`selection.nontarget.legend-batch.v1` continuation to collect every keep choice
+in live APNAP order before the simultaneous state-based batch moves any
+permanent. A player with several conflicts chooses the order of their own
+groups. Later participants see earlier public keeps. The immutable plan binds
+physical and logical identities, current names and controllers, the retained
+turn anchor and surviving participants to the captured public frame.
+
+Once all keeps are collected, saved destruction, destination-replacement and
+physical-ordering continuations retain the completed plan in their public
+state-based frame as `legend_choices`. Scoped resume restores that plan; reload and
+submission must match the current public frame before the existing zone owner
+commits the full batch. Departures invalidate the old choice authority and
+recompute surviving conflicts. Historical absence retains the original
+single-group choice and replay behavior; an explicit current mode cannot be
+paired with historical format provenance.
+
 Control-instruction execution is also bound to the existing runtime-trust
 identity. Correcting a same-controller instruction does not rename its readable
 descriptor or reset the control-history marker. Records pinned to the prior

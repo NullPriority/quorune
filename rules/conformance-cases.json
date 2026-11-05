@@ -85241,23 +85241,58 @@
       "status": "unreviewed"
     },
     {
-      "assertion_kind": "inventory_only",
+      "assertion_kind": "executable_engine",
       "blockers": [
-        "semantic_review_not_completed"
+        "Combined final-chapter Saga sacrifice and legend-rule movement of the same permanent require shared cause provenance and remain fail-closed; this review does not establish complete rule conformance."
       ],
       "case_id": "cr-704.5j",
       "case_version": 1,
-      "classification": "unclassified",
-      "covered_scenarios": [],
+      "classification": "behavioral",
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
       "dependency_rule_ids": [
         "704.5"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
-      "notes": [],
-      "required_scenarios": [],
-      "reviewed": false,
+      "executable_test_ids": [
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_current_apnap_keeps_precede_all_departures_and_commander_choices",
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_legacy_absence_retains_the_original_offered_choice_and_replay",
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_zero_toughness_legend_remains_a_keep_choice_before_the_shared_sba_commit",
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_departed_active_player_owner_cleanup_restarts_from_surviving_current_facts",
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_game_end_clears_pending_legend_choices_without_a_decision_participant",
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_completed_keeps_survive_destination_choices_without_partial_movement",
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_completed_keeps_survive_physical_ordering_before_the_shared_commit",
+        "tests.test_legend_state_based_choices.LegendStateBasedChoiceNativeTests.test_failed_batch_commit_rolls_back_and_does_not_leak_scoped_keeps"
+      ],
+      "implementation_components": [
+        "quorune.state_based_legend_model.LegendChoicePlan",
+        "quorune.state_based_legend_choices.coordinate_state_based_legend_choices",
+        "quorune.selection.public_choice.PublicChoiceOwnerMixin",
+        "quorune.state_based_replacement_coordination.resume_state_based_replacement",
+        "quorune.composition_state_based_order.complete_state_based_composition_order",
+        "quorune.state_based_execution.commit_state_based_zone_changes",
+        "quorune.turn_priority_model.apnap_participants"
+      ],
+      "notes": [
+        "Current ordinary conflicts collect keeps in the existing surviving APNAP order before any represented departure. Each player can order independent conflicts, and later participants see prior public keeps. Current names, control, logical incarnations, participants and turn facts are sealed before replacement or physical-ordering continuations resume.",
+        "Decisive command witnesses start at explicit post-resolution owner snapshots with four normally admitted physical original commanders; no spell is claimed to create that initial state. Destination controls retain their existing reviewed trust basis. Direct elimination-owner cleanup is replayed in separate segments and is not a new player concession command.",
+        "The current record version preserves old single-group choice and replay behavior on historical absence. Malformed and stale frames, unauthorized principals and invalid keeps reject with rollback. Printed legend-rule exemption abilities remain separate unsupported feature work; no new original-card gain or general match readiness is claimed."
+      ],
+      "required_scenarios": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "hidden_information"
+      ],
+      "reviewed": true,
       "rule_id": "704.5j",
       "rule_text_sha256": "7f86d382ef140dbc80728d6e7369cc38e5585f9925b1f4942b5a9985b2f82d65",
       "schema_version": 1,
@@ -85266,7 +85301,7 @@
         "end_line": 5527,
         "start_line": 5526
       },
-      "status": "unreviewed"
+      "status": "blocked"
     },
     {
       "assertion_kind": "inventory_only",

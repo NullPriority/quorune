@@ -90,11 +90,17 @@ def take_prepared_composition_departures(changes,reason,kinds,prepared_replaceme
 
 
 def complete_state_based_composition_order(host,decision):
-    from .state_based_replacement_coordination import state_based_replacement_frame,state_based_replacement_selections
+    from .state_based_legend_choices import state_based_legend_choices
     if set(decision.continuation)!={'composition_state_based_order'}:
         raise GameRuleError('Physical departure continuation fields changed')
     try:frame=CompositionStateBasedOrderContinuation.from_dict(decision.continuation['composition_state_based_order'])
     except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
+    with state_based_legend_choices(host,frame.state_based_frame.get('legend_choices')):
+        _complete_state_based_composition_order(host,decision,frame)
+
+
+def _complete_state_based_composition_order(host,decision,frame):
+    from .state_based_replacement_coordination import state_based_replacement_frame,state_based_replacement_selections
     if (frame.state_based_frame!=FrozenMap(state_based_replacement_frame(host))
             or frame.request.apnap_order!=tuple(host.apnap_order())):
         raise GameRuleError('State-based physical inputs changed before completion')

@@ -6473,6 +6473,7 @@ class CommanderEngine(
             execution = prepare_state_based_execution_or_choice(self, sba_batch)
             if execution is None:
                 return True
+            sba_batch = execution.resolved_batch or sba_batch
             consume_deathtouch_damage_checks(
                 self, sba_batch.deathtouch_checks
             )
@@ -6677,10 +6678,7 @@ class CommanderEngine(
             if protector_repair == "changed":
                 continue
 
-            legends = self._legend_groups()
-            if legends:
-                seat, name, ids = legends[0]
-                self._begin_legend_choice(seat, name, ids)
+            if self._begin_legacy_legend_choice_if_required():
                 return True
             if begin_pending_trigger_batch(self):
                 return True
@@ -6813,6 +6811,8 @@ class CommanderEngine(
             self.state.priority_player = self._next_active_after(unique[-1])
         from .transform_timestamp_order import reconcile_transform_timestamp_order_after_departure
         reconcile_transform_timestamp_order_after_departure(self)
+        from .state_based_legend_choices import reconcile_legend_choices_after_departure
+        reconcile_legend_choices_after_departure(self)
 
     # ------------------------------------------------------------------
     # Generic effect DSL used only by the arbiter/semantic executor

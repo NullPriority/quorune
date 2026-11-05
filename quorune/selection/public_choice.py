@@ -13,6 +13,7 @@ from ..commander_zones import (
 )
 from ..model import CardInstance, StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
+from ..state_based_legend_model import LEGEND_BATCH_OPERATION_ID, LegendChoicePlan
 from .model import (
     SelectionContinuation,
     SelectionContract,
@@ -62,6 +63,8 @@ class PublicChoiceOwnerMixin:
         name: str,
         object_ids: Sequence[str],
     ) -> None:
+        if getattr(self.state, 'legend_rule_choice_version', None) is not None:
+            raise GameRuleError('Legacy legend choice cannot begin in current state-based mode')
         candidates = [
             {
                 "object_id": object_id,
@@ -93,6 +96,79 @@ class PublicChoiceOwnerMixin:
             },
             continuation={"selection": continuation.to_dict()},
         )
+
+    def _begin_legacy_legend_choice_if_required(self) -> bool:
+        if getattr(self.state, 'legend_rule_choice_version', None) is not None:
+            return False
+        groups = self._legend_groups()
+        if not groups:
+            return False
+        self._begin_legend_choice(*groups[0])
+        return True
+
+    def _begin_state_based_legend_choice(self, plan: LegendChoicePlan) -> None:
+        from ..state_based_legend_choices import validate_legend_choice_plan
+
+        validate_legend_choice_plan(self, plan)
+        actor = plan.actor
+        if actor is None:
+            raise GameRuleError('Legend keep collection is already complete')
+        remaining = [group for index, group in enumerate(plan.groups)
+                     if group.controller == actor and index not in plan.selected_groups]
+        chosen = [{'player': group.controller, 'name': group.name, 'card': candidate.ref}
+                  for object_id in plan.kept for group in plan.groups for candidate in group.candidates
+                  if candidate.object_id == object_id]
+        label = remaining[0].name if len(remaining) == 1 else 'Choose a permanent to keep for one legend conflict'
+        if chosen:
+            label += '. Earlier keeps: ' + '; '.join(row['player'] + ' — ' + row['name'] for row in chosen)
+        continuation = SelectionContinuation(
+            contract=SelectionContract.NONTARGET_CHOICE, operation_id=LEGEND_BATCH_OPERATION_ID,
+            actor=actor, state_revision=self.state.revision, visibility='public',
+            payload=FrozenMap({'plan': plan.to_dict()}),
+        )
+        self.permissions.issue(kind='state.legend', role='pilot', actors=[actor], allowed_actions=['choose'],
+            payload_by_actor={actor: {'name': label, 'keep_one': [c.ref for c in plan.legal_candidates()],
+                                     'earlier_keeps': chosen}},
+            continuation={'selection': continuation.to_dict()})
+
+    def _complete_state_based_legend_choice(self, decision: Any) -> None:
+        from ..state_based_legend_choices import validate_legend_choice_plan
+
+        selection = self._decode_public_choice(decision, operation_id=LEGEND_BATCH_OPERATION_ID, legacy=None)
+        payload = thaw_value(selection.payload)
+        if set(payload) != {'plan'}:
+            raise GameRuleError('State-based legend continuation fields are malformed')
+        plan = LegendChoicePlan.from_dict(payload['plan'])
+        validate_legend_choice_plan(self, plan)
+        if decision.actors != [plan.actor] or set(decision.responses) != {plan.actor}:
+            raise GameRuleError('Legend choice principal changed')
+        response = decision.responses[selection.actor]
+        if set(response) - {'action', 'card', 'keep', 'label', 'choice_schema'}:
+            raise GameRuleError('Legend keep response has unsupported fields')
+        if response.get('action') != 'choose':
+            raise GameRuleError('Legend keep response has an invalid action')
+        if response.get('card') and response.get('keep') and response['card'] != response['keep']:
+            raise GameRuleError('Legend keep response is ambiguous')
+        updated = plan.choose(selection.actor, response.get('card') or response.get('keep'))
+        if not updated.complete:
+            self._begin_state_based_legend_choice(updated)
+            return
+        from ..state_based_legend_choices import state_based_legend_choices
+        with state_based_legend_choices(self, updated):
+            self._stabilize()
+
+    def _finish_state_based_legend_choices(self, plan: LegendChoicePlan) -> None:
+        for object_id in plan.kept:
+            group = next(group for group in plan.groups if any(c.object_id == object_id for c in group.candidates))
+            kept = next(candidate for candidate in group.candidates if candidate.object_id == object_id)
+            moved = [candidate.ref for candidate in group.candidates if candidate.object_id != object_id]
+            self._log(group.controller, 'state.legend',
+                f'{group.controller} chose {kept.ref} to keep for the legend rule; {len(moved)} other permanent(s) moved.',
+                {'kept': kept.ref, 'moved': moved}, importance=2,
+                changed_objects=[candidate.object_id for candidate in group.candidates])
+
+    def _discard_state_based_legend_choices(self) -> None:
+        self.permissions.invalidate_current()
 
     def _begin_commander_zone_choice(
         self,
@@ -214,6 +290,12 @@ class PublicChoiceOwnerMixin:
         self._stabilize()
 
     def _complete_legend_choice(self, decision: Any) -> None:
+        selection = decision.continuation.get('selection', {})
+        if selection.get('operation_id') == LEGEND_BATCH_OPERATION_ID:
+            self._complete_state_based_legend_choice(decision)
+            return
+        if getattr(self.state, 'legend_rule_choice_version', None) is not None:
+            raise GameRuleError('Legacy legend continuation is unavailable in current state-based mode')
         seat = decision.actors[0]
         raw = decision.continuation
         legacy_ids = list(raw.get("object_ids") or [])

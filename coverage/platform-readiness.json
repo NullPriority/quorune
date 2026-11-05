@@ -36,7 +36,7 @@
     "ordinary printed Exhaust now uses one typed per-ability, per-object once-only activation owner shared by advertised actions and accepted commands; control changes and phasing preserve the consumed use, while a zone change creates a new object and resets it. One closed source-threaded fixed counter-then-until-end-of-turn characteristic sequence is shared by activated and triggered contexts, preserves printed order, suspends for replacement choices, revalidates source identity, and commits atomically. Effects that grant another Exhaust use, copied, granted, removed, or face-down Exhaust abilities, reverse-order or broader source sequences, usage-limited mana auto-payment, and independently unsupported costs or results remain explicit blockers, so aggregate Exhaust is not trusted"
   ],
   "generated": {
-    "evaluated_input_fingerprint": "5ed0204f8ef7bb2fc0b53f2eadc6bee5883c50375094902cfb73a0f124ab6da3",
+    "evaluated_input_fingerprint": "59025d3572b8424c6de29b061c2d6685101d135c3ba8e4d8b0ba7f9c365ef213",
     "generator": "scripts/update_platform_status.py",
     "input_fingerprint_algorithm": "platform-readiness-derived-inputs-sha256-v1",
     "source": "platform/readiness-source.json",
@@ -718,11 +718,11 @@
       "total": 38623
     },
     "rules": {
-      "blocked": 549,
+      "blocked": 550,
       "definition_only": 191,
       "passing": 264,
       "total": 3309,
-      "unreviewed": 2305
+      "unreviewed": 2304
     },
     "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
   },
@@ -750,7 +750,7 @@
     "generated_validation_modules": 34,
     "migration_files": 1,
     "overlay_test_suites": 17,
-    "primary_test_modules": 887,
+    "primary_test_modules": 888,
     "primary_test_shards": 13,
     "schema_files": 18,
     "server_files": 5,

@@ -23374,6 +23374,32 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/state_based_legend_choices.py",
+      "layer": "rules",
+      "owning_subsystem": "state_based_actions",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/state_based_legend_model.py",
+      "layer": "domain",
+      "owning_subsystem": "state_based_actions",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/state_based_replacement_coordination.py",
       "layer": "rules",
       "owning_subsystem": "destruction",
@@ -24644,5 +24670,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "b42328d039bc154db1ca432a876b2293fb32405520c871c46d356bda3a0b3289"
+  "fingerprint": "31e1a60a55f7f0e5a971d6cf1175aa3797d621ea8df9485ae790f41708d6da01"
 }
