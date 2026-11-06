@@ -939,6 +939,11 @@ destination scope when reconstructing the batch. Damage clearing commits only
 after the movement preflight succeeds. An absent version preserves the
 historical selection and commit order.
 
+Fresh games record the version-one `counter_quantity_provenance_version` field.
+Counter replacement continuations preserve whether a positive quantity
+replacement has changed the placement's origin for effect-only matching.
+Records with the field absent retain the historical matching behavior.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads

@@ -174,6 +174,102 @@
         "tlr": "not_legal",
         "vintage": "not_legal"
       }
+    },
+    {
+      "oracle_id": "16156274-8dc0-439c-94c4-e8c89bbb5687",
+      "name": "Loading Zone",
+      "mana_cost": "{3}{G}",
+      "type_line": "Enchantment",
+      "oracle_text": "If one or more counters would be put on a creature, Spacecraft, or Planet you control, twice that many of each of those kinds of counters are put on it instead.\nWarp {G} (You may cast this card from your hand for its warp cost. Exile this enchantment at the beginning of the next end step, then you may cast it from exile on a later turn.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "Warp"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-08-01",
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "745be03c-69dc-4239-a5e7-38587b56eac0",
+      "name": "Ancient Brontodon",
+      "mana_cost": "{6}{G}{G}",
+      "type_line": "Creature — Dinosaur",
+      "oracle_text": "",
+      "power": "9",
+      "toughness": "9",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-09-29",
+      "cmc": 8.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -206,6 +302,30 @@
       "published_at": "2024-11-08",
       "source": "wotc",
       "comment": "Planeswalkers will enter with double the normal number of loyalty counters. However, if you activate an ability whose cost has you put loyalty counters on a planeswalker, the number you put on isn't doubled. This is because those counters are put on as a cost, not as an effect."
+    },
+    {
+      "oracle_id": "16156274-8dc0-439c-94c4-e8c89bbb5687",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If two or more effects attempt to modify how many counters would be put onto a permanent you control, you choose the order to apply those effects, no matter who controls the sources of those effects."
+    },
+    {
+      "oracle_id": "16156274-8dc0-439c-94c4-e8c89bbb5687",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If you control two Loading Zones, the number of counters put on a creature, Spacecraft, or Planet you control is four times the original number. Three Loading Zones multiplies the original number by eight, and so on."
+    },
+    {
+      "oracle_id": "16156274-8dc0-439c-94c4-e8c89bbb5687",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "If a creature, Spacecraft, or Planet you control would enter the battlefield with a number of counters on it, it enters with twice that many instead."
+    },
+    {
+      "oracle_id": "16156274-8dc0-439c-94c4-e8c89bbb5687",
+      "published_at": "2025-07-25",
+      "source": "wotc",
+      "comment": "The Loading Zone is for immediate loading and unloading only. There is no stopping in the Loading Zone. (Especially not if it was warped.)"
     }
   ]
 }

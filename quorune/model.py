@@ -39,6 +39,7 @@ from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
+from .counter_placement_event_model import counter_quantity_provenance_version
 
 CONTROL_HISTORY_VERSION = 2
 _COLORED_MANA_SYMBOLS = tuple("WUBRG")
@@ -1082,6 +1083,7 @@ class GameState:
     unblocked_attacker_event_version: int | None = 1
     legend_rule_choice_version: int | None = 1
     effect_destruction_replacement_version: int | None = 1
+    counter_quantity_provenance_version: int | None = 1
     departed_turn_boundary_version: int | None = None
 
     @staticmethod
@@ -1104,6 +1106,9 @@ class GameState:
         departed_turn_version = self._departed_turn_boundary_version(self.departed_turn_boundary_version)
         effect_destruction_version = self._effect_destruction_replacement_version(
             self.effect_destruction_replacement_version
+        )
+        counter_provenance_version = counter_quantity_provenance_version(
+            self.counter_quantity_provenance_version
         )
         ability_source_information_version(self.ability_source_information_version)
         cast_face_offers_version(self.cast_face_offers_version)
@@ -1162,6 +1167,10 @@ class GameState:
             **(
                 {"effect_destruction_replacement_version": effect_destruction_version}
                 if effect_destruction_version is not None else {}
+            ),
+            **(
+                {"counter_quantity_provenance_version": counter_provenance_version}
+                if counter_provenance_version is not None else {}
             ),
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
             **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
@@ -1275,6 +1284,9 @@ class GameState:
             battle_cry_resolution_version=battle_cry_resolution_version(data.get('battle_cry_resolution_version')),
             block_characteristics_version=block_characteristics_version(data.get('block_characteristics_version')),
             unblocked_attacker_event_version=unblocked_attacker_event_version(data.get('unblocked_attacker_event_version')),
+            counter_quantity_provenance_version=counter_quantity_provenance_version(
+                data.get("counter_quantity_provenance_version")
+            ),
             commander_damage_identity_version=(
                 int(data["commander_damage_identity_version"])
                 if data.get("commander_damage_identity_version") is not None
