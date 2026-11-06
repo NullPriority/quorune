@@ -66,7 +66,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative in {
         'quorune/library_selection_knowledge_model.py',
         'quorune/characteristic_query_boundary_model.py',
-        'quorune/empty_spell_resolution_model.py',
+        'quorune/stack_resolution_authority_model.py',
     }:
         return 'domain'
     if relative in {'quorune/mutate_model.py','quorune/fixed_mana_model.py'}:return 'domain'

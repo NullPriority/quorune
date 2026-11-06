@@ -50,6 +50,9 @@ An intrinsic counter prohibition supplies counter protection independently of
 the spell's resolution body. For a current empty resolution, the shared stack
 owner requires compiler admission of the complete declaration-only source.
 Stack copy capture and record provenance use the same authority.
+An accepted arbiter action supplies the instructions for unregistered
+resolution. Its continuation carries those instructions and records no
+registered program use.
 
 ## Closure layers
 

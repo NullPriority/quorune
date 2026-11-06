@@ -11,10 +11,10 @@ from .cast_lifecycles import (
     fixed_cast_lifecycle_resolution_destination,
 )
 from .cast_face_offers import omen_resolution_binding
-from .empty_spell_resolution_model import (
+from .stack_resolution_authority_model import (
     INTRINSIC_COUNTER_PROHIBITION_TEMPLATE,
     INTRINSIC_EMPTY_SPELL_ADMISSION,
-    empty_spell_resolution_version,
+    stack_resolution_authority_version,
 )
 from .errors import StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
@@ -100,7 +100,7 @@ def _has_intrinsic_empty_admission(program: Any) -> bool:
 
 
 def _intrinsic_empty_spell_provenance(host: GenericStackResolutionQuery, item: StackItem, record: Any) -> str | None:
-    version = empty_spell_resolution_version(getattr(host.state, "empty_spell_resolution_version", None))
+    version = stack_resolution_authority_version(getattr(host.state, "stack_resolution_authority_version", None))
     if version is None:
         if oracle_has_intrinsic_counter_prohibition(
             host.semantics, str(record.oracle_id), current_trusted=host.semantic_program_is_current_trusted,
@@ -119,6 +119,23 @@ def _intrinsic_empty_spell_provenance(host: GenericStackResolutionQuery, item: S
     if any(_has_intrinsic_empty_admission(program) for program in declarations):
         return "trusted_intrinsic_empty_spell"
     return None
+
+
+def arbiter_resolution_program_key(
+    host: GenericStackResolutionQuery, item: StackItem, *, action: str, requested_key: Any,
+) -> str | None:
+    """Identify the registered program, if any, used by a scoped arbiter action."""
+    if action == "register_and_resolve":
+        return str(requested_key or item.semantic_key or "")
+    key = item.semantic_key
+    version = stack_resolution_authority_version(getattr(host.state, "stack_resolution_authority_version", None))
+    if (
+        version is not None and action == "resolve" and key
+        and not key.startswith("builtin:") and host.semantics.get(key) is None
+    ):
+        # The accepted arbiter command and its continuation own these effects.
+        return None
+    return key
 
 
 def trusted_generic_empty_resolution(
@@ -277,6 +294,7 @@ def _complete_stack_resolution(
 
 
 __all__ = [
+    "arbiter_resolution_program_key",
     "complete_stack_resolution",
     "EmptyStackResolution",
     "GenericStackResolutionQuery",

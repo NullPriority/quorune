@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from ..card_programs.admission import CompleteCardProgramAdmission
-from ..empty_spell_resolution_model import INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
+from ..stack_resolution_authority_model import INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
 from ..rules.capabilities import CapabilityRegistry
 from .counter_templates import is_intrinsically_uncounterable_spell
 from .dependency_gate import explicit_capability_gate

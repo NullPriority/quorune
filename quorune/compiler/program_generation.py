@@ -16,7 +16,7 @@ import hashlib
 from typing import Any, Iterable, Mapping, TYPE_CHECKING
 
 from ..carddb import CardDatabase, CardRecord
-from ..empty_spell_resolution_model import INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
+from ..stack_resolution_authority_model import INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
 from ..keyword_counters import keyword_counter_mechanic
 
 if TYPE_CHECKING:

@@ -8651,10 +8651,10 @@
       ]
     },
     {
-      "id": "intrinsic-empty-spell-resolution",
+      "id": "stack-resolution-authority",
       "patterns": [
         "quorune/compiler/intrinsic_counter_nodes.py",
-        "quorune/empty_spell_resolution_model.py",
+        "quorune/stack_resolution_authority_model.py",
         "quorune/stack_counter.py",
         "quorune/stack_resolution.py",
         "tests/test_stack_counter_rules.py",

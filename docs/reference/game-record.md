@@ -583,13 +583,15 @@ meaning where the schema allows it. A current runtime never silently recompiles
 or reinterprets an old record as if it used current Oracle, rules, or
 CardPrograms.
 
-Current games pin `empty_spell_resolution_version: 1` in the checkpoint and
+Current games pin `stack_resolution_authority_version: 1` in the checkpoint and
 manifest. An intrinsic counter prohibition can authorize an empty resolution
 only when the compiler proves the entire spell consists of that declaration.
 Unresolved bodies in arbitrate-or-pause mode reach the ordinary arbiter
-decision. Historical absence retains the recorded empty-resolution behavior
-and its provenance. Unknown versions, booleans, and manifest disagreements
-reject before replay.
+decision. When the arbiter supplies effects for an unregistered spell, the
+accepted command and its continuation provide replay authority. The resolving
+item has no registered program key. Historical absence retains the recorded
+resolution behavior and provenance. Unknown versions, booleans, and manifest
+disagreements reject before replay.
 
 Current games pin `qualified_attack_facts_version: 1`. Declared-attack
 occurrences carry versioned public attacker characteristics sealed after

@@ -9,7 +9,7 @@ from ..card_programs.admission import (
     descriptor_requires_complete_card_program,
 )
 from ..carddb import CardRecord
-from ..empty_spell_resolution_model import INTRINSIC_EMPTY_SPELL_ADMISSION
+from ..stack_resolution_authority_model import INTRINSIC_EMPTY_SPELL_ADMISSION
 from ..rules.capabilities import CapabilityRegistry
 from ..semantics import SemanticProgram
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE

@@ -863,11 +863,41 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
         self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
         self.replay(session, load=True)
 
-    def test_empty_spell_resolution_mode_is_bound_to_the_checkpoint(self):
+    def test_unregistered_arbiter_resolution_replays_after_a_replacement_choice(self):
+        session = self.session(128608222)
+        spell = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body")
+        adder = self.add(session.engine, "Generic Bound Counter Adder")
+        self.add(session.engine, "Generic Bound Counter Doubler")
+        self.prepare(session, mana={"C": 4, "R": 1})
+        self.checkpoint(session)
+        action, = [row for row in self.actions(session) if row["id"] == "cast:" + spell.ref]
+        cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("arbiter.resolve", self.resolve(session).kind)
+        effect = {"op": "place_counters", "card": target.ref, "counter": "+1/+1", "amount": 1, "source": "$source"}
+        ruling = session.act("arbiter", {"action_id": "resolve", "effects": [effect]})
+        self.assertTrue(ruling.ok, ruling.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertIsNone(session.state.stack[-1].semantic_key)
+        self.assertFalse(session.state.cards[target.object_id].counters)
+
+        session = self.replay(session, load=True)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        first = next(option["id"] for option in options if option["source"] == adder.ref)
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": first})
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(session.state.stack)
+        self.assertEqual({"+1/+1": 4}, session.state.cards[target.object_id].counters)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertEqual([], session.commands[-1]["semantics"]["programs_used"])
+        self.replay(session, load=True)
+
+    def test_stack_resolution_authority_is_bound_to_the_checkpoint(self):
         from quorune.model import GameConfig, GameState
         from quorune.record_state_provenance import format_state_versions, validate_state_versions
 
-        key = "empty_spell_resolution_version"
+        key = "stack_resolution_authority_version"
         state = GameState(game_id="empty-spell-mode", config=GameConfig(), players={}, cards={},
                           deck_names={}, commander_oracle_ids={}, turn_order=[], current_turn=None,
                           last_normal_turn_player=None)
@@ -879,19 +909,19 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
 
         historical_wire = {field: value for field, value in wire.items() if field != key}
         historical = GameState.from_dict(historical_wire)
-        self.assertIsNone(historical.empty_spell_resolution_version)
+        self.assertIsNone(historical.stack_resolution_authority_version)
         self.assertEqual(historical_wire, historical.to_dict())
         historical_manifest = {"format": format_state_versions(historical)}
         self.assertNotIn(key, historical_manifest["format"])
         validate_state_versions(historical_manifest, historical)
         for versioned, checkpoint in ((manifest, historical), (historical_manifest, state)):
-            with self.assertRaisesRegex(ValueError, "Empty spell resolution provenance"):
+            with self.assertRaisesRegex(ValueError, "Stack resolution authority provenance"):
                 validate_state_versions(versioned, checkpoint)
         for bad in (True, False, 0, 2, "1"):
             with self.subTest(value=bad):
-                with self.assertRaisesRegex(ValueError, "Unsupported empty spell resolution version"):
+                with self.assertRaisesRegex(ValueError, "Unsupported stack resolution authority version"):
                     GameState.from_dict({**wire, key: bad})
-                with self.assertRaisesRegex(ValueError, "Empty spell resolution provenance"):
+                with self.assertRaisesRegex(ValueError, "Stack resolution authority provenance"):
                     validate_state_versions({"format": {**manifest["format"], key: bad}}, state)
 
 

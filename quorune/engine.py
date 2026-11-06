@@ -218,7 +218,7 @@ from .stack_counter import (
     stack_item_can_be_countered,
 )
 from .stack_resolution import (
-    complete_stack_resolution,
+    arbiter_resolution_program_key, complete_stack_resolution,
     trusted_generic_empty_resolution,
 )
 from . import spell_copy_engine_adapter as copy_events
@@ -3745,8 +3745,8 @@ class CommanderEngine(
         effects = [dict(effect) for effect in response.get("effects") or []]
         destination = response.get("destination", item.default_destination)
         note = str(response.get("note") or "")
+        key = arbiter_resolution_program_key(self, item, action=action, requested_key=response.get("semantic_key"))
         if action == "register_and_resolve":
-            key = str(response.get("semantic_key") or item.semantic_key or "")
             if not key:
                 raise GameRuleError("A semantic_key is required to register a program")
             self.semantics.put(
@@ -3758,7 +3758,7 @@ class CommanderEngine(
                     notes=note,
                 )
             )
-            item.semantic_key = key
+        item.semantic_key = key
         self._begin_resolve_item(item, effects, destination, note=note)
 
     def _begin_resolve_item(
