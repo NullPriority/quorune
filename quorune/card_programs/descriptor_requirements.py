@@ -8,6 +8,9 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         from ..turn_skip_model import TURN_SKIP_CAPABILITY, decode_turn_skip_instruction
         decode_turn_skip_instruction(value)
         return (TURN_SKIP_CAPABILITY,)
+    if value.get("op") in ("earthbend_land", "finish_earthbend_land", "return_earthbent_objects"):
+        from ..rules.earthbend_shapes import earthbend_descriptor_dependencies
+        return earthbend_descriptor_dependencies(value)
     from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
     destruction = qualified_destruction_payload_dependencies(value)
     if value.get("op") == "destroy_all" and "followup" in value:

@@ -247,11 +247,15 @@ def _validate_mana_payment_frame(
 
 
 def _quantity_followup_plan(plan: IntentPlan) -> bool:
+    from .semantic_runtime.earthbend_intents import EarthbendIntent
     from .semantic_runtime.intents import DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent
 
     return any(
-        isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
-        and intent.followup is not None
+        isinstance(intent, EarthbendIntent)
+        or (
+            isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
+            and intent.followup is not None
+        )
         for intent in plan.intents
     )
 

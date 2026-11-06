@@ -20,6 +20,7 @@ from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
+from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
@@ -643,8 +644,18 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent)
+PlayerIntent = (
+    BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
+    | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
+    | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
+    | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent
+)
+PLAYER_INTENT_TYPES = (
+    BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
+    DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
+    TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent,
+    EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent,
+)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -663,6 +674,15 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, EarthbendIntent):
+        from ..earthbend import animate_earthbend_land
+        return intent.actor, animate_earthbend_land(sink, intent)
+    if isinstance(intent, FinishEarthbendIntent):
+        from ..earthbend import finish_earthbend_land
+        return intent.actor, finish_earthbend_land(sink, intent)
+    if isinstance(intent, ReturnEarthbentObjectsIntent):
+        from ..earthbend import return_earthbent_objects
+        return intent.actor, return_earthbent_objects(sink, intent)
     if isinstance(intent, ScheduleTurnSkipIntent):
         return intent.actor, tuple(sink.turn_steps.schedule_skip(seat, intent.spec) for seat in intent.players)
     if isinstance(intent,ProhibitLibrarySearchIntent):return intent.actor,apply_library_search_prohibition(sink,actor=intent.actor,source_id=intent.source_id)

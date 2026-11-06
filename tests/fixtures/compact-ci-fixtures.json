@@ -532,6 +532,7 @@
     "tests/fixtures/draw-rules-cards.json",
     "tests/fixtures/each-player-life-cards.json",
     "tests/fixtures/each-player-mill-cards.json",
+    "tests/fixtures/earthbend-cards.json",
     "tests/fixtures/echo-rules-cards.json",
     "tests/fixtures/empty-fixed-target-batch-cards.json",
     "tests/fixtures/empty-permanent-cards.json",

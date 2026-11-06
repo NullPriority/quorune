@@ -4,6 +4,7 @@ from ..fractional_quantity_model import HalfQuantitySpec
 from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
+from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
@@ -1585,6 +1586,9 @@ SemanticIntent: TypeAlias = (
     | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent
     | ScheduleTurnSkipIntent
+    | EarthbendIntent
+    | FinishEarthbendIntent
+    | ReturnEarthbentObjectsIntent
     | ProhibitLibrarySearchIntent
     | AscendIntent
 )

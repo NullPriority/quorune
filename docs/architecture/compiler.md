@@ -5061,3 +5061,12 @@ starts. The ordinary replacement choice carries competing static and
 resolution-created effects, including cases where only one choice consumes
 a grant. Skipped turns advance scheduling without opening their turn-based
 actions. Scoped combat grants expire with their bound turn.
+
+Earthbend binds one announced land the controller controls. It applies
+persistent animation, then uses the ordinary counter placement continuation
+before creating the delayed ability. Departures supply the actual public
+destination incarnations, including each physical card in a composition.
+The return uses the ordinary simultaneous battlefield-entry owner.
+Repeated Earthbend retains one target slot for each instruction. The same
+land can fill both slots. The linked untap uses the original land after its
+Earthbend completes.

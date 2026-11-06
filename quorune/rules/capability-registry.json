@@ -43922,6 +43922,111 @@
     {
       "applicability": {
         "exclusions": [
+          "unbound X and unsupported quantity sources",
+          "unrepresented sibling results"
+        ],
+        "inputs": [
+          "one announced controller-owned land per instruction",
+          "fixed or closed public quantity",
+          "resolving source"
+        ],
+        "outputs": [
+          "same-incarnation layered animation",
+          "replacement-aware counters",
+          "one delayed return using committed physical departure facts"
+        ],
+        "summary": "Resolve an announced controller-owned land target through persistent animation, ordinary counter replacement and an incarnation-bound delayed return."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_keyword_zone_object",
+        "counter.producer.fixed_effect",
+        "target.revalidate_resolution",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "Target shape, public count and operation ownership are inferred from the closed descriptor independently of its declared dependencies.",
+      "dependency_fail_closed_status": "passed",
+      "id": "keyword_action.earthbend",
+      "implementation_components": [
+        "quorune.compiler.earthbend_templates.earthbend_effect_template",
+        "quorune.earthbend.animate_earthbend_land",
+        "quorune.earthbend.finish_earthbend_land",
+        "quorune.earthbend.collect_earthbend_departure",
+        "quorune.earthbend.return_earthbent_objects"
+      ],
+      "implementation_mutation_rationale": "Removing the Earthbend result production leaves the original mandatory Earthbending Lesson instruction unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_earthbend_resumes_counter_replacements_and_returns_all_merged_cards",
+        "test_actual_prevented_earthbend_counters_create_a_stale_delayed_return",
+        "test_actual_earthbend_public_count_and_exile_return_follow_current_land",
+        "test_actual_repeated_earthbend_resolves_each_legal_target_and_returns_once",
+        "test_actual_earthbend_linked_untap_keeps_the_announced_land"
+      ],
+      "multiplayer_tests": [
+        "test_actual_earthbend_resumes_counter_replacements_and_returns_all_merged_cards",
+        "test_actual_earthbend_public_count_and_exile_return_follow_current_land"
+      ],
+      "negative_tests": [
+        "test_earthbend_compiler_preserves_target_amount_and_capability_boundaries",
+        "test_actual_earthbend_resumes_counter_replacements_and_returns_all_merged_cards",
+        "test_actual_prevented_earthbend_counters_create_a_stale_delayed_return",
+        "test_actual_earthbend_public_count_and_exile_return_follow_current_land"
+      ],
+      "official_rules": [
+        "115.3",
+        "701.66a",
+        "701.66b",
+        "400.7e",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2c",
+        "613.1d",
+        "613.1f",
+        "613.4b",
+        "614.16",
+        "616.1",
+        "712.21c",
+        "730.3c"
+      ],
+      "positive_tests": [
+        "test_earthbend_compiler_preserves_target_amount_and_capability_boundaries",
+        "test_actual_earthbend_resumes_counter_replacements_and_returns_all_merged_cards",
+        "test_actual_earthbend_public_count_and_exile_return_follow_current_land",
+        "test_actual_repeated_earthbend_resolves_each_legal_target_and_returns_once",
+        "test_actual_earthbend_linked_untap_keeps_the_announced_land"
+      ],
+      "privacy_tests": [
+        "test_actual_earthbend_resumes_counter_replacements_and_returns_all_merged_cards"
+      ],
+      "replay_tests": [
+        "test_actual_earthbend_resumes_counter_replacements_and_returns_all_merged_cards",
+        "test_actual_prevented_earthbend_counters_create_a_stale_delayed_return",
+        "test_actual_earthbend_public_count_and_exile_return_follow_current_land",
+        "test_actual_repeated_earthbend_resolves_each_legal_target_and_returns_once",
+        "test_actual_earthbend_linked_untap_keeps_the_announced_land"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "separately bound event-object recipients",
           "unrepresented quantity producers and activation costs"
         ],
@@ -80906,7 +81011,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 750,
+  "registry_version": 751,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -51,6 +51,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/state_based_legend_choices.py':return 'rules'
     if relative=='quorune/created_token_cleanup_model.py':return 'domain'
     if relative=='quorune/turn_skip_model.py':return 'domain'
+    if relative=='quorune/earthbend_model.py':return 'domain'
+    if relative=='quorune/earthbend.py':return 'rules'
     if relative=='quorune/created_token_cleanup.py':return 'rules'
     if relative=='quorune/battle_cry_resolution_model.py':return 'domain'
     if relative=='quorune/battle_cry_resolution.py':return 'rules'

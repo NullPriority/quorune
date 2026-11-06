@@ -4164,6 +4164,29 @@
       ]
     },
     {
+      "id": "earthbend-land-and-delayed-return",
+      "patterns": [
+        "quorune/compiler/earthbend_templates.py",
+        "quorune/composition_departure_batch.py",
+        "quorune/earthbend.py",
+        "quorune/earthbend_model.py",
+        "quorune/rules/earthbend_shapes.py",
+        "quorune/semantic_runtime/earthbend_handlers.py",
+        "quorune/semantic_runtime/earthbend_intents.py",
+        "quorune/zone_trigger_processing.py",
+        "tests/fixtures/earthbend-cards.json",
+        "tests/test_delayed_object_native.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_composition_state_based_departure",
+        "test_counter_placement_replacements",
+        "test_delayed_object_native",
+        "test_mutate_cast_native",
+        "test_zone_trigger_events"
+      ]
+    },
+    {
       "id": "qualified-regeneration-contract",
       "patterns": [
         "quorune/compiler/regeneration_templates.py",

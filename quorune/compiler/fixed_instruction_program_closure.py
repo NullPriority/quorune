@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ..rules.extra_turn_shapes import is_closed_fixed_extra_turn_program
 from ..rules.scheduled_turn_skip_shapes import is_closed_scheduled_turn_skip_program
+from ..rules.earthbend_shapes import is_closed_earthbend_program
 from ..rules.connive_capability_shapes import is_closed_fixed_connive_program
 from ..rules.endure_shapes import is_closed_fixed_endure_program
 from ..rules.blight_shapes import is_closed_fixed_blight_program
@@ -27,5 +28,6 @@ def is_closed_fixed_instruction_program(program):
         is_closed_reveal_until_library_selection_program,
         is_closed_fixed_extra_turn_program, is_closed_fixed_connive_program, is_closed_fixed_goad_program,
         is_closed_scheduled_turn_skip_program,
+        is_closed_earthbend_program,
         is_closed_exploit_instruction_program,
     ))
