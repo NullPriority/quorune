@@ -180,6 +180,7 @@
       "quorune/permanent_exile.py": "typed identity-pinned permanent-exile transaction delegating mutation to the canonical zone-change owner",
       "quorune/permanent_transform.py": "typed CR 701.27 active-face/transform-count owner with versioned timestamp assignment through the canonical zone clock",
       "quorune/permissions.py": "decision and capability lifecycle owned by the transaction boundary",
+      "quorune/phasing.py": "typed simultaneous phased status and retained return schedule owner at actual untap steps",
       "quorune/preparation.py": "typed noncopiable Preparation designation and linked inset-spell-copy lifecycle owner",
       "quorune/record.py": "replay hydration, verification copies, and versioned migration",
       "quorune/regeneration.py": "typed identity-pinned regeneration-effect creation owner behind the semantic intent executor",

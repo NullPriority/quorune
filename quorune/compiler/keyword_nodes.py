@@ -20,6 +20,7 @@ from ..evolve import EVOLVE_EVENT_CONDITION_FIELD
 from ..echo import ECHO_MECHANIC_ID
 from ..fixed_keyword_entry_counters import FIXED_KEYWORD_ENTRY_MECHANICS
 from .umbra_armor_nodes import umbra_armor_keyword_node
+from .phasing_nodes import printed_phasing_keyword_node
 from .graveyard_copy_keyword_nodes import graveyard_copy_keyword_node
 from ..unleash import (
     UNLEASH_MECHANIC,
@@ -411,6 +412,7 @@ def closed_special_keyword_node(
         storm_keyword_node,
         ordinary_convoke_keyword_node,
         ordinary_assist_keyword_node,
+        printed_phasing_keyword_node,
         ordinary_delve_keyword_node,
         ordinary_improvise_keyword_node,
         ordinary_affinity_keyword_node,

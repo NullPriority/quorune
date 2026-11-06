@@ -6739,6 +6739,8 @@ class CommanderEngine(
                 key=lambda value: (value.ref, value.object_id),
             ):
                 if card.zone == "battlefield" and card.controller == seat and card.owner != seat:
+                    if card.phasing_record is not None:
+                        continue
                     if self.state.control_history_version == control_history.CONTROL_HISTORY_VERSION:
                         self.move_card(card.object_id, "exile", reason="controller left game", log=False)
                         continue

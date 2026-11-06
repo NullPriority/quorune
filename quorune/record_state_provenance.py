@@ -41,6 +41,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
         **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
+        **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
+           if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
@@ -112,6 +114,12 @@ def validate_state_versions(
         raise ValueError("Tap-state event provenance does not match the initial checkpoint")
     from .cast_source_placement_model import cast_source_placement_version
     from .explore_action_model import explore_action_version
+    from .phasing_model import phasing_lifecycle_version
+
+    phasing = format_value.get("phasing_lifecycle_version", 0)
+    if (type(phasing) is not int or phasing not in {0, 1}
+            or phasing != (phasing_lifecycle_version(getattr(state, "phasing_lifecycle_version", None)) or 0)):
+        raise ValueError("Phasing lifecycle provenance does not match the initial checkpoint")
     _validate_token_state_versions(format_value, state)
     explore = format_value.get('explore_action_version', 0)
     if type(explore) is not int or explore not in {0, 1} or explore != (explore_action_version(getattr(state, 'explore_action_version', None)) or 0):

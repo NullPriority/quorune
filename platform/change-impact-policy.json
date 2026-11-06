@@ -5391,6 +5391,33 @@
       ]
     },
     {
+      "id": "printed-phasing-lifecycle",
+      "patterns": [
+        "quorune/phasing.py",
+        "quorune/phasing_model.py",
+        "quorune/compiler/phasing_nodes.py",
+        "quorune/semantic_runtime/untap_steps.py",
+        "quorune/untap_step_coordination.py",
+        "quorune/turn_step_owner.py",
+        "quorune/control_effects.py",
+        "quorune/record_state_provenance.py",
+        "quorune/transform_timestamp_order.py",
+        "tests/test_phasing.py",
+        "tests/fixtures/phasing-cards.json"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_object_identity",
+        "test_phasing",
+        "test_record_lifecycle_v060",
+        "test_spell_history_transformations",
+        "test_static_attached_control",
+        "test_turn_priority_owner",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules"
+      ]
+    },
+    {
       "id": "fixed-untap-selection-limit-contract",
       "patterns": [
         "quorune/untap_step.py",

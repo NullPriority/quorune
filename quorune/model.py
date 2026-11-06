@@ -28,6 +28,7 @@ from .block_characteristic_model import block_characteristics_version
 from .unblocked_attacker_model import unblocked_attacker_event_version
 from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION, cast_face_offers_version, omen_resolution_binding
 from .cast_source_placement_model import cast_source_placement_version
+from .phasing_model import PhasingRecord, phasing_lifecycle_version
 from .explore_action_model import explore_action_version
 from .transform_timestamp_model import transform_timestamp_version
 from .face_status_timestamp_model import face_status_timestamp_version
@@ -369,6 +370,7 @@ class CardInstance:
     # Zero is omitted from historical Game Record v3 payloads.
     transform_count: int = 0
     phased_out: bool = False
+    phasing_record: PhasingRecord | None = None
     # Starts only when a new source-bound control ability participates. None
     # preserves historical record payloads and untracked source behavior.
     source_continuity: SourceContinuityHistory | None = None
@@ -442,6 +444,10 @@ class CardInstance:
             raise ValueError(
                 "Only a commander may carry zone-choice state"
             )
+        if self.phasing_record is not None and (
+            not isinstance(self.phasing_record, PhasingRecord) or self.phased_out is not True or self.zone != "battlefield"
+        ):
+            raise ValueError("Phasing records require their phased-out battlefield object")
         if type(self.deathtouch_damage) is not bool:
             raise ValueError("Deathtouch damage state must be a boolean")
         if self.source_continuity is not None and not isinstance(self.source_continuity, SourceContinuityHistory):
@@ -509,6 +515,8 @@ class CardInstance:
             payload['permanent_composition']=self.permanent_composition.to_dict()
         if self.source_continuity is None:
             payload.pop("source_continuity")
+        if self.phasing_record is None:
+            payload.pop("phasing_record")
         if self.commander_designation_id is None:
             # Preserve byte-for-byte historical checkpoint payloads. The
             # GameState identity-version marker distinguishes new records.
@@ -543,6 +551,8 @@ class CardInstance:
             payload['permanent_composition']=PermanentCompositionStorage.from_dict(payload['permanent_composition'])
         if "source_continuity" in payload:
             payload["source_continuity"] = SourceContinuityHistory.from_dict(payload["source_continuity"])
+        if "phasing_record" in payload:
+            payload["phasing_record"] = PhasingRecord.from_dict(payload["phasing_record"])
         payload["goaded_by"] = [
             GoadDesignation.from_dict(value)
             for value in payload.get("goaded_by", [])
@@ -1068,6 +1078,7 @@ class GameState:
     ability_source_information_version: int | None = 1
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
+    phasing_lifecycle_version: int | None = 1
     explore_action_version: int | None = 1
     transform_timestamp_version: int | None = 1
     face_status_timestamp_version: int | None = 1
@@ -1114,6 +1125,7 @@ class GameState:
         ability_source_information_version(self.ability_source_information_version)
         cast_face_offers_version(self.cast_face_offers_version)
         cast_source_placement_version(self.cast_source_placement_version)
+        phasing_version = phasing_lifecycle_version(self.phasing_lifecycle_version)
         explore_action_version(self.explore_action_version)
         transform_timestamp_version(self.transform_timestamp_version)
         face_status_timestamp_version(self.face_status_timestamp_version)
@@ -1176,6 +1188,7 @@ class GameState:
             ),
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
             **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
+            **({"phasing_lifecycle_version": phasing_version} if phasing_version is not None else {}),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
             **({'transform_timestamp_version':self.transform_timestamp_version} if self.transform_timestamp_version is not None else {}),
             **({'face_status_timestamp_version':self.face_status_timestamp_version} if self.face_status_timestamp_version is not None else {}),
@@ -1259,6 +1272,7 @@ class GameState:
                 data.get("effect_destruction_replacement_version")
             ),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
+            phasing_lifecycle_version=phasing_lifecycle_version(data.get("phasing_lifecycle_version")),
             explore_action_version=explore_action_version(data.get('explore_action_version')),
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),
             face_status_timestamp_version=face_status_timestamp_version(data.get('face_status_timestamp_version')),

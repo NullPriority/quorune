@@ -252,6 +252,9 @@ class TurnStepOwner:
             else None
         )
         if not entry.extra:
+            from .phasing import mark_departed_phasing_returns
+
+            mark_departed_phasing_returns(self.state, self.state.last_normal_turn_player, entry.player)
             self._advance_normal_rotation(entry.player)
         self.state.current_turn = entry
         self.state.active_player = entry.player

@@ -371,7 +371,7 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     _establish_static_control_origins(host,static)
     journal = host.state.continuous_effects
     if not journal:
-        return False
+        return _exile_phased_permanents_without_live_custody(host, (), static)
     retained = list(journal)
     expired = []
     # Each changing pass removes at least one source-bound effect. Expired
@@ -420,9 +420,31 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
             host.move_card(object_id, "exile", reason="control returned to a player who left", log=True)
         else:
             _commit_control_change(host, object_id, controller, reason=reason)
+    phased_exiled = _exile_phased_permanents_without_live_custody(host, journal, static)
     from .rules.city_blessing import synchronize_citys_blessing
     city_changed=synchronize_citys_blessing(host,reason='control changes committed')
-    return bool(changes or expired or city_changed)
+    return bool(changes or expired or phased_exiled or city_changed)
+
+
+def _exile_phased_permanents_without_live_custody(host, journal, static):
+    """Resolve CR 800.4a/c even when an object is absent from ordinary layer reads."""
+    if not host.state.eliminated_players:
+        return False
+    phased = {card.object_id: card for card in host.state.cards.values() if card.phasing_record is not None}
+    if not phased:
+        return False
+    controllers = layer_two_controller_map(host, journal, static, phased_targets=phased)
+    departed_custody = [
+        card for oid, card in phased.items()
+        if controllers.get(oid, card.controller) not in host.active_seats
+    ]
+    from .zone_transitions import ZoneTransitionOwner
+
+    owner = ZoneTransitionOwner(host)
+    for card in sorted(departed_custody, key=lambda value: (value.ref, value.object_id)):
+        owner.move_card(card.object_id, "exile", reason="control returned to a player who left",
+                        log=False, defer_control_sync=True)
+    return bool(departed_custody)
 
 
 def end_player_control_effects(state: Any, seat: str) -> int:

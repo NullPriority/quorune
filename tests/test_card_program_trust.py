@@ -418,6 +418,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "prohibition.combat.goad",
                 "participation.untap_step.static",
                 "participation.turn_step.skip",
+                "untap.phasing.keyword",
                 "participation.untap_step.fixed_selection_limit",
                 "permission.action.static",
                 "permission.action.library-search-rule",

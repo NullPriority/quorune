@@ -145,6 +145,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/copy_value_types.py",
         "quorune/devour.py",
         "quorune/granted_activation_model.py",
+        "quorune/phasing_model.py",
         "quorune/untap_restraint_model.py",
         "quorune/qualified_attack_model.py",
         "quorune/attack_batch_model.py",
@@ -546,6 +547,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/turn_counter_coordination.py",
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
+        "quorune/phasing.py",
         "quorune/untap_step.py",
         "quorune/untap_step_coordination.py",
         "quorune/unearth.py",
@@ -1094,6 +1096,8 @@ def _owner(relative: str, layer: str) -> str:
     }:
         return "turn_priority_and_decisions"
     if relative in {
+        "quorune/phasing.py",
+        "quorune/phasing_model.py",
         "quorune/untap_step.py",
         "quorune/untap_step_coordination.py",
     }:

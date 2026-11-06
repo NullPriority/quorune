@@ -842,6 +842,15 @@ declines every optional untap; a stale or malformed continuation fails before
 the step commits. Completing the choice preserves held triggers and commits
 the selected physical untap set once before advancing to upkeep.
 
+Current checkpoints declare `phasing_lifecycle_version` 1. A phased-out
+permanent retains the controller at phase-out, its attachment incarnation or
+player when applicable, and whether it follows a phased-out host. Direct
+returns also retain whether the ordinary turn rotation crossed a departed
+controller's seat. The untap owner commits one simultaneous status batch before
+day and night or untap choices. Reloading a timestamp choice during untap
+resumes after that batch. Historical checkpoints without the version retain
+their previous untap behavior and state encoding.
+
 Fixed selection limits use an `untap_selection` version-one continuation in the
 same decision kind. It retains the scoped plan, effective public battlefield
 snapshot, physical step, and held triggers. Strict canonical comparison rejects

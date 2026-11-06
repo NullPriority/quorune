@@ -9,6 +9,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_query_result
+from ..phasing_model import PHASING_CAPABILITY, PHASING_EVENT, PHASING_HANDLER_ID
 from ..rules.capabilities import load_default_capability_registry
 from ..untap_step import (
     FixedUntapSelectionLimit,
@@ -372,10 +373,35 @@ class StaticTurnStepSkipHandler:
         return (self.validate(descriptor),)
 
 
+@dataclass(frozen=True, slots=True)
+class PrintedPhasing:
+    """One current literal Phasing instruction."""
+
+
+@dataclass(frozen=True, slots=True)
+class PrintedPhasingHandler:
+    handler_id: str = PHASING_HANDLER_ID
+    schema_version: int = 1
+    family: str = PHASING_CAPABILITY
+    event: str = PHASING_EVENT
+    rule_references: tuple[str, ...] = ("502.1", "702.26a", "702.26g", "702.26n")
+    capability_dependencies: tuple[str, ...] = (PHASING_CAPABILITY,)
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="printed Phasing")
+        if (descriptor["handler_id"] != self.handler_id or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != self.schema_version or descriptor["event"] != self.event):
+            raise SemanticNodeError("Printed Phasing handler identity changed")
+        return PrintedPhasing()
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)
+
+
 class UntapStepComponentRegistry(
     RuntimeComponentRegistry[
         UntapStepSourceContext,
-        UntapStepParticipation | TurnStepSkip,
+        UntapStepParticipation | TurnStepSkip | PrintedPhasing,
     ]
 ):
     pass
@@ -405,7 +431,7 @@ class FixedUntapSelectionLimitHandler(StaticUntapStepParticipationHandler):
 def default_untap_step_component_registry() -> UntapStepComponentRegistry:
     registry = UntapStepComponentRegistry(
         (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler(),
-         FixedUntapSelectionLimitHandler(), StaticTurnStepSkipHandler())
+         FixedUntapSelectionLimitHandler(), StaticTurnStepSkipHandler(), PrintedPhasingHandler())
     )
     registry.require_registered_capabilities(
         load_default_capability_registry()
@@ -435,6 +461,12 @@ def _active_step_programs(host: UntapStepHost, event: str):
                     and program.key not in host._effective_static_component_keys(source)):
                 continue
             yield source, program
+
+
+def current_printed_phasing_object_ids(host: UntapStepHost) -> frozenset[str]:
+    handler = PrintedPhasingHandler()
+    return frozenset(source.object_id for source, program in _active_step_programs(host, PHASING_EVENT)
+                     if any(handler.validate(descriptor) for descriptor in program.handlers))
 
 
 def current_step_is_skipped(host: UntapStepHost, active: str, step: str) -> bool:

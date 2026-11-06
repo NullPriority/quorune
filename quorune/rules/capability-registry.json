@@ -74514,6 +74514,105 @@
     {
       "applicability": {
         "exclusions": [
+          "independent phase-out effects",
+          "granted Phasing without a trusted printed component",
+          "effects or triggers that expressly refer to phasing"
+        ],
+        "inputs": [
+          "one real untap step",
+          "trusted source-spanned current printed Phasing",
+          "remembered controller and attachment incarnation"
+        ],
+        "outputs": [
+          "simultaneous phase-in and phase-out",
+          "indirect attachments and retained object identity",
+          "replayable return schedule across skipped seats"
+        ],
+        "summary": "Apply current literal Phasing before day and night and untapping through one simultaneous typed battlefield status batch."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "Withdrawing the lifecycle capability leaves the literal printed Phasing ability unresolved.",
+      "dependency_fail_closed_status": "passed",
+      "id": "untap.phasing.keyword",
+      "implementation_components": [
+        "quorune.compiler.phasing_nodes.printed_phasing_keyword_node",
+        "quorune.semantic_runtime.untap_steps.PrintedPhasingHandler",
+        "quorune.phasing.plan_untap_phasing",
+        "quorune.phasing.commit_untap_phasing",
+        "quorune.phasing.mark_departed_phasing_returns",
+        "quorune.control_effects._exile_phased_permanents_without_live_custody"
+      ],
+      "implementation_mutation_rationale": "Omitting the batch is detected by an actual turn transition that otherwise untaps the printed source.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_phasing_is_simultaneous_and_restores_actions_and_attachments",
+        "test_actual_departed_controller_crosses_only_the_next_regular_seat_slot",
+        "test_actual_timestamp_order_resume_preserves_completed_phasing",
+        "test_phased_custody_exiles_after_a_live_grant_expires_to_departed_default"
+      ],
+      "multiplayer_tests": [
+        "test_actual_phasing_is_simultaneous_and_restores_actions_and_attachments",
+        "test_actual_departed_controller_crosses_only_the_next_regular_seat_slot",
+        "test_phased_custody_exiles_after_a_live_grant_expires_to_departed_default"
+      ],
+      "negative_tests": [
+        "test_printed_phasing_requires_its_declared_lifecycle",
+        "test_historical_phasing_pause_preserves_absent_format_and_pre_untap_state",
+        "test_actual_phasing_is_simultaneous_and_restores_actions_and_attachments"
+      ],
+      "official_rules": [
+        "502.1",
+        "502.2",
+        "502.3",
+        "502.4",
+        "702.26a",
+        "702.26b",
+        "702.26d",
+        "702.26f",
+        "702.26g",
+        "702.26h",
+        "702.26i",
+        "702.26j",
+        "702.26m",
+        "702.26n",
+        "702.26p",
+        "800.4a",
+        "702.26k",
+        "800.4c"
+      ],
+      "positive_tests": [
+        "test_actual_phasing_is_simultaneous_and_restores_actions_and_attachments",
+        "test_actual_departed_controller_crosses_only_the_next_regular_seat_slot"
+      ],
+      "privacy_tests": [
+        "test_actual_phasing_is_simultaneous_and_restores_actions_and_attachments"
+      ],
+      "replay_tests": [
+        "test_actual_phasing_is_simultaneous_and_restores_actions_and_attachments",
+        "test_actual_departed_controller_crosses_only_the_next_regular_seat_slot",
+        "test_historical_phasing_pause_preserves_absent_format_and_pre_untap_state",
+        "test_actual_timestamp_order_resume_preserves_completed_phasing"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "standalone activated Exert costs",
           "unrepresented conditional Exert permissions",
           "unsupported phasing or skipped-step compositions",
@@ -80448,7 +80547,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 741,
+  "registry_version": 742,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

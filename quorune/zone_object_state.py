@@ -291,6 +291,7 @@ def reset_card_after_zone_change(
     card.attached_to = None
     card.attachments.clear()
     card.phased_out = False
+    card.phasing_record = None
     card.source_continuity = None
     if not stack_to_battlefield:
         card.battle_protector = None

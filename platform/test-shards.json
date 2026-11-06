@@ -1433,6 +1433,7 @@
       "test_native_v3_slice",
       "test_ordered_amount_clauses",
       "test_ordinary_token_cleanup",
+      "test_phasing",
       "test_preparation",
       "test_public_negative_supertypes",
       "test_public_power_thresholds",

@@ -724,6 +724,7 @@
     "tests/fixtures/permanent-additional-costs.json",
     "tests/fixtures/persist-undying-cards.json",
     "tests/fixtures/persistent-hand-visibility-cards.json",
+    "tests/fixtures/phasing-cards.json",
     "tests/fixtures/player-speed-cards.json",
     "tests/fixtures/player-target-protection-cards.json",
     "tests/fixtures/plural-reanimation-cards.json",

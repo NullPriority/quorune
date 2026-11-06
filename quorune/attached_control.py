@@ -3,7 +3,7 @@ from .entry_copy import copiable_oracle_id
 
 """Read-only layer-two composition for current static Aura control."""
 
-from typing import Any, Sequence
+from typing import Any, Collection, Sequence
 from dataclasses import replace
 
 from .continuous_effects import ContinuousEffect, Layer, order_continuous_effects
@@ -33,12 +33,15 @@ def layer_two_controller_map(
     host: Any,
     journal: Sequence[ContinuousEffect],
     static: Sequence[ContinuousEffect],
+    *,
+    phased_targets: Collection[str] = (),
 ) -> dict[str, str]:
     """Evaluate Aura-source custody first; timestamp orders dependency cycles."""
     cards = {
         card.object_id: card
         for card in host.state.cards.values()
-        if card.zone == 'battlefield' and not getattr(card, 'phased_out', False)
+        if card.zone == 'battlefield'
+        and (not getattr(card, 'phased_out', False) or card.object_id in phased_targets)
     }
     current = {object_id: card.controller for object_id, card in cards.items()}
     effects = [
