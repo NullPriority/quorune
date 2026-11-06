@@ -27,7 +27,8 @@ def suspect_effect_template(text, *, source_is_permanent, source_attachment_rela
     if optional:
         schema.pop("count")
         schema["up_to"] = 1
-    return "suspect-target-v1", ({"op": SUSPECT_OPERATION, "card": "$target.0"},), schema, (SUSPECT_MECHANIC, "cr-115-targets")
+    effect = {"op": SUSPECT_OPERATION, "cards": "$targets"} if optional else {"op": SUSPECT_OPERATION, "card": "$target.0"}
+    return "suspect-target-v1", (effect,), schema, (SUSPECT_MECHANIC, "cr-115-targets")
 
 
 def normalize_entering_source_suspect(body):

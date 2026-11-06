@@ -5,7 +5,7 @@ from .closed_effect_programs import _top_level_positions
 from .ir_model import SourceSpan
 from .oracle_source_text import without_parenthetical_reminder
 from .program_composition import (_fixed_public_single_target_schema,
-    _scope_component_target,_component_target_roles_are_exact,DISTINCT_CLAUSE_TARGET_COVERAGE)
+    _bounded_public_target_set_schema, _scope_component_target,_component_target_roles_are_exact,DISTINCT_CLAUSE_TARGET_COVERAGE)
 
 _MUTATIONS={'modify_stats_until_end_of_turn','grant_keyword_until_end_of_turn',
     'place_counters','tap','untap','damage','life','lose_life','draw','scry','mill'}
@@ -26,35 +26,71 @@ def prepare_target_clause_context(material_rows,*,spell,face_id,oracle_text,card
     return material_rows,distinct_spans,blocks
 
 
-def independent_target_source_rows(rows,*,source_name,compile_effect):
-    expanded=[];distinct_spans=set()
-    for line,material,span in rows:
-        positions=_top_level_positions(line,'. ')
-        if (positions is None or not 1<=len(positions)<=2 or len(re.findall(r'\btarget\b',material,re.I))<2
-                or compile_effect(material,card_name=source_name)[0] is not None):
-            expanded.append((line,material,span));continue
-        boundaries=(0,*(position+2 for position in positions),len(line));parts=[];targeted=0;marked=[]
-        for index,(start,end) in enumerate(zip(boundaries,boundaries[1:])):
-            raw=line[start:end].strip();left=start+len(line[start:end])-len(line[start:end].lstrip())
-            body=without_parenthetical_reminder(raw)
-            another=bool(re.search(r'\banother target\b',body,re.I))
+def independent_target_source_rows(rows, *, source_name, compile_effect):
+    expanded = []
+    distinct_spans = set()
+    for line, material, span in rows:
+        positions = _top_level_positions(line, '. ')
+        conjunction = positions == () and material.casefold().startswith('counter target ')
+        if conjunction:
+            positions = _top_level_positions(line, ' and ')
+            if positions is None or len(positions) != 1:
+                expanded.append((line, material, span))
+                continue
+        if (
+            positions is None or not 1 <= len(positions) <= 2
+            or len(re.findall(r'\btarget\b', material, re.I)) < 2
+            or compile_effect(material, card_name=source_name)[0] is not None
+        ):
+            expanded.append((line, material, span))
+            continue
+        separator_length = 5 if conjunction else 2
+        boundaries = (0, *(position + separator_length for position in positions), len(line))
+        parts = []
+        marked = []
+        domains = []
+        ordinary = True
+        for index, (start, end) in enumerate(zip(boundaries, boundaries[1:])):
+            fragment = line[start:end]
+            if conjunction and index == 0:
+                fragment = fragment.removesuffix(' and ')
+            raw = fragment.strip()
+            left = start + len(fragment) - len(fragment.lstrip())
+            body = without_parenthetical_reminder(raw)
+            another = bool(re.search(r'\banother target\b', body, re.I))
             if another:
-                if targeted!=1:break
-                body=re.sub(r'\banother target\b','target',body,count=1,flags=re.I)
-            template,effects,schema,mechanics=compile_effect(body,card_name=source_name)
-            if (template is None or len(effects)!=1 or effects[0].get('op') not in _MUTATIONS
-                    or not mechanics or schema is None or not _fixed_public_single_target_schema(schema)
-                    or len(re.findall(r'\btarget\b',body,re.I))!=1
-                    or not _component_target_roles_are_exact(_scope_component_target(effects,0),0)):break
-            targeted+=1
-            child_span=SourceSpan(span.start+left,span.start+left+len(raw),span.line)
-            parts.append((raw,body,child_span))
-            if another:marked.append((child_span.start,child_span.end))
+                if len(parts) != 1:
+                    break
+                body = re.sub(r'\banother target\b', 'target', body, count=1, flags=re.I)
+            template, effects, schema, mechanics = compile_effect(body, card_name=source_name)
+            if (
+                template is None or len(effects) != 1 or not mechanics or schema is None
+                or len(re.findall(r'\btarget\b', body, re.I)) != 1
+                or not _component_target_roles_are_exact(_scope_component_target(effects, 0), 0)
+            ):
+                break
+            op = effects[0].get('op')
+            scalar = _fixed_public_single_target_schema(schema)
+            regular = scalar and op in _MUTATIONS
+            stack_counter = scalar and schema.get('zones') == ['stack'] and op == 'counter_stack_target'
+            board_bounce = scalar and schema.get('zones') == ['battlefield'] and op == 'bounce'
+            board_counters = op == 'place_counters_on_targets' and _bounded_public_target_set_schema(schema)
+            if not (regular or stack_counter or board_bounce or board_counters):
+                break
+            ordinary = ordinary and regular
+            domains.append(tuple(schema['zones']))
+            child_span = SourceSpan(span.start + left, span.start + left + len(raw), span.line)
+            parts.append((raw, body, child_span))
+            if another:
+                marked.append((child_span.start, child_span.end))
         else:
-            if targeted>=2 and (not marked or targeted==2):
-                expanded.extend(parts);distinct_spans.update(marked);continue
-        expanded.append((line,material,span))
-    return expanded,distinct_spans
+            mixed = len(parts) == 2 and set(domains) == {('stack',), ('battlefield',)} and not marked
+            if mixed or (ordinary and not conjunction and len(parts) >= 2 and (not marked or len(parts) == 2)):
+                expanded.extend(parts)
+                distinct_spans.update(marked)
+                continue
+        expanded.append((line, material, span))
+    return expanded, distinct_spans
 
 
 def mark_independent_target_nodes(nodes,distinct_spans):

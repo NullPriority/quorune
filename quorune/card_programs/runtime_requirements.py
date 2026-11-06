@@ -101,6 +101,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.finality_counters import finality_counter_runtime_dependencies
     from ..rules.target_set_result_sequences import target_set_result_sequence_runtime_dependencies
     from ..rules.target_player_sequences import target_player_sequence_runtime_dependencies
+    from ..rules.stack_controller_payment_shapes import stack_controller_payment_scope_dependencies
     from ..rules.fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
     from ..cast_event_amounts import cast_mana_value_runtime_dependencies
     from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
@@ -187,6 +188,7 @@ def _event_query_runtime_requirements(program):
         (finality_counter_runtime_dependencies,program,'finality_counter'),
         (target_set_result_sequence_runtime_dependencies,program,'target_set_result_sequence'),
         (target_player_sequence_runtime_dependencies,program,'target_player_sequence'),
+        (stack_controller_payment_scope_dependencies,program,'stack_controller_payment_scope'),
         (fixed_payment_event_player_runtime_dependencies,program,'payment_event_player'),
         (cast_mana_value_runtime_dependencies,program,'cast_spell_mana_value'),
         (event_spell_copy_runtime_dependencies,program,'event_spell_copy'),

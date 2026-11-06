@@ -1650,3 +1650,146 @@ class SuspectNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(life + 3, session.state.players["A"].life)
         self.assertIsNone(session.state.cards[other.object_id].suspected_at)
         self.replay(session, load=True)
+
+    def grouped_payment_scene(self, seed):
+        session = self.session(seed)
+        doubt = self.add(session.engine, "Reasonable Doubt", zone="hand")
+        spell = self.add(session.engine, "Boomerang", seat="B", zone="hand")
+        response = self.add(session.engine, "Counterspell", seat="D", zone="hand")
+        suspect = self.add(session.engine, "Generic Bound Body", seat="C", ref="payment-suspect")
+        bounced = self.add(session.engine, "Generic Bound Body", seat="D", ref="payment-bounced")
+        for card in (doubt, spell, response):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 1, "U": 1})
+        session.state.players["B"].mana_pool.update({"U": 2, "C": 2})
+        session.state.players["D"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        offers = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row["id"] == "cast:" + doubt.ref for row in offers))
+        self.cast_for(session, "B", spell, [bounced.ref], reserve={"C": 2})
+        stack_ref = session.state.stack[-1].ref
+        self.priority(session, "A")
+        return session, doubt, spell, response, suspect, bounced, stack_ref
+
+    def test_actual_reasonable_doubt_binds_the_current_payer_and_replays_paid_resolution(self):
+        from dataclasses import replace
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+
+        session, doubt, spell, _, suspect, bounced, stack_ref = self.grouped_payment_scene(70160010)
+        offered = self.action(session, "A", doubt)
+        groups = {group["id"]: group for group in offered["target_schema"]["groups"]}
+        self.assertIn(stack_ref, groups["clause_0"]["legal_refs"])
+        self.assertIn(suspect.ref, groups["clause_1"]["legal_refs"])
+        original = session.engine.semantics.get(f"{doubt.oracle_id}:spell:front")
+        wrong_role = {**original.effects[0], "player": "$target_group.clause_1.current_controller.0"}
+        altered = replace(original, effects=[wrong_role, *original.effects[1:]])
+        self.assertFalse(bind_semantic_program_runtime(
+            altered, capability_registry=self.registry, profile="commander_review",
+        )["strict"])
+
+        creature_target = {"group": "clause_1", "ref": suspect.ref}
+        command = {"action_id": offered["id"], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {**command, "targets": [creature_target]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        targets = [{"group": "clause_0", "ref": stack_ref}, creature_target]
+        cast = session.act("pilot:A", {**command, "targets": targets})
+        self.assertTrue(cast.ok, cast.summary)
+        pending = self.resolve(session)
+        self.assertEqual("semantic.choice", pending.kind)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        self.assertEqual(2, session.packet("pilot:B", full=True)["decision"]["ctx"]["cost"]["GENERIC"])
+        self.assertIsNone(session.packet("pilot:C", full=True)["decision"])
+        before = authoritative_state_hash(session.state)
+        payment = {"action_id": "choose", "pay": True}
+        self.assertFalse(session.act("pilot:A", payment).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        result = session.act("pilot:B", payment)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(0, session.state.players["B"].mana_pool["C"])
+        self.assertIsNotNone(session.state.cards[suspect.object_id].suspected_at)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertEqual("hand", session.state.cards[bounced.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_reasonable_doubt_resolves_legal_groups_and_allows_omission(self):
+        cases = ((True, True), (False, True), (False, False))
+        for index, (selected, remove_spell) in enumerate(cases):
+            with self.subTest(selected=selected, remove_spell=remove_spell):
+                session, doubt, spell, response, suspect, bounced, stack_ref = self.grouped_payment_scene(70160020 + index)
+                offered = self.action(session, "A", doubt)
+                targets = [{"group": "clause_0", "ref": stack_ref}]
+                if selected:
+                    targets.append({"group": "clause_1", "ref": suspect.ref})
+                cast = session.act("pilot:A", {"action_id": offered["id"], "pay": "auto", "targets": targets})
+                self.assertTrue(cast.ok, cast.summary)
+                if remove_spell:
+                    self.cast_for(session, "D", response, [stack_ref])
+                    self.resolve_top(session)
+                else:
+                    self.assertEqual("semantic.choice", self.resolve(session).kind)
+                    result = session.act("pilot:B", {"action_id": "choose", "pay": False})
+                    self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(selected, session.state.cards[suspect.object_id].suspected_at is not None)
+                self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+                self.assertEqual("graveyard", session.state.cards[doubt.object_id].zone)
+                self.assertEqual("battlefield", session.state.cards[bounced.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_actual_counter_and_board_clauses_resolve_in_their_separate_groups(self):
+        for index, (name, zone, damage) in enumerate((
+            ("Lost in the Mist", "hand", 0), ("Suffocating Blast", "battlefield", 3),
+        )):
+            with self.subTest(spell=name):
+                session = self.session(70160030 + index)
+                source = self.add(session.engine, name, zone="hand")
+                victim = self.add(session.engine, "Boomerang", seat="B", zone="hand")
+                board = self.add(session.engine, "Generic Bound Body", seat="C", ref="mixed-board-target")
+                other = self.add(session.engine, "Generic Bound Body", seat="D", ref="mixed-bounce-target")
+                for card in (source, victim):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 4, "U": 2, "R": 2})
+                session.state.players["B"].mana_pool["U"] = 2
+                self.checkpoint(session)
+                self.cast_for(session, "B", victim, [other.ref])
+                stack_ref = session.state.stack[-1].ref
+                self.priority(session, "A")
+                offer = self.action(session, "A", source)
+                targets = [{"group": "clause_0", "ref": stack_ref}, {"group": "clause_1", "ref": board.ref}]
+                cast = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "targets": targets})
+                self.assertTrue(cast.ok, cast.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[victim.object_id].zone)
+                current = session.state.cards[board.object_id]
+                self.assertEqual((zone, damage), (current.zone, current.marked_damage))
+                self.assertEqual("battlefield", session.state.cards[other.object_id].zone)
+                self.replay(session, load=True)
+
+    def test_actual_essence_capture_uses_its_creature_spell_and_owned_creature_groups(self):
+        session = self.session(70160032)
+        source = self.add(session.engine, "Essence Capture", zone="hand")
+        victim = self.add(session.engine, "Generic Bound Body", seat="B", zone="hand", ref="capture-victim")
+        own = self.add(session.engine, "Generic Bound Body", ref="capture-owned")
+        foreign = self.add(session.engine, "Generic Bound Body", seat="C", ref="capture-foreign")
+        self.assert_closed(session, source)
+        self.prepare(session, actor="B", active="B", mana={"W": 1})
+        session.state.players["A"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        self.cast_for(session, "B", victim)
+        stack_ref = session.state.stack[-1].ref
+        self.priority(session, "A")
+        offer = self.action(session, "A", source)
+        groups = {group["id"]: group for group in offer["target_schema"]["groups"]}
+        self.assertIn(stack_ref, groups["clause_0"]["legal_refs"])
+        self.assertIn(own.ref, groups["clause_1"]["legal_refs"])
+        self.assertNotIn(foreign.ref, groups["clause_1"]["legal_refs"])
+        targets = [{"group": "clause_0", "ref": stack_ref}, {"group": "clause_1", "ref": own.ref}]
+        cast = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "targets": targets})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[victim.object_id].zone)
+        self.assertEqual({"+1/+1": 1}, session.state.cards[own.object_id].counters)
+        self.replay(session, load=True)

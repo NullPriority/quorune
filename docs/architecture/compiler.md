@@ -4325,6 +4325,11 @@ characteristic owners. Unsupported group domains remain blocked until their
 composition is owned; every emitted multi-target program must also pass the
 existing closed-effect composition validator.
 
+A composed counter payment reads the current controller from the same group as
+its announced stack target. Optional Suspect uses the separate creature target
+list. A stale spell target skips the payment while a legal creature target
+keeps its result. Paying to save the spell also preserves the creature result.
+
 `compiler/independent_target_rows.py` also recognizes two or three complete
 fixed scalar-target clauses printed on one source line when the whole line has
 no existing exact production. It retains each clause's original text and source
@@ -4332,9 +4337,11 @@ span and delegates its lowering to the same scalar owners. The existing spell
 composer assigns the scoped target groups. A second `another target` clause
 carries a distinct-role marker into the composition certificate, which must
 agree with the final target schema; it cannot be dropped or substituted.
-Repeated unqualified occurrences keep ordinary same-object selection. Unknown
-siblings, optional or variable target groups, zone-moving instructions and
-ambiguous chains of `another` remain outside this source normalization.
+Repeated unqualified occurrences keep ordinary same-object selection. A pair
+of stack and battlefield clauses can combine a required counter with a fixed
+damage, return, or optional counter placement result. Their independently
+closed groups use the same composer. Unknown siblings and ambiguous chains of
+`another` remain outside this source normalization.
 
 `compiler/permanent_additional_cost_nodes.py` lowers one mandatory printed
 casting-price clause on a permanent into its primary spell cost schema. The

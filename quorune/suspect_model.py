@@ -15,6 +15,10 @@ def suspect_instruction(value):
         return True, None
     if set(value) == {"op", "card"} and (value["card"] is None or type(value["card"]) is str and value["card"]):
         return False, value["card"]
+    if set(value) == {"op", "cards"}:
+        cards = value["cards"]
+        if isinstance(cards, (list, tuple)) and len(cards) <= 1 and all(type(card) is str and card for card in cards):
+            return False, cards[0] if cards else None
     raise ValueError("Suspect requires one bound permanent or the fixed creature set")
 
 

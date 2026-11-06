@@ -10,6 +10,7 @@ from .permanent_predicate_capability_shapes import (
 
 _ENCHANTED = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "creature").to_dict()
 _TARGET_REFS = ("$target.0", "$target_group.target_0.0", "$target_group.target_1.0")
+_TARGET_LISTS = ("$targets", *(f"$target_group.clause_{index}" for index in range(4)))
 
 
 def suspect_descriptor_dependencies(effect):
@@ -23,6 +24,8 @@ def suspect_descriptor_dependencies(effect):
             return (SUSPECT_CAPABILITY,)
         if ref in _TARGET_REFS:
             return (SUSPECT_CAPABILITY, "target.revalidate_resolution")
+    if set(effect) == {"op", "cards"} and effect["cards"] in _TARGET_LISTS:
+        return (SUSPECT_CAPABILITY, "target.revalidate_resolution")
     raise ValueError("Suspect requires a represented creature target, source or attached reference")
 
 
@@ -36,11 +39,14 @@ def suspect_node_capabilities(*, effects, target_schema, mechanic_ids):
         return ()
     if not required:
         return ()
-    if effect.get("card") != "$target.0":
-        return required if target_schema is None and effect.get("card") not in _TARGET_REFS else ()
+    optional_targets = effect.get("cards") == "$targets"
+    if effect.get("card") != "$target.0" and not optional_targets:
+        return required if target_schema is None and "target.revalidate_resolution" not in required else ()
     if "cr-115-targets" not in mechanic_ids or not isinstance(target_schema, Mapping):
         return ()
     schema = dict(target_schema)
+    if optional_targets and "up_to" not in schema:
+        return ()
     if "up_to" in schema:
         optional = schema.pop("up_to")
         if type(optional) is not int or optional != 1 or "count" in schema:
