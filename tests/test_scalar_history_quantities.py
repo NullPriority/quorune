@@ -118,7 +118,7 @@ class ScalarHistoryQuantityActionTests(InheritedNativeFixture, unittest.TestCase
         treasures = [
             card for card in session.state.cards.values()
             if card.zone == "battlefield" and card.is_token
-            and session.engine._effective_card_data(card)["name"] == "Treasure"
+            and session.engine._effective_card_data(card)["name"] == "Treasure Token"
         ]
         self.assertEqual(["A", "A"], [card.controller for card in treasures])
         self.replay(session)

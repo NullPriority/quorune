@@ -128,9 +128,9 @@ class CreatedTokenCounterTests(unittest.TestCase):
         s=self.session(808050);self.add(s.engine,'Generic Token Status Observer');spell=self.add(s.engine,'Generic Fixed Construct Subject',zone='hand')
         private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand');self.assertTrue(self.binding(s,spell)['strict_capability_ready'])
         self.prepare(s,mana={'G':1});self.checkpoint(s);self.normal(s,spell,{'G':1});s=self.replay(s,load=True);self.assertIsNone(self.settle(s))
-        tokens={c.printed_name:c for c in self.tokens(s)};self.assertEqual({'Construct Token','Map'},set(tokens))
+        tokens={c.printed_name:c for c in self.tokens(s)};self.assertEqual({'Construct Token','Map Token'},set(tokens))
         for card in tokens.values():self.assertEqual(3,card.counters.get('+1/+1'))
-        self.assertNotIn('Creature',s.engine._effective_card_data(tokens['Map'])['type_line']);self.private_replay(s,private)
+        self.assertNotIn('Creature',s.engine._effective_card_data(tokens['Map Token'])['type_line']);self.private_replay(s,private)
 
     def test_token_and_counter_replacement_choices_resume_without_repeated_creation(self):
         s=self.session(808060)

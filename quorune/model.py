@@ -36,7 +36,7 @@ from .library_selection_knowledge_model import library_selection_knowledge_versi
 from .characteristic_query_boundary_model import PUBLIC_ZONE_FRONT_FACE_VERSION, characteristic_query_boundary_version
 from .stack_resolution_authority_model import stack_resolution_authority_version
 from .state_based_legend_model import legend_rule_choice_version
-from .token_copy_value_model import token_copy_value_version
+from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
 from .banding_model import normalize_attack_bands
 from .counter_placement_event_model import counter_quantity_provenance_version
@@ -1076,6 +1076,7 @@ class GameState:
     characteristic_query_boundary_version: int | None = PUBLIC_ZONE_FRONT_FACE_VERSION
     stack_resolution_authority_version: int | None = 1
     token_copy_value_version: int | None = 1
+    predefined_token_name_version: int | None = 1
     qualified_attack_facts_version: int | None = 1
     permanent_event_state_version: int | None = 1
     battle_cry_resolution_version: int | None = 1
@@ -1121,6 +1122,7 @@ class GameState:
         characteristic_query_boundary_version(self.characteristic_query_boundary_version)
         stack_resolution_authority_version(self.stack_resolution_authority_version)
         token_copy_value_version(self.token_copy_value_version)
+        token_names = predefined_token_name_version(self.predefined_token_name_version)
         qualified_attack_facts_version(self.qualified_attack_facts_version)
         permanent_event_state_version(self.permanent_event_state_version)
         battle_cry_resolution_version(self.battle_cry_resolution_version)
@@ -1183,6 +1185,7 @@ class GameState:
             **({"stack_resolution_authority_version": self.stack_resolution_authority_version}
                if self.stack_resolution_authority_version is not None else {}),
             **({'token_copy_value_version':self.token_copy_value_version} if self.token_copy_value_version is not None else {}),
+            **({"predefined_token_name_version": token_names} if token_names is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
@@ -1264,6 +1267,7 @@ class GameState:
             characteristic_query_boundary_version=characteristic_query_boundary_version(data.get('characteristic_query_boundary_version')),
             stack_resolution_authority_version=stack_resolution_authority_version(data.get("stack_resolution_authority_version")),
             token_copy_value_version=token_copy_value_version(data.get('token_copy_value_version')),
+            predefined_token_name_version=predefined_token_name_version(data.get("predefined_token_name_version")),
             game_id=str(data["game_id"]),
             config=GameConfig.from_dict(data["config"]),
             players={seat: PlayerState.from_dict(player) for seat, player in data["players"].items()},

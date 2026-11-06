@@ -324,15 +324,18 @@ def _apply_create_treasure(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    from ..fixed_token_production import predefined_token_identity
+    from ..token_copy_value_model import predefined_token_name_mode
+
+    name, characteristics = predefined_token_identity("Treasure", {
+        "type_line": "Token Artifact — Treasure",
+        "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+        "activated_ability_profile": "tap_sac_any_color_mana_v1",
+    }, legacy_name=predefined_token_name_mode(host) is None)
     return host.create_token(
         str(effect.get("controller") or actor),
-        name="Treasure",
-        characteristics={
-            "type_line": "Token Artifact — Treasure",
-            "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
-            "activated_ability_profile": "tap_sac_any_color_mana_v1",
-        },
+        name=name,
+        characteristics=characteristics,
         reason=reason,
     )
 

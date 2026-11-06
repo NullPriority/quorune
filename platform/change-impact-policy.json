@@ -8504,6 +8504,26 @@
       ]
     },
     {
+      "id": "predefined-token-name-provenance",
+      "patterns": [
+        "quorune/fixed_token_production.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/token_copy_value_model.py",
+        "quorune/record_state_provenance.py",
+        "quorune/incubate_execution.py",
+        "quorune/defined_token_faces.py"
+      ],
+      "test_modules": [
+        "test_predefined_token_view_equivalence",
+        "test_incubate_rules",
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_public_state_predefined_token_actions",
+        "test_additional_token_definitions",
+        "test_token_creation_replacements"
+      ]
+    },
+    {
       "id": "current-predefined-token-view-equivalence",
       "patterns": [
         "quorune/card_programs/activation_view_equivalence.py",

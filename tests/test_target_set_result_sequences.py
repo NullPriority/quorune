@@ -124,7 +124,7 @@ class TargetSetResultSequenceNativeTests(InheritedNativeFixture,unittest.TestCas
                 self.prepare(s,mana={'U':1,'C':3});self.checkpoint(s);self.cast(s,'A',spell,[] if empty else [target.ref])
                 if not empty:self.cast(s,'B',blink,[target.ref]);self.resolve_top(s)
                 s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
-                clues=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Clue']
+                clues=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Clue Token']
                 self.assertEqual(int(empty),len(clues));self.assertFalse(s.state.cards[target.object_id].tapped)
                 self.assertFalse(s.state.cards[target.object_id].counters);self.replay(s,load=True)
 

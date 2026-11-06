@@ -46,8 +46,8 @@ class AdditionalTokenStatusTests(unittest.TestCase):
         for card in (observer,spell):self.assertTrue(self.binding(s,card)['strict_capability_ready'])
         self.prepare(s,mana={'G':1});self.checkpoint(s);self.cast(s,'A',spell);self.assertIsNone(self.resolve(s))
         tokens={c.printed_name:c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield'}
-        self.assertEqual({'Servo Token','Map'},set(tokens));self.assertTrue(tokens['Servo Token'].tapped)
-        self.assertTrue(tokens['Map'].tapped,{name:card.tapped for name,card in tokens.items()})
+        self.assertEqual({'Servo Token','Map Token'},set(tokens));self.assertTrue(tokens['Servo Token'].tapped)
+        self.assertTrue(tokens['Map Token'].tapped,{name:card.tapped for name,card in tokens.items()})
         self.private_replay(s,private)
 
     def test_intrinsic_keywords_stay_with_their_definition_and_plain_status_stays_plain(self):
@@ -55,9 +55,9 @@ class AdditionalTokenStatusTests(unittest.TestCase):
         spell=self.add(s.engine,'Generic Intrinsic Artifact Subject',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         self.assertTrue(self.binding(s,spell)['strict_capability_ready']);self.prepare(s,mana={'G':1});self.checkpoint(s)
         self.cast(s,'A',spell);self.assertIsNone(self.resolve(s));tokens={c.printed_name:c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield'}
-        self.assertEqual({'Servo Token','Map'},set(tokens));self.assertFalse(any(c.tapped for c in tokens.values()))
+        self.assertEqual({'Servo Token','Map Token'},set(tokens));self.assertFalse(any(c.tapped for c in tokens.values()))
         self.assertIn('deathtouch',s.engine._combat_keywords(tokens['Servo Token']))
-        self.assertNotIn('Deathtouch',s.engine._copyable_characteristics(tokens['Map']).get('keywords',[]));self.private_replay(s,private)
+        self.assertNotIn('Deathtouch',s.engine._copyable_characteristics(tokens['Map Token']).get('keywords',[]));self.private_replay(s,private)
 
     def test_nonmatching_controller_and_type_do_not_receive_additional_tokens(self):
         for i,(owner,name) in enumerate((('B','Generic Tapped Artifact Subject'),('A','Generic Tapped Creature Subject'))):
@@ -65,7 +65,7 @@ class AdditionalTokenStatusTests(unittest.TestCase):
             spell=self.add(s.engine,name,zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
             self.assertTrue(self.binding(s,spell)['strict_capability_ready']);self.prepare(s,mana={'G':1});self.checkpoint(s)
             self.cast(s,'A',spell);self.assertIsNone(self.resolve(s));tokens=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield']
-            self.assertEqual(1,len(tokens));self.assertNotEqual('Map',tokens[0].printed_name);self.assertTrue(tokens[0].tapped);self.private_replay(s,private)
+            self.assertEqual(1,len(tokens));self.assertNotEqual('Map Token',tokens[0].printed_name);self.assertTrue(tokens[0].tapped);self.private_replay(s,private)
 
     def test_status_survives_both_legal_quantity_replacement_orders_and_pending_load(self):
         for map_first in (True,False):
@@ -85,7 +85,7 @@ class AdditionalTokenStatusTests(unittest.TestCase):
             else:self.fail('Token replacement order did not finish')
             tokens=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield'];self.assertTrue(tokens)
             self.assertTrue(all(c.tapped for c in tokens));self.assertEqual(2,sum(c.printed_name=='Servo Token' for c in tokens))
-            self.assertEqual(2 if map_first else 1,sum(c.printed_name=='Map' for c in tokens));self.private_replay(s,private)
+            self.assertEqual(2 if map_first else 1,sum(c.printed_name=='Map Token' for c in tokens));self.private_replay(s,private)
 
     def test_owner_api_temporary_status_is_separate_from_intrinsic_characteristics(self):
         s=self.session(807040);self.add(s.engine,'Generic Token Status Observer');self.prepare(s)
@@ -93,10 +93,10 @@ class AdditionalTokenStatusTests(unittest.TestCase):
             refs=s.engine.create_token('A',name='Servo',tapped=True,temporary_keywords=('Haste',),
                 characteristics={'type_line':'Token Artifact Creature — Servo','power':'1','toughness':'1','colors':[], 'keywords':['Deathtouch']})
         tokens={s.engine._resolve_object('A',ref).printed_name:s.engine._resolve_object('A',ref) for ref in refs}
-        self.assertEqual({'Servo','Map'},set(tokens))
+        self.assertEqual({'Servo','Map Token'},set(tokens))
         for card in tokens.values():self.assertTrue(card.tapped);self.assertIn('Haste',card.temporary_keywords)
         self.assertIn('Deathtouch',s.engine._copyable_characteristics(tokens['Servo'])['keywords'])
-        self.assertNotIn('Deathtouch',s.engine._copyable_characteristics(tokens['Map']).get('keywords',[]))
+        self.assertNotIn('Deathtouch',s.engine._copyable_characteristics(tokens['Map Token']).get('keywords',[]))
 
     def test_ambiguous_mixed_status_rejects_before_creation_and_rolls_back(self):
         from quorune.token_creation import create_token_batch

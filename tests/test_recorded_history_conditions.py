@@ -67,7 +67,7 @@ class RecordedHistoryConditionCompilerTests(unittest.TestCase):
         self.assertIsNotNone(observed)
         self.assertEqual(expected, observed)
         self.assertEqual("create_token_batch", observed.effect["op"])
-        self.assertEqual(["Clue", "Food", "Treasure"], [token["name"] for token in observed.effect["tokens"]])
+        self.assertEqual(["Clue Token", "Food Token", "Treasure Token"], [token["name"] for token in observed.effect["tokens"]])
         self.assertIsNone(fixed_token_creation_effect_template("create X Clue tokens and a Treasure token."))
 
 
@@ -249,7 +249,7 @@ class RecordedHistoryConditionNativeTests(InheritedNativeFixture, unittest.TestC
         self.assertTrue(self._source_on_stack(session, fae))
         self.assertFalse(self._source_on_stack(session, foreign_oath))
         self.assertIsNone(self.resolve(session))
-        self.assertCountEqual(["Zombie", "Clue", "Food", "Treasure"], self._token_names(session))
+        self.assertCountEqual(["Zombie Token", "Clue Token", "Food Token", "Treasure Token"], self._token_names(session))
         self.replay(session)
 
     def test_actual_lunar_requires_both_life_directions_from_its_controller(self):

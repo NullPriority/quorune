@@ -71,7 +71,7 @@ class NumberOfTokenNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.cast(s,'B',kill,[source.ref]);self.resolve_top(s)
         self.assertEqual('graveyard',s.state.cards[source.object_id].zone)
         s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
-        tokens=self.tokens(s,'Treasure');self.assertEqual(10,len(tokens))
+        tokens=self.tokens(s,'Treasure Token');self.assertEqual(10,len(tokens))
         self.assertTrue(all(c.tapped for c in tokens));self.replay(s,load=True)
 
     def test_actual_rabbit_attack_reads_current_power_after_response_and_replays(self):

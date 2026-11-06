@@ -75,6 +75,18 @@ def fixed_ordinary_token_name(subtypes: str) -> str:
     return f"{subtypes} Token" if subtypes else "Token"
 
 
+def predefined_token_identity(
+    subtype: str, characteristics: Mapping[str, Any], *, legacy_name: bool = False,
+) -> tuple[str, dict[str, Any]]:
+    """Materialize the name of an authored unnamed predefined artifact."""
+    if legacy_name:
+        return subtype, dict(characteristics)
+    return fixed_ordinary_token_name(subtype), {
+        **characteristics,
+        TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
+    }
+
+
 def historical_unnamed_token_view(
     name: object, definition: Mapping[str, Any],
 ) -> tuple[str, dict[str, Any]] | None:
@@ -102,19 +114,20 @@ def _fixed_count(value: object, *, label: str) -> int:
     return value
 
 
-def clue_token_effect(quantity: int) -> dict[str, Any]:
+def clue_token_effect(quantity: int, *, legacy_name: bool = False) -> dict[str, Any]:
     """Return the canonical fixed Clue definition for Investigate."""
 
+    name, characteristics = predefined_token_identity("Clue", {
+        "type_line": "Token Artifact — Clue",
+        "display_text": "{2}, Sacrifice this token: Draw a card.",
+        "activated_ability_profile": "two_sac_draw_card_v1",
+    }, legacy_name=legacy_name)
     return {
         "op": "create_token",
         "controller": "$controller",
-        "name": "Clue",
+        "name": name,
         "quantity": _fixed_count(quantity, label="Investigate"),
-        "characteristics": {
-            "type_line": "Token Artifact — Clue",
-            "display_text": "{2}, Sacrifice this token: Draw a card.",
-            "activated_ability_profile": "two_sac_draw_card_v1",
-        },
+        "characteristics": characteristics,
     }
 
 

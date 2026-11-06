@@ -529,6 +529,13 @@ readable historical data does not bypass it. See
 The independent `face_down_characteristics_version` remains authoritative for
 face-down values and anonymous identity in either general copy-value mode.
 
+Fresh predefined artifact instructions carry the literal derived name beside
+their existing ability profile. GameState and record format provenance also
+pin `predefined_token_name_version: 1` for definitions assembled during
+execution, including the Incubator front face. The historical mode uses the
+absent marker and preserves the previous execution-time definition. Explicit
+names and copiable snapshots supply their own name values.
+
 New compiler-owned fixed creature definitions carry
 `literal_token_name_version: 1` with their fully resolved name. The marker
 travels in the fixed definition and any pending replacement payload. Creation

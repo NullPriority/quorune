@@ -46,6 +46,7 @@ from ..fixed_token_production import (
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     literal_token_name_version,
     fixed_ordinary_token_name,
+    historical_unnamed_token_view,
 )
 
 
@@ -53,7 +54,7 @@ _TOKEN_MECHANIC = "cr-111-tokens"
 _COLOR_ORDER = "WUBRG"
 
 
-def _is_afterlife_token_effect(effect: Mapping[str, Any]) -> bool:
+def _is_fixed_token_action_effect(effect: Mapping[str, Any], build_effect) -> bool:
     from ..replacement.immutable import thaw_value
 
     quantity = effect.get("quantity")
@@ -62,7 +63,7 @@ def _is_afterlife_token_effect(effect: Mapping[str, Any]) -> bool:
         return False
     try:
         legacy_name = literal_token_name_version(characteristics) is None
-        return thaw_value(effect) == afterlife_token_effect(quantity, legacy_name=legacy_name)
+        return thaw_value(effect) == build_effect(quantity, legacy_name=legacy_name)
     except FixedTokenProductionError:
         return False
 
@@ -83,7 +84,7 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
             and isinstance(value.get('characteristics'),Mapping)
             and {'power','toughness'}<=set(value['characteristics'])
             and not value.get('copy_of') and not value.get('copy_spec')):
-        if AFTERLIFE_MECHANIC_ID in mechanics and _is_afterlife_token_effect(value):
+        if AFTERLIFE_MECHANIC_ID in mechanics and _is_fixed_token_action_effect(value, afterlife_token_effect):
             return (AFTERLIFE_CAPABILITY_ID,)
         return (
             'token.creation.fixed_definition',
@@ -197,29 +198,34 @@ def _fixed_predefined_effect_is_closed(
     effect: Mapping[str, Any],
 ) -> tuple[tuple[str, ...], set[str]] | None:
     name = effect.get("name")
-    if name not in _PREDEFINED_CAPABILITIES:
+    characteristics = effect.get("characteristics")
+    if not isinstance(name, str) or not isinstance(characteristics, Mapping):
+        return None
+    former = historical_unnamed_token_view(name, characteristics)
+    base_name = former[0] if former is not None else name
+    if base_name not in _PREDEFINED_CAPABILITIES:
         return None
     expected = fixed_token_creation_effect_template(
-        f"Create a {name} token."
+        f"Create a {base_name} token."
     )
     if expected is None:
         return None
     canonical = dict(expected.effect)
+    if former is None:
+        legacy = historical_unnamed_token_view(canonical["name"], canonical["characteristics"])
+        if legacy is None:
+            return None
+        canonical["name"], canonical["characteristics"] = legacy
     supplied = dict(effect)
     supplied["quantity"] = 1
     supplied.pop("tapped", None)
     if supplied != canonical:
         return None
-    characteristics = effect.get("characteristics")
-    keywords = (
-        characteristics.get("keywords", [])
-        if isinstance(characteristics, Mapping)
-        else []
-    )
+    keywords = characteristics.get("keywords", [])
     return (
         (
             "token.creation.fixed_definition",
-            *_PREDEFINED_CAPABILITIES[str(name)],
+            *_PREDEFINED_CAPABILITIES[base_name],
         ),
         {_TOKEN_MECHANIC, *(str(value).casefold() for value in keywords)},
     )
@@ -585,21 +591,13 @@ def _fixed_token_definition_node_capabilities(
         fixed_effect = dict(effect)
         del fixed_effect["target"]
         fixed_effect["controller"] = "$controller"
-    quantity = effect.get("quantity")
-    try:
-        expected_investigate = (
-            clue_token_effect(quantity) if type(quantity) is int else None
-        )
-    except FixedTokenProductionError:
-        expected_investigate = None
     if (
         INVESTIGATE_MECHANIC_ID in mechanics
         and {
             _TOKEN_MECHANIC,
             FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
         }.issubset(mechanics)
-        and expected_investigate is not None
-        and dict(effect) == expected_investigate
+        and _is_fixed_token_action_effect(effect, clue_token_effect)
     ):
         return (INVESTIGATE_CAPABILITY_ID,)
     if (
@@ -609,7 +607,7 @@ def _fixed_token_definition_node_capabilities(
             FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
             "cr-603-handling-triggered-abilities",
         }.issubset(mechanics)
-        and _is_afterlife_token_effect(effect)
+        and _is_fixed_token_action_effect(effect, afterlife_token_effect)
     ):
         return (AFTERLIFE_CAPABILITY_ID,)
     closure = _fixed_token_effect_closure(fixed_effect)

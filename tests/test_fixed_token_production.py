@@ -547,7 +547,7 @@ class FixedTokenProductionTests(unittest.TestCase):
         result = session.act("pilot:A", {"action_id": f"activate:{inquiry.ref}:ab1"})
         self.assertTrue(result.ok, result.summary)
         self.pass_until_empty(session)
-        clue = next(card for card in engine.state.cards.values() if card.is_token and card.printed_name == "Clue")
+        clue = next(card for card in engine.state.cards.values() if card.is_token and card.printed_name == "Clue Token")
         [clue_ability] = compiled_activated_abilities(engine, clue)
         self.assertEqual("builtin:draw:1", clue_ability.builtin_semantic_key)
 
@@ -566,8 +566,8 @@ class FixedTokenProductionTests(unittest.TestCase):
             engine.state.stack.append(item)
             engine._continue_resolution(stack_ref=item.ref, effects=[dict(effect) for effect in program.effects], destination=None, note=program.notes)
         created = {card.printed_name: card for card in engine.state.cards.values() if card.is_token}
-        self.assertTrue({"Clue", "Powerstone", "Junk", "Vibranium"}.issubset(created))
-        self.assertEqual(["Indestructible"], engine._effective_card_data(created["Vibranium"])["keywords"])
+        self.assertTrue({"Clue Token", "Powerstone Token", "Junk Token", "Vibranium Token"}.issubset(created))
+        self.assertEqual(["Indestructible"], engine._effective_card_data(created["Vibranium Token"])["keywords"])
 
     def test_token_characteristic_fragments_use_shared_rules_owners(self):
         session = self.session(1116108, players=2)
@@ -656,12 +656,12 @@ class FixedTokenProductionTests(unittest.TestCase):
         powerstone = next(
             card
             for card in replay_engine.state.cards.values()
-            if card.is_token and card.printed_name == "Powerstone"
+            if card.is_token and card.printed_name == "Powerstone Token"
         )
         junk = next(
             card
             for card in replay_engine.state.cards.values()
-            if card.is_token and card.printed_name == "Junk"
+            if card.is_token and card.printed_name == "Junk Token"
         )
         self.prepare_priority(replay_session)
         top = replay_engine.state.players["A"].zones["library"][-1]
@@ -1128,7 +1128,7 @@ class FixedTokenProductionTests(unittest.TestCase):
         first_junk = next(
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Junk"
+            if card.is_token and card.printed_name == "Junk Token"
         )
         engine.state.players["A"].mana_pool.update({"C": 2, "R": 1})
         self.prepare_priority(session)
@@ -1172,7 +1172,7 @@ class FixedTokenProductionTests(unittest.TestCase):
         junks = [
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Junk"
+            if card.is_token and card.printed_name == "Junk Token"
         ]
         self.assertEqual(2, len(junks))
         self.assertIn(first_junk, junks)
@@ -1248,7 +1248,7 @@ class FixedTokenProductionTests(unittest.TestCase):
         clue = next(
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Clue"
+            if card.is_token and card.printed_name == "Clue Token"
         )
         hand_before = len(engine.state.players["A"].zones["hand"])
         result = session.act(

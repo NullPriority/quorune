@@ -92,10 +92,10 @@ class OrderedCompositionFollowupTests(actions.InheritedNativeFixture, unittest.T
         self.assertEqual('choice.apnap', self.resolve(s).kind)
         drawn = set(s.state.players['A'].zones['hand']) - before
         self.assertEqual(2, len(drawn))
-        self.assertFalse(self.tokens(s, 'Powerstone'))
+        self.assertFalse(self.tokens(s, 'Powerstone Token'))
         s = self.discard(s, [s.state.cards[sorted(drawn)[0]].ref])
         self.settle(s)
-        tokens = self.tokens(s, 'Powerstone')
+        tokens = self.tokens(s, 'Powerstone Token')
         self.assertEqual(1, len(tokens))
         powerstone = tokens[0]
         self.assertTrue(powerstone.tapped)
@@ -196,7 +196,7 @@ class OrderedCompositionFollowupTests(actions.InheritedNativeFixture, unittest.T
                     self.settle(s)
                     self.assertEqual(40, s.state.players['A'].life)
                     self.assertEqual(1, len(self.tokens(s, 'Detective')))
-                    self.assertFalse(self.tokens(s, 'Clue'))
+                    self.assertFalse(self.tokens(s, 'Clue Token'))
                     self.replay(s, load=True)
                     continue
                 self.assertEqual('semantic.choice', self.resolve(s).kind)
@@ -206,7 +206,7 @@ class OrderedCompositionFollowupTests(actions.InheritedNativeFixture, unittest.T
                 self.assertEqual(2, s.engine._numeric_stat(detective[0].object_id, 'power'))
                 self.assertEqual(2, s.engine._numeric_stat(detective[0].object_id, 'toughness'))
                 self.assertEqual({'W', 'U'}, set(s.engine._effective_card_data(detective[0]).get('colors', ())))
-                self.assertFalse(self.tokens(s, 'Clue'))
+                self.assertFalse(self.tokens(s, 'Clue Token'))
                 looked = [s.state.cards[oid].ref for oid in reversed(s.state.players['A'].zones['library'][-2:])]
                 self.private(s, looked)
                 before = authoritative_state_hash(s.state)
@@ -217,7 +217,7 @@ class OrderedCompositionFollowupTests(actions.InheritedNativeFixture, unittest.T
                 r = s.act('pilot:A', {'action_id': 'choose', 'cards': {'top': [looked[0]], 'graveyard': [looked[1]]}})
                 self.assertTrue(r.ok, r.summary)
                 self.settle(s)
-                clues = self.tokens(s, 'Clue')
+                clues = self.tokens(s, 'Clue Token')
                 self.assertEqual(1, len(clues))
                 clue = clues[0]
                 hand = len(s.state.players['A'].zones['hand'])
@@ -227,6 +227,6 @@ class OrderedCompositionFollowupTests(actions.InheritedNativeFixture, unittest.T
                 self.assertFalse(self.offered_ids(s, clue))
                 self.settle(s)
                 self.assertEqual(hand + 1, len(s.state.players['A'].zones['hand']))
-                self.assertFalse(self.tokens(s, 'Clue'))
+                self.assertFalse(self.tokens(s, 'Clue Token'))
                 self.private(s)
                 self.replay(s, load=True)

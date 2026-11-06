@@ -48,11 +48,26 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'library_selection_knowledge_version':state.library_selection_knowledge_version} if getattr(state,'library_selection_knowledge_version',None) is not None else {}),
         **({'characteristic_query_boundary_version':state.characteristic_query_boundary_version} if getattr(state,'characteristic_query_boundary_version',None) is not None else {}),
         **({'token_copy_value_version':state.token_copy_value_version} if getattr(state,'token_copy_value_version',None) is not None else {}),
+        **({"predefined_token_name_version": state.predefined_token_name_version}
+           if getattr(state, "predefined_token_name_version", None) is not None else {}),
         **({'block_characteristics_version':state.block_characteristics_version} if getattr(state,'block_characteristics_version',None) is not None else {}),
         **({'unblocked_attacker_event_version':state.unblocked_attacker_event_version} if getattr(state,'unblocked_attacker_event_version',None) is not None else {}),
         **({'permanent_event_state_version':state.permanent_event_state_version} if getattr(state,'permanent_event_state_version',None) is not None else {}),
         **({'battle_cry_resolution_version':state.battle_cry_resolution_version} if getattr(state,'battle_cry_resolution_version',None) is not None else {}),
     }
+
+
+def _validate_token_state_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
+
+    for field, validate, label in (
+        ("token_copy_value_version", token_copy_value_version, "Token copy value"),
+        ("predefined_token_name_version", predefined_token_name_version, "Predefined token name"),
+    ):
+        declared = format_value.get(field, 0)
+        actual = validate(getattr(state, field, None)) or 0
+        if type(declared) is not int or declared not in {0, 1} or declared != actual:
+            raise ValueError(f"{label} provenance does not match the initial checkpoint")
 
 
 def validate_state_versions(
@@ -97,10 +112,7 @@ def validate_state_versions(
         raise ValueError("Tap-state event provenance does not match the initial checkpoint")
     from .cast_source_placement_model import cast_source_placement_version
     from .explore_action_model import explore_action_version
-    from .token_copy_value_model import token_copy_value_version
-    copy_values=format_value.get('token_copy_value_version',0)
-    if type(copy_values) is not int or copy_values not in {0,1} or copy_values!=(token_copy_value_version(getattr(state,'token_copy_value_version',None)) or 0):
-        raise ValueError('Token copy value provenance does not match the initial checkpoint')
+    _validate_token_state_versions(format_value, state)
     explore = format_value.get('explore_action_version', 0)
     if type(explore) is not int or explore not in {0, 1} or explore != (explore_action_version(getattr(state, 'explore_action_version', None)) or 0):
         raise ValueError('Explore action provenance does not match the initial checkpoint')

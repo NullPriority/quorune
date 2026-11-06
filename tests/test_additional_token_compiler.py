@@ -65,7 +65,7 @@ class AdditionalTokenCompilerTests(unittest.TestCase):
                 "create those tokens plus an additional Treasure token.",
                 [],
                 ["treasure"],
-                "Treasure",
+                "Treasure Token",
             ),
             (
                 "If one or more tokens would be created under your control, "
@@ -73,7 +73,7 @@ class AdditionalTokenCompilerTests(unittest.TestCase):
                 "instead.",
                 [],
                 [],
-                "Food",
+                "Food Token",
             ),
             (
                 "If one or more artifact tokens would be created under your "
@@ -82,14 +82,14 @@ class AdditionalTokenCompilerTests(unittest.TestCase):
                 "instead.",
                 ["artifact"],
                 [],
-                "Thopter",
+                "Thopter Token",
             ),
             (
                 "If you would create one or more artifact tokens, instead "
                 "create those tokens plus an additional Map token.",
                 ["artifact"],
                 [],
-                "Map",
+                "Map Token",
             ),
         )
         for text, types, subtypes, token_name in cases:
@@ -112,7 +112,7 @@ class AdditionalTokenCompilerTests(unittest.TestCase):
                 )
                 self.assertEqual(token_name, descriptor["token"]["name"])
                 self.assertNotIn("oracle_text", descriptor["token"])
-                if token_name in {"Treasure", "Food", "Map"}:
+                if token_name in {"Treasure Token", "Food Token", "Map Token"}:
                     self.assertIn("display_text", descriptor["token"])
 
     def test_nearby_unsupported_wording_remains_residual(self):

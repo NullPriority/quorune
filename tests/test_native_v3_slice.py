@@ -684,6 +684,9 @@ class TrustedSemanticScenarioTests(unittest.TestCase):
         )
         self.assertEqual(life_before - 3, engine.state.players["A"].life)
         self.assertEqual(0, aggregate["controller_life_delta"])
+        treasure = engine._resolve_object("B", aggregate["treasure_created"])
+        self.assertEqual("Treasure Token", engine.display_name(treasure.object_id))
+        self.assertEqual("Treasure Token", engine._copyable_characteristics(treasure)["name"])
 
         mishra = self._card(engine, "A", "Mishra, Eminent One")
         heart = self._card(engine, "A", "Gonti's Aether Heart")

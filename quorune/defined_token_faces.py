@@ -155,10 +155,11 @@ class DefinedTransformingToken:
                    value['schema_version'])
 
 
-def incubator_definition():
+def incubator_definition(*, legacy_name=True):
     """CR111.10i: names are data; the explicit profile supplies the ability."""
     return DefinedTransformingToken(
-        DefinedTokenFace('Incubator','Token Artifact — Incubator',ability_profile=INCUBATOR_TRANSFORM_PROFILE),
+        DefinedTokenFace("Incubator" if legacy_name else "Incubator Token",
+            'Token Artifact — Incubator',ability_profile=INCUBATOR_TRANSFORM_PROFILE),
         DefinedTokenFace('Phyrexian Token','Token Artifact Creature — Phyrexian','0','0'),
     )
 

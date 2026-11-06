@@ -406,7 +406,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             and card.zone == "battlefield"
             and card.is_token
         }
-        self.assertTrue({"Food", "Treasure"}.issubset(tokens))
+        self.assertTrue({"Food Token", "Treasure Token"}.issubset(tokens))
 
     def test_bloodghast_landfall_return_block_restriction_and_conditional_haste(
         self,

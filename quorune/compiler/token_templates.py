@@ -16,6 +16,7 @@ from ..fixed_token_production import (
     TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenCreationTemplate,
     fixed_ordinary_token_name,
+    predefined_token_identity,
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .fixed_token_production_templates import (
@@ -284,23 +285,22 @@ def _single_fixed_token_creation_effect_template(
         definition = _PREDEFINED_CREATION_DEFINITIONS.get(f"{name} token")
         if definition is None:
             return None
+        token_name, characteristics = predefined_token_identity(
+            str(definition["name"]), {field: value for field, value in definition.items() if field != "name"},
+        )
         return FixedTokenCreationTemplate(
             template_id=f"create-fixed-{name}-token-v1",
             effect={
                 "op": "create_token",
                 "controller": "$controller",
-                "name": str(definition["name"]),
+                "name": token_name,
                 "quantity": quantity,
                 **(
                     {"tapped": True}
                     if predefined.group("tapped")
                     else {}
                 ),
-                "characteristics": {
-                    field: value
-                    for field, value in definition.items()
-                    if field != "name"
-                },
+                "characteristics": characteristics,
             },
             mechanics=(
                 "cr-111-tokens",
@@ -507,7 +507,12 @@ def static_token_quantity_replacement_handler(text: str):
 def _fixed_additional_token_definition(text: str) -> Mapping[str, Any] | None:
     """Reuse the complete fixed producer; reject unrepresented creation riders."""
     normalized=" ".join(text.casefold().split())
-    if normalized in _TOKEN_DEFINITIONS:return _TOKEN_DEFINITIONS[normalized]
+    if normalized in _PREDEFINED_CREATION_DEFINITIONS:
+        definition = _TOKEN_DEFINITIONS[normalized]
+        name, characteristics = predefined_token_identity(
+            str(definition["name"]), {field: value for field, value in definition.items() if field != "name"},
+        )
+        return {"name": name, **characteristics}
     template=_single_fixed_token_creation_effect_template('Create a '+text+'.')
     if template is None:return None
     effect=template.effect

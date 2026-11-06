@@ -282,7 +282,7 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
             (
                 "Living weapon",
                 ("Equip", "Living weapon"),
-                "Phyrexian Germ",
+                "Phyrexian Germ Token",
                 "Token Creature \N{EM DASH} Phyrexian Germ",
                 "0",
                 "0",
@@ -292,7 +292,7 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
             (
                 "For Mirrodin!",
                 ("Equip", "For Mirrodin!"),
-                "Rebel",
+                "Rebel Token",
                 "Token Creature \N{EM DASH} Rebel",
                 "2",
                 "2",
@@ -1306,7 +1306,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         germs = [
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Phyrexian Germ"
+            if card.is_token and card.printed_name == "Phyrexian Germ Token"
         ]
         self.assertEqual(1, len(germs))
         self.assertEqual(germs[0].object_id, source.attached_to)
@@ -1334,7 +1334,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         rebels = [
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Rebel"
+            if card.is_token and card.printed_name == "Rebel Token"
         ]
         self.assertEqual(1, len(rebels))
         self.assertEqual(rebels[0].object_id, source.attached_to)
@@ -1368,7 +1368,7 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
         rebel = next(
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Rebel"
+            if card.is_token and card.printed_name == "Rebel Token"
         )
         self.assertEqual("A", rebel.controller)
         self.assertEqual("B", source.controller)
@@ -1404,11 +1404,11 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
             card
             for card in engine.state.cards.values()
             if card.is_token
-            and card.printed_name in {"Food", "Phyrexian Germ"}
+            and card.printed_name in {"Food Token", "Phyrexian Germ Token"}
         ]
-        self.assertEqual({"Food", "Phyrexian Germ"}, {c.printed_name for c in created})
-        germ = next(c for c in created if c.printed_name == "Phyrexian Germ")
-        food = next(c for c in created if c.printed_name == "Food")
+        self.assertEqual({"Food Token", "Phyrexian Germ Token"}, {c.printed_name for c in created})
+        germ = next(c for c in created if c.printed_name == "Phyrexian Germ Token")
+        food = next(c for c in created if c.printed_name == "Food Token")
         self.assertEqual(germ.object_id, source.attached_to)
         self.assertNotEqual(food.object_id, source.attached_to)
 
@@ -1544,8 +1544,8 @@ class FixedAttachmentActionRuntimeTests(unittest.TestCase):
 
     def test_four_player_token_attachment_triggers_replay(self):
         for seed, source_name, token_name in (
-            (7013011, "Living Harness Fixture", "Phyrexian Germ"),
-            (7013012, "Mirrodin Harness Fixture", "Rebel"),
+            (7013011, "Living Harness Fixture", "Phyrexian Germ Token"),
+            (7013012, "Mirrodin Harness Fixture", "Rebel Token"),
         ):
             with self.subTest(source=source_name):
                 session = self.session(seed, players=4)

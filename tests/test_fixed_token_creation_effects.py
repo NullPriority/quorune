@@ -1217,7 +1217,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         food = next(
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Food"
+            if card.is_token and card.printed_name == "Food Token"
         )
         data = engine._effective_card_data(food)
         self.assertEqual("Artifact — Food", data["type_line"])
@@ -1629,7 +1629,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             if card.is_token and card.zone == "battlefield"
         ]
         self.assertEqual(
-            {"Food", "Human Token", "Map", "Thopter Token"},
+            {"Food Token", "Human Token", "Map Token", "Thopter Token"},
             {card.printed_name for card in tokens},
         )
         self.assertEqual(1, len({card.zone_timestamp for card in tokens}))
@@ -1667,7 +1667,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         clue = next(
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Clue"
+            if card.is_token and card.printed_name == "Clue Token"
         )
         abilities = compiled_activated_abilities(engine, clue)
         self.assertEqual(1, len(abilities))
@@ -1776,7 +1776,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Map", "Thopter Token", "Treasure"},
+            {"Map Token", "Thopter Token", "Treasure Token"},
             {
                 card.printed_name
                 for card in engine.state.cards.values()
@@ -1806,7 +1806,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             result = session.act(principal, {"action_id": "pass"})
             self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Map": 1, "Treasure": 1},
+            {"Map Token": 1, "Treasure Token": 1},
             {
                 name: sum(
                     card.is_token
@@ -1814,7 +1814,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
                     and card.printed_name == name
                     for card in engine.state.cards.values()
                 )
-                for name in ("Map", "Treasure")
+                for name in ("Map Token", "Treasure Token")
             },
         )
 
@@ -2028,7 +2028,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         maps = [
             card
             for card in engine.state.cards.values()
-            if card.is_token and card.printed_name == "Map"
+            if card.is_token and "map" in engine._type_parts(engine._effective_card_data(card)["type_line"])[1]
         ]
         self.assertEqual(1, len(maps))
         abilities = engine._effective_card_data(maps[0])["activated_abilities"]
@@ -2114,7 +2114,7 @@ class FixedTokenCreatorRuntimeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertTrue(accepted.ok, accepted.summary)
         self.settle(session)
         tokens = self.tokens(session)
-        self.assertEqual(Counter({"Treasure": 2, "Map": 1, "Thopter": 1}), Counter(card.printed_name for card in tokens))
+        self.assertEqual(Counter({"Treasure Token": 2, "Map Token": 1, "Thopter Token": 1}), Counter(card.printed_name for card in tokens))
         self.assertEqual({("B", "B")}, {(card.owner, card.controller) for card in tokens})
         self.replay(session, load=True)
 
@@ -2142,7 +2142,7 @@ class FixedTokenCreatorRuntimeTests(InheritedNativeFixture, unittest.TestCase):
                 self.assertEqual(38, session.state.players["C"].life)
                 self.assertEqual("graveyard", session.state.cards[command.object_id].zone)
                 self.assertEqual(
-                    [("Treasure", "A", "A")] if recipient == "A" else [],
+                    [("Treasure Token", "A", "A")] if recipient == "A" else [],
                     [(card.printed_name, card.owner, card.controller) for card in self.tokens(session)],
                 )
                 self.replay(session, load=True)
