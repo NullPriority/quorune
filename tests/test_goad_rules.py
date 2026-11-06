@@ -8,6 +8,8 @@ from pathlib import Path
 from unittest import mock
 
 from common import keep_all, load_assets, make_session
+from inherited_composition_fixture import InheritedNativeFixture
+import test_qualified_public_history as history
 from quorune.card_programs import compile_card_program
 from copy import deepcopy
 from quorune.carddb import CardDatabase
@@ -168,6 +170,65 @@ class FixedGoadInstructionRuntimeTests(unittest.TestCase):
                 self.assertTrue(accepted.ok,accepted.summary)
                 self.assertEqual([],resumed.state.cards[target.object_id].goaded_by)
                 self.replay(resumed)
+
+
+class GoadDepartedTurnTests(InheritedNativeFixture, unittest.TestCase):
+    until = history.QualifiedPublicHistoryNativeTests.until
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        fixtures = Path(__file__).parents[1] / "tests" / "fixtures"
+        path = Path(cls.temporary.name) / "goad-departed-turn.sqlite3"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json", fixtures / "fixed-goad-instruction-cards.json",
+            fixtures / "fixed-extra-turn-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Goad departure", [DeckEntry("Generic Bound Commander", 1, "commander"),
+                                                      DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    def test_actual_goad_expires_before_survivors_extra_turn_after_departure(self):
+        # CR 500.7, 701.15a, and 800.4m. The Strixhaven notes for Sly
+        # Instigator confirm the deadline after the goading player leaves.
+        session = self.session(800461115)
+        goad = self.add(session.engine, "Disrupt Decorum", zone="hand")
+        warp_c = self.add(session.engine, "Time Warp", zone="hand", ref="next-c")
+        warp_a = self.add(session.engine, "Time Warp", zone="hand", ref="next-a")
+        body = self.add(session.engine, "Generic Bound Body", seat="C", ref="goaded-c")
+        body.acquired_control_turn_count = -1
+        for original in (goad, warp_c):
+            self.assert_closed(session, original)
+        self.prepare(session, mana={"C": 8, "U": 4, "R": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", goad)
+        self.resolve_top(session)
+        for spell, target in ((warp_c, "C"), (warp_a, "A")):
+            self.cast_for(session, "A", spell, [target])
+            self.resolve_top(session)
+        self.assertEqual(["A", "C"], [entry.player for entry in session.state.extra_turns])
+        self.priority(session, "A")
+        result = session.act("pilot:A", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("A", session.state.active_player)
+        self.assertEqual(["A"], [entry.player for entry in session.state.cards[body.object_id].goaded_by])
+        packet = session.packet("pilot:C", full=True)
+        self.assertEqual(["C"], packet["state"]["turn"]["extra_q"])
+
+        self.until(session, lambda game: game.state.active_player == "C"
+                   and game.state.pending_decision.kind == "combat.attackers")
+        self.assertTrue(session.state.current_turn.extra)
+        command = {"action_id": "attack", "attackers": {}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:C", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual([], session.state.cards[body.object_id].goaded_by)
+        self.replay(session, load=True)
 
 
 class GoadRuleTests(unittest.TestCase):
