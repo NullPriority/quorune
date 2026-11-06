@@ -48,7 +48,8 @@ def validate_composition_replacements(prepared):
     event=prepared.event
     if event is None:raise GameRuleError('Composition replacement event is missing')
     effects={effect.effect_id:effect for effect in prepared.effects}
-    if any(effect.event_kind=='counter.place' for effect in prepared.effects):
+    # CR 614.7. Available replacements are inert without a counter event.
+    if prepared.counter_events and any(effect.event_kind=='counter.place' for effect in prepared.effects):
         raise GameRuleError('Per-part counter replacements require their represented group continuation')
     for effect_id in event.applied_effects:
         effect=effects.get(effect_id)
