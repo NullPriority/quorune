@@ -6,7 +6,7 @@ from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
-    PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC,
+    PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
     fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
@@ -26,6 +26,19 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
     except (TypeError,ValueError,KeyError):return ()
     if not {keyword.casefold() for keyword in spec.keywords}<=mechanics:return ()
     dependencies={PERMANENT_CHARACTERISTIC_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn'}
+    if isinstance(spec, FixedResolutionSubtypeGrantSpec):
+        from .permanent_predicate_capability_shapes import (
+            direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities,
+        )
+
+        if selection != "$target.0" or not direct_permanent_target_schema_is_closed(target_schema):
+            return ()
+        if (
+            "cr-115-targets" not in mechanics
+            or (target_schema.get("types_any") != ["creature"] and "creature" not in target_schema.get("types_all", ()))
+        ):
+            return ()
+        return tuple(sorted({*dependencies, "target.revalidate_resolution", *direct_target_predicate_capabilities(target_schema)}))
     if isinstance(selection,ObjectQuerySpec):
         if selection.keywords_none or not fixed_resolution_characteristic_query_is_closed(selection,target_schema=target_schema):return ()
         if spec.card_types is None and 'creature' not in selection.types_all:return ()

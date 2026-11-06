@@ -30430,7 +30430,7 @@
           "cleanup expiration",
           "no effect on a returned source incarnation"
         ],
-        "summary": "Create one fixed source, qualified target or public-set characteristic effect whose type retention, creature subtypes, colors, ability removal, supported keywords and base power/toughness share one timestamp across represented layers until cleanup, preserving historical source v1 execution."
+        "summary": "Create one fixed source, qualified target or public-set characteristic effect whose type retention, creature subtypes, colors, ability removal, supported keywords and base power/toughness share one timestamp across represented layers until cleanup. A qualified creature target can receive one additive subtype with fixed keyword grants. Historical source v1 execution is preserved."
       },
       "blockers": [],
       "dependencies": [
@@ -30443,6 +30443,8 @@
         "quorune.compiler.fixed_target_effect_sequences.FixedSourceCharacteristicsTemplate",
         "quorune.compiler.fixed_target_effect_sequences.fixed_source_characteristics_effect_template",
         "quorune.rules.node_capability_shapes.fixed_source_characteristics_node_capabilities",
+        "quorune.resolution_characteristic_model.FixedResolutionSubtypeGrantSpec",
+        "quorune.rules.resolution_characteristic_shapes.fixed_resolution_characteristic_capabilities",
         "quorune.continuous_effect_state.ResolutionContinuousComponent",
         "quorune.continuous_effect_state.create_resolution_continuous_effect_components",
         "quorune.effect_runtime.objects_stack_and_tokens._apply_source_characteristics_until_end_of_turn",
@@ -30479,7 +30481,8 @@
         "test_type_subtraction_matches_canonical_query_case",
         "test_unspecified_animation_removes_lost_noncreature_subtypes_only",
         "test_original_gideon_animation_prevents_incoming_damage_but_deals_its_own_combat_damage",
-        "test_public_source_results_reuse_closed_sequence_and_incarnation_owners"
+        "test_public_source_results_reuse_closed_sequence_and_incarnation_owners",
+        "test_actual_goatnap_and_recruiter_use_current_subtypes_and_one_layer_timestamp"
       ],
       "multiplayer_tests": [
         "test_actual_argivian_lethal_prefix_waits_for_the_rest_of_resolution",
@@ -57159,7 +57162,7 @@
           "printed-order mutation, private choices and replacement suspension",
           "same-incarnation continuation and exact replay"
         ],
-        "summary": "Bind one grammatical player subject or one established public target to two to four independently typed printed-order effect components without introducing another target occurrence or runtime parser. A following fixed damage instruction can use an already established battlefield target's current or departure controller without announcing another target."
+        "summary": "Bind one grammatical player subject or one established public target to two to four independently typed printed-order effect components. Temporary control and its fixed follow-ups use the same announced incarnation, including a final fixed stat rider that reads a creature subtype. A following fixed damage instruction can use an already established battlefield target's current or departure controller."
       },
       "blockers": [],
       "dependencies": [
@@ -57181,6 +57184,9 @@
       "interaction_tests": [
         "test_counter_choice_resumes_after_prior_effect_once",
         "test_target_revalidation_precedes_but_does_not_repeat_between_effects",
+        "test_actual_mark_of_mutiny_changes_counter_chooser_before_untapping",
+        "test_actual_metallic_mastery_uses_only_the_announced_artifact_and_expires",
+        "test_actual_goatnap_and_recruiter_use_current_subtypes_and_one_layer_timestamp",
         "test_trusted_qualified_target_binding_and_stale_rollback",
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
@@ -57199,6 +57205,7 @@
       "negative_tests": [
         "test_bound_effect_exclusions_and_malformed_shapes",
         "test_bound_effect_dependency_and_compiler_mutants",
+        "test_linked_followups_require_one_guaranteed_target_and_closed_rider",
         "test_prevention_component_rejects_derived_amounts_open_scopes_and_missing_owner",
         "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
         "test_target_controller_damage_requires_one_typed_public_antecedent",
@@ -81011,7 +81018,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 751,
+  "registry_version": 753,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

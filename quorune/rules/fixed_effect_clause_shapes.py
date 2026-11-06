@@ -6,6 +6,7 @@ from .temporary_cast_restrictions import temporary_cast_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
 from .earthbend_shapes import earthbend_node_capabilities
+from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
 
 """Capability closure for generic two-clause effect sequences."""
 
@@ -152,6 +153,7 @@ _COMPONENT_RESOLVERS = (
     fixed_extra_turn_node_capabilities,
     scheduled_turn_skip_node_capabilities,
     earthbend_node_capabilities,
+    fixed_resolution_characteristic_capabilities,
     whole_hand_discard_node_capabilities,
     random_discard_node_capabilities,
     fixed_control_node_capabilities,

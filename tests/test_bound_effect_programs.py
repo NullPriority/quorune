@@ -163,6 +163,28 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
         with patch("quorune.compiler.bound_effect_programs._target_controller_damage_tail", return_value=None):
             self.assertNotEqual("exact", self.compile(text).status)
 
+    def test_linked_followups_require_one_guaranteed_target_and_closed_rider(self):
+        prefix = "Gain control of target artifact until end of turn. "
+        text = prefix + "Untap that artifact. It gains haste until end of turn."
+        result = self.compile(text)
+        self.assertEqual("exact", result.status, result.material_residuals)
+        node, = result.faces[0].nodes
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        self.assertEqual(["artifact"], node.target_schema["types_any"])
+        with patch("quorune.compiler.bound_effect_programs._bound_object_followup", return_value=None):
+            self.assertNotEqual("exact", self.compile(text).status)
+        for invalid in (
+            text.replace("target artifact", "target permanent"),
+            text.replace("that artifact", "that creature"),
+            text.replace("that artifact", "another target artifact"),
+            text.replace("It gains haste", "Its controller gains haste"),
+            text + " If that creature is a Goat, it gets +3/+0 until end of turn.",
+            text.replace("target artifact", "target creature").replace("that artifact", "that creature")
+            + " If that creature is a named card, it gets +3/+0 until end of turn.",
+        ):
+            with self.subTest(text=invalid):
+                self.assertNotEqual("exact", self.compile(invalid).status)
+
     def test_bound_effect_exclusions_and_malformed_shapes(self):
         compile_atomic = partial(_reviewed_atomic_effect_template, card_name="Generic Bound Compiler Fixture")
         valid = "Target player draws two cards and loses 2 life."

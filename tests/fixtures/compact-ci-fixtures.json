@@ -668,6 +668,7 @@
     "tests/fixtures/life-gain-prohibition-cards.json",
     "tests/fixtures/life-total-setting-cards.json",
     "tests/fixtures/limited-event-triggers.json",
+    "tests/fixtures/linked-temporary-control-cards.json",
     "tests/fixtures/live-battlefield-quantity-cards.json",
     "tests/fixtures/live-defined-token-cards.json",
     "tests/fixtures/live-modifier-quantity-cards.json",

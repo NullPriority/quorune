@@ -306,6 +306,35 @@ def _with_condition(
     return {**dict(effect), "target_condition": condition.to_dict()}
 
 
+def linked_creature_subtype_stats_template(text: str):
+    """Bind a fixed stat rider to the previously announced creature."""
+
+    from ..creature_subtypes import canonical_creature_subtype
+
+    match = re.fullmatch(
+        r"If that creature is an? (?P<subtype>.+?), it (?:also )?gets "
+        r"(?P<stats>[+-]\d+/[+-]\d+) until end of turn\.",
+        text, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    subtype = canonical_creature_subtype(match["subtype"])
+    result = fixed_target_characteristics_effect_template(
+        f"Target creature gets {match['stats']} until end of turn."
+    )
+    if subtype is None or result is None:
+        return None
+    _, effects, schema, mechanics = result.compiled()
+    condition = TargetConditionSpec(queries_any=(
+        ObjectQuerySpec(zones=("battlefield",), subtypes_any=(subtype,)),
+    ))
+    return (
+        "linked-creature-subtype-stats-v1",
+        tuple(_with_condition(effect, condition) for effect in effects),
+        schema, (TEMPORARY_TARGET_INTERACTION_MECHANIC, *mechanics),
+    )
+
+
 def _conditional_template(
     text: str,
 ) -> TemporaryTargetInteractionTemplate | None:

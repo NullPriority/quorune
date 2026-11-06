@@ -894,6 +894,8 @@
         "quorune/semantic_runtime/control_handlers.py",
         "quorune/semantic_runtime/control_intents.py",
         "tests/fixtures/fixed-control-effects.json",
+        "tests/fixtures/linked-temporary-control-cards.json",
+        "tests/test_fixed_control_effects.py",
         "quorune/compiler/public_state_queries.py"
       ],
       "test_modules": [
@@ -2180,6 +2182,7 @@
         "quorune/compiler/fixed_target_effect_sequences.py",
         "quorune/continuous_effect_state.py",
         "quorune/continuous_effects.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py",
         "quorune/effect_runtime/objects_stack_and_tokens.py",
         "quorune/effect_runtime/zones_and_attachments.py",
         "quorune/keyword_abilities.py",
@@ -2201,6 +2204,7 @@
       "test_modules": [
         "test_continuous_effect_duration",
         "test_fixed_source_characteristic_effects",
+        "test_fixed_control_effects",
         "test_fixed_target_effect_sequences",
         "test_fixed_query_keyword_grants",
         "test_fixed_evasion_grants",
@@ -3179,6 +3183,7 @@
         "test_closed_effect_programs",
         "test_fixed_affected_player_discards",
         "test_fixed_controller_effect_sequences",
+        "test_fixed_control_effects",
         "test_fixed_counter_event_triggers",
         "test_fixed_effect_clause_sequences",
         "test_fixed_nonrepeating_modal_programs",

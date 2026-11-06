@@ -20,6 +20,7 @@ from .closed_effect_programs import (
     _UNSAFE_LINKAGE,
     _candidate_partitions,
     _partition,
+    _sentence_partition,
 )
 
 
@@ -27,7 +28,7 @@ BOUND_EFFECT_PROGRAM_MECHANIC = "bound-effect-program"
 BOUND_EFFECT_PROGRAM_CAPABILITY = "resolution.effect_program.bound_references"
 BOUND_EFFECT_PROGRAM_TEMPLATE_ID = "bound-effect-program-v1"
 _SUBJECT = r"target player|target opponent|each player|each opponent|you"
-_REFERENCE = r"it|that player|that creature|that permanent"
+_REFERENCE = r"it|that (?:player|permanent|artifact|battle|creature|enchantment|land|planeswalker)"
 _TARGET_WORD = re.compile(r"\btarget\b", re.IGNORECASE)
 _TARGET_CONTROLLER_DAMAGE = re.compile(
     r"(?P<source>.+?) deals (?P<amount>[1-9][0-9]*) damage to that "
@@ -162,65 +163,87 @@ def _target_controller_damage_tail(
     )
 
 
-def _single_target_reference(text: str, compile_component: ComponentCompiler):
+def _single_target_reference(text: str, compile_component: ComponentCompiler, *, conditional_tail=None):
     for clauses in _candidate_partitions(text):
         first = compile_component(clauses[0])
         schema = first[2]
         if first[0] is None or not _public_single_target(schema):
             continue
         assert schema is not None
+        if conditional_tail is not None and (
+            clauses[-1] != conditional_tail[0] or not _target_type_is_guaranteed(schema, "creature")
+        ):
+            continue
         if len(clauses) == 2:
             tail = _target_controller_damage_tail(first, clauses[1], compile_component)
             if tail is not None:
                 return _program((first, tail), schema=schema)
-        generic_subject = "target player" if schema["categories"] == ["player"] else "target permanent"
         compiled = [first]
         bound_reference_seen = False
-        for clause in clauses[1:]:
+        for index, clause in enumerate(clauses[1:], start=1):
             clause = re.sub(r"^Then ", "", clause, flags=re.IGNORECASE)
-            original = compile_component(clause)
-            if original[0] is not None:
-                if original[2] is not None:
-                    break
-                compiled.append(original)
-                continue
-            # Only one object reference can be elided per clause. Possessive,
-            # controller/owner, result, and newly selected references are not
-            # inferred or bound by this production.
-            references = tuple(re.finditer(rf"\b(?:{_REFERENCE})\b", clause, re.IGNORECASE))
-            if len(references) != 1 or re.search(r"\b(?:its|their|that much|this way)\b", clause, re.IGNORECASE):
+            followups = (
+                (conditional_tail[1],)
+                if conditional_tail is not None and index == len(clauses) - 1
+                else _linked_followups(clause, schema, compile_component)
+            )
+            if not followups:
                 break
-            reference = references[0]
-            noun = reference.group().casefold()
-            if (
-                (noun == "that player" and schema["categories"] != ["player"])
-                or (noun in {"it", "that creature", "that permanent"}
-                    and schema["categories"] != ["permanent"])
-                or (noun == "that creature" and schema.get("types_any") != ["creature"])
-            ):
-                break
-            normalized = clause[:reference.start()] + generic_subject + clause[reference.end():]
-            component = compile_component(normalized)
-            if component[0] is None and (
-                schema.get("types_any") == ["creature"]
-                or "creature" in schema.get("types_all", [])
-            ):
-                creature_clause = clause[:reference.start()] + "target creature" + clause[reference.end():]
-                component = compile_component(creature_clause)
-            if (
-                component[0] is None or component[2] is None
-                or not _public_single_target(component[2])
-                or component[2].get("categories") != schema.get("categories")
-            ):
-                break
-            compiled.append(component)
-            bound_reference_seen = True
-        if len(compiled) != len(clauses) or not bound_reference_seen:
-            continue
-        result = _program(compiled, schema=schema)
-        if result is not None:
-            return result
+            compiled.extend(followups)
+            bound_reference_seen |= any(component[2] is not None for component in followups)
+        else:
+            if bound_reference_seen:
+                result = _program(compiled, schema=schema)
+                if result is not None:
+                    return result
     return None
+
+
+def _bound_object_followup(clause, schema, compile_component):
+    references = tuple(re.finditer(rf"\b(?:{_REFERENCE})\b", clause, re.IGNORECASE))
+    # The type-retention rider describes the same object, not a second
+    # referent. Other possessives remain outside this binding.
+    linkage = re.sub(r" in addition to its other types\b", "", clause, flags=re.IGNORECASE)
+    if len(references) != 1 or re.search(r"\b(?:its|their|that much|this way)\b", linkage, re.IGNORECASE):
+        return None
+    reference, = references
+    noun = reference.group().casefold()
+    if noun == "that player":
+        if schema["categories"] != ["player"]:
+            return None
+        subject = "target player"
+    else:
+        kind = "permanent" if noun == "it" else noun.removeprefix("that ")
+        if schema["categories"] != ["permanent"] or not _target_type_is_guaranteed(schema, kind):
+            return None
+        subject = f"target {kind}"
+    prefix, suffix = clause[:reference.start()], clause[reference.end():]
+    component = compile_component(prefix + subject + suffix)
+    if (
+        component[0] is None and subject == "target permanent"
+        and _target_type_is_guaranteed(schema, "creature")
+    ):
+        component = compile_component(prefix + "target creature" + suffix)
+    if (
+        component[0] is None or not _public_single_target(component[2])
+        or component[2].get("categories") != schema.get("categories")
+    ):
+        return None
+    return component
+
+
+def _linked_followups(clause, schema, compile_component):
+    original = compile_component(clause)
+    if original[0] is not None:
+        return (original,) if original[2] is None else ()
+    bound = _bound_object_followup(clause, schema, compile_component)
+    if bound is not None:
+        return (bound,)
+    conjunction = _partition(clause, " and ")
+    if conjunction is None or len(conjunction) != 2:
+        return ()
+    components = tuple(_bound_object_followup(part, schema, compile_component) for part in conjunction)
+    return components if all(component is not None for component in components) else ()
 
 
 def bound_effect_program_template(
@@ -230,11 +253,25 @@ def bound_effect_program_template(
 
     normalized = " ".join(text.strip().split())
     linkage_text = re.sub(r"\banother target\b", "target", normalized, flags=re.IGNORECASE)
-    if not normalized or _UNSAFE_LINKAGE.search(linkage_text) or any(c in normalized for c in ('"', "(", ")")):
+    if not normalized or any(c in normalized for c in ('"', "(", ")")):
         return None
     target_count = len(_TARGET_WORD.findall(normalized))
     if target_count > 1:
         return None
+    if _UNSAFE_LINKAGE.search(linkage_text):
+        clauses = _sentence_partition(normalized)
+        if (
+            target_count != 1 or clauses is None
+            or any(_UNSAFE_LINKAGE.search(re.sub(r"\banother target\b", "target", clause, flags=re.IGNORECASE))
+                   for clause in clauses[:-1])
+        ):
+            return None
+        from .temporary_target_interactions import linked_creature_subtype_stats_template
+
+        conditional = linked_creature_subtype_stats_template(clauses[-1])
+        if conditional is None:
+            return None
+        return _single_target_reference(normalized, compile_component, conditional_tail=(clauses[-1], conditional))
     shared = _shared_player_subject(normalized, compile_component)
     if shared is not None:
         return shared

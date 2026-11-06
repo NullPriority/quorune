@@ -2224,7 +2224,7 @@ and more-than-four-component programs remain source-spanned residuals.
 `compiler/bound_effect_programs.py` owns the complementary single-reference
 composition boundary. Two through four mandatory components may share one
 player subject or reuse one explicitly established player or battlefield target
-through “it,” “that player,” “that creature,” or “that permanent.” It retains
+through “it,” “that player,” or a guaranteed permanent type. It retains
 the original target qualifiers and source exclusion, verifies reference-domain
 compatibility, and emits the existing effects in printed order. Pronoun
 normalization uses a generic permanent reference before restoring the
@@ -2237,14 +2237,21 @@ Separate explicit target occurrences never become one target merely because thei
 schemas match. The bound-reference capability checks every component against
 its typed owner; execution, replacement choices, private affected-player
 choices, and checkpoint continuations remain in their existing owners. A fixed
-damage sentence can refer to the controller of a single preceding battlefield
+temporary-control sequence can apply untap, fixed counters, or duration-bound
+characteristics to the same announced incarnation. A counter replacement uses
+the controller at the time the counter would be placed. A final fixed stat
+rider can read that creature's current subtype. One effect that adds a subtype
+and grants keywords shares a timestamp across its type and ability layers.
+
+A fixed damage sentence can refer to the controller of a single preceding battlefield
 target after a closed destruction, exile, tap, counter placement, or temporary
 stat instruction. It reads current control for the same incarnation or the
 controller captured at departure if the first instruction moved it. The
 damage is untargeted and still follows a legal target when the first
 instruction has no effect. This controller read requires a single nonmodal
 target sequence. Other possessives, cross-zone or hidden-object references,
-unsupported leaves, and conditional or optional linkage remain residual. Whole-program integration may admit these bounded combinations while
+unsupported leaves, and unrepresented conditional or optional linkage remain
+residual. Whole-program integration may admit these bounded combinations while
 the original unbound leaf composition correctly continues to reject them.
 
 `compiler/optional_effect_templates.py` owns one leading `You may` around one

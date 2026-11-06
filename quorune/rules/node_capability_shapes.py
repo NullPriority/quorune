@@ -18,6 +18,7 @@ from .casting_additional_cost_groups import (
 )
 from ..compiler.creature_subtypes import canonical_creature_subtype
 from ..compiler.direct_target import DirectPermanentTargetSpec
+from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION, FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS
 from ..compiler.fixed_target_effect_sequences import (
     FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
@@ -1011,7 +1012,9 @@ def fixed_source_characteristics_node_capabilities(
     if any(effect.get('schema_version') == 3 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .defender_permission_effect import temporary_defender_permission_capabilities
         return temporary_defender_permission_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
-    if any(effect.get('schema_version') == 2 and effect.get('op') == 'apply_source_characteristics_until_end_of_turn' for effect in effects):
+    if any(effect.get('op') == CHARACTERISTIC_OPERATION
+           and type(effect.get('schema_version')) is int
+           and effect['schema_version'] in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS for effect in effects):
         from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
         return fixed_resolution_characteristic_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)
 

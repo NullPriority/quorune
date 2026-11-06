@@ -7,7 +7,7 @@ import tempfile
 from unittest.mock import patch
 import unittest
 
-from common import advance_fixture_turn, keep_all, load_assets, make_session, pass_current
+from common import ROOT, advance_fixture_turn, keep_all, load_assets, make_session, pass_current
 from quorune.compiler.fixed_control_templates import fixed_control_effect_template
 from quorune.compiler.fixed_control_templates import fixed_control_set_effect_template
 from quorune.compiler.untap_step_templates import static_untap_step_handler
@@ -17,6 +17,9 @@ from quorune.control_effects import (
     ControlEffectError, end_player_control_effects, gain_control_of_refs,
     has_control_origin, synchronize_control_effects,
 )
+from inherited_composition_fixture import InheritedNativeFixture
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.model import GameState, CardInstance
 from quorune.oracle_ir import _reviewed_effect_template, register_generated_programs
 from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
@@ -33,6 +36,7 @@ from quorune.semantic_runtime.control_intents import GainControlSetIntent
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.untap_step import UntapStepPlan
 from quorune.errors import GameRuleError
+from scripts.build_test_database import build_fixture_database
 
 
 class FixedControlCompilerTests(unittest.TestCase):
@@ -1328,3 +1332,148 @@ class FixedControlGameplayTests(unittest.TestCase):
         self.assertEqual(1, len(guards))
         self.assertEqual(later_target.logical_object_id, guards[0].locked_objects[0].logical_object_id)
         self.replay(session)
+
+
+class LinkedTemporaryControlNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "linked-control.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "ability-source-counter-cards.json",
+            fixtures / "counter-placement-event-cards.json",
+            fixtures / "optional-object-action-counters.json",
+            fixtures / "linked-temporary-control-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Linked temporary control",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    def test_actual_metallic_mastery_uses_only_the_announced_artifact_and_expires(self):
+        for leaves in (False, True):
+            with self.subTest(leaves=leaves):
+                session = self.session(611608001 + int(leaves))
+                spell = self.add(session.engine, "Metallic Mastery", zone="hand")
+                artifact = self.add(session.engine, "Mind Stone", seat="B")
+                body = self.add(session.engine, "Generic Bound Body", seat="C")
+                bounce = self.add(session.engine, "Boomerang", seat="B", zone="hand")
+                artifact.tapped = True
+                for source in (spell, artifact, bounce):
+                    self.assert_closed(session, source)
+                self.prepare(session, mana={"C": 2, "R": 1})
+                session.state.players["B"].mana_pool["U"] = 2
+                self.checkpoint(session)
+                offered = self.action(session, "A", spell)
+                self.assertIn(artifact.ref, offered["target_schema"]["legal_refs"])
+                self.assertNotIn(body.ref, offered["target_schema"]["legal_refs"])
+                before = authoritative_state_hash(session.state)
+                for principal, ref in (("pilot:A", body.ref), ("pilot:B", artifact.ref)):
+                    rejected = session.act(principal, {"action_id": offered["id"], "targets": [ref], "pay": "auto"})
+                    self.assertFalse(rejected.ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                original = artifact.logical_object_id
+                self.cast_for(session, "A", spell, [artifact.ref])
+                if leaves:
+                    self.cast_for(session, "B", bounce, [artifact.ref])
+                    self.assertIsNone(self.resolve(session))
+                    current = session.state.cards[artifact.object_id]
+                    self.assertEqual(("hand", "B"), (current.zone, current.controller))
+                    self.assertNotEqual(original, current.logical_object_id)
+                    self.assertFalse(session.state.continuous_effects)
+                else:
+                    self.assertIsNone(self.resolve(session))
+                    current = session.state.cards[artifact.object_id]
+                    self.assertEqual((original, "A", False), (current.logical_object_id, current.controller, current.tapped))
+                    self.assertNotIn("creature", session.engine._effective_type_parts(current)[0])
+                    self.assertIn("haste", session.engine._combat_keywords(current))
+                    self.priority(session, "A")
+                    actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                    mana = next(row for row in actions if row.get("mana_ability") and current.ref in row["id"])
+                    result = session.act("pilot:A", {"action_id": mana["id"], "pay": "auto"})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual(1, session.state.players["A"].mana_pool["C"])
+                    turn = session.state.turn_sequence
+                    self.until(session, lambda game: game.state.turn_sequence != turn)
+                    current = session.state.cards[artifact.object_id]
+                    self.assertEqual((original, "B"), (current.logical_object_id, current.controller))
+                    self.assertNotIn("haste", session.engine._combat_keywords(current))
+                self.replay(session, load=True)
+
+    def test_actual_mark_of_mutiny_changes_counter_chooser_before_untapping(self):
+        session = self.session(611608003)
+        spell = self.add(session.engine, "Mark of Mutiny", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        target.tapped = True
+        scales = self.add(session.engine, "Hardened Scales")
+        doubler = self.add(session.engine, "Branching Evolution")
+        for source in (spell, scales, doubler):
+            self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 2, "R": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", spell, [target.ref])
+        decision = self.resolve(session)
+        self.assertEqual("replacement.order", decision.kind)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        current = session.state.cards[target.object_id]
+        self.assertEqual(("A", True, {}), (current.controller, current.tapped, current.counters))
+        self.assertNotIn("haste", session.engine._combat_keywords(current))
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual({scales.ref, doubler.ref}, {option["source"] for option in options})
+        first = next(option["id"] for option in options if option["source"] == scales.ref)
+        command = {"action_id": "choose", "replacement": first}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[target.object_id]
+        self.assertEqual(("A", False, {"+1/+1": 4}), (current.controller, current.tapped, current.counters))
+        self.assertIn("haste", session.engine._combat_keywords(current))
+        turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence != turn)
+        current = session.state.cards[target.object_id]
+        self.assertEqual(("B", {"+1/+1": 4}), (current.controller, current.counters))
+        self.assertNotIn("haste", session.engine._combat_keywords(current))
+        self.replay(session, load=True)
+
+    def test_actual_goatnap_and_recruiter_use_current_subtypes_and_one_layer_timestamp(self):
+        for is_goat in (True, False):
+            with self.subTest(is_goat=is_goat):
+                session = self.session(611608004 + int(is_goat))
+                spell = self.add(session.engine, "Goatnap", zone="hand")
+                target = self.add(session.engine, "Mountain Goat" if is_goat else "Generic Bound Body", seat="B")
+                target.tapped = True
+                recruiter = self.add(session.engine, "Coercive Recruiter", zone="hand")
+                recruit = self.add(session.engine, "Mountain Goat", seat="C", ref="recruiter-other-goat")
+                for source in (spell, recruiter):
+                    self.assert_closed(session, source)
+                engine = session.engine
+                power = engine._numeric_stat(target.object_id, "power")
+                self.prepare(session, mana={"C": 6, "R": 2})
+                self.checkpoint(session)
+                self.cast_for(session, "A", spell, [target.ref], reserve={"R": 1})
+                self.assertIsNone(self.resolve(session))
+                current = session.state.cards[target.object_id]
+                self.assertEqual(("A", False), (current.controller, current.tapped))
+                self.assertIn("haste", engine._combat_keywords(current))
+                self.assertEqual(power + (3 if is_goat else 0), engine._numeric_stat(target.object_id, "power"))
+                if is_goat:
+                    self.cast_for(session, "A", recruiter)
+                    self.target(session, "A", [recruit.ref])
+                    self.assertIsNone(self.resolve(session))
+                    current = session.state.cards[recruit.object_id]
+                    self.assertEqual("A", current.controller)
+                    self.assertEqual({"goat", "pirate"}, engine._effective_type_parts(current)[1])
+                    self.assertIn("haste", engine._combat_keywords(current))
+                    layers = [effect for effect in session.state.continuous_effects if effect.sublayer in {"4", "6"}]
+                    self.assertEqual(1, len({effect.timestamp for effect in layers if effect.source_id == recruiter.object_id}))
+                    self.assertEqual({"4", "6"}, {effect.sublayer for effect in layers if effect.source_id == recruiter.object_id})
+                self.replay(session, load=True)
