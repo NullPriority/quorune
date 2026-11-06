@@ -13,6 +13,18 @@ from ..target_cardinality import (
 )
 
 
+def _selected_query_amount_dependencies(value):
+    from ..query_effect_amount_model import (
+        CONTROLLER_MAXIMUM_PERMANENT_MANA_AMOUNT, PUBLIC_QUERY_AMOUNT_CAPABILITY, PublicQueryAmountSpec,
+    )
+
+    try:
+        amount = PublicQueryAmountSpec.from_dict(value)
+    except (TypeError, ValueError):
+        return ()
+    return (PUBLIC_QUERY_AMOUNT_CAPABILITY,) if amount == CONTROLLER_MAXIMUM_PERMANENT_MANA_AMOUNT else ()
+
+
 def _selected_player_leaf_capabilities(effect):
     from .affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities
     from .fixed_controller_effect_shapes import fixed_life_node_capabilities
@@ -55,7 +67,15 @@ def _selected_player_leaf_capabilities(effect):
         mechanics.add("cr-121-drawing-a-card")
     else:
         return ()
-    return resolver(effects=(normalized,), target_schema=schema, mechanic_ids=mechanics)
+    amount_field = {"life": "delta", "choose_cards_apnap": "count"}.get(op)
+    amount_dependencies = ()
+    if isinstance(normalized.get(amount_field), Mapping):
+        amount_dependencies = _selected_query_amount_dependencies(normalized[amount_field])
+        if not amount_dependencies:
+            return ()
+        normalized[amount_field] = 1
+    required = resolver(effects=(normalized,), target_schema=schema, mechanic_ids=mechanics)
+    return (*required, *amount_dependencies) if required else ()
 
 
 def selected_player_payload_dependencies(effect):

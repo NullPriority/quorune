@@ -58252,7 +58252,7 @@
         ],
         "inputs": [
           "closed player or opponent targets",
-          "fixed discard, life, draw or Mill instructions with separate amount owners"
+          "closed discard, life, draw or Mill instructions with independently validated amounts"
         ],
         "outputs": [
           "the same revalidated player set for each dependent result",
@@ -58274,7 +58274,8 @@
         "quorune.rules.any_number_target_shapes.selected_player_payload_dependencies",
         "quorune.target_cardinality.ordered_selected_players",
         "quorune.semantic_runtime.generic.MillHandler",
-        "quorune.effect_runtime.life_effects._apply_selected_life"
+        "quorune.effect_runtime.life_effects._apply_selected_life",
+        "quorune.semantic_runtime.generic.DrawEachPlayerHandler"
       ],
       "implementation_mutation_rationale": "Withdrawing the selected player grammar leaves the same source text unrepresented.",
       "implementation_mutation_status": "killed",
@@ -79961,7 +79962,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 729,
+  "registry_version": 730,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

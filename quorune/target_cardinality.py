@@ -12,7 +12,7 @@ ANY_NUMBER_TARGET_CAPABILITY = "target.cardinality.any_number"
 SELECTED_PLAYER_RESULT_CAPABILITY = "resolution.target_set.selected_player_results"
 SELECTED_PLAYER_RESULT_MECHANIC = "selected-player-result-set"
 SELECTED_PLAYER_RESULT_LAYOUTS = frozenset({
-    ("mill",), ("life",), ("lose_life",), ("choose_cards_apnap",),
+    ("mill",), ("life",), ("lose_life",), ("choose_cards_apnap",), ("draw_each_player",),
     ("destroy_all", "mill"), ("mill", "lose_life"), ("discard_whole_hands", "draw_each_player"),
     ("discard_whole_hands", "draw_each_player", "draw"),
 })

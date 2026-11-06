@@ -5,10 +5,12 @@ from __future__ import annotations
 import re
 from copy import deepcopy
 
+from ..query_effect_amount_model import CONTROLLER_MAXIMUM_PERMANENT_MANA_AMOUNT
 from ..target_cardinality import (
     AnnouncedTargetCardinality, SELECTED_PLAYER_RESULT_LAYOUTS,
     SELECTED_PLAYER_RESULT_MECHANIC, selected_target_count_descriptor,
 )
+from .draw_templates import fixed_draw_effect_template
 from .fixed_homogeneous_target_sets import fixed_homogeneous_target_set_effect_template
 from .target_characteristic_sets import target_characteristic_set_template
 
@@ -40,11 +42,28 @@ _PLAYER_RESULT = re.compile(
     r"(?P<subject>players|opponents) each (?P<body>.+?)\.?",
     re.IGNORECASE,
 )
+_SHARED_AMOUNT = re.compile(
+    r"(?P<result>gain life|discard a number of cards) equal to "
+    r"the greatest mana value among permanents you control",
+    re.IGNORECASE,
+)
 
 
 def _selected_player_leaf(clause, compile_independent):
     verbs = {"mill": "mills", "gain": "gains", "lose": "loses", "discard": "discards"}
+    shared = _SHARED_AMOUNT.fullmatch(clause)
+    if shared is not None:
+        field = "delta" if shared["result"].casefold() == "gain life" else "count"
+        clause = "gain 1 life" if field == "delta" else "discard a card"
     verb, _, rest = clause.partition(" ")
+    if verb.casefold() == "draw":
+        compiled = fixed_draw_effect_template(f"Each player draws {rest.rstrip('.')}.")
+        if compiled is None or compiled[2] is not None or len(compiled[1]) != 1:
+            return None
+        draw = compiled[1][0]
+        if draw.get("op") != "draw_each_player":
+            return None
+        return {**draw, "players": "$targets"}, compiled[3]
     plural = verbs.get(verb.casefold())
     if plural is None:
         return None
@@ -60,6 +79,8 @@ def _selected_player_leaf(clause, compile_independent):
             return None
     elif effect.get("op") != "discard_whole_hands" or effect.get("players") != ["$target.0"]:
         return None
+    if shared is not None:
+        effect[field] = CONTROLLER_MAXIMUM_PERMANENT_MANA_AMOUNT.to_dict()
     return {**effect, "players": "$targets"}, compiled[3]
 
 
@@ -78,7 +99,8 @@ def any_number_player_result_template(text, *, compile_independent):
         mechanics.extend(prefix[3])
     mill_loss = re.fullmatch(r"(mill .+?) and (lose .+)", body, re.IGNORECASE)
     discard_draw = re.fullmatch(r"(discard their hands), then (draw .+)", body, re.IGNORECASE)
-    clauses = mill_loss.groups() if mill_loss else (discard_draw[1],) if discard_draw else (body,)
+    composition = mill_loss or discard_draw
+    clauses = composition.groups() if composition else (body,)
     for clause in clauses:
         selected = _selected_player_leaf(clause, compile_independent)
         if selected is None:
@@ -86,13 +108,6 @@ def any_number_player_result_template(text, *, compile_independent):
         effect, covered = selected
         effects.append(effect)
         mechanics.extend(covered)
-    if discard_draw:
-        from .draw_templates import fixed_draw_effect_template
-        draw = fixed_draw_effect_template("Each player " + re.sub(r"^draw ", "draws ", discard_draw[2], flags=re.I) + ".")
-        if draw is None or draw[2] is not None or len(draw[1]) != 1 or draw[1][0].get("op") != "draw_each_player":
-            return None
-        effects.append({**draw[1][0], "players": "$targets"})
-        mechanics.extend(draw[3])
     operations = tuple(effect["op"] for effect in effects)
     if operations not in SELECTED_PLAYER_RESULT_LAYOUTS:
         return None

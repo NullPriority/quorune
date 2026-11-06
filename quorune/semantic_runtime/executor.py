@@ -810,8 +810,15 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         return None
 
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
-    if raw_effect.get("players") == "$targets" and effect.get("players") == []:
-        return None
+    if raw_effect.get("players") == "$targets":
+        if effect.get("players") == []:
+            return None
+        amount_field = {"life": "delta", "choose_cards_apnap": "count"}.get(effect.get("op"))
+        amount = raw_effect.get(amount_field)
+        if isinstance(amount, Mapping) and type(effect.get(amount_field)) is int and effect[amount_field] == 0:
+            from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
+            if amount.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
+                return None
     if effect.get("op") == "mill":
         from ..milling import event_mill_recipient_has_left
         if event_mill_recipient_has_left(host, raw_effect, effect):

@@ -1219,12 +1219,16 @@ Target revalidation applies to the whole sequence, including independent
 controller life gain. Linked amounts, independent targets and unknown siblings
 remain residual.
 
-An any-number player target set can feed fixed discard, life change, and fixed
-or half-library Mill. It can also feed whole-hand discard followed by fixed
-draw, or Mill following independent destruction. Each result uses the existing
-APNAP and replacement owners. Choosing zero players skips their instructions
-and leaves independent instructions eligible. If every chosen target becomes
-illegal, the usual revalidation step prevents the entire spell from resolving.
+An any-number player target set can feed fixed draw, discard, life change, and
+fixed or half-library Mill. It can also feed whole-hand discard followed by
+fixed draw, or Mill following independent destruction. For discard and life
+gain, one typed quantity can read the source controller's greatest current
+permanent mana value at resolution. The same amount applies to every eligible
+target. A zero amount creates neither a life event nor a private choice.
+Each result uses the existing APNAP and replacement owners. Choosing zero
+players skips their instructions and leaves independent instructions eligible.
+If every chosen target becomes illegal, revalidation stops the entire spell
+or ability from resolving.
 
 A fractional sacrifice counts the affected player's eligible controlled
 permanents. The existing public predicate owner supports nonland permanents
