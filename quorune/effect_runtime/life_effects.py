@@ -18,6 +18,7 @@ from ..life_state import (
     LifeChange,
 )
 from ..player_result_events import dispatch_life_gain_records
+from ..target_cardinality import ordered_selected_players
 from ..replacement import (
     ReplacementChoiceRequired,
     ReplacementEventBatch,
@@ -44,6 +45,8 @@ class LifeEffectCardRecord(Protocol):
 
 class LifeEffectHost(LifeChangeHost, LifeReplacementHost, Protocol):
     active_seats: list[str]
+
+    def apnap_order(self) -> list[str]: ...
 
     def _resolve_object(self, actor: str, ref: str) -> LifeEffectObject: ...
 
@@ -132,6 +135,30 @@ def _loss_summary(result: LifeBatchResult, players: Sequence[str]) -> str:
     )
 
 
+def _apply_selected_life(host, effect, *, actor, reason, field):
+    if set(effect) - {"op", "players", field, "reason", "_runtime_source", "_replacement_selections"}:
+        raise GameRuleError("Selected life result has conflicting or unknown fields")
+    amount = effect.get(field)
+    if type(amount) is not int or amount <= 0:
+        raise GameRuleError("Selected life result requires a positive fixed amount")
+    try:
+        players = ordered_selected_players(effect["players"], host.apnap_order())
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    if not players:
+        return {}
+    delta = amount if field == "delta" else -amount
+    prepared = _commit(host, tuple(LifeChange(player, delta) for player in players),
+                       effect=effect, actor=actor, reason=reason)
+    result = _result(prepared)
+    host._log(
+        actor, "effect.life", "Life changed for the selected players.",
+        {"players": list(players), "requested_delta": delta, **result.to_dict()},
+        importance=1, changed_players=list(result.changed_players),
+    )
+    return {player: host.state.players[player].life for player in players}
+
+
 def _apply_life(
     host: LifeEffectHost,
     effect: Mapping[str, Any],
@@ -139,7 +166,9 @@ def _apply_life(
     actor: str,
     operation: str,
     reason: str,
-) -> int:
+) -> int | dict[str, int]:
+    if "players" in effect:
+        return _apply_selected_life(host, effect, actor=actor, reason=reason, field="delta")
     seat = str(effect.get("player") or actor)
     delta = int(effect.get("delta", 0))
     prepared = _commit(
@@ -176,7 +205,9 @@ def _apply_lose_life(
     actor: str,
     operation: str,
     reason: str,
-) -> int:
+) -> int | dict[str, int]:
+    if "players" in effect:
+        return _apply_selected_life(host, effect, actor=actor, reason=reason, field="amount")
     seat = str(effect.get("player") or actor)
     all_players = "scope" in effect
     if all_players and (

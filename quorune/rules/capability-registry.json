@@ -58246,6 +58246,107 @@
     {
       "applicability": {
         "exclusions": [
+          "recipient-dependent unrepresented quantities",
+          "new target groups",
+          "optional, conditional or linked result siblings outside the closed layouts"
+        ],
+        "inputs": [
+          "closed player or opponent targets",
+          "fixed discard, life, draw or Mill instructions with separate amount owners"
+        ],
+        "outputs": [
+          "the same revalidated player set for each dependent result",
+          "existing APNAP, replacement and replay semantics"
+        ],
+        "summary": "Bind existing ordered player results to one announced unrestricted distinct target set."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.cardinality.any_number",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "The typed result payload independently requires its cardinality and leaf authorities, and the complete runtime program validates the target schema.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.target_set.selected_player_results",
+      "implementation_components": [
+        "quorune.compiler.any_number_target_sets.any_number_player_result_template",
+        "quorune.rules.any_number_target_shapes.selected_player_result_node_capabilities",
+        "quorune.rules.any_number_target_shapes.selected_player_payload_dependencies",
+        "quorune.target_cardinality.ordered_selected_players",
+        "quorune.semantic_runtime.generic.MillHandler",
+        "quorune.effect_runtime.life_effects._apply_selected_life"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the selected player grammar leaves the same source text unrepresented.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_singularity_distinguishes_zero_from_lost_targets_and_resolves_ordered_mill",
+        "test_tinybones_uses_selected_private_discard_and_the_same_set_for_mill_and_loss",
+        "test_wheel_and_deal_discards_only_selected_opponents_then_draws_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_singularity_distinguishes_zero_from_lost_targets_and_resolves_ordered_mill",
+        "test_tinybones_uses_selected_private_discard_and_the_same_set_for_mill_and_loss",
+        "test_hunters_feast_changes_only_selected_players_and_replays",
+        "test_wheel_and_deal_discards_only_selected_opponents_then_draws_and_replays"
+      ],
+      "negative_tests": [
+        "test_selected_player_shapes_infer_cardinality_and_leaf_authority",
+        "test_singularity_distinguishes_zero_from_lost_targets_and_resolves_ordered_mill",
+        "test_tinybones_uses_selected_private_discard_and_the_same_set_for_mill_and_loss",
+        "test_wheel_and_deal_discards_only_selected_opponents_then_draws_and_replays"
+      ],
+      "official_rules": [
+        "101.4",
+        "101.4a",
+        "107.1c",
+        "115.1",
+        "115.3",
+        "121.2c",
+        "601.2c",
+        "603.3d",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "701.9a",
+        "701.17a",
+        "800.4a"
+      ],
+      "positive_tests": [
+        "test_selected_player_shapes_infer_cardinality_and_leaf_authority",
+        "test_singularity_distinguishes_zero_from_lost_targets_and_resolves_ordered_mill",
+        "test_tinybones_uses_selected_private_discard_and_the_same_set_for_mill_and_loss",
+        "test_hunters_feast_changes_only_selected_players_and_replays",
+        "test_wheel_and_deal_discards_only_selected_opponents_then_draws_and_replays"
+      ],
+      "privacy_tests": [
+        "test_tinybones_uses_selected_private_discard_and_the_same_set_for_mill_and_loss",
+        "test_wheel_and_deal_discards_only_selected_opponents_then_draws_and_replays"
+      ],
+      "replay_tests": [
+        "test_singularity_distinguishes_zero_from_lost_targets_and_resolves_ordered_mill",
+        "test_tinybones_uses_selected_private_discard_and_the_same_set_for_mill_and_loss",
+        "test_hunters_feast_changes_only_selected_players_and_replays",
+        "test_wheel_and_deal_discards_only_selected_opponents_then_draws_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Unrepresented cast predicates or result siblings",
           "Multiple copies and unrepresented modifications",
           "Cast-time information substituted for later current or last-known choices",
@@ -79860,7 +79961,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 728,
+  "registry_version": 729,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

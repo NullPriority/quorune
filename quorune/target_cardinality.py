@@ -9,6 +9,13 @@ from typing import Any
 
 ANNOUNCED_TARGET_SET_CAPABILITY = "target.cardinality.mana_announced_x"
 ANY_NUMBER_TARGET_CAPABILITY = "target.cardinality.any_number"
+SELECTED_PLAYER_RESULT_CAPABILITY = "resolution.target_set.selected_player_results"
+SELECTED_PLAYER_RESULT_MECHANIC = "selected-player-result-set"
+SELECTED_PLAYER_RESULT_LAYOUTS = frozenset({
+    ("mill",), ("life",), ("lose_life",), ("choose_cards_apnap",),
+    ("destroy_all", "mill"), ("mill", "lose_life"), ("discard_whole_hands", "draw_each_player"),
+    ("discard_whole_hands", "draw_each_player", "draw"),
+})
 SELECTED_TARGET_COUNT_KIND = "selected_target_count"
 
 
@@ -94,6 +101,15 @@ def bind_any_number_target_schema(schema: Mapping[str, Any], maximum: int) -> di
     if spec.parameter != "any_number":
         return deepcopy(dict(schema))
     return bind_announced_target_schema(schema, maximum)
+
+
+def ordered_selected_players(value, apnap_order) -> tuple[str, ...]:
+    if not isinstance(value, (list, tuple)) or any(type(seat) is not str for seat in value):
+        raise TargetCardinalityError("Selected player results require a typed player list")
+    selected = set(value)
+    if len(selected) != len(value) or not selected.issubset(apnap_order):
+        raise TargetCardinalityError("Selected player results require distinct active players")
+    return tuple(seat for seat in apnap_order if seat in selected)
 
 
 def selected_target_count_descriptor() -> dict[str, Any]:

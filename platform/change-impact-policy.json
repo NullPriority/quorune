@@ -6500,6 +6500,7 @@
         "tests/fixtures/all-kind-counter-cards.json",
         "tests/fixtures/announced-target-cardinality-cards.json",
         "tests/fixtures/any-number-target-cards.json",
+        "tests/fixtures/selected-player-result-cards.json",
         "tests/fixtures/attached-prevention-cards.json",
         "tests/fixtures/colorless-nonland-target-cards.json",
         "tests/fixtures/counted-permanent-cost-cards.json",

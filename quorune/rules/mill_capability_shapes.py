@@ -93,7 +93,7 @@ def validate_half_mill_program_scope(program):
     while pending:
         value = pending.pop()
         if isinstance(value, Mapping):
-            if half_mill_payload_dependencies(value):
+            if value.get("players") != "$targets" and half_mill_payload_dependencies(value):
                 player = value.get("player")
                 if player == "$target.0" and not (modal or _player_target_schema_is_closed(schema)):
                     raise ValueError("Half-library Mill requires its closed player target")

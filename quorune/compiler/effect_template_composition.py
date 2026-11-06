@@ -199,8 +199,8 @@ def reviewed_effect_template_composition(
     from .target_characteristic_sets import target_characteristic_set_template
     targeted_set=target_characteristic_set_template(text)
     if targeted_set is not None:return targeted_set
-    from .any_number_target_sets import any_number_target_set_template
-    any_number = any_number_target_set_template(text)
+    from .any_number_target_sets import any_number_player_result_template, any_number_target_set_template
+    any_number = any_number_player_result_template(text, compile_independent=compile_atomic) or any_number_target_set_template(text)
     if any_number is not None:return any_number
     if allow_conditions:
         from .paid_mana_resolution_templates import paid_mana_resolution_template

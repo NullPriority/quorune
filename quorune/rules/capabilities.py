@@ -315,6 +315,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'spell-resolution-self-shuffle': ('zone.shuffle.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'any-number-target-set': ('target.cardinality.any_number',),
+    'selected-player-result-set': ('resolution.target_set.selected_player_results',),
     'quantified-counter-target-set': ('counter.producer.quantified_target_set',),
     'all-kind-counter-doubling': ('counter.producer.all_kind_doubling',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),

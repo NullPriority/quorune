@@ -44,6 +44,9 @@ def _library_payload_dependencies(value):
 
 
 def _affected_quantity_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...] | None:
+    if value.get("players") == "$targets":
+        from ..rules.any_number_target_shapes import selected_player_payload_dependencies
+        return selected_player_payload_dependencies(value)
     if (value.get("op") == "choose_cards_apnap" and value.get("zone") == "hand"
             and value.get("then") == "exile" and value.get("predicate") is not None):
         from ..rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies

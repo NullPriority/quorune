@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from ..whole_hand_discard_model import (
     WHOLE_HAND_DISCARD_OPERATION,WHOLE_HAND_DISCARD_CAPABILITY,DiscardWholeHandsIntent,
 )
+from ..target_cardinality import ordered_selected_players
 from .context import SemanticNodeError
 from .intents import IntentPlan,MoveObjectsSimultaneouslyIntent
 
@@ -29,10 +30,11 @@ class WholeHandDiscardHandler:
             players=context.query.apnap_order
         elif raw=='opponents':
             players=tuple(p for p in context.query.apnap_order if p!=context.actor)
-        elif isinstance(raw,(list,tuple)) and len(raw)==1 and type(raw[0]) is str:
-            players=(context.query.require_active_seat(raw[0]),)
         else:
-            raise SemanticNodeError('Whole-hand discard requires a represented player set')
+            try:
+                players=ordered_selected_players(raw,context.query.apnap_order)
+            except (TypeError,ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
         try:
             intent=DiscardWholeHandsIntent(actor=context.actor,players=players,reason=str(effect.get('reason') or context.default_reason),
                 replacement_selections=effect.get('_replacement_selections',()))

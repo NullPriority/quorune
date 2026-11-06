@@ -9,6 +9,7 @@ from ..drawing.model import (
     drawn_card_action_from_dict,
 )
 from ..fractional_quantity_model import HalfQuantitySpec
+from ..target_cardinality import ordered_selected_players
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import (
     BecomeMonarchIntent,
@@ -103,16 +104,20 @@ class MillHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
-        if set(effect) - {"op", "player", "scope", "count", "reason"}:
+        if set(effect) - {"op", "player", "players", "scope", "count", "reason"}:
             raise SemanticNodeError("Mill effects have a closed schema")
         if "scope" in effect and (
             effect["scope"] not in {"all_active_players","controller_opponents"} or "player" in effect
         ):
             raise SemanticNodeError("Mill recipient scope is malformed")
-        recipients=tuple(seat for seat in context.query.apnap_order
-            if effect.get('scope')!='controller_opponents' or seat!=context.actor)
-        if effect.get('scope')=='controller_opponents' and not recipients:
-            return IntentPlan(operation=self.operation,handler_id=self.handler_id,intents=(),result_shape='by_player')
+        recipients = tuple(seat for seat in context.query.apnap_order
+                           if effect.get("scope") != "controller_opponents" or seat != context.actor)
+        if "players" in effect:
+            if "scope" in effect or "player" in effect:
+                raise SemanticNodeError("Mill has conflicting recipient scopes")
+            recipients = _selected_players(effect, context)
+        if ("players" in effect or effect.get("scope") == "controller_opponents") and not recipients:
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(), result_shape="by_player")
         raw_count = effect.get("count", 1)
         try:
             count = HalfQuantitySpec.from_dict(raw_count) if isinstance(raw_count, Mapping) else _count(effect)
@@ -130,10 +135,17 @@ class MillHandler:
                     player=player,
                     count=count,
                     reason=_reason(effect, context),
-                    batch_players=recipients if "scope" in effect else (),
+                    batch_players=recipients if "scope" in effect or "players" in effect else (),
                 ),
             ),
         )
+
+
+def _selected_players(effect, context):
+    try:
+        return ordered_selected_players(effect["players"], context.query.apnap_order)
+    except (TypeError, ValueError) as exc:
+        raise SemanticNodeError(str(exc)) from exc
 
 
 @dataclass(frozen=True, slots=True)
@@ -152,6 +164,9 @@ class DrawEachPlayerHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        if "players" in effect and set(effect) - {"op", "players", "count", "private", "reason"}:
+            raise SemanticNodeError("Selected draw recipients conflict with another scope")
+        players = _selected_players(effect, context) if "players" in effect else context.query.apnap_order
         node = DrawEachPlayerNode(
             count=_count(effect),
             reason=_reason(effect, context),
@@ -166,7 +181,7 @@ class DrawEachPlayerHandler:
                     reason=node.reason,
                     private=True,
                 )
-                for seat in context.query.apnap_order
+                for seat in players
             ),
             result_shape="by_player",
         )

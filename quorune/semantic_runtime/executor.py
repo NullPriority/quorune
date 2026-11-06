@@ -810,6 +810,8 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         return None
 
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
+    if raw_effect.get("players") == "$targets" and effect.get("players") == []:
+        return None
     if effect.get("op") == "mill":
         from ..milling import event_mill_recipient_has_left
         if event_mill_recipient_has_left(host, raw_effect, effect):

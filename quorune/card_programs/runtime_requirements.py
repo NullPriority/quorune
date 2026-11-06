@@ -227,6 +227,13 @@ def _value_runtime_requirements(program):
     try:
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
         from ..fractional_quantity_model import HALF_MILL_CAPABILITY
+        from ..target_cardinality import SELECTED_PLAYER_RESULT_CAPABILITY
+        if SELECTED_PLAYER_RESULT_CAPABILITY in amounts:
+            from ..rules.any_number_target_shapes import selected_player_result_node_capabilities
+            if not selected_player_result_node_capabilities(
+                effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+            ):
+                raise ValueError("Selected player results require their closed any-number target program")
         if HALF_MILL_CAPABILITY in amounts:
             from ..rules.mill_capability_shapes import validate_half_mill_program_scope
             validate_half_mill_program_scope(program)

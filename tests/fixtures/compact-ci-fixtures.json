@@ -815,6 +815,7 @@
     "tests/fixtures/scoped-basic-type-addition-cards.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",
+    "tests/fixtures/selected-player-result-cards.json",
     "tests/fixtures/self-cast-restriction-cards.json",
     "tests/fixtures/self-exile-return-cards.json",
     "tests/fixtures/self-public-cost-cards.json",
