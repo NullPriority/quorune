@@ -2,7 +2,7 @@
 title: "Reusable rules piece matrix"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-matrix.json.gz"
-verified: "32562e656f9d892d385956336a45af0f904fc0292f7f8d438a46b86d671b3505"
+verified: "59b38683693610d39c6211d3ea88b02d8b01d4c29a5d8224c0fac532cdb24090"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -21,7 +21,7 @@ Counts official ruling presence by Oracle ID. Ruling prose is not yet behavioral
 - Cards indexed: 31,623
 - Material abilities classified: 60,031
 - Unclassified material spans: 0
-- Mapped pinned rules: 1,626 / 3,309
+- Mapped pinned rules: 1,627 / 3,309
 - Applicable piece pairs: 165,915
 - Covered piece pairs: 1,941
 
