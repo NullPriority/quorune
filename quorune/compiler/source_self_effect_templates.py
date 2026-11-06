@@ -24,6 +24,9 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     condition=None
     guard=re.fullmatch(r'if you cast it(?P<origin> from your hand)?, (?P<body>.+)',body.strip(),re.I) if event_phrase=='enters' else None
     if guard is not None:body=guard['body'];condition=source_entry_cast_condition(origin='hand' if guard['origin'] else None)
+    if event_phrase == 'enters':
+        from .suspect_templates import normalize_entering_source_suspect
+        body = normalize_entering_source_suspect(body)
     compiled=source_scalar_effect_amount_template(body,source_name=card_name,
         event={'enters':'permanent.enter','dies':'creature.dies','leaves the battlefield':'permanent.leave'}[event_phrase],
         compile_fixed=lambda text:effect_template(text,card_name=card_name)) or source_self_contextual_effect_template(

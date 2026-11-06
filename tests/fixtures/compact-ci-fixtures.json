@@ -884,6 +884,7 @@
     "tests/fixtures/subtype-composite-grant-cards.json",
     "tests/fixtures/subtype-union-condition-cards.json",
     "tests/fixtures/support-integration-retention-cards.json",
+    "tests/fixtures/suspect-cards.json",
     "tests/fixtures/tagged-partner-cards.json",
     "tests/fixtures/tap-controller-information-cards.json",
     "tests/fixtures/target-announcements.json",

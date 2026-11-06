@@ -21,6 +21,7 @@ from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
+from ..suspect_model import SuspectIntent
 from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
@@ -648,13 +649,13 @@ PlayerIntent = (
     BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
     | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
-    | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent
+    | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent
 )
 PLAYER_INTENT_TYPES = (
     BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
     DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
     TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent,
-    EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent,
+    EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent,
 )
 TapStateIntent = (
     SetPermanentTappedIntent
@@ -677,6 +678,9 @@ def _execute_player_intent(
     if isinstance(intent, EarthbendIntent):
         from ..earthbend import animate_earthbend_land
         return intent.actor, animate_earthbend_land(sink, intent)
+    if isinstance(intent, SuspectIntent):
+        from ..permanent_designations import apply_suspect_designation
+        return intent.actor, apply_suspect_designation(sink, intent)
     if isinstance(intent, FinishEarthbendIntent):
         from ..earthbend import finish_earthbend_land
         return intent.actor, finish_earthbend_land(sink, intent)

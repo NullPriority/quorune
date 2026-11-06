@@ -2206,7 +2206,8 @@ residuals. See
 boundary for two to four mandatory components. It partitions only top-level
 sentence, comma-then, and conjunction boundaries, requires every component to
 lower through an existing reviewed typed owner, flattens their effects in
-printed order, and permits at most one shared direct target group. The
+printed order, and permits at most one direct target slot. A slot can be
+required or allow up to one target. The
 corresponding capability shape revalidates every flattened component through
 the existing effect capability resolvers before admitting the program. The
 older exact two-sentence owner retains precedence for historical semantic
@@ -2242,6 +2243,12 @@ characteristics to the same announced incarnation. A counter replacement uses
 the controller at the time the counter would be placed. A final fixed stat
 rider can read that creature's current subtype. One effect that adds a subtype
 and grants keywords shares a timestamp across its type and ability layers.
+
+Suspect can use one announced creature, the entering source, or the current
+enchanted creature. The fixed removal action clears currently suspected
+creatures. The designation carries a timestamp on the permanent's current
+incarnation. Menace and the self blocking restriction use the ordinary layer
+six evaluator and can be removed while the designation persists.
 
 A fixed damage sentence can refer to the controller of a single preceding battlefield
 target after a closed destruction, exile, tap, counter placement, or temporary

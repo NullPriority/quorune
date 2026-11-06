@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..compiler.closed_effect_programs import has_one_closed_target_slot
 from .fixed_effect_clause_shapes import (
     closed_effect_component_capabilities,
 )
@@ -54,7 +55,7 @@ def closed_effect_program_node_capabilities(
     if target_schema is None:
         if target_effects:
             return ()
-    elif not target_effects or target_schema.get("count") != 1:
+    elif not target_effects or not has_one_closed_target_slot(target_schema):
         return ()
 
     component_mechanics = mechanics - {CLOSED_EFFECT_PROGRAM_MECHANIC}

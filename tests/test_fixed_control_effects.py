@@ -1405,6 +1405,7 @@ class LinkedTemporaryControlNativeTests(InheritedNativeFixture, unittest.TestCas
                     self.assertNotIn("haste", session.engine._combat_keywords(current))
                 self.replay(session, load=True)
 
+
     def test_actual_mark_of_mutiny_changes_counter_chooser_before_untapping(self):
         session = self.session(611608003)
         spell = self.add(session.engine, "Mark of Mutiny", zone="hand")
@@ -1477,3 +1478,175 @@ class LinkedTemporaryControlNativeTests(InheritedNativeFixture, unittest.TestCas
                     self.assertEqual(1, len({effect.timestamp for effect in layers if effect.source_id == recruiter.object_id}))
                     self.assertEqual({"4", "6"}, {effect.sublayer for effect in layers if effect.source_id == recruiter.object_id})
                 self.replay(session, load=True)
+
+class SuspectNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "suspect.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "ability-source-counter-cards.json",
+            fixtures / "fixed-evasion-grants.json",
+            fixtures / "suspect-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Suspect designation",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    def test_suspect_shape_and_production_fail_closed(self):
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from quorune.rules.suspect_shapes import suspect_node_capabilities
+        from quorune.suspect_model import SUSPECT_CAPABILITY, SUSPECT_MECHANIC, SUSPECT_OPERATION
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        source = self.db.lookup("Caught Red-Handed")
+        self.assertEqual("exact", compile_oracle_card(source, capability_registry=self.registry).status)
+        with patch("quorune.compiler.resolution_effect_templates.suspect_effect_template", return_value=None):
+            self.assertNotEqual("exact", compile_oracle_card(source, capability_registry=self.registry).status)
+        schema = {"zones": ["battlefield"], "categories": ["permanent"], "types_any": ["artifact"], "count": 1}
+        self.assertEqual((), suspect_node_capabilities(
+            effects=({"op": SUSPECT_OPERATION, "card": "$target.0"},),
+            target_schema=schema, mechanic_ids=(SUSPECT_MECHANIC, "cr-115-targets"),
+        ))
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        next(row for row in raw["capabilities"] if row["id"] == SUSPECT_CAPABILITY).update(
+            status="blocked", blockers=["test withdraws Suspect authority"],
+        )
+        registry = CapabilityRegistry(raw)
+        evidence = build_index(
+            registry_value=raw,
+            declaration_source=read_evidence_document(ROOT / "platform/capability-evidence-declarations.json"),
+            discovered_test_ids=set(discover_tests(ROOT).values()),
+        )
+        registry.mark_evidence_verified(validate_capability_evidence_index(evidence, registry=registry))
+        self.assertNotEqual("exact", compile_oracle_card(source, capability_registry=registry).status)
+
+    def test_actual_caught_keeps_suspicion_after_control_and_haste_expire(self):
+        session = self.session(70160001)
+        spell = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        bounce = self.add(session.engine, "Boomerang", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B", ref="suspect-first-island")
+        self.add(session.engine, "Island", seat="B", ref="suspect-second-island")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        target.tapped = True
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"C": 4, "R": 1})
+        self.checkpoint(session)
+        self.cast_for(session, "A", spell, [target.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[target.object_id]
+        self.assertEqual(("A", False), (current.controller, current.tapped))
+        self.assertTrue({"haste", "menace"}.issubset(session.engine._combat_keywords(current)))
+        designation = current.suspected_at
+        self.assertIsNotNone(designation)
+        self.assertIn('"suspected": true', json.dumps(session.packet("pilot:D", full=True)))
+        turn = session.state.turn_sequence
+        self.until(session, lambda game: game.state.turn_sequence != turn)
+        current = session.state.cards[target.object_id]
+        self.assertEqual(("B", designation), (current.controller, current.suspected_at))
+        self.assertIn("menace", session.engine._combat_keywords(current))
+        self.assertNotIn("haste", session.engine._combat_keywords(current))
+        incarnation = current.logical_object_id
+        self.cast_for(session, "B", bounce, [current.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[target.object_id]
+        self.assertEqual(("hand", None), (current.zone, current.suspected_at))
+        self.assertNotEqual(incarnation, current.logical_object_id)
+        self.replay(session, load=True)
+
+    def test_actual_suspect_block_offers_follow_effective_ability_loss(self):
+        for blanked in (False, True):
+            with self.subTest(blanked=blanked):
+                session = self.session(70160002 + int(blanked))
+                spell = self.add(session.engine, "Caught Red-Handed", seat="B", zone="hand")
+                frog = self.add(session.engine, "Turn to Frog", seat="B", zone="hand")
+                attacker = self.add(session.engine, "Generic Bound Body", ref="suspect-attacker")
+                attacker.acquired_control_turn_count = -1
+                target = self.add(session.engine, "Generic Bound Body", seat="B", ref="suspect-blocker")
+                ordinary = self.add(session.engine, "Generic Bound Body", seat="B", ref="ordinary-blocker")
+                for source in (spell, frog):
+                    self.assert_closed(session, source)
+                self.prepare(session)
+                self.until(session, lambda game: game.state.pending_decision.kind == "combat.attackers")
+                session.state.players["B"].mana_pool.update({"C": 5, "R": 1, "U": 1})
+                self.checkpoint(session)
+                self.attack(session, [(attacker, "B")])
+                self.cast_for(session, "B", spell, [target.ref], reserve={"C": 1, "U": 1})
+                self.assertIsNone(self.resolve(session))
+                designation = session.state.cards[target.object_id].suspected_at
+                if blanked:
+                    self.cast_for(session, "B", frog, [target.ref])
+                    self.assertIsNone(self.resolve(session))
+                current = session.state.cards[target.object_id]
+                self.assertIsNotNone(designation)
+                self.assertEqual(designation, current.suspected_at)
+                self.assertEqual(not blanked, "menace" in session.engine._combat_keywords(current))
+                self.until(session, lambda game: game.state.pending_decision.kind == "combat.blockers")
+                legal = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal_blocks"]
+                self.assertEqual([attacker.ref], legal[ordinary.ref])
+                self.assertEqual(blanked, attacker.ref in legal.get(target.ref, ()))
+                command = {"action_id": "block", "blocks": {target.ref: attacker.ref}}
+                before = authoritative_state_hash(session.state)
+                result = session.act("pilot:B", command)
+                self.assertEqual(blanked, result.ok, result.summary)
+                if not blanked:
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                self.replay(session, load=True)
+
+    def test_actual_person_of_interest_makes_the_token_after_the_source_leaves(self):
+        session = self.session(70160004)
+        source = self.add(session.engine, "Person of Interest", zone="hand")
+        bounce = self.add(session.engine, "Boomerang", seat="B", zone="hand")
+        for card in (source, bounce):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3, "R": 1})
+        session.state.players["B"].mana_pool["U"] = 2
+        self.checkpoint(session)
+        self.cast_for(session, "A", source)
+        self.resolve_top(session)
+        self.assertEqual(1, len(session.state.stack))
+        self.cast_for(session, "B", bounce, [source.ref])
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[source.object_id]
+        self.assertEqual(("hand", None), (current.zone, current.suspected_at))
+        token, = [card for card in session.state.cards.values() if card.zone == "battlefield" and card.is_token]
+        self.assertEqual(("A", "Detective Token", None), (token.controller, token.printed_name, token.suspected_at))
+        self.assertEqual({"detective"}, session.engine._effective_type_parts(token)[1])
+        self.assertEqual((2, 2), tuple(session.engine._numeric_stat(token.object_id, stat) for stat in ("power", "toughness")))
+        self.replay(session, load=True)
+
+    def test_actual_lammasu_gains_life_when_no_optional_target_is_announced(self):
+        session = self.session(70160005)
+        source = self.add(session.engine, "Absolving Lammasu", zone="hand")
+        caught = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        former_suspect = self.add(session.engine, "Generic Bound Body", ref="lammasu-former-suspect")
+        other = self.add(session.engine, "Generic Bound Body", seat="B")
+        removal = self.add(session.engine, "Murder", seat="B", zone="hand")
+        for card in (source, removal):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 10, "R": 1, "W": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "B": 2})
+        self.checkpoint(session)
+        self.cast_for(session, "A", caught, [former_suspect.ref], reserve={"W": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertIsNotNone(session.state.cards[former_suspect.object_id].suspected_at)
+        self.cast_for(session, "A", source)
+        self.assertIsNone(self.resolve(session))
+        self.assertIsNone(session.state.cards[former_suspect.object_id].suspected_at)
+        self.cast_for(session, "B", removal, [source.ref])
+        self.resolve_top(session)
+        self.target(session, "A", [])
+        life = session.state.players["A"].life
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(life + 3, session.state.players["A"].life)
+        self.assertIsNone(session.state.cards[other.object_id].suspected_at)
+        self.replay(session, load=True)

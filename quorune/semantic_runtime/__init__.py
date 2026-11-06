@@ -404,12 +404,14 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .emblem_creation import CreateCompiledEmblemHandler
     from .revealed_library_top import RevealEachLibraryTopHandler
     from .scheduled_turn_skip import ScheduledTurnSkipHandler
+    from .suspect_handler import SuspectHandler
     registry = SemanticHandlerRegistry(
         (
             CreateCompiledEmblemHandler(),
             DistributedTokenCreationHandler(),
             RevealEachLibraryTopHandler(),
             ScheduledTurnSkipHandler(),
+            SuspectHandler(),
             *EARTHBEND_HANDLERS,
             *GENERIC_HANDLERS,
             FixedLibraryShuffleHandler(),

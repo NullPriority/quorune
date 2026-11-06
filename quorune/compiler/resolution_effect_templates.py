@@ -16,6 +16,7 @@ from .endure_templates import fixed_endure_effect_template
 from .earthbend_templates import earthbend_effect_template
 from .blight_templates import fixed_blight_effect_template
 from .goad_templates import fixed_goad_effect_template
+from .suspect_templates import suspect_effect_template
 from .block_capacity_templates import temporary_block_capacity_template
 
 from typing import Any, Mapping, Sequence
@@ -231,6 +232,9 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    suspect = suspect_effect_template(text, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
+    if suspect is not None:
+        return suspect
     from .graveyard_return_choice_templates import graveyard_return_choice_template
     returned = graveyard_return_choice_template(text)
     if returned is not None:return returned

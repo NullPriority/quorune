@@ -280,6 +280,7 @@ def reset_card_after_zone_change(
     card.regeneration_shields = 0
     card.temporary_keywords.clear()
     card.goaded_by.clear()
+    card.suspected_at = None
     card.monstrous_value = None
     card.renowned = False
     card.class_level = None

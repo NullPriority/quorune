@@ -4151,6 +4151,7 @@
       "id": "fixed-scheduled-turn-skips",
       "patterns": [
         "quorune/compiler/scheduled_turn_skip_templates.py",
+        "quorune/rules/fixed_rule_action_coverage.py",
         "quorune/rules/scheduled_turn_skip_shapes.py",
         "quorune/turn_skip_model.py",
         "quorune/turn_skip_replacements.py",
@@ -4176,6 +4177,7 @@
         "quorune/earthbend.py",
         "quorune/earthbend_model.py",
         "quorune/rules/earthbend_shapes.py",
+        "quorune/rules/fixed_rule_action_coverage.py",
         "quorune/semantic_runtime/earthbend_handlers.py",
         "quorune/semantic_runtime/earthbend_intents.py",
         "quorune/zone_trigger_processing.py",
@@ -4189,6 +4191,28 @@
         "test_delayed_object_native",
         "test_mutate_cast_native",
         "test_zone_trigger_events"
+      ]
+    },
+    {
+      "id": "suspect-designation-and-effective-abilities",
+      "patterns": [
+        "quorune/suspect_model.py",
+        "quorune/compiler/suspect_templates.py",
+        "quorune/compiler/source_self_effect_templates.py",
+        "quorune/compiler/closed_effect_programs.py",
+        "quorune/rules/closed_effect_program_shapes.py",
+        "quorune/rules/fixed_rule_action_coverage.py",
+        "quorune/rules/suspect_shapes.py",
+        "quorune/semantic_runtime/suspect_handler.py",
+        "quorune/permanent_designations.py",
+        "tests/fixtures/suspect-cards.json"
+      ],
+      "test_modules": [
+        "test_fixed_control_effects",
+        "test_closed_effect_programs",
+        "test_card_program_trust",
+        "test_declare_blockers_rules",
+        "test_game_record_v3"
       ]
     },
     {

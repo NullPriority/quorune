@@ -15,6 +15,7 @@ from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .endure_shapes import fixed_endure_node_capabilities
 from .earthbend_shapes import earthbend_node_capabilities
+from .suspect_shapes import suspect_node_capabilities
 from .blight_shapes import fixed_blight_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
@@ -127,6 +128,7 @@ def effect_node_capabilities(
         fixed_connive_node_capabilities, fixed_goad_node_capabilities, exploit_instruction_node_capabilities,
         fixed_endure_node_capabilities,
         earthbend_node_capabilities,
+        suspect_node_capabilities,
         fixed_blight_node_capabilities,
         fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,

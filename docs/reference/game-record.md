@@ -640,6 +640,11 @@ item has no registered program key. Historical absence retains the recorded
 resolution behavior and provenance. Unknown versions, booleans, and manifest
 disagreements reject before replay.
 
+A suspected permanent stores `suspected_at` as its layer-six grant timestamp.
+Its battlefield incarnation retains the designation through control changes,
+phasing, and ability removal. The zone-change owner clears it when the
+permanent leaves. Checkpoints omit the field for objects without the designation.
+
 Current games pin `qualified_attack_facts_version: 1`. Declared-attack
 occurrences carry versioned public attacker characteristics sealed after
 declaration and before discovery. Pending triggers retain those facts across

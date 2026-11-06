@@ -175,6 +175,12 @@ class ClosedEffectProgramTemplate:
         )
 
 
+def has_one_closed_target_slot(schema: Mapping[str, Any]) -> bool:
+    if "up_to" in schema:
+        return "count" not in schema and type(schema["up_to"]) is int and schema["up_to"] == 1
+    return type(schema.get("count")) is int and schema["count"] == 1
+
+
 def closed_effect_program_template(
     text: str,
     *,
@@ -209,7 +215,7 @@ def closed_effect_program_template(
             if target_schema is not None
         )
         if len(targeted) > 1 or (
-            targeted and targeted[0].get("count") != 1
+            targeted and not has_one_closed_target_slot(targeted[0])
         ):
             continue
         return ClosedEffectProgramTemplate(

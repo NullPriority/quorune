@@ -7,6 +7,7 @@ from .control_capability_shapes import fixed_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .fixed_rule_action_coverage import FIXED_RULE_ACTION_CAPABILITIES
 from .destruction_regeneration_capability_shapes import regeneration_covered_mechanics as _regeneration_covered_mechanics
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
@@ -387,8 +388,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'variable-library-selection':('library.select.variable_controller',),
     'reveal-until-library-selection':('library.select.reveal_until_controller',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
-    'fixed-scheduled-turn-skip': ('turn.boundary.scheduled_skip',),
-    'earthbend-land': ('keyword_action.earthbend',),
+    **FIXED_RULE_ACTION_CAPABILITIES,
     'whole-hand-discard': ('zone.discard.whole_hand',),
     'whole-hand-discard-result': ('zone.discard.whole_hand_result',),
     'declared-cast-cost-fact': ('casting.additional_cost.declared_instance',),
@@ -571,8 +571,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-public-event-set-counter',
         'ascend',
         "fixed-extra-turn-after-current",
-        "fixed-scheduled-turn-skip",
-        "earthbend-land",
+        *FIXED_RULE_ACTION_CAPABILITIES,
         "declared-effect-amount",
         "cr-121-drawing-a-card",
         "cr-119-life",

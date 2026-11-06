@@ -410,6 +410,8 @@ class StateProjector:
             )
         if card.monstrous_value is not None:
             obj["monstrous"] = card.monstrous_value
+        if card.suspected_at is not None:
+            obj["suspected"] = True
         if card.renowned:
             obj["renowned"] = True
         if card.zone == 'battlefield' and not card.phased_out and getattr(self.state, 'soulbond_pairs', None):

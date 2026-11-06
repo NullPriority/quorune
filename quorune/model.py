@@ -384,6 +384,7 @@ class CardInstance:
     regeneration_shields: int = 0
     temporary_keywords: list[str] = field(default_factory=list)
     goaded_by: list[GoadDesignation] = field(default_factory=list)
+    suspected_at: int | None = None
     # CR 701.37b noncopiable permanent designation. ``None`` means the
     # current logical object has not become monstrous.  The recorded value
     # supports rules text that later refers to the N used for monstrosity.
@@ -471,6 +472,10 @@ class CardInstance:
             )
         if type(self.renowned) is not bool:
             raise ValueError("A renowned designation must be a boolean")
+        if self.suspected_at is not None and (
+            type(self.suspected_at) is not int or self.suspected_at < 0 or self.zone != "battlefield"
+        ):
+            raise ValueError("A suspected designation requires a battlefield timestamp")
         if self.class_level is not None and (
             type(self.class_level) is not int
             or self.class_level not in {2, 3}
@@ -527,6 +532,8 @@ class CardInstance:
         if self.monstrous_value is None:
             # Keep historical Game Record v3 card payloads byte-compatible.
             payload.pop("monstrous_value")
+        if self.suspected_at is None:
+            payload.pop("suspected_at")
         if not self.renowned:
             # Keep historical Game Record v3 card payloads byte-compatible.
             payload.pop("renowned")
