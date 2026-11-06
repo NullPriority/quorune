@@ -61541,7 +61541,7 @@
           "resolution-time CR 608.2b revalidation",
           "exact replay"
         ],
-        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, present or absent keywords, power, toughness, token status, fixed mana-value bound, controller relation, source exclusion, and represented combat relation identically at offer, command-validation, and resolution time. Closed mixed type/subtype disjunctions reuse the existing characteristic-form alternatives, with common controller and source-exclusion scope."
+        "summary": "Compile one closed direct-permanent target predicate and enforce its current effective types, subtypes, supertypes, colors, color cardinality, present or absent keywords, power, toughness, token status, fixed mana-value bound, controller relation, source exclusion, and represented combat relation identically at offer, command-validation, and resolution time. Closed mixed type/subtype disjunctions reuse the existing characteristic-form alternatives, with common controller and source-exclusion scope. Direct token targets keep token status independent of card type and reuse existing current controller, tap-state, and entry-time predicates."
       },
       "blockers": [],
       "dependencies": [
@@ -61598,7 +61598,10 @@
         "test_pride_of_the_road_requires_actual_max_speed_and_expires_its_grant",
         "test_fire_nation_engineer_uses_actual_attack_history_and_excludes_itself",
         "test_perilous_snare_keeps_entry_exile_and_max_speed_vehicle_activation",
-        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load"
+        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load",
+        "test_actual_kraul_offers_opposing_artifact_and_creature_tokens",
+        "test_actual_specimen_collector_copies_a_controlled_aura_token",
+        "test_actual_romana_uses_current_turn_token_and_revalidates_at_resolution"
       ],
       "multiplayer_tests": [
         "test_current_color_change_revalidates_the_original_target_without_mode_switch_or_refund",
@@ -61612,7 +61615,10 @@
         "test_actual_entry_grants_accept_noncreature_vehicles_and_keep_shared_scope",
         "test_seven_tail_entry_and_actual_death_each_counter_the_same_vehicle_once",
         "test_fire_nation_engineer_uses_actual_attack_history_and_excludes_itself",
-        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load"
+        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load",
+        "test_actual_kraul_offers_opposing_artifact_and_creature_tokens",
+        "test_actual_specimen_collector_copies_a_controlled_aura_token",
+        "test_actual_romana_uses_current_turn_token_and_revalidates_at_resolution"
       ],
       "negative_tests": [
         "test_compiler_conjoins_existing_colorless_and_excluded_type_fields",
@@ -61631,7 +61637,10 @@
         "test_mixed_target_grammar_retains_unowned_and_malformed_boundaries",
         "test_mixed_target_authority_withdrawals_are_specific_canonical_blocks",
         "test_control_and_keyword_subject_orders_share_one_target_contract",
-        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load"
+        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load",
+        "test_token_status_keeps_card_type_and_public_state_independent",
+        "test_actual_kraul_offers_opposing_artifact_and_creature_tokens",
+        "test_actual_romana_uses_current_turn_token_and_revalidates_at_resolution"
       ],
       "official_rules": [
         "105.2",
@@ -61647,7 +61656,9 @@
         "613.1f",
         "702.9",
         "205.3h",
-        "205.3i"
+        "205.3i",
+        "111.1",
+        "111.6"
       ],
       "positive_tests": [
         "test_closed_direct_target_grammar_compiles_typed_predicates",
@@ -61672,7 +61683,11 @@
         "test_mixed_domains_keep_card_types_and_subtypes_as_alternatives",
         "test_shared_direct_effect_lowering_keeps_source_spans_and_target_authority",
         "test_control_and_keyword_subject_orders_share_one_target_contract",
-        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load"
+        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load",
+        "test_token_status_keeps_card_type_and_public_state_independent",
+        "test_actual_kraul_offers_opposing_artifact_and_creature_tokens",
+        "test_actual_specimen_collector_copies_a_controlled_aura_token",
+        "test_actual_romana_uses_current_turn_token_and_revalidates_at_resolution"
       ],
       "privacy_tests": [
         "test_current_color_change_revalidates_the_original_target_without_mode_switch_or_refund",
@@ -61686,7 +61701,8 @@
         "test_actual_type_change_invalidates_both_branches_and_skips_roadside_draw",
         "test_suit_up_animates_the_noncreature_vehicle_and_draws_privately",
         "test_actual_cycling_trigger_targets_opposing_vehicle_before_private_draw",
-        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load"
+        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load",
+        "test_actual_kraul_offers_opposing_artifact_and_creature_tokens"
       ],
       "replay_tests": [
         "test_current_color_change_revalidates_the_original_target_without_mode_switch_or_refund",
@@ -61714,7 +61730,10 @@
         "test_pride_of_the_road_requires_actual_max_speed_and_expires_its_grant",
         "test_fire_nation_engineer_uses_actual_attack_history_and_excludes_itself",
         "test_perilous_snare_keeps_entry_exile_and_max_speed_vehicle_activation",
-        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load"
+        "test_actual_counter_trigger_requires_current_control_and_absent_flying_after_pending_load",
+        "test_actual_kraul_offers_opposing_artifact_and_creature_tokens",
+        "test_actual_specimen_collector_copies_a_controlled_aura_token",
+        "test_actual_romana_uses_current_turn_token_and_revalidates_at_resolution"
       ],
       "required_evidence": [
         "positive",
@@ -61730,7 +61749,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 10
+      "version": 11
     },
     {
       "applicability": {
@@ -80547,7 +80566,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 744,
+  "registry_version": 745,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

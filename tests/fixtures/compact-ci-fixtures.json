@@ -520,6 +520,7 @@
     "tests/fixtures/designation-prevention-cards.json",
     "tests/fixtures/devoid-characteristics-cards.json",
     "tests/fixtures/devour-cards.json",
+    "tests/fixtures/direct-token-target-cards.json",
     "tests/fixtures/discard-result-cards.json",
     "tests/fixtures/discover-cards.json",
     "tests/fixtures/disjoint-negative-keyword-cards.json",

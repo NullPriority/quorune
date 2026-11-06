@@ -12199,6 +12199,20 @@
       ]
     },
     {
+      "id": "direct-token-target-contract",
+      "patterns": [
+        "quorune/compiler/direct_target.py",
+        "tests/fixtures/direct-token-target-cards.json",
+        "tests/test_fixed_direct_target_predicates.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_direct_target_predicates",
+        "test_fixed_token_production",
+        "test_token_copy_values"
+      ]
+    },
+    {
       "id": "copied-aura-token-entry",
       "patterns": [
         "quorune/aura/decisions.py",

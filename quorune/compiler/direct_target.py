@@ -190,14 +190,14 @@ def _validate_public_state_predicate(
         )
     )
     creature_domain = spec.types_any == ("creature",) or spec.types_all == ("creature",)
-    invalid_creature_state = (
+    invalid_tap_or_entry_state = (
         state.entered_this_turn or state.tapped is not None
-    ) and not creature_domain
+    ) and not (creature_domain or spec.token is True)
     invalid_counter_state = (
         (state.counter_name is not None or state.minimum_total_counter_count is not None)
         and spec.types_any not in {(), ("creature",)}
     )
-    if state_kinds != 1 or invalid_creature_state or invalid_counter_state:
+    if state_kinds != 1 or invalid_tap_or_entry_state or invalid_counter_state:
         raise ValueError("Direct permanent public-state predicate is unsupported")
 
 
@@ -348,8 +348,13 @@ def _closed_direct_characteristic_fields(
             "types_any": ("creature",),
             "subtypes_none": _OUTLAW_SUBTYPES,
         }
-    if phrase in {"creature token", "token creature"}:
+    if phrase == "token":
+        return {"token": True}
+    if phrase == "token creature":
         return {"types_any": ("creature",), "token": True}
+    token_type = phrase.removesuffix(" token")
+    if token_type != phrase and token_type in _DIRECT_TYPE_ANY_VALUES:
+        return {"types_any": (token_type,), "token": True}
 
     keyword_fields: dict[str, tuple[str, ...]] = {}
     keyword_match = re.fullmatch(
@@ -639,13 +644,8 @@ def _validate_direct_color_predicates(
 def _validate_direct_target_flags(
     spec: "DirectPermanentTargetSpec",
 ) -> None:
-    if spec.token is not None and (
-        spec.token is not True
-        or "creature" not in _positive_direct_types(spec)
-    ):
-        raise ValueError(
-            "Direct permanent token predicates require a creature target"
-        )
+    if spec.token is not None and spec.token is not True:
+        raise ValueError("Direct permanent token predicates require positive token status")
     if spec.controller_relation not in {"any", "you", "opponent"}:
         raise ValueError("Direct permanent target controller relation is unsupported")
     if spec.controller_seat is not None and (

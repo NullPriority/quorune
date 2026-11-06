@@ -57,6 +57,11 @@ to another object's name. Without a reference match, the existing printed and
 effective name query retains ambiguity checks. Reference lookup does not
 evaluate unrelated objects' continuous characteristics or keep a state cache.
 
+A direct token target checks token status independently of card type. A printed
+creature or artifact qualifier adds that type test. Controller, tapped status,
+and entry during the current turn use the same public predicates at selection
+and resolution.
+
 Target snapshots retain the selected object's identity and zone-change counter.
 During resolution, `semantic_runtime/direct_target_fields.py` checks that
 identity for scalar mutation recipients before `semantic_runtime/values.py`

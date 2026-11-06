@@ -56,6 +56,27 @@ def record(
 
 
 class FixedDirectTargetCompilerTests(unittest.TestCase):
+    def test_token_status_keeps_card_type_and_public_state_independent(self):
+        cases = (
+            ("target token you control", (), "you", False),
+            ("target artifact token", ("artifact",), "any", False),
+            ("target creature token", ("creature",), "any", False),
+            ("target token an opponent controls that entered this turn", (), "opponent", True),
+        )
+        for text, types, controller, entered_this_turn in cases:
+            with self.subTest(text=text):
+                spec = direct_permanent_target_spec(text)
+                self.assertIsNotNone(spec)
+                self.assertIs(spec.token, True)
+                self.assertEqual(types, spec.types_any)
+                self.assertEqual(controller, spec.controller_relation)
+                self.assertEqual(entered_this_turn, bool(spec.state_predicate and spec.state_predicate.entered_this_turn))
+                self.assertEqual(spec, DirectPermanentTargetSpec.from_target_schema(spec.to_target_schema()))
+        self.assertIsNone(direct_permanent_target_spec("target token created by an opponent"))
+        self.assertIsNone(direct_permanent_target_spec("target nontoken token"))
+        with self.assertRaises(ValueError):
+            DirectPermanentTargetSpec(token=1)
+
     def test_control_and_keyword_subject_orders_share_one_target_contract(self):
         for control in ('you control','an opponent controls',"you don't control"):
             for quality in ('with flying','without flying','with defender'):
@@ -327,6 +348,7 @@ class FixedDirectTargetCompilerTests(unittest.TestCase):
     def test_shared_parser_mutation_demotes_each_effect_owner(self):
         cases = (
             "Destroy target nonlegendary creature.",
+            "Destroy target token an opponent controls.",
             "Exile target monocolored permanent.",
             "{1}, {T}: Tap target nonenchantment creature.",
         )
@@ -738,3 +760,154 @@ class NoncreatureSubtypeTargetRuntimeTests(unittest.TestCase):
         with patch.object(direct_target,'DIRECT_NONCREATURE_SUBTYPES',frozenset({'forest','gate','vehicle'})):
             with self.assertRaises(AssertionError):
                 self.test_original_acid_web_spider_targets_only_current_equipment_then_optional_destruction_and_replay()
+
+
+class DirectTokenTargetRuntimeTests(unittest.TestCase):
+    from test_mixed_permanent_targets import MixedPermanentTargetRuntimeTests as _Witnesses
+
+    register_fixture_cards_on_add = True
+    session = _Witnesses.session
+    add = _Witnesses.add
+    prepare = _Witnesses.prepare
+    checkpoint = _Witnesses.checkpoint
+    resolve = _Witnesses.resolve
+    replay = _Witnesses.replay
+    resume = _Witnesses.resume
+    priority = _Witnesses.priority
+    actions = _Witnesses.actions
+    binding = _Witnesses.binding
+    reject = _Witnesses.reject
+    pay_cast = _Witnesses.pay_cast
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "direct-token-targets.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "direct-token-target-cards.json",
+            "copied-aura-token-entry-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Direct token targets", [DeckEntry("Generic Bound Commander", 1, "commander"),
+                                  DeckEntry("Generic Bound Plains", 20)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def _choose(self, session, **fields):
+        result = session.act("pilot:A", {"action_id": "choose", **fields})
+        self.assertTrue(result.ok, result.summary)
+
+    def _trigger_targets(self, session):
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        return session.packet("pilot:A", full=True)["decision"]["ctx"]["target_schema"]["legal_refs"]
+
+    def test_actual_kraul_offers_opposing_artifact_and_creature_tokens(self):
+        session = self.session(745101)
+        engine = session.engine
+        source = self.add(engine, "Kraul Whipcracker", zone="hand")
+        nontoken = self.add(engine, "Generic Bound Body", seat="B")
+        own, = engine.create_token("A", name="Clue")
+        opposing, = engine.create_token("B", name="Clue")
+        creature, = engine.create_token("C", name="Goblin", characteristics={
+            "type_line": "Token Creature — Goblin", "power": "1", "toughness": "1", "colors": ["R"],
+        })
+        victim = engine._resolve_object("B", opposing, zones={"battlefield"})
+        private = session.state.cards[session.state.players["D"].zones["hand"][0]]
+        self.prepare(session, mana={"B": 1, "G": 1})
+        self.checkpoint(session)
+        self.pay_cast(session, source, payment={"B": 1, "G": 1})
+        self.assertEqual({opposing, creature}, set(self._trigger_targets(session)))
+        self.assertIsNone(session.packet("pilot:C", full=True)["decision"])
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        for ref in (own, nontoken.ref):
+            self.reject(session, {"action_id": "choose", "targets": [ref]}, seat="A")
+        self.reject(session, {"action_id": "choose", "targets": [opposing]}, seat="B")
+        session = self.resume(session)
+        self._choose(session, targets=[opposing])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("outside", session.state.cards[victim.object_id].zone)
+        self.assertTrue(session.engine._resolve_object("A", own, zones={"battlefield"}).is_token)
+        self.assertTrue(session.engine._resolve_object("C", creature, zones={"battlefield"}).is_token)
+        self.replay(session, load=True)
+
+    def test_actual_specimen_collector_copies_a_controlled_aura_token(self):
+        session = self.session(745102)
+        engine = session.engine
+        collector = self.add(engine, "Specimen Collector")
+        rites = self.add(engine, "Village Rites", zone="hand")
+        aura = self.add(engine, "Mind Control", zone="hand")
+        original_host = self.add(engine, "Generic Bound Body", seat="B", ref="original-aura-token-host")
+        new_host = self.add(engine, "Generic Bound Body", seat="C", ref="new-aura-token-host")
+        own_host = self.add(engine, "Generic Bound Body", ref="ordinary-aura-host")
+        engine.move_card(aura.object_id, "battlefield", aura_target_ref=own_host.ref)
+        ref, = engine.create_token("B", name="", copy_of=aura.ref, aura_target_ref=original_host.ref)
+        original = engine._resolve_object("B", ref, zones={"battlefield"})
+        engine.change_control(original.object_id, "A", reason="fixture custody")
+        self.assertEqual(("B", "A"), (original.owner, original.controller))
+        opposing, = engine.create_token("C", name="Clue")
+
+        self.assertTrue(self.binding(session, collector)["strict_capability_ready"])
+        self.prepare(session, mana={"B": 1})
+        self.checkpoint(session)
+        self.pay_cast(session, rites, payment={"B": 1}, sacrifice_cards=[collector.ref])
+        self.assertEqual("graveyard", session.state.cards[collector.object_id].zone)
+        self.assertEqual([ref], self._trigger_targets(session))
+        for wrong in (aura.ref, opposing):
+            self.reject(session, {"action_id": "choose", "targets": [wrong]}, seat="A")
+        self._choose(session, targets=[ref])
+        self.assertEqual("aura.entry", self.resolve(session).kind)
+        self.assertEqual([ref], session.state.stack[-1].targets)
+        self.assertEqual(2, sum(card.is_token for card in session.state.cards.values()))
+        session = self.resume(session)
+        self._choose(session, aura_target=new_host.ref)
+        self.assertIsNone(self.resolve(session))
+        copies = [card for card in session.state.cards.values()
+                  if card.is_token and session.engine.display_name(card.object_id) == "Mind Control"]
+        self.assertEqual(2, len(copies))
+        copied, = [card for card in copies if card.object_id != original.object_id]
+        self.assertEqual(("A", "A", new_host.object_id), (copied.owner, copied.controller, copied.attached_to))
+        self.assertEqual(original_host.object_id, session.state.cards[original.object_id].attached_to)
+        self.assertEqual("A", session.state.cards[new_host.object_id].controller)
+        self.replay(session, load=True)
+
+    def test_actual_romana_uses_current_turn_token_and_revalidates_at_resolution(self):
+        from test_phasing import PhasingRuntimeTests
+
+        session = self.session(745103)
+        engine = session.engine
+        source = self.add(engine, "Romana II")
+        bounce = self.add(engine, "Disperse", zone="hand")
+        older, = engine.create_token("B", name="Clue")
+        PhasingRuntimeTests._stage_end_step(self, session, "D")
+        PhasingRuntimeTests._pass_end_step(self, session, "A")
+        fresh, = engine.create_token("B", name="Clue")
+        target = engine._resolve_object("B", fresh, zones={"battlefield"})
+        target.counters["charge"] = 1
+        self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+        self.prepare(session, mana={"C": 2, "U": 1})
+        self.checkpoint(session)
+        action, = [row for row in self.actions(session) if row["id"].startswith(f"activate:{source.ref}:")]
+        self.assertEqual([fresh], action["target_schema"]["legal_refs"])
+        command = {"action_id": action["id"], "targets": [fresh], "pay": "manual", "payment": {"C": 1}}
+        self.reject(session, {**command, "targets": [older]}, seat="A")
+        activated = session.act("pilot:A", command)
+        self.assertTrue(activated.ok, activated.summary)
+        valid = self.resume(session)
+        self.assertIsNone(self.resolve(valid))
+        copied, = [card for card in valid.state.cards.values() if card.is_token and card.owner == "A"]
+        self.assertEqual("Clue", valid.engine.display_name(copied.object_id))
+        self.assertTrue(copied.tapped)
+        self.assertEqual({}, copied.counters)
+        self.replay(valid, load=True)
+
+        self.pay_cast(session, bounce, [fresh], payment={"C": 1, "U": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("outside", session.state.cards[target.object_id].zone)
+        self.assertFalse(any(card.is_token and card.owner == "A" for card in session.state.cards.values()))
+        self.replay(session, load=True)
