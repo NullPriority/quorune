@@ -33,6 +33,12 @@ from ..fixed_token_production import (
     FIXED_DELAYED_TOKEN_CAPABILITY_ID,
     FIXED_TOKEN_COPY_CAPABILITY_ID,
     FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID,
+    FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_OPERATION,
+    FixedTokenCreatorScope,
+    fixed_token_creator_scope,
+    fixed_token_effect_shape_is_closed,
     FixedTokenProductionError,
     INVESTIGATE_CAPABILITY_ID,
     INVESTIGATE_MECHANIC_ID,
@@ -93,6 +99,8 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
     Copy recipes keep their separate owner. Legacy token references without an
     explicit definition retain their existing compatibility path.
     """
+    if isinstance(value, Mapping) and value.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
+        return distributed_token_creation_payload_dependencies(value)
     targeted = (
         isinstance(value, Mapping)
         and value.get("op") == "create_token"
@@ -402,35 +410,10 @@ def _fixed_creature_effect_closure(
     return tuple(sorted(capabilities)), mechanics
 
 
-def _fixed_token_effect_shape_is_closed(
-    effect: Mapping[str, Any],
-) -> bool:
-    expected_fields = {
-        "op",
-        "controller",
-        "name",
-        "quantity",
-        "characteristics",
-    }
-    if "tapped" in effect:
-        expected_fields.add("tapped")
-    if set(effect) != expected_fields:
-        return False
-    if (
-        effect.get("op") != "create_token"
-        or effect.get("controller") != "$controller"
-    ):
-        return False
-    quantity = effect.get("quantity")
-    if type(quantity) is not int or quantity <= 0:
-        return False
-    return "tapped" not in effect or effect.get("tapped") is True
-
-
 def _fixed_token_effect_closure(
     effect: Mapping[str, Any],
 ) -> tuple[tuple[str, ...], set[str]] | None:
-    if not _fixed_token_effect_shape_is_closed(effect):
+    if not fixed_token_effect_shape_is_closed(effect):
         return None
     predefined = _fixed_predefined_effect_is_closed(effect)
     if predefined is not None:
@@ -589,6 +572,45 @@ def _fixed_delayed_token_capabilities(
     )
 
 
+def _distributed_token_creation_closure(
+    effect: Mapping[str, Any],
+) -> tuple[FixedTokenCreatorScope, tuple[str, ...], set[str]]:
+    scope = fixed_token_creator_scope(effect)
+    targeted = scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT
+    if effect["controller"] != "$controller" or targeted and effect["target"] != "$target.0":
+        raise FixedTokenProductionError("Distributed token creation requires bound creators")
+    child = _fixed_token_effect_closure(effect["token"])
+    if child is None:
+        raise FixedTokenProductionError("Distributed token creation requires one closed token definition")
+    child_dependencies, mechanics = child
+    dependencies = tuple(dict.fromkeys((
+        FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID, *child_dependencies,
+        *(("target.revalidate_resolution",) if targeted else ()),
+    )))
+    return scope, dependencies, {*mechanics, FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID}
+
+
+def distributed_token_creation_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    return _distributed_token_creation_closure(effect)[1]
+
+
+def _fixed_distributed_token_node_capabilities(
+    effect: Mapping[str, Any],
+    target_schema: Mapping[str, Any] | None,
+    mechanics: set[str],
+) -> tuple[str, ...]:
+    try:
+        scope, dependencies, expected_mechanics = _distributed_token_creation_closure(effect)
+    except (ValueError, TypeError, KeyError):
+        return ()
+    targeted = scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT
+    if target_schema != (fixed_token_player_target_schema("opponent") if targeted else None):
+        return ()
+    if targeted and "cr-115-targets" not in mechanics:
+        return ()
+    return dependencies if _token_specific_mechanics(mechanics) == expected_mechanics else ()
+
+
 def _fixed_token_definition_node_capabilities(
     effect: Mapping[str, Any],
     target_schema: Mapping[str, Any] | None,
@@ -705,6 +727,8 @@ def fixed_token_creation_node_capabilities(
         )
     if effect.get("op") == "create_token":
         return _fixed_token_definition_node_capabilities(effect, target_schema, mechanics)
+    if effect.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
+        return _fixed_distributed_token_node_capabilities(effect, target_schema, mechanics)
     if (
         target_schema is not None
         or set(effect) != {"op", "controller", "tokens"}
@@ -770,6 +794,8 @@ def fixed_token_creation_covered_mechanics(
         "combat.declaration.typed_components",
     }.issubset(capability_ids):
         covered.add("fixed-token-declaration-fragment")
+    if FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID in capability_ids:
+        covered.add(FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID)
     if INVESTIGATE_CAPABILITY_ID in capability_ids:
         covered.update(
             {
@@ -818,6 +844,12 @@ def token_creation_component_mechanics(effects, parent_mechanics):
     mechanics = {'cr-111-tokens', *(str(keyword).casefold() for keyword in keywords if isinstance(keyword, str))}
     if effect.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
         return mechanics | {INVESTIGATE_MECHANIC_ID, FIXED_TOKEN_PRODUCTION_MECHANIC_ID}
+    if effect.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
+        try:
+            scope, _dependencies, owned = _distributed_token_creation_closure(effect)
+        except (TypeError, ValueError, KeyError):
+            return set()
+        return owned | ({"cr-115-targets"} if scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT else set())
     if len(effects) == 1 and ('copy_spec' in effect or effect.get('op') == 'populate'):
         return parent_mechanics
     if "target" in effect and "cr-115-targets" in parent_mechanics:

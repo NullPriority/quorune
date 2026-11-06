@@ -224,6 +224,27 @@ class TokenCreationReplacementResolution:
         )
 
 
+def token_creation_replacement_event(
+    *,
+    event_id: str,
+    controller: str,
+    tokens: Sequence[Mapping[str, Any]],
+    created_types: Sequence[str],
+    created_subtypes: Sequence[str],
+) -> ReplaceableEvent:
+    return ReplaceableEvent(
+        event_id=event_id,
+        kind="token.create",
+        affected_player=controller,
+        payload={
+            "event_controller": controller,
+            "created_types": sorted(set(created_types)),
+            "created_subtypes": sorted(set(created_subtypes)),
+            "tokens": [dict(token) for token in tokens],
+        },
+    )
+
+
 def resolve_token_creation_replacements(
     *,
     event_id: str,
@@ -236,16 +257,9 @@ def resolve_token_creation_replacements(
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     require_all_selections: bool = True,
 ) -> TokenCreationReplacementResolution:
-    event = ReplaceableEvent(
-        event_id=event_id,
-        kind="token.create",
-        affected_player=controller,
-        payload={
-            "event_controller": controller,
-            "created_types": sorted(set(created_types)),
-            "created_subtypes": sorted(set(created_subtypes)),
-            "tokens": [dict(token) for token in tokens],
-        },
+    event = token_creation_replacement_event(
+        event_id=event_id, controller=controller, tokens=tokens,
+        created_types=created_types, created_subtypes=created_subtypes,
     )
     progress = advance_replacement_batch(
         ReplacementEventBatch(

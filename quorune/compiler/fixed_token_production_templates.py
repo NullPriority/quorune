@@ -9,6 +9,9 @@ from ..ability_fragments import ability_fragment_to_dict
 from ..declaration_restrictions import parse_declaration_restriction_line
 from ..fixed_token_production import (
     FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_OPERATION,
+    FixedTokenCreatorScope,
     FixedInvestigateSpec,
     FixedTokenCreationTemplate,
     fixed_token_player_target_schema,
@@ -242,6 +245,44 @@ def _fixed_declaration_token_template(
     )
 
 
+def _fixed_distributed_creator_template(
+    normalized: str,
+    *,
+    compile_inner: Callable[[str], FixedTokenCreationTemplate | None],
+) -> FixedTokenCreationTemplate | None:
+    match = re.fullmatch(
+        r"(?P<creators>Each player|Each opponent|You and target opponent each) creates? (?P<body>.+)",
+        normalized, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    scope = {
+        "each player": FixedTokenCreatorScope.EACH_PLAYER,
+        "each opponent": FixedTokenCreatorScope.EACH_OPPONENT,
+        "you and target opponent each": FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT,
+    }[match["creators"].casefold()]
+    token = compile_inner(f"Create {match['body']}")
+    if (token is None or token.target_schema is not None or token.effect.get("op") != "create_token"
+            or "copy_of" in token.effect or "copy_spec" in token.effect):
+        return None
+    targeted = scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT
+    return FixedTokenCreationTemplate(
+        template_id=f"create-fixed-distributed-token-{scope.value}-v1",
+        effect={
+            "op": FIXED_DISTRIBUTED_TOKEN_OPERATION,
+            "scope": scope.value,
+            "controller": "$controller",
+            "token": dict(token.effect),
+            **({"target": "$target.0"} if targeted else {}),
+        },
+        target_schema=fixed_token_player_target_schema("opponent") if targeted else None,
+        mechanics=tuple(dict.fromkeys((
+            *token.mechanics, FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID,
+            *(("cr-115-targets",) if targeted else ()),
+        ))),
+    )
+
+
 def _fixed_targeted_creator_template(
     normalized: str,
     *,
@@ -369,6 +410,7 @@ def extended_fixed_token_creation_effect_template(
         _fixed_delayed_token_template,
         _fixed_declaration_token_template,
         _fixed_named_token_template,
+        _fixed_distributed_creator_template,
         _fixed_targeted_creator_template,
     ):
         compiled = compiler(normalized, compile_inner=compile_inner)

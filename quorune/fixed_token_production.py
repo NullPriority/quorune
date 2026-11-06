@@ -3,10 +3,14 @@ from __future__ import annotations
 """Closed descriptors shared by fixed token-producing Oracle grammar."""
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, Mapping
 
 
 FIXED_TOKEN_PRODUCTION_MECHANIC_ID = "fixed-token-production"
+FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID = "token.creation.fixed_distributed"
+FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID = "fixed-distributed-token-creation"
+FIXED_DISTRIBUTED_TOKEN_OPERATION = "create_distributed_tokens"
 INVESTIGATE_CAPABILITY_ID = "keyword_action.investigate.fixed"
 INVESTIGATE_MECHANIC_ID = "investigate"
 SEQUENTIAL_INVESTIGATE_OPERATION = "investigate_sequential"
@@ -21,6 +25,50 @@ TOKEN_LITERAL_NAME_VERSION_FIELD = "literal_token_name_version"
 
 class FixedTokenProductionError(ValueError):
     """A fixed token-production descriptor exceeds its closed grammar."""
+
+
+class FixedTokenCreatorScope(str, Enum):
+    EACH_PLAYER = "each_player"
+    EACH_OPPONENT = "each_opponent"
+    CONTROLLER_AND_TARGET_OPPONENT = "controller_and_target_opponent"
+
+
+def fixed_token_creator_scope(effect: Mapping[str, Any]) -> FixedTokenCreatorScope:
+    scope = FixedTokenCreatorScope(effect.get("scope"))
+    fields = {"op", "scope", "controller", "token"}
+    if scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT:
+        fields.add("target")
+    if (set(effect) != fields or effect["op"] != FIXED_DISTRIBUTED_TOKEN_OPERATION
+            or not isinstance(effect["token"], Mapping)):
+        raise FixedTokenProductionError("Distributed token creation has a closed effect shape")
+    return scope
+
+
+def fixed_token_effect_shape_is_closed(
+    effect: Mapping[str, Any],
+) -> bool:
+    expected_fields = {
+        "op",
+        "controller",
+        "name",
+        "quantity",
+        "characteristics",
+    }
+    if "tapped" in effect:
+        expected_fields.add("tapped")
+    if set(effect) != expected_fields:
+        return False
+    if (
+        effect.get("op") != "create_token"
+        or effect.get("controller") != "$controller"
+    ):
+        return False
+    if type(effect["name"]) is not str or not effect["name"] or not isinstance(effect["characteristics"], Mapping):
+        return False
+    quantity = effect.get("quantity")
+    if type(quantity) is not int or quantity <= 0:
+        return False
+    return "tapped" not in effect or effect.get("tapped") is True
 
 
 @dataclass(frozen=True, slots=True)

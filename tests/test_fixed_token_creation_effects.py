@@ -321,6 +321,58 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
                     capability_registry=self.capabilities, capability_profile="commander_review")
                 self.assertNotEqual("exact", ir.status)
 
+    def test_distributed_token_definition_requires_exact_creator_scope(self):
+        from quorune.fixed_token_production import FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID
+        from quorune.rules.token_creation_capability_shapes import distributed_token_creation_payload_dependencies
+
+        forms = (
+            ("Each player creates a Food token.", "each_player", False),
+            ("Each opponent creates a 1/1 white Human creature token.", "each_opponent", False),
+            ("You and target opponent each create a tapped Powerstone token.",
+             "controller_and_target_opponent", True),
+        )
+        for index, (text, scope, targeted) in enumerate(forms):
+            with self.subTest(text=text):
+                card = token_record("Distributed Token Fixture", text, 748200 + index)
+                ir = compile_oracle_card(card, capability_registry=self.capabilities, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                effect, = node.effects
+                self.assertEqual(("create_distributed_tokens", scope), (effect["op"], effect["scope"]))
+                self.assertEqual("$controller", effect["token"]["controller"])
+                self.assertEqual(targeted, node.target_schema is not None)
+                if targeted:
+                    self.assertEqual("opponent", node.target_schema["player_relation"])
+                    self.assertEqual("$target.0", effect["target"])
+                    self.assertIs(effect["token"]["tapped"], True)
+                self.assertIn(FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID, node.capability_dependencies)
+                for bad in ({**effect, "scope": "arbitrary_seats"}, {**effect, "creator_ids": ["A"]}):
+                    with self.assertRaises(ValueError):
+                        distributed_token_creation_payload_dependencies(bad)
+
+        for text in (
+            "Each player creates X Food tokens.",
+            "You and an opponent of your choice each create a Food token.",
+            "Each player creates a token that's a copy of target creature.",
+        ):
+            card = token_record("Open Distributed Token Fixture", text, 748209)
+            ir = compile_oracle_card(card, capability_registry=self.capabilities, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)
+        from quorune.rules.capabilities import CapabilityRegistry
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        dependency = next(row for row in raw["capabilities"] if row["id"] == FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID)
+        dependency.update(status="blocked", blockers=["focused distributed token withdrawal"])
+        withdrawn = CapabilityRegistry(raw)
+        withdrawn.mark_evidence_verified("0" * 64)
+        card = token_record("Withdrawn Token Fixture", forms[0][0], 748211)
+        ir = compile_oracle_card(card, capability_registry=withdrawn, capability_profile="commander_review")
+        self.assertNotEqual("exact", ir.status)
+        with patch("quorune.compiler.fixed_token_production_templates._fixed_distributed_creator_template", return_value=None):
+            ir = compile_oracle_card(token_record("Mutated Token Fixture", forms[0][0], 748210),
+                                     capability_registry=self.capabilities, capability_profile="commander_review")
+            self.assertNotEqual("exact", ir.status)
+
     def test_fixed_token_creation_compiles_shared_spell_trigger_and_activation_grammar(
         self,
     ):
@@ -521,7 +573,7 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
         self.assertIsNotNone(implicit)
         self.assertEqual(implicit, fixed_token_creation_effect_template("you create a Mutagen token."))
         for text in (
-            "Each opponent creates a Treasure token.",
+            "Each opponent creates a Treasure token for each artifact they control.",
             "Another target player creates a Treasure token.",
             "Target opponent creates X Treasure tokens.",
             "Target player creates a token that's a copy of target creature you control.",
@@ -2935,4 +2987,162 @@ class LiveDefinedTokenRuntimeTests(unittest.TestCase):
         self.assertEqual(2, len(self._tokens(session)))
         for token in self._tokens(session):
             self.assertEqual((3, 3), self._stats(session, token))
+        self.replay(session, load=True)
+
+
+class DistributedTokenCreationRuntimeTests(unittest.TestCase):
+    from test_fixed_direct_target_predicates import DirectTokenTargetRuntimeTests as _Witnesses
+
+    register_fixture_cards_on_add = True
+    session = _Witnesses.session
+    add = _Witnesses.add
+    prepare = _Witnesses.prepare
+    checkpoint = _Witnesses.checkpoint
+    resolve = _Witnesses.resolve
+    replay = _Witnesses.replay
+    resume = _Witnesses.resume
+    priority = _Witnesses.priority
+    actions = _Witnesses.actions
+    binding = _Witnesses.binding
+    reject = _Witnesses.reject
+    pay_cast = _Witnesses.pay_cast
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "distributed-tokens.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "fixed-distributed-token-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Distributed token creation",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 20)],
+            ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def _tokens(self, session):
+        return [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+
+    def test_actual_all_player_food_resolves_creator_choices_before_simultaneous_entry(self):
+        from quorune.turn_history import current_turn_history_events
+        from test_phasing import PhasingRuntimeTests
+
+        session = self.session(748101)
+        engine = session.engine
+        source = self.add(engine, "Elephant-Mandrill", seat="C", zone="hand")
+        first_doubler = self.add(engine, "Parallel Lives", seat="C", ref="creator-c-doubler")
+        additional = self.add(engine, "Peregrin Took", seat="C")
+        second_doubler = self.add(engine, "Parallel Lives", ref="creator-a-doubler")
+        procession = self.add(engine, "Anointed Procession")
+        for card in (first_doubler, additional, second_doubler, procession):
+            self.assertTrue(self.binding(session, card)["strict_capability_ready"])
+        PhasingRuntimeTests._stage_end_step(self, session, "B")
+        PhasingRuntimeTests._pass_end_step(self, session, "C")
+        self.prepare(session, actor="C", active="C", mana={"C": 2, "G": 1})
+        self.checkpoint(session)
+        self.pay_cast(session, source, seat="C", payment={"C": 2, "G": 1})
+        decision = self.resolve(session)
+        self.assertEqual(("replacement.order", ["C"]), (decision.kind, decision.actors))
+        self.assertFalse(self._tokens(session))
+        packet = session.packet("pilot:C", full=True)
+        options = packet["decision"]["ctx"]["options"]
+        self.assertEqual(2, len(options))
+        selected, = [row["id"] for row in options if f":{additional.ref}:" in row["id"]]
+        self.assertIsNone(session.packet("pilot:A", full=True)["decision"])
+        private = session.state.cards[session.state.players["D"].zones["hand"][0]]
+        self.assertNotIn(private.ref, json.dumps(packet))
+        command = {"action_id": "choose", "replacement": selected}
+        self.reject(session, command, seat="A")
+        self.reject(session, {**command, "replacement": "unissued"}, seat="C")
+        chosen = session.act("pilot:C", command)
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertEqual(["A"], session.state.pending_decision.actors)
+        self.assertFalse(self._tokens(session))
+        prior_prompt = session.packet("pilot:A", full=True)["decision"]["ctx"]["prompt"]
+        self.assertIn("Earlier replacement for C", prior_prompt)
+        self.assertIn(additional.ref, prior_prompt)
+        session = self.resume(session)
+        self.assertEqual(prior_prompt, session.packet("pilot:A", full=True)["decision"]["ctx"]["prompt"])
+
+        observed = []
+        dispatch = session.engine._dispatch_semantic_event
+
+        def observe(event, context, **fields):
+            if event == "permanent.enter" and context.get("token"):
+                tokens = self._tokens(session)
+                ids = {card.logical_object_id for card in tokens}
+                history = current_turn_history_events(
+                    session.state.turn_history, turn_sequence=session.state.turn_sequence, kind="permanent_entered",
+                )
+                entered = {fact.object_incarnation for fact in history}
+                observed.append((len(tokens), len(ids & entered)))
+            return dispatch(event, context, **fields)
+
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual(2, len(options))
+        self.reject(session, command, seat="C")
+        with patch.object(session.engine, "_dispatch_semantic_event", side_effect=observe):
+            chosen = session.act("pilot:A", {"action_id": "choose", "replacement": options[0]["id"]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertIsNone(self.resolve(session))
+        tokens = self._tokens(session)
+        counts = Counter(card.controller for card in tokens)
+        self.assertEqual({"C": 4, "D": 1, "A": 4, "B": 1}, counts)
+        self.assertTrue(all(card.owner == card.controller for card in tokens))
+        self.assertEqual(1, len({card.zone_timestamp for card in tokens}))
+        self.assertEqual([(10, 10)] * 10, observed)
+        turn_key = str(session.state.turn_sequence)
+        for seat, count in counts.items():
+            self.assertEqual(count, session.state.players[seat].stats["tokens_created_by_turn"][turn_key])
+        self.replay(session, load=True)
+
+    def test_actual_thran_pair_uses_a_live_opponent_and_revalidates_after_departure(self):
+        session = self.session(748102)
+        source = self.add(session.engine, "Thran Spider", zone="hand")
+        self.prepare(session, mana={"C": 3})
+        self.checkpoint(session)
+        self.pay_cast(session, source, payment={"C": 3})
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        schema = session.packet("pilot:A", full=True)["decision"]["ctx"]["target_schema"]
+        self.assertEqual({"B", "C", "D"}, set(schema["legal_refs"]))
+        self.reject(session, {"action_id": "choose", "targets": ["A"]}, seat="A")
+        chosen = session.act("pilot:A", {"action_id": "choose", "targets": ["C"]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        valid = self.resume(session)
+        self.assertIsNone(self.resolve(valid))
+        tokens = self._tokens(valid)
+        self.assertEqual({"A", "C"}, {card.controller for card in tokens})
+        self.assertEqual(2, len(tokens))
+        self.assertTrue(all(card.owner == card.controller and card.tapped for card in tokens))
+        self.assertEqual(1, len({card.zone_timestamp for card in tokens}))
+        self.replay(valid, load=True)
+
+        self.priority(session, "C")
+        conceded = session.act("pilot:C", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(conceded.ok, conceded.summary)
+        self.assertFalse(session.state.players["C"].in_game)
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(self._tokens(session))
+        self.replay(session, load=True)
+
+    def test_actual_slaughter_specialist_creates_only_for_opponents(self):
+        session = self.session(748103)
+        source = self.add(session.engine, "Slaughter Specialist", zone="hand")
+        self.prepare(session, mana={"C": 1, "B": 1})
+        self.checkpoint(session)
+        self.pay_cast(session, source, payment={"C": 1, "B": 1})
+        self.assertIsNone(self.resolve(session))
+        tokens = self._tokens(session)
+        self.assertEqual({"B": 1, "C": 1, "D": 1}, Counter(card.controller for card in tokens))
+        self.assertTrue(all(card.controller == card.owner for card in tokens))
+        self.assertEqual(1, len({card.zone_timestamp for card in tokens}))
         self.replay(session, load=True)

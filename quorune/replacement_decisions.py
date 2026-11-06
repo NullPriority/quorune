@@ -105,6 +105,15 @@ def issue_replacement_order_choice(
     pending = required.pending
     seat = pending.choice.chooser
     context = replacement_choice_payload(pending, required.effects)
+    from .token_creation_events import DistributedTokenChoiceRequired
+
+    if isinstance(required, DistributedTokenChoiceRequired):
+        history = " ".join(
+            f"Earlier replacement for {creator} was {label}."
+            for creator, label in required.public_history if creator != seat
+        )
+        if history:
+            context["prompt"] = f"{history} {context['prompt']}"
     sealed_effect = copy.deepcopy(dict(effect))
     from .whole_hand_discard import whole_hand_input_snapshot
     hand_inputs=whole_hand_input_snapshot(host,effect,actor=item.controller)

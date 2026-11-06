@@ -204,6 +204,7 @@
       "quorune/tap_state.py": "typed tap-state effect mutation owner behind the semantic intent executor",
       "quorune/target_source.py": "typed announced targeting-source and retained pre-cost/LKI stack provenance owner",
       "quorune/token_creation.py": "typed token-creation and replacement mutation owner behind CommanderEngine",
+      "quorune/token_creation_events.py": "canonical publication of committed token creation facts and entry events",
       "quorune/trigger_discovery.py": "normalized semantic trigger detection and immutable ordinary occurrence construction behind CommanderEngine",
       "quorune/trigger_processing.py": "typed CR 603.3 occurrence batching, APNAP placement, stack commit, and historical continuation owner behind CommanderEngine",
       "quorune/turn_priority_owner.py": "typed priority grant/pass, yield invalidation, action-opportunity audit, and deterministic pump owner",

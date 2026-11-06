@@ -348,8 +348,10 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
                     return
                 seen.append((kind, context["card_object_identity"], tuple(context["keywords"])))
             host._dispatch_semantic_event = dispatch
-            dispatch_creation(host, "A", created, name="Generic", base_quantity=len(created),
-                              replacement_components=(), replacement_journal=(), reason="owner diagnostic")
+            from quorune.token_creation_events import CommittedTokenCreation
+
+            creation = CommittedTokenCreation("A", created, "Generic", len(created), (), ())
+            dispatch_creation(host, (creation,), reason="owner diagnostic")
             self.assertEqual(len(created), len(rows))
             self.assertEqual({c.logical_object_id for c in cards.values()}, {r[1]["object_incarnation"] for r in rows})
             self.assertEqual(len(created) * 3, len(seen))
@@ -358,31 +360,27 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
             self.assertTrue(all(r[1]["actor"] == "A" and r[1]["types"] == ("creature",) for r in rows))
 
     def test_zero_single_reversed_groups_have_complete_nonduplicate_history(self):
-        from quorune.token_creation import _record_and_dispatch_token_creation
-        self.history_contract(_record_and_dispatch_token_creation)
+        from quorune.token_creation_events import publish_token_creations
+
+        self.history_contract(publish_token_creations)
 
     def test_incomplete_history_ordering_mutant_is_killed(self):
         import inspect
-        from quorune import token_creation as owner
-        source = inspect.getsource(owner._record_and_dispatch_token_creation)
-        before = '''        host._record_turn_history(
-            "permanent_entered",
-            actor=controller,
-            object_incarnation=identity,
-            types=types,
-        )
-'''
+        from quorune import token_creation_events as owner
+
+        source = inspect.getsource(owner.publish_token_creations)
+        before = "    previous_quantities = tuple(_record_creation(host, creation, reason) for creation in creations)\n"
+        entry = "        for context in entries:\n"
         self.assertEqual(1, source.count(before))
-        mutant = source.replace("    for identity, types in entry_occurrences:\n" + before, "").replace(
-            "    for context in entry_contexts:\n",
-            '''    for context in entry_contexts:
-        host._record_turn_history("permanent_entered", actor=controller,
-            object_incarnation=context["card_object_identity"], types=tuple(context["types"]))
-''')
+        self.assertEqual(1, source.count(entry))
+        mutant = source.replace(before, "    previous_quantities = (0,) * len(creations)\n").replace(
+            entry, entry + """            host._record_turn_history("permanent_entered", actor=creation.controller,
+                object_incarnation=context["card_object_identity"], types=tuple(context["types"]))
+""")
         namespace = dict(vars(owner))
-        exec(compile(mutant, "<partial-simultaneous-token-history>", "exec"), namespace)
+        exec(compile("from __future__ import annotations\n" + mutant, "<partial-simultaneous-token-history>", "exec"), namespace)
         with self.assertRaises(AssertionError):
-            self.history_contract(namespace["_record_and_dispatch_token_creation"])
+            self.history_contract(namespace["publish_token_creations"])
 
     def test_subsequent_aftercare_ordering_mutant_is_killed(self):
         import inspect
@@ -394,9 +392,9 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
         call = "    finish_copy_aftercare(host, controller, created)\n"
         self.assertEqual(1, source.count(call))
         mutant = source.replace(call, "").replace(
-            "    _record_and_dispatch_token_creation(\n", call + "    _record_and_dispatch_token_creation(\n")
+            "    publish_token_creations(\n", call + "    publish_token_creations(\n")
         namespace = dict(vars(owner))
-        exec(compile(mutant, "<retroactive-copy-aftercare>", "exec"), namespace)
+        exec(compile("from __future__ import annotations\n" + mutant, "<retroactive-copy-aftercare>", "exec"), namespace)
         for resolve, expected in ((original, False), (namespace[original.__name__], True)):
             calls = []
             host = SimpleNamespace(state=SimpleNamespace(timestamp_sequence=0, revision=1,
@@ -406,7 +404,7 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
                 patch.object(owner, "_prepare_token_objects", return_value=()),
                 patch.object(owner, "_prepare_token_entry_counters", return_value=((), object(), {})),
                 patch.object(owner, "_commit_token_specs", return_value=(["created"], [])),
-                patch.object(owner, "_record_and_dispatch_token_creation", side_effect=lambda *a, **k: calls.append("entry")),
+                patch.object(owner, "publish_token_creations", side_effect=lambda *a, **k: calls.append("entry")),
                 patch.object(token_copy_runtime, "finish_copy_aftercare", side_effect=lambda *a, **k: calls.append("aftercare")),
             )
             from contextlib import ExitStack
@@ -418,7 +416,7 @@ class TokenEntryHistoryOwnerTests(unittest.TestCase):
                 if resolve is not original:
                     for name in ("_preflight_aura_token_specs", "_prepare_token_objects",
                                  "_prepare_token_entry_counters",
-                                 "_commit_token_specs", "_record_and_dispatch_token_creation"):
+                                 "_commit_token_specs", "publish_token_creations"):
                         namespace[name] = getattr(owner, name)
                 resolve(host, "A", resolved=owner.ResolvedTokenSpecs((), (), ()),
                         base_name="Generic", base_quantity=1, reason="isolated timing contract")

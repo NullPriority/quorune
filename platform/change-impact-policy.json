@@ -12203,6 +12203,30 @@
       ]
     },
     {
+      "id": "fixed-distributed-token-creation",
+      "patterns": [
+        "quorune/compiler/fixed_token_production_templates.py",
+        "quorune/fixed_token_production.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/semantic_runtime/distributed_token_creation.py",
+        "quorune/semantic_runtime/token_replacements.py",
+        "quorune/token_creation.py",
+        "quorune/token_creation_events.py",
+        "tests/fixtures/fixed-distributed-token-cards.json",
+        "tests/test_fixed_token_creation_effects.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_token_creation_effects",
+        "test_fixed_token_production",
+        "test_history_entry_characteristics",
+        "test_token_creation_replacements",
+        "test_token_creation_triggers",
+        "test_token_entry_boundaries",
+        "test_turn_priority_owner"
+      ]
+    },
+    {
       "id": "live-defined-token-stats",
       "patterns": [
         "quorune/compiler/fixed_public_multi_event_bindings.py",

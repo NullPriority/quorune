@@ -3569,6 +3569,13 @@ its quoted definition supplies exactly one represented layer-7a definition
 for each stat. Copies carry the definition and evaluate their own current
 controller and public game state. Opponent-cast and source-death branches
 share a result only when each subscription binds its own complete predicate.
+A fixed token instruction can create the same definition for each player,
+each opponent, or the controller and a target opponent. Each creator's
+replacement choices are ordered by the existing APNAP batch owner. The
+kernel commits the complete set of tokens and their entry facts before
+publishing any entry occurrence. Later replacement choosers can see the
+earlier public decisions while the batch is pending.
+
 Fixed creature definitions also retain each positive fixed Toxic value as a
 matching `ToxicSpec` beside its keyword label. Definition validation and the
 descriptor-owned runtime minimum require the existing Toxic damage-result

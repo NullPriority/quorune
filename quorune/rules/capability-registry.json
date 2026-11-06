@@ -64398,6 +64398,102 @@
     {
       "applicability": {
         "exclusions": [
+          "variable quantities",
+          "paid sequences",
+          "copies",
+          "linked followups",
+          "arbitrary creator lists"
+        ],
+        "inputs": [
+          "resolving source and controller",
+          "each player, each opponent, or controller and target opponent",
+          "one fixed complete non-copy definition and positive quantity"
+        ],
+        "outputs": [
+          "per-creator replacement and ownership facts",
+          "all entries committed before occurrences",
+          "exact pending choice replay",
+          "prior public replacement decisions visible to later choosers"
+        ],
+        "summary": "Resolve one fixed token definition for each bound creator through one APNAP replacement batch and a simultaneous object commit."
+      },
+      "blockers": [],
+      "dependencies": [
+        "token.creation.fixed_definition",
+        "token.creation.quantity_replacement",
+        "token.creation.additional_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The exact creator shape rejects malformed and unbound definitions. Withdrawing its capability prevents exact lowering.",
+      "dependency_fail_closed_status": "passed",
+      "id": "token.creation.fixed_distributed",
+      "implementation_components": [
+        "quorune.compiler.fixed_token_production_templates._fixed_distributed_creator_template",
+        "quorune.rules.token_creation_capability_shapes.distributed_token_creation_payload_dependencies",
+        "quorune.semantic_runtime.distributed_token_creation.DistributedTokenCreationHandler",
+        "quorune.token_creation.create_distributed_tokens",
+        "quorune.token_creation_events.publish_token_creations"
+      ],
+      "implementation_mutation_rationale": "Omitting the distributed compiler production leaves the exact all-player token clause unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_all_player_food_resolves_creator_choices_before_simultaneous_entry",
+        "test_actual_thran_pair_uses_a_live_opponent_and_revalidates_after_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_all_player_food_resolves_creator_choices_before_simultaneous_entry",
+        "test_actual_thran_pair_uses_a_live_opponent_and_revalidates_after_departure",
+        "test_actual_slaughter_specialist_creates_only_for_opponents"
+      ],
+      "negative_tests": [
+        "test_distributed_token_definition_requires_exact_creator_scope",
+        "test_actual_all_player_food_resolves_creator_choices_before_simultaneous_entry",
+        "test_actual_thran_pair_uses_a_live_opponent_and_revalidates_after_departure"
+      ],
+      "official_rules": [
+        "101.4",
+        "101.4b",
+        "109.5",
+        "111.2",
+        "111.3",
+        "115.1d",
+        "603.6a",
+        "608.2b",
+        "614.16",
+        "616.1"
+      ],
+      "positive_tests": [
+        "test_distributed_token_definition_requires_exact_creator_scope",
+        "test_actual_all_player_food_resolves_creator_choices_before_simultaneous_entry",
+        "test_actual_thran_pair_uses_a_live_opponent_and_revalidates_after_departure",
+        "test_actual_slaughter_specialist_creates_only_for_opponents"
+      ],
+      "privacy_tests": [
+        "test_actual_all_player_food_resolves_creator_choices_before_simultaneous_entry"
+      ],
+      "replay_tests": [
+        "test_actual_all_player_food_resolves_creator_choices_before_simultaneous_entry",
+        "test_actual_thran_pair_uses_a_live_opponent_and_revalidates_after_departure",
+        "test_actual_slaughter_specialist_creates_only_for_opponents"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented source material",
           "arbitrary face abilities",
           "client-selected quantities or physical identities"
@@ -70637,7 +70733,7 @@
       "id": "trigger.event.token_creation",
       "implementation_components": [
         "quorune.token_creation_batch_model.TokenCreationBatchFact",
-        "quorune.token_creation._record_and_dispatch_token_creation",
+        "quorune.token_creation_events.publish_token_creations",
         "quorune.compiler.token_creation_event_bindings.token_creation_event_binding_spec",
         "quorune.compiler.fixed_counter_trigger_nodes.fixed_typed_event_effect_trigger_node",
         "quorune.rules.event_subscriptions.FixedEventSubscriptionSet"
@@ -80637,7 +80733,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 747,
+  "registry_version": 748,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

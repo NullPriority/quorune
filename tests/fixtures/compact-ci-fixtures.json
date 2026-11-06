@@ -578,6 +578,7 @@
     "tests/fixtures/fixed-counter-keyword-activations.json",
     "tests/fixtures/fixed-counter-prevention-cards.json",
     "tests/fixtures/fixed-damage-source-lki-cards.json",
+    "tests/fixtures/fixed-distributed-token-cards.json",
     "tests/fixtures/fixed-disturb-cards.json",
     "tests/fixtures/fixed-effect-clause-sequence-cards.json",
     "tests/fixtures/fixed-emerge-cards.json",

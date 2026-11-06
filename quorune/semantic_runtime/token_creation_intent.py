@@ -102,3 +102,29 @@ class CreateTokenIntent:
                 family="Token creation",
             ),
         )
+
+
+@dataclass(frozen=True, slots=True)
+class DistributedTokenCreationIntent:
+    actor: str
+    creators: tuple[str, ...]
+    token: FrozenMap
+    stack_ref: str
+    instruction_pointer: int
+    reason: str
+    replacement_selections: tuple[str | FrozenMap, ...] = ()
+
+    def __post_init__(self) -> None:
+        if any(type(value) is not str or not value for value in (self.actor, self.stack_ref, self.reason)):
+            raise ValueError("Distributed token creation requires its resolving actor, stack, and reason")
+        if type(self.instruction_pointer) is not int or self.instruction_pointer < 0:
+            raise ValueError("Distributed token creation requires a current instruction")
+        if (type(self.creators) is not tuple
+                or any(type(creator) is not str or not creator for creator in self.creators)
+                or len(self.creators) != len(set(self.creators))):
+            raise ValueError("Distributed token creators must be distinct ordered principals")
+        if not isinstance(self.token, FrozenMap):
+            raise ValueError("Distributed token creation requires a frozen token definition")
+        object.__setattr__(self, "replacement_selections", _freeze_replacement_selections(
+            tuple(self.replacement_selections), family="Distributed token creation",
+        ))

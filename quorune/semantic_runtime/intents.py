@@ -1324,7 +1324,7 @@ class RetargetStackItemIntent:
             )
 
 
-from .token_creation_intent import CreateTokenIntent
+from .token_creation_intent import CreateTokenIntent, DistributedTokenCreationIntent
 
 
 @dataclass(frozen=True, slots=True)
@@ -1572,6 +1572,7 @@ SemanticIntent: TypeAlias = (
     | CopyStackItemIntent
     | RetargetStackItemIntent
     | CreateTokenIntent
+    | DistributedTokenCreationIntent
     | CopyControlledTokensIntent
     | AddSubtypeIntent
     | GrantZoneObjectKeywordIntent
