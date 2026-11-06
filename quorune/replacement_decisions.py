@@ -3,6 +3,8 @@ from __future__ import annotations
 import copy
 from typing import Any, Mapping, Protocol, Sequence
 from .counter_doubling import named_counter_input_snapshot
+from .copied_token_aura_entry import COPIED_AURA_TOKEN_SELECTIONS, copied_aura_token_selections
+from .errors import GameRuleError
 
 from .aura import AuraEntryChoiceRequired, issue_aura_entry_choice
 from .counter_placement import (
@@ -247,6 +249,10 @@ def apply_effect_with_replacement_choice(
     """Execute one legacy or typed effect, suspending at replacement choice."""
 
     remaining, destination, note, instruction_pointer = continuation
+    if COPIED_AURA_TOKEN_SELECTIONS in item.context:
+        if effect.get("op") != "create_token" or "copy_spec" not in effect:
+            raise GameRuleError("Copied Aura token selections require their resolving copy recipe")
+        copied_aura_token_selections(item, instruction_pointer=instruction_pointer)
     from .composition_order_model import CompositionOrderChoiceRequired
     from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
     try:
@@ -274,6 +280,11 @@ def apply_effect_with_replacement_choice(
         )
         return False
     except AuraEntryChoiceRequired as required:
+        from .copied_token_aura_entry import CopiedAuraTokenChoiceRequired, issue_copied_aura_token_choice
+        if isinstance(required, CopiedAuraTokenChoiceRequired):
+            issue_copied_aura_token_choice(host, item=item, effect=effect, remaining=remaining,
+                destination=destination, note=note, instruction_pointer=instruction_pointer, required=required)
+            return False
         from .conditional_exile_return import ConditionalReturnAuraChoiceRequired, issue_conditional_aura_choice
         if isinstance(required,ConditionalReturnAuraChoiceRequired):
             issue_conditional_aura_choice(host,required,{'stack_ref':item.ref,'remaining':list(remaining),

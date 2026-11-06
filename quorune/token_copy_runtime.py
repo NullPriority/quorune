@@ -31,11 +31,15 @@ def apply_copy_recipe(host: Any, effect: Mapping[str, Any], *, actor: str, reaso
         snapshot["annotations"][COPY_AFTERCARE] = {"cleanup": recipe.cleanup, "controller": actor,
             "binding": f"{item.stack_id}:token-copy", "keywords": list(recipe.temporary_keywords),
             "keyword_duration": recipe.keyword_duration, "source": dict(source)}
+    from .copied_token_aura_entry import copied_aura_token_selections, clear_copied_aura_token_selections
     from .token_creation import create_tokens
-    return create_tokens(host, actor, name="", quantity=effect["quantity"],
+    created = create_tokens(host, actor, name="", quantity=effect["quantity"],
         copy_of=reference["ref"], copy_snapshot=snapshot, copy_source_zone=reference["zone"],
         tapped=effect.get("tapped", False),
-        reason=reason, replacement_selections=tuple(effect.get("_replacement_selections") or ()))
+        reason=reason, replacement_selections=tuple(effect.get("_replacement_selections") or ()),
+        copied_aura_selections=copied_aura_token_selections(item))
+    clear_copied_aura_token_selections(item)
+    return created
 
 
 def finish_copy_aftercare(host: Any, controller: str, created: Sequence[str]) -> None:

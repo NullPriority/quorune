@@ -1,4 +1,6 @@
 """Unchanged-owner action reproductions; entry-event capture is diagnostic only."""
+from __future__ import annotations
+
 from copy import deepcopy
 from pathlib import Path
 import tempfile

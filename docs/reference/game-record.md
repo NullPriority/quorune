@@ -1000,6 +1000,13 @@ Version-five entry-copy selectors add a closed `conditional_exception`; prior
 selector and recipe versions retain their original keys. Physical and token
 entry results share copied-value validation and commit before observers.
 
+When a copy recipe would create an Aura token, its controller chooses a legal
+enchant subject after token creation replacements determine the batch. An
+`aura.entry` continuation binds the resolving instruction, pending copy slot,
+and advertised subject incarnations. Earlier choices stay with that stack
+item until every copied Aura has a legal assignment. The token owner commits
+the batch together and then publishes entry occurrences.
+
 Version-three fixed-color or fixed-card-type Protection fragments add a required
 `exempt_aura_incarnation` for one granting Aura. CardProgram attached definitions
 carry the closed source marker; live evaluation binds the current source

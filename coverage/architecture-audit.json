@@ -8780,24 +8780,24 @@
           "classification": "rules_value",
           "file": "quorune/token_creation.py",
           "flow_id": "card-identity-flow:e95960eff04a65122756",
-          "line": 640,
+          "line": 655,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 640,
+          "source_line": 655,
           "symbol": "_card_from_token_plan"
         },
         {
           "classification": "rules_value",
           "file": "quorune/token_creation.py",
           "flow_id": "card-identity-flow:fa037198af6d55a1212b",
-          "line": 641,
+          "line": 656,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "printed_name",
           "source_kind": "attribute",
-          "source_line": 641,
+          "source_line": 656,
           "symbol": "_card_from_token_plan"
         },
         {
@@ -11881,7 +11881,7 @@
           "module": "quorune.util"
         },
         {
-          "fan_in": 135,
+          "fan_in": 136,
           "fan_out": 0,
           "module": "quorune.errors"
         },
@@ -11911,7 +11911,7 @@
           "module": "quorune.card_programs.admission"
         },
         {
-          "fan_in": 95,
+          "fan_in": 96,
           "fan_out": 8,
           "module": "quorune.continuous_effect_model"
         },
@@ -12008,7 +12008,7 @@
           "module": "quorune.compiler.keyword_nodes"
         }
       ],
-      "internal_edges": 9356,
+      "internal_edges": 9366,
       "modules": [
         {
           "fan_in": 2,
@@ -12206,8 +12206,8 @@
           "module": "quorune.aura.compiler"
         },
         {
-          "fan_in": 2,
-          "fan_out": 6,
+          "fan_in": 3,
+          "fan_out": 7,
           "module": "quorune.aura.decisions"
         },
         {
@@ -12216,12 +12216,12 @@
           "module": "quorune.aura.grammar"
         },
         {
-          "fan_in": 5,
+          "fan_in": 6,
           "fan_out": 1,
           "module": "quorune.aura.model"
         },
         {
-          "fan_in": 2,
+          "fan_in": 3,
           "fan_out": 9,
           "module": "quorune.aura.runtime"
         },
@@ -15131,7 +15131,7 @@
           "module": "quorune.continuous_conditions"
         },
         {
-          "fan_in": 95,
+          "fan_in": 96,
           "fan_out": 8,
           "module": "quorune.continuous_effect_model"
         },
@@ -15184,6 +15184,11 @@
           "fan_in": 2,
           "fan_out": 4,
           "module": "quorune.copied_aura_entry"
+        },
+        {
+          "fan_in": 4,
+          "fan_out": 5,
+          "module": "quorune.copied_token_aura_entry"
         },
         {
           "fan_in": 1,
@@ -15861,7 +15866,7 @@
           "module": "quorune.entwine_model"
         },
         {
-          "fan_in": 135,
+          "fan_in": 136,
           "fan_out": 0,
           "module": "quorune.errors"
         },
@@ -16777,7 +16782,7 @@
         },
         {
           "fan_in": 5,
-          "fan_out": 20,
+          "fan_out": 22,
           "module": "quorune.replacement_decisions"
         },
         {
@@ -20346,7 +20351,7 @@
           "module": "quorune.token_copy_faces"
         },
         {
-          "fan_in": 12,
+          "fan_in": 13,
           "fan_out": 7,
           "module": "quorune.token_copy_recipes"
         },
@@ -20357,7 +20362,7 @@
         },
         {
           "fan_in": 2,
-          "fan_out": 8,
+          "fan_out": 9,
           "module": "quorune.token_copy_runtime"
         },
         {
@@ -20367,7 +20372,7 @@
         },
         {
           "fan_in": 14,
-          "fan_out": 29,
+          "fan_out": 30,
           "module": "quorune.token_creation"
         },
         {
@@ -20679,7 +20684,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1941,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "2cc39e9fcdadffd30a3314783dc6bbe7b6fb1337e49dde314ab42f797b7fbaab",
+      "source_fingerprint": "ee988bc72ce41ccc33ef1ce20867d1013584c2175f5c0493cfae392cb3a8ae3e",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -20735,7 +20740,7 @@
       ]
     },
     "production": {
-      "file_count": 1748,
+      "file_count": 1749,
       "largest_functions_and_methods": [
         {
           "end_line": 1912,
@@ -21068,12 +21073,12 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 305048,
+      "logical_lines": 305257,
       "methods": {
-        "dunder": 901,
+        "dunder": 903,
         "private": 1062,
-        "public": 3273,
-        "total": 5236
+        "public": 3276,
+        "total": 5241
       },
       "modules": [
         {
@@ -21273,6 +21278,13 @@
           "physical_lines": 1514
         },
         {
+          "file": "quorune/token_creation.py",
+          "functions_and_methods": 42,
+          "language": "python",
+          "logical_lines": 1371,
+          "physical_lines": 1463
+        },
+        {
           "file": "quorune/ability_fragments.py",
           "functions_and_methods": 52,
           "language": "python",
@@ -21285,13 +21297,6 @@
           "language": "python",
           "logical_lines": 1370,
           "physical_lines": 1498
-        },
-        {
-          "file": "quorune/token_creation.py",
-          "functions_and_methods": 42,
-          "language": "python",
-          "logical_lines": 1359,
-          "physical_lines": 1447
         },
         {
           "file": "quorune/semantic_choices/intent_host.py",
@@ -21903,6 +21908,13 @@
           "physical_lines": 675
         },
         {
+          "file": "quorune/replacement_decisions.py",
+          "functions_and_methods": 21,
+          "language": "python",
+          "logical_lines": 619,
+          "physical_lines": 664
+        },
+        {
           "file": "quorune/compiler/program_composition.py",
           "functions_and_methods": 16,
           "language": "python",
@@ -21915,13 +21927,6 @@
           "language": "python",
           "logical_lines": 614,
           "physical_lines": 674
-        },
-        {
-          "file": "quorune/replacement_decisions.py",
-          "functions_and_methods": 21,
-          "language": "python",
-          "logical_lines": 608,
-          "physical_lines": 653
         },
         {
           "file": "quorune/zone_trigger_events.py",
@@ -22694,6 +22699,13 @@
           "physical_lines": 398
         },
         {
+          "file": "quorune/aura/decisions.py",
+          "functions_and_methods": 8,
+          "language": "python",
+          "logical_lines": 352,
+          "physical_lines": 374
+        },
+        {
           "file": "quorune/rules/morph_actions.py",
           "functions_and_methods": 13,
           "language": "python",
@@ -22706,13 +22718,6 @@
           "language": "python",
           "logical_lines": 347,
           "physical_lines": 388
-        },
-        {
-          "file": "quorune/aura/decisions.py",
-          "functions_and_methods": 7,
-          "language": "python",
-          "logical_lines": 344,
-          "physical_lines": 363
         },
         {
           "file": "quorune/card_programs/runtime_requirements.py",
@@ -24036,6 +24041,13 @@
           "language": "python",
           "logical_lines": 174,
           "physical_lines": 185
+        },
+        {
+          "file": "quorune/copied_token_aura_entry.py",
+          "functions_and_methods": 11,
+          "language": "python",
+          "logical_lines": 174,
+          "physical_lines": 200
         },
         {
           "file": "quorune/damage_values.py",
@@ -27398,6 +27410,13 @@
           "physical_lines": 71
         },
         {
+          "file": "quorune/token_copy_runtime.py",
+          "functions_and_methods": 2,
+          "language": "python",
+          "logical_lines": 63,
+          "physical_lines": 72
+        },
+        {
           "file": "quorune/additional_cost_vocabulary.py",
           "functions_and_methods": 0,
           "language": "python",
@@ -27620,13 +27639,6 @@
           "language": "python",
           "logical_lines": 59,
           "physical_lines": 64
-        },
-        {
-          "file": "quorune/token_copy_runtime.py",
-          "functions_and_methods": 2,
-          "language": "python",
-          "logical_lines": 59,
-          "physical_lines": 68
         },
         {
           "file": "quorune/client.py",
@@ -33629,8 +33641,8 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 337677,
-      "python_file_count": 1732,
+      "physical_lines": 337919,
+      "python_file_count": 1733,
       "review_thresholds": {
         "function_logical_lines_review": 150,
         "module_logical_lines_review": 1500
@@ -33647,7 +33659,7 @@
           "web/src"
         ]
       },
-      "top_level_functions": 6181,
+      "top_level_functions": 6188,
       "web_file_count": 16
     },
     "runtime_oracle_text_access": {
@@ -41688,7 +41700,7 @@
       "card_specific_operation_branch_occurrences": {
         "remora_tax": 1
       },
-      "count": 948,
+      "count": 950,
       "limitations": "AST heuristic covers if/match conditions whose source names op or operation.",
       "locations": [
         {
@@ -44147,6 +44159,18 @@
           "symbol": "_contains_source_duration"
         },
         {
+          "condition": "not isinstance(frame, dict) or not isinstance(effect, dict) or effect.get(\"op\") != \"create_token\" or not isinstance(remaining, list) or any(not isinstance(row, dict) for row in remaining) or raw[\"destination\"] is not None and type(raw[\"dest",
+          "file": "quorune/copied_token_aura_entry.py",
+          "line": 162,
+          "string_literals": [
+            "create_token",
+            "destination",
+            "note",
+            "op"
+          ],
+          "symbol": "complete_copied_aura_token_choice"
+        },
+        {
           "condition": "effect.get('op')=='double_counters_on_targets'",
           "file": "quorune/counter_doubling.py",
           "line": 97,
@@ -45602,6 +45626,17 @@
             "dredge_draw"
           ],
           "symbol": "operation_from_dict"
+        },
+        {
+          "condition": "effect.get(\"op\") != \"create_token\" or \"copy_spec\" not in effect",
+          "file": "quorune/replacement_decisions.py",
+          "line": 253,
+          "string_literals": [
+            "copy_spec",
+            "create_token",
+            "op"
+          ],
+          "symbol": "apply_effect_with_replacement_choice"
         },
         {
           "condition": "value[\"op\"] != CHARACTERISTIC_OPERATION or type(value[\"schema_version\"]) is not int or value[\"schema_version\"] != 2",
@@ -52278,7 +52313,7 @@
         "controller_scope": 2,
         "copy_of": 4,
         "copy_source": 1,
-        "copy_spec": 6,
+        "copy_spec": 7,
         "copy_stack_item": 4,
         "copy_values": 2,
         "cost": 9,
@@ -52302,7 +52337,7 @@
         "create_daretti_emblem": 1,
         "create_result_draws": 1,
         "create_role_token": 2,
-        "create_token": 24,
+        "create_token": 26,
         "create_token_batch": 1,
         "create_token_then_counters": 1,
         "create_treasure": 1,
@@ -52323,7 +52358,7 @@
         "delayed_trigger": 2,
         "delta": 2,
         "demonic_junker_resolve": 1,
-        "destination": 18,
+        "destination": 19,
         "destination_controller": 1,
         "destinations": 1,
         "destroy": 6,
@@ -52470,6 +52505,7 @@
         "next_instance": 2,
         "noncombat": 1,
         "not_in": 1,
+        "note": 1,
         "object_id": 1,
         "objects": 1,
         "offer_draw": 2,
@@ -52481,7 +52517,7 @@
         "offer_soulbond_pair": 1,
         "offset": 1,
         "once": 1,
-        "op": 599,
+        "op": 601,
         "operation": 7,
         "optional": 3,
         "optional_slots": 1,
@@ -59119,7 +59155,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1456,
     "compiler_module_physical_lines": 1518,
-    "compiler_version": "oracle-ir-v738",
+    "compiler_version": "oracle-ir-v743",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -59439,22 +59475,22 @@
       "effective_date": "2026-08-07",
       "evidence": {
         "class_counts": {
-          "interaction": 4588,
-          "multiplayer": 3317,
+          "interaction": 4589,
+          "multiplayer": 3318,
           "mutation": 1548,
-          "negative": 4499,
-          "positive": 5179,
-          "privacy": 2670,
+          "negative": 4500,
+          "positive": 5180,
+          "privacy": 2671,
           "property": 178,
-          "replay": 4034,
+          "replay": 4035,
           "rollback": 436
         },
-        "declaration_count": 26449,
-        "declaration_source_fingerprint": "02638f5b6b564b0549496c1971a9a7dfa183bdf1dc53e5aac6c494b490a90951",
-        "fingerprint": "da245fc695888b9e6cb752a3bbb247f6453b5db420ec9f4934e3b4578abf206f",
-        "registry_fingerprint": "207cf43687e7b0f6f551dc913665ee7fd2b5ca4ca891d508a19cc9474587aaef"
+        "declaration_count": 26455,
+        "declaration_source_fingerprint": "714e1388e7647a308f649d51b5940994b94d4ca6794269352aac459633fc982b",
+        "fingerprint": "050d8176ec4d92ec188fd6a3218b060b2e5885d89e213e3350743475269fa9c1",
+        "registry_fingerprint": "e07e6c45c4aec3509d2ecf37375b12c04275971b7b056f9356c3d3bb165b6602"
       },
-      "fingerprint": "207cf43687e7b0f6f551dc913665ee7fd2b5ca4ca891d508a19cc9474587aaef",
+      "fingerprint": "e07e6c45c4aec3509d2ecf37375b12c04275971b7b056f9356c3d3bb165b6602",
       "implementation_mutation_status_counts": {
         "killed": 683,
         "not_run": 4
@@ -59464,7 +59500,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "registry_version": 738,
+      "registry_version": 743,
       "schema_version": 1,
       "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
       "status_counts": {
@@ -59856,7 +59892,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 874,
         "exact_nodes": 1006,
-        "fingerprint": "b2cd8070ed6e3fe6176a70c70cbaea1508edb3e3bcea61c5c19022f7d04da917",
+        "fingerprint": "940eb990c5d2ec5bdf4ca7feea4e307effb39f28c1ccccb62cc0b137d340a5d3",
         "grammar_source_fingerprint": "f8fe32813b299c9fb0ed497c58917eb53853c404ffb351fc4a343385924167de",
         "identity_fingerprint": "5659782d4b3eee9e0bb2a10eaa603be59b46cfd005bd0b4c83f98022a8f65c84",
         "present": true,
@@ -59868,7 +59904,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 899,
         "exact_nodes": 1044,
-        "fingerprint": "e42587d91895650648f7d96143f1d862844fce49aefab22982cd94fb45f05338",
+        "fingerprint": "0f5597aa7e0d397295e7f63979d80050e33ef2be3d86ca8f8577a287f7574799",
         "grammar_source_fingerprint": "f8fe32813b299c9fb0ed497c58917eb53853c404ffb351fc4a343385924167de",
         "identity_fingerprint": "7ea957243b0f0e37242c32276e086fe13b4cb4f1f3b683d6416e8eb4c6a6fe2e",
         "present": true,
@@ -59887,7 +59923,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "d33f36d337d0788ebed7e0a05c7280fb7394298a50ca8a60494c588a79c4d947",
+      "fingerprint": "35b57ab09de75ddc5d556797252ce05a7a5bb3cd8631d23df277559bac8a6d50",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -60745,8 +60781,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 11185,
-      "discovered_total": 14494,
+      "conventional_ast_cases": 11186,
+      "discovered_total": 14495,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 341,

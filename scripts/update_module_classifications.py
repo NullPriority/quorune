@@ -446,6 +446,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/entry_counter_coordination.py",
         "quorune/entry_copy.py",
         "quorune/copied_aura_entry.py",
+        "quorune/copied_token_aura_entry.py",
         "quorune/entry_counters.py",
         "quorune/entry_state_conditions.py",
         "quorune/entry_state_metrics.py",
@@ -667,6 +668,8 @@ def _owner(relative: str, layer: str) -> str:
         return "zones_and_object_identity"
     if relative == "quorune/copied_aura_entry.py":
         return "semantic_runtime"
+    if relative == "quorune/copied_token_aura_entry.py":
+        return "token_creation"
     if relative.startswith("server/"):
         return "server_transport"
     if relative.startswith("quorune/semantic_runtime/"):
