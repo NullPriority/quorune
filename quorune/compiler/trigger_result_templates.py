@@ -8,12 +8,16 @@ from .scalar_effect_amounts import scalar_effect_amount_template
 from .token_copy_templates import token_copy_recipe_template
 from .fixed_source_combat_growth import fixed_source_combat_growth_effect_template
 from .fixed_entry_return_requirements import fixed_entry_return_effect_template
+from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
     if _allow_payment:
         from .source_sacrifice_payments import normalized_source_sacrifice_payment_text
         body=normalized_source_sacrifice_payment_text(binding,body,card_name=card_name)
+    endure = binding_endure_trigger_result(binding, body, source_name=card_name, effect_template=effect_template)
+    if endure is not None:
+        return endure, False
     from .event_player_target_results import event_player_target_result
     defending_target=event_player_target_result(binding,body,compile_result=lambda text: binding_effect_template(
         binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,

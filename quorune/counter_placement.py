@@ -817,8 +817,9 @@ def place_counters_on_refs(
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     reason: str,
     source_ref: str | None = None,
+    effect_generated: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
-    """Resolve battlefield refs and route one effect placement batch."""
+    """Resolve battlefield refs and route one placement batch."""
 
     cards = tuple(
         host._resolve_object(actor, ref, zones={"battlefield"})
@@ -834,6 +835,7 @@ def place_counters_on_refs(
                 amount=amount,
                 placing_player=actor,
                 source_ref=source_ref,
+                effect_generated=effect_generated,
             )
             for card in cards
         ),

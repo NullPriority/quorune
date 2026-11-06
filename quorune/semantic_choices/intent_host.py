@@ -947,6 +947,7 @@ class SemanticChoiceIntentHostMixin:
                 selections=intent.replacement_selections,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                effect_generated=intent.effect_generated,
             )
         except CounterPlacementError as exc:
             raise GameRuleError(str(exc)) from exc

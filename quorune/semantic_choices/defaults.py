@@ -8,6 +8,7 @@ from .mutate import MutateMergeChoiceHandler
 from .created_token_counters import CREATED_TOKEN_COUNTER_HANDLERS
 from .incubate import INCUBATE_HANDLERS
 from .investigate import SequentialInvestigateHandler
+from .endure import SourceEndureChoiceHandler
 from .discover import DiscoverScanHandler
 from .discover_cast import DiscoverCastChoiceHandler
 from .variable_library_selection import VariableLibrarySelectionHandler
@@ -78,6 +79,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             *CREATED_TOKEN_COUNTER_HANDLERS,
             *INCUBATE_HANDLERS,
             SequentialInvestigateHandler(),
+            SourceEndureChoiceHandler(),
             DiscoverScanHandler(),
             DiscoverScanHandler('discover_step','choice.library.discover-step.v1'),
             DiscoverCastChoiceHandler(),

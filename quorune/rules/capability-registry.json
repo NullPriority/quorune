@@ -43419,6 +43419,103 @@
     {
       "applicability": {
         "exclusions": [
+          "separately bound event-object recipients",
+          "unrepresented quantity producers and activation costs"
+        ],
+        "inputs": [
+          "one sealed ability-source permanent incarnation",
+          "fixed nonnegative integral Endure amount"
+        ],
+        "outputs": [
+          "resolution choice for the current controller",
+          "last-known-controller Spirit creation for an unavailable source",
+          "counter placement with cost provenance",
+          "canonical token replacement and replay"
+        ],
+        "summary": "Resolve a fixed source Endure action with current or last-known controller and canonical cost or token transactions."
+      },
+      "blockers": [],
+      "dependencies": [
+        "counter.placement.prohibition.static",
+        "counter.placement.quantity_replacement",
+        "counter.producer.fixed_effect",
+        "target.ability_source.current_or_lki",
+        "token.creation.fixed_definition"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawal of counter quantity authority leaves the original Endure instruction material.",
+      "dependency_fail_closed_status": "passed",
+      "id": "keyword_action.endure.source",
+      "implementation_components": [
+        "quorune.compiler.endure_templates.fixed_endure_effect_template",
+        "quorune.rules.endure_shapes.fixed_endure_node_capabilities",
+        "quorune.semantic_choices.endure.bind_endure_instruction",
+        "quorune.semantic_choices.endure.SourceEndureChoiceHandler",
+        "quorune.counter_placement.place_counters_on_refs",
+        "quorune.target_source.stack_targeting_source"
+      ],
+      "implementation_mutation_rationale": "Omitting source Endure lowering leaves the original source instruction material.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_endure_uses_current_controller_and_counter_cost_replacements",
+        "test_actual_endure_after_blink_creates_spirit_for_last_controller",
+        "test_actual_endure_creates_the_spirit_if_counters_are_prohibited"
+      ],
+      "multiplayer_tests": [
+        "test_actual_endure_uses_current_controller_and_counter_cost_replacements",
+        "test_actual_endure_after_blink_creates_spirit_for_last_controller"
+      ],
+      "negative_tests": [
+        "test_fixed_endure_requires_a_source_and_complete_amount",
+        "test_endure_zero_has_no_choice_or_intent",
+        "test_original_endure_producer_and_capability_withdrawal_keep_residuals",
+        "test_actual_endure_creates_the_spirit_if_counters_are_prohibited"
+      ],
+      "official_rules": [
+        "101.2",
+        "111.4",
+        "113.7a",
+        "118.12a",
+        "400.7",
+        "608.2c",
+        "614.16",
+        "701.63a",
+        "701.63b",
+        "800.4b"
+      ],
+      "positive_tests": [
+        "test_fixed_endure_requires_a_source_and_complete_amount",
+        "test_original_endure_producer_and_capability_withdrawal_keep_residuals",
+        "test_actual_endure_uses_current_controller_and_counter_cost_replacements",
+        "test_actual_endure_after_blink_creates_spirit_for_last_controller",
+        "test_actual_endure_creates_the_spirit_if_counters_are_prohibited"
+      ],
+      "privacy_tests": [
+        "test_actual_endure_uses_current_controller_and_counter_cost_replacements"
+      ],
+      "replay_tests": [
+        "test_actual_endure_uses_current_controller_and_counter_cost_replacements",
+        "test_actual_endure_after_blink_creates_spirit_for_last_controller",
+        "test_actual_endure_creates_the_spirit_if_counters_are_prohibited"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "simultaneous multi-permanent Explore under CR 701.44d",
           "explores twice or repeated Explore",
           "Explore replacement effects",
@@ -79962,7 +80059,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 730,
+  "registry_version": 733,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -44,6 +44,10 @@ def _library_payload_dependencies(value):
 
 
 def _affected_quantity_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...] | None:
+    from ..rules.endure_model import ENDURE_CAPABILITY, ENDURE_OPERATION, fixed_endure_amount
+    if value.get("op") == ENDURE_OPERATION:
+        fixed_endure_amount(value)
+        return (ENDURE_CAPABILITY,)
     if value.get("players") == "$targets":
         from ..rules.any_number_target_shapes import selected_player_payload_dependencies
         return selected_player_payload_dependencies(value)

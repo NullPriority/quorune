@@ -963,8 +963,11 @@ class PlaceCountersIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    effect_generated: bool = True
 
     def __post_init__(self) -> None:
+        if type(self.effect_generated) is not bool:
+            raise ValueError("Counter placement provenance must be boolean")
         object.__setattr__(
             self,
             "replacement_selections",

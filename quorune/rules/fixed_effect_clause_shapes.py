@@ -36,6 +36,7 @@ from .fixed_resolution_mana_shapes import fixed_resolution_mana_choice_capabilit
 from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
 from .created_token_counter_shapes import created_token_counter_node_capabilities
 from .incubate_capability_shapes import incubate_node_capabilities
+from .endure_shapes import fixed_endure_node_capabilities
 from .discover_capability_shapes import discover_node_capabilities
 from .variable_library_selection_shapes import variable_library_selection_node_capabilities
 from .reveal_until_library_selection_shapes import reveal_until_library_selection_node_capabilities
@@ -134,6 +135,7 @@ _COMPONENT_RESOLVERS = (
     fixed_stack_spell_copy_node_capabilities,
     created_token_counter_node_capabilities,
     incubate_node_capabilities,
+    fixed_endure_node_capabilities,
     discover_node_capabilities,
     variable_library_selection_node_capabilities,
     reveal_until_library_selection_node_capabilities,

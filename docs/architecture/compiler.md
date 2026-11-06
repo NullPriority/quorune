@@ -469,6 +469,13 @@ The precise Connive shape excludes internal continuation fields, open result
 tails and ambiguous event-object pronouns. Its capability closes through the
 existing draw, typed discard, destination replacement and counter owners.
 
+Fixed source Endure uses the sealed ability-source incarnation and its current
+or last-known controller. A legal counter choice pays through the counter
+placement owner as a resolution cost. Declining or being unable to pay creates
+one white Spirit Token with the instructed power and toughness. Endure zero
+completes without a choice. The source instruction composes with independent
+life loss and represented optional mana payment.
+
 Temporary query-scaled target and source modifiers accept a leading
 “Until end of turn” duration through the existing characteristic result owner.
 The complete subject, quantity and keyword clauses must close independently.

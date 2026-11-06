@@ -373,6 +373,7 @@ def resume_semantic_counter_completion(
                 response=response,
                 effect=continuation.effect,
                 source_ref=_source_ref(host, item),
+                stack_item=item if expected_intent.get("effect_generated") is False else None,
             ),
         )
         continue_semantic_completion(

@@ -7011,6 +7011,29 @@
       ]
     },
     {
+      "id": "fixed-source-endure-instruction",
+      "patterns": [
+        "quorune/rules/endure_model.py",
+        "quorune/compiler/endure_templates.py",
+        "quorune/rules/endure_shapes.py",
+        "quorune/semantic_choices/endure.py",
+        "quorune/semantic_choices/counter_coordination.py",
+        "quorune/semantic_choices/intent_replacement.py",
+        "quorune/counter_placement.py",
+        "quorune/counter_doubling.py",
+        "quorune/target_source.py",
+        "tests/fixtures/endure-cards.json",
+        "tests/test_endure.py"
+      ],
+      "test_modules": [
+        "test_endure",
+        "test_counter_placement_replacements",
+        "test_fixed_counter_additional_costs",
+        "test_fixed_controller_effect_sequences",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "source-color-protection-choice",
       "patterns": [
         "quorune/compiler/source_protection_choices.py",

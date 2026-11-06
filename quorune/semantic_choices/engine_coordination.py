@@ -13,6 +13,7 @@ from ..rules.hand_inspection import FIXED_HAND_INSPECTION_OPERATION
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
 from ..connive import connive_discard_characteristic_ids, bind_connive_instruction
+from .endure import bind_endure_instruction
 from ..object_query import object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
@@ -662,6 +663,7 @@ class SemanticChoiceCoordinationMixin:
         registry = default_semantic_choice_registry()
         try:
             effect = bind_connive_instruction(self, item, effect)
+            effect = bind_endure_instruction(self, item, effect)
             from ..drawing.miracle_casting import bind_miracle_cast_instruction
             effect = bind_miracle_cast_instruction(item, effect)
         except (ValueError, TypeError, KeyError) as exc:

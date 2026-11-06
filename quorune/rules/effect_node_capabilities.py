@@ -12,6 +12,7 @@ from .public_event_counter_set_shapes import public_event_counter_set_node_capab
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
+from .endure_shapes import fixed_endure_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
@@ -120,6 +121,7 @@ def effect_node_capabilities(
         public_event_counter_set_node_capabilities,
         unchosen_hand_discard_node_capabilities,
         fixed_connive_node_capabilities, fixed_goad_node_capabilities, exploit_instruction_node_capabilities,
+        fixed_endure_node_capabilities,
         fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,

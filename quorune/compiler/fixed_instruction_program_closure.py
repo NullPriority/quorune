@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from ..rules.extra_turn_shapes import is_closed_fixed_extra_turn_program
 from ..rules.connive_capability_shapes import is_closed_fixed_connive_program
+from ..rules.endure_shapes import is_closed_fixed_endure_program
 from ..rules.goad_capability_shapes import is_closed_fixed_goad_program
 from ..rules.exploit_capability_shapes import is_closed_exploit_instruction_program
 from ..rules.created_token_counter_shapes import is_closed_created_token_counter_program
@@ -17,6 +18,7 @@ def is_closed_fixed_instruction_program(program):
     return any(recognizer(program) for recognizer in (
         is_closed_created_token_counter_program,
         is_closed_incubate_program,
+        is_closed_fixed_endure_program,
         is_closed_discover_program,
         is_closed_variable_library_selection_program,
         is_closed_reveal_until_library_selection_program,

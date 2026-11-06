@@ -58,12 +58,19 @@ def _restore(value):
     return value
 
 
+def _intent_data(intent):
+    values = {field.name: getattr(intent, field.name) for field in fields(intent)}
+    if isinstance(intent, typed.PlaceCountersIntent) and intent.effect_generated:
+        values.pop("effect_generated")
+    return _data(values)
+
+
 def encode_remaining_completion(continuation, actor, response, completion, next_index):
     intents=[]
     for intent in completion.intents[next_index:]:
         if not is_dataclass(intent) or _intent_types().get(type(intent).__name__) is not type(intent):
             raise SemanticChoiceError('Completed choice has an unrepresented remaining intent')
-        intents.append({'kind':type(intent).__name__,'fields':{field.name:_data(getattr(intent,field.name)) for field in fields(intent)}})
+        intents.append({'kind':type(intent).__name__,'fields':_intent_data(intent)})
     return {'schema_version':1,'kind':'completed_semantic_choice','continuation':continuation.to_dict(),
         'actor':actor,'response':_data(response),'intents':intents,
         'prepend_effects':_data(completion.prepend_effects),'repeat_effect':_data(completion.repeat_effect)}
@@ -112,12 +119,17 @@ def decode_remaining_completion(value):
         if not isinstance(encoded,Mapping) or set(encoded)!={'kind','fields'}:
             raise SemanticChoiceError('Completed choice intent shape is invalid')
         cls=_intent_types().get(encoded['kind']);values=encoded['fields']
-        if cls is None or not isinstance(values,Mapping) or set(values)!={field.name for field in fields(cls)}:
+        if cls is None or not isinstance(values, Mapping):
+            raise SemanticChoiceError('Completed choice intent has unknown kind or fields')
+        expected_fields = {field.name for field in fields(cls)}
+        if cls is typed.PlaceCountersIntent and "effect_generated" not in values:
+            expected_fields.remove("effect_generated")
+        if set(values) != expected_fields:
             raise SemanticChoiceError('Completed choice intent has unknown kind or fields')
         values={key:_restore(child) for key,child in values.items()}
         if 'transition_kind' in values:values['transition_kind']=ZoneTransitionKind(values['transition_kind'])
         intent=cls(**values)
-        if _data({field.name:getattr(intent,field.name) for field in fields(intent)}) != _data(encoded['fields']):
+        if _intent_data(intent) != _data(encoded['fields']):
             raise SemanticChoiceError('Completed choice intent data are not canonical')
         intents.append(intent)
     return continuation,value['actor'],dict(value['response']),SemanticChoiceCompletion(

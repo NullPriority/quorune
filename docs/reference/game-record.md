@@ -944,6 +944,11 @@ Counter replacement continuations preserve whether a positive quantity
 replacement has changed the placement's origin for effect-only matching.
 Records with the field absent retain the historical matching behavior.
 
+An Endure counter-payment continuation records `effect_generated=false` in
+its intent identity. Resume checks the choosing controller, source
+incarnation and amount against the parent stack ability. Ordinary counter
+placement intents encode effect provenance by omission.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads

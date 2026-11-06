@@ -51,7 +51,9 @@ def snapshot_named_counter_doubling(rows: Sequence[ObjectQueryResult], *, actor:
 
 
 def resolve_effect_counters_on_refs(host: CounterDoublingHost, *, actor, object_refs, counter_name,
-    amount, selections=(), reason, source_ref=None):
+    amount, selections=(), reason, source_ref=None, effect_generated=True):
+    if not effect_generated and type(amount) is not int:
+        raise CounterDoublingError("A counter placement cost requires a fixed amount")
     if amount==ALL_COUNTER_AMOUNTS:
         if counter_name is not None:raise CounterDoublingError('All-kind doubling cannot select a counter name')
         refs=tuple(object_refs)
@@ -61,7 +63,8 @@ def resolve_effect_counters_on_refs(host: CounterDoublingHost, *, actor, object_
         return place_counters(host,snapshot_all_counter_doubling(rows,actor=actor,source_ref=source_ref),selections=selections,reason=reason)
     if type(amount) is int:
         return place_counters_on_refs(host, actor=actor, object_refs=object_refs, counter_name=counter_name,
-            amount=amount, selections=selections, reason=reason, source_ref=source_ref)
+            amount=amount, selections=selections, reason=reason, source_ref=source_ref,
+            effect_generated=effect_generated)
     if amount != EXISTING_COUNTER_AMOUNT:
         raise CounterDoublingError("Unsupported counter amount")
     refs = tuple(object_refs)
