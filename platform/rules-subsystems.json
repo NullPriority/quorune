@@ -7878,14 +7878,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v717-keyword-counter-promotion",
-      "compiler_version": "oracle-ir-v717",
+      "transition_id": "oracle-ir-v722-omen-resolution-correctness",
+      "compiler_version": "oracle-ir-v722",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Keep a fixed keyword-counter ability's declared mechanic during generated promotion so already compiled activations resolve under their existing capability closure."
+      "non_harvest_reason": "Correct the terminal destination and face characteristics of represented Omen spells through their intrinsic resolution lifecycle."
     },
     "forecast_corrections": [
       {

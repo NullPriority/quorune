@@ -1298,10 +1298,10 @@ class CommanderEngine(
             tapped=tapped,destination_controllers=destination_controllers,
         )
 
-    def shuffle_library(self, seat: str, *, reason: str = "shuffle") -> None:
+    def shuffle_library(self, seat: str, *, reason: str = "shuffle", actor: str | None = None) -> None:
         """Compatibility facade for canonical library membership mutation."""
 
-        ZoneTransitionOwner(self).shuffle_library(seat, reason=reason)
+        ZoneTransitionOwner(self).shuffle_library(seat, reason=reason, actor=actor)
 
     def draw(
         self,

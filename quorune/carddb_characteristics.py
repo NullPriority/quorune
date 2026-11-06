@@ -4,7 +4,9 @@ import copy
 from typing import Any, Mapping
 
 from .carddb import CardRecord
+from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION
 from .model import CardInstance
+from .omen import omen_characteristic_face
 from .rules.face_characteristic_values import printed_face_mana_value,printed_face_colors,current_face_mana_value
 from .defined_token_faces import (
     DEFINED_TOKEN_FACES_FIELD, DEFINED_TOKEN_IDENTITY_FIELD, defined_token_characteristic_values,
@@ -90,6 +92,8 @@ def copiable_card_characteristics(card, record, base):
 def base_card_characteristics(
     card: CardInstance,
     record: CardRecord | None,
+    *,
+    cast_face_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION,
 ) -> dict[str, Any]:
     """Adapt printed or custom object data to the shared evaluator schema."""
 
@@ -138,8 +142,8 @@ def base_card_characteristics(
             ),
         }
 
-    face = None
-    if card.active_face:
+    face = omen_characteristic_face(card, record, cast_face_version=cast_face_version)
+    if face is None and card.active_face:
         face = next(
             (
                 value

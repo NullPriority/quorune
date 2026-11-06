@@ -12,6 +12,8 @@ from .attachments import attachment_target_ref
 from .commander import commander_damage_source
 from .continuous_effect_state import active_resolution_effects
 from .counter_state import player_counter_snapshot
+from .omen import omen_characteristic_face
+from .rules.face_characteristic_values import current_face_mana_value
 from .model import (
     CardInstance,
     Event,
@@ -211,12 +213,15 @@ class StateProjector:
     def _effective(self, card: CardInstance) -> dict[str, Any]:
         try:
             record = self.card_db.by_oracle_id(card.oracle_id)
+            omen_face = omen_characteristic_face(
+                card, record, cast_face_version=getattr(self.state, "cast_face_offers_version", None),
+            )
+            face_name = omen_face["name"] if omen_face is not None else card.active_face
             face = next(
                 (
                     (index, value)
                     for index, value in enumerate(record.faces)
-                    if card.active_face
-                    and str(value.get("name") or "") == card.active_face
+                    if face_name and str(value.get("name") or "") == face_name
                 ),
                 None,
             )
@@ -232,7 +237,7 @@ class StateProjector:
                     if face_data is not None
                     else record.mana_cost
                 ),
-                "mv": record.mana_value,
+                "mv": current_face_mana_value(record, omen_face) if omen_face is not None else record.mana_value,
                 "t": (
                     str(face_data.get("type_line") or "")
                     if face_data is not None
@@ -353,7 +358,7 @@ class StateProjector:
                 or card.annotations.get("until_end_of_turn")
                 or card.temporary_keywords
             )
-            if card.active_face or characteristic_override:
+            if card.active_face or effective.get("face") is not None or characteristic_override:
                 obj["m"] = effective.get("m", "")
                 obj["t"] = effective.get("t", "")
                 obj["o"] = truncate(

@@ -681,6 +681,7 @@
     "tests/fixtures/number-of-token-cards.json",
     "tests/fixtures/numeric-count-self-cost-cards.json",
     "tests/fixtures/occurrence-player-target-cards.json",
+    "tests/fixtures/omen-resolution-cards.json",
     "tests/fixtures/opening-hand-battlefield-cards.json",
     "tests/fixtures/opening-hand-reveal-cards.json",
     "tests/fixtures/opponent-keyword-prohibition-cards.json",

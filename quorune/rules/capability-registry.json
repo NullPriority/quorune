@@ -13306,6 +13306,94 @@
     {
       "applicability": {
         "exclusions": [
+          "normal-face resolution",
+          "countered or all-targets-illegal spells",
+          "unclosed Omen spell bodies"
+        ],
+        "inputs": [
+          "compiled instant or sorcery Omen face",
+          "bound original or copied stack object",
+          "successful resolution"
+        ],
+        "outputs": [
+          "ordinary owner-library destination preparation",
+          "one deterministic owner-library shuffle",
+          "normal card characteristics outside the selected spell face"
+        ],
+        "summary": "Omen resolution uses the bound spell face and the canonical owner-library move and shuffle."
+      },
+      "blockers": [],
+      "dependencies": [
+        "library.shuffle.fixed_controller",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The compiled alternative carries an intrinsic lifecycle marker. Runtime validation requires its declared capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.lifecycle.omen",
+      "implementation_components": [
+        "quorune.omen.omen_stack_context",
+        "quorune.omen.omen_characteristic_face",
+        "quorune.omen.omen_resolution_destination",
+        "quorune.compiler.adventure_faces.compile_adventure_faces",
+        "quorune.stack_resolution.complete_stack_resolution",
+        "quorune.zone_transitions.ZoneTransitionOwner.shuffle_library"
+      ],
+      "implementation_mutation_rationale": "Omitting the intrinsic destination fails the shared lifecycle destination assertion.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_and_opponent_copy_shuffle_their_owners_libraries_and_replay",
+        "test_countered_fizzled_and_normal_face_casts_do_not_shuffle"
+      ],
+      "multiplayer_tests": [
+        "test_original_and_opponent_copy_shuffle_their_owners_libraries_and_replay",
+        "test_countered_fizzled_and_normal_face_casts_do_not_shuffle"
+      ],
+      "negative_tests": [
+        "test_registered_omen_runtime_requires_its_declared_capability",
+        "test_omen_stack_binding_and_legacy_face_versions_are_closed",
+        "test_countered_fizzled_and_normal_face_casts_do_not_shuffle"
+      ],
+      "official_rules": [
+        "608.2b",
+        "608.2n",
+        "701.24c",
+        "704.5e",
+        "707.10",
+        "720.3a",
+        "720.3c",
+        "720.3d",
+        "720.4"
+      ],
+      "positive_tests": [
+        "test_omen_capability_is_bound_only_to_the_typed_alternative_face",
+        "test_original_and_opponent_copy_shuffle_their_owners_libraries_and_replay"
+      ],
+      "privacy_tests": [
+        "test_original_and_opponent_copy_shuffle_their_owners_libraries_and_replay"
+      ],
+      "replay_tests": [
+        "test_original_and_opponent_copy_shuffle_their_owners_libraries_and_replay",
+        "test_countered_fizzled_and_normal_face_casts_do_not_shuffle"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "more than one permitted spell",
           "per-source this-way limits",
           "team limits",
@@ -78100,7 +78188,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 697,
+  "registry_version": 718,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

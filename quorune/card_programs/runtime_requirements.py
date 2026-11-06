@@ -7,6 +7,8 @@ from typing import Any, Mapping
 from ..object_predicate import object_query_capabilities
 from ..crime_model import CRIME_EVENT,CRIME_CAPABILITY,crime_fact_dependencies
 from ..adventure import ADVENTURE_CAPABILITY,ADVENTURE_COVERAGE
+from ..cast_face_offers import OMEN_COVERAGE
+from ..omen import OMEN_CAPABILITY
 from ..rules.casting_additional_cost_groups import announced_additional_cost_dependencies
 from ..rules.fixed_homogeneous_target_set_capability_shapes import announced_target_runtime_dependencies
 from ..rules.resolution_condition_shapes import same_target_self_replacement_runtime_dependencies
@@ -197,6 +199,12 @@ def _event_query_runtime_requirements(program):
     return required,blockers
 
 
+def _intrinsic_spell_face_dependencies(coverage):
+    return {capability for marker, capability in (
+        (ADVENTURE_COVERAGE, ADVENTURE_CAPABILITY), (OMEN_COVERAGE, OMEN_CAPABILITY),
+    ) if marker in coverage}
+
+
 def program_dynamic_runtime_requirements(program):
     from ..rules.fuse_shapes import fuse_runtime_requirements
     try:
@@ -204,7 +212,7 @@ def program_dynamic_runtime_requirements(program):
         if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
     required,blockers=_event_query_runtime_requirements(program)
-    if ADVENTURE_COVERAGE in program.coverage:required.add(ADVENTURE_CAPABILITY)
+    required.update(_intrinsic_spell_face_dependencies(program.coverage))
     from ..characteristic_fragments import characteristic_quantity_capabilities
     required.update(characteristic_quantity_capabilities((program.effects,program.handlers,program.target_schema,program.cost_schema)))
     from ..rules.casting.public_conditions import self_public_condition_dependencies

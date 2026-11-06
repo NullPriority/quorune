@@ -2,6 +2,7 @@ from __future__ import annotations
 from ...spell_mana_counts import capture_spell_mana_counts
 from .spell_context import declared_spell_context
 from ...adventure import adventure_stack_context
+from ...omen import omen_stack_context
 from ..optional_life_cost_model import optional_life_cost_amount
 from .turn_cast_grants import underlying_cast_cost_option_id, commit_turn_cast_grant_use
 
@@ -863,6 +864,7 @@ def _cast_provenance_context(
 ) -> dict[str, Any]:
     return {
         **adventure_stack_context(state,record,card),
+        **omen_stack_context(record, card, cast_face_version=getattr(state, "cast_face_offers_version", None)),
         "cast_origin": proposal.origin,
         "mana_spent_total": sum(
             int(amount)
