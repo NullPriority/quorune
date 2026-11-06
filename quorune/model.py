@@ -26,7 +26,7 @@ from .permanent_event_state_model import permanent_event_state_version
 from .battle_cry_resolution_model import battle_cry_resolution_version
 from .block_characteristic_model import block_characteristics_version
 from .unblocked_attacker_model import unblocked_attacker_event_version
-from .cast_face_offers import cast_face_offers_version
+from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION, cast_face_offers_version, omen_resolution_binding
 from .cast_source_placement_model import cast_source_placement_version
 from .explore_action_model import explore_action_version
 from .transform_timestamp_model import transform_timestamp_version
@@ -729,7 +729,9 @@ class StackItem:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "StackItem":
-        return cls(**data)
+        item = cls(**data)
+        omen_resolution_binding(item)
+        return item
 
 
 @dataclass(slots=True)
@@ -1039,7 +1041,7 @@ class GameState:
     ref_counters: dict[str, int] = field(default_factory=dict)
     spell_mana_counts_version: int | None = 1
     ability_source_information_version: int | None = 1
-    cast_face_offers_version: int | None = 1
+    cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
     explore_action_version: int | None = 1
     transform_timestamp_version: int | None = 1

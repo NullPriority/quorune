@@ -617,13 +617,23 @@ that incarnation remains in its expected public zone and pins immediate
 departure information through the canonical zone owner. An absent marker
 retains historical targeted-only capture and does not add fields during replay.
 
-`cast_face_offers_version: 1` enables Adventure alternative-face offers and
-their intrinsic resolution lifecycle. A resolving Adventure records the chosen
-alternative and normal face, moves to exile, and grants its resolving controller
-a normal-face play permission bound to that exact exile incarnation. Countered
-spells and spell copies gain no permission. Records without the marker retain
-their earlier face offers and resolution. Both optional markers accept only
-integer one or absence; Boolean and unknown versions are rejected.
+`cast_face_offers_version: 2` binds a cast Omen's chosen alternative face
+in a version-one stack context. The binding is also carried by stack copies.
+Successful Omen resolution prepares the owner-library move through the
+ordinary destination replacement owner, then shuffles that library once. A
+spell copy ceases to exist during stabilization. Countered spells and spells
+with all targets illegal use the ordinary counter destination. Rules queries
+and projections use the card's normal face outside the stack. Prospective
+casting queries use the selected face.
+
+Versions one and two enable Adventure alternative-face offers and their
+intrinsic resolution lifecycle. A resolving Adventure moves to exile and
+grants its resolving controller a normal-face permission bound to that exile
+incarnation. Countered spells and spell copies gain no permission. Version one
+replays its original Omen resolution under matching runtime provenance.
+Records with an absent marker retain
+their earlier face offers and resolution. The decoder rejects Boolean and
+unknown versions.
 
 Current runtime-trust provenance also identifies a core permanent-spell copy's
 empty resolution through its pinned spell record. It retains the copy-specific

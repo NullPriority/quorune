@@ -8681,6 +8681,38 @@
       ]
     },
     {
+      "id": "intrinsic-omen-resolution-lifecycle",
+      "patterns": [
+        "quorune/ability_fragment_host.py",
+        "quorune/carddb_characteristics.py",
+        "quorune/omen.py",
+        "quorune/cast_face_offers.py",
+        "quorune/cast_lifecycles.py",
+        "quorune/card_programs/runtime_requirements.py",
+        "quorune/compiler/adventure_faces.py",
+        "quorune/rules/casting/commit.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/stack_resolution.py",
+        "quorune/zone_transitions.py",
+        "quorune/projection.py",
+        "quorune/semantic_runtime/entry_copy.py",
+        "tests/test_omen_resolution.py",
+        "tests/fixtures/omen-resolution-cards.json"
+      ],
+      "test_modules": [
+        "test_omen_resolution",
+        "test_ability_source_counter_targets",
+        "test_fixed_stack_spell_copy",
+        "test_fixed_token_production",
+        "test_fixed_zone_cast_lifecycles",
+        "test_graveyard_exile_payments",
+        "test_library_selection_knowledge",
+        "test_optional_spell_copy_followups",
+        "test_stack_counter_rules",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "mixed-permanent-target-alternatives",
       "patterns": [
         "quorune/compiler/direct_target.py",

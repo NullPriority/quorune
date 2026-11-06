@@ -3,10 +3,9 @@ from __future__ import annotations
 """Intrinsic Adventure resolution and one zone-bound normal-face permission."""
 
 from collections.abc import Mapping
-from .cast_face_offers import complete_cast_face_offers
+from .cast_face_offers import ADVENTURE_CONTEXT, complete_cast_face_offers
 from .characteristic_evaluation import type_parts
 
-ADVENTURE_CONTEXT='adventure_resolution'
 ADVENTURE_PERMISSION='adventure_cast_permission'
 ADVENTURE_CAPABILITY='casting.lifecycle.adventure'
 ADVENTURE_COVERAGE='intrinsic_adventure_resolution_required'

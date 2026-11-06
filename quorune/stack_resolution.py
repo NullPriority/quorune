@@ -9,6 +9,7 @@ from .cast_lifecycles import (
     complete_fixed_cast_lifecycle_resolution,
     fixed_cast_lifecycle_resolution_destination,
 )
+from .cast_face_offers import omen_resolution_binding
 from .errors import StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
@@ -61,6 +62,8 @@ class StackResolutionCompletionHost(Protocol):
         destination: str,
         **kwargs: Any,
     ) -> CardInstance: ...
+
+    def shuffle_library(self, seat: str, *, reason: str, actor: str | None = None) -> None: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -223,6 +226,8 @@ def _complete_stack_resolution(
     )
     from .adventure import complete_adventure_resolution
     complete_adventure_resolution(item,card)
+    if final_destination == "library" and omen_resolution_binding(item) is not None:
+        host.shuffle_library(card.owner, reason="Omen resolved", actor=item.controller)
     if evoked and card.zone != "battlefield":
         card.annotations.pop("evoked", None)
 

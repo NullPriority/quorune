@@ -1424,8 +1424,13 @@ class ZoneTransitionOwner:
     def shuffle_library(
         self, seat: str, *, reason: str = "shuffle",
         excluded_object_ids: Sequence[str] = (),
+        actor: str | None = None,
     ) -> None:
         self.host._require_seat(seat)
+        if actor is None:
+            actor = seat
+        elif actor != seat:
+            self.host._require_seat(actor)
         player = self.state.players[seat]
         excluded = set(excluded_object_ids)
         if len(excluded) != len(excluded_object_ids) or any(
@@ -1455,9 +1460,9 @@ class ZoneTransitionOwner:
             card.known_to = []
             card.revealed_to = []
         self.host._log(
-            seat,
+            actor,
             "library.shuffle",
-            f"{seat} shuffled.",
+            f"{seat} shuffled." if actor == seat else f"{actor} shuffled {seat}'s library.",
             {JOURNAL_REASON_FIELD: reason, "count": count},
             importance=0,
             changed_players=[seat],

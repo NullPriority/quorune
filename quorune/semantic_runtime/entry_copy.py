@@ -91,7 +91,10 @@ def _copiable_values(host, target, spec, *, entering=None):
         # Printed/prototype spell values, before the copy and battlefield boosts.
         from ..carddb_characteristics import base_card_characteristics
         from ..rules.prototype import prototype_characteristic_values
-        original=base_card_characteristics(entering,host.card_record(entering))
+        original = base_card_characteristics(
+            entering, host.card_record(entering),
+            cast_face_version=getattr(getattr(host, "state", None), "cast_face_offers_version", None),
+        )
         original.update(prototype_characteristic_values(entering))
         try:power,toughness=int(original['power']),int(original['toughness'])
         except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError('Entering source stats are not represented') from exc

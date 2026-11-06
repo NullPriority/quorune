@@ -118,12 +118,12 @@ class AbilitySourceCounterModelTests(unittest.TestCase):
         from quorune.adventure import ADVENTURE_CONTEXT,ADVENTURE_PERMISSION,adventure_cast_permission,adventure_resolution_destination,complete_adventure_resolution
         from quorune.cast_face_offers import cast_face_offers_version
         state=GameState('face-info',GameConfig(),{},{},{},{},[],None,None)
-        raw=state.to_dict();self.assertEqual(1,raw['cast_face_offers_version'])
+        raw=state.to_dict();self.assertEqual(2,raw['cast_face_offers_version'])
         raw.pop('cast_face_offers_version');raw.pop('ability_source_information_version')
         legacy=GameState.from_dict(raw)
         self.assertEqual(raw,legacy.to_dict())
         self.assertIsNone(legacy.cast_face_offers_version)
-        for value in (True,False,0,2,1.0,'1'):
+        for value in (True,False,0,3,1.0,'1'):
             with self.assertRaises(ValueError):cast_face_offers_version(value)
         card=CardInstance(object_id='adventurer',ref='adventurer',oracle_id='model:adventure',printed_name='Normal',owner='A',controller='B',zone='exile')
         item=StackItem(stack_id='adventure',ref='adventure',kind='spell',controller='B',label='Adventure',

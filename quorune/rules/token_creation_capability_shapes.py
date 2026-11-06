@@ -17,6 +17,7 @@ from ..ability_fragments import (
     ToxicSpec,
     canonical_ability_fragments,
 )
+from ..cast_face_offers import OMEN_COVERAGE
 from ..compiler.token_templates import (
     FIXED_TOKEN_DEFINITION_BATCH_MECHANIC,
     fixed_token_creation_effect_template,
@@ -149,6 +150,7 @@ _AUXILIARY_MECHANICS = frozenset(
         AFTERLIFE_MECHANIC_ID,
         "generated_oracle_ir",
         "spell_resolution",
+        OMEN_COVERAGE,
         "triggered_ability",
         TYPED_TOKEN_ABILITY_MECHANIC_ID,
         "cr-115-targets",
