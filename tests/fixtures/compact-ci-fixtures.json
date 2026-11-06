@@ -530,6 +530,7 @@
     "tests/fixtures/distinct-target-cost-cards.json",
     "tests/fixtures/double-faced-spell-copy-cards.json",
     "tests/fixtures/draw-rules-cards.json",
+    "tests/fixtures/dungeon-cards.json",
     "tests/fixtures/each-player-life-cards.json",
     "tests/fixtures/each-player-mill-cards.json",
     "tests/fixtures/earthbend-cards.json",

@@ -1080,6 +1080,7 @@
       "test_destruction_rules",
       "test_draw_replacement_components",
       "test_draw_restrictions",
+      "test_dungeon_progress",
       "test_entry_keyword_counter_choices",
       "test_entry_x_results",
       "test_exact_deck_interactions",

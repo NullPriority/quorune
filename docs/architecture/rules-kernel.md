@@ -603,6 +603,17 @@ Historical source-only designation events retain their original payload and
 discovery scope alongside the separate normalized stream, so retained programs
 keep their saved subscription meaning and replay behavior.
 
+`dungeon_catalog.py` pins the four traditional dungeon graphs to their printed
+Oracle source hashes. Room labels are display data and numbered edges define
+the legal destinations. `dungeon_progress.py` prepares immutable Venture
+offers for one owner and one current journey. The offer codec reconstructs the
+legal destinations from the graph and checks the retained choices against it.
+
+Last-room completion uses the outstanding room abilities of the current
+incarnation. A venture from the last room completes that dungeon before the
+next entry choice. Entry allocates a new incarnation even when the player
+chooses the same dungeon again.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining

@@ -4176,6 +4176,18 @@
       ]
     },
     {
+      "id": "dungeon-progression-contract",
+      "patterns": [
+        "quorune/dungeon_catalog.py",
+        "quorune/dungeon_progress.py",
+        "tests/fixtures/dungeon-cards.json",
+        "tests/test_dungeon_progress.py"
+      ],
+      "test_modules": [
+        "test_dungeon_progress"
+      ]
+    },
+    {
       "id": "earthbend-land-and-delayed-return",
       "patterns": [
         "quorune/compiler/earthbend_templates.py",
