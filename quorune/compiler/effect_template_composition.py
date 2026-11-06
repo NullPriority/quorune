@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from typing import Any, Callable, Mapping
 from functools import partial
+import re
 
+from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, supports_next_turn_effect
 from .closed_effect_programs import closed_effect_program_template
 from .bound_effect_programs import bound_effect_program_template
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
@@ -20,6 +22,7 @@ from .counter_templates import targeted_controller_payment_template
 from .token_copy_templates import token_copy_recipe_template
 from .resolution_condition_templates import resolution_condition_template
 from .query_counter_sequences import ordered_quantity_sequence_template
+from .oracle_source_text import without_parenthetical_reminder
 
 
 CompiledEffectTemplate = tuple[
@@ -29,6 +32,44 @@ CompiledEffectTemplate = tuple[
     tuple[str, ...],
 ]
 EffectCompiler = Callable[[str], CompiledEffectTemplate]
+
+
+_NEXT_TURN_DURATION = re.compile(r"\buntil your next turn\b", re.IGNORECASE)
+
+
+def _next_turn_effect_template(
+    text: str, compile_atomic: EffectCompiler, *, card_name: str, allow_source: bool,
+) -> CompiledEffectTemplate | None:
+    """Match the duration wording before delegating the full result grammar."""
+    if "until your next turn" not in text.casefold():
+        return None
+    body = without_parenthetical_reminder(text)
+    folded = body.casefold()
+    if (not (folded.startswith("until your next turn, ") or folded.rstrip(".").endswith(" until your next turn"))
+            or "until end of turn" in folded or '"' in body):
+        return None
+    equivalent, count = _NEXT_TURN_DURATION.subn("until end of turn", body)
+    if count != 1:
+        return None
+    from .target_characteristic_sets import target_characteristic_set_template
+
+    template_id, effects, schema, mechanics = (
+        target_characteristic_set_template(equivalent, include_single=True) or compile_atomic(equivalent)
+    )
+    if template_id is None:
+        from .temporary_declaration_templates import temporary_declaration_restriction_effect_template
+
+        declaration_body = (body[len("Until your next turn, "):].rstrip(".") + " this turn."
+                            if folded.startswith("until your next turn, ")
+                            else _NEXT_TURN_DURATION.sub("this turn", body))
+        declaration = temporary_declaration_restriction_effect_template(
+            declaration_body, card_name=card_name, allow_source=allow_source,
+        )
+        if declaration is not None:
+            template_id, effects, schema, mechanics = declaration.compiled()
+    if template_id is None or len(effects) != 1 or not supports_next_turn_effect(effects[0]):
+        return None
+    return f"{template_id}-next-turn", ({**effects[0], NEXT_TURN_EFFECT_FIELD: True},), schema, mechanics
 
 
 def reviewed_contextual_effect_template(
@@ -43,6 +84,12 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        timed = _next_turn_effect_template(
+            body, atomic_with_characteristics, card_name=card_name,
+            allow_source=source_context.get("source_is_permanent") is True,
+        )
+        if timed is not None:
+            return timed
         from .reveal_until_library_selection_templates import reveal_until_library_selection_effect_template
         reveal_until=reveal_until_library_selection_effect_template(body)
         if reveal_until is not None:return reveal_until

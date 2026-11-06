@@ -949,7 +949,7 @@ class ContinuousEffectModelTests(unittest.TestCase):
             "Creatures target opponent controls get -1/-1 until end of turn.",
             "Creatures your opponents control get +X/+X until end of turn.",
             "All creatures become artifacts until end of turn.",
-            "All creatures get -1/-1 until your next turn.",
+            "All creatures get -1/-1 until the end of your next turn.",
             "If you attacked, attacking creatures get +1/+0 until end of turn.",
         )
         for index, text in enumerate(cases):

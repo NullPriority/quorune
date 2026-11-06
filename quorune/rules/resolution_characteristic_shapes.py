@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..next_turn_effect import next_turn_effect_dependencies
 from ..resolution_characteristic_model import (
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
     fixed_resolution_characteristic_instruction,
@@ -25,7 +26,8 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
     try:spec,selection=fixed_resolution_characteristic_instruction(effects[0])
     except (TypeError,ValueError,KeyError):return ()
     if not {keyword.casefold() for keyword in spec.keywords}<=mechanics:return ()
-    dependencies={PERMANENT_CHARACTERISTIC_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn'}
+    dependencies={PERMANENT_CHARACTERISTIC_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn',
+                  *next_turn_effect_dependencies(effects[0])}
     if isinstance(spec, FixedResolutionSubtypeGrantSpec):
         from .permanent_predicate_capability_shapes import (
             direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities,

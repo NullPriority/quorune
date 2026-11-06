@@ -127,8 +127,9 @@ def commit_temporary_declaration_restriction(
     card: Any,
     source: ResolutionEffectSource,
     kind: TemporaryDeclarationRestrictionKind | str | Mapping,
+    expires_on_next_turn_of: str | None = None,
 ) -> ResolutionDeclarationRuleEffect:
-    """Create one locked declaration rule that lasts until cleanup."""
+    """Create one locked, duration-bound declaration rule."""
 
     if getattr(card, "zone", None) != "battlefield" or bool(
         getattr(card, "phased_out", False)
@@ -148,6 +149,7 @@ def commit_temporary_declaration_restriction(
             targets=(card,),
             restriction=restriction,
             duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+            expires_on_next_turn_of=expires_on_next_turn_of,
         )
     except (ContinuousEffectError, ContinuousEffectStateError) as exc:
         raise TemporaryDeclarationRestrictionError(str(exc)) from exc

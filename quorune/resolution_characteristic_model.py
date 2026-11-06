@@ -181,7 +181,12 @@ def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any],
 ) -> tuple[FixedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
-    if not isinstance(value, Mapping) or set(value) not in (expected | {"card"}, expected | {"predicate"}):
+    if not isinstance(value, Mapping):
+        raise ValueError("Fixed characteristic instruction fields are malformed")
+    from .next_turn_effect import split_next_turn_effect
+
+    value, _ = split_next_turn_effect(value)
+    if set(value) not in (expected | {"card"}, expected | {"predicate"}):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value["schema_version"]
     if value["op"] != CHARACTERISTIC_OPERATION or type(version) is not int or version not in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS:

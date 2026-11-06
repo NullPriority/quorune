@@ -5,6 +5,7 @@ from typing import Any, Mapping
 """Descriptor-owned runtime requirements beyond registered operation minima."""
 
 from ..object_predicate import object_query_capabilities
+from ..next_turn_effect import next_turn_effect_dependencies
 from ..crime_model import CRIME_EVENT,CRIME_CAPABILITY,crime_fact_dependencies
 from ..adventure import ADVENTURE_CAPABILITY,ADVENTURE_COVERAGE
 from ..cast_face_offers import OMEN_COVERAGE
@@ -224,6 +225,10 @@ def _value_runtime_requirements(program):
     values = (program.effects, program.handlers, program.target_schema, program.cost_schema)
     required = set(characteristic_quantity_capabilities((*values, program.event_condition)))
     blockers = set()
+    try:
+        required.update(next_turn_effect_dependencies(program.effects))
+    except ValueError as exc:
+        blockers.add(f"runtime_next_turn_duration:invalid:{exc}")
     try:
         required.update(self_public_condition_dependencies((program.handlers, program.cost_schema)))
     except (ValueError, TypeError) as exc:

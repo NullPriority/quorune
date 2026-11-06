@@ -6751,7 +6751,6 @@ class CommanderEngine(
                         self.move_card(card.object_id, "exile", reason="controller left game", log=False)
             self.state.stack = [item for item in self.state.stack if item.controller != seat or item.card_object_id is not None]
             self.turn_steps.retire_departed_turns(seat)
-            self.turn_steps.discard_skips_for(seat)
             self.state.priority_passes = [passed for passed in self.state.priority_passes if passed != seat]
             self._log(seat, "player.eliminated", f"{seat} left the game: {reason}.", {"reason": reason}, importance=3, changed_players=[seat])
 

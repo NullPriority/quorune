@@ -4,7 +4,7 @@ import copy
 import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Literal, Mapping
 from .composition_storage import PermanentCompositionStorage
 
 from .damage_modifier_state import (
@@ -1350,7 +1350,7 @@ class GameState:
                 for item in data.get("damage_redirections", [])
             ],
             continuous_effects=(
-                cls._continuous_effects_from_dict(data["continuous_effects"])
+                cls._continuous_effects_from_dict(data["continuous_effects"], data["players"])
                 if "continuous_effects" in data
                 else None
             ),
@@ -1413,11 +1413,16 @@ class GameState:
 
     @staticmethod
     def _continuous_effects_from_dict(
-        data: Any,
+        data: Any, players: Mapping[str, Any],
     ) -> list[ContinuousJournalEffect]:
         if not isinstance(data, list):
             raise ValueError("continuous_effects must be an array")
-        return [continuous_journal_effect_from_dict(effect) for effect in data]
+        effects = [continuous_journal_effect_from_dict(effect) for effect in data]
+        for effect in effects:
+            expiry_player = getattr(effect, "expires_on_next_turn_of", None)
+            if expiry_player is not None and expiry_player not in players:
+                raise ValueError("Continuous effect names an unknown expiry player")
+        return effects
 
     def save(self, path: str | Path) -> None:
         path = Path(path)

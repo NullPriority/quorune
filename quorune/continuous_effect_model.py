@@ -44,6 +44,7 @@ class ContinuousEffectDuration(str, Enum):
 
     WHILE_SOURCE_PRESENT = "while_source_present"
     UNTIL_END_OF_TURN = "until_end_of_turn"
+    UNTIL_NEXT_TURN = "until_next_turn"
     UNTIL_CONTROL_CHANGE = "until_control_change"
     ZONE_OBJECT = "zone_object"
     UNTIL_UNATTACHED = "until_unattached"
@@ -475,6 +476,10 @@ def _validate_continuous_effect_identity_scope(
         validate_attachment_duration(effect, locked)
     except ValueError as exc:
         raise ContinuousEffectError(str(exc)) from exc
+    validate_turn_expiry(effect.duration, effect.expires_on_next_turn_of)
+    if (effect.duration is ContinuousEffectDuration.UNTIL_NEXT_TURN
+            and effect.origin is not ContinuousEffectOrigin.RESOLUTION):
+        raise ContinuousEffectError("Next-turn duration requires a resolution-created effect")
     if effect.duration.source_bound:
         if (effect.origin is not ContinuousEffectOrigin.RESOLUTION
                 or effect.layer is not Layer.CONTROL
@@ -560,6 +565,7 @@ class ContinuousEffect:
     duration_history: SourceContinuitySnapshot | None = None
     denied_keyword_grants: tuple[tuple[str, str, str], ...] = ()
     attachment_duration: AttachmentDuration | None = None
+    expires_on_next_turn_of: str | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -712,6 +718,8 @@ class ContinuousEffect:
             payload['denied_keyword_grants'] = [list(row) for row in self.denied_keyword_grants]
         if self.attachment_duration is not None:
             payload['attachment_duration'] = self.attachment_duration.to_dict()
+        if self.expires_on_next_turn_of is not None:
+            payload["expires_on_next_turn_of"] = self.expires_on_next_turn_of
         return payload
 
     @classmethod
@@ -737,7 +745,8 @@ class ContinuousEffect:
             raise ContinuousEffectError(
                 "Continuous effect fields are missing or unknown"
             )
-        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration'})
+        turn_expiry = decode_turn_expiry(value)
+        actual_fields = frozenset(set(value) - {'denied_keyword_grants', 'attachment_duration', 'expires_on_next_turn_of'})
         if actual_fields not in {
             frozenset(legacy_fields),
             frozenset(relation_fields),
@@ -820,6 +829,7 @@ class ContinuousEffect:
                 denied_keyword_grants=value.get('denied_keyword_grants', ()),
                 attachment_duration=(AttachmentDuration.from_dict(value['attachment_duration'])
                     if 'attachment_duration' in value else None),
+                expires_on_next_turn_of=turn_expiry,
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):
@@ -830,6 +840,20 @@ class ContinuousEffect:
     def fingerprint(self) -> str:
         return immutable_fingerprint(self.to_dict())
 
+
+def validate_turn_expiry(duration: ContinuousEffectDuration, player: str | None) -> None:
+    if duration is ContinuousEffectDuration.UNTIL_NEXT_TURN:
+        if type(player) is not str or not player:
+            raise ContinuousEffectError("Next-turn duration requires an expiry player")
+    elif player is not None:
+        raise ContinuousEffectError("Only next-turn duration may name an expiry player")
+
+
+def decode_turn_expiry(value: Mapping[str, Any]) -> str | None:
+    has_anchor = "expires_on_next_turn_of" in value
+    if has_anchor != (value.get("duration") == ContinuousEffectDuration.UNTIL_NEXT_TURN.value):
+        raise ContinuousEffectError("Next-turn duration and its expiry player must be recorded together")
+    return value.get("expires_on_next_turn_of")
 
 __all__ = [
     "ContinuousEffect",

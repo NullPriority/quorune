@@ -1161,6 +1161,16 @@ expiry boundaries stay internal to the scheduler. Public queues expose turns
 that surviving players can take. The departure marker in Game Record v3 pins
 this behavior so earlier records can replay their original schedule.
 
+Fixed characteristic results and ordinary declaration prohibitions can expire
+at the resolving controller's next eligible turn. The continuous-effect
+journal records that controller when the result resolves. Turn selection uses
+the existing extra-turn order and whole-turn skip grants to find the boundary.
+After departure, the relevant scheduled slots remain internal to the turn
+owner until the effect expires at the turn that would have begun. Public turn
+offers and the extra-turn queue show only players who can take those turns.
+Effects with the earlier duration vocabulary retain their existing checkpoint
+representation.
+
 `CommanderEngine.apnap_order` rotates the physical seat order from the retained
 turn anchor before omitting departed players. During a departed player's
 continuing turn, the next surviving seat is first in APNAP order; that successor

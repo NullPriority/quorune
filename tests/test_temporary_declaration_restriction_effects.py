@@ -946,7 +946,7 @@ class QualifiedDeclarationCompilerTests(unittest.TestCase):
         self.assertEqual("exact", self.compile(text).status)
         for body in ("Target creature with power X or less can't be blocked this turn.",
                      "Target creature can't block this creature until your next turn.",
-                     "Target creature can't be blocked until your next turn."):
+                     "Target creature can't be blocked until the end of your next turn."):
             with self.subTest(body=body):
                 self.assertNotEqual("exact", self.compile("{1}: " + body).status)
         raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
@@ -1181,7 +1181,7 @@ class GroupDeclarationCompilerTests(unittest.TestCase):
             "Other creatures can't attack this turn.",
             "X target creatures can't block this turn.",
             "Two or more target creatures can't block this turn.",
-            "Creatures you control can't be blocked until your next turn.",
+            "Creatures you control can't be blocked until the end of your next turn.",
             "Creatures a player chooses can't block this turn.",
         ):
             with self.subTest(text=text):

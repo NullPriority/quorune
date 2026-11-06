@@ -5,12 +5,16 @@ from __future__ import annotations
 from typing import Any,Mapping,Sequence
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
 from ..keyword_counters import keyword_counter_mechanic
+from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, next_turn_effect_dependencies, split_next_turn_effect
 
 TARGET_CHARACTERISTIC_SET_CAPABILITY='continuous.resolution.fixed_target_characteristic_set'
 OPERATION='apply_source_characteristics_until_end_of_turn'
 
 
 def decode_target_characteristics(effect,*,allow_zero_result=False):
+    if not isinstance(effect, Mapping):
+        raise ValueError('Target characteristic set fields are malformed')
+    effect, _ = split_next_turn_effect(effect)
     variable = isinstance(effect,Mapping) and effect.get('announced_target_count') is True
     if not isinstance(effect,Mapping) or set(effect)!={'op','schema_version','cards','maximum_targets','power','toughness','keywords'} | ({'announced_target_count'} if variable else set()):
         raise ValueError('Target characteristic set fields are malformed')
@@ -37,13 +41,21 @@ def target_characteristic_set_capabilities(*,effects:Sequence[Mapping[str,Any]],
     if effect['cards']!='$targets' or not isinstance(target_schema,Mapping):return ()
     from .fixed_homogeneous_target_set_capability_shapes import _singular_schema,_target_bounds
     from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed,direct_target_predicate_capabilities
-    parsed=_singular_schema(target_schema);bounds=_target_bounds(target_schema)
-    if parsed is None or bounds is None or parsed[1] or bounds[1]!=effect['maximum_targets']:return ()
-    singular=parsed[0]
+    if NEXT_TURN_EFFECT_FIELD in effect and type(target_schema.get('count')) is int and target_schema['count'] == 1:
+        if effect['maximum_targets'] != 1:
+            return ()
+        singular = target_schema
+    else:
+        parsed = _singular_schema(target_schema)
+        bounds = _target_bounds(target_schema)
+        if parsed is None or bounds is None or parsed[1] or bounds[1] != effect['maximum_targets']:
+            return ()
+        singular = parsed[0]
     if not direct_permanent_target_schema_is_closed(singular) or singular.get('types_any')!=['creature']:return ()
     if not {keyword_counter_mechanic(k) or k.casefold() for k in keywords}<=mechanics:return ()
     return tuple(sorted({TARGET_CHARACTERISTIC_SET_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn','target.revalidate_resolution',
-        *direct_target_predicate_capabilities(singular),*(cap for keyword in keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
+        *next_turn_effect_dependencies(effect), *direct_target_predicate_capabilities(singular),
+        *(cap for keyword in keywords for cap in FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES[keyword])}))
 
 
 def is_closed_target_characteristic_set_program(program):

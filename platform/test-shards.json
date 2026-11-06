@@ -1105,6 +1105,7 @@
       "test_library_search_dispatch_native",
       "test_mutate_cast_metadata",
       "test_mutate_cast_native",
+      "test_next_turn_duration",
       "test_noncreature_subtype_quantities",
       "test_number_of_token_amounts",
       "test_occurrence_player_target_native",

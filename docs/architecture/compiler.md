@@ -20,6 +20,13 @@ A name-first legendary creature token may carry a fixed keyword list. The
 ordinary creature-token production validates that entire list before the named
 production adds the printed name and legendary supertype.
 
+Fixed characteristic changes and ordinary declaration prohibitions may carry
+controller-relative next-turn timing. The compiler consumes the literal
+duration and delegates the full body to the existing selection and result
+grammar. The timing field carries a separate capability requirement. Existing
+operation identifiers continue to identify the same result owners across
+historical records.
+
 A closed fixed token definition may identify one target player or opponent as
 the creator. The ordinary public player target schema chooses and revalidates
 that recipient. The token transaction uses the chosen player's creation

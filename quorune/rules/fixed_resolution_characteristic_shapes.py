@@ -12,6 +12,7 @@ from ..keyword_abilities import (
     FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES,
 )
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
+from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, split_next_turn_effect
 
 
 FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
@@ -33,7 +34,10 @@ def fixed_resolution_characteristic_set_node_capabilities(
         or len(effects) != 1
     ):
         return ()
-    effect = effects[0]
+    try:
+        effect, next_turn = split_next_turn_effect(effects[0])
+    except ValueError:
+        return ()
     has_keywords = "keywords" in effect
     expected_fields = {"op", "predicate", "power", "toughness"}
     if has_keywords:
@@ -86,6 +90,8 @@ def fixed_resolution_characteristic_set_node_capabilities(
         ):
             return ()
     dependencies = {FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, *object_query_capabilities(query)}
+    if next_turn:
+        dependencies.add(NEXT_TURN_EFFECT_CAPABILITY)
     if query.state_predicate is not None:
         dependencies.add("state_query.permanent.public_state_predicate")
     if target_schema is not None:

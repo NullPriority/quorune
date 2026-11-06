@@ -31238,6 +31238,93 @@
     {
       "applicability": {
         "exclusions": [
+          "replacement effects lasting until next turn",
+          "unsupported durations or ambiguous controller references",
+          "variable target counts"
+        ],
+        "inputs": [
+          "fixed characteristic change or ordinary combat prohibition",
+          "resolved controller",
+          "canonical whole-turn order and skips"
+        ],
+        "outputs": [
+          "immutable controller-relative expiry",
+          "first eligible normal or extra turn boundary",
+          "no turn or priority for departed controller"
+        ],
+        "summary": "Expire a supported resolution-created characteristic change or combat declaration rule when the resolving controller next begins an eligible turn."
+      },
+      "blockers": [],
+      "dependencies": [
+        "turn.boundary.scheduled_skip",
+        "turn.extra.fixed_after_current"
+      ],
+      "dependency_fail_closed_rationale": "Normal runtime binding requires this timing capability even when it is removed from the declared source program.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.until_controller_next_turn",
+      "implementation_components": [
+        "quorune.next_turn_effect.split_next_turn_effect",
+        "quorune.compiler.effect_template_composition._next_turn_effect_template",
+        "quorune.continuous_effect_state.expire_next_turn_continuous_effects",
+        "quorune.turn_step_owner.TurnStepOwner",
+        "quorune.continuous_effect_model.ContinuousEffect",
+        "quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect"
+      ],
+      "implementation_mutation_rationale": "Omitting expiry at the departed extra-turn boundary leaves the effects active in the next surviving extra turn and is detected by the boundary witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_living_anchor_waits_past_a_skipped_extra_turn",
+        "test_departed_anchor_expires_at_its_first_eligible_slot",
+        "test_actual_mass_diminish_expires_before_the_surviving_extra_turn"
+      ],
+      "multiplayer_tests": [
+        "test_departed_anchor_expires_at_its_first_eligible_slot",
+        "test_actual_mass_diminish_expires_before_the_surviving_extra_turn"
+      ],
+      "negative_tests": [
+        "test_mixed_deadlines_and_unrepresented_results_fail_closed",
+        "test_next_turn_dependency_cannot_be_removed_from_an_original_program",
+        "test_journal_round_trips_and_rejects_missing_or_unknown_anchors"
+      ],
+      "official_rules": [
+        "109.5",
+        "500.7",
+        "500.11",
+        "611.2a",
+        "611.2c",
+        "614.10a",
+        "800.4k",
+        "800.4m"
+      ],
+      "positive_tests": [
+        "test_room_bodies_share_existing_target_and_result_authority",
+        "test_actual_mass_diminish_expires_before_the_surviving_extra_turn"
+      ],
+      "privacy_tests": [
+        "test_actual_mass_diminish_expires_before_the_surviving_extra_turn"
+      ],
+      "replay_tests": [
+        "test_actual_mass_diminish_expires_before_the_surviving_extra_turn"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unknown or modified temptation instructions",
           "source-specific Ring conditional, trigger or result grammar not independently compiled"
         ],

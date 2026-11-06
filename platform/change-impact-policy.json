@@ -4188,6 +4188,21 @@
       ]
     },
     {
+      "id": "controller-next-turn-duration",
+      "patterns": [
+        "quorune/next_turn_effect.py",
+        "quorune/continuous_effect_model.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/declaration_rule_effects.py",
+        "quorune/turn_step_owner.py",
+        "tests/fixtures/next-turn-duration-cards.json",
+        "tests/test_next_turn_duration.py"
+      ],
+      "test_modules": [
+        "test_next_turn_duration"
+      ]
+    },
+    {
       "id": "earthbend-land-and-delayed-return",
       "patterns": [
         "quorune/compiler/earthbend_templates.py",

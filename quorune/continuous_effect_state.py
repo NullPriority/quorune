@@ -24,6 +24,7 @@ from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
 from .object_predicate import ObjectQuerySpec
+from .next_turn_effect import NEXT_TURN_EFFECT_FIELD
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
 from .keyword_prohibition import prepare_resolution_keyword_exclusions
 
@@ -185,12 +186,27 @@ def commit_continuous_effect(
         raise ContinuousEffectStateError(
             "Continuous-effect state is unavailable"
         )
+    _require_expiry_player(state, getattr(effect, "expires_on_next_turn_of", None))
     if any(current.effect_id == effect.effect_id for current in journal):
         raise ContinuousEffectStateError(
             "Continuous-effect identity is already committed"
         )
     journal.append(effect)
     return effect
+
+
+def _require_expiry_player(state: Any, player: str | None) -> None:
+    if player is not None and (player not in state.players or not state.players[player].in_game):
+        raise ContinuousEffectStateError("A new next-turn effect requires its live resolving controller")
+
+
+def _resolution_duration(state: Any, duration: ContinuousEffectDuration, expiry_player: str | None) -> ContinuousEffectDuration:
+    if expiry_player is None:
+        return duration
+    if duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN or state.continuous_effects is None:
+        raise ContinuousEffectStateError("Next-turn expiry requires the resolution effect journal")
+    _require_expiry_player(state, expiry_player)
+    return ContinuousEffectDuration.UNTIL_NEXT_TURN
 
 
 def matching_battlefield_objects(
@@ -263,13 +279,15 @@ def apply_fixed_resolution_characteristics(
             except GameRuleError:
                 return []
         components = tuple(ResolutionContinuousComponent(*value) for value in spec.layer_operations())
+        expiry_player = actor if NEXT_TURN_EFFECT_FIELD in instruction else None
         create_resolution_continuous_effect_components(
             host,source=resolution_effect_source(host,effect,fallback_card=affected[0] if affected else None),
-            targets=affected,components=components)
+            targets=affected, components=components, expires_on_next_turn_of=expiry_player)
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     refs = [card.ref for card in affected]
-    host._log(actor,'permanent.characteristics','Fixed characteristics changed until end of turn.',
+    duration_label = "your next turn" if expiry_player is not None else "end of turn"
+    host._log(actor,'permanent.characteristics',f'Fixed characteristics changed until {duration_label}.',
               {'objects':refs,'reason':reason},importance=1,changed_objects=[card.object_id for card in affected])
     return refs
 
@@ -288,7 +306,9 @@ def apply_target_characteristics(host,effect,*,actor,reason):
     if keywords:components.append(ResolutionContinuousComponent(Layer.ABILITY,'6',tuple(ContinuousOperation('add_ability',k) for k in keywords)))
     if instruction['power'] or instruction['toughness'] or not keywords:
         components.append(ResolutionContinuousComponent(Layer.POWER_TOUGHNESS,'7c',(ContinuousOperation('modify_power_toughness',(instruction['power'],instruction['toughness'])),)))
-    create_resolution_continuous_effect_components(host,source=resolution_effect_source(host,effect,fallback_card=cards[0] if cards else None),targets=cards,components=tuple(components))
+    create_resolution_continuous_effect_components(host,source=resolution_effect_source(host,effect,fallback_card=cards[0] if cards else None),
+        targets=cards, components=tuple(components),
+        expires_on_next_turn_of=actor if NEXT_TURN_EFFECT_FIELD in instruction else None)
     host._log(actor,'permanent.target_characteristics',reason,{'objects':list(refs),'reason':reason},importance=1,changed_objects=[c.object_id for c in cards])
     return tuple(refs)
 
@@ -304,9 +324,11 @@ def create_resolution_continuous_effect(
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
+    expires_on_next_turn_of: str | None = None,
 ) -> ContinuousEffect | None:
     """Commit one immutable effect whose current affected set is locked."""
 
+    duration = _resolution_duration(host.state, duration, expires_on_next_turn_of)
     journal = host.state.continuous_effects
     if journal is None:
         return None
@@ -330,6 +352,7 @@ def create_resolution_continuous_effect(
         duration=duration,
         applies=ObjectQuerySpec(zones=("battlefield",)),
         locked_objects=identities,
+        expires_on_next_turn_of=expires_on_next_turn_of,
     )
     effect, = prepare_resolution_keyword_exclusions(host, targets, (effect,))
     return commit_continuous_effect(host.state, effect)
@@ -344,9 +367,11 @@ def create_resolution_continuous_effect_components(
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
+    expires_on_next_turn_of: str | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     """Atomically commit one multi-layer effect with one shared timestamp."""
 
+    duration = _resolution_duration(host.state, duration, expires_on_next_turn_of)
     if not isinstance(source, ResolutionEffectSource):
         raise ContinuousEffectStateError(
             "Resolution continuous components require a typed source"
@@ -385,6 +410,7 @@ def create_resolution_continuous_effect_components(
             duration=duration,
             applies=ObjectQuerySpec(zones=("battlefield",)),
             locked_objects=identities,
+            expires_on_next_turn_of=expires_on_next_turn_of,
         )
         for index, component in enumerate(values, start=1)
     )
@@ -423,9 +449,11 @@ def create_resolution_declaration_rule_effect(
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
     live_query: ObjectQuerySpec | None = None,
+    expires_on_next_turn_of: str | None = None,
 ) -> ResolutionDeclarationRuleEffect | None:
     """Commit a declaration rule with locked recipients or one live query."""
 
+    duration = _resolution_duration(host.state, duration, expires_on_next_turn_of)
     journal = host.state.continuous_effects
     if journal is None:
         return None
@@ -446,6 +474,7 @@ def create_resolution_declaration_rule_effect(
         duration=duration,
         locked_objects=identities,
         live_query=live_query,
+        expires_on_next_turn_of=expires_on_next_turn_of,
     )
     committed = commit_continuous_effect(host.state, effect)
     if not isinstance(committed, ResolutionDeclarationRuleEffect):
@@ -515,6 +544,22 @@ def expire_end_of_turn_continuous_effects(state: Any) -> int:
     expired = len(journal) - len(retained)
     journal[:] = retained
     return expired
+
+
+def next_turn_expiry_players(state: Any) -> frozenset[str]:
+    return frozenset(
+        player for effect in state.continuous_effects or ()
+        if (player := getattr(effect, "expires_on_next_turn_of", None)) is not None
+    )
+
+
+def expire_next_turn_continuous_effects(state: Any, player: str) -> None:
+    """End the effects anchored to the first eligible turn of this player."""
+    journal = state.continuous_effects
+    if journal:
+        retained = [effect for effect in journal if getattr(effect, "expires_on_next_turn_of", None) != player]
+        if len(retained) != len(journal):
+            journal[:] = retained
 
 
 def expire_control_change_continuous_effects(state: Any, card: Any) -> int:

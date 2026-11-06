@@ -8,7 +8,11 @@ from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from .errors import GameRuleError, StateInvariantError
-from .continuous_effect_state import expire_end_of_turn_continuous_effects
+from .continuous_effect_state import (
+    expire_end_of_turn_continuous_effects,
+    expire_next_turn_continuous_effects,
+    next_turn_expiry_players,
+)
 from .control_effects import synchronize_control_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
 from .impulse_access import expire_temporary_play_permissions
@@ -189,20 +193,6 @@ class TurnStepOwner:
         )
         return entry
 
-    def retire_departed_turns(self, seat: str) -> None:
-        """Retain scheduled slots only when a current effect still uses them."""
-        if (self.state.departed_turn_boundary_version == 1
-                and any(entry.player == seat for entry in self.state.extra_turns)
-                and any(designation.player == seat for card in self.state.cards.values()
-                        for designation in card.goaded_by)):
-            return
-        self.state.extra_turns = [entry for entry in self.state.extra_turns if entry.player != seat]
-
-    def _observe_departed_turn(self, seat: str) -> None:
-        if self.state.departed_turn_boundary_version == 1:
-            self._host._expire_goad_designations(seat, departed_turn=True)
-            self.retire_departed_turns(seat)
-
     def schedule_skip(self, seat: str, spec: TurnSkipSpec) -> ScheduledTurnSkip | None:
         self._host._require_seat(seat, in_game=True)
         if spec.scope is TurnSkipScope.THIS_TURN and seat != self.state.active_player:
@@ -238,11 +228,38 @@ class TurnStepOwner:
                 grant, spec=replace(grant.spec, count=grant.spec.count - 1)
             )
 
-    def discard_skips_for(self, seat: str) -> None:
+    def _departure_expiry_players(self) -> frozenset[str]:
+        players = next_turn_expiry_players(self.state)
+        if self.state.departed_turn_boundary_version == 1:
+            players = players.union(
+                designation.player for card in self.state.cards.values() for designation in card.goaded_by
+            )
+        return players
+
+    def retire_departed_turns(self, seat: str) -> None:
+        retain_boundary = seat in self._departure_expiry_players()
+        if not retain_boundary:
+            self.state.extra_turns = [entry for entry in self.state.extra_turns if entry.player != seat]
         if self.state.scheduled_turn_skips:
             self.state.scheduled_turn_skips = [
-                grant for grant in self.state.scheduled_turn_skips if grant.player != seat
+                grant for grant in self.state.scheduled_turn_skips
+                if grant.player != seat or retain_boundary and grant.spec.boundary is TurnBoundary.TURN
             ]
+
+    def _whole_turn_skip(self, seat: str) -> ScheduledTurnSkip | None:
+        return next((grant for grant in self.state.scheduled_turn_skips
+                     if grant.applies(seat, TurnBoundary.TURN, self.state.turn_sequence)), None)
+
+    def _visit_departed_turn_boundary(self, seat: str) -> None:
+        """CR 800.4k/m preserves the duration boundary of an eligible absent turn."""
+        skip = self._whole_turn_skip(seat)
+        if skip is not None:
+            self.consume_skip(skip)
+        else:
+            expire_next_turn_continuous_effects(self.state, seat)
+            if self.state.departed_turn_boundary_version == 1:
+                self._host._expire_goad_designations(seat, departed_turn=True)
+            self.retire_departed_turns(seat)
 
     def _bind_turn_skips(self, seat: str) -> None:
         if not self.state.scheduled_turn_skips:
@@ -260,12 +277,14 @@ class TurnStepOwner:
         from .phasing import mark_departed_phasing_returns
 
         previous = self.state.last_normal_turn_player
-        if self.state.departed_turn_boundary_version == 1 and previous is not None and self.state.eliminated_players:
+        expiry_players = self._departure_expiry_players() if self.state.eliminated_players else frozenset()
+        if previous is not None and expiry_players.intersection(self.state.eliminated_players):
             seats = self.state.turn_order
-            for candidate in apnap_participants(seats, seats, previous)[1:]:
-                if self.state.players[candidate].in_game:
+            for seat in apnap_participants(seats, seats, previous)[1:]:
+                if seat == entry.player or self.state.players[seat].in_game:
                     break
-                self._observe_departed_turn(candidate)
+                if seat in expiry_players:
+                    self._visit_departed_turn_boundary(seat)
         mark_departed_phasing_returns(self.state, previous, entry.player)
         self.state.last_normal_turn_player = entry.player
 
@@ -279,10 +298,7 @@ class TurnStepOwner:
             if player is None:
                 raise StateInvariantError(f"Turn entry names unknown player {entry.player!r}")
             if player.in_game:
-                grant = next((
-                    grant for grant in self.state.scheduled_turn_skips
-                    if grant.applies(entry.player, TurnBoundary.TURN, self.state.turn_sequence)
-                ), None)
+                grant = self._whole_turn_skip(entry.player)
                 if grant is None:
                     return entry
                 self.consume_skip(grant)
@@ -292,8 +308,8 @@ class TurnStepOwner:
                     {"grant": grant.grant_id, "turn": entry.turn_id, "extra": entry.extra},
                     importance=2, changed_players=[entry.player],
                 )
-            else:
-                self._observe_departed_turn(entry.player)
+            elif entry.player in self._departure_expiry_players():
+                self._visit_departed_turn_boundary(entry.player)
             entry = self.select_next_turn()
 
     def next_normal_player(self) -> str:
@@ -308,7 +324,8 @@ class TurnStepOwner:
             entry = self.state.extra_turns.pop(0)
             if self.state.players[entry.player].in_game:
                 return entry
-            self._observe_departed_turn(entry.player)
+            if entry.player in self._departure_expiry_players():
+                self._visit_departed_turn_boundary(entry.player)
         seat = self.next_normal_player()
         return TurnEntry(
             turn_id=self._host._next_ref("N"),
@@ -328,6 +345,7 @@ class TurnStepOwner:
         self._advance_normal_rotation(entry)
         self.state.current_turn = entry
         self.state.active_player = entry.player
+        expire_next_turn_continuous_effects(self.state, entry.player)
         self.state.turn_sequence += 1
         self._bind_turn_skips(entry.player)
         if self.state.turn_history is not None:

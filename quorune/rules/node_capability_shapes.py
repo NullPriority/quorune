@@ -3,6 +3,7 @@ from __future__ import annotations
 """Strict CardProgram node shapes with reviewed capability ownership."""
 
 from typing import Any, Iterable, Mapping, Sequence
+from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, NEXT_TURN_EFFECT_FIELD, split_next_turn_effect
 from .counter_placement_capability_shapes import fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities
 
 from .casting_additional_costs import (
@@ -1123,6 +1124,15 @@ def temporary_declaration_restriction_node_capabilities(
     if len(effects) != 1:
         return ()
     effect = effects[0]
+    if NEXT_TURN_EFFECT_FIELD in effect:
+        try:
+            original, _ = split_next_turn_effect(effect)
+        except ValueError:
+            return ()
+        dependencies = temporary_declaration_restriction_node_capabilities(
+            effects=(original,), target_schema=target_schema, mechanic_ids=mechanic_ids,
+        )
+        return (*dependencies, NEXT_TURN_EFFECT_CAPABILITY) if dependencies else ()
     kind = effect.get("restriction")
     if isinstance(kind, Mapping):
         from ..temporary_all_blocker_model import TEMPORARY_ALL_BLOCKER_KIND

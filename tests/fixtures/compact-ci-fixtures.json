@@ -695,6 +695,7 @@
     "tests/fixtures/named-attacking-token-cards.json",
     "tests/fixtures/named-source-result-cards.json",
     "tests/fixtures/new-support-residual-boundaries.json",
+    "tests/fixtures/next-turn-duration-cards.json",
     "tests/fixtures/noncreature-subtype-quantity-cards.json",
     "tests/fixtures/noncreature-subtype-targets.json",
     "tests/fixtures/nonmana-buyback-cost-cards.json",

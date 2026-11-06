@@ -10,6 +10,8 @@ from .continuous_effect_model import (
     ContinuousEffectDuration,
     ContinuousEffectError,
     ContinuousObjectIdentity,
+    decode_turn_expiry,
+    validate_turn_expiry,
 )
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
 from .replacement.immutable import immutable_fingerprint
@@ -62,6 +64,7 @@ class ResolutionDeclarationRuleEffect:
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     )
     live_query: ObjectQuerySpec | None = None
+    expires_on_next_turn_of: str | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -101,11 +104,13 @@ class ResolutionDeclarationRuleEffect:
             raise ContinuousEffectError(
                 "Declaration-rule effect duration is invalid"
             ) from exc
-        if duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN:
+        if duration not in {ContinuousEffectDuration.UNTIL_END_OF_TURN, ContinuousEffectDuration.UNTIL_NEXT_TURN}:
             raise ContinuousEffectError(
-                "Represented resolution-created declaration rules expire "
-                "at end of turn"
+                "Resolution-created declaration rule duration is unsupported"
             )
+        validate_turn_expiry(duration, self.expires_on_next_turn_of)
+        if requirement and self.expires_on_next_turn_of is not None:
+            raise ContinuousEffectError("Resolved declaration requirements expire at end of turn")
         object.__setattr__(self, "duration", duration)
         try:
             locked = tuple(sorted(tuple(self.locked_objects)))
@@ -149,6 +154,8 @@ class ResolutionDeclarationRuleEffect:
             value['restriction'] = self.restriction.to_dict()
         if self.live_query is not None:
             value.update(schema_version=2, live_query=self.live_query.to_dict())
+        if self.expires_on_next_turn_of is not None:
+            value["expires_on_next_turn_of"] = self.expires_on_next_turn_of
         return value
 
     @classmethod
@@ -165,9 +172,13 @@ class ResolutionDeclarationRuleEffect:
             "duration",
             "locked_objects",
         }
-        live = isinstance(value, Mapping) and set(value) == expected | {"schema_version", "live_query"}
-        requirement = isinstance(value, Mapping) and set(value) == (expected - {'restriction'}) | {'schema_version', 'requirement'}
-        if not isinstance(value, Mapping) or (set(value) != expected and not live and not requirement):
+        if not isinstance(value, Mapping):
+            raise ContinuousEffectError("Declaration-rule effect fields are missing or unknown")
+        turn_expiry = decode_turn_expiry(value)
+        fields = set(value) - {"expires_on_next_turn_of"}
+        live = fields == expected | {"schema_version", "live_query"}
+        requirement = fields == (expected - {'restriction'}) | {'schema_version', 'requirement'}
+        if fields != expected and not live and not requirement:
             raise ContinuousEffectError(
                 "Declaration-rule effect fields are missing or unknown"
             )
@@ -198,6 +209,7 @@ class ResolutionDeclarationRuleEffect:
                     for identity in value["locked_objects"]
                 ),
                 live_query=ObjectQuerySpec.from_dict(value["live_query"]) if live else None,
+                expires_on_next_turn_of=turn_expiry,
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):

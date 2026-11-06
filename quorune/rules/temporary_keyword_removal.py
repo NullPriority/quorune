@@ -6,6 +6,7 @@ from collections.abc import Mapping
 
 from ..object_predicate import ObjectQuerySpec,object_query_capabilities
 from ..keyword_abilities import FIXED_CHARACTERISTIC_KEYWORD_CAPABILITIES
+from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, next_turn_effect_dependencies, split_next_turn_effect
 
 OPERATION='apply_source_characteristics_until_end_of_turn'
 MECHANIC='fixed-temporary-keyword-removal'
@@ -14,7 +15,10 @@ CAPABILITY='continuous.resolution.fixed_keyword_removal'
 
 def temporary_keyword_removal_instruction(effect):
     fields={'op','schema_version','power','toughness','remove_keywords','keywords'}
-    if not isinstance(effect,Mapping) or set(effect) not in (fields|{'card'},fields|{'predicate'}):
+    if not isinstance(effect, Mapping):
+        raise ValueError('Temporary keyword removal has a closed selection/result schema')
+    effect, _ = split_next_turn_effect(effect)
+    if set(effect) not in (fields|{'card'},fields|{'predicate'}):
         raise ValueError('Temporary keyword removal has a closed selection/result schema')
     if effect['op']!=OPERATION or type(effect['schema_version']) is not int or effect['schema_version']!=11:
         raise ValueError('Temporary keyword removal requires its explicit version')
@@ -60,7 +64,8 @@ def temporary_keyword_removal_capabilities(*,effects,target_schema,mechanic_ids)
         return ()
     try:selection=temporary_keyword_removal_instruction(effects[0])
     except (ValueError,TypeError,KeyError):return ()
-    dependencies={CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn', *damage_dependencies}
+    dependencies={CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn',
+                  *damage_dependencies, *next_turn_effect_dependencies(effects[0])}
     if isinstance(selection,ObjectQuerySpec):
         from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
         if 'creature' not in selection.types_all or not fixed_resolution_characteristic_query_is_closed(selection,target_schema=target_schema):return ()
@@ -115,7 +120,8 @@ def apply_temporary_keyword_removal(host,effect,*,actor,reason):
             components.append(ResolutionContinuousComponent(Layer.POWER_TOUGHNESS,'7c',(
                 ContinuousOperation('modify_power_toughness',(instruction['power'],instruction['toughness'])),)))
         create_resolution_continuous_effect_components(host,source=resolution_effect_source(host,effect,fallback_card=affected[0] if affected else None),
-            targets=affected,components=tuple(components))
+            targets=affected, components=tuple(components),
+            expires_on_next_turn_of=actor if NEXT_TURN_EFFECT_FIELD in instruction else None)
     except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     refs=tuple(card.ref for card in affected)
     host._log(actor,'permanent.keyword_removal',reason,{'objects':list(refs),'reason':reason},importance=1,changed_objects=[card.object_id for card in affected])
