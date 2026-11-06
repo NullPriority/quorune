@@ -1134,13 +1134,17 @@ feeds one immutable current-library-top plan into the canonical simultaneous
 zone-transition owner. All-player instructions snapshot every affected
 library before one simultaneous batch, with APNAP ordering retained for
 replacement choices and normalized trigger placement. A short library mills as
-many cards as possible; an empty library alone causes no loss from milling.
-destination replacements, actual public results, target revalidation, APNAP
-zone triggers, rollback, privacy, and replay remain shared. Optional and cost
-Mill, unrepresented dynamic or half-library quantities, linked
-cards-milled-this-way consumers, and graveyard-order-sensitive interactions
-while CR 404.3 is blocked remain source-spanned residuals or explicit trust
-exclusions.
+many cards as possible. Milling from an empty library leaves it empty.
+A half-library instruction records the printed rounding direction and reads
+each affected library's current size when it resolves. The same Mill owner
+locks the top cards for each recipient and applies destination replacements
+through one simultaneous batch. Targeted and defending-player versions use
+their existing recipient owners. An untargeted Mill instruction for a sealed
+event player whose library has left the game has no movement to perform. A
+kicked replacement selects its Mill instruction before the count is calculated. Optional and cost Mill,
+unrepresented quantities or target cardinalities, linked cards-milled-this-way
+consumers, and graveyard-order-sensitive interactions while CR 404.3 is
+blocked remain residuals.
 
 `compiler/surveil_templates.py` owns one mandatory positive fixed-count
 controller Surveil instruction. The leaf grammar is shared by spell,

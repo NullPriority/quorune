@@ -43,6 +43,17 @@ def _library_payload_dependencies(value):
             *reveal_until_selection_payload_dependencies(value))
 
 
+def _affected_quantity_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...] | None:
+    if (value.get("op") == "choose_cards_apnap" and value.get("zone") == "hand"
+            and value.get("then") == "exile" and value.get("predicate") is not None):
+        from ..rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies
+        return fixed_hand_exile_payload_dependencies(value)
+    if value.get("op") == "mill" and isinstance(value.get("count"), Mapping):
+        from ..rules.mill_capability_shapes import half_mill_payload_dependencies
+        return half_mill_payload_dependencies(value) or None
+    return None
+
+
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
@@ -54,12 +65,9 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if value.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
             count = sequential_investigate_count(value)
             return (INVESTIGATE_CAPABILITY_ID, *typed_result_amount_runtime_dependencies(count, mechanics=mechanics))
-        if (
-            value.get("op") == "choose_cards_apnap" and value.get("zone") == "hand"
-            and value.get("then") == "exile" and value.get("predicate") is not None
-        ):
-            from ..rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies
-            return fixed_hand_exile_payload_dependencies(value)
+        affected_quantity = _affected_quantity_payload_dependencies(value)
+        if affected_quantity is not None:
+            return affected_quantity
         from ..entry_x_amount_model import entry_x_amount_dependencies
         if value.get('kind')=='source_entry_x_amount':return entry_x_amount_dependencies(value)
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies

@@ -8,6 +8,7 @@ from ..drawing.model import (
     RevealDrawnCard,
     drawn_card_action_from_dict,
 )
+from ..fractional_quantity_model import HalfQuantitySpec
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import (
     BecomeMonarchIntent,
@@ -112,7 +113,11 @@ class MillHandler:
             if effect.get('scope')!='controller_opponents' or seat!=context.actor)
         if effect.get('scope')=='controller_opponents' and not recipients:
             return IntentPlan(operation=self.operation,handler_id=self.handler_id,intents=(),result_shape='by_player')
-        count = _count(effect)
+        raw_count = effect.get("count", 1)
+        try:
+            count = HalfQuantitySpec.from_dict(raw_count) if isinstance(raw_count, Mapping) else _count(effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
         player = context.query.require_active_seat(
             str(effect.get("player") or context.actor)
         )

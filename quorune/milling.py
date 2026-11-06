@@ -3,9 +3,10 @@ from __future__ import annotations
 """Typed mandatory fixed-count Mill preparation and commit owner."""
 
 from dataclasses import dataclass
-from typing import Any, Protocol, Sequence
+from typing import Any, Mapping, Protocol, Sequence
 
 from .errors import GameRuleError
+from .fractional_quantity_model import HalfQuantitySpec
 from .model import CardInstance
 from .zone_transition_model import PUBLIC_ZONES
 from .zone_transitions import ZoneTransitionOwner
@@ -115,6 +116,27 @@ class MillResult:
     @property
     def refs(self) -> tuple[str, ...]:
         return tuple(card.identity.ref for card in self.cards)
+
+
+def event_mill_recipient_has_left(
+    host: MillHost, raw_effect: Mapping[str, Any], effect: Mapping[str, Any],
+) -> bool:
+    """An accepted event binding can outlive its recipient's library."""
+    recipient = effect.get("player")
+    return (
+        raw_effect.get("player") in ("$context.target", "$context.player", "$context.defending_player")
+        and isinstance(recipient, str) and recipient in host.state.players
+        and not host.state.players[recipient].in_game
+    )
+
+
+def mill_request(
+    host: MillHost, *, actor: str, player: str, count: int | HalfQuantitySpec, reason: str,
+) -> MillRequest:
+    if isinstance(count, HalfQuantitySpec):
+        host._require_seat(player, in_game=True)
+        count = count.amount(len(host.state.players[player].zones["library"]))
+    return MillRequest(actor=actor, player=player, count=count, reason=reason)
 
 
 def prepare_mill(host: MillHost, request: MillRequest) -> MillPlan:

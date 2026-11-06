@@ -78385,6 +78385,106 @@
     {
       "applicability": {
         "exclusions": [
+          "omitted or unsupported rounding",
+          "different player's library supplying the amount",
+          "unrepresented target cardinality or unbound event recipients",
+          "optional, linked-result, or cost instructions"
+        ],
+        "inputs": [
+          "one fixed own-library half instruction with explicit rounding",
+          "closed target, controller, opponent scope, or sealed event player"
+        ],
+        "outputs": [
+          "one count per affected player computed when the Mill instruction is applied",
+          "ordinary top-first replacement-aware movement and exact replay",
+          "No Mill movement if the sealed event recipient has left the game."
+        ],
+        "summary": "Mill an explicitly rounded half of each affected player's current library through the shared typed Mill owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.mill.fixed"
+      ],
+      "dependency_fail_closed_rationale": "The independent payload minimum retains the ordinary Mill owner and target or event authority. Unknown counts and unsealed recipients reject.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.mill.half_library",
+      "implementation_components": [
+        "quorune.compiler.mill_templates.fixed_mill_effect_template",
+        "quorune.rules.mill_capability_shapes.fixed_mill_node_capabilities",
+        "quorune.rules.mill_capability_shapes.half_mill_payload_dependencies",
+        "quorune.semantic_runtime.generic.MillHandler",
+        "quorune.milling.mill_request",
+        "quorune.milling.mill_player_batch",
+        "quorune.milling.event_mill_recipient_has_left"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the half-library producer leaves the same fixed spell result unrepresented.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_traumatize_uses_current_odd_library_after_response_and_replacement",
+        "test_kicked_cacophony_mills_each_current_half_in_one_batch",
+        "test_mindbreaker_mills_the_sealed_defender_in_four_seats",
+        "test_departed_mill_defender_skips_the_bound_result_and_replays"
+      ],
+      "multiplayer_tests": [
+        "test_kicked_cacophony_mills_each_current_half_in_one_batch",
+        "test_mindbreaker_mills_the_sealed_defender_in_four_seats",
+        "test_departed_mill_defender_skips_the_bound_result_and_replays"
+      ],
+      "negative_tests": [
+        "test_half_library_mill_has_closed_rounding_and_independent_payload_trust",
+        "test_traumatize_uses_current_odd_library_after_response_and_replacement",
+        "test_departed_mill_defender_skips_the_bound_result_and_replays"
+      ],
+      "official_rules": [
+        "101.4",
+        "107.1a",
+        "115.1",
+        "401.3",
+        "508.5",
+        "608.2b",
+        "608.2c",
+        "608.2h",
+        "614.15",
+        "701.17a",
+        "701.17b",
+        "609.3",
+        "800.4a"
+      ],
+      "positive_tests": [
+        "test_half_library_mill_has_closed_rounding_and_independent_payload_trust",
+        "test_traumatize_uses_current_odd_library_after_response_and_replacement",
+        "test_kicked_cacophony_mills_each_current_half_in_one_batch",
+        "test_mindbreaker_mills_the_sealed_defender_in_four_seats",
+        "test_departed_mill_defender_skips_the_bound_result_and_replays"
+      ],
+      "privacy_tests": [
+        "test_traumatize_uses_current_odd_library_after_response_and_replacement"
+      ],
+      "replay_tests": [
+        "test_traumatize_uses_current_odd_library_after_response_and_replacement",
+        "test_kicked_cacophony_mills_each_current_half_in_one_batch",
+        "test_mindbreaker_mills_the_sealed_defender_in_four_seats",
+        "test_departed_mill_defender_skips_the_bound_result_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Direct generic Aura, generic permanent, nonpermanent, variable, chosen, linked, random, each-player, opponent-hand, library, graveyard, and command-zone selections",
           "Unrepresented attachment domains, additional entry counters, multiple cards, attacking entry, and later linked references to the selected identity",
           "copied, granted, text-changed, and independently unsupported ability carriers"
@@ -79731,7 +79831,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 725,
+  "registry_version": 727,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

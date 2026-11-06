@@ -693,19 +693,19 @@ def _execute_player_intent(
             ),
         )
         return intent.player, result.exiled_refs
-    from ..milling import MillRequest, mill_cards, mill_player_batch
+    from ..milling import mill_cards, mill_player_batch, mill_request
 
     if intent.batch_players:
         results = mill_player_batch(sink, tuple(
-            MillRequest(actor=intent.actor, player=player, count=intent.count, reason=intent.reason)
+            mill_request(sink, actor=intent.actor, player=player, count=intent.count, reason=intent.reason)
             for player in intent.batch_players
         ))
         return intent.actor, tuple(ref for result in results for ref in result.refs)
 
     result = mill_cards(
         sink,
-        MillRequest(
-            actor=intent.actor,
+        mill_request(
+            sink, actor=intent.actor,
             player=intent.player,
             count=intent.count,
             reason=intent.reason,
@@ -810,6 +810,10 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         return None
 
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
+    if effect.get("op") == "mill":
+        from ..milling import event_mill_recipient_has_left
+        if event_mill_recipient_has_left(host, raw_effect, effect):
+            return None
     if any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object')):
         host._log(
             item.controller, 'effect.target.skipped',

@@ -226,6 +226,10 @@ def _value_runtime_requirements(program):
         blockers.add(f"runtime_self_public_condition:invalid:{exc}")
     try:
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
+        from ..fractional_quantity_model import HALF_MILL_CAPABILITY
+        if HALF_MILL_CAPABILITY in amounts:
+            from ..rules.mill_capability_shapes import validate_half_mill_program_scope
+            validate_half_mill_program_scope(program)
         paid = PAID_SACRIFICE_STAT_CAPABILITY in amounts
         if paid != (PAID_SACRIFICE_STAT_MECHANIC in program.coverage) or (paid and (
             program.event != 'resolve' or not program.ability_id.startswith('spell:')

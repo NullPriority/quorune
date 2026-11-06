@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+from ..fractional_quantity_model import HalfQuantitySpec
 from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
@@ -78,7 +80,7 @@ class DrawCardsIntent:
 class MillCardsIntent:
     actor: str
     player: str
-    count: int
+    count: int | HalfQuantitySpec
     reason: str
     batch_players: tuple[str, ...] = ()
 
@@ -90,8 +92,8 @@ class MillCardsIntent:
             raise ValueError(
                 "Mill intents require an actor, player, and reason"
             )
-        if type(self.count) is not int or self.count < 0:
-            raise ValueError("Mill intents require a nonnegative fixed count")
+        if not isinstance(self.count, HalfQuantitySpec) and (type(self.count) is not int or self.count < 0):
+            raise ValueError("Mill intents require a nonnegative fixed count or a closed half quantity")
         if not isinstance(self.batch_players, (list, tuple)):
             raise ValueError("Mill batch recipients require a typed sequence")
         players = tuple(self.batch_players)

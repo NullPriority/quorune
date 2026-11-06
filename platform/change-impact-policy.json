@@ -4228,6 +4228,7 @@
         "quorune/semantic_runtime/executor.py",
         "quorune/effect_runtime/zones_and_attachments.py",
         "tests/fixtures/each-player-mill-cards.json",
+        "tests/fixtures/half-library-mill-cards.json",
         "quorune/compiler/trigger_result_templates.py"
       ],
       "test_modules": [
