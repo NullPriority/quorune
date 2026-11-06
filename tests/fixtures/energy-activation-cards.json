@@ -298,6 +298,55 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{U}",
+      "name": "Emissary of Soulfire",
+      "oracle_id": "bdacd7a4-3d14-45eb-85a6-33ee711b34af",
+      "oracle_text": "When this creature enters, you get {E}{E}{E} (three energy counters).\nPay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery. (Whenever a creature you control attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents you control.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": "4",
+      "type_line": "Creature — Djinn Monk"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -533,6 +582,18 @@
     {
       "comment": "{E} is the energy symbol. It represents one energy counter.",
       "oracle_id": "c0602911-7d44-4a7a-a04c-837036ed3b82",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature with multiple exalted counters will have that many instances of exalted.",
+      "oracle_id": "bdacd7a4-3d14-45eb-85a6-33ee711b34af",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature attacks alone if it's the only creature declared as an attacker during the declare attackers step (including creatures controlled by your teammates, if applicable). For example, exalted won't trigger if you attack with multiple creatures and all but one of them are removed from combat. Similarly, creatures that enter the battlefield attacking later in combat won't affect exalted abilities that have already triggered or resolved.",
+      "oracle_id": "bdacd7a4-3d14-45eb-85a6-33ee711b34af",
       "published_at": "2024-06-07",
       "source": "wotc"
     }

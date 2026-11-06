@@ -116,6 +116,39 @@ class EnergyActivationRuntimeTests(unittest.TestCase):
         result=session.act('pilot:'+actor,{'action_id':action_id,'targets':list(targets),'pay':'auto'})
         self.assertFalse(result.ok);self.assertEqual(before,authoritative_state_hash(session.state))
 
+    def test_original_emissary_resolves_declared_keyword_counter_activation(self):
+        from dataclasses import replace
+        from quorune.compiler.program_generation import _is_closed_fixed_counter_placement_program
+
+        session = self.session(406030)
+        source = self.add(session.engine, 'Emissary of Soulfire', zone='hand')
+        target = self.add(session.engine, 'Generic Bound Body', ref='emissary-target')
+        foreign = self.add(session.engine, 'Generic Bound Body', seat='B', ref='emissary-foreign')
+        self.assert_closed(session, source)
+        activation = next(program for program in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                          if program.event == 'activate')
+        self.assertEqual('trusted', activation.trust_level)
+        missing = replace(activation, coverage=[value for value in activation.coverage if value != 'exalted'])
+        self.assertFalse(_is_closed_fixed_counter_placement_program(missing))
+
+        self.prepare(session, mana={'C': 1, 'W': 1, 'U': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', source)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(3, session.state.players['A'].energy)
+
+        action = self.energy_action(session, session.state.cards[source.object_id], 2)
+        self.reject_activation(session, action['id'], [foreign.ref])
+        self.reject_activation(session, action['id'], [target.ref], actor='B')
+        self.assertEqual(3, session.state.players['A'].energy)
+        self.activate(session, action, [target.ref])
+        self.assertEqual(1, session.state.players['A'].energy)
+        self.assertEqual(0, session.state.cards[target.object_id].counters.get('exalted', 0))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, session.state.cards[target.object_id].counters['exalted'])
+        self.replay(session)
+
     def test_actual_artist_uses_own_energy_without_tap_and_control_change_changes_payer(self):
         session=self.session(406000);engine=session.engine
         source=self.add(engine,'Spontaneous Artist',ref='actual-energy-artist')
