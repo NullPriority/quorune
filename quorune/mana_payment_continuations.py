@@ -34,6 +34,18 @@ class ManaPaymentContinuationHost(Protocol):
     def _activate(self, seat: str, response: Mapping[str, Any]) -> None: ...
 
 
+def priority_payment_frame(host):
+    return {
+        "active_player": host.state.active_player,
+        "phase": host.state.phase,
+        "step": host.state.step,
+        "turn_sequence": host.state.turn_sequence,
+        "priority_player": host.state.priority_player,
+        "priority_epoch": host.state.priority_epoch,
+        "stack_refs": [item.ref for item in host.state.stack],
+    }
+
+
 def issue_mana_payment_replacement_choice(
     host: ManaPaymentContinuationHost,
     *,
@@ -116,15 +128,7 @@ def issue_mana_payment_replacement_choice(
             "priority_seat": seat,
             "priority_action": action,
             "priority_response": copy.deepcopy(dict(response)),
-            "priority_frame": {
-                "active_player": host.state.active_player,
-                "phase": host.state.phase,
-                "step": host.state.step,
-                "turn_sequence": host.state.turn_sequence,
-                "priority_player": host.state.priority_player,
-                "priority_epoch": host.state.priority_epoch,
-                "stack_refs": [item.ref for item in host.state.stack],
-            },
+            "priority_frame": priority_payment_frame(host),
             "replacement_batch": required.batch.to_dict(),
             "replacement_effects": [
                 replacement.to_dict() for replacement in required.effects
@@ -154,7 +158,11 @@ def execute_mana_choice_capable_priority_action(
         raise ValueError(
             "Only represented priority actions may suspend mana payment"
         )
+    from .rules.casting.assist_frame import ASSIST_INTERNAL_FIELDS
+    from .rules.casting.assist_payment import AssistCastStart, issue_assist_choice
+
     internal_fields = {
+        *ASSIST_INTERNAL_FIELDS,
         "_mana_payment_id",
         "_mana_replacement_selections",
         "_counted_cost_replacement_sequence",
@@ -196,6 +204,9 @@ def execute_mana_choice_capable_priority_action(
                     seat=seat,
                     response=payload,
                 )
+    except AssistCastStart as required:
+        issue_assist_choice(host, required.frame)
+        return False
     except ReplacementChoiceRequired as required:
         issue_mana_payment_replacement_choice(
             host,

@@ -162,6 +162,10 @@ names. Forms cover scalar, object, ordering, mode, target, grouped, assignment,
 payment, private search, and delegated rules choices. Unknown fields and
 unknown form versions fail closed.
 
+An active Assist transaction projects a public `assist_cast` announcement
+in the view state. Only the principal for the current mana or payment window
+receives the `cast.assist` decision and its legal actions.
+
 Dynamic `mana_modes` fields declare `allowed_colors`, an integral `total`, and
 `single_color` instead of enumerating allocations. Clients accept only objects
 with allowed color keys, nonnegative integral values, that exact total, and at

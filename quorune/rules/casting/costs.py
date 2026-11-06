@@ -15,6 +15,7 @@ from ...casting_payment_keywords import (
 )
 from ...compiled_cast_costs import (
     compiled_affinity_specs,
+    compiled_assist_specs,
     compiled_convoke_specs,
     compiled_delve_specs,
     compiled_evoke_specs,
@@ -357,6 +358,9 @@ def _cast_schema_and_mechanics(
     )
     if mechanics is None:
         return None
+    if (not suppress_source_costs and "assist" in {str(keyword).casefold() for keyword in record.keywords}
+            and compiled_assist_specs(host, record.oracle_id, spell_program=program)):
+        schema["compiled_assist"] = True
     return schema, mechanics
 
 
@@ -512,6 +516,9 @@ def _initial_options(
     from .option_expansion import expand_optional_resource_costs
     expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
     from .aftermath import with_aftermath_stack_context
+    from .assist_costs import ASSIST_OPTION_FIELD
+    if schema.get("compiled_assist") is True:
+        expanded = [{**option, ASSIST_OPTION_FIELD: 1} for option in expanded]
     return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 
 
@@ -1366,11 +1373,14 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     selected_cards = conspire_payment_cards(host, seat, card, option, selected_cards)
     if selected_cards is None:
         return None
-    if not host._cost_is_affordable(
-        seat,
-        option["requirements"],
-        exclude_sources={card.object_id for card in selected_cards},
-        spend_context=spend_context,
+    from .assist_costs import ASSIST_OPTION_FIELD, select_assist_cost
+    excluded = {payment_card.object_id for payment_card in selected_cards}
+    if option.get(ASSIST_OPTION_FIELD) == 1:
+        if not select_assist_cost(host, seat, option, response, hint=hint, choice_schema=choice_schema,
+                                  spend_context=spend_context, exclude_sources=excluded):
+            return None
+    elif not host._cost_is_affordable(
+        seat, option["requirements"], exclude_sources=excluded, spend_context=spend_context,
     ):
         return None
     if selected_cards:

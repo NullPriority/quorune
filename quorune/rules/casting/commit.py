@@ -1462,6 +1462,8 @@ def _commit_cast_costs_and_stack(
         )
         for ref in proposal.tap_cost_refs
     ]
+    from .assist_payment import apply_assist_cast_mana, commit_assist_cast_payment, prepare_assist_cast
+    assist = prepare_assist_cast(host, proposal, selected_option, response)
     if 'waterbend_payment' in selected_option:
         from ..waterbend_payments import bind_waterbend_response
         bind_waterbend_response(response,selected_option['waterbend_payment'])
@@ -1474,22 +1476,28 @@ def _commit_cast_costs_and_stack(
         host.state.stack.append(prepared_item)
         from ..state_triggers import observe_public_state_triggers
         observe_public_state_triggers(host)
-    blight_payment = prepare_blight_cast_payment(host, proposal, selected_option, response)
-    mana_response, mana_replay = blight_cast_mana_response(blight_payment, response)
-    payer_protection = {"preserve_source_id": blight_payment.payer_id} if blight_payment is not None else {}
-    with blight_cast_replacement_scope(blight_payment):
-        spent, activations = host._pay_for_cost(
-            proposal.seat,
-            requirements,
-            mana_response,
-            exclude_sources={card.object_id for card in tap_cards},
-            spend_context=host._spell_mana_spend_context(proposal.type_line),
-            **payer_protection,
-        )
-    if mana_replay is not None:
-        mana_replay.validate()
     from .spell_mana_payments import capture_spell_mana_payment
-    payment_triggers=capture_spell_mana_payment(host,player=proposal.seat,spent=spent)
+    excluded = {payment_card.object_id for payment_card in tap_cards}
+    spend_context = host._spell_mana_spend_context(proposal.type_line)
+    blight_payment = prepare_blight_cast_payment(host, proposal, selected_option, response)
+    if assist is not None:
+        apply_assist_cast_mana(host, assist, proposal, card, response, spend_context=spend_context, excluded=excluded)
+        helper_spent, caster_spent = commit_assist_cast_payment(host, assist, response, requirements, spend_context)
+        payment_triggers = capture_spell_mana_payment(host, player=assist.helper, spent=helper_spent)
+        payment_triggers.extend(capture_spell_mana_payment(host, player=assist.caster, spent=caster_spent))
+        spent = {color: helper_spent.get(color, 0) + caster_spent.get(color, 0) for color in "WUBRGC"}
+        activations = [{"seat": step.seat, **step.activation()} for step in assist.plans]
+    else:
+        mana_response, mana_replay = blight_cast_mana_response(blight_payment, response)
+        payer_protection = {"preserve_source_id": blight_payment.payer_id} if blight_payment is not None else {}
+        with blight_cast_replacement_scope(blight_payment):
+            spent, activations = host._pay_for_cost(
+                proposal.seat, requirements, mana_response, exclude_sources=excluded,
+                spend_context=spend_context, **payer_protection,
+            )
+        if mana_replay is not None:
+            mana_replay.validate()
+        payment_triggers = capture_spell_mana_payment(host, player=proposal.seat, spent=spent)
     from .emerge_costs import validate_emerge_after_mana_payment
     try:
         validate_emerge_after_mana_payment(host, proposal.seat, card, selected_option)

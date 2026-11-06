@@ -224,11 +224,17 @@ def _apply_life_payment(
         raise GameRuleError(str(exc)) from exc
 
 
+def mana_sacrifice_payment_event_id(payment_id: str, source_ref: str) -> str:
+    return f"zone.mana:{payment_id}:{source_ref}"
+
+
 def _apply_sacrifice(
     host: ManaModeEffectHost,
     *,
     seat: str,
     source: Any | None,
+    payment_id: str | None,
+    replacement_selections_by_event: Mapping[str, Any] | None,
 ) -> None:
     if (
         source is None
@@ -236,11 +242,15 @@ def _apply_sacrifice(
         or source.zone != "battlefield"
     ):
         raise GameRuleError("The mana source cannot be sacrificed")
+    selections = _replacement_selections(
+        replacement_selections_by_event, mana_sacrifice_payment_event_id(payment_id, source.ref),
+    ) if payment_id else ()
     host.move_card(
         source.object_id,
         "graveyard",
         reason="mana ability cost",
         semantic_events=True,
+        **({"replacement_selections": selections} if selections else {}),
     )
 
 
@@ -273,7 +283,10 @@ def apply_mana_mode_effects(
             if source is None:raise GameRuleError('Next-actor untap mana result requires its original source')
             prohibit_next_player_untap(host,source,actor=seat)
         else:
-            _apply_sacrifice(host, seat=seat, source=source)
+            _apply_sacrifice(
+                host, seat=seat, source=source, payment_id=payment_id,
+                replacement_selections_by_event=replacement_selections_by_event,
+            )
 
 
 __all__ = [

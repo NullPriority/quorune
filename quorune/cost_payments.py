@@ -13,12 +13,13 @@ from .semantic_runtime.mana_spending import current_mana_spending_policy
 class ExactManaReplacementReplay(dict):
     """Verify prior mana decisions are used by the retried payment."""
 
-    def __init__(self, selections: Mapping[str, Any], payment_id: str) -> None:
+    def __init__(self, selections: Mapping[str, Any], payment_id: str, *, extra_event_ids=()) -> None:
         from .mana_mode_effects import mana_damage_event_belongs_to_payment
 
         super().__init__(selections)
         self.unused = {
-            event_id for event_id in selections if mana_damage_event_belongs_to_payment(event_id, payment_id)
+            event_id for event_id in selections
+            if event_id in extra_event_ids or mana_damage_event_belongs_to_payment(event_id, payment_id)
         }
 
     def get(self, event_id, default=None):

@@ -1399,6 +1399,13 @@ the printed mana price and its own legal payment options. A Blight casting
 continuation retains the announced branch, amount, and payer incarnation
 through prior mana replacements and any later counter replacement choice.
 
+Assist locks the casting proposal before inviting one authenticated helper.
+The helper chooses mana activations first, then the caster chooses their own.
+After both windows the helper selects a generic contribution and the caster
+pays the remainder. Stored mana plans replay in order through the same
+casting transaction, so an unpayable remainder commits neither the spell nor
+partial resources. Mana payment history retains the actual payer of each part.
+
 Version-2 source-counter costs represent exactly one or two counters of any
 present kinds. The source-scoped form lists every legal distribution, including
 two different counter kinds, with human-readable labels and incarnation-bound

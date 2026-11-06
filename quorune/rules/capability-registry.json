@@ -15164,6 +15164,99 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented mana modes",
+          "assisted casts during the resolution of an unrelated effect"
+        ],
+        "inputs": [
+          "one printed Assist keyword",
+          "one locked casting proposal",
+          "one active helper"
+        ],
+        "outputs": [
+          "authoritative independent mana windows",
+          "helper then caster payment",
+          "exact private continuation and replay"
+        ],
+        "summary": "Choose another player for generic mana and stage both ordered mana windows through the ordinary casting transaction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.payment.mana_unit_counts"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the typed cost capability leaves the actual printed Assist keyword unresolved.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.payment.assist",
+      "implementation_components": [
+        "quorune.compiler.casting_payment_keyword_nodes.ordinary_assist_keyword_node",
+        "quorune.semantic_runtime.cast_costs.AssistCostHandler",
+        "quorune.compiled_cast_costs.compiled_assist_specs",
+        "quorune.rules.casting.assist_costs.select_assist_cost",
+        "quorune.rules.casting.assist_frame.AssistCastFrame",
+        "quorune.rules.casting.assist_payment.complete_assist_choice",
+        "quorune.rules.casting.assist_payment.commit_assist_cast_payment"
+      ],
+      "implementation_mutation_rationale": "The native witness detects a spell charged to the caster while the helper keeps its declared contribution.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_bring_down_assist_preserves_both_mana_windows_and_replays",
+        "test_actual_bring_down_declined_help_rolls_back_and_solo_stays_legal",
+        "test_actual_assist_helper_sacrifice_replacement_resumes_and_replays",
+        "test_actual_out_of_bounds_assist_keeps_the_announced_spell_target"
+      ],
+      "multiplayer_tests": [
+        "test_actual_bring_down_assist_preserves_both_mana_windows_and_replays",
+        "test_actual_bring_down_declined_help_rolls_back_and_solo_stays_legal",
+        "test_actual_assist_helper_sacrifice_replacement_resumes_and_replays",
+        "test_actual_out_of_bounds_assist_keeps_the_announced_spell_target"
+      ],
+      "negative_tests": [
+        "test_printed_assist_requires_its_declared_payment_capability",
+        "test_actual_bring_down_assist_preserves_both_mana_windows_and_replays",
+        "test_actual_bring_down_declined_help_rolls_back_and_solo_stays_legal"
+      ],
+      "official_rules": [
+        "118.3",
+        "601.2c",
+        "601.2f",
+        "601.2g",
+        "601.2h",
+        "702.132a"
+      ],
+      "positive_tests": [
+        "test_printed_assist_requires_its_declared_payment_capability",
+        "test_actual_bring_down_assist_preserves_both_mana_windows_and_replays",
+        "test_actual_bring_down_declined_help_rolls_back_and_solo_stays_legal",
+        "test_actual_assist_helper_sacrifice_replacement_resumes_and_replays",
+        "test_actual_out_of_bounds_assist_keeps_the_announced_spell_target"
+      ],
+      "privacy_tests": [
+        "test_actual_bring_down_assist_preserves_both_mana_windows_and_replays"
+      ],
+      "replay_tests": [
+        "test_actual_bring_down_assist_preserves_both_mana_windows_and_replays",
+        "test_actual_bring_down_declined_help_rolls_back_and_solo_stays_legal",
+        "test_actual_assist_helper_sacrifice_replacement_resumes_and_replays",
+        "test_actual_out_of_bounds_assist_keeps_the_announced_spell_target"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Convoke-equivalent rules text",
           "Convoke granted or removed after compilation",
           "unrepresented cost increases, reductions, floors, restrictions, or ordering choices",
@@ -80355,7 +80448,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 740,
+  "registry_version": 741,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

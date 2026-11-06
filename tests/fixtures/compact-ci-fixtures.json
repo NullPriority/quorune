@@ -406,6 +406,7 @@
     "tests/fixtures/any-source-counter-cost-cards.json",
     "tests/fixtures/as-unblocked-assignment-cards.json",
     "tests/fixtures/ascend-city-blessing-cards.json",
+    "tests/fixtures/assist-payment-cards.json",
     "tests/fixtures/attached-cast-restriction-cards.json",
     "tests/fixtures/attached-characteristic-closure-cards.json",
     "tests/fixtures/attached-exile-activation-cards.json",

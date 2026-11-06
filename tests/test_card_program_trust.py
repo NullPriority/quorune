@@ -365,6 +365,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.payment.affinity",
                 "casting.payment.affinity_artifacts",
                 "casting.payment.convoke",
+                "casting.payment.assist",
                 "casting.payment.delve",
                 "casting.payment.improvise",
                 "combat.block.self-counter-prohibition",

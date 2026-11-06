@@ -563,6 +563,7 @@
     "functional-01": [
       "test_activated_self_transform",
       "test_activation_target_view_equivalence",
+      "test_assist_payment",
       "test_attached_permanent_modifiers",
       "test_attached_prevention",
       "test_bargain_cost_reductions",

@@ -704,6 +704,11 @@ class StateProjector:
             "stack": stack,
             "combat": combat,
         }
+        pending = self.state.pending_decision
+        if pending is not None and pending.kind == "cast.assist" and len(pending.actors) == 1:
+            announcement = pending.payload_by_actor.get(pending.actors[0], {}).get("assist_public")
+            if isinstance(announcement, Mapping):
+                snapshot["assist_cast"] = copy.deepcopy(dict(announcement))
         own_seat = self.seat_for(principal)
         if (
             own_seat in view_seats

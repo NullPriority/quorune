@@ -7012,6 +7012,25 @@
       ]
     },
     {
+      "id": "assist-casting-payment",
+      "patterns": [
+        "quorune/rules/casting/assist_*.py",
+        "quorune/casting_payment_keywords.py",
+        "quorune/compiled_cast_costs.py",
+        "quorune/compiler/casting_payment_keyword_nodes.py",
+        "quorune/mana_payment_continuations.py",
+        "tests/fixtures/assist-payment-cards.json",
+        "tests/test_assist_payment.py"
+      ],
+      "test_modules": [
+        "test_assist_payment",
+        "test_blight",
+        "test_card_program_trust",
+        "test_mana_abilities",
+        "test_cast_source_placement"
+      ]
+    },
+    {
       "id": "fixed-blight-casting-alternatives",
       "patterns": [
         "quorune/rules/casting/blight_costs.py",
