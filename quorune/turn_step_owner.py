@@ -3,6 +3,7 @@ from __future__ import annotations
 """Canonical owner for turn selection and phase/step progression."""
 
 import copy
+from dataclasses import replace
 
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -11,7 +12,7 @@ from .continuous_effect_state import expire_end_of_turn_continuous_effects
 from .control_effects import synchronize_control_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
 from .impulse_access import expire_temporary_play_permissions
-from .semantic_runtime.untap_steps import current_step_is_skipped
+from .turn_skip_model import ScheduledTurnSkip, TurnBoundary, TurnSkipScope, TurnSkipSpec
 from .rules.land_play_permissions import (
     reset_additional_land_play_permissions,
 )
@@ -45,6 +46,8 @@ TURN_STEPS: tuple[tuple[str, str], ...] = (
     ("ending", "end_step"),
     ("ending", "cleanup"),
 )
+
+_COMBAT_END_INDEX = TURN_STEPS.index(("postcombat_main", "main"))
 
 
 class TurnStepHost(Protocol):
@@ -200,7 +203,62 @@ class TurnStepOwner:
             self._host._expire_goad_designations(seat, departed_turn=True)
             self.retire_departed_turns(seat)
 
-    def _advance_normal_rotation(self, seat: str) -> None:
+    def schedule_skip(self, seat: str, spec: TurnSkipSpec) -> ScheduledTurnSkip | None:
+        self._host._require_seat(seat, in_game=True)
+        if spec.scope is TurnSkipScope.THIS_TURN and seat != self.state.active_player:
+            return None
+        previous = next((
+            grant for grant in self.state.scheduled_turn_skips
+            if grant.player == seat and grant.spec.boundary is TurnBoundary.TURN
+        ), None) if spec.boundary is TurnBoundary.TURN else None
+        if previous is None:
+            grant = ScheduledTurnSkip(
+                self._host._next_ref("TS"), seat, spec,
+                self.state.turn_sequence if spec.scope is TurnSkipScope.THIS_TURN else None,
+            )
+            self.state.scheduled_turn_skips.append(grant)
+        else:
+            grant = replace(previous, spec=replace(spec, count=previous.spec.count + spec.count))
+            index = self.state.scheduled_turn_skips.index(previous)
+            self.state.scheduled_turn_skips[index] = grant
+        self._host._log(
+            seat, "turn.skip.scheduled", f"{seat} will skip {spec.boundary.value}.",
+            {"grant": grant.grant_id, **spec.to_dict()}, importance=2, changed_players=[seat],
+        )
+        return grant
+
+    def consume_skip(self, grant: ScheduledTurnSkip) -> None:
+        if grant.spec.scope is TurnSkipScope.ALL_OF_NEXT_TURN:
+            return
+        index = self.state.scheduled_turn_skips.index(grant)
+        if grant.spec.count == 1:
+            self.state.scheduled_turn_skips.pop(index)
+        else:
+            self.state.scheduled_turn_skips[index] = replace(
+                grant, spec=replace(grant.spec, count=grant.spec.count - 1)
+            )
+
+    def discard_skips_for(self, seat: str) -> None:
+        if self.state.scheduled_turn_skips:
+            self.state.scheduled_turn_skips = [
+                grant for grant in self.state.scheduled_turn_skips if grant.player != seat
+            ]
+
+    def _bind_turn_skips(self, seat: str) -> None:
+        if not self.state.scheduled_turn_skips:
+            return
+        self.state.scheduled_turn_skips = [
+            replace(grant, turn_sequence=self.state.turn_sequence)
+            if grant.player == seat and grant.spec.scope is TurnSkipScope.ALL_OF_NEXT_TURN else grant
+            for grant in self.state.scheduled_turn_skips
+            if grant.turn_sequence is None
+        ]
+
+    def _advance_normal_rotation(self, entry: TurnEntry) -> None:
+        if entry.extra:
+            return
+        from .phasing import mark_departed_phasing_returns
+
         previous = self.state.last_normal_turn_player
         if self.state.departed_turn_boundary_version == 1 and previous is not None and self.state.eliminated_players:
             seats = self.state.turn_order
@@ -208,7 +266,35 @@ class TurnStepOwner:
                 if self.state.players[candidate].in_game:
                     break
                 self._observe_departed_turn(candidate)
-        self.state.last_normal_turn_player = seat
+        mark_departed_phasing_returns(self.state, previous, entry.player)
+        self.state.last_normal_turn_player = entry.player
+
+    def _first_unskipped_turn(self, entry: TurnEntry) -> TurnEntry:
+        while True:
+            if entry.skip_steps:
+                raise GameRuleError(
+                    "Skipped-step turn entries are not implemented; the turn cannot begin"
+                )
+            player = self.state.players.get(entry.player)
+            if player is None:
+                raise StateInvariantError(f"Turn entry names unknown player {entry.player!r}")
+            if player.in_game:
+                grant = next((
+                    grant for grant in self.state.scheduled_turn_skips
+                    if grant.applies(entry.player, TurnBoundary.TURN, self.state.turn_sequence)
+                ), None)
+                if grant is None:
+                    return entry
+                self.consume_skip(grant)
+                self._advance_normal_rotation(entry)
+                self._host._log(
+                    entry.player, "turn.skip.applied", f"{entry.player} skipped a turn.",
+                    {"grant": grant.grant_id, "turn": entry.turn_id, "extra": entry.extra},
+                    importance=2, changed_players=[entry.player],
+                )
+            else:
+                self._observe_departed_turn(entry.player)
+            entry = self.select_next_turn()
 
     def next_normal_player(self) -> str:
         anchor = (
@@ -232,33 +318,18 @@ class TurnStepOwner:
         )
 
     def begin_turn(self, entry: TurnEntry) -> None:
-        if entry.skip_steps:
-            raise GameRuleError(
-                "Skipped-step turn entries are not implemented; "
-                "the turn cannot begin"
-            )
-        if entry.player not in self.state.players:
-            raise StateInvariantError(
-                f"Turn entry names unknown player {entry.player!r}"
-            )
-        if not self.state.players[entry.player].in_game:
-            self._observe_departed_turn(entry.player)
-            self.begin_turn(self.select_next_turn())
-            return
+        entry = self._first_unskipped_turn(entry)
 
         previous_active_player = (
             self.state.current_turn.player
             if self.state.current_turn is not None
             else None
         )
-        if not entry.extra:
-            from .phasing import mark_departed_phasing_returns
-
-            mark_departed_phasing_returns(self.state, self.state.last_normal_turn_player, entry.player)
-            self._advance_normal_rotation(entry.player)
+        self._advance_normal_rotation(entry)
         self.state.current_turn = entry
         self.state.active_player = entry.player
         self.state.turn_sequence += 1
+        self._bind_turn_skips(entry.player)
         if self.state.turn_history is not None:
             self.state.turn_history = roll_turn_history(
                 self.state.turn_history,
@@ -317,6 +388,7 @@ class TurnStepOwner:
         self,
         *,
         held_triggers: Sequence[StackItem] = (),
+        boundary_replacement: str | None = None,
     ) -> None:
         if not 0 <= self.state.phase_index < len(TURN_STEPS):
             raise StateInvariantError(
@@ -330,8 +402,20 @@ class TurnStepOwner:
             raise StateInvariantError(
                 f"A turn names unknown active player {active!r}"
             )
-        while current_step_is_skipped(self._host, active, step):
-            self.state.phase_index += 1
+        from .turn_skip_replacements import apply_step_skip_replacement
+
+        while True:
+            skipped = apply_step_skip_replacement(
+                self._host, active, step, held_triggers, selection=boundary_replacement
+            )
+            if skipped is None:
+                return
+            if not skipped:
+                break
+            boundary_replacement = None
+            self.state.phase_index = (
+                _COMBAT_END_INDEX if step == "beginning_combat" else self.state.phase_index + 1
+            )
             phase, step = TURN_STEPS[self.state.phase_index]
 
         # CR 800.4j leaves the current turn in progress when its active player

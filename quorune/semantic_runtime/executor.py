@@ -19,6 +19,7 @@ from .random_discard import execute_random_discard
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
@@ -132,6 +133,8 @@ class SemanticIntentSink(
     RegenerationHost,
     Protocol,
 ):
+    turn_steps: Any
+
     def apply_domain_effect_intent(self, intent: DomainEffectIntent) -> Any: ...
 
     def draw(
@@ -640,8 +643,8 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent)
+PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
+PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -660,6 +663,8 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, ScheduleTurnSkipIntent):
+        return intent.actor, tuple(sink.turn_steps.schedule_skip(seat, intent.spec) for seat in intent.players)
     if isinstance(intent,ProhibitLibrarySearchIntent):return intent.actor,apply_library_search_prohibition(sink,actor=intent.actor,source_id=intent.source_id)
     if isinstance(intent, RandomDiscardIntent):
         return intent.actor, execute_random_discard(sink, intent)

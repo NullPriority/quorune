@@ -313,6 +313,12 @@ Only the current authenticated controller receives the ordering form. Completion
 validates delivered metadata and current source state before retrying the existing
 transform owner. No bearer token or executable callback is saved in the frame.
 
+Scheduled skip grants record a fixed boundary, recipient, scope, and any
+bound turn. Checkpoints omit the grant array when it is empty. Competing skips
+use a `replacement.order` continuation pinned to the upcoming boundary, the
+affected seat, and the offered effects. Completion re-derives the live choices
+before consuming a grant or advancing the scheduler.
+
 | File | Contract |
 | --- | --- |
 | `manifest.json` | Public identity, lifecycle, profiles, source fingerprints, outcome, replay, and fidelity summary |

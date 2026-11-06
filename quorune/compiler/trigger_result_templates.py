@@ -94,6 +94,10 @@ def _binding_result_template(binding, body: str, *, card_name: str, effect_templ
     from .event_player_results import fixed_event_player_damage_result
     player_damage=fixed_event_player_damage_result(binding,body,effect_template=effect_template,card_name=card_name)
     if player_damage is not None:return player_damage
+    from .scheduled_turn_skip_templates import damage_player_turn_skip_result
+    skip = damage_player_turn_skip_result(binding, body)
+    if skip is not None:
+        return skip
     from .event_player_choice_templates import fixed_event_player_sacrifice_result
     player_choice = fixed_event_player_sacrifice_result(binding, body,
         effect_template=effect_template, card_name=card_name)

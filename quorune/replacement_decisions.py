@@ -37,6 +37,7 @@ from .entry_counter_coordination import (
     resume_resolving_entry_replacement,
 )
 from .turn_counter_coordination import resume_turn_counter_replacement
+from .turn_skip_model import TURN_BOUNDARY_SKIP_RESUME
 
 
 _PILOT_ROLE = "pilot"
@@ -699,6 +700,10 @@ def complete_replacement_order_choice(
             selection,
             error_type=error_type,
         )
+        return
+    if restored.resume_kind == TURN_BOUNDARY_SKIP_RESUME:
+        from .turn_skip_replacements import resume_turn_boundary_skip
+        resume_turn_boundary_skip(host, restored, selection, error_type=error_type)
         return
     _resume_semantic_replacement(
         host, restored, selection, error_type=error_type

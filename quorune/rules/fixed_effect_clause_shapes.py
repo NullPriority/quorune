@@ -4,6 +4,7 @@ from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .temporary_cast_restrictions import temporary_cast_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
 
 """Capability closure for generic two-clause effect sequences."""
 
@@ -148,6 +149,7 @@ _COMPONENT_RESOLVERS = (
     fixed_goad_node_capabilities,
     fixed_prevention_component_capabilities,
     fixed_extra_turn_node_capabilities,
+    scheduled_turn_skip_node_capabilities,
     whole_hand_discard_node_capabilities,
     random_discard_node_capabilities,
     fixed_control_node_capabilities,

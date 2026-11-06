@@ -2,8 +2,12 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
-def _committed_action_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
-    """Validate counts whose authority comes from an actual committed action."""
+def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    """Validate the closed payloads of independently owned instructions."""
+    if value.get("op") == "schedule_turn_skip":
+        from ..turn_skip_model import TURN_SKIP_CAPABILITY, decode_turn_skip_instruction
+        decode_turn_skip_instruction(value)
+        return (TURN_SKIP_CAPABILITY,)
     from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
     destruction = qualified_destruction_payload_dependencies(value)
     if value.get("op") == "destroy_all" and "followup" in value:
@@ -84,7 +88,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies
         returned=graveyard_self_return_dependencies(value)
         if returned:return returned
-        action_result = _committed_action_dependencies(value)
+        action_result = _owned_operation_payload_dependencies(value)
         if action_result:
             return action_result
         from ..alternative_discard_model import alternative_discard_runtime_dependencies

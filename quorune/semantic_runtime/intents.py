@@ -9,6 +9,7 @@ from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
@@ -1583,6 +1584,7 @@ SemanticIntent: TypeAlias = (
     | RandomDiscardIntent
     | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent
+    | ScheduleTurnSkipIntent
     | ProhibitLibrarySearchIntent
     | AscendIntent
 )

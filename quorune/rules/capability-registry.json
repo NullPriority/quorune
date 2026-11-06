@@ -74525,6 +74525,94 @@
     {
       "applicability": {
         "exclusions": [
+          "random or variable skip counts",
+          "interruption of a started boundary",
+          "unrepresented sibling effects"
+        ],
+        "inputs": [
+          "fixed count, occurrence scope and player relation",
+          "upcoming boundary",
+          "applicable static and scheduled replacements"
+        ],
+        "outputs": [
+          "one consumed skip per eligible boundary",
+          "exact affected-player replacement choice",
+          "unchanged historical records when no grant exists"
+        ],
+        "summary": "Apply fixed skip replacements to upcoming turn, combat, and beginning-phase boundaries through the canonical turn scheduler and affected-player choice."
+      },
+      "blockers": [],
+      "dependencies": [
+        "turn.step.static_skip"
+      ],
+      "dependency_fail_closed_rationale": "The compiler and runtime independently require the typed closed skip capability and reject malformed or untrusted descriptors.",
+      "dependency_fail_closed_status": "passed",
+      "id": "turn.boundary.scheduled_skip",
+      "implementation_components": [
+        "quorune.compiler.scheduled_turn_skip_templates.scheduled_turn_skip_effect_template",
+        "quorune.rules.scheduled_turn_skip_shapes.scheduled_turn_skip_node_capabilities",
+        "quorune.semantic_runtime.scheduled_turn_skip.ScheduledTurnSkipHandler",
+        "quorune.turn_step_owner.TurnStepOwner",
+        "quorune.turn_skip_replacements.apply_step_skip_replacement"
+      ],
+      "implementation_mutation_rationale": "Removing the scheduled skip production leaves the targeted draw-step instruction unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_meditate_draws_and_skips_the_queued_extra_turn",
+        "test_actual_static_draw_skip_choice_preserves_the_one_shot_after_load"
+      ],
+      "multiplayer_tests": [
+        "test_actual_stonehorn_skips_only_the_announced_opponents_combat",
+        "test_actual_static_draw_skip_choice_preserves_the_one_shot_after_load",
+        "test_actual_brine_elemental_schedules_each_opponents_next_untap_on_turn_up"
+      ],
+      "negative_tests": [
+        "test_scheduled_skip_templates_require_closed_scope_and_dependencies",
+        "test_actual_stonehorn_skips_only_the_announced_opponents_combat",
+        "test_actual_static_draw_skip_choice_preserves_the_one_shot_after_load"
+      ],
+      "official_rules": [
+        "500.7",
+        "500.11",
+        "614.10",
+        "614.10a",
+        "616.1"
+      ],
+      "positive_tests": [
+        "test_scheduled_skip_templates_require_closed_scope_and_dependencies",
+        "test_actual_meditate_draws_and_skips_the_queued_extra_turn",
+        "test_actual_stonehorn_skips_only_the_announced_opponents_combat",
+        "test_actual_brine_elemental_schedules_each_opponents_next_untap_on_turn_up"
+      ],
+      "privacy_tests": [
+        "test_actual_static_draw_skip_choice_preserves_the_one_shot_after_load",
+        "test_actual_brine_elemental_schedules_each_opponents_next_untap_on_turn_up"
+      ],
+      "replay_tests": [
+        "test_actual_meditate_draws_and_skips_the_queued_extra_turn",
+        "test_actual_stonehorn_skips_only_the_announced_opponents_combat",
+        "test_actual_static_draw_skip_choice_preserves_the_one_shot_after_load",
+        "test_actual_brine_elemental_schedules_each_opponents_next_untap_on_turn_up"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "variable, optional, conditional or unknown turn quantities",
           "different turn insertion points",
           "each-player or simultaneous-player extra-turn groups",
@@ -80818,7 +80906,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 749,
+  "registry_version": 750,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

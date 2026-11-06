@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT
+
 from .applicability import canonical_effects, replacement_choice
 from .immutable import thaw_value
 from .model import (
@@ -55,6 +57,7 @@ _SET_FIELDS = {
     "draw.instruction": {"count"},
     "damage.results": {"life_loss_amount", "life_after_without_replacement"},
     "effect": {"resolved"},
+    TURN_BOUNDARY_SKIP_EVENT: {"skipped"},
 }
 _NUMERIC_FIELDS = {
     "damage": {"amount", "prevented"},
@@ -569,6 +572,8 @@ def _apply_operation(
 ) -> EntryReplacementScope | None:
     if isinstance(operation, SetField):
         _require_field(event, operation.field, _SET_FIELDS, operation="set")
+        if event.kind == TURN_BOUNDARY_SKIP_EVENT and operation.value is not True:
+            raise ReplacementEffectError("A skipped boundary cannot be restored by a skip replacement")
         if operation.field=='destination' and 'commander_components' in payload and payload.get('destination')!=operation.value:
             from ..composition_commander_replacement_model import payload_commander_components,EPOCH_FIELD
             try:payload_commander_components(payload)

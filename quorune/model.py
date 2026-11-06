@@ -16,6 +16,7 @@ from .declaration_rule_effects import (
     continuous_journal_effect_from_dict,
 )
 from .trigger_batches import PendingTriggerBatch, TriggerBatchError
+from .turn_skip_model import ScheduledTurnSkip, decode_scheduled_turn_skips
 from .util import normalize_mana_bundle, stable_json
 from .source_continuity import SourceContinuityHistory
 from .soulbond_model import SoulbondPair, canonical_pair_book
@@ -1022,6 +1023,7 @@ class GameState:
     # Absent until a Soulbond pair first exists; preserve historical hashes.
     soulbond_pairs: tuple[SoulbondPair, ...] | None = None
     extra_turns: list[TurnEntry] = field(default_factory=list)
+    scheduled_turn_skips: list[ScheduledTurnSkip] = field(default_factory=list)
     active_player: str | None = None
     priority_player: str | None = None
     priority_passes: list[str] = field(default_factory=list)
@@ -1204,6 +1206,10 @@ class GameState:
             "last_normal_turn_player": self.last_normal_turn_player,
             **({"departed_turn_boundary_version": departed_turn_version} if departed_turn_version is not None else {}),
             "extra_turns": [turn.to_dict() for turn in self.extra_turns],
+            **(
+                {"scheduled_turn_skips": [grant.to_dict() for grant in self.scheduled_turn_skips]}
+                if self.scheduled_turn_skips else {}
+            ),
             "active_player": self.active_player,
             "priority_player": self.priority_player,
             "priority_passes": list(self.priority_passes),
@@ -1314,6 +1320,10 @@ class GameState:
                 cls._control_history_version_from_dict(data)
             ),
             extra_turns=[TurnEntry.from_dict(turn) for turn in data.get("extra_turns", [])],
+            scheduled_turn_skips=decode_scheduled_turn_skips(
+                data.get("scheduled_turn_skips", ()), data["players"],
+                active_player=data.get("active_player"), turn_sequence=int(data.get("turn_sequence", 0)),
+            ),
             active_player=data.get("active_player"),
             priority_player=data.get("priority_player"),
             priority_passes=list(data.get("priority_passes", [])),

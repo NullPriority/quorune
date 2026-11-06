@@ -4143,6 +4143,27 @@
       ]
     },
     {
+      "id": "fixed-scheduled-turn-skips",
+      "patterns": [
+        "quorune/compiler/scheduled_turn_skip_templates.py",
+        "quorune/rules/scheduled_turn_skip_shapes.py",
+        "quorune/turn_skip_model.py",
+        "quorune/turn_skip_replacements.py",
+        "quorune/turn_step_owner.py",
+        "tests/fixtures/scheduled-turn-skip-cards.json",
+        "tests/test_fixed_extra_turns.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_extra_turns",
+        "test_morph_rules",
+        "test_phasing",
+        "test_static_step_skips",
+        "test_turn_priority_owner",
+        "test_turn_structure_rules"
+      ]
+    },
+    {
       "id": "qualified-regeneration-contract",
       "patterns": [
         "quorune/compiler/regeneration_templates.py",

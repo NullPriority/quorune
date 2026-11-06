@@ -50,6 +50,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         return 'domain'
     if relative=='quorune/state_based_legend_choices.py':return 'rules'
     if relative=='quorune/created_token_cleanup_model.py':return 'domain'
+    if relative=='quorune/turn_skip_model.py':return 'domain'
     if relative=='quorune/created_token_cleanup.py':return 'rules'
     if relative=='quorune/battle_cry_resolution_model.py':return 'domain'
     if relative=='quorune/battle_cry_resolution.py':return 'rules'
@@ -548,6 +549,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/turn_counter_coordination.py",
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
+        "quorune/turn_skip_replacements.py",
         "quorune/phasing.py",
         "quorune/untap_step.py",
         "quorune/untap_step_coordination.py",
@@ -1094,6 +1096,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/turn_priority_model.py",
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
+        "quorune/turn_skip_model.py",
+        "quorune/turn_skip_replacements.py",
     }:
         return "turn_priority_and_decisions"
     if relative in {

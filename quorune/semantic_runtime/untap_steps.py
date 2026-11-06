@@ -469,23 +469,26 @@ def current_printed_phasing_object_ids(host: UntapStepHost) -> frozenset[str]:
                      if any(handler.validate(descriptor) for descriptor in program.handlers))
 
 
-def current_step_is_skipped(host: UntapStepHost, active: str, step: str) -> bool:
+def active_step_skip_sources(host: UntapStepHost, active: str, step: str):
     if (
         step not in _SKIPPABLE_STEPS
         or active not in host.active_seats
         or not host.semantics.programs_for_event(STATIC_STEP_SKIP_EVENT)
     ):
-        return False
+        return
     handler = StaticTurnStepSkipHandler()
     for source, program in _active_step_programs(host, STATIC_STEP_SKIP_EVENT):
-        for descriptor in program.handlers:
+        for index, descriptor in enumerate(program.handlers):
             skip = handler.validate(descriptor)
             if skip.step != step or skip.scope == "source_controller" and source.controller != active:
                 continue
             if skip.requires_empty_hand and host.state.players[active].zones["hand"]:
                 continue
-            return True
-    return False
+            yield source, program.key, index
+
+
+def current_step_is_skipped(host: UntapStepHost, active: str, step: str) -> bool:
+    return next(active_step_skip_sources(host, active, step), None) is not None
 
 
 def collect_untap_step_participations(

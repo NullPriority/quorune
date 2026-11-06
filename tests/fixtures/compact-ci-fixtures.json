@@ -820,6 +820,7 @@
     "tests/fixtures/scheduled-event-pair-cards.json",
     "tests/fixtures/scheduled-half-life-cards.json",
     "tests/fixtures/scheduled-player-triggers.json",
+    "tests/fixtures/scheduled-turn-skip-cards.json",
     "tests/fixtures/scoped-basic-type-addition-cards.json",
     "tests/fixtures/scoped-damage-prevention-cards.json",
     "tests/fixtures/scryfall-exact-lists.json",

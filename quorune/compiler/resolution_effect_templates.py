@@ -4,6 +4,7 @@ from .counter_resolution_effect_templates import counter_resolution_effect_templ
 from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
+from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
 from .hand_entry_templates import fixed_draw_then_hand_entry_template
@@ -157,6 +158,9 @@ def _source_context_resolution_template(
         return blight
     extra_turn = fixed_extra_turn_effect_template(text)
     if extra_turn is not None:return extra_turn
+    scheduled_skip = scheduled_turn_skip_effect_template(text)
+    if scheduled_skip is not None:
+        return scheduled_skip
     capacity = temporary_block_capacity_template(text, source_name=card_name,
         source_is_permanent=source_is_permanent, source_card_types=source_card_types)
     if capacity is not None:return capacity

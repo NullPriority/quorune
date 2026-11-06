@@ -5054,3 +5054,10 @@ in the defining payload. The sealed attack declaration captures each instance
 on a declared attacker. Resolving that trigger schedules a separate
 end-of-combat sacrifice through the existing delayed and incarnation-filtered
 zone movement owners.
+
+Fixed scheduled skips lower to a typed boundary, scope, and recipient. The
+turn owner applies them before a turn, combat phase, or beginning-phase step
+starts. The ordinary replacement choice carries competing static and
+resolution-created effects, including cases where only one choice consumes
+a grant. Skipped turns advance scheduling without opening their turn-based
+actions. Scoped combat grants expire with their bound turn.
