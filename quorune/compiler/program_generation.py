@@ -16,6 +16,7 @@ import hashlib
 from typing import Any, Iterable, Mapping, TYPE_CHECKING
 
 from ..carddb import CardDatabase, CardRecord
+from ..keyword_counters import keyword_counter_mechanic
 
 if TYPE_CHECKING:
     from .ir_model import OracleCardIR
@@ -674,6 +675,15 @@ def _is_closed_fixed_counter_placement_program(
 ) -> bool:
     """Recognize only the reviewed fixed permanent-counter effect family."""
 
+    keyword = (
+        keyword_counter_mechanic(program.effects[0].get('counter'))
+        if len(program.effects) == 1 else None
+    )
+    placement_mechanics = {
+        'cr-122-counters', 'cr-115-targets', 'named-counter-doubling',
+        'fixed-entry-event-object-counter', 'fixed-public-event-source-counter',
+        'fixed-public-event-target-counter', keyword,
+    }
     required = set(
         fixed_counter_placement_node_capabilities(
             effects=program.effects,
@@ -681,7 +691,7 @@ def _is_closed_fixed_counter_placement_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"cr-122-counters", "cr-115-targets", "named-counter-doubling", "fixed-entry-event-object-counter", "fixed-public-event-source-counter", "fixed-public-event-target-counter"}
+                if value in placement_mechanics
             ),
         )
     )
