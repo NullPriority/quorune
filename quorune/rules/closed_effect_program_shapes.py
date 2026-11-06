@@ -7,6 +7,7 @@ from typing import Any, Iterable, Mapping, Sequence
 from .fixed_effect_clause_shapes import (
     closed_effect_component_capabilities,
 )
+from ..fractional_quantity_model import HALF_QUANTITY_KIND
 from .bound_effect_program_shapes import (
     bound_effect_program_node_capabilities, has_target_controller_recipient,
 )
@@ -127,6 +128,14 @@ def closed_effect_program_runtime_dependencies(program):
         return owned
     if not 2 <= len(program.effects) <= 8:
         raise ValueError('Closed ordered programs require two to eight effects')
+    if any(isinstance(value, Mapping) and value.get("kind") == HALF_QUANTITY_KIND
+           for effect in program.effects for value in (effect.get("amount"), effect.get("count"))):
+        owned = closed_effect_program_node_capabilities(
+            effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
+        )
+        if not owned:
+            raise ValueError("Ordered fractional effects require all closed result owners")
+        return owned
     return (CLOSED_EFFECT_PROGRAM_CAPABILITY,)
 
 

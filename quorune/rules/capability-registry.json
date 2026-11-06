@@ -17755,7 +17755,7 @@
           "normalized zone-change and sacrifice events",
           "exact continuation replay"
         ],
-        "summary": "Resolve one mandatory fixed controller or affected-player sacrifice by collecting public controlled-permanent choices in APNAP order and committing through one replacement-aware simultaneous zone transaction. Fixed creature subtype predicates inspect current creature types."
+        "summary": "Resolve one mandatory fixed controller or affected-player sacrifice by collecting public controlled-permanent choices in APNAP order and committing through one replacement-aware simultaneous zone transaction. Fixed creature subtype predicates inspect current creature types. The public query can exclude land from a permanent scope or a canonical creature subtype from a creature scope."
       },
       "blockers": [],
       "dependencies": [
@@ -17782,18 +17782,22 @@
         "test_original_perilous_research_draws_before_controller_sacrifice_choice",
         "test_original_puppet_upkeep_uses_current_creature_subtype_and_empty_sets",
         "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
-        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement"
+        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "multiplayer_tests": [
         "test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously",
         "test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
-        "test_original_puppet_upkeep_uses_current_creature_subtype_and_empty_sets"
+        "test_original_puppet_upkeep_uses_current_creature_subtype_and_empty_sets",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "negative_tests": [
         "test_unsupported_sacrifice_choices_and_shape_mutations_fail_closed",
         "test_mandatory_controller_sacrifice_uses_affected_player_choice",
         "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
-        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement"
+        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner"
       ],
       "official_rules": [
         "101.4",
@@ -17807,7 +17811,9 @@
         "test_fixed_affected_player_sacrifices_compile_across_contexts_and_modes",
         "test_fixed_count_sacrifices_available_objects_and_skips_empty_player",
         "test_mandatory_controller_sacrifice_uses_affected_player_choice",
-        "test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature"
+        "test_original_entry_sacrifice_can_choose_the_source_or_another_controlled_creature",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "privacy_tests": [
         "test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously",
@@ -17820,7 +17826,9 @@
         "test_original_upkeep_sacrifice_is_current_controller_scoped_and_replays",
         "test_original_perilous_research_draws_before_controller_sacrifice_choice",
         "test_subtype_sacrifice_uses_current_type_after_response_and_rejects_stale_choice",
-        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement"
+        "test_original_controller_sacrifice_keeps_choice_across_destination_replacement",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "required_evidence": [
         "positive",
@@ -17836,7 +17844,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -17855,7 +17863,7 @@
           "canonical life or simultaneous discard/sacrifice mutation",
           "sealed affected-player choices and replayable continuation"
         ],
-        "summary": "Compute half a represented affected-player hand or controlled permanent domain with explicit rounding and seal per-player counts/candidates before canonical APNAP choices."
+        "summary": "Compute half a represented affected-player hand or controlled permanent domain with explicit rounding and seal per-player counts/candidates before canonical APNAP choices. Nonland and excluded-subtype domains use the same sealed count and public eligibility owner."
       },
       "blockers": [],
       "dependencies": [
@@ -17880,15 +17888,22 @@
       "interaction_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
-        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "multiplayer_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
-        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "negative_tests": [
-        "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual"
+        "test_fraction_result_unknown_domains_and_shape_mutations_remain_residual",
+        "test_unowned_domains_and_missing_common_rounding_remain_residual",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner"
       ],
       "official_rules": [
         "107.1a",
@@ -17905,16 +17920,23 @@
       "positive_tests": [
         "test_half_player_life_hand_and_creature_results_have_closed_rounding_contracts",
         "test_half_quantity_arithmetic_and_malformed_fields_are_closed",
-        "test_fractional_selection_state_rejects_changed_sealed_counts_and_domains"
+        "test_fractional_selection_state_rejects_changed_sealed_counts_and_domains",
+        "test_shared_rounding_and_excluded_permanent_predicates_compile_through_existing_owners",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "privacy_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
-        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions"
       ],
       "replay_tests": [
         "test_actual_rush_modes_keep_independent_opponents_counts_and_current_life",
         "test_actual_vona_city_branch_uses_current_each_opponent_creature_count",
-        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit"
+        "test_each_opponent_fractional_discard_keeps_all_sealed_hands_private_until_commit",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions",
+        "test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner",
+        "test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice"
       ],
       "required_evidence": [
         "positive",
@@ -17930,7 +17952,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -56561,7 +56583,7 @@
           "replacement- and choice-aware suspension and resume",
           "exact replay across component boundaries"
         ],
-        "summary": "Compile and resolve two to four mandatory printed-order components when every component is already typed and capability-closed and the complete program shares at most one direct target group. Independently closed public-query and source-scalar amounts evaluate at each instruction position through the same resumable program cursor."
+        "summary": "Compile and resolve two to four mandatory printed-order components when every component is already typed and capability-closed and the complete program shares at most one direct target group. Independently closed public-query and source-scalar amounts evaluate at each instruction position through the same resumable program cursor. A trailing explicit rounding sentence can supply the same rounding direction to three independently closed fractional instructions."
       },
       "blockers": [],
       "dependencies": [],
@@ -56607,7 +56629,8 @@
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
         "test_private_scry_suspends_draw_and_life_then_replays",
-        "test_target_characteristics_commit_before_private_scry"
+        "test_target_characteristics_commit_before_private_scry",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions"
       ],
       "multiplayer_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
@@ -56631,7 +56654,8 @@
         "test_original_augury_resumes_into_current_proliferate_choice_once",
         "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
-        "test_private_scry_suspends_draw_and_life_then_replays"
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions"
       ],
       "negative_tests": [
         "test_actual_carnival_uses_enchantment_controller_for_own_and_foreign_creature_entries",
@@ -56667,7 +56691,8 @@
         "test_plain_comma_untap_sequence_requires_complete_typed_siblings",
         "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
         "test_stale_target_fizzles_every_three_component_effect",
-        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
+        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source",
+        "test_unowned_domains_and_missing_common_rounding_remain_residual"
       ],
       "official_rules": [
         "608.2b",
@@ -56710,7 +56735,9 @@
         "test_plain_comma_untap_sequence_requires_complete_typed_siblings",
         "test_private_scry_suspends_draw_and_life_then_replays",
         "test_reviewed_snapshot_serialization_retains_legacy_mode_ids",
-        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source"
+        "test_verified_ordered_and_mode_dependency_withdrawal_rejects_source",
+        "test_shared_rounding_and_excluded_permanent_predicates_compile_through_existing_owners",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions"
       ],
       "privacy_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
@@ -56731,7 +56758,8 @@
         "test_original_bond_private_partition_finishes_before_life_gain_and_replays",
         "test_original_canker_all_three_modes_keep_target_and_sacrifice_authority",
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
-        "test_private_scry_suspends_draw_and_life_then_replays"
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions"
       ],
       "replay_tests": [
         "test_actual_bogbeast_attack_gains_before_reading_own_gained_life_not_net_or_opponent_gain",
@@ -56757,7 +56785,8 @@
         "test_original_fungus_all_modes_and_private_draw_then_optional_tapped_land",
         "test_original_rals_damage_precedes_private_choice_and_invalid_target_stops_all",
         "test_pending_counter_replacement_resumes_once_before_later_quantity",
-        "test_private_scry_suspends_draw_and_life_then_replays"
+        "test_private_scry_suspends_draw_and_life_then_replays",
+        "test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions"
       ],
       "required_evidence": [
         "positive",
@@ -56773,7 +56802,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 10
+      "version": 11
     },
     {
       "applicability": {
@@ -79831,7 +79860,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 727,
+  "registry_version": 728,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

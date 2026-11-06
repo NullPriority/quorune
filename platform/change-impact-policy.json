@@ -11712,10 +11712,15 @@
       "patterns": [
         "quorune/compiler/life_templates.py",
         "quorune/compiler/fractional_player_templates.py",
+        "quorune/rules/fractional_player_result_shapes.py",
+        "quorune/rules/closed_effect_program_shapes.py",
+        "quorune/rules/special_node_shapes.py",
         "quorune/compiler/declared_effect_amounts.py",
         "quorune/compiler/public_query_effect_amounts.py",
         "quorune/semantic_choices/actual_life_transfer.py",
         "tests/test_variable_actual_life_transfer.py",
+        "tests/test_fractional_player_results.py",
+        "tests/fixtures/half-sacrifice-sequence-cards.json",
         "tests/fixtures/variable-actual-life-cards.json"
       ],
       "test_modules": [

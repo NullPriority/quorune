@@ -81,6 +81,12 @@ def _predicate(phrase: str, *, count: int) -> ObjectQuerySpec | None:
         return None
     if normalized == "permanent":
         return ObjectQuerySpec(zones=("battlefield",))
+    if normalized == "nonland permanent":
+        return ObjectQuerySpec(zones=("battlefield",), excluded_types=("land",))
+    if normalized.startswith("non-") and normalized.endswith(" creature"):
+        excluded = canonical_creature_subtype_surface(normalized.removeprefix("non-").removesuffix(" creature"))
+        if excluded is not None:
+            return ObjectQuerySpec(zones=("battlefield",), types_all=("creature",), excluded_subtypes=(excluded,))
     if normalized in {
         "artifact",
         "creature",
@@ -147,6 +153,7 @@ _CLOSED_PREDICATES = frozenset(
         "nontoken artifact",
         "nontoken creature",
         "nonartifact creature",
+        "nonland permanent",
         "creature with flying",
     )
     for value in (_predicate(phrase, count=1),)
@@ -163,6 +170,10 @@ def fixed_affected_player_sacrifice_predicate_is_closed(
         return False
     if stable_json(predicate.to_dict()) in _CLOSED_PREDICATES:
         return True
+    if len(predicate.excluded_subtypes) == 1:
+        subtype = canonical_creature_subtype_surface(predicate.excluded_subtypes[0])
+        return subtype is not None and predicate == ObjectQuerySpec(
+            zones=("battlefield",), types_all=("creature",), excluded_subtypes=(subtype,))
     if len(predicate.subtypes_all) != 1:
         return False
     subtype = canonical_creature_subtype_surface(predicate.subtypes_all[0])

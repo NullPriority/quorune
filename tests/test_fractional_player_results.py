@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from common import ROOT
 from quorune.carddb import CardDatabase
@@ -229,3 +230,188 @@ class FractionalPlayerResultRuntimeTests(unittest.TestCase):
         self.resolve(session)
         self.assertEqual([3, 4, 4], [len(session.state.players[seat].zones['hand']) for seat in 'BCD'])
         self.replay(session, load=True)
+
+
+
+class HalfSacrificeSequenceCompilerTests(unittest.TestCase):
+    def test_shared_rounding_and_excluded_permanent_predicates_compile_through_existing_owners(self):
+        registry = load_default_capability_registry()
+        for domain, rounding, excluded in (
+            ("creatures", "up", {}),
+            ("permanents", "down", {}),
+            ("nonland permanents", "down", {"excluded_types": ["land"]}),
+            ("non-God creatures", "up", {"excluded_subtypes": ["god"]}),
+        ):
+            text = ("Each player loses half their life, then discards half the cards in their hand, "
+                    f"then sacrifices half the {domain} they control of their choice. Round {rounding} each time.")
+            with self.subTest(domain=domain):
+                ir = compile_oracle_card(record(text, "Sorcery"), capability_registry=registry,
+                                         capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertIn("resolution.effect_program.closed_components", node.capability_dependencies)
+                self.assertIn(LIFE_OWNER, node.capability_dependencies)
+                self.assertIn(CHOICE_OWNER, node.capability_dependencies)
+                life, hand, sacrifice = node.effects
+                self.assertEqual(("lose_life", "discard", "sacrifice"),
+                                 (life["op"], hand["then"], sacrifice["then"]))
+                self.assertEqual([rounding] * 3,
+                                 [life["amount"]["rounding"], hand["count"]["rounding"], sacrifice["count"]["rounding"]])
+                for key, value in excluded.items():
+                    self.assertEqual(value, sacrifice["predicate"][key])
+
+    def test_shared_rounding_producer_omission_leaves_material_text(self):
+        registry = load_default_capability_registry()
+        text = ("Each player loses half their life, then discards half the cards in their hand, "
+                "then sacrifices half the permanents they control of their choice. Round down each time.")
+        card = record(text, "Sorcery")
+        self.assertEqual("exact", compile_oracle_card(card, capability_registry=registry,
+            capability_profile="commander_review").status)
+        with patch("quorune.compiler.fractional_player_templates._SHARED_ROUNDING_SEQUENCE") as pattern:
+            pattern.fullmatch.return_value = None
+            self.assertNotEqual("exact", compile_oracle_card(card, capability_registry=registry,
+                capability_profile="commander_review").status)
+
+    def test_unowned_domains_and_missing_common_rounding_remain_residual(self):
+        registry = load_default_capability_registry()
+        for text in (
+            "Target opponent sacrifices half the nonland permanents they own of their choice, rounded down.",
+            "Each player sacrifices half the non-Unrecognized creatures they control of their choice, rounded down.",
+            "Each player loses half their life, then discards half the cards in their hand, "
+            "then sacrifices half the creatures they control of their choice.",
+        ):
+            with self.subTest(text=text):
+                ir = compile_oracle_card(record(text, "Sorcery"), capability_registry=registry,
+                                         capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status)
+
+
+class HalfSacrificeSequenceRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = FractionalPlayerResultRuntimeTests.session
+    add = FractionalPlayerResultRuntimeTests.add
+    checkpoint = FractionalPlayerResultRuntimeTests.checkpoint
+    resolve = FractionalPlayerResultRuntimeTests.resolve
+    replay = FractionalPlayerResultRuntimeTests.replay
+    prepare = FractionalPlayerResultRuntimeTests.prepare
+    cast = FractionalPlayerResultRuntimeTests.cast
+    assert_closed = FractionalPlayerResultRuntimeTests.assert_closed
+    choose = FractionalPlayerResultRuntimeTests.choose
+    reject = FractionalPlayerResultRuntimeTests.reject
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory()
+        path = Path(cls.temp.name) / "half-sacrifice-sequences.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/half-sacrifice-sequence-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Half-sacrifice sequence", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temp.cleanup()
+
+    def _bodies(self, session, seat, count, prefix):
+        return [self.add(session.engine, "Generic Bound Body", seat=seat, ref=f"{prefix}-{seat}-{i}")
+                for i in range(count)]
+
+    def test_xander_death_counts_current_nonland_control_and_sacrifices_to_owner(self):
+        session = self.session(728100)
+        engine = session.engine
+        xander = self.add(engine, "Lord Xander, the Collector")
+        kill = self.add(engine, "Murder", zone="hand")
+        land = self.add(engine, "Great Furnace", seat="B")
+        self._bodies(session, "B", 2, "xander-local")
+        borrowed = self._bodies(session, "D", 1, "xander-borrowed")[0]
+        engine.change_control(borrowed.object_id, "B")
+        self.assert_closed(session, xander)
+        self.prepare(session, mana={"C": 1, "B": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", kill, targets=[xander.ref])
+        pending = self.resolve(session)
+        self.assertEqual("semantic.target", pending.kind)
+        chosen = session.act("pilot:A", {"action_id": "choose", "targets": ["B"]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.resolve(session)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        self.assertEqual(1, session.state.pending_decision.payload_by_actor["B"]["count"])
+        self.reject(session, "B", [land.ref])
+        self.reject(session, "A", [borrowed.ref])
+        session = self.replay(session, load=True)
+        self.choose(session, "B", [borrowed.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertIn(borrowed.object_id, session.state.players["D"].zones["graveyard"])
+        self.assertEqual("battlefield", session.state.cards[land.object_id].zone)
+        self.replay(session)
+
+    def test_zodiark_excludes_gods_from_each_players_half_and_counts_the_sacrifice(self):
+        session = self.session(728110)
+        zodiark = self.add(session.engine, "Zodiark, Umbral God", zone="hand")
+        a_body = self._bodies(session, "A", 1, "zodiark-friendly")[0]
+        victims = self._bodies(session, "B", 3, "zodiark-victim")
+        self._bodies(session, "C", 1, "zodiark-short")
+        self.assert_closed(session, zodiark)
+        self.prepare(session, mana={"B": 5})
+        self.checkpoint(session)
+        self.cast(session, "A", zodiark)
+        self.resolve(session)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        self.assertEqual(1, session.state.pending_decision.payload_by_actor["B"]["count"])
+        self.choose(session, "B", [victims[0].ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[a_body.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[zodiark.object_id].zone)
+        self.assertEqual(1, session.state.cards[zodiark.object_id].counters.get("+1/+1"))
+        self.assertEqual("graveyard", session.state.cards[victims[0].object_id].zone)
+        self.replay(session, load=True)
+
+    def test_fraying_resolves_life_private_discard_and_public_sacrifice_before_state_actions(self):
+        session = self.session(728120)
+        spell = self.add(session.engine, "Fraying Omnipotence", zone="hand")
+        private = self.add(session.engine, "Generic Bound Growth", seat="B", zone="hand",
+                           ref="fraying-private-hand")
+        bodies = {"B": self._bodies(session, "B", 3, "fraying"),
+                  "C": self._bodies(session, "C", 2, "fraying")}
+        for seat, life in zip("ABCD", (39, 1, 38, 37), strict=True):
+            session.state.players[seat].life = life
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={"C": 3, "B": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", spell)
+        hand_ids = {seat: list(session.state.players[seat].zones["hand"]) for seat in "ABCD"}
+        self.resolve(session)
+        self.assertEqual([19, 0, 19, 18], [session.state.players[seat].life for seat in "ABCD"])
+        for seat in "ABCD":
+            self.assertTrue(session.state.players["B"].in_game)
+            self.assertEqual([f"pilot:{seat}"], session.pending_principals())
+            count = (len(hand_ids[seat]) + 1) // 2
+            self.assertEqual(count, session.state.pending_decision.payload_by_actor[seat]["count"])
+            if seat == "B":
+                self.assertNotIn(private.ref, json.dumps(session.packet("pilot:C", full=True)))
+                session = self.replay(session, load=True)
+            refs = [session.state.cards[oid].ref for oid in hand_ids[seat][:count]]
+            self.choose(session, seat, refs)
+            if seat != "D":
+                self.assertEqual(hand_ids, {p: list(session.state.players[p].zones["hand"]) for p in "ABCD"})
+        for seat, count in (("B", 2), ("C", 1)):
+            self.assertTrue(session.state.players["B"].in_game)
+            self.assertEqual([f"pilot:{seat}"], session.pending_principals())
+            self.assertEqual(count, session.state.pending_decision.payload_by_actor[seat]["count"])
+            refs = [card.ref for card in bodies[seat][:count]]
+            self.choose(session, seat, refs)
+            if seat == "B":
+                self.assertTrue(all(session.state.cards[card.object_id].zone == "battlefield"
+                                    for group in bodies.values() for card in group))
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(session.state.players["B"].in_game)
+        self.assertEqual("graveyard", session.state.cards[bodies["C"][0].object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[bodies["C"][1].object_id].zone)
+        self.replay(session)

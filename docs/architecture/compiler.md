@@ -1217,7 +1217,16 @@ closed shape. The sequence requires
 and retains the remaining instructions across a private discard choice.
 Target revalidation applies to the whole sequence, including independent
 controller life gain. Linked amounts, independent targets and unknown siblings
-remain residual; no new mutation or choice owner is introduced.
+remain residual.
+
+A fractional sacrifice counts the affected player's eligible controlled
+permanents. The existing public predicate owner supports nonland permanents
+and creatures without a specified subtype. The selector locks the rounded
+count before collecting APNAP choices. When a trailing rounding sentence
+governs life loss, discard, and sacrifice, the compiler attaches that direction
+to each typed instruction. Resolution applies them in printed order through
+the existing cursor, which preserves private discard and public sacrifice as
+separate choices. State-based actions wait until the whole effect resolves.
 
 `compiler/fixed_effect_clause_sequences.py` owns the general closed
 two-sentence composition boundary. It accepts exactly two top-level,

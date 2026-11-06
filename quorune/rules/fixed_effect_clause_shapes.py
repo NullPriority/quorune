@@ -81,6 +81,7 @@ from .library_search_capability_shapes import (
     fixed_type_to_hand_search_node_capabilities,
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
+from .fractional_player_result_shapes import half_choice_node_capabilities, half_life_node_capabilities
 from .public_zone_move_capability_shapes import (
     fixed_public_zone_move_set_node_capabilities,
     public_graveyard_card_exile_node_capabilities,
@@ -167,6 +168,8 @@ _COMPONENT_RESOLVERS = (
     fixed_affected_player_discard_node_capabilities,
     fixed_affected_player_hand_exile_node_capabilities,
     fixed_affected_player_sacrifice_node_capabilities,
+    half_choice_node_capabilities,
+    half_life_node_capabilities,
     fixed_counter_placement_batch_node_capabilities,
     fixed_counter_placement_group_node_capabilities,
     fixed_counter_placement_node_capabilities,
