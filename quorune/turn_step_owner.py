@@ -11,6 +11,7 @@ from .continuous_effect_state import expire_end_of_turn_continuous_effects
 from .control_effects import synchronize_control_effects
 from .damage_prevention import expire_end_of_turn_damage_modifiers
 from .impulse_access import expire_temporary_play_permissions
+from .semantic_runtime.untap_steps import current_step_is_skipped
 from .rules.land_play_permissions import (
     reset_additional_land_play_permissions,
 )
@@ -326,6 +327,9 @@ class TurnStepOwner:
             raise StateInvariantError(
                 f"A turn names unknown active player {active!r}"
             )
+        while current_step_is_skipped(self._host, active, step):
+            self.state.phase_index += 1
+            phase, step = TURN_STEPS[self.state.phase_index]
 
         # CR 800.4j leaves the current turn in progress when its active player
         # leaves a multiplayer game.  The turn therefore retains that physical

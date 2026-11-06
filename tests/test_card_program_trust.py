@@ -416,6 +416,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "prevention.damage.fixed_self_counter",
                 "prohibition.combat.goad",
                 "participation.untap_step.static",
+                "participation.turn_step.skip",
                 "participation.untap_step.fixed_selection_limit",
                 "permission.action.static",
                 "permission.action.library-search-rule",

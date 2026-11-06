@@ -1894,6 +1894,13 @@ trigger. All defenders finish declaring before APNAP placement. The event pair
 does not substitute the distinct per-blocker occurrence, and one source's block
 cannot satisfy another source's subscription.
 
+The turn owner checks trusted static step-skip components before entering
+untap, upkeep, or draw. It reads current source abilities, controller scope,
+and the empty-hand condition where printed. A skip advances directly to the
+next actual step, carrying waiting triggers to that step's normal placement
+boundary. Ordinary draw replacements and restrictions on untapping individual
+objects keep their own timing.
+
 `turn_history.py` retains current-turn events plus one bounded per-player
 spell-count summary for the immediately previous turn. `day_night.py` consumes
 the previous active player's count during the second untap-step action, before

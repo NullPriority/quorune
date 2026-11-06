@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "fixture_kind": "public_exact-list_card_data",
+  "source": "Pinned Scryfall Oracle and rulings for static turn-step skips",
+  "cards": [
+    {
+      "oracle_id": "b08cb220-34fe-4c54-b654-64a3c24dba44",
+      "name": "Infernal Sovereign",
+      "mana_cost": "{4}{B}{B}",
+      "cmc": 6.0,
+      "type_line": "Creature — Demon",
+      "oracle_text": "Flying, trample\nSkip your draw step.\nWhenever you play a land or cast a spell, you draw a card and you lose 1 life.",
+      "power": "6",
+      "toughness": "6",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying",
+        "Trample"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2023-04-21",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "84342991-b925-4064-a88f-b6d60fd931e7",
+      "name": "Eon Hub",
+      "mana_cost": "{5}",
+      "cmc": 5.0,
+      "type_line": "Artifact",
+      "oracle_text": "Players skip their upkeep steps.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2004-06-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f2d1e991-e13a-43c7-85aa-d53dd14822e6",
+      "name": "Wake Thrasher",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Creature — Merfolk Soldier",
+      "oracle_text": "Whenever a permanent you control becomes untapped, this creature gets +1/+1 until end of turn.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-10-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a8cf1379-0195-4e11-b994-481ef1284245",
+      "name": "Stasis",
+      "mana_cost": "{1}{U}",
+      "cmc": 2.0,
+      "type_line": "Enchantment",
+      "oracle_text": "Players skip their untap steps.\nAt the beginning of your upkeep, sacrifice this enchantment unless you pay {U}.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-01-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "name": "Gibbering Descent",
+      "mana_cost": "{4}{B}{B}",
+      "cmc": 6.0,
+      "type_line": "Enchantment",
+      "oracle_text": "At the beginning of each player's upkeep, that player loses 1 life and discards a card.\nHellbent — Skip your upkeep step if you have no cards in hand.\nMadness {2}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Madness",
+        "Hellbent"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2007-05-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a3fb7228-e76b-4e96-a40e-20b5fed75685",
+      "name": "Mountain",
+      "mana_cost": "",
+      "cmc": 0.0,
+      "type_line": "Basic Land — Mountain",
+      "oracle_text": "({T}: Add {R}.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [
+        "R"
+      ],
+      "layout": "normal",
+      "released_at": "2026-11-13",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "84342991-b925-4064-a88f-b6d60fd931e7",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Any triggered abilities that triggered during the untap step will go onto the stack at the start of the draw step."
+    },
+    {
+      "oracle_id": "84342991-b925-4064-a88f-b6d60fd931e7",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "The upkeep step is skipped entirely. The turn proceeds from untap step to draw step."
+    },
+    {
+      "oracle_id": "84342991-b925-4064-a88f-b6d60fd931e7",
+      "published_at": "2004-12-01",
+      "source": "wotc",
+      "comment": "Upkeep-triggered abilities don't trigger, and \"activate only during your upkeep\" abilities can't be activated."
+    },
+    {
+      "oracle_id": "f2d1e991-e13a-43c7-85aa-d53dd14822e6",
+      "published_at": "2008-08-01",
+      "source": "wotc",
+      "comment": "If permanents you control become untapped during your untap step, Wake Thresher’s ability will trigger that many times. However, since no player gets priority during the untap step, those abilities wait to be put on the stack until your upkeep starts. At that time, all your “beginning of upkeep” triggers will also trigger. You can put them and Wake Thresher’s abilities on the stack in any order."
+    },
+    {
+      "oracle_id": "a8cf1379-0195-4e11-b994-481ef1284245",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Since there is no untap step, Phasing in/out won't happen."
+    },
+    {
+      "oracle_id": "a8cf1379-0195-4e11-b994-481ef1284245",
+      "published_at": "2004-10-04",
+      "source": "wotc",
+      "comment": "Does not prevent cards from being untapped outside the untap step."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2007-05-01",
+      "source": "wotc",
+      "comment": "If you have no cards in hand at the time your upkeep step would start, instead that step is skipped and your draw step starts."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you choose not to cast a card with madness when the madness triggered ability resolves, it's put into your graveyard. Madness doesn't give you another chance to cast it later."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you discard a card with madness to pay the cost of a spell or activated ability, that card's madness triggered ability (and the spell that card becomes, if you choose to cast it) will resolve before the spell or ability the discard paid for."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Casting a spell with madness ignores the timing rules based on the card's card type. For example, you can cast a sorcery with madness if you discard it during an opponent's turn."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a madness cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A card with madness that's discarded counts as having been discarded even though it's put into exile rather than a graveyard. If it was discarded to pay a cost, that cost is still paid. Abilities that trigger when a card is discarded will still trigger."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "If you discard a card with madness while a spell or ability is resolving, it moves immediately to exile. Continue resolving that spell or ability, noting that the card you discarded is not in your graveyard at this time. Its madness triggered ability will be placed onto the stack once that spell or ability has completely resolved."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Cards are discarded in a Magic game only from a player's hand. Effects that put cards into a player's graveyard from anywhere else do not cause those cards to be discarded."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "Madness works independently of why you're discarding the card. You could discard it to pay a cost, because a spell or ability tells you to, or because you have too many cards in your hand during your cleanup step. You can't discard a card with madness just because you want to, though."
+    },
+    {
+      "oracle_id": "fbf6f677-d96b-406a-bc6f-4b244df72c7b",
+      "published_at": "2022-12-08",
+      "source": "wotc",
+      "comment": "A spell cast for its madness cost is put onto the stack like any other spell. It can be countered, copied, and so on. As it resolves, it's put onto the battlefield if it's a permanent card or into its owner's graveyard if it's an instant or sorcery card."
+    }
+  ]
+}

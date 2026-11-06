@@ -73519,6 +73519,82 @@
     },
     {
       "applicability": {
+        "summary": "A current trusted static rule may skip the active player's untap, upkeep, or draw step before that step begins.",
+        "inputs": [
+          "Complete typed step and player scope",
+          "Current source ability and controller",
+          "Current empty-hand condition for the controller upkeep form"
+        ],
+        "outputs": [
+          "Next actual step with held triggers carried forward",
+          "Skipped turn-based actions and beginning triggers"
+        ],
+        "exclusions": [
+          "One-shot skips",
+          "Whole turns and combat phases",
+          "Other conditional surfaces"
+        ]
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "This leaf capability has no prerequisite capabilities. A native binding mutation verifies that its registered handler still declares the skip capability.",
+      "dependency_fail_closed_status": "not_applicable",
+      "id": "turn.step.static_skip",
+      "implementation_components": [
+        "quorune.compiler.untap_step_templates.static_turn_step_skip_handler",
+        "quorune.semantic_runtime.untap_steps.StaticTurnStepSkipHandler",
+        "quorune.semantic_runtime.untap_steps.current_step_is_skipped",
+        "quorune.turn_step_owner.TurnStepOwner.enter_step"
+      ],
+      "implementation_mutation_rationale": "Removing the scheduler's pre-step predicate makes the Stasis native untap witness fail.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_draw_and_global_upkeep_skips_retain_held_triggers_and_other_seats_draw",
+        "test_actual_stasis_skips_untap_until_its_upkeep_payment_is_declined"
+      ],
+      "multiplayer_tests": [
+        "test_actual_draw_and_global_upkeep_skips_retain_held_triggers_and_other_seats_draw"
+      ],
+      "negative_tests": [
+        "test_closed_step_scope_and_hellbent_descriptors"
+      ],
+      "official_rules": [
+        "500.11",
+        "611.3b",
+        "614.10",
+        "614.10a"
+      ],
+      "positive_tests": [
+        "test_actual_draw_and_global_upkeep_skips_retain_held_triggers_and_other_seats_draw",
+        "test_actual_stasis_skips_untap_until_its_upkeep_payment_is_declined",
+        "test_actual_hellbent_checks_current_hand_before_the_upkeep"
+      ],
+      "privacy_tests": [
+        "test_actual_hellbent_checks_current_hand_before_the_upkeep"
+      ],
+      "replay_tests": [
+        "test_actual_draw_and_global_upkeep_skips_retain_held_triggers_and_other_seats_draw",
+        "test_actual_stasis_skips_untap_until_its_upkeep_payment_is_declined",
+        "test_actual_hellbent_checks_current_hand_before_the_upkeep"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
         "exclusions": [
           "Conditional or duration-qualified restraints",
           "Chosen or dynamic subjects",
@@ -79456,7 +79532,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 721,
+  "registry_version": 722,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

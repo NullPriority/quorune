@@ -1304,6 +1304,24 @@
       ]
     },
     {
+      "id": "static-turn-step-skip-contract",
+      "patterns": [
+        "quorune/compiler/runtime_templates.py",
+        "quorune/compiler/untap_step_templates.py",
+        "quorune/semantic_runtime/untap_steps.py",
+        "quorune/turn_step_owner.py",
+        "tests/test_static_step_skips.py",
+        "tests/fixtures/static-step-skip-cards.json"
+      ],
+      "test_modules": [
+        "test_static_step_skips",
+        "test_beginning_phase_rules",
+        "test_card_program_trust",
+        "test_typed_untap_step_participation",
+        "test_untap_step_rules"
+      ]
+    },
+    {
       "id": "spell-history-transformation-contract",
       "patterns": [
         "quorune/day_night.py",
