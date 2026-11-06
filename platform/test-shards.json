@@ -568,6 +568,7 @@
       "test_bargain_cost_reductions",
       "test_bargain_native",
       "test_batch_retained_owner_composition",
+      "test_blight",
       "test_bolster_rules",
       "test_cast_source_placement",
       "test_cast_spell_mana_values",

@@ -44,6 +44,10 @@ def _library_payload_dependencies(value):
 
 
 def _affected_quantity_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...] | None:
+    from ..rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_OPERATION, fixed_blight_amount
+    if value.get("op") == BLIGHT_OPERATION:
+        fixed_blight_amount(value)
+        return (BLIGHT_CAPABILITY,)
     from ..rules.endure_model import ENDURE_CAPABILITY, ENDURE_OPERATION, fixed_endure_amount
     if value.get("op") == ENDURE_OPERATION:
         fixed_endure_amount(value)

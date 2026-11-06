@@ -11,6 +11,7 @@ from .destruction_regeneration_capability_shapes import regeneration_covered_mec
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .endure_model import ENDURE_CAPABILITY, ENDURE_MECHANIC
+from .blight_model import BLIGHT_CAPABILITY, BLIGHT_MECHANIC
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
@@ -1365,6 +1366,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         RING_TEMPTATION_CAPABILITY: RING_MECHANIC,
         CHAMPION_CAPABILITY: CHAMPION_MECHANIC,
         ENDURE_CAPABILITY: ENDURE_MECHANIC,
+        BLIGHT_CAPABILITY: BLIGHT_MECHANIC,
         EVENT_PLAYER_CHOICE_CAPABILITY: EVENT_PLAYER_CHOICE_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",

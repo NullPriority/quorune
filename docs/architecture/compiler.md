@@ -476,6 +476,13 @@ one white Spirit Token with the instructed power and toughness. Endure zero
 completes without a choice. The source instruction composes with independent
 life loss and represented optional mana payment.
 
+Fixed resolution Blight chooses one eligible controlled creature through the
+public object-choice owner. It places all counters in one transaction.
+The same creature predicate serves the optional payment owner, which keeps
+cost provenance through replacement ordering and commits before the paid
+result. Declined results and reflexive triggers use their existing resolution
+owners. The represented quantity is fixed and the choice is nontargeted.
+
 Temporary query-scaled target and source modifiers accept a leading
 “Until end of turn” duration through the existing characteristic result owner.
 The complete subject, quantity and keyword clauses must close independently.

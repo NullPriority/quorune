@@ -12,6 +12,7 @@ from .as_unblocked_templates import temporary_as_unblocked_template
 from .toughness_assignment_templates import temporary_toughness_assignment_template
 from .connive_templates import fixed_connive_effect_template
 from .endure_templates import fixed_endure_effect_template
+from .blight_templates import fixed_blight_effect_template
 from .goad_templates import fixed_goad_effect_template
 from .block_capacity_templates import temporary_block_capacity_template
 
@@ -139,6 +140,9 @@ def _source_context_resolution_template(
     endure = fixed_endure_effect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
     if endure is not None:
         return endure
+    blight = fixed_blight_effect_template(text)
+    if blight is not None:
+        return blight
     extra_turn = fixed_extra_turn_effect_template(text)
     if extra_turn is not None:return extra_turn
     capacity = temporary_block_capacity_template(text, source_name=card_name,

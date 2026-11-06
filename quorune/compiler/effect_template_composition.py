@@ -8,6 +8,7 @@ from functools import partial
 from .closed_effect_programs import closed_effect_program_template
 from .bound_effect_programs import bound_effect_program_template
 from .fixed_effect_clause_sequences import fixed_effect_clause_sequence_template
+from .blight_templates import normalized_blight_sequence
 from .public_query_effect_amounts import public_query_effect_amount_template
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
@@ -251,7 +252,7 @@ def reviewed_effect_template_composition(
     if query_counters is not None:return query_counters
     from .announced_target_sets import announced_target_clause_compiler
     sequence = fixed_effect_clause_sequence_template(
-        text,
+        normalized_blight_sequence(text),
         compile_clause=announced_target_clause_compiler(compile_atomic) if cast_x_available else compile_atomic,
     )
     if sequence is not None:

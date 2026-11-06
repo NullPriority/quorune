@@ -13,7 +13,9 @@ from ..fixed_effect_payment import (
 )
 from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
+from ..rules.blight_model import BLIGHT_PAYMENT_VERSION, blight_creature_predicate, blight_decline_branch_is_closed
 from ..util import mana_cost_to_vector, stable_json
+from .blight_templates import fixed_blight_effect_template
 from .optional_payment_templates import OPTIONAL_MANA_PAYMENT_OPERATION
 from .spell_additional_cost_templates import (
     fixed_sacrifice_additional_cost_template, fixed_zone_change_additional_cost_template,
@@ -21,6 +23,7 @@ from .spell_additional_cost_templates import (
 
 
 _PAYMENT = re.compile(r"You may (?P<cost>.+?)\. If you do, (?P<body>.+)", re.I)
+_DECLINED_PAYMENT = re.compile(r"You may (?P<cost>.+?)\. If you don['’]t, (?P<body>.+)", re.I)
 _MANDATORY_DISCARD = re.compile(r"Discard (?:a|one) card\. If you do, (?P<body>[^.\n]+\.?)", re.I)
 _OPEN = re.compile(r"\b(?:if|unless|may|when|where|random|repeat|this way|that much|equal to|for each)\b", re.I)
 Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]]
@@ -28,6 +31,10 @@ Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | 
 
 def fixed_effect_payment_spec(text: str, *, allow_source_sacrifice: bool = False) -> FixedEffectPaymentSpec | None:
     value=text.strip()
+    blight = fixed_blight_effect_template(value)
+    if blight is not None:
+        return FixedEffectPaymentSpec("blight", schema_version=BLIGHT_PAYMENT_VERSION,
+            amount=blight[1][0]["amount"], predicate=blight_creature_predicate("$controller"))
     if allow_source_sacrifice and re.fullmatch(r'sacrifice this (?:artifact|aura|battle|creature|enchantment|equipment|land|permanent|planeswalker|token|vehicle)',value,re.I):
         return FixedEffectPaymentSpec('source_sacrifice',schema_version=7,source_ref='$source.zone_object')
     compound=re.fullmatch(r'pay (?P<mana>(?:\{(?:[0-9]+|[WUBRGC])\})+) and discard a card',value,re.I)
@@ -122,6 +129,7 @@ def _owned_graveyard_exile_payment(value):
 
 def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], Compiled]) -> Compiled | None:
     match = _MANDATORY_DISCARD.fullmatch(text.strip())
+    declined = False
     if match is not None:
         cost = FixedEffectPaymentSpec(
             "discard", schema_version=MANDATORY_DISCARD_PAYMENT_VERSION,
@@ -130,7 +138,10 @@ def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], 
     else:
         match = _PAYMENT.fullmatch(text.strip())
         if match is None:
-            return None
+            match = _DECLINED_PAYMENT.fullmatch(text.strip())
+            if match is None:
+                return None
+            declined = True
         cost = fixed_effect_payment_spec(match["cost"], allow_source_sacrifice=True)
     body=match['body'].strip()
     if cost is None or _OPEN.search(body) or '"' in body:return None
@@ -142,11 +153,15 @@ def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], 
     if template is None or not 1<=len(effects)<=4 or not mechanics or any(
         effect.get('op') in {'offer_optional_effect',OPTIONAL_MANA_PAYMENT_OPERATION} for effect in effects
     ) or FIXED_EFFECT_PAYMENT_MECHANIC in mechanics:return None
+    if declined and (schema is not None or not blight_decline_branch_is_closed(cost.kind, (), effects)):
+        return None
     from ..rules.fixed_effect_payment_shapes import fixed_payment_result_capabilities
     if not fixed_payment_result_capabilities(effects=effects,target_schema=schema,mechanic_ids=mechanics):
         return None
     value={'op':OPTIONAL_MANA_PAYMENT_OPERATION,'schema_version':2,'player':'$controller',
-           'payment':cost.to_dict(),'effects':deepcopy(list(effects))}
+           'payment':cost.to_dict(),'effects':[] if declined else deepcopy(list(effects))}
+    if declined:
+        value["declined_effects"] = deepcopy(list(effects))
     if cost.kind=='mana':value['cost']=dict(cost.requirements)
     identity=hashlib.sha256(stable_json(value).encode('utf-8')).hexdigest()[:16]
     return ('fixed-resolution-payment-'+identity+'-v2',(value,),schema,

@@ -430,6 +430,7 @@
     "tests/fixtures/bestow-cards.json",
     "tests/fixtures/bestow-typed-grant-cards.json",
     "tests/fixtures/binding-aware-event-payments.json",
+    "tests/fixtures/blight-cards.json",
     "tests/fixtures/block-capacity-cards.json",
     "tests/fixtures/boast-restriction-cards.json",
     "tests/fixtures/bound-static-declaration-cards.json",

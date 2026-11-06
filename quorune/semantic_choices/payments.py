@@ -1168,6 +1168,7 @@ PAYMENT_CHOICE_HANDLERS = (
             "source",
             "cost",
             "effects",
+            "declined_effects",
             "schema_version",
             "action", "rules_scope",
             "payment",
