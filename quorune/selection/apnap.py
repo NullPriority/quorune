@@ -8,7 +8,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_choices.apnap_commit import APNAP_OBJECT_COMMIT_OPERATION
-from .apnap_contract import validate_apnap_choice_effect
+from .apnap_contract import is_typed_hand_exile, validate_apnap_choice_effect
 from .fractional_counts import seal_fractional_counts, apnap_required_count
 from .alternative_discard import alternative_discard_options,validate_alternative_discard_choice
 from ..alternative_discard_model import alternative_discard_count
@@ -279,6 +279,8 @@ class ApnapChoiceOwnerMixin:
         if not queue or queue[0] != seat:
             raise GameRuleError("APNAP choice queue actor changed")
         resume = dict(state.get("resume") or {})
+        if is_typed_hand_exile(effect):
+            validate_apnap_choice_effect(self, effect, resume)
         if str(resume.get("stack_ref") or "") != str(
             selection.stack_ref or ""
         ):

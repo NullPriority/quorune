@@ -19,6 +19,7 @@ from typing import Any, Mapping, Sequence
 from ..attachment_references import AttachmentReferenceKind
 from .affected_player_discard_templates import (
     fixed_affected_player_discard_effect_template,
+    fixed_affected_player_hand_exile_effect_template,
 )
 from . import affected_player_discard_templates as _discard
 from .affected_player_sacrifice_templates import (
@@ -185,6 +186,13 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     return None
 
 
+def _affected_player_hand_effect_template(text: str) -> CompiledEffectTemplate | None:
+    discard = fixed_affected_player_discard_effect_template(text)
+    if discard is not None:
+        return discard.compiled()
+    return fixed_affected_player_hand_exile_effect_template(text)
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -252,11 +260,8 @@ def typed_resolution_effect_template(
         return affected_player_sacrifice.compiled()
     if (controller_discard := _discard.standalone_controller_discard_effect_template(text)) is not None:
         return controller_discard
-    affected_player_discard = fixed_affected_player_discard_effect_template(
-        text
-    )
-    if affected_player_discard is not None:
-        return affected_player_discard.compiled()
+    if (affected_player_hand := _affected_player_hand_effect_template(text)) is not None:
+        return affected_player_hand
     from .per_player_target_sets import per_player_target_set_template
     per_player=per_player_target_set_template(text)
     if per_player is not None:return per_player

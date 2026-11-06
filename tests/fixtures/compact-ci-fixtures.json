@@ -385,6 +385,7 @@
     "tests/fixtures/additional-draw-step-cards.json",
     "tests/fixtures/additional-token-definition-cards.json",
     "tests/fixtures/additional-token-status-cards.json",
+    "tests/fixtures/affected-player-hand-exile-cards.json",
     "tests/fixtures/affinity-rules-cards.json",
     "tests/fixtures/aftermath-cards.json",
     "tests/fixtures/aggregated-zone-event-triggers.json",

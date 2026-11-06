@@ -4036,6 +4036,23 @@
       ]
     },
     {
+      "id": "fixed-affected-player-hand-exile-contract",
+      "patterns": [
+        "quorune/selection/apnap.py",
+        "quorune/selection/apnap_contract.py",
+        "quorune/compiler/affected_player_discard_templates.py",
+        "quorune/compiler/target_player_sequences.py",
+        "quorune/rules/affected_player_discard_capability_shapes.py",
+        "tests/fixtures/affected-player-hand-exile-cards.json",
+        "tests/test_fixed_affected_player_discards.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_fixed_affected_player_discards",
+        "test_target_player_sequences"
+      ]
+    },
+    {
       "id": "bound-event-optional-payment-contract",
       "patterns": [
         "quorune/compiler/optional_payment_templates.py",

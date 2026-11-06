@@ -18,6 +18,7 @@ from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
 from ..random_discard import random_discard_node_capabilities
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
+    fixed_affected_player_hand_exile_node_capabilities,
     fixed_controller_discard_node_capabilities,
 )
 from .counter_capability_shapes import (
@@ -164,6 +165,7 @@ _COMPONENT_RESOLVERS = (
     all_counter_removal_node_capabilities,
     fixed_controller_discard_node_capabilities,
     fixed_affected_player_discard_node_capabilities,
+    fixed_affected_player_hand_exile_node_capabilities,
     fixed_affected_player_sacrifice_node_capabilities,
     fixed_counter_placement_batch_node_capabilities,
     fixed_counter_placement_group_node_capabilities,

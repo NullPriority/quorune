@@ -17646,6 +17646,94 @@
     {
       "applicability": {
         "exclusions": [
+          "qualified or random choices",
+          "face-down exile",
+          "linked duration and alternative-zone choices",
+          "independently unsupported sibling effects"
+        ],
+        "inputs": [
+          "source-spanned fixed affected-player hand instruction",
+          "unqualified hand predicate",
+          "current private hand refs and applicable destinations"
+        ],
+        "outputs": [
+          "private required choice of available cards",
+          "one APNAP-ordered simultaneous face-up exile batch",
+          "ordinary zone movement and exact continuation replay"
+        ],
+        "summary": "Resolve fixed face-up exile from each affected player's own hand through private APNAP choices and one simultaneous destination transaction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "A native strict Mind Swords program rejects withdrawal of its independently inferred hand-exile dependency. Malformed typed hands and target references fail closed.",
+      "dependency_fail_closed_status": "passed",
+      "id": "choice.affected_player.fixed_hand_exile",
+      "implementation_components": [
+        "quorune.compiler.affected_player_discard_templates.fixed_affected_player_hand_exile_effect_template",
+        "quorune.rules.affected_player_discard_capability_shapes.fixed_affected_player_hand_exile_node_capabilities",
+        "quorune.selection.apnap_contract.validate_apnap_choice_effect",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously"
+      ],
+      "implementation_mutation_rationale": "Removing the fixed hand-exile producer leaves an otherwise supported instruction residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_mind_swords_collects_private_apnap_choices_and_exiles_simultaneously",
+        "test_witness_the_end_finishes_the_targeted_sequence_with_a_short_or_empty_hand",
+        "test_perfect_intimidation_resumes_the_second_mode_after_private_exile"
+      ],
+      "multiplayer_tests": [
+        "test_mind_swords_collects_private_apnap_choices_and_exiles_simultaneously"
+      ],
+      "negative_tests": [
+        "test_fixed_hand_exile_rejects_unrepresented_and_malformed_shapes",
+        "test_mind_swords_collects_private_apnap_choices_and_exiles_simultaneously"
+      ],
+      "official_rules": [
+        "101.4",
+        "101.4a",
+        "400.2",
+        "406.3",
+        "608.2b",
+        "608.2c",
+        "609.3"
+      ],
+      "positive_tests": [
+        "test_fixed_hand_exile_compiles_targeted_batch_and_shared_player_sequence",
+        "test_mind_swords_collects_private_apnap_choices_and_exiles_simultaneously",
+        "test_witness_the_end_finishes_the_targeted_sequence_with_a_short_or_empty_hand"
+      ],
+      "privacy_tests": [
+        "test_mind_swords_collects_private_apnap_choices_and_exiles_simultaneously",
+        "test_witness_the_end_finishes_the_targeted_sequence_with_a_short_or_empty_hand"
+      ],
+      "replay_tests": [
+        "test_mind_swords_collects_private_apnap_choices_and_exiles_simultaneously",
+        "test_witness_the_end_finishes_the_targeted_sequence_with_a_short_or_empty_hand",
+        "test_perfect_intimidation_resumes_the_second_mode_after_private_exile"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "optional, variable, all, half, greatest, least, historic, dynamic, chosen-quality, color-count, mana-value, power, toughness, or arbitrary-number sacrifices",
           "attacking or blocking predicates",
           "effects where another player chooses the sacrificed object",
@@ -73602,7 +73690,11 @@
     },
     {
       "applicability": {
-        "summary": "A current trusted static rule may skip the active player's untap, upkeep, or draw step before that step begins.",
+        "exclusions": [
+          "One-shot skips",
+          "Whole turns and combat phases",
+          "Other conditional surfaces"
+        ],
         "inputs": [
           "Complete typed step and player scope",
           "Current source ability and controller",
@@ -73612,11 +73704,7 @@
           "Next actual step with held triggers carried forward",
           "Skipped turn-based actions and beginning triggers"
         ],
-        "exclusions": [
-          "One-shot skips",
-          "Whole turns and combat phases",
-          "Other conditional surfaces"
-        ]
+        "summary": "A current trusted static rule may skip the active player's untap, upkeep, or draw step before that step begins."
       },
       "blockers": [],
       "dependencies": [],
@@ -79615,7 +79703,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 723,
+  "registry_version": 724,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

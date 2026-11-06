@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-"""Capability shape for one fixed affected-player discard instruction."""
+"""Capability shapes for fixed affected-player hand choices."""
 
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..compiler.affected_player_discard_templates import (
     FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
     FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC,
+    FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY,
+    FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC,
     fixed_affected_player_discard_predicate_is_closed,
     FIXED_CONTROLLER_DISCARD_MECHANIC,
     FIXED_CONTROLLER_DISCARD_CAPABILITY,
@@ -15,22 +17,23 @@ from ..compiler.affected_player_discard_templates import (
 )
 
 
-def _literal_discard_count_is_closed(value, controller):
+def _literal_hand_choice_count_is_closed(value, controller):
     return type(value) is int and value in ({1, 2, 3, 4} if controller else {1, 2, 3})
 
 
-def fixed_affected_player_discard_node_capabilities(
+def _fixed_affected_player_hand_choice_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
-    allow_controller: bool = False,
+    allow_controller: bool,
+    action: str,
+    mechanic: str,
+    capability: str,
 ) -> tuple[str, ...]:
-    """Recognize one fixed affected-player private discard choice."""
-
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if not {
-        FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC,
+        mechanic,
         "cr-402-hand",
     }.issubset(mechanics) or len(effects) != 1:
         return ()
@@ -56,8 +59,8 @@ def fixed_affected_player_discard_node_capabilities(
         or effect.get("op") != "choose_cards_apnap"
         or effect.get("actor") != "$controller"
         or effect.get("zone") != "hand"
-        or not _literal_discard_count_is_closed(effect.get("count"), controller)
-        or effect.get("then") != "discard"
+        or not _literal_hand_choice_count_is_closed(effect.get("count"), controller)
+        or effect.get("then") != action
         or effect.get("hidden") is not True
         or type(effect.get("prompt")) is not str
         or not str(effect.get("prompt")).strip()
@@ -68,7 +71,7 @@ def fixed_affected_player_discard_node_capabilities(
     ):
         return ()
     dependencies = {
-        FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
+        capability,
         "zone.change.destination_replacement",
     }
     if targeted:
@@ -100,6 +103,41 @@ def fixed_affected_player_discard_node_capabilities(
     elif not controller and effect.get("players") not in ("all", "opponents"):
         return ()
     return tuple(sorted(dependencies))
+
+
+def fixed_affected_player_discard_node_capabilities(
+    *, effects, target_schema, mechanic_ids, allow_controller: bool = False,
+) -> tuple[str, ...]:
+    return _fixed_affected_player_hand_choice_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        allow_controller=allow_controller, action="discard",
+        mechanic=FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC, capability=FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
+    )
+
+
+def fixed_affected_player_hand_exile_node_capabilities(
+    *, effects, target_schema, mechanic_ids,
+) -> tuple[str, ...]:
+    return _fixed_affected_player_hand_choice_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids,
+        allow_controller=False, action="exile",
+        mechanic=FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC, capability=FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY,
+    )
+
+
+def fixed_hand_exile_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    """Infer a typed hand-exile minimum even without a coverage annotation."""
+    target_schema = (
+        {"zones": ["player"], "categories": ["player"], "player_relation": "any", "count": 1}
+        if effect.get("target") == "$target.0" else None
+    )
+    required = fixed_affected_player_hand_exile_node_capabilities(
+        effects=(effect,), target_schema=target_schema,
+        mechanic_ids=(FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC, "cr-402-hand", "cr-115-targets"),
+    )
+    if not required:
+        raise ValueError("Typed hand exile lacks a closed affected-player instruction")
+    return required
 
 
 def fixed_controller_discard_node_capabilities(*, effects, target_schema, mechanic_ids):
@@ -160,6 +198,13 @@ def is_closed_fixed_bound_discard_program(program):
 def is_closed_fixed_affected_player_discard_program(program):
     required=fixed_affected_player_discard_node_capabilities(effects=program.effects,
         target_schema=program.target_schema,mechanic_ids=program.coverage)
+    return bool(required) and set(required).issubset(program.capability_dependencies)
+
+
+def is_closed_fixed_affected_player_hand_exile_program(program):
+    required = fixed_affected_player_hand_exile_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
     return bool(required) and set(required).issubset(program.capability_dependencies)
 
 

@@ -54,6 +54,12 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if value.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
             count = sequential_investigate_count(value)
             return (INVESTIGATE_CAPABILITY_ID, *typed_result_amount_runtime_dependencies(count, mechanics=mechanics))
+        if (
+            value.get("op") == "choose_cards_apnap" and value.get("zone") == "hand"
+            and value.get("then") == "exile" and value.get("predicate") is not None
+        ):
+            from ..rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies
+            return fixed_hand_exile_payload_dependencies(value)
         from ..entry_x_amount_model import entry_x_amount_dependencies
         if value.get('kind')=='source_entry_x_amount':return entry_x_amount_dependencies(value)
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies

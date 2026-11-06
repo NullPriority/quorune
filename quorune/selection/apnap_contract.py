@@ -3,15 +3,23 @@ from __future__ import annotations
 """Validate the shared authoritative APNAP instruction boundary."""
 
 from ..errors import GameRuleError
+from ..object_predicate import ObjectQuerySpec
 from .fractional_counts import validate_apnap_count
+
+
+def is_typed_hand_exile(effect):
+    return (
+        effect.get("zone") == "hand" and effect.get("then") == "exile"
+        and effect.get("predicate") is not None
+    )
 
 
 def validate_apnap_choice_effect(host, effect, continuation):
     validate_apnap_count(effect)
     if effect.get("predicate") is not None:
-        private_discard = (
+        private_hand_choice = (
             effect.get("zone") == "hand"
-            and effect.get("then") == "discard"
+            and effect.get("then") in {"discard", "exile"}
         )
         allowed_fields = {
             "op",
@@ -24,7 +32,7 @@ def validate_apnap_choice_effect(host, effect, continuation):
             "prompt",
             *(("exclude_ref",) if "exclude_ref" in effect else ()),
             *(("require_full_count", "fallback_effects") if effect.get("require_full_count") is True else ()),
-            *(("hidden",) if private_discard else ()),
+            *(("hidden",) if private_hand_choice else ()),
             *(('target',) if "target" in effect else ()),
         }
         stack_ref = str(continuation.get("stack_ref") or "")
@@ -48,6 +56,7 @@ def validate_apnap_choice_effect(host, effect, continuation):
                 ("battlefield", "sacrifice", False),
                 ("battlefield", "return_owner_hand", False),
                 ("hand", "discard", True),
+                ("hand", "exile", True),
             }
             or type(effect.get("actor")) is not str
             or effect.get("actor") not in host.active_seats
@@ -73,3 +82,10 @@ def validate_apnap_choice_effect(host, effect, continuation):
             )
         ):
             raise GameRuleError("Typed APNAP choice effect is malformed")
+        if is_typed_hand_exile(effect) and (
+            type(effect.get("count")) is not int or effect["count"] not in {1, 2, 3}
+            or effect["predicate"] != ObjectQuerySpec(zones=("hand",)).to_dict()
+            or "exclude_ref" in effect or "require_full_count" in effect
+            or ("target" not in effect and effect.get("players") not in ("all", "opponents"))
+        ):
+            raise GameRuleError("Typed hand exile requires a fixed private own-hand choice")
