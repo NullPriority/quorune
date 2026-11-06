@@ -35149,7 +35149,7 @@
     {
       "applicability": {
         "exclusions": [
-          "Modular\u00e2\u20ac\u201dSunburst",
+          "Modularâ€”Sunburst",
           "granted or copied Modular outside trusted typed ability propagation",
           "Oracle-equivalent nonkeyword wording",
           "trigger-doubling policies beyond ordinary represented trigger placement",
@@ -36400,7 +36400,7 @@
           "spell copies and other objects that were not cast",
           "casts with no colored mana spent",
           "granted, copied, removed, or face-down Sunburst outside trusted typed ability propagation",
-          "Modular\u00e2\u20ac\u201dSunburst variable linkage",
+          "Modularâ€”Sunburst variable linkage",
           "unrepresented zone or counter replacement families"
         ],
         "inputs": [
@@ -42998,7 +42998,7 @@
         ],
         "inputs": [
           "complete Investigate or Investigate N times instruction",
-          "fixed count from one to twenty",
+          "fixed count from one to twenty or a typed committed-damage or opponent count",
           "resolving controller"
         ],
         "outputs": [
@@ -43007,7 +43007,7 @@
           "executable private Clue draw ability",
           "exact replay"
         ],
-        "summary": "Resolve one or a fixed positive number of Investigate actions as creation of canonical Clue tokens."
+        "summary": "Resolve each represented Investigate action as a separate canonical Clue creation event."
       },
       "blockers": [],
       "dependencies": [
@@ -43020,6 +43020,7 @@
       "implementation_components": [
         "quorune.fixed_token_production.FixedInvestigateSpec",
         "quorune.compiler.token_templates.fixed_token_creation_effect_template",
+        "quorune.semantic_choices.investigate.SequentialInvestigateHandler",
         "quorune.token_creation.create_tokens",
         "quorune.standard_token_abilities.standard_token_characteristics"
       ],
@@ -43040,6 +43041,8 @@
       ],
       "official_rules": [
         "111.10f",
+        "608.2c",
+        "614.5",
         "701.16",
         "701.16a"
       ],
@@ -78188,7 +78191,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 718,
+  "registry_version": 738,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

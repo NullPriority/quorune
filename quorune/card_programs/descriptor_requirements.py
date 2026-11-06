@@ -7,6 +7,12 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
+        from ..fixed_token_production import (
+            INVESTIGATE_CAPABILITY_ID, SEQUENTIAL_INVESTIGATE_OPERATION, sequential_investigate_count,
+        )
+        if value.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
+            count = sequential_investigate_count(value)
+            return (INVESTIGATE_CAPABILITY_ID, *typed_result_amount_runtime_dependencies(count, mechanics=mechanics))
         from ..entry_x_amount_model import entry_x_amount_dependencies
         if value.get('kind')=='source_entry_x_amount':return entry_x_amount_dependencies(value)
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies

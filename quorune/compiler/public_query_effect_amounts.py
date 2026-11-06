@@ -666,7 +666,11 @@ def public_query_amount_shape_context(
     from ..multikicker_result_amounts import multikicker_amount_dependencies
     from ..mana_spent_amounts import mana_color_amount_dependencies
     from ..cast_event_amounts import cast_mana_value_amount_dependencies
+    from ..fixed_token_production import SEQUENTIAL_INVESTIGATE_OPERATION, sequential_investigate_count
     try:
+        for effect in effects:
+            if effect.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
+                sequential_investigate_count(effect)
         target_hand_count_dependencies(effects,target_schema,mechanics)
         multikicker_amount_dependencies(effects,mechanics)
         mana_color_amount_dependencies(effects,mechanics)

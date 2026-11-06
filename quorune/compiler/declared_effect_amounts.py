@@ -17,6 +17,7 @@ from ..query_effect_amount_model import (
 from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
 from ..entry_x_amount_model import ENTRY_X_AMOUNT_KIND,EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,ENTRY_X_AMOUNT_CAPABILITY
+from ..fixed_token_production import SEQUENTIAL_INVESTIGATE_OPERATION
 
 
 DECLARED_EFFECT_AMOUNT_MECHANIC = "declared-effect-amount"
@@ -42,6 +43,7 @@ _RESULT_FIELDS = {
     'incubate': ('amount',),
     'create_token_then_counters': ('amount',),
     'return_random_graveyard_cards': ('count',),
+    SEQUENTIAL_INVESTIGATE_OPERATION: ('count',),
     "damage": ("amount",), "damage_fixed_set": ("amount",),
     "draw": ("count",), "draw_each_player": ("count",),
     "mill": ("count",), "scry": ("count",),

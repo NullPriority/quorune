@@ -36,10 +36,12 @@ from ..fixed_token_production import (
     FixedTokenProductionError,
     INVESTIGATE_CAPABILITY_ID,
     INVESTIGATE_MECHANIC_ID,
+    SEQUENTIAL_INVESTIGATE_OPERATION,
     TYPED_TOKEN_ABILITY_CAPABILITY_ID,
     TYPED_TOKEN_ABILITY_MECHANIC_ID,
     afterlife_token_effect,
     clue_token_effect,
+    sequential_investigate_count,
 )
 
 
@@ -559,6 +561,15 @@ def fixed_token_creation_node_capabilities(
         return ()
     effect = effects[0]
     mechanics = set(mechanic_ids)
+    if effect.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
+        required = {INVESTIGATE_MECHANIC_ID, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, _TOKEN_MECHANIC}
+        if target_schema is not None or not required.issubset(mechanics):
+            return ()
+        try:
+            sequential_investigate_count(effect)
+        except FixedTokenProductionError:
+            return ()
+        return (INVESTIGATE_CAPABILITY_ID,)
     if dict(effect) == {"op":"populate"} and target_schema is None:
         required = {_TOKEN_MECHANIC, FIXED_TOKEN_PRODUCTION_MECHANIC_ID, "fixed-token-copy", "cr-707-copying-objects"}
         return (FIXED_TOKEN_COPY_CAPABILITY_ID,) if required.issubset(mechanics) else ()
@@ -737,6 +748,8 @@ def token_creation_component_mechanics(effects, parent_mechanics):
     characteristics = effect.get('characteristics')
     keywords = characteristics.get('keywords', ()) if isinstance(characteristics, Mapping) else ()
     mechanics = {'cr-111-tokens', *(str(keyword).casefold() for keyword in keywords if isinstance(keyword, str))}
+    if effect.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
+        return mechanics | {INVESTIGATE_MECHANIC_ID, FIXED_TOKEN_PRODUCTION_MECHANIC_ID}
     if len(effects) == 1 and ('copy_spec' in effect or effect.get('op') == 'populate'):
         return parent_mechanics
     try:

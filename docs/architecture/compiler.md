@@ -3487,8 +3487,12 @@ runtime ability. Lander and Mutagen have separate predefined-profile capabilitie
 Lander preserves a private basic-land search, tapped entry and mandatory shuffle,
 including legal failure to find. Mutagen retains sorcery timing and one current
 creature target for its fixed counter. Both pay their complete source costs
-before an independent queued result. The same owner lowers canonical fixed Investigate, fixed
-Afterlife through permanent-graveyard LKI, one current-target copy token, and
+before an independent queued result. The same owner lowers canonical fixed
+Investigate. Counted Investigate queues one canonical Clue creation per action,
+with its own token replacements and trigger observation before the next action.
+The existing variable counts read either committed damage or the controller's
+current opponent count. The owner also lowers fixed Afterlife through
+permanent-graveyard LKI, one current-target copy token, and
 one source-independent next-end-step creation. `compiler/token_copy_templates.py`
 adds fixed copy recipes referencing the source, one qualified public permanent
 target, or a represented zone-event object. Copiable fixed exceptions retain
