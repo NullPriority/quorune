@@ -2,7 +2,7 @@
 title: "Reusable rules piece delta"
 status: "generated"
 authoritative_source: "coverage/reusable-piece-delta.json"
-verified: "f07a5f222790b50ac74aeaae3f5c0c772c320793dc6090c0eddb29e03015aa10"
+verified: "fad39b44afb6f93e825e513ea7889af88e000bd7cc4580ce795260554b20714d"
 audience: "compiler and rules contributors"
 maintenance: "generated"
 ---
@@ -20,7 +20,7 @@ Compared with durable baseline `accelerator-9d44ab29ff15-66d8a4756946`.
 
 ## Piece status movement
 
-- Added: 3,103
+- Added: 3,104
 - Removed: 128
 - Promoted axes: 808
 - Demoted axes: 9
