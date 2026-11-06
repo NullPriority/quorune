@@ -375,6 +375,7 @@
       "owners": [
         "quorune/engine.py",
         "quorune/abilities.py",
+        "quorune/activation_cost_choice.py",
         "quorune/activation_mana_cost.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",

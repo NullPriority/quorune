@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -7,14 +8,18 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT
+from quorune.abilities import CostChoice
 from quorune.carddb import CardDatabase
 from quorune.compiler.blight_templates import fixed_blight_effect_template
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
+from quorune.replacement.model import ReplacementEffectError
+from quorune.replacement.replay import ReplacementContinuation
 from quorune.rules.blight_model import BLIGHT_CAPABILITY
 from quorune.rules.blight_shapes import fixed_blight_node_capabilities
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+from quorune.rules.selected_counter_costs import BLIGHT_ACTIVATION_COST_CAPABILITY, BLIGHT_ACTIVATION_COST_KIND
 from scripts.build_test_database import build_fixture_database
 import test_fixed_counter_additional_costs as counter_witnesses
 import test_reflexive_payments as reflexive_witnesses
@@ -34,6 +39,18 @@ class FixedBlightCompilerTests(unittest.TestCase):
                 self.assertEqual((), fixed_blight_node_capabilities(
                     effects=({**effects[0], **fields},), target_schema=None, mechanic_ids=mechanics,
                 ))
+
+
+    def test_blight_activation_choice_round_trips_and_rejects_malformed_shapes(self):
+        choice = CostChoice(BLIGHT_ACTIVATION_COST_KIND, card_type="creature", counter_amount=2)
+        self.assertEqual(choice, CostChoice.from_dict(choice.to_dict()))
+        self.assertEqual({"k": "blight", "n": 1, "z": "battlefield", "t": "creature", "amount": 2}, choice.compact())
+        for changes in (
+            {"counter_amount": True}, {"counter_amount": None}, {"counter_amount": 0}, {"count": 2},
+            {"card_type": "land"}, {"zone": "graveyard"}, {"another": True}, {"kind": "sacrifice"},
+        ):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                CostChoice.from_dict({**choice.to_dict(), **changes})
 
 
 class FixedBlightRuntimeTests(unittest.TestCase):
@@ -58,6 +75,8 @@ class FixedBlightRuntimeTests(unittest.TestCase):
             ROOT / "tests/fixtures/counter-prohibition-cards.json",
             ROOT / "tests/fixtures/counter-replacement-cards.json",
             ROOT / "tests/fixtures/blight-cards.json",
+            ROOT / "tests/fixtures/fixed-mana-result-cards.json",
+            ROOT / "tests/fixtures/fixed-self-cost-surface-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -215,3 +234,214 @@ class FixedBlightRuntimeTests(unittest.TestCase):
         registry = CapabilityRegistry(value)
         registry.mark_evidence_verified("0" * 64)
         self.assertTrue(compile_with(registry).material_residuals)
+
+
+    def _activation_offer(self, session, source):
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next((row for row in actions if row.get("source") == source.ref and row["id"].startswith("activate:")), None)
+
+    def test_original_blight_activation_cost_closes_and_capability_withdrawal_blocks(self):
+        value = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in value["capabilities"] if row["id"] == BLIGHT_ACTIVATION_COST_CAPABILITY)
+        capability.update(status="blocked", blockers=["test activation cost capability withdrawal"])
+        withdrawn = CapabilityRegistry(value)
+        withdrawn.mark_evidence_verified("0" * 64)
+        for name in ("Sting-Slinger", "Evershrike's Gift", "Gristle Glutton"):
+            with self.subTest(name=name):
+                card = self.db.lookup(name, fuzzy=False)
+                ir = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = [node for face in ir.faces for node in face.nodes if node.kind == "activated_ability"]
+                self.assertIn(BLIGHT_ACTIVATION_COST_CAPABILITY, node.capability_dependencies)
+                self.assertEqual(1, node.cost["choices"][0]["n"])
+                blocked = compile_oracle_card(card, capability_registry=withdrawn, capability_profile="commander_review")
+                self.assertNotEqual("exact", blocked.status)
+
+    def test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays(self):
+        from quorune.damage_modifier_state import DamageModifierDuration, PreventionMode
+        from quorune.damage_prevention_creation import (
+            PreventionShieldCreationRequest, PreventionSubjectAllocation,
+            commit_prevention_shield_creation, plan_prevention_shield_creation,
+        )
+
+        session = self.session(737101)
+        engine = session.engine
+        source = self.add(engine, "Sting-Slinger")
+        payer = self.add(engine, "Ancient Brontodon")
+        foreign = self.add(engine, "Generic Bound Body", seat="B")
+        private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand")
+        doc = self.add(engine, "Doc Samson, Super Psychiatrist")
+        vorinclex = self.add(engine, "Vorinclex, Monstrous Raider")
+        season = self.add(engine, "Doubling Season")
+        reef = self.add(engine, "Shivan Reef")
+        for card in (source, doc, season, reef):
+            self.assert_normal_admission(session, card)
+        replacement, = engine.semantics.runtime_handler_programs_for_oracle(
+            vorinclex.oracle_id, active_zone="battlefield", event="counter.place",
+        )
+        self.assertTrue(engine.semantic_program_is_current_trusted(replacement))
+        self.assertIn("counter.placement.quantity_replacement", replacement.capability_dependencies)
+        for label in ("one", "two"):
+            request = PreventionShieldCreationRequest(
+                source_id=f"fixture:blight-mana:{label}", controller="A",
+                mode=PreventionMode.AMOUNT, duration=DamageModifierDuration.UNTIL_END_OF_TURN,
+                subjects=(PreventionSubjectAllocation("A", 1),), label=f"Prevent {label}",
+            )
+            commit_prevention_shield_creation(engine, plan_prevention_shield_creation(engine, request))
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        action = self._activation_offer(session, source)
+        self.assertIsNotNone(action)
+        offer = action["choice_schema"]["cost_cards"]
+        self.assertEqual((1, 1), (offer["minimum"], offer["maximum"]))
+        self.assertIn(payer.ref, offer["legal_refs"])
+        self.assertIn(source.ref, offer["legal_refs"])
+        self.assertNotIn(foreign.ref, offer["legal_refs"])
+        before = authoritative_state_hash(session.state)
+        command = {"action_id": action["id"], "cost_cards": [payer.ref], "pay": "auto"}
+        for principal, change in (
+            ("pilot:B", {}),
+            ("pilot:A", {"cost_cards": [foreign.ref]}),
+            ("pilot:A", {"cost_cards": [source.ref, payer.ref]}),
+            ("pilot:A", {"pay": "manual", "payment": {"C": 1}}),
+        ):
+            denied = session.act(principal, {**command, **change})
+            self.assertFalse(denied.ok, denied.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        first = ReplacementContinuation.from_dict(session.state.pending_decision.continuation)
+        self.assertEqual("mana_payment", first.resume_kind)
+        self.assertFalse(session.state.cards[reef.object_id].tapped)
+        self.assertFalse(session.state.cards[source.object_id].tapped)
+        mana_options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual(2, len(mana_options))
+        session = self.replay(session, load=True)
+        self.choose(session, replacement=mana_options[0]["id"])
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        self.assertFalse(session.state.cards[reef.object_id].tapped)
+        self.assertFalse(session.state.cards[source.object_id].tapped)
+        self.assertEqual({}, session.state.cards[payer.object_id].counters)
+        self.assertEqual(1, sum(session.state.players["A"].mana_pool.values()))
+        self.assertFalse(session.state.stack)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual(2, len(options))
+        choice = next(row["id"] for row in options if doc.ref in row["id"])
+        packet = session.packet("pilot:B", full=True)
+        self.assertIsNone(packet["decision"])
+        self.assertNotIn(private.ref, json.dumps(packet))
+        continuation = session.state.pending_decision.continuation
+        restored = ReplacementContinuation.from_dict(continuation)
+        self.assertEqual("priority_action_cost", restored.resume_kind)
+        for change in ("amount", "creature", "counter_kind"):
+            forged = deepcopy(continuation)
+            if change == "amount":
+                forged["replacement_batch"]["events"][0]["payload"]["amount"] = 2
+            elif change == "counter_kind":
+                forged["replacement_batch"]["events"][0]["payload"]["counter_name"] = "loyalty"
+            else:
+                forged["priority_response"]["cost_cards"] = [source.ref]
+            with self.subTest(change=change), self.assertRaises(ReplacementEffectError):
+                ReplacementContinuation.from_dict(forged)
+
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        for principal, selection in (("pilot:B", choice), ("pilot:A", "unknown-replacement")):
+            denied = session.act(principal, {"action_id": "choose", "replacement": selection})
+            self.assertFalse(denied.ok, denied.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        self.choose(session, replacement=choice)
+        # CR 614.16: the changed payment now also admits effect-only doubling.
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertFalse(session.state.cards[source.object_id].tapped)
+        self.assertEqual({}, session.state.cards[payer.object_id].counters)
+        self.assertEqual(1, sum(session.state.players["A"].mana_pool.values()))
+        self.assertFalse(session.state.cards[reef.object_id].tapped)
+        self.assertFalse(session.state.stack)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        self.assertEqual(2, len(options))
+        second_choice = next(row["id"] for row in options if season.ref in row["id"])
+        self.assertTrue(any(vorinclex.ref in row["id"] for row in options))
+        forged = deepcopy(session.state.pending_decision.continuation)
+        forged["replacement_batch"]["events"][0]["payload"]["amount"] = 3
+        with self.assertRaises(ReplacementEffectError):
+            ReplacementContinuation.from_dict(forged)
+        session = self.replay(session, load=True)
+        self.choose(session, replacement=second_choice)
+        self.assertTrue(session.state.cards[reef.object_id].tapped)
+        self.assertTrue(session.state.cards[source.object_id].tapped)
+        self.assertEqual(8, session.state.cards[payer.object_id].counters["-1/-1"])
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        item, = session.state.stack
+        self.assertFalse(item.targets)
+        self.assertEqual(life, {seat: player.life for seat, player in session.state.players.items()})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({seat: amount if seat == "A" else amount - 2 for seat, amount in life.items()},
+                         {seat: player.life for seat, player in session.state.players.items()})
+        self.replay(session)
+
+    def test_actual_evershrikes_gift_requires_legal_payer_and_can_pay_lethally(self):
+        session = self.session(737102)
+        engine = session.engine
+        source = self.add(engine, "Evershrike's Gift", zone="graveyard")
+        cantor = self.add(engine, "Wild Cantor")
+        for card in (source, cantor):
+            self.assert_normal_admission(session, card)
+        self.prepare(session, mana={"C": 1})
+        self.assertIsNone(self._activation_offer(session, source), "Cantor cannot fund mana and Blight")
+        payer = self.add(engine, "Gladecover Scout")
+        solemnity = self.add(engine, "Solemnity", seat="B")
+        for card in (payer, solemnity):
+            self.assert_normal_admission(session, card)
+        self.prepare(session, mana={"C": 1})
+        self.assertIsNone(self._activation_offer(session, source))
+        engine.move_card(solemnity.object_id, "graveyard", reason="test removes counter prohibition")
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        action = self._activation_offer(session, source)
+        self.assertIsNotNone(action)
+        self.assertEqual([payer.ref], action["choice_schema"]["cost_cards"]["legal_refs"])
+        accepted = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [payer.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", session.state.cards[cantor.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[payer.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        added = next(event for event in reversed(session.state.events) if event.code == "counter.add")
+        self.assertEqual((payer.ref, 2, 2), (added.details["object"], added.details["requested"], added.details["placed"]))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[source.object_id].zone)
+        self.replay(session)
+
+    def test_actual_gristle_glutton_pays_on_its_tapped_source_before_private_result(self):
+        session = self.session(737103)
+        source = self.add(session.engine, "Gristle Glutton")
+        discard = self.add(session.engine, "Generic Bound Growth", zone="hand")
+        self.assert_normal_admission(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        action = self._activation_offer(session, source)
+        self.assertIsNotNone(action)
+        self.assertIn(source.ref, action["choice_schema"]["cost_cards"]["legal_refs"])
+        drawn = session.state.players["A"].zones["library"][-1]
+        accepted = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [source.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        current = session.state.cards[source.object_id]
+        self.assertTrue(current.tapped)
+        self.assertEqual(1, current.counters.get("-1/-1", 0), "The activation must commit its Blight payment")
+        self.assertEqual("hand", session.state.cards[discard.object_id].zone)
+        self.assertEqual("library", session.state.cards[drawn].zone)
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        self.choose(session, cards=[discard.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[discard.object_id].zone)
+        self.assertEqual("hand", session.state.cards[drawn].zone)
+        self.replay(session)
+
+    def test_native_blight_activation_detects_omitted_counter_commit(self):
+        with patch("quorune.counter_placement.commit_prepared_counter_placements", return_value=()):
+            with self.assertRaisesRegex(AssertionError, "must commit its Blight payment"):
+                self.test_actual_gristle_glutton_pays_on_its_tapped_source_before_private_result()

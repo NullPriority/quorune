@@ -2304,6 +2304,7 @@ class CommanderEngine(
         spend_context: str | None = None,
         payment_id: str | None = None,
         replacement_selections_by_event: Mapping[str, Any] | None = None,
+        preserve_source_id: str | None = None,
     ) -> None:
         complete_mana_plan_activations(
             self,
@@ -2312,6 +2313,7 @@ class CommanderEngine(
             spend_context=spend_context,
             payment_id=payment_id,
             replacement_selections_by_event=replacement_selections_by_event,
+            preserve_source_id=preserve_source_id,
         )
 
     def _pay_for_cost(
@@ -2323,9 +2325,12 @@ class CommanderEngine(
         exclude_sources: set[str] | None = None,
         spend_context: str | None = None,
         snow_required: int = 0,
+        preserve_source_id: str | None = None,
     ) -> tuple[dict[str, int], list[dict[str, Any]]]:
         from .cost_payments import pay_for_cost
-        return pay_for_cost(self,seat,requirements,response,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
+
+        return pay_for_cost(self, seat, requirements, response, exclude_sources=exclude_sources,
+            spend_context=spend_context, snow_required=snow_required, preserve_source_id=preserve_source_id)
 
     def _check_priority(self, seat: str) -> None:
         if self.state.priority_player != seat:
@@ -2776,7 +2781,7 @@ class CommanderEngine(
         slots: list[list[str]] = []
         for choice in ability.choices:
             candidates = list(
-                activation_choice_candidates(self, seat, source, choice)
+                activation_choice_candidates(self, seat, source, choice, ability=ability)
             )
             for _ in range(choice.count):
                 slots.append(candidates)
@@ -2885,9 +2890,12 @@ class CommanderEngine(
         exclude_sources: set[str] | None = None,
         spend_context: str | None = None,
         snow_required: int = 0,
+        preserve_source_id: str | None = None,
     ) -> bool:
         from .cost_payments import cost_is_affordable
-        return cost_is_affordable(self,seat,requirements,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
+
+        return cost_is_affordable(self, seat, requirements, exclude_sources=exclude_sources,
+            spend_context=spend_context, snow_required=snow_required, preserve_source_id=preserve_source_id)
 
 
     @staticmethod

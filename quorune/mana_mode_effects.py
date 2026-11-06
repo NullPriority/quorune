@@ -125,6 +125,21 @@ def compile_mana_mode_effects(
     return tuple(compiled)
 
 
+def _mana_damage_payment_prefix(payment_id: str) -> str:
+    return f"damage.mana:{payment_id}:"
+
+
+def mana_damage_event_belongs_to_payment(event_id: str, payment_id: str) -> bool:
+    if type(event_id) is not str or type(payment_id) is not str or not payment_id:
+        return False
+    prefix = _mana_damage_payment_prefix(payment_id)
+    if not event_id.startswith(prefix):
+        return False
+    source, separator, index = event_id[len(prefix):].rpartition(":")
+    return bool(source and separator and index.isascii() and index.isdecimal()
+                and (index == "0" or not index.startswith("0")))
+
+
 def _damage_proposal_id(
     host: ManaModeEffectHost,
     effect: DealDamageToController,
@@ -135,7 +150,7 @@ def _damage_proposal_id(
 ) -> str:
     if payment_id:
         source_identity = source.object_id if source is not None else seat
-        return f"damage.mana:{payment_id}:{source_identity}:{effect.effect_index}"
+        return f"{_mana_damage_payment_prefix(payment_id)}{source_identity}:{effect.effect_index}"
     return (
         f"damage.mana:{host.state.revision}:"
         f"{host.state.event_sequence + 1}:{effect.effect_index}"

@@ -125,7 +125,7 @@ class AdditionalTokenDefinitionTests(unittest.TestCase):
             self.assertNotIn(TOKEN_LITERAL_NAME_VERSION_FIELD, engine._copyable_characteristics(card))
         self.replay(session, load=True)
 
-    def test_complete_definition_producer_preserves_predefined_payloads_and_rejects_riders(self):
+    def test_complete_definition_producer_preserves_old_payloads_and_rejects_riders(self):
         from quorune.compiler.token_templates import static_additional_token_replacement_handler as lower,_TOKEN_DEFINITIONS
         from quorune.semantic_runtime.token_replacements import GenericAdditionalTokenReplacementHandler
         for definition in ('Treasure token', 'Food token', 'Map token'):
@@ -133,6 +133,8 @@ class AdditionalTokenDefinitionTests(unittest.TestCase):
             result=lower(text);self.assertIsNotNone(result)
             original = _TOKEN_DEFINITIONS[definition.casefold()]
             self.assertEqual({**original, "name": definition.title(), "literal_token_name_version": 1}, result[1]["token"])
+            legacy = GenericAdditionalTokenReplacementHandler().validate({**result[1], "token": original})
+            self.assertEqual(original["name"], legacy.token.name)
         for definition,name in (('Mutagen token','Mutagen Token'),('1/1 green Frog creature token','Frog Token'),('1/1 white Soldier creature token','Soldier Token')):
             result=lower('If one or more creature tokens would be created under your control, those tokens plus a '+definition+' are created instead.')
             self.assertIsNotNone(result);node=GenericAdditionalTokenReplacementHandler().validate(result[1]);self.assertEqual(name,node.token.name);self.assertEqual(('creature',),node.created_types_all);self.assertEqual(1,node.quantity)

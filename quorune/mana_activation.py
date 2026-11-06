@@ -350,6 +350,7 @@ def complete_mana_plan_activations(
     spend_context: str | None = None,
     payment_id: str | None = None,
     replacement_selections_by_event: Mapping[str, Any] | None = None,
+    preserve_source_id: str | None = None,
 ) -> None:
     """Validate and commit an authoritative derived mana-payment plan."""
 
@@ -382,6 +383,10 @@ def complete_mana_plan_activations(
             raise GameRuleError(f"{card.ref} is summoning sick")
         bundle = normalize_mana_bundle(activation.get("bundle"))
         modes = _mana_plan_modes(host, seat, card)
+        if card.object_id == preserve_source_id:
+            from .mana import mana_modes_preserving_source
+
+            modes = mana_modes_preserving_source(modes)
         mode, restriction = _selected_plan_mode(
             host,
             seat,

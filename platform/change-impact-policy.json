@@ -6926,6 +6926,7 @@
     {
       "id": "selected-controlled-creature-counter-costs",
       "patterns": [
+        "quorune/activation_cost_choice.py",
         "quorune/rules/selected_counter_costs.py",
         "quorune/compiler/activated_counter_costs.py",
         "quorune/abilities.py",
@@ -7014,6 +7015,7 @@
       "id": "fixed-resolution-blight",
       "patterns": [
         "quorune/rules/blight_model.py",
+        "quorune/rules/selected_counter_costs.py",
         "quorune/rules/blight_shapes.py",
         "quorune/compiler/blight_templates.py",
         "quorune/compiler/fixed_effect_payment_templates.py",
@@ -7025,6 +7027,8 @@
       ],
       "test_modules": [
         "test_blight",
+        "test_selected_counter_costs",
+        "test_loyalty_counter_cost_replacements",
         "test_counter_placement_replacements",
         "test_fixed_optional_mana_payment_triggers",
         "test_reflexive_payments",

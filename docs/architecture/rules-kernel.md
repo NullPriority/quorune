@@ -1384,6 +1384,15 @@ a target, and later state-based death or illegal targets never refund it.
 Other counter kinds, amounts, selectable payment groups and granted forms
 remain residual until their own contracts are represented.
 
+Fixed Blight activation prices choose one currently controlled creature that
+can receive the full fixed number of -1/-1 counters. This is a cost selection
+with no target. The source may pay both its tap and Blight costs, and low
+toughness does not disqualify a payer. Mana affordability and payment keep the
+selected creature available for Blight. The counter placement owner distinguishes
+an absolute prohibition from an applicable replacement of a legal cost.
+Competing replacements suspend the ordinary activation transaction with a
+private, incarnation-bound choice before any payment or stack mutation commits.
+
 Version-2 source-counter costs represent exactly one or two counters of any
 present kinds. The source-scoped form lists every legal distribution, including
 two different counter kinds, with human-readable labels and incarnation-bound

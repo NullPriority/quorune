@@ -498,6 +498,105 @@
     {
       "applicability": {
         "exclusions": [
+          "variable or split Blight payments",
+          "multiple selected payment groups",
+          "mana abilities and simultaneous source-zone or loyalty costs",
+          "effects triggered specifically by blighting"
+        ],
+        "inputs": [
+          "one compiled fixed positive Blight cost on a nonmana battlefield or graveyard activation",
+          "one current creature controlled by the activator and eligible for the full counter placement",
+          "exact source and cost-object identity under the authorized priority action"
+        ],
+        "outputs": [
+          "one non-targeting public cost selection",
+          "replacement-aware non-effect counter placement and ordinary activation payment",
+          "private replacement ordering with an uncommitted activation and exact replay"
+        ],
+        "summary": "Pay fixed Blight as part of an ordinary activated ability through the canonical counter placement and priority cost transaction."
+      },
+      "blockers": [],
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "keyword_action.blight.fixed"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawal of fixed activation payment authority retains the original material cost as a blocker.",
+      "dependency_fail_closed_status": "passed",
+      "id": "activation.blight.fixed",
+      "implementation_components": [
+        "quorune.compiler.activated_counter_costs.fixed_blight_activation",
+        "quorune.rules.selected_counter_costs.validate_selected_counter_choice",
+        "quorune.rules.selected_counter_costs.selected_counter_cost_candidates",
+        "quorune.rules.selected_counter_costs.blight_activation_cost_candidates",
+        "quorune.rules.selected_counter_costs.pay_blight_activation_cost",
+        "quorune.rules.selected_counter_costs.selected_counter_runtime_dependencies",
+        "quorune.rules.selected_counter_costs.blight_activation_cost_event_is_valid"
+      ],
+      "implementation_mutation_rationale": "The native source-payer witness rejects an activation with the counter commit removed.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays",
+        "test_actual_evershrikes_gift_requires_legal_payer_and_can_pay_lethally",
+        "test_actual_gristle_glutton_pays_on_its_tapped_source_before_private_result"
+      ],
+      "multiplayer_tests": [
+        "test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays"
+      ],
+      "negative_tests": [
+        "test_blight_activation_choice_round_trips_and_rejects_malformed_shapes",
+        "test_original_blight_activation_cost_closes_and_capability_withdrawal_blocks",
+        "test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays",
+        "test_actual_evershrikes_gift_requires_legal_payer_and_can_pay_lethally"
+      ],
+      "official_rules": [
+        "101.2",
+        "118.3",
+        "118.11",
+        "122.6",
+        "601.2h",
+        "602.2b",
+        "614.16",
+        "616.1",
+        "701.68a",
+        "701.68b",
+        "704.4",
+        "704.5f"
+      ],
+      "positive_tests": [
+        "test_blight_activation_choice_round_trips_and_rejects_malformed_shapes",
+        "test_original_blight_activation_cost_closes_and_capability_withdrawal_blocks",
+        "test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays",
+        "test_actual_evershrikes_gift_requires_legal_payer_and_can_pay_lethally",
+        "test_actual_gristle_glutton_pays_on_its_tapped_source_before_private_result"
+      ],
+      "privacy_tests": [
+        "test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays",
+        "test_actual_gristle_glutton_pays_on_its_tapped_source_before_private_result"
+      ],
+      "replay_tests": [
+        "test_actual_sting_slinger_blight_replacement_preserves_unpaid_frame_and_replays",
+        "test_actual_evershrikes_gift_requires_legal_payer_and_can_pay_lethally",
+        "test_actual_gristle_glutton_pays_on_its_tapped_source_before_private_result"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Boast frequency modifiers",
           "unowned source/body/cost grammar"
         ],
@@ -80161,7 +80260,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 734,
+  "registry_version": 735,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

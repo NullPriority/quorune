@@ -603,7 +603,7 @@ def _validate_replacement_journal(
     response: Mapping[str, Any],
     *,
     event_ids: set[str],
-    allow_typed_selections: bool,
+    typed_event_ids: set[str],
 ) -> None:
     raw = response.get("_mana_replacement_selections")
     if raw is None:
@@ -625,9 +625,7 @@ def _validate_replacement_journal(
         for selection in selections:
             if type(selection) is str and bool(selection):
                 continue
-            if not allow_typed_selections or not isinstance(
-                selection, Mapping
-            ):
+            if event_id not in typed_event_ids or not isinstance(selection, Mapping):
                 raise ReplacementEffectError(
                     "Priority-action replacement journal is malformed"
                 )
@@ -777,6 +775,7 @@ def _activation_batch_cost_refs(response:Mapping[str,Any]) -> tuple[str,...] | N
 
 def _priority_action_cost_event_ids(
     batch: ReplacementEventBatch,
+    effects: tuple[ReplacementEffect, ...],
     *,
     action: str,
     response: Mapping[str, Any],
@@ -852,7 +851,13 @@ def _priority_action_cost_event_ids(
             common_valid = common_valid and (
                 payload.get("effect_generated") is False
             )
-            action_valid = payload.get("counter_name") == "loyalty"
+            from ..rules.selected_counter_costs import (
+                blight_activation_cost_event_is_valid, is_blight_activation_cost_event,
+            )
+            if is_blight_activation_cost_event(event, response):
+                action_valid = blight_activation_cost_event_is_valid(batch, effects, response, seat=seat)
+            else:
+                action_valid = payload.get("counter_name") == "loyalty"
         else:
             common_valid = common_valid and (
                 payload.get("effect_generated") is False
@@ -985,6 +990,7 @@ def _decode_mana_continuation(
     if resume_kind == "priority_action_cost":
         event_ids = _priority_action_cost_event_ids(
             batch,
+            effects,
             action=action,
             response=response,
             seat=seat,
@@ -1025,10 +1031,16 @@ def _decode_mana_continuation(
             raise ReplacementEffectError(
                 "Mana-payment continuation event batch is malformed"
             )
+    prior_mana_event_ids = set()
+    if action == "activate":
+        from ..rules.selected_counter_costs import blight_prior_mana_replacement_event_ids
+
+        prior_mana_event_ids = blight_prior_mana_replacement_event_ids(response)
+    event_ids.update(prior_mana_event_ids)
     _validate_replacement_journal(
         response,
         event_ids=event_ids,
-        allow_typed_selections=(resume_kind == "mana_payment"),
+        typed_event_ids=event_ids if resume_kind == "mana_payment" else prior_mana_event_ids,
     )
     return continuation_type(
         batch=batch,
