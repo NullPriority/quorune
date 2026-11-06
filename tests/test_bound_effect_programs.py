@@ -116,6 +116,53 @@ class BoundEffectProgramCompilerTests(unittest.TestCase):
                     self.assertTrue(any(owner in n.capability_dependencies for f in ir.faces for n in f.nodes))
                     self.assertTrue(all(n.text == text[n.span.start:n.span.end] for f in ir.faces for n in f.nodes))
 
+    def test_target_controller_damage_requires_one_typed_public_antecedent(self):
+        from types import SimpleNamespace
+        from quorune.rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
+        from quorune.target_controller_information import (
+            TARGET_CONTROLLER_INFORMATION_CAPABILITY, target_controller_reference,
+        )
+
+        damage = "Generic Bound Compiler Fixture deals 2 damage to that creature's controller."
+        text = "Destroy target creature. " + damage
+        ir = self.compile(text)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual(1, node.target_schema["count"])
+        self.assertEqual(target_controller_reference(), node.effects[1]["target"])
+        self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, node.capability_dependencies)
+        self.assertIn(CAPABILITY, node.capability_dependencies)
+        probe = SimpleNamespace(target_schema=node.target_schema, effects=node.effects, coverage=node.mechanics)
+        self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, closed_effect_program_runtime_dependencies(probe))
+        first, second = node.effects
+        for effects, schema, mechanics in (
+            ((second, first), node.target_schema, node.mechanics),
+            ((first, {**second, "target": target_controller_reference(1)}), node.target_schema, node.mechanics),
+            (node.effects, {**node.target_schema, "up_to": True}, node.mechanics),
+            (node.effects, node.target_schema, tuple(mechanic for mechanic in node.mechanics if mechanic != MECHANIC)),
+        ):
+            with self.subTest(effects=effects, schema=schema, mechanics=mechanics):
+                forged = SimpleNamespace(target_schema=schema, effects=effects, coverage=mechanics)
+                with self.assertRaisesRegex(ValueError, "preceding closed target instruction"):
+                    closed_effect_program_runtime_dependencies(forged)
+        for unsupported in (
+            damage,
+            "Destroy target artifact or creature. " + damage,
+            "Tap up to one target creature. " + damage,
+            "Destroy target creature. If it died, " + damage,
+            "Destroy target creature. " + damage.replace("2 damage", "X damage"),
+            "Choose one —\n• Draw a card.\n• " + text,
+            "Choose two —\n• Target player draws a card.\n• " + text,
+        ):
+            with self.subTest(unsupported=unsupported):
+                self.assertNotEqual("exact", self.compile(unsupported).status)
+
+    def test_target_controller_damage_tail_omission_is_killed(self):
+        text = "Destroy target artifact. Generic Bound Compiler Fixture deals 2 damage to that artifact's controller."
+        self.assertEqual("exact", self.compile(text).status)
+        with patch("quorune.compiler.bound_effect_programs._target_controller_damage_tail", return_value=None):
+            self.assertNotEqual("exact", self.compile(text).status)
+
     def test_bound_effect_exclusions_and_malformed_shapes(self):
         compile_atomic = partial(_reviewed_atomic_effect_template, card_name="Generic Bound Compiler Fixture")
         valid = "Target player draws two cards and loses 2 life."
@@ -575,4 +622,124 @@ class BoundEffectProgramRuntimeTests(unittest.TestCase):
         self.replay(session)
 
 
-if __name__=="__main__": unittest.main()
+
+
+
+class BoundTargetControllerRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = BoundEffectProgramRuntimeTests.session
+    add = BoundEffectProgramRuntimeTests.add
+    ready = BoundEffectProgramRuntimeTests.ready
+    checkpoint = BoundEffectProgramRuntimeTests.checkpoint
+    resolve = BoundEffectProgramRuntimeTests.resolve
+    replay = BoundEffectProgramRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "target-controller-damage.sqlite3"
+        build_fixture_database([FIXTURE, ROOT / "tests/fixtures/target-controller-damage-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Target controller witness", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def _act(self, session, seat, command):
+        result = session.act(f"pilot:{seat}", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def _reply(self, session, seat, spell, target, payment):
+        for _ in range(3):
+            principal = session.pending_principals()[0]
+            if principal == f"pilot:{seat}":
+                break
+            self._act(session, principal.removeprefix("pilot:"), {"action_id": "pass"})
+        self.assertEqual([f"pilot:{seat}"], list(session.pending_principals()))
+        actions = session.packet(f"pilot:{seat}", full=True)["decision"]["ctx"]["legal"]["actions"]
+        reply = next((row for row in actions if row["id"] == f"cast:{spell.ref}"), None)
+        self.assertIsNotNone(reply, [row["id"] for row in actions])
+        self.assertIn(target.ref, reply["target_schema"]["legal_refs"])
+        self._act(session, seat, {"action_id": reply["id"], "targets": [target.ref],
+                                 "pay": "manual", "payment": payment})
+
+    def test_structural_distortion_uses_departure_controller_after_a_real_response(self):
+        session = self.session(725100)
+        engine = session.engine
+        source = self.add(engine, "Structural Distortion", zone="hand")
+        target = self.add(engine, "Ornithopter", seat="B")
+        control = self.add(engine, "Blind with Anger", seat="C", zone="hand")
+        private = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="private-control-case")
+        engine.state.players["C"].mana_pool.update({"C": 3, "R": 1})
+        action = self.ready(session, source, {"C": 3, "R": 1})
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        self.assertNotIn("C", action["target_schema"]["legal_refs"])
+        self.checkpoint(session)
+        command = {"action_id": action["id"], "targets": [target.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.assertFalse(session.act("pilot:A", {**command, "targets": ["C"]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self._act(session, "A", command)
+        self._reply(session, "C", control, target, {"C": 3, "R": 1})
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[target.object_id].zone)
+        self.assertEqual([40, 40, 38, 40], [session.state.players[seat].life for seat in "ABCD"])
+        for seat in "ABD":
+            self.assertNotIn(private.ref, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+        self.assertIn(private.ref, json.dumps(session.packet("pilot:C", full=True)))
+        self.replay(session)
+
+    def test_destructive_revelry_distinguishes_indestructible_from_illegal_target(self):
+        for indestructible in (True, False):
+            with self.subTest(indestructible=indestructible):
+                session = self.session(725110 + indestructible)
+                engine = session.engine
+                source = self.add(engine, "Destructive Revelry", zone="hand")
+                target = self.add(engine, "Darksteel Citadel" if indestructible else "Ornithopter", seat="B")
+                if indestructible:
+                    engine.change_control(target.object_id, "C")
+                else:
+                    reply = self.add(engine, "Destructive Revelry", seat="C", zone="hand", ref="revelry-reply")
+                    engine.state.players["C"].mana_pool.update({"G": 1, "R": 1})
+                action = self.ready(session, source, {"G": 1, "R": 1})
+                self.checkpoint(session)
+                self._act(session, "A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+                if not indestructible:
+                    self._reply(session, "C", reply, target, {"G": 1, "R": 1})
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("battlefield" if indestructible else "graveyard",
+                                 session.state.cards[target.object_id].zone)
+                life = [40, 40, 38, 40] if indestructible else [40, 38, 40, 40]
+                self.assertEqual(life, [session.state.players[seat].life for seat in "ABCD"])
+                self.replay(session)
+
+    def test_cindervines_resolves_after_sacrificing_the_source(self):
+        session = self.session(725120)
+        engine = session.engine
+        source = self.add(engine, "Cindervines")
+        target = self.add(engine, "Ornithopter", seat="C")
+        engine.change_control(target.object_id, "D")
+        action = self.ready(session, source, {"C": 1})
+        self.assertTrue(action["id"].startswith(f"activate:{source.ref}:"))
+        self.checkpoint(session)
+        self._act(session, "A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertEqual([40, 40, 40, 40], [session.state.players[seat].life for seat in "ABCD"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        self.assertEqual([40, 40, 40, 38], [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -56432,7 +56432,7 @@
           "printed-order mutation, private choices and replacement suspension",
           "same-incarnation continuation and exact replay"
         ],
-        "summary": "Bind one grammatical player subject or one established public target to two to four independently typed printed-order effect components without introducing another target occurrence or runtime parser."
+        "summary": "Bind one grammatical player subject or one established public target to two to four independently typed printed-order effect components without introducing another target occurrence or runtime parser. A following fixed damage instruction can use an already established battlefield target's current or departure controller without announcing another target."
       },
       "blockers": [],
       "dependencies": [
@@ -56458,18 +56458,24 @@
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
         "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
-        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_cindervines_resolves_after_sacrificing_the_source"
       ],
       "multiplayer_tests": [
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
-        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority"
+        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response"
       ],
       "negative_tests": [
         "test_bound_effect_exclusions_and_malformed_shapes",
         "test_bound_effect_dependency_and_compiler_mutants",
         "test_prevention_component_rejects_derived_amounts_open_scopes_and_missing_owner",
-        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority"
+        "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
+        "test_target_controller_damage_requires_one_typed_public_antecedent",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target"
       ],
       "official_rules": [
         "115.1",
@@ -56489,11 +56495,16 @@
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
         "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
         "test_bound_creature_prevention_pronouns_preserve_closed_scope_shape",
-        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+        "test_target_controller_damage_requires_one_typed_public_antecedent",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_cindervines_resolves_after_sacrificing_the_source"
       ],
       "privacy_tests": [
         "test_trusted_player_subject_draw_loss_and_discard",
-        "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays"
+        "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response"
       ],
       "replay_tests": [
         "test_counter_choice_resumes_after_prior_effect_once",
@@ -56502,7 +56513,10 @@
         "test_trusted_player_subject_draw_loss_and_discard",
         "test_original_leap_of_faith_modifier_and_prevention_resolve_then_damage_boundary_replays",
         "test_original_djeru_untap_and_prevention_expire_and_preserve_target_authority",
-        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays"
+        "test_original_djeru_resolve_untaps_then_prevents_damage_and_replays",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_cindervines_resolves_after_sacrificing_the_source"
       ],
       "required_evidence": [
         "positive",
@@ -56518,7 +56532,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 1
+      "version": 2
     },
     {
       "applicability": {
@@ -57977,7 +57991,7 @@
           "one information-derived player recipient without another target announcement",
           "canonical damage source and player-life result"
         ],
-        "summary": "Read the current or captured departure controller of an already announced target incarnation for one fixed untargeted player result. A distinct untargeted tap-occurrence reference reuses the same controller-information owner and typed departure record; stacked and queued occurrences read current control or exact-incarnation departure LKI without target announcement. New tap/untap life, mill and damage results that name the occurring permanent controller use current or exact departure-LKI information, independently from the sealed event controller and Aura trigger controller. Historical locked reference tokens retain their existing codecs."
+        "summary": "Read the current or captured departure controller of an already announced target incarnation for one fixed untargeted player result. A distinct untargeted tap-occurrence reference reuses the same controller-information owner and typed departure record; stacked and queued occurrences read current control or exact-incarnation departure LKI without target announcement. New tap/untap life, mill and damage results that name the occurring permanent controller use current or exact departure-LKI information, independently from the sealed event controller and Aura trigger controller. Historical locked reference tokens retain their existing codecs. A printed-order fixed target instruction and damage sentence reuse this information for the same target incarnation, including departure during the first instruction."
       },
       "blockers": [],
       "dependencies": [
@@ -58008,7 +58022,10 @@
         "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
         "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
-        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back"
+        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_cindervines_resolves_after_sacrificing_the_source"
       ],
       "multiplayer_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
@@ -58020,7 +58037,8 @@
         "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
         "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
-        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back"
+        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response"
       ],
       "negative_tests": [
         "test_condition_reference_result_and_information_codecs_reject_wrong_shapes",
@@ -58030,7 +58048,9 @@
         "test_closed_attachment_event_grammar_and_controller_value_reject_near_misses",
         "test_controller_information_owner_is_required_independently_at_runtime",
         "test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed",
-        "test_verified_controller_information_withdrawal_blocks_corrected_originals"
+        "test_verified_controller_information_withdrawal_blocks_corrected_originals",
+        "test_target_controller_damage_requires_one_typed_public_antecedent",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target"
       ],
       "official_rules": [
         "400.7",
@@ -58050,7 +58070,11 @@
         "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
         "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
-        "test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed"
+        "test_new_compiler_reference_and_legacy_locked_shapes_are_distinct_and_closed",
+        "test_target_controller_damage_requires_one_typed_public_antecedent",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_cindervines_resolves_after_sacrificing_the_source"
       ],
       "privacy_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
@@ -58059,7 +58083,8 @@
         "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
         "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
-        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back"
+        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response"
       ],
       "replay_tests": [
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
@@ -58071,7 +58096,10 @@
         "test_actual_chronic_flooding_mills_current_controller_instead_of_tap_event_player",
         "test_actual_psychic_venom_damages_current_controller_instead_of_tap_event_player",
         "test_three_original_results_use_departure_lki_instead_of_returned_incarnation",
-        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back"
+        "test_source_departure_keeps_result_and_missing_controller_lki_rolls_back",
+        "test_structural_distortion_uses_departure_controller_after_a_real_response",
+        "test_destructive_revelry_distinguishes_indestructible_from_illegal_target",
+        "test_cindervines_resolves_after_sacrificing_the_source"
       ],
       "required_evidence": [
         "positive",
@@ -58087,7 +58115,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 3
+      "version": 4
     },
     {
       "applicability": {
@@ -79703,7 +79731,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 724,
+  "registry_version": 725,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

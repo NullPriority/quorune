@@ -7,9 +7,14 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping
 
+from ..basic_land_types import LAND_SUBTYPES
+from ..target_controller_information import (
+    TARGET_CONTROLLER_INFORMATION_MECHANIC, target_controller_reference,
+)
 from .closed_effect_programs import (
     CLOSED_EFFECT_PROGRAM_MECHANIC,
     ClosedEffectProgramTemplate,
+    CompiledEffectTemplate,
     ComponentCompiler,
     _NESTED_SEQUENCE_MECHANICS,
     _UNSAFE_LINKAGE,
@@ -24,6 +29,15 @@ BOUND_EFFECT_PROGRAM_TEMPLATE_ID = "bound-effect-program-v1"
 _SUBJECT = r"target player|target opponent|each player|each opponent|you"
 _REFERENCE = r"it|that player|that creature|that permanent"
 _TARGET_WORD = re.compile(r"\btarget\b", re.IGNORECASE)
+_TARGET_CONTROLLER_DAMAGE = re.compile(
+    r"(?P<source>.+?) deals (?P<amount>[1-9][0-9]*) damage to that "
+    r"(?P<kind>permanent|artifact|battle|creature|enchantment|land|planeswalker)"
+    r"['’]s controller\.",
+    re.IGNORECASE,
+)
+_CONTROLLER_PREFIX_OPS = frozenset({
+    "destroy", "exile_permanent", "tap", "place_counters", "modify_stats_until_end_of_turn",
+})
 
 
 @dataclass(frozen=True, slots=True)
@@ -102,6 +116,52 @@ def _shared_player_subject(text: str, compile_component: ComponentCompiler):
     return None
 
 
+def target_controller_prefix_matches(effect: Mapping[str, Any]) -> bool:
+    return (
+        isinstance(effect, Mapping)
+        and effect.get("op") in _CONTROLLER_PREFIX_OPS
+        and effect.get("card") == "$target.0"
+    )
+
+
+def _target_type_is_guaranteed(schema: Mapping[str, Any], kind: str) -> bool:
+    if kind == "permanent" or kind in schema.get("types_all", ()):
+        return True
+    if tuple(schema.get("types_any", ())) == (kind,):
+        return True
+    land_choices = set(schema.get("subtypes_any", ()))
+    return kind == "land" and (
+        bool(LAND_SUBTYPES.intersection(schema.get("subtypes_all", ())))
+        or bool(land_choices and land_choices <= LAND_SUBTYPES)
+    )
+
+
+def _target_controller_damage_tail(
+    first: CompiledEffectTemplate,
+    clause: str,
+    compile_component: ComponentCompiler,
+) -> CompiledEffectTemplate | None:
+    schema = first[2]
+    match = _TARGET_CONTROLLER_DAMAGE.fullmatch(clause)
+    if (
+        match is None or schema is None or schema["categories"] != ["permanent"]
+        or schema.get("up_to") or len(first[1]) != 1
+        or not target_controller_prefix_matches(first[1][0])
+        or not _target_type_is_guaranteed(schema, match["kind"].casefold())
+    ):
+        return None
+    damage = compile_component(f"{match['source']} deals {match['amount']} damage to you.")
+    expected = {
+        "op": "damage", "source": "$source", "target": "$controller", "amount": int(match["amount"]),
+    }
+    if damage[0] is None or damage[1] != (expected,) or damage[2] is not None:
+        return None
+    return (
+        damage[0], ({**expected, "target": target_controller_reference()},), None,
+        (*damage[3], TARGET_CONTROLLER_INFORMATION_MECHANIC),
+    )
+
+
 def _single_target_reference(text: str, compile_component: ComponentCompiler):
     for clauses in _candidate_partitions(text):
         first = compile_component(clauses[0])
@@ -109,6 +169,10 @@ def _single_target_reference(text: str, compile_component: ComponentCompiler):
         if first[0] is None or not _public_single_target(schema):
             continue
         assert schema is not None
+        if len(clauses) == 2:
+            tail = _target_controller_damage_tail(first, clauses[1], compile_component)
+            if tail is not None:
+                return _program((first, tail), schema=schema)
         generic_subject = "target player" if schema["categories"] == ["player"] else "target permanent"
         compiled = [first]
         bound_reference_seen = False

@@ -5,8 +5,11 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..compiler.bound_effect_programs import (
-    BOUND_EFFECT_PROGRAM_CAPABILITY, BOUND_EFFECT_PROGRAM_MECHANIC,
+    BOUND_EFFECT_PROGRAM_CAPABILITY, BOUND_EFFECT_PROGRAM_MECHANIC, CLOSED_EFFECT_PROGRAM_MECHANIC,
+    target_controller_prefix_matches,
 )
+from ..target_controller_information import TARGET_CONTROLLER_INFORMATION_KIND
+from .damage_capability_shapes import fixed_damage_node_capabilities
 from .fixed_effect_clause_shapes import closed_effect_component_capabilities, _contains_target_reference
 from .permanent_predicate_capability_shapes import direct_permanent_target_schema_is_closed
 
@@ -19,6 +22,28 @@ def _target_zero_only(value: Any) -> bool:
     if isinstance(value, (list, tuple)):
         return all(_target_zero_only(child) for child in value)
     return True
+
+
+def has_target_controller_recipient(effect: Mapping[str, Any]) -> bool:
+    recipient = effect.get("target") if isinstance(effect, Mapping) else None
+    return isinstance(recipient, Mapping) and recipient.get("kind") == TARGET_CONTROLLER_INFORMATION_KIND
+
+
+def _target_controller_pair_dependencies(effects, schema, mechanics) -> tuple[str, ...]:
+    if (
+        CLOSED_EFFECT_PROGRAM_MECHANIC not in mechanics
+        or schema is None or schema.get("up_to") or not direct_permanent_target_schema_is_closed(schema)
+        or len(effects) != 2 or not has_target_controller_recipient(effects[1])
+        or not target_controller_prefix_matches(effects[0]) or not _target_zero_only(effects[0])
+    ):
+        return ()
+    prefix = closed_effect_component_capabilities(
+        effects[:1], target_schema=schema, mechanics=mechanics,
+    )
+    damage = fixed_damage_node_capabilities(
+        effects=effects[1:], target_schema=None, mechanic_ids=mechanics,
+    )
+    return (*prefix, *damage) if prefix and damage else ()
 
 
 def bound_effect_program_node_capabilities(
@@ -39,6 +64,9 @@ def bound_effect_program_node_capabilities(
                 return ()
     target_seen = False
     dependencies = {BOUND_EFFECT_PROGRAM_CAPABILITY, "resolution.effect_program.closed_components"}
+    if any(has_target_controller_recipient(effect) for effect in effects):
+        pair = _target_controller_pair_dependencies(effects, target_schema, mechanics)
+        return tuple(sorted(dependencies.union(pair))) if pair else ()
     for effect in effects:
         if not isinstance(effect, Mapping) or not _target_zero_only(effect):
             return ()

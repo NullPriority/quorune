@@ -2198,10 +2198,15 @@ target schema is restored. A noncreature target cannot use that retry.
 Separate explicit target occurrences never become one target merely because their
 schemas match. The bound-reference capability checks every component against
 its typed owner; execution, replacement choices, private affected-player
-choices, and checkpoint continuations remain in their existing owners. Owner
-or controller possessives, cross-zone or hidden-object references, unsupported
-leaf grammar, conditional or optional linkage, and derived results remain
-residual. Whole-program integration may admit these bounded combinations while
+choices, and checkpoint continuations remain in their existing owners. A fixed
+damage sentence can refer to the controller of a single preceding battlefield
+target after a closed destruction, exile, tap, counter placement, or temporary
+stat instruction. It reads current control for the same incarnation or the
+controller captured at departure if the first instruction moved it. The
+damage is untargeted and still follows a legal target when the first
+instruction has no effect. This controller read requires a single nonmodal
+target sequence. Other possessives, cross-zone or hidden-object references,
+unsupported leaves, and conditional or optional linkage remain residual. Whole-program integration may admit these bounded combinations while
 the original unbound leaf composition correctly continues to reject them.
 
 `compiler/optional_effect_templates.py` owns one leading `You may` around one

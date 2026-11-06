@@ -7,7 +7,9 @@ from typing import Any, Iterable, Mapping, Sequence
 from .fixed_effect_clause_shapes import (
     closed_effect_component_capabilities,
 )
-from .bound_effect_program_shapes import bound_effect_program_node_capabilities
+from .bound_effect_program_shapes import (
+    bound_effect_program_node_capabilities, has_target_controller_recipient,
+)
 
 
 CLOSED_EFFECT_PROGRAM_MECHANIC = "closed-effect-program"
@@ -42,6 +44,7 @@ def closed_effect_program_node_capabilities(
     if (
         CLOSED_EFFECT_PROGRAM_MECHANIC not in mechanics
         or not 2 <= len(effects) <= 8
+        or any(has_target_controller_recipient(effect) for effect in effects)
     ):
         return ()
     target_effects = tuple(
@@ -104,6 +107,13 @@ def closed_effect_program_runtime_dependencies(program):
             required.update(owned)
         if CLOSED_EFFECT_PROGRAM_CAPABILITY not in required:raise ValueError('Modal ordered-program annotation has no owning branch')
         return tuple(sorted({*required,*modal_owned}))
+    if any(has_target_controller_recipient(effect) for effect in program.effects):
+        owned = closed_effect_program_node_capabilities(
+            effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
+        )
+        if not owned:
+            raise ValueError("Target controller damage requires its preceding closed target instruction")
+        return owned
     if CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage:
         return ()
     if (len(program.effects) == 1
