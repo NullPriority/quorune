@@ -8,6 +8,7 @@ import unittest
 from unittest import mock
 
 from common import ROOT, keep_all, make_session
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import (
     ProtectionQualityKind,
     ProtectionSpec,
@@ -308,14 +309,90 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                 self.assertTrue(node.exact)
                 self.assertEqual("triggered_ability", node.kind)
                 self.assertEqual("permanent.enter.self", node.event)
-                self.assertEqual("create-attached-equipment-token-v1", node.template_id)
-                self.assertEqual("create_attached_token", node.effects[0]["op"])
-                self.assertEqual(token, node.effects[0]["name"])
-                self.assertEqual(type_line, node.effects[0]["characteristics"]["type_line"])
-                self.assertEqual(power, node.effects[0]["characteristics"]["power"])
-                self.assertEqual(toughness, node.effects[0]["characteristics"]["toughness"])
-                self.assertEqual(colors, node.effects[0]["characteristics"]["colors"])
+                self.assertEqual("create-attached-equipment-token-v2", node.template_id)
+                effect = node.effects[0]
+                self.assertEqual("create_token_then_attach_source", effect["op"])
+                self.assertEqual("$source.zone_object", effect["source"])
+                self.assertEqual(token, effect["token"]["name"])
+                characteristics = effect["token"]["characteristics"]
+                self.assertEqual(type_line, characteristics["type_line"])
+                self.assertEqual(power, characteristics["power"])
+                self.assertEqual(toughness, characteristics["toughness"])
+                self.assertEqual(colors, characteristics["colors"])
                 self.assertIn(capability, node.capability_dependencies)
+
+    def test_created_attachment_payload_rejects_uncommitted_or_malformed_results(self):
+        from quorune.rules.attachment_actions import (
+            ATTACH_CREATED_TOKEN,
+            created_token_attachment_payload_dependencies,
+        )
+
+        node = self.compile(record("Token Harness", "Living weapon", keywords=("Living weapon",))).faces[0].nodes[0]
+        effect = node.effects[0]
+        self.assertIn("attachment.action.fixed_source", created_token_attachment_payload_dependencies(effect))
+        for malformed in (
+            {**effect, "schema_version": True},
+            {**effect, "source": "$target.0"},
+            {**effect, "token": {**effect["token"], "quantity": True}},
+            {"op": ATTACH_CREATED_TOKEN, "source": "$source.zone_object", "cards": ["T1"]},
+        ):
+            with self.subTest(effect=malformed), self.assertRaises(ValueError):
+                created_token_attachment_payload_dependencies(malformed)
+
+    def test_printed_token_attachment_closes_direct_and_paid_entry_bodies(self):
+        from quorune.compiler.optional_payment_templates import (
+            FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY,
+            OPTIONAL_MANA_PAYMENT_OPERATION,
+        )
+        from quorune.rules.attachment_actions import CREATE_AND_ATTACH
+
+        fixtures = {row["name"]: row for row in json.loads(FIXTURE.read_text(encoding="utf-8"))["cards"]}
+        costs = {
+            "Barbed Spike": None,
+            "Auxiliary Boosters": None,
+            "Dwarven Hammer": (2, 0),
+            "Valkyrie's Sword": (4, 1),
+        }
+        for name, cost in costs.items():
+            with self.subTest(card=name):
+                row = fixtures[name]
+                source = record(
+                    name, row["oracle_text"], type_line=row["type_line"],
+                    keywords=tuple(row["keywords"]),
+                )
+                ir = self.compile(source)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual("permanent.enter.self", node.event)
+                self.assertEqual(source.oracle_text.splitlines()[0],
+                                 source.oracle_text[node.span.start:node.span.end])
+                self.assertIsNone(node.target_schema)
+                self.assertIn("attachment.action.fixed_source", node.capability_dependencies)
+                self.assertIn("token.creation.fixed_definition", node.capability_dependencies)
+                effect, = node.effects
+                if cost is not None:
+                    self.assertEqual(OPTIONAL_MANA_PAYMENT_OPERATION, effect["op"])
+                    self.assertEqual("$controller", effect["player"])
+                    self.assertEqual(cost, (effect["cost"]["GENERIC"], effect["cost"]["W"]))
+                    self.assertIn(FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY, node.capability_dependencies)
+                    effect, = effect["effects"]
+                self.assertEqual(CREATE_AND_ATTACH, effect["op"])
+                self.assertEqual("$source.zone_object", effect["source"])
+                self.assertEqual("$controller", effect["controller"])
+                self.assertEqual(1, effect["token"]["quantity"])
+
+    def test_printed_token_attachment_requires_one_definition_and_the_source_equipment(self):
+        text = "When this Equipment enters, create a 1/1 white Soldier creature token, then attach this Equipment to it."
+        base = record("Boundary Harness", text)
+        for candidate in (
+            replace(base, oracle_text=text.replace("attach this Equipment", "attach that Equipment")),
+            replace(base, oracle_text=text.replace("a 1/1 white Soldier creature token",
+                                                   "two 1/1 white Soldier creature tokens")),
+            replace(base, oracle_text=text + " Untap it."),
+            replace(base, type_line="Artifact"),
+        ):
+            with self.subTest(text=candidate.oracle_text, type_line=candidate.type_line):
+                self.assertTrue(self.compile(candidate).material_residuals)
 
     def test_adjacent_attachment_grammar_remains_fail_closed(self):
         base = record("Boundary Harness", "Equip {2}", keywords=("Equip",))
@@ -331,6 +408,208 @@ class FixedAttachmentActionCompilerTests(unittest.TestCase):
                     replace(base, oracle_text=oracle_text)
                 )
                 self.assertNotEqual("exact", compiled.status)
+
+
+class AttachedTokenChoiceNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "attached-token-choice.sqlite3"
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            FIXTURE,
+            fixtures / "additional-token-definition-cards.json",
+            fixtures / "attachment-damage-cards.json",
+            fixtures / "empty-permanent-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Created attachment choices",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    def _open_entry_trigger(self, session, equipment):
+        self.cast(session, "A", equipment)
+        self.resolve_top(session)
+        trigger = session.state.stack[-1]
+        self.assertEqual(("triggered_ability", "A"), (trigger.kind, trigger.controller))
+        self.assertEqual(equipment.object_id, trigger.source_object_id)
+        return trigger.ref
+
+    def _tokens(self, session, name):
+        return [card for card in session.state.cards.values()
+                if card.is_token and card.zone == "battlefield" and card.printed_name == name]
+
+    def test_actual_current_equipment_controller_selects_other_seats_rebel_after_load(self):
+        session = self.session(713001)
+        session.state.config.semantic_policy = "trusted_only"
+        engine = session.engine
+        equipment = self.add(engine, "Hexgold Halberd", zone="hand")
+        lives = self.add(engine, "Parallel Lives")
+        aura = self.add(engine, "Steal Artifact", seat="B", zone="hand")
+        orrery = self.add(engine, "Vedalken Orrery", seat="B")
+        for card in (equipment, lives, aura, orrery):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 1, "R": 1})
+        session.state.players["B"].mana_pool.update({"C": 2, "U": 2})
+        self.checkpoint(session)
+
+        trigger_ref = self._open_entry_trigger(session, equipment)
+        self.cast(session, "B", aura, [equipment.ref])
+        self.resolve_top(session)
+        equipment = session.state.cards[equipment.object_id]
+        self.assertEqual("B", equipment.controller)
+        self.assertEqual(trigger_ref, session.state.stack[-1].ref)
+
+        choice = self.resolve(session)
+        self.assertEqual("semantic.choice", choice.kind)
+        self.assertEqual(["B"], list(choice.actors))
+        self.assertIsNone(equipment.attached_to)
+        rebels = self._tokens(session, "Rebel Token")
+        self.assertEqual(2, len(rebels))
+        self.assertTrue(all(card.owner == "A" and card.controller == "A" for card in rebels))
+        for seat in "ACD":
+            self.assertIsNone(session.packet("pilot:" + seat, full=True)["decision"])
+        legal = choice.payload_by_actor["B"]["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self.assertEqual([card.ref for card in rebels], list(legal))
+
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        for seat, reference in (("A", legal[1]), ("B", equipment.ref)):
+            rejected = session.act("pilot:" + seat, {"action_id": "choose", "objects": [reference]})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:B", {"action_id": "choose", "objects": [legal[1]]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(rebels[1].object_id, session.state.cards[equipment.object_id].attached_to)
+        self.assertEqual(2, len(self._tokens(session, "Rebel Token")))
+        self.replay(session, load=True)
+
+    def test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions(self):
+        session = self.session(713002)
+        session.state.config.semantic_policy = "trusted_only"
+        source = self.add(session.engine, "Flayer Husk", zone="hand")
+        self.add(session.engine, "Parallel Lives")
+        self.assert_closed(session, source)
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        self.cast(session, "A", source)
+        choice = self.resolve(session)
+        self.assertEqual("semantic.choice", choice.kind)
+        germs = self._tokens(session, "Phyrexian Germ Token")
+        self.assertEqual(2, len(germs))
+        self.assertTrue(all(session.engine._numeric_stat(card.object_id, "toughness") == 0 for card in germs))
+
+        accepted = session.act("pilot:A", {"action_id": "choose", "objects": [germs[1].ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        survivor, = self._tokens(session, "Phyrexian Germ Token")
+        self.assertEqual(germs[1].object_id, survivor.object_id)
+        self.assertEqual(survivor.object_id, session.state.cards[source.object_id].attached_to)
+        self.assertEqual(1, session.engine._numeric_stat(survivor.object_id, "toughness"))
+        self.replay(session, load=True)
+
+    def test_actual_departed_equipment_creates_rebels_without_an_attachment_choice(self):
+        session = self.session(713003)
+        session.state.config.semantic_policy = "trusted_only"
+        source = self.add(session.engine, "Hexgold Halberd", zone="hand")
+        self.add(session.engine, "Parallel Lives")
+        destroy = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+        self.assert_closed(session, source)
+        self.assert_closed(session, destroy)
+        self.prepare(session, mana={"C": 1, "R": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+        self.checkpoint(session)
+
+        self._open_entry_trigger(session, source)
+        self.cast(session, "B", destroy, [source.ref])
+        self.resolve_top(session)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+        self.assertIsNone(session.state.cards[source.object_id].attached_to)
+        self.assertEqual(2, len(self._tokens(session, "Rebel Token")))
+        self.replay(session, load=True)
+
+    def test_actual_barbed_spike_attaches_to_the_chosen_created_thopter(self):
+        session = self.session(714001)
+        session.state.config.semantic_policy = "trusted_only"
+        source = self.add(session.engine, "Barbed Spike", zone="hand")
+        doubling = self.add(session.engine, "Parallel Lives")
+        for card in (source, doubling):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 1, "W": 1})
+        self.checkpoint(session)
+
+        self._open_entry_trigger(session, source)
+        choice = self.resolve(session)
+        self.assertEqual("semantic.choice", choice.kind)
+        self.assertEqual(["A"], list(choice.actors))
+        thopters = self._tokens(session, "Thopter Token")
+        self.assertEqual(2, len(thopters))
+        legal = choice.payload_by_actor["A"]["legal_actions"][0]["choice_schema"]["legal_refs"]
+        self.assertEqual([card.ref for card in thopters], list(legal))
+        self.assertEqual([1, 1], [session.engine._numeric_stat(card.object_id, "power") for card in thopters])
+        self.assertIsNone(session.state.cards[source.object_id].attached_to)
+
+        session = self.replay(session, load=True)
+        result = session.act("pilot:A", {"action_id": "choose", "objects": [legal[1]]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(thopters[1].object_id, session.state.cards[source.object_id].attached_to)
+        self.assertEqual([1, 2], [session.engine._numeric_stat(card.object_id, "power") for card in thopters])
+        self.replay(session, load=True)
+
+    def test_actual_dwarven_hammer_payment_decline_and_departed_source(self):
+        for mode in ("pay", "decline", "destroyed"):
+            with self.subTest(mode=mode):
+                session = self.session(714002)
+                session.state.config.semantic_policy = "trusted_only"
+                source = self.add(session.engine, "Dwarven Hammer", zone="hand")
+                destroy = self.add(session.engine, "Disenchant", seat="B", zone="hand")
+                for card in (source, destroy):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 4, "R": 1})
+                session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+                self.checkpoint(session)
+
+                self._open_entry_trigger(session, source)
+                if mode == "destroyed":
+                    self.cast(session, "B", destroy, [source.ref])
+                    self.resolve_top(session)
+                choice = self.resolve(session)
+                self.assertEqual("semantic.choice", choice.kind)
+                self.assertEqual(["A"], list(choice.actors))
+                self.assertEqual(2, session.state.players["A"].mana_pool["C"])
+                self.assertFalse(self._tokens(session, "Dwarf Berserker Token"))
+                self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+
+                session = self.replay(session, load=True)
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act("pilot:B", {"action_id": "choose", "pay": True}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                pay = mode != "decline"
+                result = session.act("pilot:A", {"action_id": "choose", "pay": pay})
+                self.assertTrue(result.ok, result.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(0 if pay else 2, session.state.players["A"].mana_pool.get("C", 0))
+                equipment = session.state.cards[source.object_id]
+                tokens = self._tokens(session, "Dwarf Berserker Token")
+                if pay:
+                    token, = tokens
+                    self.assertEqual(("A", "A"), (token.owner, token.controller))
+                    self.assertEqual(5 if mode == "pay" else 2, session.engine._numeric_stat(token.object_id, "power"))
+                    self.assertEqual(token.object_id if mode == "pay" else None, equipment.attached_to)
+                else:
+                    self.assertFalse(tokens)
+                    self.assertIsNone(equipment.attached_to)
+                self.assertEqual("graveyard" if mode == "destroyed" else "battlefield", equipment.zone)
+                self.replay(session, load=True)
 
 
 class FixedAttachmentActionRuntimeTests(unittest.TestCase):

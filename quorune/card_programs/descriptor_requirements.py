@@ -159,6 +159,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own, *resolution_mana_choice_dependencies(value))
         from ..created_token_counter_model import created_token_counter_payload_dependencies
         own = (*own, *created_token_counter_payload_dependencies(value))
+        from ..rules.attachment_actions import created_token_attachment_payload_dependencies
+        own = (*own, *created_token_attachment_payload_dependencies(value))
         from ..incubate_model import incubate_payload_dependencies
         own = (*own,*incubate_payload_dependencies(value))
         from ..discover_model import discover_payload_dependencies

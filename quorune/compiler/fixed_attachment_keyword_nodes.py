@@ -2,16 +2,15 @@ from __future__ import annotations
 
 """Closed fixed-token Equipment attachment keyword triggers."""
 
-from typing import Mapping
-
 from ..rules.attachment_actions import (
+    CREATED_TOKEN_ATTACHMENT_DEPENDENCIES,
     FOR_MIRRODIN_CAPABILITY,
     LIVING_WEAPON_CAPABILITY,
     JOB_SELECT_CAPABILITY,
 )
-from .dependency_gate import explicit_capability_gate
+from .dependency_gate import explicit_capabilities_gate
+from .fixed_attachment_templates import created_token_attachment_effect
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
-from .token_templates import fixed_token_creation_effect_template
 from ..rules.capabilities import CapabilityRegistry
 
 
@@ -49,17 +48,11 @@ def fixed_attachment_keyword_node(
     if spec is None or mechanics != (normalized,):
         return None
     capability_id, token_text = spec
-    token = fixed_token_creation_effect_template(token_text)
-    if token is None:
+    effect = created_token_attachment_effect(token_text)
+    if effect is None:
         raise ValueError("Fixed attachment keyword token profile is unavailable")
-    token_effect = dict(token.effect)
-    effect: Mapping[str, object] = {
-        **token_effect,
-        "op": "create_attached_token",
-        "source": "$source.zone_object",
-    }
-    gate = explicit_capability_gate(
-        capability_id,
+    gate = explicit_capabilities_gate(
+        (capability_id, *CREATED_TOKEN_ATTACHMENT_DEPENDENCIES),
         capability_registry=capability_registry,
         capability_profile=capability_profile,
     )
@@ -87,7 +80,7 @@ def fixed_attachment_keyword_node(
         event="permanent.enter.self",
         lowerable=True,
         exact=not residual_ids,
-        template_id="create-attached-equipment-token-v1",
+        template_id="create-attached-equipment-token-v2",
         effects=(effect,),
         mechanics=(normalized, "cr-701-3-attach"),
         residual_ids=residual_ids,

@@ -4743,16 +4743,18 @@
           "one source-spanned fixed attachment instruction",
           "one current battlefield Aura or Equipment source incarnation",
           "one revalidated legal creature target, including a closed required or excluded creature subtype for Equipment entry",
-          "the source's compiled Enchant restriction for Aura movement"
+          "the source's compiled Enchant restriction for Aura movement",
+          "one fixed creature creation and its committed replacement-adjusted result incarnations"
         ],
         "outputs": [
           "one public target contract",
           "resolution-time source and target revalidation",
           "one reciprocal attachment transition",
           "a no-effect result for an absent, stale, or illegal source or target",
-          "exact replay of the resulting relation"
+          "exact replay of the resulting relation",
+          "one legal created recipient selected before state-based actions"
         ],
-        "summary": "Resolve one target-selected source Equipment or Aura attachment through the canonical reciprocal attachment transaction using the source's current logical incarnation."
+        "summary": "Resolve one closed source Equipment or Aura attachment through the canonical reciprocal transaction. The target path retains its source and target incarnations. An Equipment creation instruction binds the actual legal token recipients and lets the current Equipment controller choose when more than one is legal."
       },
       "blockers": [],
       "dependencies": [
@@ -4768,7 +4770,10 @@
         "quorune.rules.attachment_action_capability_shapes.fixed_attachment_action_node_capabilities",
         "quorune.effect_runtime.zones_and_attachments._apply_attach",
         "quorune.aura.runtime.legal_aura_target_refs",
-        "quorune.attachments.attach_objects"
+        "quorune.attachments.attach_objects",
+        "quorune.compiler.fixed_attachment_templates.created_token_attachment_effect_template",
+        "quorune.rules.attachment_actions.validate_created_token_attachment",
+        "quorune.semantic_choices.created_token_counters.CreatedTokenAttachmentHandler"
       ],
       "implementation_mutation_rationale": "test_attachment_action_compiler_and_runtime_mutants_are_killed removes either the typed lowering or canonical attach dispatch and the exact relation assertions reject both survivors. test_restricted_attachment_shape_and_compiler_omission_fail_closed removes the fixed attachment lowering and requires the minimal restricted entry to remain residual.",
       "implementation_mutation_status": "killed",
@@ -4777,17 +4782,27 @@
         "test_aura_reattachment_uses_current_source_controller",
         "test_token_replacement_attaches_exactly_one_created_token",
         "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity",
-        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target"
+        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target",
+        "test_actual_barbed_spike_attaches_to_the_chosen_created_thopter",
+        "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
+        "test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions",
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
       ],
       "multiplayer_tests": [
         "test_four_player_attachment_target_projection_and_replay",
-        "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity"
+        "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity",
+        "test_actual_barbed_spike_attaches_to_the_chosen_created_thopter",
+        "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
       ],
       "negative_tests": [
         "test_adjacent_attachment_grammar_remains_fail_closed",
         "test_departed_or_reentered_source_does_not_attach",
         "test_restricted_attachment_shape_and_compiler_omission_fail_closed",
-        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target"
+        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target",
+        "test_created_attachment_payload_rejects_uncommitted_or_malformed_results",
+        "test_actual_departed_equipment_creates_rebels_without_an_attachment_choice",
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
       ],
       "official_rules": [
         "301.5c",
@@ -4798,7 +4813,10 @@
         "701.3a",
         "701.3b",
         "701.3c",
-        "701.3d"
+        "701.3d",
+        "608.2c",
+        "608.2d",
+        "614.16"
       ],
       "positive_tests": [
         "test_source_equipment_entry_attach_is_typed_and_targeted",
@@ -4806,16 +4824,27 @@
         "test_equipment_entry_trigger_attaches_and_revalidates_target",
         "test_restricted_equipment_entry_attachment_uses_shared_target_predicates",
         "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity",
-        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target"
+        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target",
+        "test_printed_token_attachment_closes_direct_and_paid_entry_bodies",
+        "test_actual_barbed_spike_attaches_to_the_chosen_created_thopter",
+        "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
+        "test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions"
       ],
       "privacy_tests": [
         "test_four_player_attachment_target_projection_and_replay",
-        "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity"
+        "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity",
+        "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
       ],
       "replay_tests": [
         "test_four_player_attachment_target_projection_and_replay",
         "test_original_shining_armor_restricted_entry_choices_and_source_departure_keep_attachment_identity",
-        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target"
+        "test_original_restricted_entry_attachment_handles_no_target_and_departed_nonhuman_target",
+        "test_actual_barbed_spike_attaches_to_the_chosen_created_thopter",
+        "test_actual_current_equipment_controller_selects_other_seats_rebel_after_load",
+        "test_actual_departed_equipment_creates_rebels_without_an_attachment_choice",
+        "test_actual_doubled_living_weapon_attaches_before_zero_toughness_state_actions",
+        "test_actual_dwarven_hammer_payment_decline_and_departed_source"
       ],
       "required_evidence": [
         "positive",
@@ -4831,7 +4860,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 2
+      "version": 3
     },
     {
       "applicability": {
@@ -80566,7 +80595,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 745,
+  "registry_version": 746,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

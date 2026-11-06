@@ -3204,11 +3204,15 @@ even when the printed target is a bare subtype; a noncreature Kindred permanent
 with that subtype is not eligible. Offers, choices, and resolution share that
 predicate, and an entry with no legal target leaves the Equipment unattached.
 These triggers do not pay or inherit the separate Equip activation cost.
-The keyword triggers first use the replacement-aware token owner and attach the
-source only to the original Germ, Rebel or 1/1 colorless Hero. Additional replacement-created
-tokens remain unattached. Multiple targets, other attachment source kinds,
-broader Equip restrictions, modified keyword token definitions, and
-replacements that multiply or alter the original token remain source-spanned
+The keyword triggers and printed instructions to create one fixed creature
+token and attach this Equipment use the same replacement-aware token owner.
+A printed optional fixed mana payment uses the existing resolution payment
+choice. The ability's controller creates the token and the same Equipment
+incarnation attempts to attach during that resolution. If multiple committed
+results are legal creatures to equip, the current Equipment controller chooses
+one before state-based actions. Creation still takes place if the Equipment
+has left. Printed attachment to a different Equipment, multiple printed
+definitions, and unsupported token definitions retain their source-spanned
 residuals.
 Decorative flavor labels on Equip preserve their original source spans. The
 complete fixed-mana Equip child is recognized by the shared typed grammar for

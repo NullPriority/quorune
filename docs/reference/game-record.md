@@ -543,6 +543,12 @@ consumes it before committing the token's characteristics, so the name alone
 becomes a copiable value. Saved unmarked effects retain their historical name
 and catalog-lookup path. Game Record replay reads the saved semantic registry.
 
+Equipment-token instructions retain the original source incarnation and the
+creatures that actually entered after creation replacements. The current
+Equipment controller chooses among the legal result incarnations before
+normal priority and state-based actions. Historical fixed attachment
+instructions retain their recorded operation and result path.
+
 An Incubate replacement continuation uses semantic intent kind `incubate` and a
 closed version-one identity containing actor, controller, resolved amount,
 source reference and reason. The replacement selection queue remains separate.

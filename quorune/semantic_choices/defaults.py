@@ -5,7 +5,7 @@ from functools import lru_cache
 from .registry import SemanticChoiceRegistry
 from .composition_order import CompositionOrderHandler
 from .mutate import MutateMergeChoiceHandler
-from .created_token_counters import CREATED_TOKEN_COUNTER_HANDLERS
+from .created_token_counters import CREATED_TOKEN_ATTACHMENT_HANDLERS, CREATED_TOKEN_COUNTER_HANDLERS
 from .incubate import INCUBATE_HANDLERS
 from .investigate import SequentialInvestigateHandler
 from .endure import SourceEndureChoiceHandler
@@ -78,6 +78,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             DiscardResultDrawHandler(),
             GraveyardReturnChoiceHandler(),
             *CREATED_TOKEN_COUNTER_HANDLERS,
+            *CREATED_TOKEN_ATTACHMENT_HANDLERS,
             *INCUBATE_HANDLERS,
             SequentialInvestigateHandler(),
             SourceEndureChoiceHandler(),

@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from .token_creation_queries import semantic_choice_token_creation_preview, token_creation_choice_facts
+from .token_creation_queries import (
+    attached_token_candidate_refs,
+    semantic_choice_token_creation_preview,
+    token_creation_choice_facts,
+)
 
 from ..target_source import stack_targeting_source
 from ..ring_state import materialized_ring_choice_plans
@@ -213,7 +217,10 @@ class SemanticChoiceCoordinationMixin:
         effect: Mapping[str, Any],
         source_ref: str | None,
     ) -> tuple[str, ...]:
+        from ..rules.attachment_actions import ATTACH_CREATED_TOKEN
         from ..rules.graveyard_return_choices import OPERATION, graveyard_return_candidates
+        if effect.get("op") == ATTACH_CREATED_TOKEN:
+            return attached_token_candidate_refs(self, effect)
         if effect.get('op') == OPERATION:
             try:return graveyard_return_candidates(self, actor, effect)
             except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc

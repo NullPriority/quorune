@@ -27,7 +27,10 @@ from . import affected_player_discard_templates as _discard
 from .affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_effect_template,
 )
-from .fixed_attachment_templates import fixed_source_attachment_effect_template
+from .fixed_attachment_templates import (
+    created_token_attachment_effect_template,
+    fixed_source_attachment_effect_template,
+)
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
 from .conditional_exile_templates import conditional_source_exile_template
@@ -99,22 +102,31 @@ def _attachment_or_owner_zone_move(
     card_name: str,
     source_is_permanent: bool | None,
     source_attachment_relation: AttachmentReferenceKind | None,
-):
+) -> CompiledEffectTemplate | None:
     from .attached_destruction import attached_destruction_template
     from .exile_templates import attached_exile_effect_template
-    return attached_exile_effect_template(text,source_attachment_relation=source_attachment_relation) or attached_destruction_template(text,source_attachment_relation=source_attachment_relation) or fixed_source_attachment_effect_template(
-        text,
-        source_attachment_relation=source_attachment_relation,
-    ) or fixed_owner_zone_move_effect_template(
-        text,
-        card_name=card_name,
-        source_is_permanent=source_is_permanent,
-        source_attachment_relation=source_attachment_relation,
-    ) or fixed_creature_power_damage_effect_template(
-        text,
-        card_name=card_name,
-        source_attachment_relation=source_attachment_relation,
+    created_attachment = created_token_attachment_effect_template(
+        text, source_attachment_relation=source_attachment_relation,
     )
+    if created_attachment is not None:
+        return created_attachment
+    template = (
+        attached_exile_effect_template(text, source_attachment_relation=source_attachment_relation)
+        or attached_destruction_template(text, source_attachment_relation=source_attachment_relation)
+        or fixed_source_attachment_effect_template(text, source_attachment_relation=source_attachment_relation)
+        or fixed_owner_zone_move_effect_template(
+            text,
+            card_name=card_name,
+            source_is_permanent=source_is_permanent,
+            source_attachment_relation=source_attachment_relation,
+        )
+        or fixed_creature_power_damage_effect_template(
+            text,
+            card_name=card_name,
+            source_attachment_relation=source_attachment_relation,
+        )
+    )
+    return template.compiled() if template is not None else None
 
 
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
@@ -233,7 +245,7 @@ def typed_resolution_effect_template(
         text, card_name, source_is_permanent, source_attachment_relation
     )
     if attachment is not None:
-        return attachment.compiled()
+        return attachment
     fixed_damage = fixed_damage_effect_template(text, card_name=card_name)
     if fixed_damage is not None:
         return fixed_damage.compiled()
