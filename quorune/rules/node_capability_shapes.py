@@ -69,10 +69,10 @@ def fixed_counter_additional_cost_node_capabilities(
     if not isinstance(raw_costs, list) or len(raw_costs) != 1:
         return ()
     try:
-        FixedCounterPlacementAdditionalCost.from_descriptor(raw_costs[0])
+        cost = FixedCounterPlacementAdditionalCost.from_descriptor(raw_costs[0])
     except (AdditionalCostError, TypeError):
         return ()
-    return ("casting.additional_cost.fixed_counter_placement",)
+    return ("casting.additional_cost.fixed_counter_placement",) if cost.schema_version == 1 else ()
 
 
 def fixed_sacrifice_additional_cost_node_capabilities(

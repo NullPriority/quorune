@@ -7012,6 +7012,24 @@
       ]
     },
     {
+      "id": "fixed-blight-casting-alternatives",
+      "patterns": [
+        "quorune/rules/casting/blight_costs.py",
+        "quorune/rules/casting_additional_cost_groups.py",
+        "quorune/compiler/spell_additional_cost_templates.py",
+        "quorune/mana_payment_continuations.py",
+        "quorune/replacement/ordering.py"
+      ],
+      "test_modules": [
+        "test_blight",
+        "test_fixed_alternative_additional_costs",
+        "test_fixed_counter_additional_costs",
+        "test_targeted_spell_costs",
+        "test_selected_counter_costs",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "fixed-resolution-blight",
       "patterns": [
         "quorune/rules/blight_model.py",

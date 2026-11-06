@@ -136,10 +136,15 @@ class FixedCounterPlacementAdditionalCost:
                 "Counter additional costs require a counter name"
             )
         normalized = " ".join(self.counter_name.casefold().split())
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise AdditionalCostError(
                 "Counter additional-cost schema version is unsupported"
             )
+        if self.schema_version == 2:
+            from .blight_model import BLIGHT_COUNTER
+
+            if normalized != BLIGHT_COUNTER or self.choice_field != "counter_cost_card":
+                raise AdditionalCostError("A Blight casting cost requires its exact counter and choice field")
         if self.kind != "counter_placement":
             raise AdditionalCostError(
                 "Counter additional-cost kind is unsupported"

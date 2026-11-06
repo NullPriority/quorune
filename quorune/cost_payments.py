@@ -30,6 +30,15 @@ class ExactManaReplacementReplay(dict):
             raise GameRuleError("The activation did not replay all of its mana replacement choices")
 
 
+def sacrificing_mana_source_ids(host, seat, refs, *, spend_context, exclude_sources):
+    return {
+        source.ref: source.object_id
+        for source in host.available_mana_sources(seat, spend_context=spend_context)
+        if source.ref in refs and source.object_id not in exclude_sources
+        and len(mana_modes_preserving_source(source.modes)) != len(source.modes)
+    }
+
+
 def _payment_mana_sources(host, seat, spend_context, exclude_sources, preserve_source_id):
     sources = []
     for source in host.available_mana_sources(seat, spend_context=spend_context):

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """Typed fixed life, mana, and binary alternative casting costs."""
 
+import copy
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, TypeAlias
@@ -22,7 +23,9 @@ from .reveal_additional_cost import FixedRevealAdditionalCost,REVEAL_ADDITIONAL_
 from .tap_additional_cost import FixedTapAdditionalCost,TAP_ADDITIONAL_COST_CAPABILITY,fixed_tap_additional_cost
 from .casting_additional_costs import (
     AdditionalCostError, announced_cost_x, ANNOUNCED_X_EXILE_CAPABILITY, ANNOUNCED_X_LIFE_CAPABILITY,announced_zone_cost_capabilities,
+    FixedCounterPlacementAdditionalCost,
     FixedZoneChangeAdditionalCost,
+    fixed_counter_additional_cost,
     fixed_zone_change_additional_cost,
 )
 
@@ -201,6 +204,7 @@ FixedAdditionalCostLeaf: TypeAlias = (
     | FixedManaPaymentAdditionalCost
     | FixedRevealAdditionalCost
     | FixedTapAdditionalCost
+    | FixedCounterPlacementAdditionalCost
 )
 
 
@@ -225,6 +229,9 @@ def fixed_additional_cost_leaf(
         return FixedLifePaymentAdditionalCost.from_descriptor(value)
     if value.get("kind") == FIXED_MANA_PAYMENT_COST_KIND:
         return FixedManaPaymentAdditionalCost.from_descriptor(value)
+    counter = fixed_counter_additional_cost(value)
+    if counter is not None and counter.schema_version == 2:
+        return counter
     raise AdditionalCostError(
         "Alternative additional-cost leaf is outside the closed family"
     )
@@ -251,6 +258,13 @@ class FixedAlternativeAdditionalCost:
             raise AdditionalCostError(
                 "Alternative additional costs require exactly two options"
             )
+        counters = [option for option in self.options if isinstance(option, FixedCounterPlacementAdditionalCost)]
+        if counters:
+            mana = next((option for option in self.options if isinstance(option, FixedManaPaymentAdditionalCost)), None)
+            if len(counters) != 1 or counters[0].schema_version != 2 or mana is None or any(
+                amount for symbol, amount in mana.requirements if symbol != "GENERIC"
+            ):
+                raise AdditionalCostError("An alternative Blight cost pairs with one fixed generic mana cost")
         descriptors = [option.to_descriptor() for option in self.options]
         if descriptors[0] == descriptors[1]:
             raise AdditionalCostError(
@@ -396,6 +410,10 @@ def fixed_alternative_additional_cost_node_capabilities(
             capabilities.add(REVEAL_ADDITIONAL_COST_CAPABILITY)
         elif isinstance(option,FixedTapAdditionalCost):
             capabilities.add(TAP_ADDITIONAL_COST_CAPABILITY)
+        elif isinstance(option, FixedCounterPlacementAdditionalCost):
+            from .blight_model import BLIGHT_CASTING_COST_CAPABILITY
+
+            capabilities.add(BLIGHT_CASTING_COST_CAPABILITY)
         elif not isinstance(option, FixedManaPaymentAdditionalCost):
             return ()
     return tuple(sorted(capabilities))
@@ -440,6 +458,8 @@ def fixed_additional_cost_option_label(
 
     if isinstance(cost,FixedRevealAdditionalCost):return f'Reveal one {cost.subtype} card from your hand'
     if isinstance(cost,FixedTapAdditionalCost):return f'Tap {cost.count} matching untapped permanent(s)'
+    if isinstance(cost, FixedCounterPlacementAdditionalCost):
+        return f"Blight {cost.amount}"
     if isinstance(cost, FixedManaPaymentAdditionalCost):
         requirements = cost.requirements_dict
         symbols = (
@@ -465,7 +485,52 @@ def fixed_additional_cost_option_label(
     }[cost.operation]
 
 
+def expand_fixed_alternative_options(
+    expanded: list[dict[str, Any]],
+    mandatory: list[dict[str, Any]],
+    *,
+    mana_vector,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]] | None:
+    """Expand one closed binary additional cost into explicit cost options."""
+
+    if len(mandatory) != 1:
+        return expanded, mandatory
+    try:
+        alternative = fixed_alternative_additional_cost(mandatory[0])
+    except AdditionalCostError:
+        return None
+    if alternative is None:
+        return expanded, mandatory
+
+    alternatives: list[dict[str, Any]] = []
+    blight_group = any(
+        isinstance(leaf, FixedCounterPlacementAdditionalCost) for leaf in alternative.options
+    )
+    for base_option in expanded:
+        for index, cost in enumerate(alternative.options, start=1):
+            option = copy.deepcopy(base_option)
+            option["base_cost_option"] = str(base_option["id"])
+            option["id"] = (
+                f"{base_option['id']}+additional-alternative-{index}"
+            )
+            option["kind"] = "additional_alternative"
+            option["label"] = fixed_additional_cost_option_label(cost)
+            if blight_group:
+                option["fixed_blight_alternative"] = True
+            if isinstance(cost, FixedManaPaymentAdditionalCost):
+                requirements = mana_vector(option["requirements"])
+                for symbol, amount in cost.requirements:
+                    requirements[symbol] += amount
+                option["requirements"] = requirements
+                option["_selected_additional_costs"] = []
+            else:
+                option["_selected_additional_costs"] = [cost.to_descriptor()]
+            alternatives.append(option)
+    return alternatives, []
+
+
 __all__ = [
+    "expand_fixed_alternative_options",
     "FixedAdditionalCostLeaf",
     "FixedAlternativeAdditionalCost",
     "FixedLifePaymentAdditionalCost",

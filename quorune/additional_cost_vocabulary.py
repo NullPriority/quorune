@@ -67,3 +67,6 @@ __all__ = [
     "SACRIFICE_ONE_COST",
     "ZONE_CHANGE_COST_KIND",
 ]
+
+
+BLIGHT_CAST_PAYMENT_FIELD = "_blight_cast_payment"

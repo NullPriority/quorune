@@ -74,7 +74,7 @@ def selected_counter_cost_candidates(host, actor, choice):
 
 
 def blight_activation_cost_candidates(host, actor, source, ability, choice):
-    from ..mana import mana_modes_preserving_source
+    from ..cost_payments import sacrificing_mana_source_ids
     from ..mana_restrictions import ability_mana_spend_context
     from .activation.pricing import payable_activation_mana_options
     from .activation.x_costs import activation_requirements
@@ -84,12 +84,9 @@ def blight_activation_cost_candidates(host, actor, source, ability, choice):
         return ()
     spend_context = ability_mana_spend_context(str(host._effective_card_data(source).get("type_line") or ""))
     excluded = {source.object_id} if ability.tap_source else set()
-    sacrificing_sources = {
-        candidate.ref: candidate.object_id
-        for candidate in host.available_mana_sources(actor, spend_context=spend_context)
-        if candidate.ref in refs and candidate.object_id not in excluded
-        and len(mana_modes_preserving_source(candidate.modes)) != len(candidate.modes)
-    }
+    sacrificing_sources = sacrificing_mana_source_ids(
+        host, actor, refs, spend_context=spend_context, exclude_sources=excluded,
+    )
     if not sacrificing_sources:
         return refs
     try:
@@ -278,9 +275,7 @@ def is_blight_activation_cost_event(event, response):
 
 
 def blight_activation_cost_event_is_valid(batch, effects, response, *, seat):
-    from dataclasses import replace
-    from ..replacement.model import COUNTER_REPLACEMENT_GENERATED_FIELD
-    from ..replacement.ordering import advance_replacement_batch
+    from ..replacement.ordering import counter_cost_replacement_progress_matches
 
     event, = batch.events
     offered = _offered_blight_cost(response)
@@ -319,14 +314,4 @@ def blight_activation_cost_event_is_valid(batch, effects, response, *, seat):
         type(value) is not str or not value for value in prior_choices
     ):
         return False
-    # The suspended event may already include earlier counter replacements.
-    # Rebuild the requested event and check progress through the existing owner.
-    original_payload = {**payload, "amount": amount}
-    original_payload.pop("replacement_choosers", None)
-    if COUNTER_REPLACEMENT_GENERATED_FIELD in original_payload:
-        original_payload[COUNTER_REPLACEMENT_GENERATED_FIELD] = False
-    original = replace(event, payload=original_payload, applied_effects=())
-    progress = advance_replacement_batch(
-        replace(batch, events=(original,), journal=()), effects, selections=tuple(prior_choices),
-    )
-    return progress.pending is not None and progress.batch == batch
+    return counter_cost_replacement_progress_matches(batch, effects, prior_choices, amount)

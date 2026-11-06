@@ -1393,6 +1393,12 @@ an absolute prohibition from an applicable replacement of a legal cost.
 Competing replacements suspend the ordinary activation transaction with a
 private, incarnation-bound choice before any payment or stack mutation commits.
 
+A casting price of fixed Blight or fixed generic mana uses the same binary
+additional cost group as other mandatory alternatives. Each branch carries
+the printed mana price and its own legal payment options. A Blight casting
+continuation retains the announced branch, amount, and payer incarnation
+through prior mana replacements and any later counter replacement choice.
+
 Version-2 source-counter costs represent exactly one or two counters of any
 present kinds. The source-scoped form lists every legal distribution, including
 two different counter kinds, with human-readable labels and incarnation-bound

@@ -10,6 +10,7 @@ from ..object_predicate import ObjectQuerySpec
 BLIGHT_OPERATION = "blight"
 BLIGHT_MECHANIC = "fixed-controller-blight"
 BLIGHT_CAPABILITY = "keyword_action.blight.fixed"
+BLIGHT_CASTING_COST_CAPABILITY = "casting.additional_cost.fixed_blight"
 BLIGHT_PAYMENT_VERSION = 9
 BLIGHT_COUNTER = "-1/-1"
 BLIGHT_FIELDS = frozenset({"op", "schema_version", "player", "amount"})

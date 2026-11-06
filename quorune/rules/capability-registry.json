@@ -7757,6 +7757,101 @@
     {
       "applicability": {
         "exclusions": [
+          "variable or optional Blight costs",
+          "groups with additional nonmana leaves",
+          "unrepresented results triggered specifically by blighting"
+        ],
+        "inputs": [
+          "one printed fixed binary price",
+          "the ordinary printed mana price",
+          "one authorized controlled creature for Blight"
+        ],
+        "outputs": [
+          "separately payable branch offers",
+          "exact joint mana and counter payment",
+          "closed private replacement continuation"
+        ],
+        "summary": "Pay fixed Blight or fixed generic mana as one announced additional casting cost."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.additional_cost.fixed_alternative",
+        "casting.additional_cost.fixed_counter_placement",
+        "keyword_action.blight.fixed"
+      ],
+      "dependency_fail_closed_rationale": "Capability withdrawal blocks the exact original fixed alternative declarations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.additional_cost.fixed_blight",
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.fixed_alternative_additional_cost_template",
+        "quorune.rules.casting_additional_cost_groups.fixed_alternative_additional_cost_node_capabilities",
+        "quorune.rules.casting.blight_costs.payable_blight_cast_candidates",
+        "quorune.rules.casting.blight_costs.prepare_blight_cast_payment",
+        "quorune.rules.casting.blight_costs.blight_cast_cost_event_matches",
+        "quorune.rules.casting.commit._commit_counter_placement_additional_cost"
+      ],
+      "implementation_mutation_rationale": "A native lethal Blight payment detects omission of the counter transaction.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_bogslithers_embrace_reserves_one_payer_and_exiles",
+        "test_actual_bogslithers_embrace_pays_fixed_mana_with_no_creature",
+        "test_actual_wild_unraveling_resumes_mana_and_blight_before_countering"
+      ],
+      "multiplayer_tests": [
+        "test_actual_wild_unraveling_resumes_mana_and_blight_before_countering"
+      ],
+      "negative_tests": [
+        "test_original_blight_casts_require_the_closed_price_capability",
+        "test_actual_bogslithers_embrace_reserves_one_payer_and_exiles",
+        "test_actual_bogslithers_embrace_pays_fixed_mana_with_no_creature",
+        "test_actual_wild_unraveling_resumes_mana_and_blight_before_countering"
+      ],
+      "official_rules": [
+        "118.3",
+        "118.8",
+        "118.11",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "614.16",
+        "701.68a",
+        "701.68b",
+        "704.4"
+      ],
+      "positive_tests": [
+        "test_original_blight_casts_require_the_closed_price_capability",
+        "test_actual_bogslithers_embrace_reserves_one_payer_and_exiles",
+        "test_actual_bogslithers_embrace_pays_fixed_mana_with_no_creature",
+        "test_actual_wild_unraveling_resumes_mana_and_blight_before_countering"
+      ],
+      "privacy_tests": [
+        "test_actual_wild_unraveling_resumes_mana_and_blight_before_countering"
+      ],
+      "replay_tests": [
+        "test_actual_bogslithers_embrace_reserves_one_payer_and_exiles",
+        "test_actual_bogslithers_embrace_pays_fixed_mana_with_no_creature",
+        "test_actual_wild_unraveling_resumes_mana_and_blight_before_countering"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "multiple or optional additional costs",
           "variable counter amounts",
           "counter removal or movement",
@@ -80260,7 +80355,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 739,
+  "registry_version": 740,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

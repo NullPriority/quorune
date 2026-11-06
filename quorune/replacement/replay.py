@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..additional_cost_vocabulary import BLIGHT_CAST_PAYMENT_FIELD
 from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
 from ..rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
@@ -858,6 +859,11 @@ def _priority_action_cost_event_ids(
                 action_valid = blight_activation_cost_event_is_valid(batch, effects, response, seat=seat)
             else:
                 action_valid = payload.get("counter_name") == "loyalty"
+        elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
+            from ..rules.casting.blight_costs import blight_cast_cost_event_matches
+
+            common_valid = common_valid and payload.get("effect_generated") is False
+            action_valid = blight_cast_cost_event_matches(batch, effects, response, seat=seat)
         else:
             common_valid = common_valid and (
                 payload.get("effect_generated") is False
@@ -1036,6 +1042,10 @@ def _decode_mana_continuation(
         from ..rules.selected_counter_costs import blight_prior_mana_replacement_event_ids
 
         prior_mana_event_ids = blight_prior_mana_replacement_event_ids(response)
+    elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
+        from ..rules.casting.blight_costs import blight_cast_prior_mana_event_ids
+
+        prior_mana_event_ids = blight_cast_prior_mana_event_ids(response)
     event_ids.update(prior_mana_event_ids)
     _validate_replacement_journal(
         response,

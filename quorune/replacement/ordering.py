@@ -724,6 +724,22 @@ def advance_replacement_batch(
     )
 
 
+def counter_cost_replacement_progress_matches(batch, effects, selections, requested_amount):
+    """Rebuild a suspended fixed counter payment from its requested amount."""
+    from .model import COUNTER_REPLACEMENT_GENERATED_FIELD
+
+    event, = batch.events
+    payload = {**event.payload, "amount": requested_amount}
+    payload.pop("replacement_choosers", None)
+    if COUNTER_REPLACEMENT_GENERATED_FIELD in payload:
+        payload[COUNTER_REPLACEMENT_GENERATED_FIELD] = False
+    original = replace(event, payload=payload, applied_effects=())
+    progress = advance_replacement_batch(
+        replace(batch, events=(original,), journal=()), effects, selections=tuple(selections),
+    )
+    return progress.pending is not None and progress.batch == batch
+
+
 def replacement_choice_payload(
     pending: ReplacementBatchChoice,
     effects: Iterable[ReplacementEffect],

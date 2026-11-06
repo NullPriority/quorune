@@ -16,7 +16,7 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.replacement.model import ReplacementEffectError
 from quorune.replacement.replay import ReplacementContinuation
-from quorune.rules.blight_model import BLIGHT_CAPABILITY
+from quorune.rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_CASTING_COST_CAPABILITY
 from quorune.rules.blight_shapes import fixed_blight_node_capabilities
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.rules.selected_counter_costs import BLIGHT_ACTIVATION_COST_CAPABILITY, BLIGHT_ACTIVATION_COST_KIND
@@ -445,3 +445,209 @@ class FixedBlightRuntimeTests(unittest.TestCase):
         with patch("quorune.counter_placement.commit_prepared_counter_placements", return_value=()):
             with self.assertRaisesRegex(AssertionError, "must commit its Blight payment"):
                 self.test_actual_gristle_glutton_pays_on_its_tapped_source_before_private_result()
+
+
+    def _blight_spell_offer(self, session, source, seat="A"):
+        actions = session.packet(f"pilot:{seat}", full=True)["decision"]["ctx"]["legal"]["actions"]
+        return next((row for row in actions if row.get("card") == source.ref), None)
+
+    def test_original_blight_casts_require_the_closed_price_capability(self):
+        from quorune.compiler.spell_additional_cost_templates import fixed_alternative_additional_cost_template
+
+        registry = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        capability = next(row for row in registry["capabilities"] if row["id"] == BLIGHT_CASTING_COST_CAPABILITY)
+        capability.update(status="blocked", blockers=["test withdrawal"])
+        withdrawn = CapabilityRegistry(registry)
+        withdrawn.mark_evidence_verified("0" * 64)
+        for name in ("Bogslither's Embrace", "Wild Unraveling"):
+            with self.subTest(name=name):
+                card = self.db.lookup(name, fuzzy=False)
+                result = compile_oracle_card(card, capability_registry=self.registry, capability_profile="commander_review")
+                self.assertEqual("exact", result.status, result.material_residuals)
+                node, = [node for face in result.faces for node in face.nodes if node.cost]
+                self.assertIn(BLIGHT_CASTING_COST_CAPABILITY, node.capability_dependencies)
+                blocked = compile_oracle_card(card, capability_registry=withdrawn, capability_profile="commander_review")
+                self.assertNotEqual("exact", blocked.status)
+        for fragment in ("blight 0 or pay {1}", "blight X or pay {1}", "blight 1 or pay {B}",
+                         "you may blight 1 or pay {1}", "blight 1 or discard a card"):
+            with self.subTest(fragment=fragment):
+                self.assertIsNone(fixed_alternative_additional_cost_template(
+                    f"As an additional cost to cast this spell, {fragment}.",
+                ))
+
+    def test_actual_bogslithers_embrace_reserves_one_payer_and_exiles(self):
+        session = self.session(740102)
+        engine = session.engine
+        spell = self.add(engine, "Bogslither's Embrace", zone="hand")
+        cantor = self.add(engine, "Wild Cantor")
+        enemy = self.add(engine, "Generic Bound Body", seat="B")
+        for card in (spell, cantor, enemy):
+            self.assert_normal_admission(session, card)
+        self.prepare(session, mana={"C": 1})
+        self.assertIsNone(self._blight_spell_offer(session, spell))
+        scout = self.add(engine, "Gladecover Scout")
+        self.prepare(session, mana={"C": 1})
+        self.checkpoint(session)
+        action = self._blight_spell_offer(session, spell)
+        self.assertIsNotNone(action)
+        option, = action["cost_options"]
+        self.assertEqual("Blight 1", option["label"])
+        self.assertEqual([scout.ref], option["choice_schema"]["counter_cost_card"]["legal_refs"])
+        command = {"action_id": action["id"], "cost_option": option["id"],
+                   "targets": [enemy.ref], "counter_cost_card": scout.ref, "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        for principal, changes in (
+            ("pilot:B", {}), ("pilot:A", {"counter_cost_card": cantor.ref}),
+            ("pilot:A", {"counter_cost_card": [scout.ref, enemy.ref]}),
+            ("pilot:A", {"counter_cost_card": enemy.ref}),
+            ("pilot:A", {"cost_option": "forged-branch"}),
+            ("pilot:A", {"_blight_cast_payment": {"amount": 0}}),
+        ):
+            rejected = session.act(principal, {**command, **changes})
+            self.assertFalse(rejected.ok, rejected.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("graveyard", session.state.cards[cantor.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[scout.object_id].zone,
+                         "The chosen creature must pay Blight")
+        paid = next(event for event in reversed(session.state.events) if event.code == "cost.counter_placement")
+        self.assertEqual((scout.ref, 1, 1), (paid.details["object"], paid.details["requested"], paid.details["placed"]))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[enemy.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_bogslithers_embrace_pays_fixed_mana_with_no_creature(self):
+        session = self.session(740103)
+        engine = session.engine
+        spell = self.add(engine, "Bogslither's Embrace", zone="hand")
+        enemy = self.add(engine, "Generic Bound Body", seat="B")
+        self.assert_normal_admission(session, spell)
+        self.prepare(session, mana={"B": 1, "C": 4})
+        self.checkpoint(session)
+        action = self._blight_spell_offer(session, spell)
+        self.assertIsNotNone(action)
+        option, = action["cost_options"]
+        self.assertEqual("Pay {3}", option["label"])
+        self.assertEqual((4, 1), (option["requirements"]["GENERIC"], option["requirements"]["B"]))
+        command = {"action_id": action["id"], "cost_option": option["id"], "targets": [enemy.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:A", {**command, "counter_cost_card": enemy.ref})
+        self.assertFalse(denied.ok, denied.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        self.assertFalse(any(event.code == "cost.counter_placement" for event in session.state.events))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[enemy.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_wild_unraveling_resumes_mana_and_blight_before_countering(self):
+        from quorune.additional_cost_vocabulary import BLIGHT_CAST_PAYMENT_FIELD
+        from quorune.damage_modifier_state import DamageModifierDuration, PreventionMode
+        from quorune.damage_prevention_creation import (
+            PreventionShieldCreationRequest, PreventionSubjectAllocation,
+            commit_prevention_shield_creation, plan_prevention_shield_creation,
+        )
+
+        session = self.session(740104)
+        engine = session.engine
+        spell = self.add(engine, "Wild Unraveling", zone="hand")
+        payer = self.add(engine, "Ancient Brontodon")
+        reef = self.add(engine, "Shivan Reef")
+        doc = self.add(engine, "Doc Samson, Super Psychiatrist")
+        self.add(engine, "Vorinclex, Monstrous Raider")
+        opponent_spell = self.add(engine, "Generic Bound Growth", seat="B", zone="hand")
+        opponent_target = self.add(engine, "Generic Bound Body", seat="B")
+        hidden = self.add(engine, "Generic Bound Growth", seat="C", zone="hand", ref="blight-cast-private")
+        for card in (spell, reef, doc, opponent_spell):
+            self.assert_normal_admission(session, card)
+        for label in ("one", "two"):
+            request = PreventionShieldCreationRequest(
+                source_id=f"fixture:blight-cast-mana:{label}", controller="A",
+                mode=PreventionMode.AMOUNT, duration=DamageModifierDuration.UNTIL_END_OF_TURN,
+                subjects=(PreventionSubjectAllocation("A", 1),), label=f"Prevent {label}",
+            )
+            commit_prevention_shield_creation(engine, plan_prevention_shield_creation(engine, request))
+        self.prepare(session, actor="B", active="A", mana={"G": 1})
+        session.state.players["A"].mana_pool["U"] = 1
+        self.checkpoint(session)
+        action = self._blight_spell_offer(session, opponent_spell, "B")
+        cast = session.act("pilot:B", {"action_id": action["id"], "targets": [opponent_target.ref], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        opponent_stack_ref = session.state.stack[-1].ref
+        for _ in range(4):
+            if session.pending_principals() == ["pilot:A"]:
+                break
+            result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        action = self._blight_spell_offer(session, spell)
+        self.assertIsNotNone(action)
+        options = {option["label"]: option for option in action["cost_options"]}
+        self.assertEqual({"Blight 2", "Pay {1}"}, set(options))
+        life = session.state.players["A"].life
+        command = {
+            "action_id": action["id"], "targets": [opponent_stack_ref],
+            "counter_cost_card": payer.ref, "pay": "manual",
+            "mana": [{"source": reef.ref, "bundle": {"U": 1}}], "payment": {"U": 2},
+        }
+        before = authoritative_state_hash(session.state)
+        denied = session.act("pilot:A", command)
+        self.assertFalse(denied.ok, denied.summary)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {**command, "cost_option": options["Blight 2"]["id"]})
+        self.assertTrue(result.ok, result.summary)
+        first = ReplacementContinuation.from_dict(session.state.pending_decision.continuation)
+        self.assertEqual("mana_payment", first.resume_kind)
+        self.assertFalse(session.state.cards[reef.object_id].tapped)
+        option = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"][0]["id"]
+        session = self.replay(session, load=True)
+        self.choose(session, replacement=option)
+        second = ReplacementContinuation.from_dict(session.state.pending_decision.continuation)
+        self.assertEqual("priority_action_cost", second.resume_kind)
+        self.assertEqual("hand", session.state.cards[spell.object_id].zone)
+        self.assertEqual([opponent_stack_ref], [item.ref for item in session.state.stack])
+        self.assertFalse(session.state.cards[reef.object_id].tapped)
+        self.assertEqual({}, session.state.cards[payer.object_id].counters)
+        self.assertEqual(life, session.state.players["A"].life)
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:A", full=True)))
+        for mutate in ("amount", "payer", "kind", "binding"):
+            forged = deepcopy(session.state.pending_decision.continuation)
+            if mutate == "amount":
+                forged["priority_response"][BLIGHT_CAST_PAYMENT_FIELD]["amount"] = 1
+            elif mutate == "payer":
+                forged["priority_response"][BLIGHT_CAST_PAYMENT_FIELD]["payer_ref"] = doc.ref
+            elif mutate == "kind":
+                forged["replacement_batch"]["events"][0]["payload"]["counter_name"] = "loyalty"
+            else:
+                del forged["priority_response"][BLIGHT_CAST_PAYMENT_FIELD]
+            with self.subTest(mutate=mutate), self.assertRaises(ReplacementEffectError):
+                ReplacementContinuation.from_dict(forged)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        selected = next(row["id"] for row in options if doc.ref in row["id"])
+        session = self.replay(session, load=True)
+        before = authoritative_state_hash(session.state)
+        for principal, value in (("pilot:B", selected), ("pilot:A", "invalid-replacement")):
+            rejected = session.act(principal, {"action_id": "choose", "replacement": value})
+            self.assertFalse(rejected.ok, rejected.summary)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        self.choose(session, replacement=selected)
+        self.assertTrue(session.state.cards[reef.object_id].tapped)
+        self.assertEqual(6, session.state.cards[payer.object_id].counters["-1/-1"])
+        self.assertEqual(life, session.state.players["A"].life)
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[opponent_spell.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_blight_cast_witness_detects_omitted_counter_payment(self):
+        def omit_payment(*args):
+            return args[5]["card"]
+
+        with patch("quorune.rules.casting.commit._commit_counter_placement_additional_cost", side_effect=omit_payment):
+            with self.assertRaisesRegex(AssertionError, "chosen creature must pay Blight"):
+                self.test_actual_bogslithers_embrace_reserves_one_payer_and_exiles()
