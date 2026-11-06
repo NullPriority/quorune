@@ -151,6 +151,7 @@
       "quorune/continuous_effect_state.py": "typed resolution-created continuous-effect journal and cleanup-expiration mutation owner",
       "quorune/control_effects.py": "typed retained control journal and source continuity mutation owner",
       "quorune/control_history.py": "typed permanent control-acquisition and per-player upkeep-boundary history owner",
+      "quorune/copied_token_aura_entry.py": "typed Aura entry choice continuation for copied tokens with slot-bound incarnation selections and no token allocation",
       "quorune/counter_placement.py": "typed effect-generated counter-placement replacement and mutation owner behind CommanderEngine",
       "quorune/counter_state.py": "canonical typed player and permanent counter mutation owner behind represented rules transactions",
       "quorune/damage.py": "typed damage proposal, quantity replacement, prevention, and final-event coordinator behind CommanderEngine",

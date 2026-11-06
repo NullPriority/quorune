@@ -180,6 +180,47 @@ class AuraEntryContinuation:
         )
 
 
+def aura_entry_choice_payload(plan, *, stack_ref: str, aura_ref: str) -> dict[str, Any]:
+    player_subject = bool(
+        isinstance(plan.spec, TypedEnchantSpec)
+        and plan.spec.subject is AuraEnchantSubject.PLAYER
+    )
+    return {
+        "stack": stack_ref,
+        "aura": aura_ref,
+        "prompt": "Choose a legal subject for this Aura to enchant.",
+        "target_schema": {
+            **plan.spec.target_schema(),
+            "legal_refs": list(plan.legal_target_refs),
+        },
+        "legal_actions": [
+            {
+                "id": "choose",
+                "action": "choose",
+                "choice_schema": {
+                    "aura_target": {
+                        "type": "seat" if player_subject else "object_ref",
+                        "required": True,
+                        **(
+                            {
+                                "legal_seats": list(
+                                    plan.legal_target_refs
+                                )
+                            }
+                            if player_subject
+                            else {
+                                "legal_refs": list(
+                                    plan.legal_target_refs
+                                )
+                            }
+                        ),
+                    }
+                },
+            }
+        ],
+    }
+
+
 def issue_aura_entry_choice(
     host: AuraDecisionHost,
     *,
@@ -192,10 +233,6 @@ def issue_aura_entry_choice(
     required: AuraEntryChoiceRequired,
 ) -> None:
     plan = required.plan
-    player_subject = bool(
-        isinstance(plan.spec, TypedEnchantSpec)
-        and plan.spec.subject is AuraEnchantSubject.PLAYER
-    )
     frame = host._semantic_frame(
         item,
         instruction_pointer=instruction_pointer,
@@ -207,40 +244,9 @@ def issue_aura_entry_choice(
         actors=[plan.controller],
         allowed_actions=["choose"],
         payload_by_actor={
-            plan.controller: {
-                "stack": item.ref,
-                "aura": host.state.cards[plan.source_object_id].ref,
-                "prompt": "Choose a legal subject for this Aura to enchant.",
-                "target_schema": {
-                    **plan.spec.target_schema(),
-                    "legal_refs": list(plan.legal_target_refs),
-                },
-                "legal_actions": [
-                    {
-                        "id": "choose",
-                        "action": "choose",
-                        "choice_schema": {
-                            "aura_target": {
-                                "type": "seat" if player_subject else "object_ref",
-                                "required": True,
-                                **(
-                                    {
-                                        "legal_seats": list(
-                                            plan.legal_target_refs
-                                        )
-                                    }
-                                    if player_subject
-                                    else {
-                                        "legal_refs": list(
-                                            plan.legal_target_refs
-                                        )
-                                    }
-                                ),
-                            }
-                        },
-                    }
-                ],
-            }
+            plan.controller: aura_entry_choice_payload(
+                plan, stack_ref=item.ref, aura_ref=host.state.cards[plan.source_object_id].ref,
+            ),
         },
         continuation={
             "schema_version": 1,
@@ -275,6 +281,11 @@ def complete_aura_entry_choice(
     *,
     error_type: type[Exception],
 ) -> None:
+    from ..copied_token_aura_entry import COPIED_AURA_TOKEN_CHOICE, complete_copied_aura_token_choice
+
+    if COPIED_AURA_TOKEN_CHOICE in decision.continuation:
+        complete_copied_aura_token_choice(host, decision, error_type=error_type)
+        return
     if 'opening_hand_entry' in decision.continuation:
         from ..opening_hand import resume_opening_hand_aura
         resume_opening_hand_aura(host,decision)

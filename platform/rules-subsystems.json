@@ -7878,14 +7878,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v738-separate-counted-investigate",
-      "compiler_version": "oracle-ir-v738",
+      "transition_id": "oracle-ir-v743-copied-aura-entry-correctness",
+      "compiler_version": "oracle-ir-v743",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Give each already admitted counted Investigate action a separate token-creation event so token replacements and triggers apply to the correct events."
+      "non_harvest_reason": "Allow controllers to choose legal enchant subjects before committing already admitted copied Aura token batches."
     },
     "forecast_corrections": [
       {

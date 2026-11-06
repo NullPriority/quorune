@@ -61839,10 +61839,11 @@
           "independent incarnation-pinned keyword grants and grouped delayed sacrifice or exile",
           "target and choice revalidation, exact replay"
         ],
-        "summary": "Create a fixed copy-token group or Populate through the canonical choice and replacement-aware token transaction. Typed exceptions are copiable; separate keyword grants and delayed cleanup retain their distinct duration and incarnation boundaries. Fixed additive subtype/card-type descriptions and other-creature-types wording consume exact copy exceptions; changes remain copiable."
+        "summary": "Create a fixed copy-token group or Populate through the canonical choice and replacement-aware token transaction. Typed exceptions are copiable; separate keyword grants and delayed cleanup retain their distinct duration and incarnation boundaries. Fixed additive subtype/card-type descriptions and other-creature-types wording consume exact copy exceptions; changes remain copiable. A copied Aura uses its controller's non-targeted attachment choice after creation replacements determine each entering copy."
       },
       "blockers": [],
       "dependencies": [
+        "attachment.aura.typed_restriction",
         "target.revalidate_resolution",
         "token.creation.defined_transforming"
       ],
@@ -61876,7 +61877,9 @@
         "quorune.token_copy_faces.copied_object_name",
         "quorune.token_copy_faces.copied_object_oracle_id",
         "quorune.token_creation_identity.token_copy_snapshot",
-        "quorune.token_copy_references._snapshot"
+        "quorune.token_copy_references._snapshot",
+        "quorune.copied_token_aura_entry.prepare_copied_aura_token_specs",
+        "quorune.copied_token_aura_entry.complete_copied_aura_token_choice"
       ],
       "implementation_mutation_rationale": "Existing copy-shape and copiable-value mutations remain killed; focused owner contracts additionally kill incomplete simultaneous history and separately instructed aftercare occurring before entry discovery. The native Synth copy-type omission mutation removes only added types and is detected without changing source admission. The original-face and copied-derived-value omission witnesses distinguish front-derived original mana value from a zero-value actual Clone of a transforming back face. Omitting copied face provenance retains source admission and copied characteristics but makes the actual back-face token die; the native departure-history witness detects it. Exact unchanged main08a native normally admitted Morph copying exposes the hidden name/Oracle/text/price to an opponent (1FAIL15.451s); original admitted Zoetic Morph pauses from its printed land type (1FAIL8.366s). Anonymous status values and validated creature resolution distinguish corrections, while Ward payment and historical replay protect nearby contracts. On unchanged source, actual original Cackling Counterpart creates a token whose accepted inherited transform does nothing (oracle-dfc-token-copy-unchanged-correct-face.log). Complete compiled face transport changes that native consequence; an otherwise identical merged copy must remain single-faced and historical absence must retain its original replay. Unchanged accepted Morph spell copying exposed Lumithread name, Oracle/image identity, rules text and Morph price to an opponent (face-down-spell-copy-unchanged.log1FAIL20.983s). A separately normally admitted Zoetic Morph cast paused as arbiter.resolve from its printed land type (morph-land-resolution-unchanged.log1FAIL9.105s). Status-layer snapshots, anonymous identity and validated current creature resolution distinguish both repairs; printed Ward/flying identity must not leak while listed Ward and real payment remain operative.",
       "implementation_mutation_status": "killed",
@@ -61910,7 +61913,8 @@
         "test_actual_copy_of_a_merged_physical_double_face_stays_single_faced_after_paid_transform",
         "test_face_down_spell_copy_keeps_anonymous_copiable_values_and_public_identity_through_replay",
         "test_face_down_permanent_copy_retains_disguise_ward_and_anonymous_identity_with_real_payment",
-        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode"
+        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode",
+        "test_actual_aura_token_copies_choose_independent_attachments_before_entry"
       ],
       "multiplayer_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -61928,7 +61932,8 @@
         "test_actual_copy_of_a_merged_physical_double_face_stays_single_faced_after_paid_transform",
         "test_face_down_spell_copy_keeps_anonymous_copiable_values_and_public_identity_through_replay",
         "test_face_down_permanent_copy_retains_disguise_ward_and_anonymous_identity_with_real_payment",
-        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode"
+        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode",
+        "test_actual_aura_token_copies_choose_independent_attachments_before_entry"
       ],
       "negative_tests": [
         "test_actual_eliminate_rejects_transformed_five_mana_creature",
@@ -61958,7 +61963,8 @@
         "test_face_down_copy_reader_preserves_only_status_values_and_rejects_missing_representation",
         "test_face_down_permanent_copy_retains_disguise_ward_and_anonymous_identity_with_real_payment",
         "test_anonymous_spell_copy_keeps_builtin_provenance_without_a_physical_card_record",
-        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode"
+        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode",
+        "test_actual_aura_token_copies_choose_independent_attachments_before_entry"
       ],
       "official_rules": [
         "111.12",
@@ -61991,7 +61997,12 @@
         "707.8a",
         "712.10",
         "712.9",
-        "730.2i"
+        "730.2i",
+        "111.5",
+        "115.1d",
+        "303.4f",
+        "303.4g",
+        "603.3d"
       ],
       "positive_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -62029,7 +62040,8 @@
         "test_face_down_copy_reader_preserves_only_status_values_and_rejects_missing_representation",
         "test_face_down_permanent_copy_retains_disguise_ward_and_anonymous_identity_with_real_payment",
         "test_anonymous_spell_copy_keeps_builtin_provenance_without_a_physical_card_record",
-        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode"
+        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode",
+        "test_actual_aura_token_copies_choose_independent_attachments_before_entry"
       ],
       "privacy_tests": [
         "test_actual_clone_of_back_face_is_zero_and_eliminate_uses_that_value",
@@ -62046,7 +62058,8 @@
         "test_actual_back_face_copy_has_both_physical_faces_after_pending_load_and_read_only_capture",
         "test_face_down_spell_copy_keeps_anonymous_copiable_values_and_public_identity_through_replay",
         "test_face_down_permanent_copy_retains_disguise_ward_and_anonymous_identity_with_real_payment",
-        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode"
+        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode",
+        "test_actual_aura_token_copies_choose_independent_attachments_before_entry"
       ],
       "replay_tests": [
         "test_actual_back_copy_inherits_exile_without_disturb_payment_and_humble_removes_it",
@@ -62080,7 +62093,8 @@
         "test_face_down_spell_copy_keeps_anonymous_copiable_values_and_public_identity_through_replay",
         "test_face_down_permanent_copy_retains_disguise_ward_and_anonymous_identity_with_real_payment",
         "test_historical_absent_face_down_spell_copy_keeps_original_representation_and_replay",
-        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode"
+        "test_published_face_down_token_copy_keeps_ward_without_general_copy_mode",
+        "test_actual_aura_token_copies_choose_independent_attachments_before_entry"
       ],
       "required_evidence": [
         "positive",
@@ -62096,7 +62110,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 14
+      "version": 15
     },
     {
       "applicability": {
@@ -78191,7 +78205,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 738,
+  "registry_version": 743,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

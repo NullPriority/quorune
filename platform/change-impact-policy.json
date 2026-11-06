@@ -11870,6 +11870,26 @@
       ]
     },
     {
+      "id": "copied-aura-token-entry",
+      "patterns": [
+        "quorune/aura/decisions.py",
+        "quorune/copied_token_aura_entry.py",
+        "quorune/replacement_decisions.py",
+        "quorune/token_copy_runtime.py",
+        "quorune/token_creation.py",
+        "tests/fixtures/copied-aura-token-entry-cards.json",
+        "tests/test_token_copy_values.py"
+      ],
+      "test_modules": [
+        "test_aura_targeting_entry",
+        "test_card_program_trust",
+        "test_fixed_token_creation_effects",
+        "test_static_attached_control",
+        "test_token_copy_values",
+        "test_token_creation_replacements"
+      ]
+    },
+    {
       "id": "ordinary-created-token-cleanup",
       "patterns": [
         "quorune/created_token_cleanup_model.py",

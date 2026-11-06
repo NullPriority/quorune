@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 from .created_token_cleanup import CreatedTokenCleanupPlan, capture_created_token_cleanup, schedule_created_token_cleanup
 from .entry_copy import copiable_oracle_id
 
 import copy
 from dataclasses import dataclass, replace
-from typing import Any, Iterable, Mapping, Protocol, Sequence
+from typing import Any, Iterable, Mapping, Protocol, Sequence, TYPE_CHECKING
 
 from .aura import (
     AuraEntryChoiceRequired,
@@ -51,6 +52,10 @@ from .semantic_runtime.zone_replacements import (
     log_applied_zone_replacements,
 )
 from .semantic_runtime.zone_replacement_model import PreparedZoneChange
+
+
+if TYPE_CHECKING:
+    from .copied_token_aura_entry import CopiedAuraTokenSelection
 
 
 class TokenCreationHost(Protocol):
@@ -561,9 +566,12 @@ def _preflight_aura_token_specs(
     host: TokenCreationHost,
     controller: str,
     token_specs: Sequence[Mapping[str, Any]],
+    *,
+    copied_aura_selections: Sequence[CopiedAuraTokenSelection] | None = None,
 ) -> tuple[Mapping[str, Any], ...]:
     prepared: list[Mapping[str, Any]] = []
-    for raw_spec in token_specs:
+    selected = {choice.slot: choice for choice in copied_aura_selections or ()}
+    for spec_index, raw_spec in enumerate(token_specs):
         spec = dict(raw_spec)
         if int(spec.get("quantity", 1)) <= 0:
             prepared.append(spec)
@@ -610,10 +618,15 @@ def _preflight_aura_token_specs(
                 resolving_as_spell=False,
             )
         except AuraEntryChoiceRequired as exc:
-            raise TokenCreationError(
-                "Aura token creation requires a legal attachment choice "
-                "before any token is committed"
-            ) from exc
+            if copied_aura_selections is None:
+                raise TokenCreationError(
+                    "Aura token creation requires a legal attachment choice "
+                    "before any token is committed"
+                ) from exc
+            from .copied_token_aura_entry import prepare_copied_aura_token_specs
+
+            prepared.extend(prepare_copied_aura_token_specs(host, preview, spec, exc, spec_index, selected))
+            continue
         except AuraRuleError as exc:
             raise TokenCreationError(str(exc)) from exc
         if plan.outcome is AuraEntryOutcome.REMAIN_IN_ZONE:
@@ -626,6 +639,8 @@ def _preflight_aura_token_specs(
             )
         spec["aura_target_ref"] = plan.target_ref
         prepared.append(spec)
+    if selected:
+        raise TokenCreationError("Copied Aura token slots changed before entry")
     return tuple(prepared)
 
 
@@ -1086,11 +1101,10 @@ def _commit_resolved_token_specs(
     reason: str,
     role_timestamp_order: Sequence[int] | None = None,
     token_cleanup: CreatedTokenCleanupPlan | None = None,
+    copied_aura_selections: Sequence[CopiedAuraTokenSelection] | None = None,
 ) -> list[str]:
     resolved_specs = _preflight_aura_token_specs(
-        host,
-        controller,
-        resolved.specs,
+        host, controller, resolved.specs, copied_aura_selections=copied_aura_selections,
     )
     creation_timestamp = (
         host.state.timestamp_sequence + 1 if resolved_specs else 0
@@ -1166,6 +1180,7 @@ def create_tokens(
     ] = (),
     effect_entry_counters: Sequence[EffectEntryCounter] = (),
     token_cleanup: CreatedTokenCleanupPlan | None = None,
+    copied_aura_selections: Sequence[CopiedAuraTokenSelection] | None = None,
 ) -> list[str]:
     """Resolve creation replacements, commit tokens, and emit enter events."""
 
@@ -1249,6 +1264,7 @@ def create_tokens(
         base_quantity=quantity,
         reason=reason,
         token_cleanup=token_cleanup,
+        copied_aura_selections=copied_aura_selections,
     )
 
 

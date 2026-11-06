@@ -95,7 +95,10 @@ class TokenCopyValueNativeTests(unittest.TestCase):
         from quorune.rules.capabilities import load_default_capability_registry
         from scripts.build_test_database import build_fixture_database
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'copy-values.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/token-copy-recipe-cards.json'],path)
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "token-copy-recipe-cards.json",
+            "copied-aura-token-entry-cards.json",
+        )], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Copy-value witness',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
@@ -137,3 +140,92 @@ class TokenCopyValueNativeTests(unittest.TestCase):
                     self.assertEqual(expected,copied.annotations)
                 self.assertNotIn(FIELD,engine._copyable_characteristics(copied))
                 Helpers.replay(self,session,load=True)
+
+    def test_actual_aura_token_copies_choose_independent_attachments_before_entry(self):
+        from dataclasses import replace
+        import json
+
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.engine import TURN_STEPS
+        from quorune.record import authoritative_state_hash
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Helpers
+        from test_self_public_zone_casting import SelfPublicZoneRuntimeTests
+
+        session = Helpers.session(self, 743301)
+        engine = session.engine
+        replication = Helpers.add(self, engine, "Extravagant Replication")
+        aura = Helpers.add(self, engine, "Mind Control", zone="hand")
+        original = Helpers.add(self, engine, "Generic Bound Body", seat="B", ref="original-host")
+        another = Helpers.add(self, engine, "Generic Bound Body", seat="B", ref="second-copy-host")
+        shroud = Helpers.add(self, engine, "Elvish Lookout", seat="C")
+        doubler = Helpers.add(self, engine, "Parallel Lives")
+        private = session.state.cards[session.state.players["D"].zones["hand"][0]]
+        engine.move_card(aura.object_id, "battlefield", aura_target_ref=original.ref)
+        self.assertEqual("A", session.state.cards[original.object_id].controller)
+        for card in (replication, aura, shroud, doubler):
+            record = self.db.by_oracle_id(card.oracle_id)
+            program = compile_best_available_card_program(
+                self.db, record, semantic_registry=engine.semantics, capability_registry=self.registry,
+                capability_profile="commander_review",
+            )
+            bound = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+            self.assertTrue(bound["strict_capability_ready"], (card.printed_name, bound["blockers"]))
+
+        SelfPublicZoneRuntimeTests.prepare(self, session, actor="D", active="D")
+        engine.permissions.invalidate_current()
+        engine.state.pending_decision = None
+        engine.state.phase, engine.state.step = "ending", "end_step"
+        engine.state.phase_index = TURN_STEPS.index(("ending", "end_step"))
+        engine.state.last_normal_turn_player = "D"
+        if engine.state.current_turn is not None:
+            engine.state.current_turn = replace(engine.state.current_turn, player="D")
+        engine._grant_priority("D")
+        engine.pump()
+        Helpers.checkpoint(self, session)
+        for _ in range(4):
+            principal, = session.pending_principals()
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.target", session.state.pending_decision.kind)
+        target = session.act("pilot:A", {"action_id": "choose", "targets": [aura.ref]})
+        self.assertTrue(target.ok, target.summary)
+        self.assertEqual([aura.ref], session.state.stack[-1].targets)
+        for _ in range(4):
+            principal, = session.pending_principals()
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+
+        decision = session.state.pending_decision
+        self.assertEqual("aura.entry", decision.kind)
+        self.assertEqual(["A"], decision.actors)
+        self.assertEqual([aura.ref], session.state.stack[-1].targets)
+        self.assertEqual([], [card.ref for card in session.state.cards.values() if card.is_token])
+        packet = session.packet("pilot:A", full=True)
+        self.assertNotIn(private.ref, json.dumps(packet))
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        self.assertIn(shroud.ref, packet["decision"]["ctx"]["target_schema"]["legal_refs"])
+
+        before = authoritative_state_hash(session.state)
+        for seat, ref in (("B", another.ref), ("A", replication.ref)):
+            rejected = session.act(f"pilot:{seat}", {"action_id": "choose", "aura_target": ref})
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        first = session.act("pilot:A", {"action_id": "choose", "aura_target": shroud.ref})
+        self.assertTrue(first.ok, first.summary)
+        self.assertEqual("aura.entry", session.state.pending_decision.kind)
+        self.assertEqual([], [card.ref for card in session.state.cards.values() if card.is_token])
+        session = Helpers.replay(self, session, load=True)
+
+        second = session.act("pilot:A", {"action_id": "choose", "aura_target": another.ref})
+        self.assertTrue(second.ok, second.summary)
+        self.assertFalse(session.state.stack)
+        copies = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(2, len(copies))
+        self.assertEqual({shroud.object_id, another.object_id}, {card.attached_to for card in copies})
+        self.assertEqual({"Mind Control"}, {session.engine.display_name(card.object_id) for card in copies})
+        self.assertEqual(original.object_id, session.state.cards[aura.object_id].attached_to)
+        for host in (original, shroud, another):
+            self.assertEqual("A", session.state.cards[host.object_id].controller)
+        self.assertEqual("A", session.state.priority_player)
+        Helpers.replay(self, session, load=True)
