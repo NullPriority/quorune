@@ -13,7 +13,9 @@ from quorune.compiler.optional_payment_templates import (
     OPTIONAL_MANA_PAYMENT_OPERATION,
 )
 from quorune.model import StackItem
-from quorune.fixed_effect_payment import FixedEffectPaymentSpec
+from quorune.fixed_effect_payment import (
+    MANDATORY_DISCARD_PAYMENT_CAPABILITY, MANDATORY_DISCARD_PAYMENT_VERSION, FixedEffectPaymentSpec,
+)
 from quorune.object_predicate import ObjectQuerySpec
 from quorune.object_query import ObjectQueryResult
 from quorune.oracle_ir import compile_oracle_card
@@ -123,6 +125,47 @@ def payment_continuation(effect) -> SemanticChoiceContinuation:
 
 
 class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
+    def test_mandatory_discard_requires_its_own_runtime_dependency(self):
+        from dataclasses import replace
+
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import generated_programs
+
+        registry = load_default_capability_registry()
+        text = "Discard a card. If you do, draw two cards."
+        record = payment_record(text, type_line="Sorcery")
+        ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node = ir.faces[0].nodes[0]
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        self.assertEqual(MANDATORY_DISCARD_PAYMENT_VERSION, node.effects[0]["payment"]["schema_version"])
+        self.assertIn(MANDATORY_DISCARD_PAYMENT_CAPABILITY, node.capability_dependencies)
+        class NoRulings:
+            def rulings(self, record):
+                return ()
+
+        program, = generated_programs(
+            NoRulings(), record, capability_registry=registry, capability_profile="commander_review",
+        )
+        deps = tuple(cap for cap in program.capability_dependencies if cap != MANDATORY_DISCARD_PAYMENT_CAPABILITY)
+        stripped = replace(program, capability_dependencies=deps,
+                           capability_closure=registry.closure(deps, profile="commander_review").to_dict())
+        binding = bind_semantic_program_runtime(stripped, capability_registry=registry, profile="commander_review")
+        self.assertIn(
+            f"capability:undeclared_runtime_dependency:{MANDATORY_DISCARD_PAYMENT_CAPABILITY}", binding["blockers"],
+        )
+        for text in (
+            "Discard two cards. If you do, draw a card.",
+            "Discard a creature card. If you do, draw a card.",
+            "Discard a card at random. If you do, draw a card.",
+            "Discard a card. When you do, draw a card.",
+            "Discard a card. If you do, draw a card for each card discarded this way.",
+            "Discard a card. If you do, draw a card. You gain 1 life.",
+        ):
+            with self.subTest(text=text):
+                record = payment_record(text, type_line="Sorcery")
+                self.assertNotEqual("exact", compile_oracle_card(record, capability_registry=registry).status)
+
     def test_fixed_payment_target_copy_retains_typed_origin_and_closure(self):
         text="Whenever this creature becomes untapped, you may pay {1}{R}. If you do, create a token that's a copy of another target creature, except it's an enchantment in addition to its other types. It gains haste. Exile it at the beginning of the next end step."
         ir=compile_oracle_card(payment_record(text),capability_registry=load_default_capability_registry(),
@@ -489,6 +532,66 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
 
 
 class FixedOptionalManaPaymentChoiceTests(unittest.TestCase):
+    def test_mandatory_discard_schema_rejects_qualified_costs_and_optional_carriers(self):
+        spec = FixedEffectPaymentSpec(
+            "discard", schema_version=MANDATORY_DISCARD_PAYMENT_VERSION,
+            predicate=ObjectQuerySpec(zones=("hand",), owner="A", known_to_actor=True),
+        )
+        self.assertEqual(spec, FixedEffectPaymentSpec.from_dict(spec.to_dict(), allow_mandatory=True))
+        with self.assertRaisesRegex(ValueError, "outside this payment"):
+            FixedEffectPaymentSpec.from_dict(spec.to_dict())
+        for fields in (
+            {"amount": 2},
+            {"schema_version": float(MANDATORY_DISCARD_PAYMENT_VERSION)},
+            {"kind": "sacrifice"},
+            {"predicate": ObjectQuerySpec(zones=("hand",), owner="A", known_to_actor=True,
+                                          types_all=("creature",)).to_dict()},
+        ):
+            with self.subTest(fields=fields), self.assertRaises(ValueError):
+                FixedEffectPaymentSpec.from_dict({**spec.to_dict(), **fields}, allow_mandatory=True)
+
+    def test_mandatory_discard_choice_cannot_be_declined(self):
+        owned = ObjectQueryResult(
+            object_id="owned", ref="OWNED", printed_name="Private card",
+            owner="A", controller="A", zone="hand", logical_object_id="owned:1",
+        )
+        query = SnapshotSemanticChoiceQuery(seat_order=("A", "B"), active_order=("A", "B"), object_rows=(owned,))
+        payment = FixedEffectPaymentSpec(
+            "discard", schema_version=MANDATORY_DISCARD_PAYMENT_VERSION,
+            predicate=ObjectQuerySpec(zones=("hand",), owner="A", known_to_actor=True),
+        )
+        effect = {
+            "op": OPTIONAL_MANA_PAYMENT_OPERATION, "schema_version": 2, "player": "A",
+            "payment": payment.to_dict(), "effects": [{"op": "draw", "player": "A", "count": 1, "private": True}],
+        }
+        handler = payment_handler()
+        prepared = handler.prepare(effect, payment_context(query=query))
+        choice = prepared.request.choice
+        self.assertEqual((1, 1, False, ("OWNED",)),
+                         (choice.minimum, choice.maximum, choice.optional, choice.legal_refs))
+        continuation = payment_continuation(prepared.continuation_effect)
+        with self.assertRaisesRegex(SemanticChoiceError, "complete selected cost"):
+            handler.complete(continuation, {"cards": []}, query)
+        completed = handler.complete(continuation, {"cards": ["OWNED"]}, query)
+        self.assertEqual(("OWNED",), completed.intents[0].object_refs)
+        self.assertEqual(1, completed.prepend_effects[0]["count"])
+        empty = handler.prepare(effect, payment_context())
+        self.assertIsNone(empty.request)
+        self.assertEqual((), empty.auto_continue.prepend_effects)
+
+    def test_mandatory_discard_decline_mutant_is_killed(self):
+        from dataclasses import replace
+        from quorune.semantic_choices import fixed_effect_payment as owner
+
+        original = owner.complete_fixed_payment_cost
+
+        def allow_decline(spec, effect, response, query):
+            return original(replace(spec, schema_version=2), effect, response, query)
+
+        with mock.patch.object(owner, "complete_fixed_payment_cost", side_effect=allow_decline):
+            with self.assertRaisesRegex(AssertionError, "SemanticChoiceError not raised"):
+                self.test_mandatory_discard_choice_cannot_be_declined()
+
     def test_two_card_payment_publication_mutant_is_killed(self):
         from quorune.semantic_choices.model import ObjectChoice
         original=ObjectChoice.choice_schema

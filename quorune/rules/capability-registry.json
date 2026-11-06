@@ -30993,6 +30993,89 @@
     {
       "applicability": {
         "exclusions": [
+          "Qualified, multiple or random cards",
+          "Optional or reflexive payment carriers",
+          "Results dependent on the discarded object"
+        ],
+        "inputs": [
+          "One owned hand card selected during resolution",
+          "A closed dependent result"
+        ],
+        "outputs": [
+          "Private required choice when payable",
+          "Replacement-aware discard followed by its result",
+          "No dependent effect when unpayable"
+        ],
+        "summary": "A fixed one-card discard cost at resolution requires an available owned hand card and resumes its closed result after the cost starts through the canonical discard owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "choice.affected_player.fixed_discard",
+        "effect.choice.optional_fixed_mana_payment",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "Removing the declared mandatory cost dependency leaves an inferred runtime minimum that rejects the program.",
+      "dependency_fail_closed_status": "passed",
+      "id": "cost.discard.mandatory_fixed_resolution",
+      "implementation_components": [
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.fixed_effect_payment.fixed_payment_payload_dependencies",
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_template",
+        "quorune.semantic_choices.fixed_effect_payment.prepare_fixed_payment_cost",
+        "quorune.semantic_choices.fixed_effect_payment.complete_fixed_payment_cost"
+      ],
+      "implementation_mutation_rationale": "Allowing an empty selection through the optional completion branch fails the required-discard owner witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_akoum_pays_current_discard_once_across_replacement_and_replay"
+      ],
+      "multiplayer_tests": [
+        "test_actual_akoum_pays_current_discard_once_across_replacement_and_replay"
+      ],
+      "negative_tests": [
+        "test_mandatory_discard_requires_its_own_runtime_dependency",
+        "test_mandatory_discard_schema_rejects_qualified_costs_and_optional_carriers",
+        "test_mandatory_discard_choice_cannot_be_declined",
+        "test_actual_akoum_pays_current_discard_once_across_replacement_and_replay"
+      ],
+      "official_rules": [
+        "118.3",
+        "118.11",
+        "118.12",
+        "608.2c",
+        "608.2d",
+        "701.9a"
+      ],
+      "positive_tests": [
+        "test_mandatory_discard_requires_its_own_runtime_dependency",
+        "test_mandatory_discard_choice_cannot_be_declined",
+        "test_actual_akoum_pays_current_discard_once_across_replacement_and_replay"
+      ],
+      "privacy_tests": [
+        "test_actual_akoum_pays_current_discard_once_across_replacement_and_replay"
+      ],
+      "replay_tests": [
+        "test_actual_akoum_pays_current_discard_once_across_replacement_and_replay"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "variable or repeated energy",
           "compound resource prices",
           "reflexive when-you-do target timing",
@@ -79532,7 +79615,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 722,
+  "registry_version": 723,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

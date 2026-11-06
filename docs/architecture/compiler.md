@@ -2297,7 +2297,12 @@ payment scope. The compiler preserves every target and result owner and retains
 v1 precedence when its old one-mana/one-effect shape closes. Runtime rechecks
 full resources, current predicates and object incarnations, commits through
 canonical payment or simultaneous zone intents, then resumes the typed result.
-CR 118.12 depends on chosen payment, not the final destination after replacement.
+CR 118.12 checks whether a player chose an optional cost or started a required
+cost. A replacement can change the final destination without changing that
+result. The version-eight discard cost requires one unqualified owned hand
+card. Its actor must select one current card when available. With an empty
+hand, resolution skips the dependent result and offers no choice. The
+mandatory grammar binds one `If you do` sentence.
 The version-seven `source_sacrifice` cost leaf binds the original source zone
 object. The compiler opts into this cost in the existing `If you do` factory;
 other parser callers keep their prior cost grammar. Source names are explicit
@@ -2403,7 +2408,8 @@ The committed land-play action publishes its playing seat and prior zone
 before normal stabilization and trigger placement. Effects that put lands
 onto the battlefield use the existing zone-entry event. Printed land-play
 or spell-cast pairs keep two subscriptions and apply each event's origin
-filter independently. A result addressed to the player who acted keeps that
+filter independently. A shared exclusion of the controller's hand applies to
+both subscriptions. A result addressed to the player who acted keeps that
 seat through ordinary APNAP placement and resolution.
 
 Public self-death and attached-creature death returns bind the event card and

@@ -19,6 +19,23 @@ from scripts.build_test_database import build_fixture_database
 
 
 class LandPlayTriggerCompilerTests(unittest.TestCase):
+    def test_shared_nonhand_origin_filters_both_committed_actions(self):
+        binding = fixed_public_action_event_binding_spec(
+            "Whenever you play a land or cast a spell from anywhere other than your hand, draw a card.",
+        )
+        subscriptions = FixedEventSubscriptionSet.from_condition(binding.condition)
+        for event, actor_field in ((LAND_PLAY_EVENT, "player"), ("spell.cast", "controller")):
+            self.assertEqual(
+                (
+                    {"field": actor_field, "op": "eq", "value": "$source.controller"},
+                    {"field": "from", "op": "ne", "value": "hand"},
+                ),
+                tuple(dict(term) for term in subscriptions.subscription_for(event).condition["all"]),
+            )
+        self.assertIsNone(fixed_public_action_event_binding_spec(
+            "Whenever you play a land from exile or cast a spell from anywhere other than your hand, draw a card.",
+        ))
+
     def test_land_and_cast_subscriptions_keep_their_own_origin_filters(self):
         binding = fixed_public_action_event_binding_spec(
             "Whenever you play a land from exile or cast a spell, draw a card.",
@@ -200,6 +217,49 @@ class LandPlayTriggerNativeTests(InheritedNativeFixture, unittest.TestCase):
             self.assertIn("Thopter", data["type_line"])
             self.assertIn("Flying", data["keywords"])
             self.assertIn("Haste", data["keywords"])
+        self.replay(session, load=True)
+
+    def test_actual_shadow_observes_nonhand_land_plays_and_spell_casts(self):
+        session = self.session(720001)
+        session.state.config.semantic_policy = "trusted_only"
+        shadow = self.add(session.engine, "Shadow of the Goblin")
+        exploration = self.add(session.engine, "Exploration")
+        impulse = self.add(session.engine, "Reckless Impulse", zone="hand")
+        hand_land = self.add(session.engine, "Mountain", zone="hand", ref="shadow-hand-land")
+        hand_spell = self.add(session.engine, "Ornithopter", zone="hand", ref="shadow-hand-spell")
+        exile_land = self.add(session.engine, "Mountain", zone="library", ref="shadow-exile-land")
+        exile_spell = self.add(session.engine, "Ornithopter", zone="library", ref="shadow-exile-spell")
+        commander, = session.state.players["A"].zones["command"]
+        for card in (shadow, exploration, impulse):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 1, "R": 1, "W": 2})
+        self.checkpoint(session)
+        initial = {seat: player.life for seat, player in session.state.players.items()}
+
+        self.play_land(session, hand_land)
+        self.assertFalse(session.state.stack)
+        self.cast(session, "A", hand_spell)
+        self.assertEqual(0, self.trigger_count(session, shadow))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", impulse)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial, {seat: player.life for seat, player in session.state.players.items()})
+        for card in (exile_land, exile_spell):
+            self.assertEqual("exile", session.state.cards[card.object_id].zone)
+
+        self.play_land(session, exile_land)
+        self.assertEqual(1, self.trigger_count(session, shadow))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", exile_spell)
+        self.assertEqual(1, self.trigger_count(session, shadow))
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "A", session.state.cards[commander])
+        self.assertEqual(1, self.trigger_count(session, shadow))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(initial["A"], session.state.players["A"].life)
+        for seat in "BCD":
+            self.assertEqual(initial[seat] - 3, session.state.players[seat].life)
         self.replay(session, load=True)
 
     def test_actual_endstone_draws_for_a_play_and_sets_half_starting_life_rounded_up(self):

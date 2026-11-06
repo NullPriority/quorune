@@ -13,7 +13,7 @@ from ..semantic_runtime.energy_payment import PayEnergyIntent
 from ..zone_trigger_events import ZoneTransitionKind
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
-    ObjectChoice, ScalarChoice, SemanticChoiceCompletion, SemanticChoiceContinuation,
+    AutoContinue, ObjectChoice, ScalarChoice, SemanticChoiceCompletion, SemanticChoiceContinuation,
     SemanticChoiceError, SemanticChoicePreparation, SemanticChoiceRequest,
 )
 from .optional_effect import _represented_effect
@@ -46,7 +46,7 @@ def _validated(
     if effect['player'] != actor or actor not in query.active_seats:
         raise SemanticChoiceError('Fixed payment controller changed')
     try:
-        spec = FixedEffectPaymentSpec.from_dict(effect['payment'])
+        spec = FixedEffectPaymentSpec.from_dict(effect['payment'], allow_mandatory=True)
     except (TypeError, ValueError, KeyError) as exc:
         raise SemanticChoiceError(str(exc)) from exc
     if ('cost' in effect) != (spec.kind == 'mana') or spec.kind == 'mana' and dict(effect['cost']) != dict(spec.requirements):
@@ -119,10 +119,15 @@ def prepare_fixed_payment_cost(
                 key=lambda row: (row.ref, row.logical_object_id),
             ))
         payable = len(legal) >= spec.amount
+        if spec.mandatory and not payable:
+            return SemanticChoicePreparation(
+                request=None, continuation_effect=FrozenMap(effect),
+                auto_continue=AutoContinue("Mandatory discard is unavailable"),
+            )
         choice = ObjectChoice(
             field_name='cards', legal_refs=tuple(row.ref for row in legal),
-            zones=_object_payment_zones(spec), minimum=0,
-            maximum=spec.amount if payable else 0, optional=True,
+            zones=_object_payment_zones(spec), minimum=spec.amount if spec.mandatory else 0,
+            maximum=spec.amount if payable else 0, optional=not spec.mandatory,
             visibility='actor_private' if spec.kind == 'discard' else 'public',
             allowed_cardinalities=((0, spec.amount) if payable else (0,)) if spec.amount > 1 else None,
             owner_relation='actor' if spec.kind in {'discard','exile'} else 'any',
@@ -149,7 +154,8 @@ def prepare_fixed_payment_cost(
         public['objects'] = [{'id': row.ref, 'name': row.printed_name} for row in legal]
     return SemanticChoicePreparation(
         request=SemanticChoiceRequest(
-            prompt='Pay the optional fixed cost or decline.', choice=choice,
+            prompt=("Choose a card to discard." if spec.mandatory else "Pay the optional fixed cost or decline."),
+            choice=choice,
             public_context=FrozenMap(public),
         ),
         continuation_effect=FrozenMap(stored),
@@ -193,7 +199,7 @@ def complete_fixed_payment_cost(
         if 'pay' in response and type(response['pay']) is not bool:
             raise SemanticChoiceError('Fixed payment flag must be boolean')
         if not selected:
-            if response.get('pay', False):
+            if spec.mandatory or response.get('pay', False):
                 raise SemanticChoiceError('Fixed payment requires its complete selected cost')
             return SemanticChoiceCompletion()
         if response.get('pay', True) is not True:

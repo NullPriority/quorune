@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -32,7 +33,11 @@ class CombinedTapCostRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'combined-taps.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/combined-tap-activation-costs.json'],path)
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/combined-tap-activation-costs.json",
+            ROOT / "tests/fixtures/fixed-resolution-payment-cards.json",
+        ], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Combined tap',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
     @classmethod
@@ -44,6 +49,75 @@ class CombinedTapCostRuntimeTests(unittest.TestCase):
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
     resolve=counter_witnesses.CounterPlacementEventRuntimeTests.resolve
     order_triggers=counter_witnesses.CounterPlacementEventRuntimeTests.order_triggers
+
+    def test_actual_akoum_pays_current_discard_once_across_replacement_and_replay(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        for has_card in (False, True):
+            with self.subTest(has_card=has_card):
+                session = self.session(720020 + has_card)
+                session.state.config.semantic_policy = "trusted_only"
+                source = self.add(session.engine, "Akoum Flameseeker")
+                source.acquired_control_turn_count = -1
+                ally = self.add(session.engine, "Zulaport Chainmage")
+                ally.acquired_control_turn_count = session.state.players["A"].turns_begun
+                for object_id in tuple(session.state.players["A"].zones["hand"]):
+                    session.engine.move_card(object_id, "library", log=False)
+                program = compile_best_available_card_program(
+                    self.db, self.db.lookup("Akoum Flameseeker"),
+                    semantic_registry=session.engine.semantics, capability_registry=self.registry,
+                    capability_profile="commander_review",
+                )
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+                self.assertTrue(binding["strict_capability_ready"], binding)
+                if has_card:
+                    selected = self.add(session.engine, "Generic Bound Plains", zone="hand", ref="akoum-private-cost")
+                    self.add(session.engine, "Generic Payment Destination Replacement", seat="B")
+                    self.add(session.engine, "Generic Payment Competing Replacement", seat="C")
+                library = tuple(session.state.players["A"].zones["library"])
+                action = self.ready(session, source, {})
+                self.assertIn(ally.ref, action["cost_summary"]["choose_cost"][0]["legal_refs"])
+                self.checkpoint(session)
+                activated = session.act("pilot:A", {"action_id": action["id"], "cost_cards": [ally.ref], "pay": "auto"})
+                self.assertTrue(activated.ok, activated.summary)
+                self.assertTrue(all(session.state.cards[card.object_id].tapped for card in (source, ally)))
+                pending = self.resolve(session)
+                if not has_card:
+                    self.assertIsNone(pending)
+                    self.assertEqual((), tuple(session.state.players["A"].zones["hand"]))
+                    self.assertEqual(library, tuple(session.state.players["A"].zones["library"]))
+                    self.replay(session, load=True)
+                    continue
+
+                self.assertEqual("semantic.choice", pending.kind)
+                self.assertEqual(["pilot:A"], list(session.pending_principals()))
+                choice = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal_actions"][0]["choice_schema"]
+                self.assertEqual([selected.ref], choice["legal_refs"])
+                self.assertEqual((1, 1, False),
+                                 (choice.get("minimum", 1), choice.get("maximum", 1), choice.get("optional", False)))
+                for seat in "BCD":
+                    self.assertNotIn(selected.ref, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+                before = authoritative_state_hash(session.state)
+                pay = {"action_id": "choose", "cards": [selected.ref]}
+                self.assertFalse(session.act("pilot:B", pay).ok)
+                self.assertFalse(session.act("pilot:A", {"action_id": "choose", "cards": []}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                session = self.replay(session, load=True)
+                paid = session.act("pilot:A", pay)
+                self.assertTrue(paid.ok, paid.summary)
+                self.assertIn("replacement", session.state.pending_decision.kind)
+                self.assertEqual("hand", session.state.cards[selected.object_id].zone)
+                self.assertEqual(library, tuple(session.state.players["A"].zones["library"]))
+                session = self.replay(session, load=True)
+                choice = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"][0]["id"]
+                replaced = session.act("pilot:A", {"action_id": "choose", "replacement": choice})
+                self.assertTrue(replaced.ok, replaced.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("exile", session.state.cards[selected.object_id].zone)
+                self.assertEqual(1, len(session.state.players["A"].zones["hand"]))
+                self.assertEqual(len(library) - 1, len(session.state.players["A"].zones["library"]))
+                self.replay(session, load=True)
 
     def test_actual_evangel_requires_distinct_taps_and_allows_new_selected_creature(self):
         session=self.session(308001);engine=session.engine

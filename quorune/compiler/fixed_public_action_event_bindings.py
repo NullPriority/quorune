@@ -27,7 +27,8 @@ _PUBLIC_CONTROLLER_CYCLE_TRIGGER = re.compile(
 _PUBLIC_LAND_PLAY_TRIGGER = re.compile(
     r"Whenever (?P<actor>you|a player|an opponent) (?P<play>play|plays) a land"
     r"(?P<land_origin> from exile)?"
-    r"(?: or (?P<cast>cast|casts) a spell(?P<spell_origin> from exile)?)?, (?P<body>.+)",
+    r"(?: or (?P<cast>cast|casts) a spell(?P<spell_origin> from exile|"
+    r"(?P<shared_nonhand> from anywhere other than your hand))?)?, (?P<body>.+)",
     re.IGNORECASE,
 )
 _PUBLIC_SACRIFICE_TRIGGER = re.compile(
@@ -155,9 +156,17 @@ def _public_land_play_spec(material_line: str) -> FixedPublicEventBindingSpec | 
     controller = actor == "you"
     if controller != (match["play"].casefold() == "play"):
         return None
+    if match["shared_nonhand"] is not None:
+        if not controller or match["land_origin"] is not None:
+            return None
+        land_origin = {"field": "from", "op": "ne", "value": "hand"}
+    elif match["land_origin"] is not None:
+        land_origin = {"field": "from", "op": "eq", "value": "exile"}
+    else:
+        land_origin = None
     condition = _all_conditions(
         _actor_condition(actor, field="player"),
-        {"field": "from", "op": "eq", "value": "exile"} if match["land_origin"] else None,
+        land_origin,
     )
     if match["cast"] is None:
         return _spec(

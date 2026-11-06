@@ -98,7 +98,7 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
         return spec.capabilities
     fields={'op','schema_version','player','payment','effects'}
     if not isinstance(wrapper,Mapping) or set(wrapper) not in (fields,fields|{'cost'}) or wrapper.get('op')!=OPTIONAL_MANA_PAYMENT_OPERATION or type(wrapper.get('schema_version'))is not int or wrapper['schema_version']!=2 or wrapper.get('player')!='$controller':return ()
-    try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'])
+    try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'], allow_mandatory=True)
     except (ValueError,TypeError,KeyError):return ()
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
     if payment.kind in {'discard','exile','mana_discard'}and payment.predicate.owner!='$controller':return ()

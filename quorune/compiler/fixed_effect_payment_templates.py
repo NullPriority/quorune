@@ -8,7 +8,10 @@ import hashlib
 import re
 from typing import Any, Callable, Mapping
 
-from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
+from ..fixed_effect_payment import (
+    FIXED_EFFECT_PAYMENT_MECHANIC, MANDATORY_DISCARD_PAYMENT_VERSION, FixedEffectPaymentSpec,
+)
+from ..object_predicate import ObjectQuerySpec
 from ..replacement.immutable import FrozenMap
 from ..util import mana_cost_to_vector, stable_json
 from .optional_payment_templates import OPTIONAL_MANA_PAYMENT_OPERATION
@@ -18,6 +21,7 @@ from .spell_additional_cost_templates import (
 
 
 _PAYMENT = re.compile(r"You may (?P<cost>.+?)\. If you do, (?P<body>.+)", re.I)
+_MANDATORY_DISCARD = re.compile(r"Discard (?:a|one) card\. If you do, (?P<body>[^.\n]+\.?)", re.I)
 _OPEN = re.compile(r"\b(?:if|unless|may|when|where|random|repeat|this way|that much|equal to|for each)\b", re.I)
 Compiled = tuple[str | None, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]]
 
@@ -117,9 +121,17 @@ def _owned_graveyard_exile_payment(value):
 
 
 def fixed_effect_payment_template(text: str, *, compile_effect: Callable[[str], Compiled]) -> Compiled | None:
-    match=_PAYMENT.fullmatch(text.strip())
-    if match is None:return None
-    cost=fixed_effect_payment_spec(match['cost'],allow_source_sacrifice=True)
+    match = _MANDATORY_DISCARD.fullmatch(text.strip())
+    if match is not None:
+        cost = FixedEffectPaymentSpec(
+            "discard", schema_version=MANDATORY_DISCARD_PAYMENT_VERSION,
+            predicate=ObjectQuerySpec(zones=("hand",), owner="$controller", known_to_actor=True),
+        )
+    else:
+        match = _PAYMENT.fullmatch(text.strip())
+        if match is None:
+            return None
+        cost = fixed_effect_payment_spec(match["cost"], allow_source_sacrifice=True)
     body=match['body'].strip()
     if cost is None or _OPEN.search(body) or '"' in body:return None
     template,effects,schema,mechanics=compile_effect(body)

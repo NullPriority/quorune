@@ -128,8 +128,8 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
             own = (*own, *legend_rule_payload_dependencies(value))
         from ..rules.casting_additional_cost_groups import selected_zone_cost_payload_dependencies
         own = (*own, *selected_zone_cost_payload_dependencies(value))
-        from ..fixed_effect_payment import compound_payment_payload_dependencies
-        own = (*own, *compound_payment_payload_dependencies(value))
+        from ..fixed_effect_payment import fixed_payment_payload_dependencies
+        own = (*own, *fixed_payment_payload_dependencies(value))
         from ..resolution_mana_model import resolution_mana_choice_dependencies
         own = (*own, *resolution_mana_choice_dependencies(value))
         from ..created_token_counter_model import created_token_counter_payload_dependencies
