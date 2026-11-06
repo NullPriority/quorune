@@ -9,6 +9,7 @@ from typing import Any, Mapping
 FIXED_TOKEN_PRODUCTION_MECHANIC_ID = "fixed-token-production"
 INVESTIGATE_CAPABILITY_ID = "keyword_action.investigate.fixed"
 INVESTIGATE_MECHANIC_ID = "investigate"
+SEQUENTIAL_INVESTIGATE_OPERATION = "investigate_sequential"
 AFTERLIFE_CAPABILITY_ID = "trigger.keyword.afterlife.fixed"
 AFTERLIFE_MECHANIC_ID = "afterlife"
 FIXED_TOKEN_COPY_CAPABILITY_ID = "token.creation.fixed_copy"
@@ -101,7 +102,60 @@ class FixedInvestigateSpec:
         _fixed_count(self.count, label="Investigate")
 
     def effect(self) -> dict[str, Any]:
-        return clue_token_effect(self.count)
+        if self.count == 1:
+            return clue_token_effect(1)
+        return {
+            "op": SEQUENTIAL_INVESTIGATE_OPERATION,
+            "schema_version": self.schema_version,
+            "controller": "$controller",
+            "count": self.count,
+        }
+
+
+def sequential_investigate_count(
+    effect: Mapping[str, Any], *, resolved_controller: str | None = None,
+) -> int | Mapping[str, Any]:
+    """Validate a fixed or typed count before, and again after, amount resolution."""
+    controller = "$controller" if resolved_controller is None else resolved_controller
+    if (
+        not isinstance(effect, Mapping)
+        or set(effect) != {"op", "schema_version", "controller", "count"}
+        or effect["op"] != SEQUENTIAL_INVESTIGATE_OPERATION
+        or effect["controller"] != controller
+        or type(effect["schema_version"]) is not int
+        or effect["schema_version"] != 1
+    ):
+        raise FixedTokenProductionError("Sequential Investigate requires a closed controller and count")
+    count = effect["count"]
+    if resolved_controller is not None:
+        if type(count) is not int or count < 0:
+            raise FixedTokenProductionError("Resolved Investigate requires a nonnegative count")
+        return count
+    if type(count) is int and _fixed_count(count, label="Investigate") >= 2:
+        return count
+    if isinstance(count, Mapping) and _known_investigate_amount(count):
+        return count
+    raise FixedTokenProductionError("Sequential Investigate requires a fixed or represented count")
+
+
+def _known_investigate_amount(count: Mapping[str, Any]) -> bool:
+    from .characteristic_fragments import CharacteristicQuantityScope, CharacteristicQuantitySpec
+    from .query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND, PublicQueryAmountSpec
+    from .scalar_effect_amount_model import SCALAR_AMOUNT_KIND, ScalarAmountOrigin, ScalarEffectAmountSpec
+
+    try:
+        if count.get("kind") == SCALAR_AMOUNT_KIND:
+            return ScalarEffectAmountSpec.from_dict(count) == ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_AMOUNT)
+        if count.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
+            amount = PublicQueryAmountSpec.from_dict(count)
+            opponents = CharacteristicQuantitySpec(
+                scope=CharacteristicQuantityScope.CONTROLLER_OPPONENT_COUNT,
+                schema_version=2,
+            )
+            return amount.schema_version == 2 and amount.coefficient == 1 and amount.quantity == opponents
+    except (TypeError, ValueError):
+        return False
+    return False
 
 
 @dataclass(frozen=True, slots=True)
@@ -132,6 +186,8 @@ __all__ = [
     "FixedTokenProductionError",
     "INVESTIGATE_CAPABILITY_ID",
     "INVESTIGATE_MECHANIC_ID",
+    "SEQUENTIAL_INVESTIGATE_OPERATION",
+    "sequential_investigate_count",
     "TYPED_TOKEN_ABILITY_CAPABILITY_ID",
     "TYPED_TOKEN_ABILITY_MECHANIC_ID",
     "afterlife_token_effect",

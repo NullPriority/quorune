@@ -10876,6 +10876,8 @@
       "patterns": [
         "quorune/token_creation_batch_model.py",
         "quorune/token_creation.py",
+        "quorune/fixed_token_production.py",
+        "quorune/semantic_choices/investigate.py",
         "quorune/compiler/token_creation_event_bindings.py",
         "quorune/compiler/tap_state_event_bindings.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
@@ -10886,6 +10888,7 @@
       "test_modules": [
         "test_token_creation_triggers",
         "test_token_creation_replacements",
+        "test_fixed_token_production",
         "test_fixed_token_creation_effects",
         "test_fixed_counter_event_triggers",
         "test_card_program_trust",

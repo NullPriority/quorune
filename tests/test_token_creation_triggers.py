@@ -1,4 +1,5 @@
 """Creation and entry differ; cardinality and first-event time stay explicit."""
+from collections import Counter
 import unittest
 from pathlib import Path
 import tempfile
@@ -31,6 +32,38 @@ class TokenCreationFactTests(unittest.TestCase):
 
 
 class TokenCreationBindingTests(unittest.TestCase):
+    def test_sequential_investigate_requires_a_closed_controller_and_count(self):
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        from quorune.fixed_token_production import (
+            INVESTIGATE_CAPABILITY_ID,
+            FixedInvestigateSpec,
+            FixedTokenProductionError,
+            sequential_investigate_count,
+        )
+        from quorune.rules.fixed_effect_clause_shapes import closed_effect_component_capabilities
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+
+        mechanics = {"investigate", "fixed-token-production", "cr-111-tokens"}
+        effect = FixedInvestigateSpec(3).effect()
+        self.assertEqual((INVESTIGATE_CAPABILITY_ID,), typed_result_amount_runtime_dependencies(effect))
+        self.assertIn(INVESTIGATE_CAPABILITY_ID, closed_effect_component_capabilities(
+            (effect,), target_schema=None, mechanics=mechanics,
+        ))
+        for change in ({"controller": "$target.0"}, {"count": True}, {"count": 1},
+                       {"count": 21}, {"schema_version": 2}, {"quantity": 3},
+                       {"count": {"kind": "cast_x_effect_amount", "schema_version": 1, "coefficient": 1}}):
+            with self.subTest(change=change):
+                malformed = {**effect, **change}
+                self.assertEqual((), fixed_token_creation_node_capabilities(
+                    effects=(malformed,), target_schema=None, mechanic_ids=mechanics,
+                ))
+                with self.assertRaises(FixedTokenProductionError):
+                    typed_result_amount_runtime_dependencies(malformed)
+        for resolved in (0, 1, 21):
+            self.assertEqual(resolved, sequential_investigate_count(
+                {**effect, "controller": "A", "count": resolved}, resolved_controller="A",
+            ))
+
     def test_creation_capability_withdrawal_and_removed_binding_producer_leave_residuals(self):
         import json
         from common import ROOT
@@ -148,17 +181,27 @@ class TokenCreationTriggerNativeTests(unittest.TestCase):
         H.add(self,engine,'Generic Bound Growth',seat='D',zone='hand',ref='CREATION_PRIVATE_D_HAND')
         engine._grant_priority(actor);engine.pump();H.checkpoint(self,session)
 
-    def cast(self,session,card,targets=(),actor='A'):
+    def cast(self,session,card,targets=(),actor='A',*,cost_option=None):
         from quorune.record import authoritative_state_hash
         offered=next(row for row in session.packet('pilot:'+actor,full=True)['decision']['ctx']['legal']['actions']
             if row.get('card')==card.ref)
         command={'action_id':offered['id'],'targets':list(targets),'pay':'auto'}
+        if cost_option is not None:
+            self.assertIn(cost_option, {option["id"] for option in offered["cost_options"]})
+            command["cost_option"] = cost_option
         before=authoritative_state_hash(session.engine.state)
         self.assertFalse(session.act('pilot:'+('B' if actor=='A' else 'A'),command).ok);self.assertEqual(before,authoritative_state_hash(session.engine.state))
         accepted=session.act('pilot:'+actor,command);self.assertTrue(accepted.ok,accepted.summary)
 
     def tokens(self,session):
         return tuple(card for card in session.engine.state.cards.values() if card.is_token and card.zone=='battlefield')
+
+    def token_subtype_counts(self, session):
+        engine = session.engine
+        return Counter(
+            subtype for card in self.tokens(session)
+            for subtype in engine._type_parts(engine._effective_card_data(card)["type_line"])[1]
+        )
 
     def settle(self,session,*,rosie=None):
         from quorune.record import authoritative_state_hash
@@ -317,6 +360,125 @@ class TokenCreationTriggerNativeTests(unittest.TestCase):
         self.assertEqual(5,len(self.tokens(session)))
         self.assertEqual(1,engine.state.cards[staff.object_id].counters.get('story',0),
             'A later Treasure plus Food event has no created creature')
+        self.finish(session)
+
+    def test_actual_confirm_suspicions_counters_then_investigates_three_separate_times(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        session = self.session(964107, actor="B")
+        engine = session.engine
+        took = H.add(self, engine, "Peregrin Took", ref="INVESTIGATE_TOOK")
+        counter = H.add(self, engine, "Confirm Suspicions", zone="hand", ref="INVESTIGATE_COUNTER")
+        target = H.add(self, engine, "Raise the Alarm", seat="B", zone="hand", ref="INVESTIGATE_TARGET")
+        for card in (took, counter, target):
+            self.assert_closed(session, card)
+        engine.state.players["A"].mana_pool.update({"C": 3, "U": 2})
+        self.start(session, actor="B")
+        self.cast(session, target, actor="B")
+        for _ in range(4):
+            if session.pending_principals() == ["pilot:A"]:
+                break
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual(["pilot:A"], session.pending_principals())
+        self.cast(session, counter, (session.state.stack[-1].ref,))
+        session, _ = self.settle(session)
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        self.assertEqual({"clue": 3, "food": 3}, self.token_subtype_counts(session))
+        self.finish(session)
+
+    def test_actual_carnage_interpreter_reopens_replacements_for_each_clue_after_load(self):
+        from quorune.record import authoritative_state_hash
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        session = self.session(964108)
+        engine = session.engine
+        took = H.add(self, engine, "Peregrin Took", ref="INVESTIGATE_TOOK")
+        doubler = H.add(self, engine, "Anointed Procession", ref="INVESTIGATE_PROCESSION")
+        source = H.add(self, engine, "Carnage Interpreter", zone="hand", ref="INVESTIGATE_INTERPRETER")
+        for card in (took, doubler, source):
+            self.assert_closed(session, card)
+        self.start(session)
+        self.cast(session, source, cost_option="hybrid-1")
+        for _ in range(12):
+            if session.state.pending_decision.kind != "priority":
+                break
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        self.assertEqual([], session.state.players["A"].zones["hand"])
+        for completed in range(4):
+            self.assertEqual("replacement.order", session.state.pending_decision.kind)
+            self.assertEqual(["pilot:A"], session.pending_principals())
+            self.assertEqual(4 * completed, len(self.tokens(session)))
+            if completed == 1:
+                session = H.replay(self, session, load=True)
+            options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+            self.assertEqual({took.ref, doubler.ref}, {option["source"] for option in options})
+            selection = next(option["id"] for option in options if option["source"] == took.ref)
+            command = {"action_id": "choose", "replacement": selection}
+            before = authoritative_state_hash(session.state)
+            rejected = session.act("pilot:B", command)
+            self.assertFalse(rejected.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            accepted = session.act("pilot:A", command)
+            self.assertTrue(accepted.ok, accepted.summary)
+        session, _ = self.settle(session)
+        self.assertEqual({"clue": 8, "food": 8}, self.token_subtype_counts(session))
+        self.finish(session)
+
+    def test_actual_ethereal_investigator_uses_live_opponent_count_at_resolution(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        session = self.session(964109)
+        took = H.add(self, session.engine, "Peregrin Took", ref="INVESTIGATE_TOOK")
+        source = H.add(self, session.engine, "Ethereal Investigator", zone="hand", ref="INVESTIGATE_ETHEREAL")
+        for card in (took, source):
+            self.assert_closed(session, card)
+        self.start(session)
+        self.cast(session, source)
+        for _ in range(16):
+            if (session.state.stack and session.state.stack[-1].kind == "triggered_ability"
+                    and session.pending_principals() == ["pilot:B"]):
+                break
+            passed = session.act(session.pending_principals()[0], {"action_id": "pass"})
+            self.assertTrue(passed.ok, passed.summary)
+        else:
+            self.fail("B did not get priority before the Investigate trigger resolved")
+        self.assertFalse(self.tokens(session))
+        left = session.act("pilot:B", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(left.ok, left.summary)
+        session, _ = self.settle(session)
+        self.assertEqual({"clue": 2, "food": 2}, self.token_subtype_counts(session))
+        self.finish(session)
+
+    def test_actual_piper_wright_uses_committed_combat_damage_for_separate_creations(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        session = self.session(964110)
+        took = H.add(self, session.engine, "Peregrin Took", ref="INVESTIGATE_TOOK")
+        source = H.add(self, session.engine, "Piper Wright, Publick Reporter", ref="INVESTIGATE_PIPER")
+        source.counters["+1/+1"] = 2
+        source.acquired_control_turn_count = -1
+        for card in (took, source):
+            self.assert_closed(session, card)
+        self.start(session)
+        for _ in range(42):
+            if self.tokens(session):
+                break
+            kind = session.state.pending_decision.kind
+            if kind == "combat.attackers":
+                command = {"action_id": "attack", "attackers": {source.ref: "B"}}
+            elif kind == "combat.blockers":
+                command = {"action_id": "block", "blocks": {}}
+            else:
+                self.assertEqual("priority", kind)
+                command = {"action_id": "pass"}
+            accepted = session.act(session.pending_principals()[0], command)
+            self.assertTrue(accepted.ok, accepted.summary)
+        else:
+            self.fail("The combat damage trigger did not resolve")
+        self.assertEqual(37, session.state.players["B"].life)
+        self.assertEqual({"clue": 3, "food": 3}, self.token_subtype_counts(session))
         self.finish(session)
 
     def test_actual_changed_control_uses_creator_and_current_controller_instead_of_card_owner(self):

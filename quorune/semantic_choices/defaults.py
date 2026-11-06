@@ -7,6 +7,7 @@ from .composition_order import CompositionOrderHandler
 from .mutate import MutateMergeChoiceHandler
 from .created_token_counters import CREATED_TOKEN_COUNTER_HANDLERS
 from .incubate import INCUBATE_HANDLERS
+from .investigate import SequentialInvestigateHandler
 from .discover import DiscoverScanHandler
 from .discover_cast import DiscoverCastChoiceHandler
 from .variable_library_selection import VariableLibrarySelectionHandler
@@ -76,6 +77,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             GraveyardReturnChoiceHandler(),
             *CREATED_TOKEN_COUNTER_HANDLERS,
             *INCUBATE_HANDLERS,
+            SequentialInvestigateHandler(),
             DiscoverScanHandler(),
             DiscoverScanHandler('discover_step','choice.library.discover-step.v1'),
             DiscoverCastChoiceHandler(),

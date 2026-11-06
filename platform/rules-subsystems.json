@@ -7878,14 +7878,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v722-omen-resolution-correctness",
-      "compiler_version": "oracle-ir-v722",
+      "transition_id": "oracle-ir-v738-separate-counted-investigate",
+      "compiler_version": "oracle-ir-v738",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Correct the terminal destination and face characteristics of represented Omen spells through their intrinsic resolution lifecycle."
+      "non_harvest_reason": "Give each already admitted counted Investigate action a separate token-creation event so token replacements and triggers apply to the correct events."
     },
     "forecast_corrections": [
       {
