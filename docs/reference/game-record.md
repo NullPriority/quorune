@@ -583,6 +583,14 @@ meaning where the schema allows it. A current runtime never silently recompiles
 or reinterprets an old record as if it used current Oracle, rules, or
 CardPrograms.
 
+Current games pin `empty_spell_resolution_version: 1` in the checkpoint and
+manifest. An intrinsic counter prohibition can authorize an empty resolution
+only when the compiler proves the entire spell consists of that declaration.
+Unresolved bodies in arbitrate-or-pause mode reach the ordinary arbiter
+decision. Historical absence retains the recorded empty-resolution behavior
+and its provenance. Unknown versions, booleans, and manifest disagreements
+reject before replay.
+
 Current games pin `qualified_attack_facts_version: 1`. Declared-attack
 occurrences carry versioned public attacker characteristics sealed after
 declaration and before discovery. Pending triggers retain those facts across

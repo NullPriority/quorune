@@ -9,9 +9,11 @@ from ..card_programs.admission import (
     descriptor_requires_complete_card_program,
 )
 from ..carddb import CardRecord
+from ..empty_spell_resolution_model import INTRINSIC_EMPTY_SPELL_ADMISSION
 from ..rules.capabilities import CapabilityRegistry
 from ..semantics import SemanticProgram
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from .intrinsic_counter_nodes import intrinsic_empty_spell_admission
 
 
 COMPOSED_SPELL_EFFECT_SEQUENCE = "composed-spell-effect-sequence-v1"
@@ -552,6 +554,9 @@ def program_from_generated_node_group(
         capability_closure=capability_closure,
         composed_spell=composed_spell,
     )
+    empty_admission = intrinsic_empty_spell_admission(record, ir, first)
+    if empty_admission is not None:
+        provenance[INTRINSIC_EMPTY_SPELL_ADMISSION] = empty_admission
     if str(first.kind).startswith("granted_"):
         provenance["granted_only"] = True
     program = SemanticProgram(

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from .empty_spell_resolution_model import empty_spell_resolution_version
 from .record_commander_identity import (
     commander_damage_identity_version,
     validate_commander_damage_identity_provenance,
@@ -19,8 +20,10 @@ def format_state_versions(state: Any) -> dict[str, int]:
 
     from .state_based_legend_model import legend_rule_choice_version
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
+    empty_spell = empty_spell_resolution_version(getattr(state, "empty_spell_resolution_version", None))
     return {
         **({'legend_rule_choice_version': legend} if legend is not None else {}),
+        **({"empty_spell_resolution_version": empty_spell} if empty_spell is not None else {}),
         "commander_damage_identity_version": commander_damage_identity_version(
             state.commander_damage_identity_version
         ),
@@ -64,6 +67,12 @@ def validate_state_versions(
     format_value = manifest.get("format")
     if not isinstance(format_value, Mapping):
         raise ValueError("Record format provenance is malformed")
+    empty_spell = format_value.get("empty_spell_resolution_version", 0)
+    if (
+        type(empty_spell) is not int or empty_spell not in {0, 1}
+        or empty_spell != (empty_spell_resolution_version(getattr(state, "empty_spell_resolution_version", None)) or 0)
+    ):
+        raise ValueError("Empty spell resolution provenance does not match the initial checkpoint")
     declared = format_value.get("departure_history_version", 0)
     current = getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
     if type(declared) is not int or declared not in {0, 1} or declared != current:

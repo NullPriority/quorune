@@ -34,6 +34,7 @@ from .face_status_timestamp_model import face_status_timestamp_version
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
 from .characteristic_query_boundary_model import characteristic_query_boundary_version
+from .empty_spell_resolution_model import empty_spell_resolution_version
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
@@ -1049,6 +1050,7 @@ class GameState:
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
     characteristic_query_boundary_version: int | None = 1
+    empty_spell_resolution_version: int | None = 1
     token_copy_value_version: int | None = 1
     qualified_attack_facts_version: int | None = 1
     permanent_event_state_version: int | None = 1
@@ -1081,6 +1083,7 @@ class GameState:
         face_down_characteristics_version(self.face_down_characteristics_version)
         library_selection_knowledge_version(self.library_selection_knowledge_version)
         characteristic_query_boundary_version(self.characteristic_query_boundary_version)
+        empty_spell_resolution_version(self.empty_spell_resolution_version)
         token_copy_value_version(self.token_copy_value_version)
         qualified_attack_facts_version(self.qualified_attack_facts_version)
         permanent_event_state_version(self.permanent_event_state_version)
@@ -1137,6 +1140,8 @@ class GameState:
             **({'face_down_characteristics_version':self.face_down_characteristics_version} if self.face_down_characteristics_version is not None else {}),
             **({'library_selection_knowledge_version':self.library_selection_knowledge_version} if self.library_selection_knowledge_version is not None else {}),
             **({'characteristic_query_boundary_version':self.characteristic_query_boundary_version} if self.characteristic_query_boundary_version is not None else {}),
+            **({"empty_spell_resolution_version": self.empty_spell_resolution_version}
+               if self.empty_spell_resolution_version is not None else {}),
             **({'token_copy_value_version':self.token_copy_value_version} if self.token_copy_value_version is not None else {}),
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
@@ -1215,6 +1220,7 @@ class GameState:
             face_down_characteristics_version=face_down_characteristics_version(data.get('face_down_characteristics_version')),
             library_selection_knowledge_version=library_selection_knowledge_version(data.get('library_selection_knowledge_version')),
             characteristic_query_boundary_version=characteristic_query_boundary_version(data.get('characteristic_query_boundary_version')),
+            empty_spell_resolution_version=empty_spell_resolution_version(data.get("empty_spell_resolution_version")),
             token_copy_value_version=token_copy_value_version(data.get('token_copy_value_version')),
             game_id=str(data["game_id"]),
             config=GameConfig.from_dict(data["config"]),

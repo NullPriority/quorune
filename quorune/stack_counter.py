@@ -42,14 +42,22 @@ def oracle_has_intrinsic_counter_prohibition(
 ) -> bool:
     """Return the pinned trusted CardProgram declaration for one Oracle ID."""
 
-    return any(
-        current_trusted(program)
-        and program.active_zone == "stack"
-        and program.event == "continuous"
-        and INTRINSIC_COUNTER_PROHIBITION_CAPABILITY
-        in program.capability_dependencies
-        for program in semantics.programs_for_oracle(oracle_id)
-    )
+    return any(current_intrinsic_counter_prohibitions(semantics, oracle_id, current_trusted=current_trusted))
+
+
+def current_intrinsic_counter_prohibitions(
+    semantics: Any,
+    oracle_id: str,
+    *,
+    current_trusted: Callable[[Any], bool],
+):
+    for program in semantics.programs_for_oracle(oracle_id):
+        if (
+            program.active_zone == "stack" and program.event == "continuous"
+            and INTRINSIC_COUNTER_PROHIBITION_CAPABILITY in program.capability_dependencies
+            and current_trusted(program)
+        ):
+            yield program
 
 
 def stack_item_can_be_countered(
@@ -153,6 +161,7 @@ __all__ = [
     "INTRINSIC_COUNTER_PROHIBITION_CAPABILITY",
     "StackCounterHost",
     "counter_stack_item",
+    "current_intrinsic_counter_prohibitions",
     "oracle_has_intrinsic_counter_prohibition",
     "stack_item_can_be_countered",
 ]

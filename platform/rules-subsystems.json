@@ -7878,14 +7878,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v752-composed-departure-counter-scope",
-      "compiler_version": "oracle-ir-v752",
+      "transition_id": "oracle-ir-v754-intrinsic-empty-spell-admission",
+      "compiler_version": "oracle-ir-v754",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Allow represented composed departures when a counter replacement is available and the departure creates no counter-placement event."
+      "non_harvest_reason": "Require a complete source admission for intrinsic empty spell resolution so unresolved bodies reach the normal arbitration boundary."
     },
     "forecast_corrections": [
       {
