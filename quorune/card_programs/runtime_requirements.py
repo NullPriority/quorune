@@ -143,9 +143,13 @@ def _event_query_runtime_requirements(program):
     if program.event==CRIME_EVENT:required.add(CRIME_CAPABILITY)
     required.update(crime_fact_dependencies((program.handlers,program.event_condition,program.effects,program.cost_schema)))
     from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
-    from ..rules.event_subscriptions import FixedEventSubscriptionSet, upkeep_hand_runtime_dependencies
+    from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT, upkeep_hand_runtime_dependencies
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
+        if program.event == LAND_PLAY_EVENT or (
+            subscriptions is not None and subscriptions.subscription_for(LAND_PLAY_EVENT) is not None
+        ):
+            required.add('trigger.event.normalized_public_action')
         if subscriptions is not None:
             required.add('trigger.subscription.fixed_multi_event')
             shared = subscriptions.shared_public_state_condition()

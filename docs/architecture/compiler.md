@@ -1120,6 +1120,8 @@ remain residual.
 Activated bodies use the same exact result-shape owner; their mana, tap and
 discard costs retain the ordinary activation cost authority.
 Fixed life-total setting uses its separately owned typed instruction.
+The printed rounded-up half of starting life uses the configured starting
+value and applies the resulting difference through the ordinary life owner.
 Unrepresented dynamic amounts, target-player drains that could affect the controller,
 exchanges, and unequal drains remain
 source-spanned residuals.
@@ -2396,6 +2398,13 @@ not qualify. Graveyard conditions count cards, excluding tokens. A permanent
 card matches the canonical six permanent card types, with each card counted
 once; “permanent” is not a subtype. The resolving spell remains on the stack
 while that condition is read, including when cast using Flashback.
+
+The committed land-play action publishes its playing seat and prior zone
+before normal stabilization and trigger placement. Effects that put lands
+onto the battlefield use the existing zone-entry event. Printed land-play
+or spell-cast pairs keep two subscriptions and apply each event's origin
+filter independently. A result addressed to the player who acted keeps that
+seat through ordinary APNAP placement and resolution.
 
 Public self-death and attached-creature death returns bind the event card and
 its exact post-departure zone-change counter. The existing graveyard-return

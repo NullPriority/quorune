@@ -931,6 +931,7 @@
       "test_hand_size_adjustments",
       "test_indestructible_rules",
       "test_kicked_self_replacements",
+      "test_land_play_triggers",
       "test_library_moving_mana_activations",
       "test_madness_rules",
       "test_mana_spent_amounts",

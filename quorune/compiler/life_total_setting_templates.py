@@ -17,6 +17,8 @@ def life_total_setting_template(text):
     raw=match['value'];subject=match['subject'].casefold()
     if re.fullmatch(FIXED_COUNT_PATTERN,raw,re.I):value=LifeTotalValueSpec('fixed',fixed_number(raw))
     elif raw.casefold()=='equal to your starting life total' and subject=='your':value=LifeTotalValueSpec('starting')
+    elif raw.casefold()=='half your starting life total, rounded up' and subject=='your':
+        value=LifeTotalValueSpec('starting_half_rounded_up')
     elif raw.casefold() in {'the highest life total among all players','the lowest life total among all players'}:
         value=LifeTotalValueSpec('highest' if 'highest' in raw.casefold() else 'lowest')
     elif raw.casefold()=='the number of creatures they control' and subject=="each player's":value=LifeTotalValueSpec('creatures')

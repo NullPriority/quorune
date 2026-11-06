@@ -21,6 +21,7 @@ from .scheduled_player_shapes import SCHEDULED_PLAYER_CAPABILITY, is_upkeep_part
 
 
 EVENT_SUBSCRIPTIONS_FIELD = "event_subscriptions"
+LAND_PLAY_EVENT = "land.played"
 
 
 class EventSubscriptionError(ValueError):

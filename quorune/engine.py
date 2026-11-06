@@ -280,6 +280,7 @@ from .rules.activation import (
     is_builtin_activation_semantic,
 )
 from .rules.action_catalog import build_priority_action_catalog
+from .rules.event_subscriptions import LAND_PLAY_EVENT
 from .rules.land_play_permissions import (
     consume_land_play_permission,
     selected_land_play_permission,
@@ -2462,6 +2463,7 @@ class CommanderEngine(
                     "This land play does not authorize an entry life payment"
                 )
         life_before = player.life
+        origin = card.zone
         card.annotations.pop("temporary_play_permission", None)
         self.move_card(
             card.object_id,
@@ -2493,6 +2495,7 @@ class CommanderEngine(
             changed_objects=[card.object_id],
             changed_players=[seat],
         )
+        dispatch_semantic_event(self, LAND_PLAY_EVENT, {"player": seat, "from": origin})
         # CR 117.5 and 704.3 require state-based actions and waiting triggers
         # to be handled before the active player receives priority after this
         # special action.  Without this boundary, an enters trigger created by

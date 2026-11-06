@@ -1,6 +1,8 @@
 """Closed normalized-event vocabulary shared by trigger binding consumers."""
 from enum import Enum
 
+from ..rules.event_subscriptions import LAND_PLAY_EVENT
+
 
 class FixedCounterTriggerEvent(str, Enum):
     """Closed normalized event families accepted by this compiler slice."""
@@ -13,6 +15,7 @@ class FixedCounterTriggerEvent(str, Enum):
     TOKENS_CREATED = 'tokens.created'
     SPELL_MANA_PAID = 'spell.mana_paid'
     CONTROLLED_LAND_ENTER = "land.enter"
+    PUBLIC_LAND_PLAY = LAND_PLAY_EVENT
     CONTROLLER_SPELL_CAST = "spell.cast"
     SOURCE_ATTACKS = "creature.attacks"
     ATTACKER_UNBLOCKED = 'creature.unblocked'

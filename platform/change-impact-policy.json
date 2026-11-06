@@ -3236,6 +3236,10 @@
         "quorune/block_transitions.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/fixed_public_action_event_bindings.py",
+        "quorune/compiler/event_player_results.py",
+        "quorune/rules/event_player_result_shapes.py",
+        "tests/test_land_play_triggers.py",
+        "tests/fixtures/land-play-trigger-cards.json",
         "tests/test_repeatable_object_action_triggers.py",
         "tests/fixtures/repeatable-object-action-triggers.json",
         "quorune/compiler/fixed_public_event_trigger_bindings.py",
@@ -3257,6 +3261,7 @@
       ],
       "test_modules": [
         "test_qualified_zone_event_queries",
+        "test_land_play_triggers",
         "test_ability_word_event_triggers",
         "test_attack_transitions",
         "test_block_transitions",
@@ -10999,6 +11004,7 @@
       ],
       "test_modules": [
         "test_life_total_setting",
+        "test_land_play_triggers",
         "test_life_change",
         "test_life_effect_runtime",
         "test_fixed_player_life_effects",

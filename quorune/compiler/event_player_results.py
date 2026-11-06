@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT
 from ..event_player_result_values import event_result_value_capabilities
 from .event_result_value_templates import event_result_instruction
 
@@ -45,7 +45,7 @@ def _occurrence_player(event,condition,variant,subject):
     elif event=='card.discarded':player='$context.previous_controller'
     elif event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}:player='$context.controller'
     elif event=='creature.dies':player='$context.previous_controller'
-    elif event in {'spell.cast','card.drawn','player.scried','player.surveilled'}:
+    elif event in {LAND_PLAY_EVENT,'spell.cast','card.drawn','player.scried','player.surveilled'}:
         player='$context.player'
     elif event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(condition):
         player='$context.target'

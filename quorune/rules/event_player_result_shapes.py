@@ -96,7 +96,8 @@ def _source_combat_player_scope(condition):
 
 
 def _occurrence_player_reference_is_closed(event,condition,coverage,player):
-    if player=='$context.player':return event in {'spell.cast','card.drawn','player.scried','player.surveilled'}
+    from .event_subscriptions import LAND_PLAY_EVENT
+    if player=='$context.player':return event in {LAND_PLAY_EVENT,'spell.cast','card.drawn','player.scried','player.surveilled'}
     if player=='$context.previous_controller':return event in {'card.discarded','creature.dies','creature.dies.self'}
     if player=='$context.controller':return event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}
     from ..compiler.event_player_results import _damage_guarantees_player
