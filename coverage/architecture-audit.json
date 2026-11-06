@@ -3044,84 +3044,84 @@
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:2b034ca1f768668d0319",
-          "line": 248,
+          "line": 249,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "face_id",
           "source_kind": "attribute",
-          "source_line": 248,
+          "source_line": 249,
           "symbol": "_validate_generated_program_trust"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:370b5257323bc14a7b48",
-          "line": 267,
+          "line": 268,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "card_name",
           "source_kind": "attribute",
-          "source_line": 267,
+          "source_line": 268,
           "symbol": "_validate_generated_program_trust"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:bb6c235e650a6a84d250",
-          "line": 1542,
+          "line": 1552,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1542,
+          "source_line": 1552,
           "symbol": "register_generated_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:46fe221950447b70c665",
-          "line": 1544,
+          "line": 1554,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1544,
+          "source_line": 1554,
           "symbol": "register_generated_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:aa4298afb2b017b682d4",
-          "line": 1553,
+          "line": 1563,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1553,
+          "source_line": 1563,
           "symbol": "register_generated_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:a796f8669390e5c5b8a7",
-          "line": 1610,
+          "line": 1620,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1610,
+          "source_line": 1620,
           "symbol": "register_generated_programs"
         },
         {
           "classification": "compiler_binding",
           "file": "quorune/compiler/program_generation.py",
           "flow_id": "card-identity-flow:d30ac7f81792b4c65366",
-          "line": 1616,
+          "line": 1626,
           "selector": null,
           "sink_kind": "identity_as_data",
           "source_field": "oracle_id",
           "source_kind": "attribute",
-          "source_line": 1616,
+          "source_line": 1626,
           "symbol": "register_generated_programs"
         },
         {
@@ -11947,7 +11947,7 @@
         },
         {
           "fan_in": 4,
-          "fan_out": 73,
+          "fan_out": 74,
           "module": "quorune.compiler.program_generation"
         },
         {
@@ -11996,7 +11996,7 @@
           "module": "quorune.compiler.keyword_nodes"
         }
       ],
-      "internal_edges": 9329,
+      "internal_edges": 9330,
       "modules": [
         {
           "fan_in": 2,
@@ -14250,7 +14250,7 @@
         },
         {
           "fan_in": 4,
-          "fan_out": 73,
+          "fan_out": 74,
           "module": "quorune.compiler.program_generation"
         },
         {
@@ -16069,7 +16069,7 @@
           "module": "quorune.keyword_abilities"
         },
         {
-          "fan_in": 17,
+          "fan_in": 18,
           "fan_out": 0,
           "module": "quorune.keyword_counters"
         },
@@ -20657,7 +20657,7 @@
       "covered_high_risk_pairs": 616,
       "covered_piece_pairs": 1941,
       "source": "coverage/reusable-piece-interactions.json.gz",
-      "source_fingerprint": "2044413aaf77da50a6b51c6a3f3a63cf11469466f2c4a82734b911f7d978bc90",
+      "source_fingerprint": "730af734c4a07c731072d34c70b660c91be49acb432237c39055fc575c8192fa",
       "uncovered_high_risk_pairs": 0
     },
     "migration_queue": [],
@@ -21046,7 +21046,7 @@
           "visibility": "private"
         }
       ],
-      "logical_lines": 304771,
+      "logical_lines": 304781,
       "methods": {
         "dunder": 900,
         "private": 1062,
@@ -21167,6 +21167,13 @@
           "physical_lines": 1561
         },
         {
+          "file": "quorune/compiler/program_generation.py",
+          "functions_and_methods": 70,
+          "language": "python",
+          "logical_lines": 1458,
+          "physical_lines": 1674
+        },
+        {
           "file": "quorune/semantic_runtime/zone_replacements.py",
           "functions_and_methods": 33,
           "language": "python",
@@ -21179,13 +21186,6 @@
           "language": "python",
           "logical_lines": 1456,
           "physical_lines": 1518
-        },
-        {
-          "file": "quorune/compiler/program_generation.py",
-          "functions_and_methods": 70,
-          "language": "python",
-          "logical_lines": 1448,
-          "physical_lines": 1664
         },
         {
           "file": "quorune/rules/casting/commit.py",
@@ -33593,7 +33593,7 @@
           "physical_lines": 1690
         }
       ],
-      "physical_lines": 337355,
+      "physical_lines": 337365,
       "python_file_count": 1730,
       "review_thresholds": {
         "function_logical_lines_review": 150,
@@ -43059,7 +43059,7 @@
         {
           "condition": "all(effect.get('op') == 'manifest_card' for effect in program.effects)",
           "file": "quorune/compiler/program_generation.py",
-          "line": 504,
+          "line": 505,
           "string_literals": [
             "manifest_card",
             "op"
@@ -59031,7 +59031,7 @@
     "compiler_module": "quorune/oracle_ir.py",
     "compiler_module_logical_lines": 1456,
     "compiler_module_physical_lines": 1518,
-    "compiler_version": "oracle-ir-v708",
+    "compiler_version": "oracle-ir-v717",
     "current_ir": "OracleCardIR lowered to canonical CardProgram V2 with a derived SemanticProgram compatibility index",
     "full_oracle": {
       "current_snapshot_complete": false,
@@ -59600,7 +59600,7 @@
             "quorune/card_programs/adapters.py:226"
           ],
           "generated_programs": [
-            "quorune/compiler/program_generation.py:1336",
+            "quorune/compiler/program_generation.py:1346",
             "quorune/oracle_ir.py:1461"
           ]
         },
@@ -59652,7 +59652,7 @@
             "quorune/compiler/maximum_hand_size_nodes.py:15",
             "quorune/compiler/myriad_nodes.py:10",
             "quorune/compiler/program_composition.py:12",
-            "quorune/compiler/program_generation.py:25",
+            "quorune/compiler/program_generation.py:26",
             "quorune/compiler/public_alternative_cost_nodes.py:16",
             "quorune/compiler/saga_chapter_nodes.py:10",
             "quorune/compiler/source_maintenance_nodes.py:9",
@@ -59702,7 +59702,7 @@
             "quorune/compiler/unearth_nodes.py:14"
           ],
           "generated_programs": [
-            "quorune/compiler/program_generation.py:1336",
+            "quorune/compiler/program_generation.py:1346",
             "quorune/oracle_ir.py:1461"
           ]
         },
@@ -59749,7 +59749,7 @@
             "quorune/engine.py:41"
           ],
           "register_generated_programs": [
-            "quorune/compiler/program_generation.py:1517",
+            "quorune/compiler/program_generation.py:1527",
             "quorune/oracle_ir.py:1484",
             "quorune/preflight.py:18",
             "quorune/session.py:14"
@@ -59768,7 +59768,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 874,
         "exact_nodes": 1006,
-        "fingerprint": "c8ff890279605d50abccd124f8b78924a580897ab92d2862d6f5d67186c46fe7",
+        "fingerprint": "062493b635c7b654842e406a61b5d5595971e634377c61c0a01da7fcd14327f2",
         "grammar_source_fingerprint": "f8fe32813b299c9fb0ed497c58917eb53853c404ffb351fc4a343385924167de",
         "identity_fingerprint": "56f7de35e08b9cbaad6d14544004c4665c37a5961cbdcbe8bc0f8bc8dd587919",
         "present": true,
@@ -59780,7 +59780,7 @@
         "contract_fingerprint": "49d2cced978cfa4f7f74f28456b625e020425b22b5a67308fc9a53b5c9f29ee3",
         "exact_cards_with_template": 899,
         "exact_nodes": 1044,
-        "fingerprint": "96b35d3b4c478840ce77907a135c897cf9a2851e51d58c835045f385762868df",
+        "fingerprint": "b619b60b7a092bc16d5c1970f76dd9a5876245e4021bbacde4f502d810452cc4",
         "grammar_source_fingerprint": "f8fe32813b299c9fb0ed497c58917eb53853c404ffb351fc4a343385924167de",
         "identity_fingerprint": "a07588de4f82eecd42adb2eb14f72db4f8f15a6a85d875b0ecfc034fa1c5dd99",
         "present": true,
@@ -59799,7 +59799,7 @@
       "worktree_clean": true
     },
     "evaluated_source_tree": {
-      "fingerprint": "1e51a4108133d8e3a71d052cafaeb26547d7a0abdf0cf05c9e07edef2d5fd887",
+      "fingerprint": "f759ce9b853397b6abd0655d656721e4768bc3e82380ff080070453b7e1f63e8",
       "fingerprint_algorithm": "tracked-git-clean-blobs-sha256-v3"
     },
     "historical_audit_observation": {
@@ -60657,8 +60657,8 @@
       "named_deterministic_fuzz_cases": 1
     },
     "python": {
-      "conventional_ast_cases": 11172,
-      "discovered_total": 14481,
+      "conventional_ast_cases": 11173,
+      "discovered_total": 14482,
       "generated_rule_conformance_cases": 3309,
       "named_cross_cutting_counts": {
         "compiler_named": 341,
