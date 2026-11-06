@@ -409,6 +409,11 @@ def _lower_combat_keyword_fragments(
             CombatKeywordTriggerKind.TRAINING,
             "ability.trigger.training.v1",
         ),
+        (
+            "decayed",
+            CombatKeywordTriggerKind.DECAYED,
+            "ability.trigger.decayed.v1",
+        ),
     )
     for mechanic, kind, handler_id in ordinary_attack_keywords:
         keyword = mechanic

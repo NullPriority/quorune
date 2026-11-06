@@ -509,6 +509,7 @@
     "tests/fixtures/damage-result-cards.json",
     "tests/fixtures/damage-source-identity-cards.json",
     "tests/fixtures/dealt-damage-recipient-cards.json",
+    "tests/fixtures/decayed-cards.json",
     "tests/fixtures/defender-declaration-numeric-cards.json",
     "tests/fixtures/defender-permission-cards.json",
     "tests/fixtures/defending-player-target-cards.json",

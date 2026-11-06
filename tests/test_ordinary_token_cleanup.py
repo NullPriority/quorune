@@ -335,4 +335,140 @@ class OrdinaryTokenCleanupCopyNativeTests(InheritedNativeFixture,unittest.TestCa
         self.replay(s,load=True)
 
 
+class DecayedNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "decayed.sqlite3"
+        fixtures = ROOT / "tests/fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "qualified-attack-cards.json",
+            fixtures / "decayed-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Decayed combat",
+            [DeckEntry("Isamaru, Hound of Konda", 1, "commander"),
+             DeckEntry("Generic Bound Plains", 30)],
+            ["Isamaru, Hound of Konda"],
+        )
+
+    def make_zombie(self, session, source):
+        previous_objects = set(session.state.cards)
+        self.assert_closed(session, source)
+        self.cast(session, "A", source)
+        self.resolve_top(session)
+        self.assertEqual(source.object_id, session.state.stack[-1].source_object_id)
+        self.resolve_top(session)
+        zombie, = [
+            card for card in session.state.cards.values()
+            if card.is_token and card.zone == "battlefield" and card.object_id not in previous_objects
+        ]
+        self.assertEqual("Zombie Token", zombie.printed_name)
+        self.assertIn("decayed", {keyword.casefold() for keyword in session.engine._combat_keywords(zombie)})
+        return zombie
+
+    def test_actual_decayed_attacker_sacrifices_at_end_of_combat_after_ability_loss(self):
+        session = self.session(702147001)
+        falcon = self.add(session.engine, "Falcon Abomination", zone="hand")
+        self.add(session.engine, "Fervor")
+        dress_down = self.add(session.engine, "Dress Down", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B", ref="decayed-response-one")
+        self.add(session.engine, "Island", seat="B", ref="decayed-response-two")
+        self.assert_closed(session, dress_down)
+        private = self.add(session.engine, "Twiddle", seat="D", zone="hand", ref="decayed-private")
+        self.prepare(session, mana={"C": 2, "U": 1})
+        self.checkpoint(session)
+
+        zombie = self.make_zombie(session, falcon)
+        self.attack(session, [(zombie, "B")])
+        attack_trigger, = session.state.stack
+        self.assertEqual(zombie.object_id, attack_trigger.source_object_id)
+        self.assertEqual("decayed", attack_trigger.context["attack_keyword_trigger"]["kind"])
+        self.assertFalse(any(item.active for item in session.state.delayed_triggers))
+
+        self.cast(session, "B", dress_down)
+        self.resolve_top(session)
+        self.resolve_top(session)  # Dress Down's draw trigger.
+        current = session.state.cards[zombie.object_id]
+        self.assertNotIn("decayed", {keyword.casefold() for keyword in session.engine._combat_keywords(current)})
+        self.assertEqual(attack_trigger.ref, session.state.stack[-1].ref)
+        self.resolve_top(session)
+        delay, = [item for item in session.state.delayed_triggers if item.active]
+        self.assertEqual(("A", zombie.object_id, zombie.logical_object_id),
+                         (delay.controller, delay.source_object_id, delay.source_logical_object_id))
+        session = self.replay(session, load=True)
+
+        self.until(session, lambda game: game.state.step == "end_combat")
+        self.assertEqual("battlefield", session.state.cards[zombie.object_id].zone)
+        self.assertEqual(38, session.state.players["B"].life)
+        delayed_stack_item, = session.state.stack
+        self.assertEqual(("triggered_ability", "A", zombie.object_id),
+                         (delayed_stack_item.kind, delayed_stack_item.controller, delayed_stack_item.source_object_id))
+        self.resolve_top(session)
+        self.assertEqual("outside", session.state.cards[zombie.object_id].zone)
+        self.assertFalse(any(item.active for item in session.state.delayed_triggers))
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        self.replay(session, load=True)
+
+    def test_actual_decayed_and_plain_zombies_have_different_blocker_offers(self):
+        session = self.session(702147002)
+        falcon = self.add(session.engine, "Falcon Abomination", zone="hand")
+        self.add(session.engine, "Vedalken Orrery")
+        attacker = self.add(session.engine, "Grizzly Bears", seat="B")
+        attacker.acquired_control_turn_count = -1
+        plain_ref, = session.engine.create_token("A", name="Zombie Token", characteristics={
+            "type_line": "Token Creature — Zombie", "power": "2", "toughness": "2", "colors": ["B"],
+        })
+        for index in range(3):
+            self.add(session.engine, "Island", ref=f"decayed-cast-{index}")
+        self.prepare(session, active="B", actor="B")
+        self.checkpoint(session)
+        zombie = self.make_zombie(session, falcon)
+
+        self.until(session, lambda game: game.state.pending_decision.kind == "combat.attackers")
+        result = session.act("pilot:B", {"action_id": "attack", "attackers": {attacker.ref: "A"}})
+        self.assertTrue(result.ok, result.summary)
+        self.until(session, lambda game: game.state.pending_decision.kind == "combat.blockers")
+        decision = session.packet("pilot:A", full=True)["decision"]
+        self.assertEqual([attacker.ref], decision["ctx"]["legal_blocks"][plain_ref])
+        self.assertNotIn(zombie.ref, decision["ctx"]["legal_blocks"])
+        before = authoritative_state_hash(session.state)
+        illegal = {"action_id": "block", "blocks": {zombie.ref: attacker.ref}}
+        self.assertFalse(session.act("pilot:A", illegal).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        legal = {"action_id": "block", "blocks": {plain_ref: attacker.ref}}
+        result = session.act("pilot:A", legal)
+        self.assertTrue(result.ok, result.summary)
+        self.until(session, lambda game: game.state.phase == "postcombat_main")
+        self.assertEqual("graveyard", session.state.cards[attacker.object_id].zone)
+        self.assertEqual("battlefield", session.state.cards[zombie.object_id].zone)
+        self.assertFalse(any(item.active for item in session.state.delayed_triggers))
+        self.replay(session, load=True)
+
+    def test_actual_countered_decayed_attack_trigger_schedules_no_sacrifice(self):
+        session = self.session(702147003)
+        falcon = self.add(session.engine, "Falcon Abomination", zone="hand")
+        self.add(session.engine, "Fervor")
+        stifle = self.add(session.engine, "Stifle", seat="B", zone="hand")
+        self.add(session.engine, "Island", seat="B")
+        self.assert_closed(session, stifle)
+        self.prepare(session, mana={"C": 2, "U": 1})
+        self.checkpoint(session)
+        zombie = self.make_zombie(session, falcon)
+        self.attack(session, [(zombie, "B")])
+        attack_trigger, = session.state.stack
+        self.cast(session, "B", stifle, [attack_trigger.ref])
+        self.resolve_top(session)
+        self.assertFalse(session.state.stack)
+        self.assertFalse(any(item.active for item in session.state.delayed_triggers))
+        self.until(session, lambda game: game.state.phase == "postcombat_main")
+        self.assertEqual(38, session.state.players["B"].life)
+        self.assertEqual("battlefield", session.state.cards[zombie.object_id].zone)
+        self.replay(session, load=True)
+
+
 if __name__=='__main__':unittest.main()

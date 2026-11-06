@@ -31,6 +31,7 @@ from ..ability_fragments import (
     StaticComponentScopeSpec,
     ToxicSpec,
     ability_fragment_from_dict,
+    decayed_ability_fragments,
 )
 from ..legend_rule_model import LEGEND_RULE_CAPABILITY, LEGEND_RULE_HANDLER, LegendRuleExemptionSpec
 from ..enchant_spec import SimpleEnchantSpec, TypedEnchantSpec
@@ -74,6 +75,7 @@ MELEE_FRAGMENT_HANDLER_ID = "ability.trigger.melee.v1"
 MENTOR_FRAGMENT_HANDLER_ID = "ability.trigger.mentor.v1"
 DETHRONE_FRAGMENT_HANDLER_ID = "ability.trigger.dethrone.v1"
 TRAINING_FRAGMENT_HANDLER_ID = "ability.trigger.training.v1"
+DECAYED_FRAGMENT_HANDLER_ID = "ability.trigger.decayed.v1"
 RENOWN_FRAGMENT_HANDLER_ID = "ability.trigger.renown.v1"
 CASCADE_FRAGMENT_HANDLER_ID = "ability.trigger.cascade.v1"
 PROWESS_FRAGMENT_HANDLER_ID = "ability.trigger.prowess.v1"
@@ -853,6 +855,40 @@ class TrainingAbilityFragmentHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class DecayedAbilityFragmentHandler:
+    handler_id: str = DECAYED_FRAGMENT_HANDLER_ID
+    schema_version: int = 1
+    family: str = "ability.trigger.decayed"
+    event: str = "continuous"
+    rule_references: tuple[str, ...] = ("702.147a", "508.3a", "511.2")
+    capability_dependencies: tuple[str, ...] = ("combat.trigger.decayed",)
+
+    def validate(
+        self, descriptor: Mapping[str, Any]
+    ) -> CombatKeywordTriggerSpec:
+        fragment = _fragment(
+            descriptor,
+            handler_id=self.handler_id,
+            event=self.event,
+            expected_type=CombatKeywordTriggerSpec,
+        )
+        if fragment.kind is not CombatKeywordTriggerKind.DECAYED:
+            raise SemanticNodeError(
+                "The Decayed runtime handler requires a Decayed fragment"
+            )
+        return fragment
+
+    def lower(
+        self,
+        descriptor: Mapping[str, Any],
+        context: object,
+    ) -> tuple[StaticAbilityFragment, ...]:
+        del context
+        self.validate(descriptor)
+        return decayed_ability_fragments()
+
+
+@dataclass(frozen=True, slots=True)
 class RenownAbilityFragmentHandler:
     handler_id: str = RENOWN_FRAGMENT_HANDLER_ID
     schema_version: int = 1
@@ -1523,6 +1559,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             StormAbilityFragmentHandler(),
             StaticComponentScopeAbilityFragmentHandler(),
             TrainingAbilityFragmentHandler(),
+            DecayedAbilityFragmentHandler(),
             TriggerMultiplierAbilityFragmentHandler(),
             TypedTriggerParticipationAbilityFragmentHandler(),
             TypedTriggerParticipationAbilityFragmentHandler(handler_id='ability.static.trigger-prohibition.v2',
@@ -1575,6 +1612,7 @@ __all__ = [
     "MENTOR_FRAGMENT_HANDLER_ID",
     "DETHRONE_FRAGMENT_HANDLER_ID",
     "TRAINING_FRAGMENT_HANDLER_ID",
+    "DECAYED_FRAGMENT_HANDLER_ID",
     "RENOWN_FRAGMENT_HANDLER_ID",
     "PROWESS_FRAGMENT_HANDLER_ID",
     "STORM_FRAGMENT_HANDLER_ID",
@@ -1606,6 +1644,7 @@ __all__ = [
     "QueryCharacteristicModifierAbilityFragmentHandler",
     "QueryPowerToughnessDefinitionAbilityFragmentHandler",
     "TrainingAbilityFragmentHandler",
+    "DecayedAbilityFragmentHandler",
     "RenownAbilityFragmentHandler",
     "ProwessAbilityFragmentHandler",
     "StormAbilityFragmentHandler",

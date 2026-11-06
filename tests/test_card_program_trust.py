@@ -326,6 +326,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.trigger.renown",
                 "ability.trigger.storm",
                 "ability.trigger.training",
+                "ability.trigger.decayed",
                 "ability.trigger.ward",
                 "casting.alternative-cost.fixed-public",
                 "casting.alternative-cost.fixed-battlefield-grant",

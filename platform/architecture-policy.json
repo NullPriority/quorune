@@ -216,7 +216,7 @@
     "read_only_consumers": {
       "quorune/__init__.py": "public type re-export",
       "quorune/attack_transition_engine_adapter.py": "narrow read-only CommanderEngine compatibility query and trigger coordinator for immutable completed attack transitions",
-      "quorune/attack_transition_resolution.py": "read-only attack-trigger result coordinator delegating mutation to the canonical continuous-effect owner",
+      "quorune/attack_transition_resolution.py": "attack-trigger result coordinator delegating mutation to the canonical continuous-effect and delayed-trigger owners",
       "quorune/aura/decisions.py": "seat-scoped Aura-entry continuation validation and resolution routing",
       "quorune/aura/runtime.py": "read-only Aura legality and entry planner delegating attachment mutation to the canonical owner",
       "quorune/cascade.py": "typed Cascade trigger and resolution coordinator delegating casting, zone movement, choice, and cleanup mutation to canonical owners",

@@ -414,6 +414,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _MENTOR_MECHANIC: ("counter.producer.mentor",),
     _DETHRONE_MECHANIC: ("counter.producer.dethrone",),
     _TRAINING_MECHANIC: ("counter.producer.training",),
+    "decayed": ("combat.trigger.decayed",),
     _RENOWN_MECHANIC: ("counter.producer.renown",),
     _MODULAR_MECHANIC: ("counter.producer.modular",),
     _EXHAUST_MECHANIC: ("activation.exhaust.once_per_object",),

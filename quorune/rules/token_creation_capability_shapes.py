@@ -8,6 +8,7 @@ from typing import Any, Mapping, Sequence
 from ..ability_fragments import (
     AbilityFragmentError,
     AllCreatureTypesCharacteristicDefinitionSpec,
+    CombatKeywordTriggerSpec,
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
     QueryCharacteristicModifierSpec,
@@ -16,6 +17,7 @@ from ..ability_fragments import (
     SpellCastKeywordTriggerSpec,
     ToxicSpec,
     canonical_ability_fragments,
+    decayed_ability_fragments,
 )
 from ..cast_face_offers import OMEN_COVERAGE
 from ..compiler.token_templates import (
@@ -24,6 +26,7 @@ from ..compiler.token_templates import (
 )
 from ..compiler.direct_target import direct_permanent_target_spec
 from ..declaration_fragments import (
+    DECLARATION_COMPONENT_CAPABILITY_ID,
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
 )
@@ -116,6 +119,7 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
         return (
             'token.creation.fixed_definition',
             *token_toxic_definition_dependencies(value['characteristics']),
+            *token_decayed_definition_dependencies(value['characteristics']),
             *query_defined_token_stat_dependencies(value['characteristics']),
             *target_dependencies,
         )
@@ -144,9 +148,31 @@ def token_toxic_definition_dependencies(characteristics: Mapping[str, Any]) -> t
     return ("damage.result.toxic",) if toxic else ()
 
 
+def token_decayed_definition_dependencies(
+    characteristics: Mapping[str, Any],
+) -> tuple[str, ...]:
+    """Require both typed abilities for an ordinary Decayed token definition."""
+
+    keywords = characteristics.get("keywords", ())
+    fragments = canonical_ability_fragments(characteristics.get("ability_fragments", ()))
+    printed = sum(
+        isinstance(keyword, str) and keyword.casefold() == "decayed"
+        for keyword in keywords
+    )
+    trigger, block_restriction = decayed_ability_fragments()
+    instances = fragments.count(trigger)
+    if printed != instances or printed > 1 or (printed and block_restriction not in fragments):
+        raise ValueError("Token Decayed requires matching attack and block abilities")
+    return (
+        ("combat.trigger.decayed", DECLARATION_COMPONENT_CAPABILITY_ID)
+        if printed else ()
+    )
+
+
 _CREATURE_KEYWORDS = frozenset(
     {
         "Deathtouch",
+        "Decayed",
         "Defender",
         "Double Strike",
         "First Strike",
@@ -259,12 +285,9 @@ def _fixed_predefined_effect_is_closed(
     )
 
 
-def _fixed_creature_effect_closure(
-    effect: Mapping[str, Any],
-) -> tuple[tuple[str, ...], set[str]] | None:
-    characteristics = effect.get("characteristics")
-    if not isinstance(characteristics, Mapping):
-        return None
+def _fixed_creature_definition_fields_are_closed(
+    characteristics: Mapping[str, Any],
+) -> bool:
     allowed = {
         "type_line",
         "colors",
@@ -276,6 +299,30 @@ def _fixed_creature_effect_closure(
     }
     required = {"type_line", "colors", "power", "toughness"}
     if not required.issubset(characteristics) or set(characteristics) - allowed:
+        return False
+    colors = characteristics.get("colors")
+    if (
+        not isinstance(colors, list)
+        or len(colors) > 3
+        or any(color not in _COLOR_ORDER for color in colors)
+        or colors != sorted(set(colors), key=_COLOR_ORDER.index)
+    ):
+        return False
+    for field in ("power", "toughness"):
+        value = characteristics.get(field)
+        if not isinstance(value, str) or (value != "*" and not value.isdigit()):
+            return False
+    return True
+
+
+def _fixed_creature_effect_closure(
+    effect: Mapping[str, Any],
+) -> tuple[tuple[str, ...], set[str]] | None:
+    characteristics = effect.get("characteristics")
+    if (
+        not isinstance(characteristics, Mapping)
+        or not _fixed_creature_definition_fields_are_closed(characteristics)
+    ):
         return None
     try:
         name_version = literal_token_name_version(characteristics)
@@ -293,18 +340,6 @@ def _fixed_creature_effect_closure(
         type_line,
     ) is None:
         return None
-    colors = characteristics.get("colors")
-    if (
-        not isinstance(colors, list)
-        or len(colors) > 3
-        or any(color not in _COLOR_ORDER for color in colors)
-        or colors != sorted(set(colors), key=_COLOR_ORDER.index)
-    ):
-        return None
-    for field in ("power", "toughness"):
-        value = characteristics.get(field)
-        if not isinstance(value, str) or (value != "*" and not value.isdigit()):
-            return None
     keywords = characteristics.get("keywords", [])
     if (
         not isinstance(keywords, list)
@@ -336,6 +371,7 @@ def _fixed_creature_effect_closure(
         return None
     try:
         capabilities.update(token_toxic_definition_dependencies(characteristics))
+        capabilities.update(token_decayed_definition_dependencies(characteristics))
         capabilities.update(query_defined_token_stat_dependencies(characteristics))
     except (AbilityFragmentError, TypeError, ValueError):
         return None
@@ -344,6 +380,7 @@ def _fixed_creature_effect_closure(
     except (TypeError,ValueError):return None
     typed_ability_definition = False
     typed_ability_fragment = False
+    decayed_trigger, decayed_restriction = decayed_ability_fragments()
     for fragment in fragments:
         if isinstance(fragment, ToxicSpec):
             capabilities.add("damage.result.toxic")
@@ -355,7 +392,12 @@ def _fixed_creature_effect_closure(
             if fragment.kind is not SpellCastKeywordTriggerKind.PROWESS or 'Prowess' not in keywords:
                 return None
             capabilities.add('trigger.keyword.prowess')
+        elif isinstance(fragment, CombatKeywordTriggerSpec):
+            if fragment != decayed_trigger:
+                return None
         elif isinstance(fragment, DeclarationRestrictionTemplate):
+            if "Decayed" in keywords and fragment == decayed_restriction:
+                continue
             legacy_declaration = fragment.template_id in {
                 "intrinsic-block-prohibition-v1",
                 "intrinsic-unblockable-v1",

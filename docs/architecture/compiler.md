@@ -5047,3 +5047,10 @@ uses the separately authorized resolving cast window.
 Variable costs, altered reminder text, granted declarations and unrepresented
 faces retain their material residuals. The [drawing owner](drawing.md) owns
 prospective-library and committed-hand identities.
+
+Printed Decayed and fixed token definitions use the same typed attack trigger
+and intrinsic block prohibition. Fixed token admission requires both abilities
+in the defining payload. The sealed attack declaration captures each instance
+on a declared attacker. Resolving that trigger schedules a separate
+end-of-combat sacrifice through the existing delayed and incarnation-filtered
+zone movement owners.

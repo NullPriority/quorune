@@ -22885,6 +22885,91 @@
     {
       "applicability": {
         "exclusions": [
+          "variable or conditional keyword grants",
+          "keyword counters without their own typed producer",
+          "result compositions with other residuals"
+        ],
+        "inputs": [
+          "printed keyword or fixed token definition",
+          "effective abilities at sealed attack declaration"
+        ],
+        "outputs": [
+          "block exclusion",
+          "one ordinary attack trigger per declared instance",
+          "one delayed incarnation-bound sacrifice per resolution"
+        ],
+        "summary": "Ordinary Decayed combines an intrinsic block prohibition and an attack trigger whose resolution schedules a controller-bound end-of-combat sacrifice."
+      },
+      "blockers": [],
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "trigger.delayed.fixed_object_action"
+      ],
+      "dependency_fail_closed_rationale": "Fixed token definitions and printed components require the Decayed capability; incomplete typed definitions and withdrawn runtime dependencies fail closed.",
+      "dependency_fail_closed_status": "passed",
+      "id": "combat.trigger.decayed",
+      "implementation_components": [
+        "quorune.ability_fragments.decayed_ability_fragments",
+        "quorune.attack_transition_model.derive_attack_keyword_trigger_occurrences",
+        "quorune.attack_transition_resolution.resolve_attack_keyword_trigger",
+        "quorune.rules.token_creation_capability_shapes.token_decayed_definition_dependencies",
+        "quorune.semantic_runtime.ability_fragments.DecayedAbilityFragmentHandler"
+      ],
+      "implementation_mutation_rationale": "Removing the Decayed token production leaves Falcon Abomination's mandatory token result unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_decayed_attacker_sacrifices_at_end_of_combat_after_ability_loss",
+        "test_actual_countered_decayed_attack_trigger_schedules_no_sacrifice"
+      ],
+      "multiplayer_tests": [
+        "test_actual_decayed_attacker_sacrifices_at_end_of_combat_after_ability_loss",
+        "test_actual_decayed_and_plain_zombies_have_different_blocker_offers"
+      ],
+      "negative_tests": [
+        "test_actual_decayed_and_plain_zombies_have_different_blocker_offers",
+        "test_actual_countered_decayed_attack_trigger_schedules_no_sacrifice",
+        "test_decayed_fixed_definition_requires_both_abilities"
+      ],
+      "official_rules": [
+        "702.147a",
+        "508.3a",
+        "511.2",
+        "603.7c",
+        "603.7e",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_decayed_uses_only_declared_attackers_and_preserves_instances",
+        "test_actual_decayed_attacker_sacrifices_at_end_of_combat_after_ability_loss",
+        "test_decayed_fixed_definition_requires_both_abilities"
+      ],
+      "privacy_tests": [
+        "test_actual_decayed_attacker_sacrifices_at_end_of_combat_after_ability_loss"
+      ],
+      "replay_tests": [
+        "test_actual_decayed_attacker_sacrifices_at_end_of_combat_after_ability_loss",
+        "test_actual_decayed_and_plain_zombies_have_different_blocker_offers",
+        "test_actual_countered_decayed_attack_trigger_schedules_no_sacrifice"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "conditional or rules-text-equivalent Exalted wording",
           "granted, copied, or face-down Exalted outside trusted typed fragments",
           "put-onto-the-battlefield-attacking effects",
@@ -80733,7 +80818,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 748,
+  "registry_version": 749,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

@@ -11,6 +11,7 @@ from ..ability_fragments import (
     SpellCastKeywordTriggerSpec,
     ToxicSpec,
     ability_fragment_to_dict,
+    decayed_ability_fragments,
 )
 from ..fixed_token_production import (
     TOKEN_LITERAL_NAME_VERSION_FIELD,
@@ -55,6 +56,7 @@ _COLOR_ORDER = "WUBRG"
 _CREATURE_TOKEN_KEYWORDS = frozenset(
     {
         "deathtouch",
+        "decayed",
         "defender",
         "double strike",
         "first strike",
@@ -350,6 +352,11 @@ def _single_fixed_token_creation_effect_template(
     if 'prowess' in keywords:
         characteristics.setdefault('ability_fragments', []).append(ability_fragment_to_dict(
             SpellCastKeywordTriggerSpec(kind=SpellCastKeywordTriggerKind.PROWESS)))
+    if "decayed" in keywords:
+        characteristics.setdefault("ability_fragments", []).extend(
+            ability_fragment_to_dict(fragment)
+            for fragment in decayed_ability_fragments()
+        )
     for keyword in keywords:
         toxic = re.fullmatch(r"toxic (?P<value>[1-9]\d*)", keyword)
         if toxic is not None:

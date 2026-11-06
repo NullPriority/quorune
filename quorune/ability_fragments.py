@@ -85,6 +85,7 @@ class CombatKeywordTriggerKind(str, Enum):
     MENTOR = "mentor"
     DETHRONE = "dethrone"
     TRAINING = "training"
+    DECAYED = "decayed"
 
 
 class SpellCastKeywordTriggerKind(str, Enum):
@@ -592,6 +593,21 @@ class CombatKeywordTriggerSpec:
             kind=kind,
             amount=value["amount"],
         )
+
+
+def decayed_ability_fragments() -> tuple[
+    CombatKeywordTriggerSpec, DeclarationRestrictionTemplate
+]:
+    """The two abilities represented by Decayed (CR 702.147a)."""
+
+    return (
+        CombatKeywordTriggerSpec(CombatKeywordTriggerKind.DECAYED, amount=1),
+        DeclarationRestrictionTemplate(
+            template_id="intrinsic-block-prohibition-v1",
+            declarations=("block",),
+            scope="self",
+        ),
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -1506,6 +1522,7 @@ __all__ = [
     "activation_prohibition_specs",
     "canonical_ability_fragments",
     "combat_keyword_trigger_specs",
+    "decayed_ability_fragments",
     "counter_maximum_specs",
     "counter_maximum_values",
     "damage_keyword_trigger_specs",

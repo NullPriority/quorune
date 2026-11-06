@@ -12305,6 +12305,24 @@
       ]
     },
     {
+      "id": "decayed-combat-and-token-definition",
+      "patterns": [
+        "quorune/attack_transition_model.py",
+        "quorune/attack_transition_resolution.py",
+        "quorune/compiler/ability_keyword_fragments.py",
+        "quorune/compiler/token_templates.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "tests/fixtures/decayed-cards.json"
+      ],
+      "test_modules": [
+        "test_attack_keyword_compiler",
+        "test_attack_transitions",
+        "test_card_program_trust",
+        "test_ordinary_token_cleanup",
+        "test_token_copy_values"
+      ]
+    },
+    {
       "id": "scalar-cleanup-and-owned-token-components",
       "patterns": [
         "quorune/compiler/created_token_cleanup_templates.py",
