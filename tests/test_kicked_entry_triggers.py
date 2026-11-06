@@ -146,6 +146,29 @@ class KickedEntryActionTests(unittest.TestCase):
                 self.assertEqual(50 if kicked else 40, session.state.players['A'].life)
                 self.replay(session)
 
+    def test_actual_kicked_verix_creates_karox_with_its_printed_characteristics(self):
+        session = self.session(7023308)
+        engine = session.engine
+        source = self.add(engine, 'Verix Bladewing', ref='VERIX')
+        action = self.ready(session, source, {'R': 2, 'C': 5})
+        self.assertEqual({'normal', 'kicked'}, {option['id'] for option in action['cost_options']})
+        self.checkpoint(session)
+        result = session.act('pilot:A', {'action_id': action['id'], 'cost_option': 'kicked', 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.advance_to(session, lambda s: s.state.cards[source.object_id].zone == 'battlefield')
+        self.assertEqual(1, len(session.state.stack))
+        self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+        self.advance_to(session, lambda s: not s.state.stack)
+        token, = (card for card in session.state.cards.values() if card.is_token)
+        self.assertEqual(('Karox Bladewing', 'A', 'A', 'battlefield'),
+                         (token.printed_name, token.owner, token.controller, token.zone))
+        current = engine._effective_card_data(token)
+        self.assertEqual(('Legendary Creature — Dragon', '4', '4'),
+                         (current['type_line'], current['power'], current['toughness']))
+        self.assertEqual({'R'}, set(current['colors']))
+        self.assertEqual({'flying'}, engine._combat_keywords(token))
+        self.replay(session)
+
     def test_actual_kicked_entry_trigger_survives_blink_and_new_entry_has_no_kicker(self):
         session = self.session(7023303); engine = session.engine
         source = self.add(engine, 'Krosan Druid', ref='DRUID')

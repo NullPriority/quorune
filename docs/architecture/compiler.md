@@ -16,6 +16,10 @@ cleanup clauses keep their existing owners. An unconsumed `that's`/`that is`/
 `that are` state rider cannot become part of a token name; unsupported recipient
 or ability text remains residual.
 
+A name-first legendary creature token may carry a fixed keyword list. The
+ordinary creature-token production validates that entire list before the named
+production adds the printed name and legendary supertype.
+
 A closed fixed token definition may identify one target player or opponent as
 the creator. The ordinary public player target schema chooses and revalidates
 that recipient. The token transaction uses the chosen player's creation

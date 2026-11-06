@@ -7,6 +7,7 @@ import re
 import unittest
 
 from common import ROOT
+from quorune.compiler.token_templates import fixed_token_creation_effect_template
 from quorune.dungeon_catalog import DUNGEON_CATALOG, DungeonId, DungeonRoom, VentureMode
 from quorune.dungeon_progress import (
     DungeonJourney,
@@ -37,6 +38,23 @@ class DungeonProgressTests(unittest.TestCase):
                 graph = [(room.label, tuple(definition.rooms[index].label for index in room.exits))
                          for room in definition.rooms]
                 self.assertEqual(printed, graph)
+
+    def test_cradle_lowers_the_named_legendary_token_with_its_printed_ability(self):
+        payload = json.loads((ROOT / "tests/fixtures/dungeon-cards.json").read_bytes())
+        tomb = next(card for card in payload["cards"] if card["name"] == "Tomb of Annihilation")
+        body, = (line.split(" — ", 1)[1] for line in tomb["oracle_text"].splitlines()
+                 if line.startswith("Cradle of the Death God — "))
+        compiled = fixed_token_creation_effect_template(body)
+        self.assertIsNotNone(compiled)
+        self.assertIsNone(compiled.target_schema)
+        self.assertEqual({
+            "op": "create_token", "controller": "$controller", "name": "The Atropal", "quantity": 1,
+            "characteristics": {"type_line": "Token Legendary Creature — God Horror",
+                                "literal_token_name_version": 1, "colors": ["B"],
+                                "power": "4", "toughness": "4", "keywords": ["Deathtouch"]},
+        }, compiled.effect)
+        unsupported = body.replace("deathtouch", "deathtouch and all triggered abilities of the exiled cards")
+        self.assertIsNone(fixed_token_creation_effect_template(unsupported))
 
     def test_catalog_rejects_backward_edges_and_unreachable_rooms(self):
         definition = DUNGEON_CATALOG[DungeonId.LOST_MINE]

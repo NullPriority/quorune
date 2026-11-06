@@ -57,7 +57,8 @@ _FIXED_NAMED_TOKEN = re.compile(
 )
 _FIXED_LEGENDARY_NAMED_TOKEN = re.compile(
     r"^Create (?P<name>[A-Za-z][A-Za-z' -]*), a legendary "
-    r"(?P<body>\d+/\d+ .+? creature token)\.?$", re.IGNORECASE,
+    r"(?P<body>\d+/\d+ .+? creature token(?: with [A-Za-z0-9 ,'-]+)?)\.?$",
+    re.IGNORECASE,
 )
 _FIXED_POSTPOSED_COLOR_TOKEN = re.compile(
     r"^Create (?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|"
