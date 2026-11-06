@@ -68,6 +68,25 @@ def _is_fixed_token_action_effect(effect: Mapping[str, Any], build_effect) -> bo
         return False
 
 
+def query_defined_token_stat_dependencies(
+    characteristics: Mapping[str, Any],
+) -> tuple[str, ...]:
+    """Require a unique intrinsic definition for every star-valued token stat."""
+    fields = tuple(field for field in ("power", "toughness") if characteristics.get(field) == "*")
+    if not fields:
+        return ()
+    definitions = tuple(
+        fragment for fragment in canonical_ability_fragments(characteristics.get("ability_fragments", ()))
+        if isinstance(fragment, QueryPowerToughnessDefinitionSpec)
+    )
+    if any(sum(getattr(definition, f"define_{field}") for definition in definitions) != 1 for field in fields):
+        raise FixedTokenProductionError("Star-valued token stats require one intrinsic definition per stat")
+    return (
+        TYPED_TOKEN_ABILITY_CAPABILITY_ID,
+        "continuous.characteristics.query_power_toughness_definition",
+    )
+
+
 def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
     """Infer fixed token and selected creator dependencies from the payload.
 
@@ -89,6 +108,7 @@ def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] =
         return (
             'token.creation.fixed_definition',
             *token_toxic_definition_dependencies(value['characteristics']),
+            *query_defined_token_stat_dependencies(value['characteristics']),
             *target_dependencies,
         )
     return target_dependencies
@@ -275,7 +295,7 @@ def _fixed_creature_effect_closure(
         return None
     for field in ("power", "toughness"):
         value = characteristics.get(field)
-        if not isinstance(value, str) or not value.isdigit():
+        if not isinstance(value, str) or (value != "*" and not value.isdigit()):
             return None
     keywords = characteristics.get("keywords", [])
     if (
@@ -308,6 +328,7 @@ def _fixed_creature_effect_closure(
         return None
     try:
         capabilities.update(token_toxic_definition_dependencies(characteristics))
+        capabilities.update(query_defined_token_stat_dependencies(characteristics))
     except (AbilityFragmentError, TypeError, ValueError):
         return None
     from .token_prowess_requirements import token_prowess_definition_dependencies

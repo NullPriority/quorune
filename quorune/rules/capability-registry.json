@@ -64037,7 +64037,7 @@
           "token copies outside the separate fixed-copy capability",
           "attached or attacking tokens",
           "Roles",
-          "quoted abilities other than the two represented declaration restrictions",
+          "quoted definitions without their typed ability capability",
           "unrepresented predefined tokens",
           "batches larger than three definitions",
           "ambiguous separators",
@@ -64052,7 +64052,8 @@
           "optional proper token name or legendary supertype",
           "optional tapped entry state",
           "optional represented keyword, Changeling, fixed positive Toxic, or declaration-restriction fragment",
-          "specific closed predefined activation profiles with separately required costs and effect capabilities"
+          "specific closed predefined activation profiles with separately required costs and effect capabilities",
+          "intrinsic query-defined star stats with complete typed definitions"
         ],
         "outputs": [
           "replacement-ordered immutable token specifications",
@@ -64060,7 +64061,7 @@
           "ordinary token and permanent entry events",
           "replay-stable public token objects"
         ],
-        "summary": "Create fixed positive quantities of one compiler-pinned token definition or one unambiguous two- or three-definition simultaneous batch through the canonical replacement-aware token transaction, including bounded named, predefined, and typed-ability definitions. Fixed Prowess token definitions carry exactly one matching canonical source-local trigger fragment beside their keyword label. Fixed Toxic token definitions retain one matching typed positive value per printed Toxic keyword, including alongside an intrinsic declaration restriction."
+        "summary": "Create fixed positive quantities of one compiler-pinned token definition or one unambiguous two- or three-definition simultaneous batch through the canonical replacement-aware token transaction, including bounded named, predefined, and typed-ability definitions. Fixed Prowess token definitions carry exactly one matching canonical source-local trigger fragment beside their keyword label. Fixed Toxic token definitions retain one matching typed positive value per printed Toxic keyword, including alongside an intrinsic declaration restriction. A star-valued power or toughness requires its corresponding intrinsic query definition."
       },
       "blockers": [],
       "dependencies": [],
@@ -64109,7 +64110,9 @@
         "test_countered_announced_x_spends_cost_without_creating_a_token",
         "test_current_power_and_toughness_queries_snapshot_the_new_body",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "multiplayer_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -64132,7 +64135,9 @@
         "test_countered_announced_x_spends_cost_without_creating_a_token",
         "test_current_power_and_toughness_queries_snapshot_the_new_body",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "negative_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -64160,7 +64165,8 @@
         "test_originals_admit_normally_and_token_runtime_minimum_is_independent",
         "test_receiver_result_minima_and_scope_survive_removed_coverage",
         "test_singular_articles_share_one_closed_definition_and_original_source_span",
-        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary"
+        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
+        "test_query_defined_token_stats_require_complete_intrinsic_definitions"
       ],
       "official_rules": [
         "111.2",
@@ -64172,7 +64178,11 @@
         "603.6d",
         "608.2c",
         "614.16",
-        "616.1"
+        "616.1",
+        "604.3",
+        "604.3a",
+        "613.4a",
+        "707.2"
       ],
       "positive_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -64207,7 +64217,10 @@
         "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
         "test_originals_admit_normally_and_token_runtime_minimum_is_independent",
         "test_singular_articles_share_one_closed_definition_and_original_source_span",
-        "test_zero_single_reversed_groups_have_complete_nonduplicate_history"
+        "test_zero_single_reversed_groups_have_complete_nonduplicate_history",
+        "test_query_defined_token_stats_require_complete_intrinsic_definitions",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "privacy_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -64231,7 +64244,8 @@
         "test_countered_announced_x_spends_cost_without_creating_a_token",
         "test_current_power_and_toughness_queries_snapshot_the_new_body",
         "test_fixed_token_batch_replacement_order_is_private_and_shared",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests"
       ],
       "replay_tests": [
         "test_actual_announced_x_creates_fixed_base_body_including_real_zero_token",
@@ -64255,7 +64269,9 @@
         "test_compiled_fixed_token_effect_replays_exactly",
         "test_countered_announced_x_spends_cost_without_creating_a_token",
         "test_current_power_and_toughness_queries_snapshot_the_new_body",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "required_evidence": [
         "positive",
@@ -64271,7 +64287,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 10
+      "version": 11
     },
     {
       "applicability": {
@@ -64946,7 +64962,7 @@
           "reminder-only token definitions",
           "more than two quoted abilities",
           "independently inexact child abilities",
-          "dynamic, linked, delayed, modal, replacement, or prevention child text",
+          "unbound dynamic, linked, delayed, modal, replacement, or prevention child text",
           "attached, attacking, copy, Role, or variable-quantity token shells",
           "runtime Oracle interpretation"
         ],
@@ -64962,9 +64978,10 @@
           "copiable typed token ability fragments",
           "recipient-bound activation or trigger programs",
           "current layer-6 static applicability",
-          "exact replay"
+          "exact replay",
+          "copiable intrinsic layer-7a power and toughness definitions"
         ],
-        "summary": "Create a fixed creature token carrying one or two independently exact source-pinned activated, triggered, mana, declaration, or cycle-safe characteristic abilities through the canonical token and current-ability owners. Complete ordinary and fixed-price Spree modal branches retain independently closed token child definitions through the whole-face and generated-program pipeline. Intrinsic cannot-block and unblockable fragments retain the existing fixed-definition representation when no broader child program is added."
+        "summary": "Create a fixed creature token carrying one or two independently exact source-pinned activated, triggered, mana, declaration, or cycle-safe characteristic abilities through the canonical token and current-ability owners. Complete ordinary and fixed-price Spree modal branches retain independently closed token child definitions through the whole-face and generated-program pipeline. Intrinsic cannot-block and unblockable fragments retain the existing fixed-definition representation when no broader child program is added. Printed creature tokens with omitted numeric stats retain star values when every stat has one exact intrinsic definition."
       },
       "blockers": [],
       "dependencies": [
@@ -64983,7 +65000,8 @@
         "AbilityFragmentHostMixin._effective_ability_fragments",
         "quorune.compiler.modal_token_branches.ModalTokenBranchCompiler",
         "quorune.compiler.modal_spell_faces.compile_whole_modal_face",
-        "quorune.compiler.granted_program_bounds.granted_effect_values_are_closed"
+        "quorune.compiler.granted_program_bounds.granted_effect_values_are_closed",
+        "quorune.rules.token_creation_capability_shapes.query_defined_token_stat_dependencies"
       ],
       "implementation_mutation_rationale": "The compiler mutation removes the token ability wrapper; exact outer and child program assertions plus intrinsic token behavior reject the survivor. Omitting modal token branch composition rejects the new complete modal witnesses; created-token child activation, timing, current controller and replay expose dangling or lost definitions. test_created_mite_toxic_fragment_mutation_is_killed_by_normal_admission corrupts the produced typed Toxic value and the normal original-card admission assertion rejects the mismatched definition.",
       "implementation_mutation_status": "killed",
@@ -64993,17 +65011,22 @@
         "test_actual_spree_token_fresh_tap_guard_haste_activation_expiry_and_replay",
         "test_real_token_control_change_uses_current_activator_targets_and_child_program",
         "test_actual_destroy_only_spree_mode_does_not_create_unselected_token",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "multiplayer_tests": [
         "test_typed_token_ability_apnap_privacy_and_replay",
         "test_real_token_control_change_uses_current_activator_targets_and_child_program",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "negative_tests": [
         "test_typed_token_ability_grammar_and_dependencies_fail_closed",
         "test_unknown_token_child_and_withdrawn_definition_keep_whole_modal_residual",
-        "test_fixed_toxic_token_definition_rejects_mismatched_fragments_and_infers_runtime_owner"
+        "test_fixed_toxic_token_definition_rejects_mismatched_fragments_and_infers_runtime_owner",
+        "test_query_defined_token_stats_require_complete_intrinsic_definitions"
       ],
       "official_rules": [
         "111.2",
@@ -65011,7 +65034,11 @@
         "111.4",
         "608.2c",
         "614.16",
-        "616.1"
+        "616.1",
+        "604.3",
+        "604.3a",
+        "613.4a",
+        "707.2"
       ],
       "positive_tests": [
         "test_explicit_token_ability_compiles_as_source_pinned_typed_program",
@@ -65019,19 +65046,25 @@
         "test_modal_token_branches_retain_generated_children_and_distinct_program_keys",
         "test_original_spree_and_ordinary_modal_token_programs_close_normally",
         "test_fixed_toxic_token_definitions_retain_typed_poison_and_declaration_owners",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_query_defined_token_stats_require_complete_intrinsic_definitions",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "privacy_tests": [
         "test_typed_token_ability_apnap_privacy_and_replay",
         "test_actual_spree_token_fresh_tap_guard_haste_activation_expiry_and_replay",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests"
       ],
       "replay_tests": [
         "test_typed_token_ability_apnap_privacy_and_replay",
         "test_actual_spree_token_fresh_tap_guard_haste_activation_expiry_and_replay",
         "test_real_token_control_change_uses_current_activator_targets_and_child_program",
         "test_actual_destroy_only_spree_mode_does_not_create_unselected_token",
-        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison"
+        "test_original_mite_entry_and_activation_keep_cannot_block_and_actual_combat_poison",
+        "test_actual_twingrove_tokens_and_copies_use_live_controller_forests",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "required_evidence": [
         "positive",
@@ -65047,7 +65080,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 3
+      "version": 4
     },
     {
       "applicability": {
@@ -73798,7 +73831,8 @@
           "one explicit source-entry prefix conjoined with one independently closed distinct same-zone event prefix",
           "one independently closed qualified public subject entering or dying/leaving",
           "unqualified source blocks or becomes blocked pair; per-blocker and qualified pairs require separate exact grammar",
-          "A scheduled step composes with one independently exact source-entry or controller-spell-cast prefix in the battlefield zone. Each subscription keeps its complete source/controller/color/phase predicate and one shared body. Nested, cross-zone, intervening and branch-relative result grammar remains residual. Runtime binding infers subscription authority directly from descriptors even if the coverage marker is omitted."
+          "A scheduled step composes with one independently exact source-entry or controller-spell-cast prefix in the battlefield zone. Each subscription keeps its complete source/controller/color/phase predicate and one shared body. Nested, cross-zone, intervening and branch-relative result grammar remains residual. Runtime binding infers subscription authority directly from descriptors even if the coverage marker is omitted.",
+          "one opponent spell during the source controller's turn and one source-death occurrence"
         ],
         "outputs": [
           "one CardProgram ability",
@@ -73808,7 +73842,7 @@
           "ordinary APNAP placement",
           "exact replay"
         ],
-        "summary": "Bind one source-spanned triggered ability to two fixed normalized events in the same active zone, preserving an independent typed condition for each subscription and one shared effect body. Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope. Unqualified source blocks/becomes-blocked pairs retain source identity independently on each event; multiple blockers produce one becomes-blocked occurrence and reuse the signed source P/T result owner."
+        "summary": "Bind one source-spanned triggered ability to two fixed normalized events in the same active zone, preserving an independent typed condition for each subscription and one shared effect body. Independent composition preserves each child source-specific event identity together with its existing predicate; global and controller-wide children retain their scope. Unqualified source blocks/becomes-blocked pairs retain source identity independently on each event; multiple blockers produce one becomes-blocked occurrence and reuse the signed source P/T result owner. Opponent-cast and source-death subscriptions retain distinct controller, turn, and source predicates."
       },
       "blockers": [],
       "dependencies": [],
@@ -73824,7 +73858,8 @@
         "quorune.rules.event_subscriptions.FixedEventSubscription",
         "quorune.rules.event_subscriptions.FixedEventSubscriptionSet",
         "quorune.trigger_discovery._selected_event_subscription",
-        "quorune.trigger_discovery.semantic_event_matches"
+        "quorune.trigger_discovery.semantic_event_matches",
+        "quorune.compiler.fixed_public_multi_event_bindings._opponent_cast_or_source_death_spec"
       ],
       "implementation_mutation_rationale": "Focused compiler tests remove the shared multi-event parser and block the subscription capability, while runtime witnesses require both distinct events to reach the same typed body. Replacing only the becomes-blocked subscription with a valid attack subscription is killed by actual multiblocker combat consequences, while preserving closed two-event model validation.",
       "implementation_mutation_status": "killed",
@@ -73850,7 +73885,8 @@
         "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
-        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw"
+        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "multiplayer_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -73871,7 +73907,8 @@
         "test_qualified_pair_actual_entry_and_death_draw_only_for_source_controller",
         "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
-        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw"
+        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "negative_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -73903,7 +73940,8 @@
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
         "test_verified_each_event_dependency_withdrawal_keeps_single_upkeep_control",
-        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary"
+        "test_verified_result_owner_withdrawal_keeps_ordinary_draw_and_optional_counter_boundary",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "official_rules": [
         "603.2",
@@ -73917,7 +73955,9 @@
         "509.3a",
         "509.3c",
         "603.2c",
-        "603.2e"
+        "603.2e",
+        "109.5",
+        "603.10"
       ],
       "positive_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -73947,7 +73987,8 @@
         "test_receiver_destroy_heads_keep_no_targets_and_per_child_subscriptions",
         "test_schedule_and_cast_keep_separate_complete_predicates_and_one_source_span",
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
-        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw"
+        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "privacy_tests": [
         "test_actual_alpha_entry_and_monstrous_branches_work_once_and_legacy_subscription_replays",
@@ -73986,7 +74027,8 @@
         "test_real_multiplayer_blocks_bind_both_sources_once_and_resume_privately",
         "test_source_designation_and_public_renowned_heads_have_different_closed_predicates",
         "test_trusted_dual_event_draws_only_for_each_actual_source_in_real_combat",
-        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw"
+        "test_verified_designation_owner_withdrawal_keeps_unrelated_entry_draw",
+        "test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens"
       ],
       "required_evidence": [
         "positive",
@@ -74002,7 +74044,7 @@
         "commander_duel",
         "commander_review"
       ],
-      "version": 6
+      "version": 7
     },
     {
       "applicability": {
@@ -80595,7 +80637,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 746,
+  "registry_version": 747,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

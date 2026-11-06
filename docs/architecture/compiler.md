@@ -3563,6 +3563,12 @@ while its temporary power/toughness bonus is not. Ability loss suppresses new
 triggers without cancelling instances already on the stack. Class self-entry
 wording uses the same source-incarnation binder as other permanent self-entry
 subjects. Independently unsupported creator clauses remain residual.
+
+A creature token with omitted numeric stats uses intrinsic star values when
+its quoted definition supplies exactly one represented layer-7a definition
+for each stat. Copies carry the definition and evaluate their own current
+controller and public game state. Opponent-cast and source-death branches
+share a result only when each subscription binds its own complete predicate.
 Fixed creature definitions also retain each positive fixed Toxic value as a
 matching `ToxicSpec` beside its keyword label. Definition validation and the
 descriptor-owned runtime minimum require the existing Toxic damage-result

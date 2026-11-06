@@ -280,6 +280,47 @@ class FixedTokenCreationCompilerTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_query_defined_token_stats_require_complete_intrinsic_definitions(self):
+        from quorune.ability_fragments import canonical_ability_fragments
+        from quorune.characteristic_fragments import QueryPowerToughnessDefinitionSpec
+        from quorune.rules.token_creation_capability_shapes import token_definition_payload_dependencies
+
+        text = (
+            'Create a green Ooze creature token with "This token\'s power is equal to '
+            'the number of card types among cards in your graveyard and its toughness '
+            'is equal to that number plus 1."'
+        )
+        card = token_record("Defined Ooze", text, 747201)
+        ir = compile_oracle_card(card, capability_registry=self.capabilities, capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        effect, = [effect for face in ir.faces for node in face.nodes for effect in node.effects
+                   if effect["op"] == "create_token"]
+        characteristics = effect["characteristics"]
+        self.assertEqual(("*", "*"), (characteristics["power"], characteristics["toughness"]))
+        definition, = canonical_ability_fragments(characteristics["ability_fragments"])
+        self.assertIsInstance(definition, QueryPowerToughnessDefinitionSpec)
+        self.assertTrue(definition.define_power and definition.define_toughness)
+        self.assertEqual(1, definition.toughness_adjustment)
+        self.assertIn("continuous.characteristics.query_power_toughness_definition",
+                      token_definition_payload_dependencies(effect))
+        for invalid_fragments in ([], [*characteristics["ability_fragments"]] * 2):
+            with self.subTest(invalid_fragments=invalid_fragments), self.assertRaises(ValueError):
+                token_definition_payload_dependencies({**effect, "characteristics": {
+                    **characteristics, "ability_fragments": invalid_fragments,
+                }})
+        with patch("quorune.compiler.typed_token_ability_nodes._CREATURE_TOKEN_WITHOUT_STATS") as omitted:
+            omitted.subn.side_effect = lambda _replacement, shell, **_options: (shell, 0)
+            mutant = compile_oracle_card(card, capability_registry=self.capabilities, capability_profile="commander_review")
+        self.assertNotEqual("exact", mutant.status)
+        for unsupported in (
+            'Create a green Ooze creature token with "{T}: Add {G}."',
+            'Create a green Ooze creature token with "This token\'s power is equal to the number of creatures you control."',
+        ):
+            with self.subTest(unsupported=unsupported):
+                ir = compile_oracle_card(token_record("Open Ooze", unsupported, 747202),
+                    capability_registry=self.capabilities, capability_profile="commander_review")
+                self.assertNotEqual("exact", ir.status)
+
     def test_fixed_token_creation_compiles_shared_spell_trigger_and_activation_grammar(
         self,
     ):
@@ -2764,3 +2805,134 @@ class TokenCopyCopiableSubjectOwnerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LiveDefinedTokenRuntimeTests(unittest.TestCase):
+    from test_fixed_direct_target_predicates import DirectTokenTargetRuntimeTests as _Witnesses
+
+    register_fixture_cards_on_add = True
+    session = _Witnesses.session
+    add = _Witnesses.add
+    prepare = _Witnesses.prepare
+    checkpoint = _Witnesses.checkpoint
+    resolve = _Witnesses.resolve
+    replay = _Witnesses.replay
+    resume = _Witnesses.resume
+    priority = _Witnesses.priority
+    actions = _Witnesses.actions
+    binding = _Witnesses.binding
+    reject = _Witnesses.reject
+    pay_cast = _Witnesses.pay_cast
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.carddb import CardDatabase
+        from quorune.deck import DeckDefinition, DeckEntry
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "live-defined-tokens.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures" / name for name in (
+            "bound-effect-program-cards.json", "live-defined-token-cards.json",
+            "graveyard-resolution-condition-cards.json",
+        )], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Live token definitions", [DeckEntry("Generic Bound Commander", 1, "commander"),
+                                  DeckEntry("Generic Bound Plains", 20)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def _stats(self, session, card):
+        return tuple(session.engine._numeric_stat(card.object_id, field) for field in ("power", "toughness"))
+
+    def _tokens(self, session):
+        return [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+
+    def test_actual_twingrove_tokens_and_copies_use_live_controller_forests(self):
+        session = self.session(747101)
+        engine = session.engine
+        grove = self.add(engine, "Kalonian Twingrove", zone="hand")
+        collector = self.add(engine, "Specimen Collector")
+        rites = self.add(engine, "Village Rites", zone="hand")
+        rain = self.add(engine, "Stone Rain", zone="hand")
+        aura = self.add(engine, "Mind Control", seat="B", zone="hand")
+        orrery = self.add(engine, "Vedalken Orrery", seat="B")
+        forests = [self.add(engine, "Forest", ref=f"forest-A-{index}") for index in range(3)]
+        self.add(engine, "Forest", seat="B", ref="forest-B")
+        self.assertTrue(self.binding(session, orrery)["strict_capability_ready"])
+        session.state.players["B"].mana_pool.update({"C": 3, "U": 2})
+        self.prepare(session, mana={"C": 7, "G": 1, "B": 1, "R": 1})
+        self.checkpoint(session)
+        self.pay_cast(session, grove, payment={"C": 5, "G": 1})
+        self.assertIsNone(self.resolve(session))
+        original, = self._tokens(session)
+        self.assertEqual((3, 3), self._stats(session, original))
+        self.pay_cast(session, rites, payment={"B": 1}, sacrifice_cards=[collector.ref])
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        private = session.state.cards[session.state.players["D"].zones["hand"][0]]
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:A", full=True)))
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        self.reject(session, {"action_id": "choose", "targets": [original.ref]}, seat="B")
+        session = self.resume(session)
+        chosen = session.act("pilot:A", {"action_id": "choose", "targets": [original.ref]})
+        self.assertTrue(chosen.ok, chosen.summary)
+        self.assertIsNone(self.resolve(session))
+        copied, = [token for token in self._tokens(session) if token.object_id != original.object_id]
+        for token in (original, copied):
+            current = session.state.cards[token.object_id]
+            self.assertEqual((3, 3), self._stats(session, current))
+            copy_values = session.engine._copyable_characteristics(current)
+            self.assertEqual(("*", "*"), (copy_values["power"], copy_values["toughness"]))
+
+        self.pay_cast(session, rain, [forests[0].ref], payment={"C": 2, "R": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual((2, 2), self._stats(session, original))
+        self.assertEqual((2, 2), self._stats(session, copied))
+
+        self.pay_cast(session, aura, [copied.ref], seat="B", payment={"C": 3, "U": 2})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("B", session.state.cards[copied.object_id].controller)
+        self.assertEqual((2, 2), self._stats(session, original))
+        self.assertEqual((1, 1), self._stats(session, copied))
+        self.replay(session, load=True)
+
+    def test_actual_voice_cast_and_death_subscriptions_create_independent_live_tokens(self):
+        session = self.session(747102)
+        engine = session.engine
+        voice = self.add(engine, "Voice of Resurgence")
+        self.add(engine, "Generic Bound Body")
+        own_shock = self.add(engine, "Shock", zone="hand", ref="voice-own-shock")
+        opponent_shock = self.add(engine, "Shock", seat="B", zone="hand", ref="voice-opponent-shock")
+        rites = self.add(engine, "Village Rites", zone="hand")
+        self.assertTrue(self.binding(session, voice)["strict_capability_ready"])
+        session.state.players["B"].mana_pool["R"] = 1
+        self.prepare(session, mana={"R": 1, "B": 1})
+        self.checkpoint(session)
+        self.pay_cast(session, own_shock, ["B"], payment={"R": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(self._tokens(session))
+
+        life_before = session.state.players["A"].life
+        self.pay_cast(session, opponent_shock, ["A"], seat="B", payment={"R": 1})
+        self.assertEqual(2, len(session.state.stack))
+        self.assertEqual("A", session.state.stack[-1].controller)
+        for _ in range(len(engine.active_seats)):
+            principal, = session.pending_principals()
+            result = session.act(principal, {"action_id": "pass"})
+            self.assertTrue(result.ok, result.summary)
+        token, = self._tokens(session)
+        self.assertEqual(life_before, session.state.players["A"].life)
+        self.assertEqual((3, 3), self._stats(session, token))
+        self.assertIsNone(self.resolve(session))
+
+        self.pay_cast(session, rites, payment={"B": 1}, sacrifice_cards=[voice.ref])
+        self.assertEqual("graveyard", session.state.cards[voice.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, len(self._tokens(session)))
+        for token in self._tokens(session):
+            self.assertEqual((3, 3), self._stats(session, token))
+        self.replay(session, load=True)

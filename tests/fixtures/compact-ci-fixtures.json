@@ -666,6 +666,7 @@
     "tests/fixtures/life-total-setting-cards.json",
     "tests/fixtures/limited-event-triggers.json",
     "tests/fixtures/live-battlefield-quantity-cards.json",
+    "tests/fixtures/live-defined-token-cards.json",
     "tests/fixtures/live-modifier-quantity-cards.json",
     "tests/fixtures/main-phase-trigger-cards.json",
     "tests/fixtures/mana-color-result-cards.json",

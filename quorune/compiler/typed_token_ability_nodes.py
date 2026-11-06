@@ -38,6 +38,11 @@ _PERMANENT_CARD_TYPES = frozenset(
     {"artifact", "battle", "creature", "enchantment", "land", "planeswalker"}
 )
 _SPELL_CARD_TYPES = frozenset({"instant", "sorcery"})
+_CREATURE_TOKEN_WITHOUT_STATS = re.compile(
+    r"(\bcreate (?:a|an|[1-9]\d*|one|two|three|four|five|six|seven|eight|nine|ten)(?: tapped)? )"
+    r"(?=(?:white|blue|black|red|green|colorless)\b[^.\n]*\bcreature tokens?\b)",
+    re.IGNORECASE,
+)
 
 
 def _token_ability_shell(text: str) -> tuple[str, tuple[str, ...]] | None:
@@ -100,6 +105,7 @@ def _with_token_fragments(
     value: Any,
     *,
     fragments: Sequence[Mapping[str, Any]],
+    query_defined_stats: bool = False,
 ) -> tuple[Any, int]:
     if isinstance(value, Mapping):
         result = {str(key): copy.deepcopy(child) for key, child in value.items()}
@@ -109,6 +115,8 @@ def _with_token_fragments(
                 recipe["exception"]["add_ability_fragments"] = [copy.deepcopy(dict(fragment)) for fragment in fragments]
                 return result, 1
             characteristics = dict(result.get("characteristics") or {})
+            if query_defined_stats:
+                characteristics.update(power="*", toughness="*")
             characteristics["ability_fragments"] = [
                 *copy.deepcopy(list(characteristics.get("ability_fragments") or ())),
                 *(copy.deepcopy(dict(fragment)) for fragment in fragments),
@@ -118,7 +126,7 @@ def _with_token_fragments(
         changed = 0
         for key, child in tuple(result.items()):
             result[key], count = _with_token_fragments(
-                child, fragments=fragments
+                child, fragments=fragments, query_defined_stats=query_defined_stats,
             )
             changed += count
         return result, changed
@@ -126,7 +134,9 @@ def _with_token_fragments(
         result = []
         changed = 0
         for child in value:
-            updated, count = _with_token_fragments(child, fragments=fragments)
+            updated, count = _with_token_fragments(
+                child, fragments=fragments, query_defined_stats=query_defined_stats,
+            )
             result.append(updated)
             changed += count
         return (tuple(result) if isinstance(value, tuple) else result), changed
@@ -449,6 +459,7 @@ def _decorate_outer_nodes(
     direct_mechanics: Sequence[str],
     capability_registry: CapabilityRegistry,
     capability_profile: str,
+    query_defined_stats: bool = False,
 ) -> tuple[OracleNode, ...] | None:
     # These intrinsic restrictions already have a closed fixed-definition
     # representation. Keep its legacy capability shape when adding no child
@@ -473,7 +484,7 @@ def _decorate_outer_nodes(
     changed = 0
     for outer in outer_nodes:
         effects, count = _with_token_fragments(
-            outer.effects, fragments=fragments
+            outer.effects, fragments=fragments, query_defined_stats=query_defined_stats,
         )
         changed += count
         if not count:
@@ -535,6 +546,9 @@ def typed_token_ability_nodes(
     if parsed is None or capability_registry is None:
         return None
     shell, quoted_abilities = parsed
+    # Reuse the fixed creature parser for color, subtype and keyword spelling.
+    # The temporary pair is replaced only after both intrinsic stats are proven.
+    shell, missing_stats = _CREATURE_TOKEN_WITHOUT_STATS.subn(r"\g<1>0/0 ", shell, count=1)
     outer_nodes = _outer_nodes(
         node_id=node_id,
         line=line,
@@ -595,8 +609,20 @@ def typed_token_ability_nodes(
     if compiled is None:
         return None
     fragments, children, direct_mechanics = compiled
+    if missing_stats:
+        from ..rules.token_creation_capability_shapes import query_defined_token_stat_dependencies
+
+        if "copy_spec" in created[0]:
+            return None
+        try:
+            query_defined_token_stat_dependencies(
+                {"power": "*", "toughness": "*", "ability_fragments": list(fragments)}
+            )
+        except ValueError:
+            return None
     decorated = _decorate_outer_nodes(
         outer_nodes=outer_nodes,
+        query_defined_stats=bool(missing_stats),
         fragments=fragments,
         direct_mechanics=direct_mechanics,
         capability_registry=capability_registry,

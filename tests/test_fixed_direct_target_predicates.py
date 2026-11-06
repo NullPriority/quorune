@@ -763,7 +763,7 @@ class NoncreatureSubtypeTargetRuntimeTests(unittest.TestCase):
 
 
 class DirectTokenTargetRuntimeTests(unittest.TestCase):
-    from test_mixed_permanent_targets import MixedPermanentTargetRuntimeTests as _Witnesses
+    from test_life_gain_prohibitions import LifeGainProhibitionRuntimeTests as _Witnesses
 
     register_fixture_cards_on_add = True
     session = _Witnesses.session
@@ -777,7 +777,12 @@ class DirectTokenTargetRuntimeTests(unittest.TestCase):
     actions = _Witnesses.actions
     binding = _Witnesses.binding
     reject = _Witnesses.reject
-    pay_cast = _Witnesses.pay_cast
+    def pay_cast(self, session, source, targets=(), *, payment, seat="A", **fields):
+        from test_mixed_permanent_targets import MixedPermanentTargetRuntimeTests
+
+        MixedPermanentTargetRuntimeTests.pay_cast(
+            self, session, source, targets, payment=payment, seat=seat, **fields,
+        )
 
     @classmethod
     def setUpClass(cls):
