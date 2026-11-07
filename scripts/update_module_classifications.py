@@ -53,6 +53,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/turn_skip_model.py':return 'domain'
     if relative in {'quorune/earthbend_model.py', 'quorune/suspect_model.py'}:return 'domain'
     if relative in {'quorune/dungeon_catalog.py', 'quorune/dungeon_progress.py', 'quorune/next_turn_effect.py'}:return 'domain'
+    if relative == 'quorune/apnap_object_payment.py':return 'domain'
     if relative=='quorune/earthbend.py':return 'rules'
     if relative=='quorune/created_token_cleanup.py':return 'rules'
     if relative=='quorune/battle_cry_resolution_model.py':return 'domain'

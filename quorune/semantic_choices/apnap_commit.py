@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap
+from ..apnap_object_payment import DECLINED_LIFE_LOSS
+from ..semantic_runtime.life_batch_intent import LifeLossBatchIntent
 from ..semantic_runtime.intents import (
     MoveObjectsSimultaneouslyIntent,
     RecordChoiceIntent,
@@ -33,10 +35,11 @@ _FIELDS = {
     "event_code",
     "message",
 }
+_LOSS_FIELDS = {DECLINED_LIFE_LOSS, 'declining_players'}
 
 
-def _intents(effect: Mapping[str, Any]) -> tuple[Any, ...]:
-    if not isinstance(effect, Mapping) or set(effect) != _FIELDS:
+def _intents(effect: Mapping[str, Any], *, source_ref: str | None = None) -> tuple[Any, ...]:
+    if not isinstance(effect, Mapping) or set(effect) not in (_FIELDS, _FIELDS | _LOSS_FIELDS):
         raise SemanticChoiceError("APNAP object commit fields are malformed")
     if effect["op"] != APNAP_OBJECT_COMMIT_OPERATION:
         raise SemanticChoiceError("APNAP object commit operation changed")
@@ -91,6 +94,19 @@ def _intents(effect: Mapping[str, Any]) -> tuple[Any, ...]:
         if refs
         else ()
     )
+    loss = ()
+    if DECLINED_LIFE_LOSS in effect:
+        players = effect['declining_players']
+        if ((zones, destination, event_code) not in ((('hand',), 'graveyard', 'choice.discard'),
+                                                    (('battlefield',), 'graveyard', 'choice.sacrifice'))
+                or not isinstance(players, (list, tuple))
+                or any(type(seat) is not str or not seat for seat in players)):
+            raise SemanticChoiceError('Declined APNAP payment needs its sealed player set')
+        try:
+            loss = (LifeLossBatchIntent(actor, tuple(players), effect[DECLINED_LIFE_LOSS],
+                                        'Declined APNAP object payment', source_ref),)
+        except ValueError as exc:
+            raise SemanticChoiceError(str(exc)) from exc
     return (
         *move,
         RecordChoiceIntent(
@@ -101,6 +117,7 @@ def _intents(effect: Mapping[str, Any]) -> tuple[Any, ...]:
             importance=2,
             changed_object_refs=refs,
         ),
+        *loss,
     )
 
 
@@ -120,12 +137,13 @@ class ApnapObjectCommitHandler:
     capability_dependencies: tuple[str, ...] = (
         "zone.change.destination_replacement",
     )
-    continuation_fields: tuple[str, ...] = tuple(sorted(_FIELDS))
+    continuation_fields: tuple[str, ...] = tuple(sorted(_FIELDS | _LOSS_FIELDS))
     private_data: tuple[str, ...] = ("object_refs",)
     projected_fields: tuple[str, ...] = ()
     mutation_path: tuple[str, ...] = (
         "MoveObjectsSimultaneouslyIntent",
         "ZoneTransitionOwner.move_cards_simultaneously",
+        "LifeLossBatchIntent",
     )
     replay_fixture: str = "apnap-object-choice-commit"
     test_modules: tuple[str, ...] = (
@@ -139,7 +157,7 @@ class ApnapObjectCommitHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
-        intents = _intents(effect)
+        intents = _intents(effect, source_ref=context.source_ref)
         if effect.get("actor") != context.stack_controller:
             raise SemanticChoiceError("APNAP commit controller changed")
         return SemanticChoicePreparation(

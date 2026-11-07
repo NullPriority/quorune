@@ -216,7 +216,19 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     return None
 
 
-def _affected_player_hand_effect_template(text: str) -> CompiledEffectTemplate | None:
+def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate | None:
+    if 'life unless' in text.casefold():
+        from .apnap_object_payment_templates import apnap_object_payment_template
+
+        payment = apnap_object_payment_template(text)
+        if payment is not None:
+            return payment
+    sacrifice = fixed_affected_player_sacrifice_effect_template(text)
+    if sacrifice is not None:
+        return sacrifice.compiled()
+    controller_discard = _discard.standalone_controller_discard_effect_template(text)
+    if controller_discard is not None:
+        return controller_discard
     discard = fixed_affected_player_discard_effect_template(text)
     if discard is not None:
         return discard.compiled()
@@ -286,15 +298,8 @@ def typed_resolution_effect_template(
     )
     if fixed_player_counter_placement is not None:
         return fixed_player_counter_placement.compiled()
-    affected_player_sacrifice = (
-        fixed_affected_player_sacrifice_effect_template(text)
-    )
-    if affected_player_sacrifice is not None:
-        return affected_player_sacrifice.compiled()
-    if (controller_discard := _discard.standalone_controller_discard_effect_template(text)) is not None:
-        return controller_discard
-    if (affected_player_hand := _affected_player_hand_effect_template(text)) is not None:
-        return affected_player_hand
+    if (affected_object := _affected_player_object_effect_template(text)) is not None:
+        return affected_object
     from .per_player_target_sets import per_player_target_set_template
     per_player=per_player_target_set_template(text)
     if per_player is not None:return per_player

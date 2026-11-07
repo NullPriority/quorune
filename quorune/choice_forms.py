@@ -456,7 +456,8 @@ def _special_fields(
     if decision_kind == "choice.apnap" and action_name == "choose":
         refs = list(context.get("options") or [])
         count = int(context.get("count") or 0)
-        return [_ref_field("cards", refs, context, minimum=count, maximum=count)]
+        minimum = 0 if context.get('declined_life_loss') is not None else count
+        return [_ref_field("cards", refs, context, minimum=minimum, maximum=count)]
     if decision_kind == "state.legend" and action_name == "choose":
         refs = list(context.get("keep_one") or [])
         return [_ref_field("card", refs, context, minimum=1, maximum=1)]

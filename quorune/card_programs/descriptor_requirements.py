@@ -44,12 +44,14 @@ def _damage_payload_dependencies(value, mechanics):
             *damage_death_exile_payload_dependencies(value, coverage=mechanics))
 
 
-def _library_payload_dependencies(value):
+def _zone_choice_payload_dependencies(value):
+    from ..apnap_object_payment import apnap_object_payment_dependencies
     from ..library_search_model import counted_search_bound_dependencies
     from ..reveal_until_library_selection_model import reveal_until_selection_payload_dependencies
     from ..variable_library_selection_model import variable_library_selection_payload_dependencies
 
-    return (*counted_search_bound_dependencies(value),
+    return (*apnap_object_payment_dependencies(value),
+            *counted_search_bound_dependencies(value),
             *variable_library_selection_payload_dependencies(value),
             *reveal_until_selection_payload_dependencies(value))
 
@@ -176,7 +178,7 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own,*incubate_payload_dependencies(value))
         from ..discover_model import discover_payload_dependencies
         own = (*own,*discover_payload_dependencies(value))
-        own = (*own, *_library_payload_dependencies(value))
+        own = (*own, *_zone_choice_payload_dependencies(value))
         from ..library_battlefield_model import library_battlefield_payload_dependencies
         own = (*own,*library_battlefield_payload_dependencies(value))
         from ..public_zone_quantity_model import public_zone_quantity_dependencies

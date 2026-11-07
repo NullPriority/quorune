@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..apnap_object_payment import DECLINED_LIFE_LOSS, apnap_object_payment_dependencies
+
 """Capability shapes for fixed affected-player hand choices."""
 
 from typing import Any, Iterable, Mapping, Sequence
@@ -38,6 +40,10 @@ def _fixed_affected_player_hand_choice_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    try:
+        payment_dependencies = apnap_object_payment_dependencies(effect)
+    except ValueError:
+        return ()
     targeted = effect.get("players") == ["$target.0"]
     controller = effect.get("players") == ["$controller"]
     if controller and not allow_controller:
@@ -52,6 +58,7 @@ def _fixed_affected_player_hand_choice_node_capabilities(
         "then",
         "hidden",
         "prompt",
+        *((DECLINED_LIFE_LOSS,) if payment_dependencies else ()),
         *(("target",) if targeted else ()),
     }
     if (
@@ -73,6 +80,7 @@ def _fixed_affected_player_hand_choice_node_capabilities(
     dependencies = {
         capability,
         "zone.change.destination_replacement",
+        *payment_dependencies,
     }
     if targeted:
         if (

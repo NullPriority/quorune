@@ -3,6 +3,7 @@ from __future__ import annotations
 """Validate the shared authoritative APNAP instruction boundary."""
 
 from ..errors import GameRuleError
+from ..apnap_object_payment import DECLINED_LIFE_LOSS, apnap_object_payment_dependencies
 from ..object_predicate import ObjectQuerySpec
 from .fractional_counts import validate_apnap_count
 
@@ -16,6 +17,10 @@ def is_typed_hand_exile(effect):
 
 def validate_apnap_choice_effect(host, effect, continuation):
     validate_apnap_count(effect)
+    try:
+        optional_payment = bool(apnap_object_payment_dependencies(effect))
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
     if effect.get("predicate") is not None:
         private_hand_choice = (
             effect.get("zone") == "hand"
@@ -33,6 +38,7 @@ def validate_apnap_choice_effect(host, effect, continuation):
             *(("exclude_ref",) if "exclude_ref" in effect else ()),
             *(("require_full_count", "fallback_effects") if effect.get("require_full_count") is True else ()),
             *(("hidden",) if private_hand_choice else ()),
+            *((DECLINED_LIFE_LOSS,) if optional_payment else ()),
             *(('target',) if "target" in effect else ()),
         }
         stack_ref = str(continuation.get("stack_ref") or "")

@@ -18273,6 +18273,89 @@
     {
       "applicability": {
         "exclusions": [
+          "combined prices and other conditional result effects",
+          "variable quantities",
+          "arbitrary player relations"
+        ],
+        "inputs": [
+          "each player or each opponent",
+          "one fixed private discard or public sacrifice",
+          "fixed positive life-loss amount"
+        ],
+        "outputs": [
+          "ordered participant choices",
+          "private hand selection until commit",
+          "simultaneous object payment and subsequent simultaneous life loss"
+        ],
+        "summary": "Collect one optional discard or sacrifice per affected player in APNAP order, move paid objects together, and apply simultaneous life loss to the players who declined."
+      },
+      "blockers": [],
+      "dependencies": [
+        "zone.change.destination_replacement",
+        "life.change.effect"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the typed optional payment owner retains a material residual for the exact printed instruction.",
+      "dependency_fail_closed_status": "passed",
+      "id": "choice.apnap.optional_object_payment_or_life_loss",
+      "implementation_components": [
+        "quorune.apnap_object_payment.apnap_object_payment_dependencies",
+        "quorune.compiler.apnap_object_payment_templates.apnap_object_payment_template",
+        "quorune.selection.apnap.ApnapChoiceOwnerMixin",
+        "quorune.selection.apnap_contract.validate_apnap_choice_effect",
+        "quorune.semantic_choices.apnap_commit.ApnapObjectCommitHandler",
+        "quorune.semantic_choices.life_intent_commit.apply_life_loss_batch_intent"
+      ],
+      "implementation_mutation_rationale": "Suppressing the fixed payment production leaves both original room bodies materially unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_bellowing_mauler_batches_payments_then_declined_life_loss"
+      ],
+      "multiplayer_tests": [
+        "test_actual_bellowing_mauler_batches_payments_then_declined_life_loss"
+      ],
+      "negative_tests": [
+        "test_fixed_optional_payment_lowers_printed_room_bodies_and_rejects_open_prices",
+        "test_actual_bellowing_mauler_batches_payments_then_declined_life_loss"
+      ],
+      "official_rules": [
+        "101.4",
+        "101.4a",
+        "101.4b",
+        "118.11",
+        "118.12a",
+        "608.2c",
+        "701.9a",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_actual_bellowing_mauler_batches_payments_then_declined_life_loss",
+        "test_fixed_optional_payment_lowers_printed_room_bodies_and_rejects_open_prices"
+      ],
+      "privacy_tests": [
+        "test_optional_apnap_discard_projects_payment_decision_without_the_card"
+      ],
+      "replay_tests": [
+        "test_actual_bellowing_mauler_batches_payments_then_declined_life_loss"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "targets, up-to counts, each or all sets, opponent-controlled subjects, hidden zones, non-owner destinations, variable or optional return instructions",
           "chosen, named, linked, historic, dynamic, target-relative, and unsupported characteristic predicates",
           "compound effects following the return",

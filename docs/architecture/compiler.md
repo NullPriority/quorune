@@ -3849,6 +3849,12 @@ one-card zone scan and resolving cast payment. The first nonland result supplies
 one immediate free-cast choice. Declining keeps every unused card in exile.
 This instruction has its own capability and ends with the enclosing resolution.
 
+Fixed life loss unless each affected player discards or sacrifices one object
+shares the APNAP choice owner. Players choose in turn order. Earlier payment
+decisions are visible, and selected hand identities stay private until the
+discard. The owner commits the object moves together before applying one
+simultaneous life-loss batch to the players who declined.
+
 Aftermath binds only its selected split-card half. It grants owner-graveyard
 casting and prohibits that half from all other zones, including under another
 casting permission. Every actual graveyard cast retains its mandatory

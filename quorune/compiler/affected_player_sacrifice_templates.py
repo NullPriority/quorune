@@ -107,6 +107,8 @@ def _predicate(phrase: str, *, count: int) -> ObjectQuerySpec | None:
             zones=("battlefield",),
             types_any=tuple(normalized.split(" or ")),
         )
+    if normalized == "creature, artifact, or land":
+        return ObjectQuerySpec(zones=("battlefield",), types_any=("artifact", "creature", "land"))
     if normalized == "creature token":
         return ObjectQuerySpec(
             zones=("battlefield",),
@@ -149,6 +151,7 @@ _CLOSED_PREDICATES = frozenset(
         "artifact or enchantment",
         "creature or enchantment",
         "creature or planeswalker",
+        "creature, artifact, or land",
         "creature token",
         "nontoken artifact",
         "nontoken creature",

@@ -4558,6 +4558,26 @@
       ]
     },
     {
+      "id": "optional-apnap-object-payment-contract",
+      "patterns": [
+        "quorune/apnap_object_payment.py",
+        "quorune/compiler/apnap_object_payment_templates.py",
+        "quorune/selection/apnap.py",
+        "quorune/selection/apnap_contract.py",
+        "quorune/semantic_choices/apnap_commit.py",
+        "quorune/choice_forms.py",
+        "tests/fixtures/fixed-affected-player-sacrifice-cards.json",
+        "tests/test_fixed_affected_player_sacrifices.py"
+      ],
+      "test_modules": [
+        "test_fixed_affected_player_sacrifices",
+        "test_fixed_affected_player_discards",
+        "test_choice_forms",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "controller-subtype-sacrifice-contract",
       "patterns": [
         "quorune/compiler/affected_player_sacrifice_templates.py",
