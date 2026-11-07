@@ -143,6 +143,14 @@ def _resolve_typed_semantic_value(host, value, item):
 
 
 def _resolve_effect_mapping(host, value, item):
+    if value.get('op') == 'resolve_fixed_object_action' and value.get('schema_version') == 3:
+        from ..rules.reanimation_followup import current_linked_subject, validate_linked_departure
+
+        try:
+            subject = validate_linked_departure(value)
+        except (ValueError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+        return {**value, 'object': None} if current_linked_subject(host, subject, zone='battlefield') is None else dict(value)
     if value.get('op')=='schedule_fixed_object_action':
         from ..delayed_object_actions import bind_delayed_object_instruction
         try:return bind_delayed_object_instruction(host,value,item)

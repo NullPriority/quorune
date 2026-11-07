@@ -1033,6 +1033,24 @@
       ]
     },
     {
+      "id": "linked-reanimation-haste-and-departure",
+      "patterns": [
+        "quorune/compiler/reanimation_followup_templates.py",
+        "quorune/rules/reanimation_followup.py",
+        "quorune/rules/reanimation_capability_shapes.py",
+        "quorune/rules/reanimation_entry_counters.py",
+        "tests/fixtures/reanimation-followup-cards.json",
+        "tests/test_reanimation_followup.py"
+      ],
+      "test_modules": [
+        "test_reanimation_followup",
+        "test_fixed_target_reanimation",
+        "test_reanimation_entry_counters",
+        "test_delayed_object_native",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "fixed-single-object-reanimation-contract",
       "patterns": [
         "quorune/compiler/reanimation_templates.py",

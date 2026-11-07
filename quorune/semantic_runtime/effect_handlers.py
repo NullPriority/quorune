@@ -72,6 +72,16 @@ class DomainEffectHandler:
             except (ValueError,TypeError,KeyError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
             return IntentPlan(operation=operation,handler_id=self.handler_id,intents=(intent,))
+        if operation == 'resolve_fixed_object_action' and effect.get('schema_version') == 3:
+            from ..rules.reanimation_followup import linked_departure_intent
+
+            if context.source is None:
+                raise SemanticNodeError('Delayed departure requires its stack source')
+            try:
+                intent = linked_departure_intent(effect, actor=context.actor, reason=context.default_reason)
+            except (ValueError, TypeError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
+            return IntentPlan(operation=operation, handler_id=self.handler_id, intents=(intent,))
         reason = str(effect.get("reason") or context.default_reason)
         if not reason:
             raise SemanticNodeError("A domain effect requires a reason")

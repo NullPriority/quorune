@@ -53,7 +53,7 @@ class DirectTargetFields:
 def bound_graveyard_return_target_snapshot(effect, item, resolve_reference):
     """Retain the original target identity across resolution-time prefixes."""
     if (effect.get('op') != 'return_graveyard_card_to_owner_hand'
-            and not (effect.get('op')=='reanimate' and effect.get('schema_version')==3)):
+            and not (effect.get('op')=='reanimate' and effect.get('schema_version') in {3,4})):
         return {}
     reference = effect.get('card')
     if not isinstance(reference, str) or not reference.startswith('$target'):

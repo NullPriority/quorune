@@ -62,6 +62,7 @@ from .public_zone_move_capability_shapes import (
     public_graveyard_card_exile_node_capabilities,
 )
 from .reanimation_capability_shapes import fixed_target_reanimation_covered_mechanics, fixed_target_reanimation_node_capabilities
+from .reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC
 from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
@@ -394,6 +395,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
     'fixed-target-reanimation-set':('zone.reanimate.fixed_target_set',),
+    REANIMATION_FOLLOWUP_MECHANIC: (REANIMATION_FOLLOWUP_CAPABILITY,),
     'variable-library-selection':('library.select.variable_controller',),
     'reveal-until-library-selection':('library.select.reveal_until_controller',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
@@ -558,6 +560,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'alternative-quality-discard',
         'shared-target-set-result-sequence',
         'fixed-target-entry-counter-reanimation',
+        REANIMATION_FOLLOWUP_MECHANIC,
         'fixed-per-player-target-set',
         'fixed-controller-top-order',
         'fixed-untargeted-land-untap',
@@ -1355,6 +1358,7 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         REVEAL_TOP_CAPABILITY: REVEAL_TOP_MECHANIC,
         'resolution.target_set.ordered_results':'shared-target-set-result-sequence',
         'zone.reanimate.entry_counters':'fixed-target-entry-counter-reanimation',
+        REANIMATION_FOLLOWUP_CAPABILITY: REANIMATION_FOLLOWUP_MECHANIC,
         'target.set.one_per_player':'fixed-per-player-target-set',
         FACE_UP_EFFECT_CAPABILITY: FACE_UP_EFFECT_MECHANIC,
         PREPARED_POWER_DAMAGE_CAPABILITY: PREPARED_POWER_DAMAGE_MECHANIC,

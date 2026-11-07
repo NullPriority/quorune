@@ -9,6 +9,10 @@ from ..compiler.reanimation_templates import (
     FIXED_TARGET_REANIMATION_MECHANIC,
 )
 from ..effect_contracts import REANIMATE_OPERATION
+from .reanimation_followup import (
+    REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC,
+    REANIMATION_FOLLOWUP_VERSION, validate_reanimation_followup,
+)
 from ..targets import TargetGroup
 from ..target_numeric import (
     TargetNumericCharacteristic,
@@ -38,6 +42,8 @@ def fixed_target_reanimation_node_capabilities(
     """Recognize exactly one closed graveyard-to-battlefield target move."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if len(effects) == 1 and effects[0].get('op') == REANIMATE_OPERATION and effects[0].get('schema_version') == REANIMATION_FOLLOWUP_VERSION:
+        return _reanimation_followup_capabilities(effects[0], target_schema=target_schema, mechanics=mechanics)
     if len(effects) == 1 and effects[0].get('schema_version') == 2:
         from ..event_card_return import (EVENT_BATTLEFIELD_RETURN_MECHANIC,
             EVENT_BATTLEFIELD_RETURN_CAPABILITY, event_battlefield_return_effect)
@@ -130,6 +136,27 @@ def fixed_target_reanimation_node_capabilities(
     ):
         return ()
     return (FIXED_TARGET_REANIMATION_CAPABILITY,)
+
+
+def _reanimation_followup_capabilities(effect, *, target_schema, mechanics):
+    if REANIMATION_FOLLOWUP_MECHANIC not in mechanics:
+        return ()
+    try:
+        followup = validate_reanimation_followup(effect)
+    except (ValueError, TypeError):
+        return ()
+    base = {key: value for key, value in effect.items() if key not in {"schema_version", "followup"}}
+    required = fixed_target_reanimation_node_capabilities(effects=(base,),
+        target_schema=target_schema, mechanic_ids=mechanics)
+    if not required:
+        return ()
+    duration = ("continuous.resolution.fixed_keyword_zone_object" if followup.haste_duration == "zone_object"
+        else "continuous.resolution.fixed_characteristics_until_end_of_turn")
+    departure = {"exile": "permanent.exile.effect", "sacrifice": "choice.affected_player.fixed_sacrifice",
+        "bounce": "permanent.return.owner_hand"}[followup.departure]
+    return (*required, REANIMATION_FOLLOWUP_CAPABILITY, "target.revalidate_resolution",
+        "trigger.delayed.fixed_object_action", "trigger.placement.apnap", "zone.change.destination_replacement",
+        "combat.attack.haste", "activation.tap_untap_cost.haste", duration, departure)
 
 
 __all__ = [

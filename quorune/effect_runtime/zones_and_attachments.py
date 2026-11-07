@@ -791,7 +791,20 @@ def _apply_reanimate(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    followup = None
+    if effect.get("schema_version") == 4:
+        from ..continuous_effect_state import ResolutionEffectSource
+        from ..rules.reanimation_followup import current_linked_subject, validate_reanimation_followup
+
+        try:
+            followup = validate_reanimation_followup(effect, materialized=True)
+            source = ResolutionEffectSource.from_effect(effect)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+        subject = effect["target_snapshot"]
+        if current_linked_subject(host, subject, zone="graveyard") is None:
+            return None
+        effect = {key: value for key, value in effect.items() if key not in {"schema_version", "followup", "target_snapshot"}}
     allowed = {
         "op",
         "card",
@@ -852,7 +865,7 @@ def _apply_reanimate(
         raise GameRuleError(
             "Reanimation effect requires a permanent card"
         )
-    return host.move_card(
+    entered = host.move_card(
         card.object_id,
         "battlefield",
         controller=controller,
@@ -862,6 +875,12 @@ def _apply_reanimate(
         replacement_selections=tuple(selections),
         aura_target_ref=aura_target_ref,
     )
+    if (followup is not None and entered.zone == "battlefield" and not entered.phased_out
+        and entered.zone_change_counter == subject["zone_change_counter"] + 1):
+        from ..rules.reanimation_followup import commit_battlefield_entry_followup
+
+        commit_battlefield_entry_followup(host, entered, actor=actor, source=source, followup=followup)
+    return entered
 
 
 

@@ -81968,6 +81968,115 @@
     {
       "applicability": {
         "exclusions": [
+          "hidden or unordered entry choices",
+          "independent leave-the-battlefield replacement riders",
+          "arbitrary granted abilities",
+          "unbounded or repeated delayed departures"
+        ],
+        "inputs": [
+          "closed scalar graveyard target and entry policy",
+          "typed resolving source",
+          "fixed haste duration, end-step condition, and departure"
+        ],
+        "outputs": [
+          "immutable continuous effect on the returned incarnation",
+          "one source-pinned delayed exile, sacrifice, or owner hand return",
+          "existing replacement and APNAP coordination"
+        ],
+        "summary": "Apply a closed haste grant and one end-step departure only after the selected graveyard target enters the battlefield. The delayed trigger retains the creating controller and source separately from the returned incarnation. Temporary haste and a fixed power modifier expire at cleanup. The delayed departure uses the existing zone owner and checks current control for sacrifice."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.tap_untap_cost.haste",
+        "combat.attack.haste",
+        "target.revalidate_resolution",
+        "trigger.delayed.fixed_object_action",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement",
+        "zone.reanimate.fixed_target"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing delayed object action removes closure for the linked body while ordinary targeted reanimation remains supported.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.reanimate.fixed_haste_and_departure",
+      "implementation_components": [
+        "quorune.compiler.reanimation_followup_templates.fixed_reanimation_followup_template",
+        "quorune.rules.reanimation_capability_shapes.fixed_target_reanimation_node_capabilities",
+        "quorune.rules.reanimation_followup.commit_battlefield_entry_followup",
+        "quorune.rules.reanimation_followup.linked_departure_intent",
+        "quorune.zone_transitions.ZoneTransitionOwner.move_card"
+      ],
+      "implementation_mutation_rationale": "The omission witness withdraws the linked compiler production and detects the resulting material residuals.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_goryos_vengeance_captures_one_incarnation_through_delayed_trigger_reload",
+        "test_puppeteer_clique_waits_for_its_controllers_end_step_and_keeps_indefinite_haste",
+        "test_macabre_mockery_cleanup_precedes_the_later_sacrifice_and_control_still_matters",
+        "test_greasefang_grants_haste_to_a_vehicle_then_returns_it_to_its_owner"
+      ],
+      "multiplayer_tests": [
+        "test_puppeteer_clique_waits_for_its_controllers_end_step_and_keeps_indefinite_haste",
+        "test_macabre_mockery_cleanup_precedes_the_later_sacrifice_and_control_still_matters"
+      ],
+      "negative_tests": [
+        "test_complete_targeted_return_and_riders_compile_and_open_variants_fail_closed",
+        "test_withdrawing_delayed_action_authority_leaves_the_linked_body_unclosed",
+        "test_goryos_vengeance_captures_one_incarnation_through_delayed_trigger_reload",
+        "test_macabre_mockery_cleanup_precedes_the_later_sacrifice_and_control_still_matters"
+      ],
+      "official_rules": [
+        "400.7",
+        "400.7j",
+        "513.2",
+        "514.2",
+        "603.3b",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2b",
+        "608.2c",
+        "611.2a",
+        "611.2c",
+        "701.21a",
+        "702.10",
+        "702.26b"
+      ],
+      "positive_tests": [
+        "test_complete_targeted_return_and_riders_compile_and_open_variants_fail_closed",
+        "test_goryos_vengeance_captures_one_incarnation_through_delayed_trigger_reload",
+        "test_puppeteer_clique_waits_for_its_controllers_end_step_and_keeps_indefinite_haste",
+        "test_macabre_mockery_cleanup_precedes_the_later_sacrifice_and_control_still_matters",
+        "test_greasefang_grants_haste_to_a_vehicle_then_returns_it_to_its_owner"
+      ],
+      "privacy_tests": [
+        "test_puppeteer_clique_waits_for_its_controllers_end_step_and_keeps_indefinite_haste"
+      ],
+      "replay_tests": [
+        "test_goryos_vengeance_captures_one_incarnation_through_delayed_trigger_reload",
+        "test_puppeteer_clique_waits_for_its_controllers_end_step_and_keeps_indefinite_haste",
+        "test_macabre_mockery_cleanup_precedes_the_later_sacrifice_and_control_still_matters",
+        "test_greasefang_grants_haste_to_a_vehicle_then_returns_it_to_its_owner"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "untargeted, each-player, all-card, mass, random, linked-result, reflexive, delayed, self-return, or top-graveyard selection",
           "variable, exact-value, history, chosen, different-name, total-value, or cross-field target predicates",
           "unrepresentable characteristic-defining or cyclic power and type-changing interactions outside the shared exact-characteristic boundary",

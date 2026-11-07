@@ -2127,6 +2127,14 @@ departure, but applies only while the affected permanent retains the same
 battlefield logical identity. The runtime does not parse Oracle text or execute
 display rules text to reconstruct that duration.
 
+Linked reanimation grants haste only after the selected graveyard card enters
+the battlefield. It captures the new incarnation separately from the creating
+stack source and schedules one delayed departure through the normal trigger
+owner. The end-step condition can use the resolving controller's next end step.
+The delayed instruction checks the retained incarnation before it moves the
+object and requires current control for sacrifice. A temporary power modifier
+and haste share one timestamp and expire at cleanup.
+
 Closed fixed source-counter sequences use the same owners. The compiler emits
 `$source.zone_object`; resolution requires the current battlefield source and
 its stack-pinned logical identity before constructing the counter intent. A

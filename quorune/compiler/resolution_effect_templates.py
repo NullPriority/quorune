@@ -76,6 +76,7 @@ from .fixed_counter_controller_effect_sequences import (
 from .proliferate_templates import single_proliferate_effect_template
 from .reanimation_templates import fixed_target_reanimation_effect_template
 from .reanimation_entry_counter_templates import fixed_reanimation_entry_counter_template
+from .reanimation_followup_templates import fixed_reanimation_followup_template
 from .public_zone_move_templates import public_zone_move_effect_template
 from .return_to_hand_templates import (
     targeted_own_graveyard_return_to_hand_effect_template,
@@ -134,6 +135,7 @@ def _attachment_or_owner_zone_move(
 
 
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
+    fixed_reanimation_followup_template,
     fixed_reanimation_entry_counter_template,
     fixed_target_reanimation_effect_template, public_zone_move_effect_template, temporary_target_interaction_effect_template,
     destruction_effect_template,
