@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from ..effect_contracts import EffectFamilyContract, effect_operation_contracts
 from ..replacement.immutable import FrozenMap
+from ..source_tap_effect import RUNTIME_SOURCE_CONTINUITY_FIELD, SOURCE_TAP_EFFECT_FIELD
 from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_EXILE_RETURN_OPERATION, LINKED_RETURN_OPERATION, validate_linked_instruction
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import DomainEffectIntent, IntentPlan
@@ -71,7 +72,7 @@ class DomainEffectHandler:
         reason = str(effect.get("reason") or context.default_reason)
         if not reason:
             raise SemanticNodeError("A domain effect requires a reason")
-        if "_runtime_source" in effect:
+        if "_runtime_source" in effect or RUNTIME_SOURCE_CONTINUITY_FIELD in effect:
             raise SemanticNodeError(
                 "Semantic programs cannot supply authoritative runtime source context"
             )
@@ -101,6 +102,12 @@ class DomainEffectHandler:
                 raise SemanticNodeError(str(exc)) from exc
         if context.source is not None:
             runtime_effect["_runtime_source"] = context.source.to_dict()
+            if SOURCE_TAP_EFFECT_FIELD in effect:
+                history = context.source.duration_history
+                runtime_effect[RUNTIME_SOURCE_CONTINUITY_FIELD] = {
+                    "history": history.to_dict() if history is not None else None,
+                    "resolution_timestamp": context.source.duration_resolution_timestamp,
+                }
         return IntentPlan(
             operation=self.operation,
             handler_id=self.handler_id,

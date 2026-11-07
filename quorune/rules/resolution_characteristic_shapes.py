@@ -6,9 +6,10 @@ from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
 from ..next_turn_effect import next_turn_effect_dependencies
+from ..source_tap_effect import source_tap_effect_dependencies
 from ..resolution_characteristic_model import (
     PERMANENT_CHARACTERISTIC_CAPABILITY, PERMANENT_CHARACTERISTIC_MECHANIC, FixedResolutionSubtypeGrantSpec,
-    fixed_resolution_characteristic_instruction,
+    FixedResolutionModifierSpec, fixed_resolution_characteristic_instruction,
 )
 from ..compiler.fixed_resolution_characteristic_queries import fixed_resolution_characteristic_query_is_closed
 
@@ -25,9 +26,12 @@ def fixed_resolution_characteristic_capabilities(*, effects: Any, target_schema:
     if PERMANENT_CHARACTERISTIC_MECHANIC not in mechanics or 'cr-611-continuous-effects' not in mechanics or len(effects)!=1:return ()
     try:spec,selection=fixed_resolution_characteristic_instruction(effects[0])
     except (TypeError,ValueError,KeyError):return ()
-    if not {keyword.casefold() for keyword in spec.keywords}<=mechanics:return ()
     dependencies={PERMANENT_CHARACTERISTIC_CAPABILITY,'continuous.resolution.fixed_characteristics_until_end_of_turn',
-                  *next_turn_effect_dependencies(effects[0])}
+                  *next_turn_effect_dependencies(effects[0]), *source_tap_effect_dependencies(effects[0])}
+    if isinstance(spec, FixedResolutionModifierSpec):
+        all_creatures = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+        return tuple(sorted(dependencies)) if target_schema is None and selection == all_creatures else ()
+    if not {keyword.casefold() for keyword in spec.keywords}<=mechanics:return ()
     if isinstance(spec, FixedResolutionSubtypeGrantSpec):
         from .permanent_predicate_capability_shapes import (
             direct_permanent_target_schema_is_closed, direct_target_predicate_capabilities,

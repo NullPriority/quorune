@@ -9,6 +9,7 @@ from .continuous_effects import ContinuousOperation, Layer
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from .object_predicate import ObjectQuerySpec
+from .source_tap_effect import SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
 
 
 PERMANENT_CHARACTERISTIC_MECHANIC = "fixed-source-characteristics-until-end-of-turn"
@@ -17,7 +18,7 @@ PERMANENT_CHARACTERISTIC_CAPABILITY = (
 )
 CHARACTERISTIC_OPERATION = "apply_source_characteristics_until_end_of_turn"
 SUBTYPE_GRANT_INSTRUCTION_VERSION = 12
-FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({2, SUBTYPE_GRANT_INSTRUCTION_VERSION})
+FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION})
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
 # Every non-retaining animation in this closed model sets Creature alone.
 # Remove subtypes correlated with the lost types, not retained creature types.
@@ -177,21 +178,41 @@ class FixedResolutionSubtypeGrantSpec:
         return (*result, (Layer.ABILITY, "6", abilities)) if abilities else result
 
 
+@dataclass(frozen=True, slots=True)
+class FixedResolutionModifierSpec:
+    power: int
+    toughness: int
+
+    def __post_init__(self) -> None:
+        if type(self.power) is not int or type(self.toughness) is not int or not (self.power or self.toughness):
+            raise ValueError("Fixed modifier requires a nonzero pair of integer deltas")
+
+    def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
+        operation = ContinuousOperation("modify_power_toughness", (self.power, self.toughness))
+        return ((Layer.POWER_TOUGHNESS, "7c", (operation,)),)
+
+
 def fixed_resolution_characteristic_instruction(
     value: Mapping[str, Any],
-) -> tuple[FixedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec, str | ObjectQuerySpec]:
+) -> tuple[FixedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
     if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     from .next_turn_effect import split_next_turn_effect
 
+    value, source_tapped = split_source_tap_effect(value)
     value, _ = split_next_turn_effect(value)
     if set(value) not in (expected | {"card"}, expected | {"predicate"}):
         raise ValueError("Fixed characteristic instruction fields are malformed")
     version = value["schema_version"]
     if value["op"] != CHARACTERISTIC_OPERATION or type(version) is not int or version not in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS:
         raise ValueError("Fixed characteristic instruction identity is malformed")
-    if version == SUBTYPE_GRANT_INSTRUCTION_VERSION:
+    if version == SOURCE_TAP_MODIFIER_VERSION:
+        raw = value["characteristics"]
+        if not source_tapped or "predicate" not in value or not isinstance(raw, Mapping) or set(raw) != {"power", "toughness"}:
+            raise ValueError("Tapped-source modifiers require a fixed query and exact integer deltas")
+        spec = FixedResolutionModifierSpec(raw["power"], raw["toughness"])
+    elif version == SUBTYPE_GRANT_INSTRUCTION_VERSION:
         if "card" not in value:
             raise ValueError("Fixed subtype grants require a single object")
         spec = FixedResolutionSubtypeGrantSpec.from_dict(value["characteristics"])

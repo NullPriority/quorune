@@ -14,6 +14,7 @@ from .blight_templates import normalized_blight_sequence
 from .public_query_effect_amounts import public_query_effect_amount_template
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
+from .source_tap_characteristics import tapped_source_characteristics_template
 from .fixed_resolution_characteristics import fixed_resolution_characteristics_effect_template
 from .fixed_effect_payment_templates import fixed_effect_payment_template,fixed_effect_payment_with_mandatory_prefix
 from .reflexive_payment_templates import reflexive_payment_template
@@ -84,6 +85,11 @@ def reviewed_contextual_effect_template(
     """Bind source context before composing the same closed leaf owners."""
 
     def atomic_with_characteristics(body: str) -> CompiledEffectTemplate:
+        tapped = tapped_source_characteristics_template(
+            body, card_name=card_name, source_context=source_context, compile_atomic=atomic_with_characteristics,
+        )
+        if tapped is not None:
+            return tapped
         timed = _next_turn_effect_template(
             body, atomic_with_characteristics, card_name=card_name,
             allow_source=source_context.get("source_is_permanent") is True,

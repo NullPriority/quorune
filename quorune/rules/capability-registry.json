@@ -31580,6 +31580,84 @@
     {
       "applicability": {
         "exclusions": [
+          "durations that also require continued control of the source",
+          "untap-step rules and variable or unsupported characteristic results"
+        ],
+        "inputs": [
+          "one fixed characteristic effect and its original permanent source",
+          "retained tap, untap, phase and incarnation continuity",
+          "the revalidated target or locked set at resolution"
+        ],
+        "outputs": [
+          "fixed resolution layers sharing the original tapped interval",
+          "permanent expiry at the first ending transition"
+        ],
+        "summary": "Keep represented characteristic changes for the uninterrupted tapped interval of the original permanent source and lock affected objects when the result begins."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "dependency_fail_closed_rationale": "Runtime independently requires the duration capability, the compiler checks the source and fixed result, and resolution uses only the retained server source facts.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.while_source_remains_tapped",
+      "implementation_components": [
+        "quorune.source_tap_effect.split_source_tap_effect",
+        "quorune.compiler.source_tap_characteristics.tapped_source_characteristics_template",
+        "quorune.control_effects.prepare_tapped_characteristic_duration",
+        "quorune.control_effects.tapped_characteristic_duration_is_current",
+        "quorune.continuous_effect_state.create_resolution_continuous_effect_components"
+      ],
+      "implementation_mutation_rationale": "Reducing continuity to the source's current tapped flag incorrectly restores an expired pending activation after a retap and fails the printed Flowstone Armor witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_everglove_bonus_keeps_its_recipient_after_subtype_change",
+        "test_actual_thran_weaponry_locks_only_the_creatures_present_at_resolution"
+      ],
+      "multiplayer_tests": [
+        "test_actual_flowstone_duration_survives_cleanup_and_never_restarts_after_untap"
+      ],
+      "negative_tests": [
+        "test_source_tap_grammar_requires_the_original_source_and_a_closed_result",
+        "test_source_tap_runtime_binding_requires_the_declared_duration",
+        "test_actual_flowstone_pending_activation_cannot_restart_before_resolution"
+      ],
+      "official_rules": [
+        "611.2a",
+        "611.2b",
+        "611.2c",
+        "702.26f"
+      ],
+      "positive_tests": [
+        "test_actual_flowstone_duration_survives_cleanup_and_never_restarts_after_untap",
+        "test_actual_thran_weaponry_locks_only_the_creatures_present_at_resolution"
+      ],
+      "privacy_tests": [
+        "test_actual_flowstone_duration_survives_cleanup_and_never_restarts_after_untap"
+      ],
+      "replay_tests": [
+        "test_actual_flowstone_duration_survives_cleanup_and_never_restarts_after_untap",
+        "test_actual_flowstone_pending_activation_cannot_restart_before_resolution"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unknown or modified temptation instructions",
           "source-specific Ring conditional, trigger or result grammar not independently compiled"
         ],

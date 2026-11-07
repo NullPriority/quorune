@@ -482,18 +482,20 @@ def _validate_continuous_effect_identity_scope(
         raise ContinuousEffectError("Next-turn duration requires a resolution-created effect")
     if effect.duration.source_bound:
         if (effect.origin is not ContinuousEffectOrigin.RESOLUTION
-                or effect.layer is not Layer.CONTROL
+                or (effect.layer is not Layer.CONTROL
+                    and (effect.duration is not ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS
+                         or effect.layer not in {Layer.TYPE, Layer.COLOR, Layer.ABILITY, Layer.POWER_TOUGHNESS}))
                 or not isinstance(effect.duration_source, ContinuousObjectIdentity)
                 or not isinstance(effect.duration_history, SourceContinuitySnapshot)
                 or effect.source_id != effect.duration_source.object_id):
-            raise ContinuousEffectError("Source-bound control requires one original source incarnation")
+            raise ContinuousEffectError("Source-bound effects require an original source incarnation and a supported layer")
         if effect.duration.requires_source_controller:
             if type(effect.duration_controller) is not str or not effect.duration_controller:
                 raise ContinuousEffectError("Source-control duration requires its resolving controller")
         elif effect.duration_controller is not None:
             raise ContinuousEffectError("Source-presence duration cannot add a controller condition")
     elif any(value is not None for value in (effect.duration_source, effect.duration_controller, effect.duration_history)):
-        raise ContinuousEffectError("Only source-bound control may carry duration source facts")
+        raise ContinuousEffectError("Only source-bound effects may carry duration source facts")
     locked_origins = {
         ContinuousEffectOrigin.REPLACEMENT,
         ContinuousEffectOrigin.RESOLUTION,

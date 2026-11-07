@@ -27,6 +27,8 @@ from .object_predicate import ObjectQuerySpec
 from .next_turn_effect import NEXT_TURN_EFFECT_FIELD
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
 from .keyword_prohibition import prepare_resolution_keyword_exclusions
+from .source_continuity import SourceContinuitySnapshot
+from .source_tap_effect import RUNTIME_SOURCE_CONTINUITY_FIELD, SOURCE_TAP_EFFECT_FIELD
 
 
 class ContinuousEffectStateError(ValueError):
@@ -249,6 +251,26 @@ def matching_battlefield_objects(
     return tuple(matches)
 
 
+def _characteristic_effect_timing(host, effect, *, actor, source):
+    if SOURCE_TAP_EFFECT_FIELD not in effect:
+        expiry = actor if NEXT_TURN_EFFECT_FIELD in effect else None
+        return ContinuousEffectDuration.UNTIL_END_OF_TURN, expiry, None
+    from .control_effects import prepare_tapped_characteristic_duration
+
+    facts = effect.get(RUNTIME_SOURCE_CONTINUITY_FIELD)
+    if not isinstance(facts, Mapping) or set(facts) != {"history", "resolution_timestamp"}:
+        raise ContinuousEffectStateError("Tapped-source effect requires authoritative resolution facts")
+    timestamp = facts["resolution_timestamp"]
+    if type(timestamp) is not int or timestamp < 0:
+        raise ContinuousEffectStateError("Tapped-source resolution timestamp is malformed")
+    raw_history = facts["history"]
+    history = SourceContinuitySnapshot.from_dict(raw_history) if raw_history is not None else None
+    active = prepare_tapped_characteristic_duration(host.state, source, history, timestamp)
+    if active is None:
+        return None
+    return ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS, None, active
+
+
 def apply_fixed_resolution_characteristics(
     host: Any, effect: Mapping[str, Any], *, actor: str, reason: str,
 ) -> list[str]:
@@ -256,7 +278,8 @@ def apply_fixed_resolution_characteristics(
     from .resolution_characteristic_model import fixed_resolution_characteristic_instruction
     from .errors import GameRuleError
 
-    instruction = {key:value for key,value in effect.items() if key != '_runtime_source'}
+    instruction = {key: value for key, value in effect.items()
+                   if key not in {'_runtime_source', RUNTIME_SOURCE_CONTINUITY_FIELD}}
     if instruction.get('card',True) is None:
         # The canonical semantic source/target resolver pins incarnations and
         # clears a stale reference before this instruction reaches its owner.
@@ -278,16 +301,24 @@ def apply_fixed_resolution_characteristics(
                 affected = (host._resolve_object(actor,selection,zones={'battlefield'}),)
             except GameRuleError:
                 return []
+        source = resolution_effect_source(host, effect, fallback_card=affected[0] if affected else None)
+        timing = _characteristic_effect_timing(host, effect, actor=actor, source=source)
+        if timing is None:
+            return []
+        duration, expiry_player, history = timing
         components = tuple(ResolutionContinuousComponent(*value) for value in spec.layer_operations())
-        expiry_player = actor if NEXT_TURN_EFFECT_FIELD in instruction else None
         create_resolution_continuous_effect_components(
-            host,source=resolution_effect_source(host,effect,fallback_card=affected[0] if affected else None),
-            targets=affected, components=components, expires_on_next_turn_of=expiry_player)
+            host, source=source, targets=affected, components=components, duration=duration,
+            expires_on_next_turn_of=expiry_player, duration_history=history,
+        )
     except (TypeError, ValueError, KeyError) as exc:
         raise GameRuleError(str(exc)) from exc
     refs = [card.ref for card in affected]
-    duration_label = "your next turn" if expiry_player is not None else "end of turn"
-    host._log(actor,'permanent.characteristics',f'Fixed characteristics changed until {duration_label}.',
+    if history is not None:
+        duration_label = "until the source untaps or leaves the battlefield"
+    else:
+        duration_label = "until your next turn" if expiry_player is not None else "until end of turn"
+    host._log(actor,'permanent.characteristics',f'Fixed characteristics changed {duration_label}.',
               {'objects':refs,'reason':reason},importance=1,changed_objects=[card.object_id for card in affected])
     return refs
 
@@ -295,20 +326,28 @@ def apply_fixed_resolution_characteristics(
 def apply_target_characteristics(host,effect,*,actor,reason):
     from .rules.target_characteristic_sets import decode_target_characteristics
     from .errors import GameRuleError
-    instruction={k:v for k,v in effect.items() if k!='_runtime_source'}
+    instruction={k:v for k,v in effect.items() if k not in {'_runtime_source', RUNTIME_SOURCE_CONTINUITY_FIELD}}
     try:keywords=decode_target_characteristics(instruction,allow_zero_result=True)
     except (ValueError,TypeError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     refs=instruction['cards']
     if not isinstance(refs,(list,tuple)) or any(type(r) is not str or not r for r in refs) or len(set(refs))!=len(refs) or len(refs)>instruction['maximum_targets']:
         raise GameRuleError('Target characteristic references are malformed')
     cards=tuple(host._resolve_object(actor,ref,zones={'battlefield'}) for ref in refs)
+    try:
+        source = resolution_effect_source(host, effect, fallback_card=cards[0] if cards else None)
+        timing = _characteristic_effect_timing(host, effect, actor=actor, source=source)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    if timing is None:
+        return ()
+    duration, expiry_player, history = timing
     components=[]
     if keywords:components.append(ResolutionContinuousComponent(Layer.ABILITY,'6',tuple(ContinuousOperation('add_ability',k) for k in keywords)))
     if instruction['power'] or instruction['toughness'] or not keywords:
         components.append(ResolutionContinuousComponent(Layer.POWER_TOUGHNESS,'7c',(ContinuousOperation('modify_power_toughness',(instruction['power'],instruction['toughness'])),)))
-    create_resolution_continuous_effect_components(host,source=resolution_effect_source(host,effect,fallback_card=cards[0] if cards else None),
-        targets=cards, components=tuple(components),
-        expires_on_next_turn_of=actor if NEXT_TURN_EFFECT_FIELD in instruction else None)
+    create_resolution_continuous_effect_components(host, source=source,
+        targets=cards, components=tuple(components), duration=duration,
+        expires_on_next_turn_of=expiry_player, duration_history=history)
     host._log(actor,'permanent.target_characteristics',reason,{'objects':list(refs),'reason':reason},importance=1,changed_objects=[c.object_id for c in cards])
     return tuple(refs)
 
@@ -368,6 +407,7 @@ def create_resolution_continuous_effect_components(
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),
     expires_on_next_turn_of: str | None = None,
+    duration_history: SourceContinuitySnapshot | None = None,
 ) -> tuple[ContinuousEffect, ...]:
     """Atomically commit one multi-layer effect with one shared timestamp."""
 
@@ -398,6 +438,10 @@ def create_resolution_continuous_effect_components(
     if not identities:
         return ()
     source_id = source.object_id or source.stack_ref
+    duration_source = (
+        ContinuousObjectIdentity(source.object_id, source.logical_object_id)
+        if duration_history is not None else None
+    )
     prototypes = tuple(
         ContinuousEffect(
             effect_id=f"resolution-component:{index}",
@@ -411,6 +455,8 @@ def create_resolution_continuous_effect_components(
             applies=ObjectQuerySpec(zones=("battlefield",)),
             locked_objects=identities,
             expires_on_next_turn_of=expires_on_next_turn_of,
+            duration_source=duration_source,
+            duration_history=duration_history,
         )
         for index, component in enumerate(values, start=1)
     )
@@ -489,6 +535,8 @@ def create_resolution_declaration_rule_effect(
 def active_resolution_effects(
     state: Any, card: Any
 ) -> tuple[ContinuousEffect, ...]:
+    from .control_effects import tapped_characteristic_duration_is_current
+
     journal = state.continuous_effects
     if not journal:
         return ()
@@ -501,6 +549,8 @@ def active_resolution_effects(
         for effect in journal
         if isinstance(effect, ContinuousEffect)
         and identity in effect.locked_objects
+        and (effect.duration_source is None or effect.layer is Layer.CONTROL
+             or tapped_characteristic_duration_is_current(state, effect))
         and (effect.attachment_duration is None
             or effect.attachment_duration.is_current(state.cards))
     )

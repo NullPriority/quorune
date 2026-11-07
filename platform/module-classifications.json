@@ -8128,6 +8128,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/source_tap_characteristics.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/source_transform_program_closure.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -24011,6 +24026,18 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/source_tap_effect.py",
+      "layer": "domain",
+      "owning_subsystem": "continuous_effects",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/spell_copy_engine_adapter.py",
       "layer": "rules",
       "owning_subsystem": "trigger_processing",
@@ -25555,5 +25582,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "f7154cb192ad6bcfb4b9b11d945497382b37d738e7855b278a964a3eac3416bf"
+  "fingerprint": "044012cf010ae39392e625273604697c3aed090abb6247feb225d11016616f0d"
 }

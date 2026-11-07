@@ -3072,6 +3072,14 @@ the existing layer-two journal and custody history, without reading Oracle
 text during play. Exchange, dynamic subjects, unsupported durations, and
 independently unsupported siblings remain residuals.
 
+`compiler/source_tap_characteristics.py` admits fixed characteristic changes
+for the uninterrupted tapped interval of their original permanent source.
+The existing source continuity owner records that interval for the pending
+ability and the resulting layers. Targeted deltas, keyword grants, fixed
+animation, and the locked creature set use the ordinary resolution journal.
+An untap, phase-out, or departure ends the interval. The affected objects are
+fixed when the effect begins. Untap-step restrictions use their own rule owner.
+
 `compiler/untap_step_templates.py` lowers mandatory self untaps on other
 players' turns and fixed untap prohibitions against nonbasic lands, legendary
 creatures, represented subtype sets, inclusive fixed power thresholds, or named

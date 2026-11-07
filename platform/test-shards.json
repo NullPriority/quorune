@@ -1143,6 +1143,7 @@
       "test_source_maintenance",
       "test_source_sacrifice_native",
       "test_source_sacrifice_payments",
+      "test_source_tap_duration",
       "test_spell_owner_targeting",
       "test_state_qualified_zone_events",
       "test_state_trigger_predicates",

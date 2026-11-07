@@ -796,6 +796,12 @@ snapshot and resolution-start timestamp. `source_continuity` is omitted from
 card payloads until needed. Version one and absent-marker states retain their
 earlier control path; the new fixed-control capability requires version two.
 
+Tapped-source characteristic changes also use the retained source incarnation
+and continuity snapshot. Their locked effects carry `duration_source` and
+`duration_history` in the same journal as other characteristic changes.
+An ended interval is removed during stabilization. Pending abilities and
+committed effects retain their respective continuity across save and load.
+
 The optional `soulbond_pairs` array retains version-one pair identities,
 both exact object incarnations, their original controller, and control/phase
 continuity snapshots. It is absent until a pair is first committed, preserving
