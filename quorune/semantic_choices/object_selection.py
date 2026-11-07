@@ -207,6 +207,7 @@ class PutTypedCardFromHandHandler:
         "tapped",
         "schema_version",
         "followup",
+        "attacking_entry",
         "_choice_actor",
         "_choice_query",
         "_legal_refs",
@@ -235,9 +236,9 @@ class PutTypedCardFromHandHandler:
         *,
         actor: str | None = None,
     ) -> tuple[ObjectQuerySpec, ...]:
-        from ..rules.hand_entry_followup import HAND_ENTRY_FOLLOWUP_FIELDS, decode_hand_entry_followup
+        from ..rules.hand_entry_followup import VERSIONED_HAND_ENTRY_FIELDS, decode_hand_entry_followup
 
-        allowed = {"op", "player", "query", "tapped", "prompt", *HAND_ENTRY_FOLLOWUP_FIELDS}
+        allowed = {"op", "player", "query", "tapped", "prompt", *VERSIONED_HAND_ENTRY_FIELDS}
         if (
             set(effect) - allowed
             or set(effect).intersection({"op", "player", "query", "tapped"})
@@ -327,9 +328,11 @@ class PutTypedCardFromHandHandler:
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
         from ..rules.hand_entry_followup import HAND_ENTRY_FOLLOWUP_VERSION, decode_hand_entry_followup
+        from ..rules.attacking_card_entry import attacking_entry_choice, decode_hand_attacking_entry
 
         try:
             followup = decode_hand_entry_followup(continuation.effect)
+            attacking = decode_hand_attacking_entry(continuation.effect)
         except (TypeError, ValueError) as exc:
             raise SemanticChoiceError(str(exc)) from exc
         selected = str(response.get("card") or "")
@@ -352,8 +355,8 @@ class PutTypedCardFromHandHandler:
                 "Private hand-entry continuation query is malformed"
             ) from exc
         identities = continuation.effect.get('_legal_logical_ids')
-        if followup is not None and identities is None:
-            raise SemanticChoiceError('Private hand-entry follow-up requires the sealed hand incarnation')
+        if (followup is not None or attacking) and identities is None:
+            raise SemanticChoiceError('Versioned private hand entry requires the sealed hand incarnation')
         if identities is not None and (
             not isinstance(identities, Mapping)
             or set(identities) != legal
@@ -383,6 +386,8 @@ class PutTypedCardFromHandHandler:
         }
         if followup is not None:
             move.update(schema_version=HAND_ENTRY_FOLLOWUP_VERSION, followup=followup.to_dict())
+        if attacking:
+            return SemanticChoiceCompletion(prepend_effects=(FrozenMap(attacking_entry_choice(move)),))
         return SemanticChoiceCompletion(prepend_effects=(FrozenMap(move),))
 
 

@@ -8,6 +8,7 @@ from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
 from .hand_entry_templates import fixed_draw_then_hand_entry_template, fixed_private_hand_entry_followup_template
+from .attacking_card_entry_templates import fixed_attacking_card_entry_template
 from .defender_permission_templates import temporary_defender_permission_template
 from .as_unblocked_templates import temporary_as_unblocked_template
 from .toughness_assignment_templates import temporary_toughness_assignment_template
@@ -185,7 +186,8 @@ def _source_context_resolution_template(
     if as_unblocked is not None:return as_unblocked
     permission=temporary_defender_permission_template(text,source_name=card_name,source_is_permanent=source_is_permanent,source_card_types=tuple(source_card_types))
     if permission is not None:return permission
-    hand_entry=fixed_private_hand_entry_followup_template(text) or fixed_draw_then_hand_entry_template(text)
+    hand_entry=(fixed_attacking_card_entry_template(text) or fixed_private_hand_entry_followup_template(text)
+        or fixed_draw_then_hand_entry_template(text))
     if hand_entry is not None:return hand_entry
     discard = discard_result_draw_template(text) or random_discard_effect_template(text) or whole_hand_discard_effect_template(text) or whole_hand_discard_draw_sequence_template(text) or whole_hand_discard_public_draw_sequence(text,source_name=card_name)
     if discard is not None:

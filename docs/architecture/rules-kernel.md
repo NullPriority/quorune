@@ -2141,6 +2141,13 @@ identity. Declining creates no effect. The existing move owner resolves entry
 replacements before the follow-up captures the new battlefield incarnation.
 Creature subtype filters require the creature card type as well as the subtype.
 
+Selected creatures can enter tapped and attacking from a private hand choice
+or a revalidated graveyard target. Entry replacement choices come before the
+defending recipient choice. The existing zone owner commits the combat
+assignment before entry events are collected. The entrant keeps the selected
+recipient only while it remains eligible and retains its captured identity.
+The assignment preserves the original declarations and attack bands.
+
 Closed fixed source-counter sequences use the same owners. The compiler emits
 `$source.zone_object`; resolution requires the current battlefield source and
 its stack-pinned logical identity before constructing the counter intent. A

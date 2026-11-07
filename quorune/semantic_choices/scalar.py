@@ -367,6 +367,13 @@ class ChooseOptionHandler:
         effect: Mapping[str, Any],
         context: SemanticChoiceContext,
     ) -> SemanticChoicePreparation:
+        if "attacking_card_entry" in effect:
+            from .attacking_card_entry import prepare_attacking_card_entry_choice
+
+            prepared = prepare_attacking_card_entry_choice(effect, context)
+            if isinstance(prepared, SemanticChoicePreparation):
+                return prepared
+            effect = prepared
         options = self._options(effect)
         legal_values = tuple(option["id"] for option in options)
         return SemanticChoicePreparation(

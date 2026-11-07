@@ -1033,6 +1033,25 @@
       ]
     },
     {
+      "id": "selected-card-attacking-entry",
+      "patterns": [
+        "quorune/compiler/attacking_card_entry_templates.py",
+        "quorune/rules/attacking_card_entry.py",
+        "quorune/semantic_choices/attacking_card_entry.py",
+        "quorune/zone_transitions.py",
+        "quorune/combat_relationship_state.py",
+        "tests/fixtures/attacking-card-entry-cards.json",
+        "tests/test_attacking_card_entry.py"
+      ],
+      "test_modules": [
+        "test_attacking_card_entry",
+        "test_attacking_token_results",
+        "test_hand_entry_followup",
+        "test_reanimation_followup",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "linked-private-hand-haste-and-sacrifice",
       "patterns": [
         "quorune/compiler/hand_entry_templates.py",

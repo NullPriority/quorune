@@ -569,6 +569,7 @@
       "test_assist_payment",
       "test_attached_permanent_modifiers",
       "test_attached_prevention",
+      "test_attacking_card_entry",
       "test_bargain_cost_reductions",
       "test_bargain_native",
       "test_batch_retained_owner_composition",

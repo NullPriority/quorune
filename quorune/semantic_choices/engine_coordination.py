@@ -524,6 +524,7 @@ class SemanticChoiceCoordinationMixin:
             except (ValueError, TypeError, KeyError) as exc:
                 raise SemanticChoiceError(str(exc)) from exc
         from ..rules.library_search_rules import optional_search_permissions
+        from ..rules.attacking_card_entry import attacking_card_entry_choice_facts
         from ..semantic_runtime.counter_permissions import collect_counter_permissions
         from ..semantic_runtime.explore import materialize_explore_source_types
         return SnapshotSemanticChoiceQuery(
@@ -616,6 +617,7 @@ class SemanticChoiceCoordinationMixin:
                 )
             ),
             **token_creation_choice_facts(self, actor, choice_effect),
+            **attacking_card_entry_choice_facts(self, actor, choice_effect),
             current_turn_sequence=self.state.turn_sequence,
             committed_discard_ids=(
                 tuple(event.object_incarnation for event in self._current_turn_history('card_discarded')

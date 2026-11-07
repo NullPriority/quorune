@@ -42,6 +42,19 @@ def fixed_target_reanimation_node_capabilities(
     """Recognize exactly one closed graveyard-to-battlefield target move."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if len(effects) == 1 and "attacking_card_entry" in effects[0]:
+        from .attacking_card_entry import ATTACKING_CARD_ENTRY_CAPABILITY, validate_attacking_entry_choice
+
+        try:
+            move = validate_attacking_entry_choice(effects[0], actor="$controller", compiled=True)
+            target = TargetGroup.from_mapping(target_schema) if target_schema is not None else None
+        except (ValueError, TypeError):
+            return ()
+        if target is None or target.types_any != ("creature",) and "creature" not in target.types_all:
+            return ()
+        base = {"op": REANIMATE_OPERATION, "card": move["card"], "controller": move["controller"], "tapped": True}
+        required = fixed_target_reanimation_node_capabilities(effects=(base,), target_schema=target_schema, mechanic_ids=mechanics)
+        return (*required, ATTACKING_CARD_ENTRY_CAPABILITY, "target.revalidate_resolution") if required else ()
     if len(effects) == 1 and effects[0].get('op') == REANIMATE_OPERATION and effects[0].get('schema_version') == REANIMATION_FOLLOWUP_VERSION:
         return _reanimation_followup_capabilities(effects[0], target_schema=target_schema, mechanics=mechanics)
     if len(effects) == 1 and effects[0].get('schema_version') == 2:

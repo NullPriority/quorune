@@ -1078,7 +1078,15 @@ class ZoneTransitionOwner:
         entry_faces: Mapping[str,str] | None = None,
         publish_events: bool = True,
         damage_clears: Sequence[tuple[str, str]] = (),
+        attacking_entries: Mapping[str, Any] | None = None,
     ) -> list[CardInstance]:
+        if attacking_entries:
+            from .rules.attacking_card_entry import AttackingEntryRecipient
+
+            entering = {object_id for object_id, destination in changes if destination == 'battlefield'}
+            if any(object_id not in entering or not isinstance(recipient, AttackingEntryRecipient)
+                for object_id, recipient in attacking_entries.items()):
+                raise GameRuleError('Attacking entry requires typed recipients for the entering cards')
         if any(self.state.cards.get(object_id) is not None
                 and self.state.cards[object_id].permanent_composition is not None for object_id,_ in changes):
             from .composition_ordering import resolve_composition_departure_batch
@@ -1100,7 +1108,8 @@ class ZoneTransitionOwner:
             clear_damage_for_permanents(self.host, damage_clears)
         if not changes:return []
         snapshots=self._commit_simultaneous_zone_batch(changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,reason=reason,log=log)
-        return self._publish_simultaneous_zone_batch(snapshots,prepared,kinds,reason=reason,publish_events=publish_events)
+        return self._publish_simultaneous_zone_batch(snapshots,prepared,kinds,reason=reason,
+            publish_events=publish_events,attacking_entries=attacking_entries)
 
     def _commit_simultaneous_zone_batch(self,changes,prepared,kinds,controllers,aura_targets,faces,source_snapshot,*,reason,log,destination_timestamp=None):
         """Commit an already validated group without publishing partial facts."""
@@ -1136,7 +1145,7 @@ class ZoneTransitionOwner:
             )
         return snapshots
 
-    def _publish_simultaneous_zone_batch(self,snapshots,prepared,kinds,*,reason,publish_events=True):
+    def _publish_simultaneous_zone_batch(self,snapshots,prepared,kinds,*,reason,publish_events=True,attacking_entries=None):
         """Seal history and discover triggers after every group member commits."""
         from .control_effects import synchronize_control_effects
         synchronize_control_effects(self.host, reason="control duration sources changed zones simultaneously")
@@ -1147,6 +1156,12 @@ class ZoneTransitionOwner:
             (card.object_id for card, departure in snapshots if departure.origin == 'battlefield'
              and card.zone != 'battlefield'), reason='paired objects left simultaneously')
         reconcile_soulbond_pairs(self.host)
+        if attacking_entries:
+            from .rules.attacking_card_entry import commit_attacking_entry
+
+            for card, _departure in snapshots:
+                if card.object_id in attacking_entries:
+                    commit_attacking_entry(self.host, card, attacking_entries[card.object_id])
         occurrences = tuple(
             self._zone_change_occurrence(
                 card,

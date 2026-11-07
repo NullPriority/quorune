@@ -51,6 +51,10 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
     reason: str,
 ) -> Any:
     op = operation
+    if op == "move" and "attacking_entry" in effect:
+        from ..rules.attacking_card_entry import apply_attacking_entry_move
+
+        return apply_attacking_entry_move(host, effect, actor=actor, reason=reason)
     implicit_zones = {
         "sacrifice": {"battlefield"},
         "destroy": {"battlefield"},

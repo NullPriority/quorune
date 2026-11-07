@@ -5,14 +5,18 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from .reanimation_followup import BattlefieldEntryFollowup
+from .attacking_card_entry import ATTACKING_CARD_ENTRY_CAPABILITY, decode_hand_attacking_entry
 
 
 HAND_ENTRY_FOLLOWUP_CAPABILITY = "zone.move.fixed_private_hand_haste_and_sacrifice"
 HAND_ENTRY_FOLLOWUP_VERSION = 2
 HAND_ENTRY_FOLLOWUP_FIELDS = frozenset({"schema_version", "followup"})
+VERSIONED_HAND_ENTRY_FIELDS = HAND_ENTRY_FOLLOWUP_FIELDS | {"attacking_entry"}
 
 
 def decode_hand_entry_followup(effect: Mapping) -> BattlefieldEntryFollowup | None:
+    if decode_hand_attacking_entry(effect):
+        return None
     fields = HAND_ENTRY_FOLLOWUP_FIELDS.intersection(effect)
     if not fields:
         return None
@@ -33,10 +37,10 @@ def hand_entry_followup_runtime_dependencies(program):
 
     def visit(value):
         if isinstance(value, Mapping):
-            if value.get("op") == "put_card_from_hand" and HAND_ENTRY_FOLLOWUP_FIELDS.intersection(value):
+            if value.get("op") == "put_card_from_hand" and VERSIONED_HAND_ENTRY_FIELDS.intersection(value):
                 owned = fixed_private_hand_entry_node_capabilities(effects=(value,), target_schema=None,
                     mechanic_ids=("fixed-private-hand-entry", "fixed-public-zone-move"))
-                if HAND_ENTRY_FOLLOWUP_CAPABILITY not in owned:
+                if not {HAND_ENTRY_FOLLOWUP_CAPABILITY, ATTACKING_CARD_ENTRY_CAPABILITY}.intersection(owned):
                     raise ValueError("Private hand entry lacks its closed follow-up authority")
                 required.update(owned)
             for child in value.values():

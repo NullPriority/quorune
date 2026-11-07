@@ -50,6 +50,12 @@ def reanimation_entry_counter_runtime_dependencies(program):
                 if not owned:
                     raise ValueError('Linked reanimation lacks its closed target and follow-up shape')
                 required.update(owned)
+            elif value.get('op') == 'choose_option' and 'attacking_card_entry' in value:
+                owned = fixed_target_reanimation_node_capabilities(effects=(value,), target_schema=program.target_schema,
+                    mechanic_ids=(FIXED_TARGET_REANIMATION_MECHANIC, 'cr-115-targets'))
+                if not owned:
+                    raise ValueError('Attacking reanimation lacks its closed target and entry shape')
+                required.update(owned)
             for child in value.values():visit(child)
         elif isinstance(value,(list,tuple)):
             for child in value:visit(child)

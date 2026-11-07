@@ -155,6 +155,9 @@ class SemanticChoiceQuery(
     def attacking_token_entry_allowed(self) -> bool: ...
 
     @property
+    def attacking_card_entry_status(self) -> str | None: ...
+
+    @property
     def damage_source_candidates_are_complete(self) -> bool: ...
 
     @property
@@ -201,10 +204,13 @@ class SnapshotSemanticChoiceQuery:
     apnap_order: tuple[str, ...] = ()
     discard_hand_inputs: FrozenMap | None = None
     attacking_token_entry_allowed: bool = False
+    attacking_card_entry_status: str | None = None
 
     def __post_init__(self) -> None:
         if type(self.attacking_token_entry_allowed) is not bool:
             raise ValueError('Attacking token entry fact must be boolean')
+        if self.attacking_card_entry_status not in (None, 'missing', 'ordinary', 'attacking'):
+            raise ValueError('Attacking card entry preview has an unknown result')
         if self.discard_hand_inputs is not None and not isinstance(self.discard_hand_inputs, FrozenMap):
             object.__setattr__(self, 'discard_hand_inputs', FrozenMap(self.discard_hand_inputs))
         if self.resolution_source_is_physical_card is not None and type(self.resolution_source_is_physical_card) is not bool:
