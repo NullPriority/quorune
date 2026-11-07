@@ -229,7 +229,7 @@ class OrdinaryTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
         for card in (spell,celebrant):self.assert_closed(s,card)
         self.prepare(s,mana={'B':1,'R':1});self.checkpoint(s)
         self.cast(s,'A',spell,[]);self.resolve_top(s)
-        tokens=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Vampire']
+        tokens=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Vampire Token']
         self.assertEqual(2,len(tokens));active=[t for t in s.state.delayed_triggers if t.active]
         self.assertEqual(1,len(active));self.assertEqual('A',active[0].controller)
         self.assertEqual(spell.object_id,active[0].source_object_id)
@@ -256,7 +256,7 @@ class OrdinaryTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assert_closed(s,wave);self.assert_closed(s,theft);self.prepare(s);self.checkpoint(s)
         self.until(s,lambda game:game.state.active_player=='B' and game.state.phase=='precombat_main')
         self.mana_from(s,'A',islands);self.cast(s,'A',wave,[]);self.resolve_top(s)
-        token=next(c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Wall')
+        token=next(c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Wall Token')
         self.mana_from(s,'B',mountains);self.cast(s,'B',theft,[token.ref]);self.resolve_top(s)
         self.assertEqual('B',s.state.cards[token.object_id].controller)
         self.until(s,lambda game:game.state.phase=='ending' and game.state.step=='end_step')
@@ -282,7 +282,7 @@ class OrdinaryTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
         command={'action_id':'choose','attacking':{refs[0]:'C'}};before=authoritative_state_hash(s.state)
         self.assertFalse(s.act('pilot:D',command).ok);self.assertEqual(before,authoritative_state_hash(s.state))
         result=s.act('pilot:A',command);self.assertTrue(result.ok,result.summary);self.settle(s)
-        angel=next(c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Angel')
+        angel=next(c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Angel Token')
         self.assertTrue(angel.tapped);self.assertEqual('C',angel.attacking)
         cleanup=next(t for t in s.state.delayed_triggers if t.active)
         self.assertEqual(geist.object_id,cleanup.source_object_id)
@@ -326,7 +326,7 @@ class OrdinaryTokenCleanupCopyNativeTests(InheritedNativeFixture,unittest.TestCa
         self.resolve_top(s)
         cleanup=[item for item in s.state.delayed_triggers if item.active];self.assertEqual(2,len(cleanup))
         self.assertEqual({copied_source_id,spell.object_id},{item.source_object_id for item in cleanup})
-        tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Vampire']
+        tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Vampire Token']
         self.assertEqual(2,len(tokens))
         self.until(s,lambda game:game.state.phase=='ending' and game.state.step=='end_step')
         s=self.replay(s,load=True);self.settle(s)

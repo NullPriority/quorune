@@ -295,7 +295,7 @@ class ExactMishraClosureTests(unittest.TestCase):
             card
             for card in engine.state.cards.values()
             if card.is_token
-            and card.printed_name == "Construct"
+            and card.printed_name == "Construct Token"
             and card.controller == "A"
             and card.zone == "battlefield"
         ]
@@ -336,7 +336,7 @@ class ExactMishraClosureTests(unittest.TestCase):
         thopter = next(
             engine._resolve_object("A", ref)
             for ref in created
-            if engine._resolve_object("A", ref).printed_name == "Thopter"
+            if engine._resolve_object("A", ref).printed_name == "Thopter Token"
         )
         self.assertEqual(
             2, engine._numeric_stat(thopter.object_id, "power")

@@ -1929,7 +1929,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         source = self.card(engine, "Knight-Captain of Eos")
         engine.create_token(
             "A",
-            name="Soldier",
+            name="Soldier Token",
             quantity=1,
             characteristics={
                 "type_line": "Token Creature — Soldier",
@@ -1944,7 +1944,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.is_token
             and card.controller == "A"
-            and card.printed_name == "Soldier"
+            and card.printed_name == "Soldier Token"
         )
         combat_source = next(
             card
@@ -1958,7 +1958,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
             log=False,
         )
         soldiers_before = sum(
-            card.is_token and card.printed_name == "Soldier"
+            card.is_token and card.printed_name == "Soldier Token"
             for card in engine.state.cards.values()
         )
         self._prepare_priority(session, source)
@@ -2067,7 +2067,7 @@ class FixedTokenCreationRuntimeTests(unittest.TestCase):
         self.assertEqual(
             soldiers_before + 2,
             sum(
-                card.is_token and card.printed_name == "Soldier"
+                card.is_token and card.printed_name == "Soldier Token"
                 for card in engine.state.cards.values()
             ),
         )
@@ -2554,11 +2554,12 @@ class TokenCopyCopiableBoundaryActionTests(unittest.TestCase):
                                 for p in programs), record.name)
 
     def test_copy_recipe_with_unsupported_replacement_fails_closed_at_runtime_admission(self):
+        from high_risk_interaction_support import CONDITIONAL_DRAW_STEP_REPLACEMENT
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
         record = token_record("Generic Copy Replacement Boundary",
-            "Skip your draw step.\n{W}: Create a token that's a copy of target creature you control.",
+            f"{CONDITIONAL_DRAW_STEP_REPLACEMENT}\n{{W}}: Create a token that's a copy of target creature you control.",
             25100814, type_line="Artifact")
         registry = load_default_capability_registry()
         ir = compile_oracle_card(record, capability_registry=registry, capability_profile="commander_review")

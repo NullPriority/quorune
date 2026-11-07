@@ -562,7 +562,7 @@ class PublicQueryEffectAmountCompilerTests(unittest.TestCase):
             "creature card in your hand.",
             "Target creature gets +1/+1 until end of turn for each other "
             "creature of the chosen type you control.",
-            "Target creature gets +X/+X until your next turn, where X is the "
+            "Target creature gets +X/+X until your next end step, where X is the "
             "number of creatures you control.",
             "Up to two target creatures each get +X/+X until end of turn, "
             "where X is the number of creatures that attacked this turn you control.",

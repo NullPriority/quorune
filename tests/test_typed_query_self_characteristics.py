@@ -636,10 +636,11 @@ class TypedQuerySelfCharacteristicRuntimeTests(unittest.TestCase):
                 color="G",
             ),
         )
+        from high_risk_interaction_support import CONDITIONAL_DRAW_STEP_REPLACEMENT
         boundary=replace(cases[0],oracle_id='fixture:query-self-replacement-boundary',
             name='Generic Query Modifier Replacement Boundary',layout='normal',faces=(),
             type_line='Creature — Spirit',keywords=(),oracle_text=(
-                'This creature gets +1/+1 for each land you control.\nSkip your draw step.'))
+                f'This creature gets +1/+1 for each land you control.\n{CONDITIONAL_DRAW_STEP_REPLACEMENT}'))
         for record in (*cases,boundary):
             with self.subTest(name=record.name):
                 program = compile_card_program(

@@ -360,7 +360,7 @@ class LifeGainProhibitionRuntimeTests(unittest.TestCase):
         self.activate(s,source)
         self.assertEqual(3,s.state.cards[source.object_id].counters['loyalty'])
         self.assertIsNone(self.settle(s))
-        token = next(c for c in s.state.cards.values() if c.is_token and c.zone == 'battlefield' and c.printed_name == 'Devil')
+        token = next(c for c in s.state.cards.values() if c.is_token and c.zone == 'battlefield' and c.printed_name == 'Devil Token')
         self.assertEqual((1,1),(s.engine._numeric_stat(token.object_id,'power'),s.engine._numeric_stat(token.object_id,'toughness')))
         self.heal(s,heals[0],seat='B',gain=0)
         self.cast(s,shock,[token.ref],payment={'R':1});self.assertIsNone(self.settle(s,target='C'))

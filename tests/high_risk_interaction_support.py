@@ -17,6 +17,9 @@ from quorune.semantics import SemanticRegistry
 
 
 Pair = tuple[str, str]
+CONDITIONAL_DRAW_STEP_REPLACEMENT = (
+    "If you would begin your draw step while you have three or more cards in hand, skip that step instead."
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -916,16 +919,16 @@ _WITNESSES = {
     ),
     "control-replacement-boundary": _Witness(
         "Generic Fixed Control Replacement Boundary", "Artifact",
-        "Skip your draw step.\n{1}: Gain control of target creature until end of turn. "
+        f"{CONDITIONAL_DRAW_STEP_REPLACEMENT}\n{{1}}: Gain control of target creature until end of turn. "
         "Untap that creature. It gains haste until end of turn.", "{3}",
     ),
     "quantity-mana-replacement-boundary": _Witness(
         "Generic Public Quantity Mana Replacement Boundary", "Artifact",
-        "Skip your draw step.\n{T}: Add {G} for each creature you control.", "{3}",
+        f"{CONDITIONAL_DRAW_STEP_REPLACEMENT}\n{{T}}: Add {{G}} for each creature you control.", "{3}",
     ),
     "land-untap-replacement-boundary": _Witness(
         "Generic Land Untap Replacement Boundary", "Artifact",
-        "Skip your draw step.\n{1}: Untap up to three lands you control.", "{3}",
+        f"{CONDITIONAL_DRAW_STEP_REPLACEMENT}\n{{1}}: Untap up to three lands you control.", "{3}",
     ),
     "resolution-mana-replacement-boundary": _Witness(
         "Generic Resolution Mana Replacement Boundary", "Creature — Human",

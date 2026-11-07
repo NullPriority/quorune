@@ -45,7 +45,9 @@ class WholeHandDiscardCompilerTests(unittest.TestCase):
         from quorune.semantic_runtime.context import ReadOnlyHandlerContext
         context=ReadOnlyHandlerContext.from_sequences(actor='A',default_reason='Discard witness',seats='ABCD',active_seats='ABCD',apnap_order='BCDA')
         base={'op':'discard_whole_hands','actor':'A','players':'all'}
-        for change in ({'actor':'B'},{'players':['B','C']},{'players':True},{'extra':0}):
+        selected = WholeHandDiscardHandler().lower({**base, 'players': ['C', 'B']}, context)
+        self.assertEqual(('B', 'C'), selected.intents[0].players)
+        for change in ({'actor':'B'},{'players':['B','unknown']},{'players':True},{'extra':0}):
             with self.assertRaises(ValueError):WholeHandDiscardHandler().lower({**base,**change},context)
         data=json.loads((ROOT/'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(r for r in data['capabilities'] if r['id']=='zone.discard.whole_hand').update(status='blocked',blockers=['Whole-hand authority withdrawn'])

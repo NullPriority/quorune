@@ -207,7 +207,7 @@ class CommittedDestructionFollowupNativeTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         spirits = [
             card for card in session.state.cards.values()
-            if card.zone == "battlefield" and card.is_token and card.printed_name == "Spirit"
+            if card.zone == "battlefield" and card.is_token and card.printed_name == "Spirit Token"
         ]
         self.assertEqual(["A", "A"], [card.controller for card in spirits])
         for creature in (own, borrowed, foreign):

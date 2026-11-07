@@ -21821,14 +21821,14 @@
       "piece_ids": [
         "capability.damage.prevention.persistent_amount",
         "capability.permanent.indestructible.ordinary",
-        "residual.activated_effect.tap-state"
+        "residual.reference_binding.linked-result-reference"
       ],
       "capability_ids": [
         "damage.prevention.persistent_amount",
         "permanent.indestructible.ordinary"
       ],
       "interaction_order": 3,
-      "assertion": "Original Kytheon/Gideon represents Indestructible and fixed self prevention while a remaining material tap/untap result keeps the complete card unresolved. Strict and compatible whole-card admission reject it; no native composition is claimed."
+      "assertion": "Original Kytheon/Gideon represents Indestructible and fixed self prevention. The activated untap still requires linked result binding, so strict and compatible whole-card admission reject the original."
     },
     {
       "evidence_class": "interaction",

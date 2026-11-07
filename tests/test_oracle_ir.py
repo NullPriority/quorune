@@ -2147,7 +2147,7 @@ class OracleIRTests(unittest.TestCase):
         )[0]
         token = sprout_program.effects[0]
         self.assertEqual("create_token", token["op"])
-        self.assertEqual("Saproling", token["name"])
+        self.assertEqual("Saproling Token", token["name"])
         self.assertEqual(
             "Token Creature — Saproling",
             token["characteristics"]["type_line"],

@@ -298,5 +298,5 @@ class KickedEntryActionTests(unittest.TestCase):
         self.assertEqual(1, len(session.state.stack))
         self.advance_to(session, lambda s: not s.state.stack)
         soldiers = [card for card in session.state.cards.values() if card.is_token and card.zone == 'battlefield' and card.controller == 'A']
-        self.assertEqual(1, len(soldiers)); self.assertEqual('Soldier', soldiers[0].printed_name)
+        self.assertEqual(1, len(soldiers)); self.assertEqual('Soldier Token', soldiers[0].printed_name)
         self.replay(session)
