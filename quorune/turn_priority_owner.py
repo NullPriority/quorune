@@ -227,6 +227,9 @@ class TurnPriorityDecisionOwner:
                 response=response,
                 entry_action_id=decision.decision_id,
             )
+        elif action == "cast" and response.get("prepare_splice") is True:
+            from .selection.splice_cast import begin_splice_cast
+            begin_splice_cast(self.host, seat, response)
         elif action in {
             "cast",
             "activate",

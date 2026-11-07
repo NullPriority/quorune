@@ -1464,6 +1464,8 @@ def _commit_cast_costs_and_stack(
         prepared_item.x_value=selected_option.get('announced_target_x',selected_option.get('announced_additional_x',response.get('x')))
         host.state.stack.append(prepared_item)
         observe_cast_source_placement(host, prepared_item)
+    from .splice_costs import announce_splice_sources
+    announce_splice_sources(host, proposal, card, selected_option)
     from .spell_mana_payments import capture_spell_mana_payment
     excluded = {payment_card.object_id for payment_card in tap_cards}
     spend_context = host._spell_mana_spend_context(proposal.type_line)

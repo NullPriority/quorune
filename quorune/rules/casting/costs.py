@@ -1520,6 +1520,13 @@ def build_cast_cost_options(
             if option.get("cast_type_line")
             else cast_type_line
         )
+        from ..splice import SPLICE_INTERNAL_SELECTION, SPLICE_SELECTION
+        if SPLICE_SELECTION in submission or SPLICE_INTERNAL_SELECTION in submission:
+            from .splice_costs import apply_splice_declaration
+            option = apply_splice_declaration(host, seat, card, program, option, mandatory, submission,
+                type_line=option_cast_type_line, hint=hint)
+            if option is None:
+                continue
         spend_context = host._spell_mana_spend_context(
             str(
                 option_cast_type_line

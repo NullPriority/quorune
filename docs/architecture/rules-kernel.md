@@ -1252,6 +1252,13 @@ the same physical spell and controller throughout. The complete spell determines
 whether all announced targets are illegal. A surviving spell skips instructions
 whose required target is gone and resolves the independent instructions in order.
 
+Splice uses source-pinned hand descriptors and a private ordered choice before
+the ordinary cast commits. Each offered addition has a current price and
+complete target assignment available. Acceptance rechecks the hand incarnations
+and combines their fixed prices before the ordinary cost modifiers. The cast
+reveals the chosen cards during its atomic announcement. Later copies retain the
+already announced text and targeting source through the standard copy owners.
+
 `abilities.py` generically lowers represented colon abilities, the supported
 Craft reminder grammar, and typed activation-usage limits for
 printed Exhaust and ordinary once-only abilities. `activation_usage.py` is the single owner for the

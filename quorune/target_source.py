@@ -152,6 +152,11 @@ def ensure_trigger_targeting_source(host,item):
 
 
 def spell_copy_targeting_source(host,template):
+    from .rules.casting.spell_text import CAST_TEXT_COPY_CHARACTERISTICS
+    if CAST_TEXT_COPY_CHARACTERISTICS in template:
+        actor = template.get("controller")
+        return TargetingSource.from_characteristics("spell", template[CAST_TEXT_COPY_CHARACTERISTICS],
+            controller=actor, spell_owner=actor)
     card=host.state.cards.get(str(template.get('card_object_id') or ''))
     if card is not None:return spell_targeting_source(host,card)
     return TargetingSource('spell')

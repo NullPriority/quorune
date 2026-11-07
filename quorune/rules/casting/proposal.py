@@ -673,6 +673,8 @@ def _cast_targets_and_tap_costs(
         if effective_target_schema is not None
         else []
     )
+    if "splice_modes" in selected_dict:
+        selected_modes = selected_dict["splice_modes"]
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     from .additional_tap_costs import validate_fixed_tap_payment
     try:validate_fixed_tap_payment(host,request.actor,card,selected_dict)
@@ -740,6 +742,8 @@ def build_cast_proposal(
             "Pilots cannot select semantic program identifiers",
             reason="pilot_semantic_key",
         )
+    if "prepare_splice" in response and response["prepare_splice"] is not False:
+        raise CastProposalError("Splice requires its offered announcement choice", reason="splice_announcement_required")
     card = _resolve_cast_source(host, request)
     record = host.card_record(card)
     if not record:
@@ -920,6 +924,24 @@ def _cast_offer_payload(
     return payload, tuple(legal_options)
 
 
+def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type_line, declaration):
+    alternative = None
+    if face_down:
+        alternative = {
+            "id": str(cast_method),
+            "kind": "alternate",
+            "label": f"Cast face down using {str(cast_method).title()}",
+            "requirements": {"GENERIC": 3, **{color: 0 for color in "WUBRGC"}},
+        }
+    return tuple(
+        CastCostOption.from_dict(value)
+        for value in host._cast_cost_options(
+            seat, card, program, response=declaration, hint=True, alternative_base=alternative,
+            cast_type_line=type_line if face_down else None, suppress_source_costs=face_down,
+        )
+    )
+
+
 def build_cast_offer(
     host: CastProposalHost,
     seat: str,
@@ -927,6 +949,7 @@ def build_cast_offer(
     *,
     cast_method: str | None = None,
     face_name: str | None = None,
+    splice_declaration: Mapping[str, Any] | None = None,
 ) -> CastProposalResult:
     """Use the casting proposal queries to advertise one executable action."""
 
@@ -1005,30 +1028,8 @@ def build_cast_offer(
         return CastProposalResult(exc.status, exc.reason)
     if method_spec is None and host.state.config.semantic_policy == "trusted_only" and not cast_resolution_is_trusted(host,record,front,program):
         return CastProposalResult("unresolved", "semantic_policy_requires_trusted")
-    options = tuple(
-        CastCostOption.from_dict(value)
-        for value in host._cast_cost_options(
-            seat,
-            card,
-            program,
-            hint=True,
-            alternative_base=(
-                {
-                    "id": str(cast_method),
-                    "kind": "alternate",
-                    "label": f"Cast face down using {str(cast_method).title()}",
-                    "requirements": {
-                        "GENERIC": 3,
-                        **{color: 0 for color in "WUBRGC"},
-                    },
-                }
-                if method_spec is not None
-                else None
-            ),
-            cast_type_line=type_line if method_spec is not None else None,
-            suppress_source_costs=method_spec is not None,
-        )
-    )
+    options = _cast_offer_costs(host, seat, card, program, cast_method=cast_method,
+        face_down=method_spec is not None, type_line=type_line, declaration=splice_declaration)
     if not options:
         return CastProposalResult("unpayable", "mandatory_cost_unpayable")
     payload, legal = _cast_offer_payload(
@@ -1046,6 +1047,9 @@ def build_cast_offer(
     if method_spec is not None:
         payload["cost"] = "{3}"
         payload["cast_method"] = cast_method
+    from .splice_costs import splice_offer_fields
+    payload.update(splice_offer_fields(host, seat, card, program, type_line=type_line,
+        enabled=splice_declaration is None and method_spec is None))
     payload.update(characteristic_offer_fields(record,cast_method))
     cast_name = str(front.get("name") or "") if front else record.name
     cast_cost = str(front.get("mana_cost") or "") if front else record.mana_cost

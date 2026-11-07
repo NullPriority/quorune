@@ -3,6 +3,7 @@ from __future__ import annotations
 """Assemble separately compiled spell text on one cast and stack object."""
 
 from collections.abc import Mapping, Sequence
+from copy import deepcopy
 from dataclasses import dataclass, field, replace
 from typing import Any
 
@@ -11,6 +12,7 @@ from ...targets import available_modes, target_group_mappings, target_plan
 
 
 CAST_TEXT_FRAMES = "cast_text_frames"
+CAST_TEXT_COPY_CHARACTERISTICS = "cast_text_copy_characteristics"
 _FRAME_INDEX = "_cast_text_frame"
 _TARGET_FIELDS = ("target", "card", "object", "stack", "subject", "player")
 
@@ -102,6 +104,10 @@ class CastTextComposition:
         expected = {identity for frame in self.frames for identity in frame["groups"].values()}
         if set(grouped) != expected:
             raise ValueError("Declared spell text targets do not match the combined target groups")
+        return self.seal()
+
+    def seal(self) -> dict[str, Any]:
+        """Prepare the immutable instruction scopes for a declared target plan."""
         frames = thaw_value(self.frames)
         effects = []
         for index, (body, frame) in enumerate(zip(self.bodies, self.frames, strict=True)):
@@ -131,6 +137,14 @@ def compose_cast_text(bodies: Sequence[SpellTextBody]) -> CastTextComposition:
             "target_schema": local, "modes": body.modes}))
     schema = FrozenMap({"groups": groups, **({"same_player_groups": relations} if relations else {})}) if groups else None
     return CastTextComposition(parts, schema, tuple(frames))
+
+
+def cast_text_copy_fields(context: Mapping[str, Any]) -> dict[str, Any]:
+    """Retain already-paid text and its groups in a delayed copy template."""
+    if CAST_TEXT_FRAMES not in context:
+        return {}
+    return {key: deepcopy(context[key]) for key in
+        (CAST_TEXT_FRAMES, "cast_option_effects", "dynamic_effects", "target_schema_override")}
 
 
 def _local_target_groups(item, field, names, *, fallback=None):

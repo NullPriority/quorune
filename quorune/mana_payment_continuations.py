@@ -145,6 +145,7 @@ def execute_mana_choice_capable_priority_action(
     response: Mapping[str, Any],
     payment_id: str,
     trusted_resume: bool = False,
+    splice_sources: tuple[Mapping[str, Any], ...] = (),
 ) -> bool:
     """Run one payment atomically or replace it with a strict continuation."""
 
@@ -160,6 +161,7 @@ def execute_mana_choice_capable_priority_action(
         )
     from .rules.casting.assist_frame import ASSIST_INTERNAL_FIELDS
     from .rules.casting.assist_payment import AssistCastStart, issue_assist_choice
+    from .rules.splice import SPLICE_INTERNAL_SELECTION, SPLICE_SELECTION
 
     internal_fields = {
         *ASSIST_INTERNAL_FIELDS,
@@ -169,12 +171,18 @@ def execute_mana_choice_capable_priority_action(
         "_random_discard_cost_refs",
         "_waterbend_payment",
         BLIGHT_CAST_PAYMENT_FIELD,
+        SPLICE_SELECTION,
+        SPLICE_INTERNAL_SELECTION,
     }
     if not trusted_resume and internal_fields.intersection(response):
         raise GameRuleError(
             "Internal payment-continuation fields cannot be submitted"
         )
     payload = dict(response)
+    if splice_sources:
+        if action != "cast":
+            raise ValueError("Only a cast can carry a private Splice announcement")
+        payload[SPLICE_INTERNAL_SELECTION] = [dict(source) for source in splice_sources]
     payload.setdefault("_mana_payment_id", str(payment_id))
     try:
         # A replacement choice is discovered while resolving a mana ability.

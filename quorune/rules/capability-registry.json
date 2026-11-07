@@ -9399,6 +9399,108 @@
     {
       "applicability": {
         "exclusions": [
+          "unrepresented variable and color-qualified prices",
+          "additional zone prices sharing one unsupported selection field",
+          "separate cast-during-resolution Splice choice windows",
+          "unrepresented donor bodies"
+        ],
+        "inputs": [
+          "trusted printed source from the caster's hand",
+          "eligible exact instant or sorcery body",
+          "ordinary mana or a fixed zone-change price"
+        ],
+        "outputs": [
+          "one paid cast with the host's characteristics",
+          "ordered scoped effects",
+          "disclosed selected sources"
+        ],
+        "summary": "Private ordered Splice declarations reuse ordinary fixed mana or typed zone-change prices and append independently compiled resolution bodies to one target plan."
+      },
+      "blockers": [],
+      "dependencies": [
+        "target.revalidate_resolution",
+        "trigger.event.normalized_spell_cast",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the typed Splice capability keeps its source declaration residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.additional_cost.splice",
+      "implementation_components": [
+        "quorune.compiler.splice_nodes.splice_static_node",
+        "quorune.semantic_runtime.splice_costs.SpliceCostHandler",
+        "quorune.rules.casting.splice_costs.apply_splice_declaration",
+        "quorune.rules.casting.splice_costs.announce_splice_sources",
+        "quorune.selection.splice_cast.complete_splice_cast",
+        "quorune.rules.casting.spell_text.compose_cast_text",
+        "quorune.storm.spell_copy_template"
+      ],
+      "implementation_mutation_rationale": "Omitting the printed declaration producer leaves the source span unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards",
+        "test_actual_splice_sacrifices_two_mountains_and_fizzles_as_one_spell",
+        "test_spliced_storm_copy_keeps_its_text_after_the_original_is_countered",
+        "test_actual_modal_cast_keeps_declared_modes_and_added_targets"
+      ],
+      "multiplayer_tests": [
+        "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards",
+        "test_actual_splice_sacrifices_two_mountains_and_fizzles_as_one_spell",
+        "test_spliced_storm_copy_keeps_its_text_after_the_original_is_countered"
+      ],
+      "negative_tests": [
+        "test_splice_cost_is_source_spanned_and_rejects_open_prices",
+        "test_withdrawn_splice_authority_leaves_the_printed_cost_residual",
+        "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards",
+        "test_actual_splice_sacrifices_two_mountains_and_fizzles_as_one_spell"
+      ],
+      "official_rules": [
+        "115.3",
+        "601.2b",
+        "601.2c",
+        "601.2f",
+        "601.2h",
+        "608.2b",
+        "701.20a",
+        "702.47a",
+        "702.47b",
+        "702.47c",
+        "702.47d",
+        "702.47e",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_splice_cost_is_source_spanned_and_rejects_open_prices",
+        "test_original_splice_bodies_and_prices_bind_strictly",
+        "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards",
+        "test_actual_splice_sacrifices_two_mountains_and_fizzles_as_one_spell"
+      ],
+      "privacy_tests": [
+        "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards"
+      ],
+      "replay_tests": [
+        "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards",
+        "test_actual_splice_sacrifices_two_mountains_and_fizzles_as_one_spell",
+        "test_spliced_storm_copy_keeps_its_text_after_the_original_is_countered"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "variable or complex mode prices",
           "unknown or partially represented mode bodies",
           "zero/repeated/unknown mode selections",

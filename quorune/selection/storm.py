@@ -13,6 +13,7 @@ from ..model import StackItem
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..spell_copy_engine_adapter import dispatch_normalized_spell_copy_event
 from ..declared_cast_cost_model import declared_cost_copy_fields
+from ..rules.casting.spell_text import CAST_TEXT_COPY_CHARACTERISTICS, cast_text_copy_fields
 from ..storm import STORM_SEMANTIC_KEY, SPELL_COPY_TRIGGER_KEYS, validated_spell_copy_trigger
 from .copy_targets import copy_target_public_schema, prepare_copy_targets
 from .model import (
@@ -282,6 +283,7 @@ class StormTargetChoiceOwnerMixin:
                     ),
                     context={
                         **declared_cost_copy_fields(template),
+                        **cast_text_copy_fields(template),
                         "target_groups": grouped,
                         "target_snapshots": thaw_value(assignment.snapshots),
                         "targets_revalidated": False,
@@ -301,7 +303,7 @@ class StormTargetChoiceOwnerMixin:
         source_card = self.state.cards.get(
             str(template.get("card_object_id") or "")
         )
-        source_data = (
+        source_data = template.get(CAST_TEXT_COPY_CHARACTERISTICS) or (
             self._copyable_characteristics(source_card)
             if source_card is not None
             else {

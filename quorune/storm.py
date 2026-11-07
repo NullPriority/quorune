@@ -98,9 +98,17 @@ def spell_copy_template(host, spell, program):
     target_snapshots = copy.deepcopy(
         dict(spell.context.get("target_snapshots") or {})
     )
+    from .rules.casting.spell_text import CAST_TEXT_COPY_CHARACTERISTICS, cast_text_copy_fields
+    text = cast_text_copy_fields(spell.context)
+    if text:
+        card = host.state.cards.get(spell.card_object_id)
+        if card is None or card.zone != "stack":
+            raise StateInvariantError("Composed spell copy lost its original casting characteristics")
+        text[CAST_TEXT_COPY_CHARACTERISTICS] = host._spell_copy_characteristics(card)
     return {
         "label": spell.label,
         **declared_cost_copy_fields(spell.context),
+        **text,
         "source_spell_ref": spell.ref,
         "controller": spell.controller,
         "card_object_id": spell.card_object_id,

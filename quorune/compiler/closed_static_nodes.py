@@ -43,6 +43,11 @@ def closed_static_card_node(*, record, node_id, line, material_line, span,
     target_price=target_count_cost_static_node(record=record,node_id=node_id,line=line,material_line=material_line,
         span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)
     if target_price is not None:return target_price
+    from .splice_nodes import splice_static_node
+    splice = splice_static_node(record=record, node_id=node_id, line=line, material_line=material_line,
+        span=span, capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    if splice is not None:
+        return splice
     from .preparation_nodes import preparation_entry_node
     preparation=preparation_entry_node(record=record,face_name=face_name,node_id=node_id,line=line,material_line=material_line,
         span=span,capability_registry=capability_registry,capability_profile=capability_profile,residuals=residuals)

@@ -8462,6 +8462,27 @@
       ]
     },
     {
+      "id": "splice-cast-proposal",
+      "patterns": [
+        "quorune/compiler/splice_nodes.py",
+        "quorune/rules/splice.py",
+        "quorune/rules/casting/splice_costs.py",
+        "quorune/semantic_runtime/splice_costs.py",
+        "quorune/selection/splice_cast.py",
+        "quorune/selection/storm.py",
+        "quorune/storm.py",
+        "tests/fixtures/splice-cards.json",
+        "tests/test_splice.py"
+      ],
+      "test_modules": [
+        "test_splice",
+        "test_composed_spell_text",
+        "test_fixed_reveal_additional_costs",
+        "test_fixed_replicate",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "composed-spell-text-targeting",
       "patterns": [
         "quorune/rules/casting/spell_text.py",

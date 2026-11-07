@@ -32,6 +32,9 @@ def dispatch_completed_decision(host,decision):
     elif kind=='battle.enter_protector':host._complete_battle_entry_protector_choice(decision)
     elif kind=='battle.siege_defeated':host._complete_siege_defeated_choice(decision)
     elif kind=='selection.exile_cast':host._complete_one_shot_exile_cast_choice(decision)
+    elif kind=='selection.splice_cast':
+        from .selection.splice_cast import complete_splice_cast
+        complete_splice_cast(host,decision)
     elif kind=='choice.apnap':host._complete_apnap_choice(decision)
     elif kind=='replacement.order':complete_replacement_order_choice(host,decision,error_type=GameRuleError)
     elif kind=='aura.entry':complete_aura_entry_choice(host,decision,error_type=GameRuleError)
