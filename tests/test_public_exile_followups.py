@@ -165,7 +165,7 @@ class PublicExileFollowupNativeTests(unittest.TestCase):
         self.assertEqual(before, authoritative_state_hash(session.state))
         self.cast(session, "A", spell, targets=("B",))
         self.assertIsNone(self.resolve(session))
-        self.assertEqual(["A", "A"], [card.controller for card in self._tokens(session, "Spirit")])
+        self.assertEqual(["A", "A"], [card.controller for card in self._tokens(session, "Spirit Token")])
         for card in (creature, modal_creature, modal_spell):
             self.assertEqual("exile", session.state.cards[card.object_id].zone)
         self.assertEqual("graveyard", session.state.cards[own.object_id].zone)
@@ -184,7 +184,7 @@ class PublicExileFollowupNativeTests(unittest.TestCase):
         self.checkpoint(session)
         self.cast(session, "A", spell)
         session = self._choose_player(session, "B")
-        tokens = self._tokens(session, "Insect")
+        tokens = self._tokens(session, "Insect Token")
         self.assertEqual(["A", "A"], [card.controller for card in tokens])
         self.assertTrue(all("flying" in session.engine._combat_keywords(card) for card in tokens))
         for card in (land_artifact, artifact, modal):
@@ -202,7 +202,7 @@ class PublicExileFollowupNativeTests(unittest.TestCase):
         self.checkpoint(session)
         self.cast(session, "A", spell)
         session = self._choose_player(session, "B")
-        token, = self._tokens(session, "Zombie")
+        token, = self._tokens(session, "Zombie Token")
         self.assertEqual("A", token.controller)
         self.assertIn("lifelink", session.engine._combat_keywords(token))
         self.assertEqual("exile", session.state.cards[creature.object_id].zone)
@@ -245,7 +245,7 @@ class PublicExileFollowupNativeTests(unittest.TestCase):
         self.assertTrue(accepted.ok, accepted.summary)
         self.assertIsNone(self.resolve(session))
         self.assertEqual(before + 2, session.state.players["A"].life)
-        self.assertEqual(["A", "A"], [card.controller for card in self._tokens(session, "Bear")])
+        self.assertEqual(["A", "A"], [card.controller for card in self._tokens(session, "Bear Token")])
         for card in exiled:
             self.assertEqual("exile", session.state.cards[card.object_id].zone)
         self.replay(session)

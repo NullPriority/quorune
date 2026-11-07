@@ -122,7 +122,8 @@ class AllCounterSelfCostTests(unittest.TestCase):
                 modified = json.loads(json.dumps(descriptor))
                 modified['reduction']['terms'][0]['metric'].update(change)
                 candidate = SimpleNamespace(provenance={}, handlers=(modified,), effects=(), target_schema=None,
-                    coverage=(), cost_schema=None, event_condition=None, event='cast.cost.modify', active_zone='all')
+                    coverage=(), capability_dependencies=(), cost_schema=None, event_condition=None,
+                    event='cast.cost.modify', active_zone='all')
                 _, blockers = program_dynamic_runtime_requirements(candidate)
                 self.assertTrue(any('self_cost_public_counters:invalid' in b for b in blockers), blockers)
         for text in ('This spell costs {1} less to cast for each counter on players.',

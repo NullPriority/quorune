@@ -241,7 +241,7 @@ class CommittedOccurrenceNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertTrue(any(item.source_object_id == relic.object_id for item in session.state.stack))
         self.assertIsNone(self.resolve(session))
         self.assertCountEqual(
-            [("A", "Zombie Druid"), ("B", "Treasure Token")],
+            [("A", "Zombie Druid Token"), ("B", "Treasure Token")],
             [(card.controller, card.printed_name) for card in session.state.cards.values()
              if card.is_token and card.zone == "battlefield"],
         )

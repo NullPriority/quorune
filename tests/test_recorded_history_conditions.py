@@ -117,7 +117,7 @@ class RecordedHistoryConditionNativeTests(InheritedNativeFixture, unittest.TestC
                 session = self.replay(session, load=True)
                 self.assertIsNone(self.resolve(session))
                 self.assertEqual("hand", session.state.cards[target.object_id].zone)
-                self.assertEqual([] if responder == "A" else ["Wolf"], self._token_names(session))
+                self.assertEqual([] if responder == "A" else ["Wolf Token"], self._token_names(session))
                 self.replay(session)
 
     def test_actual_see_red_counts_an_unenchanted_attacker_and_sacrifices_without_one(self):
@@ -186,7 +186,7 @@ class RecordedHistoryConditionNativeTests(InheritedNativeFixture, unittest.TestC
                 self.assertEqual(discard, self._source_on_stack(session, raven))
                 self.assertFalse(self._source_on_stack(session, mirage))
                 self.assertIsNone(self.resolve(session))
-                self.assertEqual(["Bird"] if discard else [], self._token_names(session))
+                self.assertEqual(["Bird Token"] if discard else [], self._token_names(session))
                 self.replay(session)
 
     def test_actual_macabre_discount_requires_a_creature_arrival_in_its_own_graveyard(self):
@@ -271,5 +271,5 @@ class RecordedHistoryConditionNativeTests(InheritedNativeFixture, unittest.TestC
                 triggers = sum(item.source_object_id == lunar.object_id for item in session.state.stack)
                 self.assertEqual(2 if target == "A" else 1, triggers)
                 self.assertIsNone(self.resolve(session))
-                self.assertEqual(["Bat"] if target == "A" else [], self._token_names(session))
+                self.assertEqual(["Bat Token"] if target == "A" else [], self._token_names(session))
                 self.replay(session)
