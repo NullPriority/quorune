@@ -1122,9 +1122,22 @@ class GameState:
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
+    def _turn_schedule_fields(self) -> dict[str, Any]:
+        departed_turn_version = self._departed_turn_boundary_version(self.departed_turn_boundary_version)
+        return {
+            "turn_order": list(self.turn_order),
+            "current_turn": self.current_turn.to_dict() if self.current_turn else None,
+            "last_normal_turn_player": self.last_normal_turn_player,
+            **({"departed_turn_boundary_version": departed_turn_version} if departed_turn_version is not None else {}),
+            "extra_turns": [turn.to_dict() for turn in self.extra_turns],
+            **(
+                {"scheduled_turn_skips": [grant.to_dict() for grant in self.scheduled_turn_skips]}
+                if self.scheduled_turn_skips else {}
+            ),
+        }
+
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
         legend_rule_choice_version(self.legend_rule_choice_version)
-        departed_turn_version = self._departed_turn_boundary_version(self.departed_turn_boundary_version)
         effect_destruction_version = self._effect_destruction_replacement_version(
             self.effect_destruction_replacement_version
         )
@@ -1208,15 +1221,7 @@ class GameState:
                if self.stack_resolution_authority_version is not None else {}),
             **({'token_copy_value_version':self.token_copy_value_version} if self.token_copy_value_version is not None else {}),
             **({"predefined_token_name_version": token_names} if token_names is not None else {}),
-            "turn_order": list(self.turn_order),
-            "current_turn": self.current_turn.to_dict() if self.current_turn else None,
-            "last_normal_turn_player": self.last_normal_turn_player,
-            **({"departed_turn_boundary_version": departed_turn_version} if departed_turn_version is not None else {}),
-            "extra_turns": [turn.to_dict() for turn in self.extra_turns],
-            **(
-                {"scheduled_turn_skips": [grant.to_dict() for grant in self.scheduled_turn_skips]}
-                if self.scheduled_turn_skips else {}
-            ),
+            **self._turn_schedule_fields(),
             "active_player": self.active_player,
             "priority_player": self.priority_player,
             "priority_passes": list(self.priority_passes),
