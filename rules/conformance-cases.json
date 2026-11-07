@@ -51603,7 +51603,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "eliminated_player_would_be_next_turn_duration_and_complete_oracle_goad_grammar_not_implemented"
+        "complete_oracle_goad_grammar_not_implemented"
       ],
       "case_id": "cr-701.15a",
       "case_version": 1,
@@ -51621,16 +51621,19 @@
       "effective_date": "2026-08-07",
       "executable_test_ids": [
         "tests.test_goad_rules.GoadRuleTests.test_same_player_goad_is_redundant_and_expires_on_their_next_turn",
+        "tests.test_goad_rules.GoadDepartedTurnTests.test_actual_goad_expires_before_survivors_extra_turn_after_departure",
+        "tests.test_goad_rules.GoadRuleTests.test_departed_goad_waits_through_earlier_extra_turns_and_keeps_other_goader",
         "tests.test_goad_rules.GoadRuleTests.test_oracle_compiler_lowers_only_anchored_target_goad_templates"
       ],
       "implementation_components": [
         "GoadDesignation",
         "CommanderEngine.apply_effect",
         "CommanderEngine._expire_goad_designations",
+        "TurnStepOwner",
         "oracle_ir._effect_template"
       ],
       "notes": [
-        "Anchored target-creature goad effects create a typed designation through the generic effect DSL and expire on the goading player's next ordinary or extra turn. Other Oracle forms and CR 800.4m eliminated-player duration remain blocked."
+        "Represented goad instructions create a typed designation and expire on the goading player's next ordinary or extra turn. Current games also observe the CR 800.4m boundary after departure."
       ],
       "required_scenarios": [
         "positive",
