@@ -289,7 +289,7 @@ class LegendRuleExemptionCompilerTests(unittest.TestCase):
         self.assertEqual(LEGEND_RULE_HANDLER, node.handlers[0]['handler_id'])
         self.assertEqual(legend_rule_exemption_spec(text),
                          ability_fragment_from_dict(node.handlers[0]['fragment']))
-        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text())
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
         next(row for row in raw['capabilities'] if row['id'] == LEGEND_RULE_CAPABILITY).update(
             status='blocked', blockers=['Current legend authority withdrawn'])
         blocked = CapabilityRegistry(raw)
