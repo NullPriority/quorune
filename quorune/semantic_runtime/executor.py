@@ -833,6 +833,7 @@ def _synchronize_instruction_observers(sink):
 def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -> dict[str, Any] | None:
     """Resolve one available instruction without changing its position in the program."""
     from ..card_overrides import normalize_game_record_v3_effect
+    from ..rules.casting.spell_text import cast_text_instruction_has_no_target, scoped_cast_text_instruction
     from ..scheduled_player import scheduled_player_instruction_is_impossible
 
     if scheduled_player_instruction_is_impossible(host, item, raw_effect):
@@ -845,7 +846,11 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         )
         return None
 
-    effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
+    try:
+        scoped_item, raw_effect = scoped_cast_text_instruction(item, raw_effect)
+    except ValueError as exc:
+        raise SemanticNodeError(str(exc)) from exc
+    effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, scoped_item))
     if raw_effect.get('op') == 'offer_optional_effect' and unavailable_optional_combat_removal(host, raw_effect, effect):
         return None
     if raw_effect.get("players") == "$targets":
@@ -861,7 +866,8 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         from ..milling import event_mill_recipient_has_left
         if event_mill_recipient_has_left(host, raw_effect, effect):
             return None
-    if any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object')):
+    if (any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object'))
+        or scoped_item is not item and cast_text_instruction_has_no_target(raw_effect, effect)):
         host._log(
             item.controller, 'effect.target.skipped',
             f'Skipped a target-dependent part of {item.ref}.',

@@ -8462,6 +8462,22 @@
       ]
     },
     {
+      "id": "composed-spell-text-targeting",
+      "patterns": [
+        "quorune/rules/casting/spell_text.py",
+        "quorune/semantic_runtime/executor.py",
+        "quorune/targets.py",
+        "tests/fixtures/composed-spell-text-cards.json",
+        "tests/test_composed_spell_text.py"
+      ],
+      "test_modules": [
+        "test_composed_spell_text",
+        "test_casting_spells_rules",
+        "test_fixed_nonrepeating_modal_programs",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "fused-split-spells",
       "patterns": [
         "quorune/compiler/fuse_faces.py",

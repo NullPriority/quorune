@@ -466,6 +466,7 @@
     "tests/fixtures/committed-occurrence-history-cards.json",
     "tests/fixtures/complex-activation-mana-cards.json",
     "tests/fixtures/composed-manifest-cards.json",
+    "tests/fixtures/composed-spell-text-cards.json",
     "tests/fixtures/composite-quoted-grant-cards.json",
     "tests/fixtures/composition-assurance-cards.json",
     "tests/fixtures/composition-commander-cards.json",

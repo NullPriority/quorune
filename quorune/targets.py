@@ -650,12 +650,13 @@ def available_modes(schema: Mapping[str, Any]) -> tuple[str, ...]:
     return tuple(str(name) for name in modes)
 
 
-def target_plan(
+def target_group_mappings(
     schema: Mapping[str, Any],
     modes: Sequence[str] = (),
     *,
     require_modes: bool = True,
-) -> TargetPlan:
+) -> tuple[Mapping[str, Any], ...]:
+    """Read group definitions for the selected modes in announcement order."""
     selected_modes = tuple(str(mode) for mode in modes)
     mode_definitions = schema.get("modes")
     raw_groups: list[Mapping[str, Any]] = []
@@ -695,9 +696,19 @@ def target_plan(
         if groups is None:
             groups = [schema]
         raw_groups.extend(dict(group) for group in groups)
+    return tuple(raw_groups)
+
+
+def target_plan(
+    schema: Mapping[str, Any],
+    modes: Sequence[str] = (),
+    *,
+    require_modes: bool = True,
+) -> TargetPlan:
+    selected_modes = tuple(str(mode) for mode in modes)
     parsed = tuple(
         TargetGroup.from_mapping(group, default_id=f"target_{index}")
-        for index, group in enumerate(raw_groups)
+        for index, group in enumerate(target_group_mappings(schema, selected_modes, require_modes=require_modes))
     )
     group_ids = [group.group_id for group in parsed]
     if len(set(group_ids)) != len(group_ids):

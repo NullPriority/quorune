@@ -1245,6 +1245,13 @@ the same spell-program key from the selected front face name. A typed land-face
 program cannot authorize an unsupported spell face, and a trusted spell target
 schema cannot disappear from its advertised offer.
 
+An assembled spell text plan declares one combined set of targets. Each body
+keeps its original target relations, and each selected mode keeps its own target
+positions. Stack resolution binds instructions against those saved groups using
+the same physical spell and controller throughout. The complete spell determines
+whether all announced targets are illegal. A surviving spell skips instructions
+whose required target is gone and resolves the independent instructions in order.
+
 `abilities.py` generically lowers represented colon abilities, the supported
 Craft reminder grammar, and typed activation-usage limits for
 printed Exhaust and ordinary once-only abilities. `activation_usage.py` is the single owner for the
