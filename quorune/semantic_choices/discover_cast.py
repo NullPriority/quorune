@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-"""Discover cast/hand choice and cleanup within an enclosing instruction list."""
+"""Sealed exile-cast choices within an enclosing instruction list."""
 
 from collections.abc import Mapping
 from dataclasses import dataclass
 
 from ..discover_model import (DISCOVER_CAPABILITY,DISCOVER_CAST_OPERATION,DISCOVER_FINISH_OPERATION,
-    DiscoverProgress,DiscoverCastIntent,DiscoverCleanupIntent,discover_options_fingerprint,
+    NONLAND_SCAN_CAST_OPERATION, ExileCastProgress,DiscoverCastIntent,DiscoverCleanupIntent,discover_options_fingerprint,
     discover_zone_counter,require_current_discover_cards)
 from ..replacement.immutable import FrozenMap
 from ..semantic_runtime.zone_move_intent import ZoneMoveIntent
@@ -27,7 +27,9 @@ def _hand_intent(actor,progress):
 def _progress(effect,actor,query,*,finishing=False):
     if effect.get('player')!=actor or actor not in query.active_seats:
         raise SemanticChoiceError('Discover requires the resolving controller')
-    progress=DiscoverProgress.from_dict(effect['progress'])
+    progress = ExileCastProgress.from_dict(effect['progress'])
+    if (progress.amount is None) != (effect.get('op') == NONLAND_SCAN_CAST_OPERATION):
+        raise SemanticChoiceError('The exile cast changed its printed search rule')
     if not finishing and progress.candidate is None:
         raise SemanticChoiceError('Discover casting requires its final discovered card')
     require_current_discover_cards(progress,query,actor=actor,include_candidate=not finishing)
@@ -57,15 +59,22 @@ class DiscoverCastChoiceHandler:
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
                 preparation_intents=(DiscoverCleanupIntent(context.actor,context.stack_ref,progress),),
                 auto_continue=AutoContinue(reason='The Discover procedure completed; resume the enclosing instruction.'))
-        if self.operation!=DISCOVER_CAST_OPERATION:raise SemanticChoiceError('Unknown Discover choice operation')
+        if self.operation not in {DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION}:
+            raise SemanticChoiceError('Unknown resolving exile-cast choice operation')
+        nonland = self.operation == NONLAND_SCAN_CAST_OPERATION
         options=tuple(context.query.authorized_cast_options())
         if not options:
+            if nonland:
+                return SemanticChoicePreparation(request=None, continuation_effect=FrozenMap(effect),
+                    auto_continue=AutoContinue(reason='The supplied card cannot be cast and stays exiled.'))
             return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
                 preparation_intents=(_hand_intent(context.actor,progress),),
                 auto_continue=AutoContinue(reason='The discovered card cannot be cast and goes to hand.',
                     prepend_effects=(_finish_effect(context.actor,progress),)))
+        prompt = ('Cast the exiled card without paying its mana cost, or leave it exiled?' if nonland
+                  else 'Cast the discovered card without paying its mana cost, or put it into your hand?')
         return SemanticChoicePreparation(request=SemanticChoiceRequest(
-            prompt='Cast the discovered card without paying its mana cost, or put it into your hand?',
+            prompt=prompt,
             choice=CastOrDeclineChoice(options),public_context=FrozenMap({'stack':context.stack_ref,
                 'operation':self.operation,'card':progress.candidate_ref,'cast_options':list(options)})),
             continuation_effect=FrozenMap({**effect,'_choice_actor':context.actor,'_stack_ref':context.stack_ref,
@@ -73,7 +82,8 @@ class DiscoverCastChoiceHandler:
 
     def complete(self,continuation,response,query):
         effect=continuation.effect
-        if (self.operation!=DISCOVER_CAST_OPERATION or set(effect)!={'op','player','progress',
+        if (self.operation not in {DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION}
+                or set(effect)!={'op','player','progress',
                 '_choice_actor','_stack_ref','_options_fingerprint'} or effect['op']!=self.operation
                 or effect['_stack_ref']!=continuation.stack_ref or effect['_choice_actor']!=effect['player']):
             raise SemanticChoiceError('Discover choice continuation changed')
@@ -84,6 +94,12 @@ class DiscoverCastChoiceHandler:
         choice=response.get('choice');cast=response.get('cast')
         if choice not in {'cast','decline'} or cast is not None and not isinstance(cast,Mapping):
             raise SemanticChoiceError('Choose one current Discover action')
-        intent=(_hand_intent(actor,progress) if choice=='decline' else
-            DiscoverCastIntent(actor,continuation.stack_ref,progress,effect['_options_fingerprint'],FrozenMap(cast or {})))
-        return SemanticChoiceCompletion(intents=(intent,),prepend_effects=(_finish_effect(actor,progress),))
+        if choice == 'cast':
+            intents = (DiscoverCastIntent(actor, continuation.stack_ref, progress,
+                                         effect['_options_fingerprint'], FrozenMap(cast or {})),)
+        elif progress.amount is None:
+            intents = ()
+        else:
+            intents = (_hand_intent(actor, progress),)
+        finish = () if progress.amount is None else (_finish_effect(actor, progress),)
+        return SemanticChoiceCompletion(intents=intents, prepend_effects=finish)

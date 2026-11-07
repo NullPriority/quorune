@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Immutable CR 701.57 eligibility and public exile-progress values."""
+"""Immutable progress and casting authority for public library exile scans."""
 
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -16,6 +16,11 @@ DISCOVER_OPERATION='discover'
 DISCOVER_STEP_OPERATION='discover_step'
 DISCOVER_CAST_OPERATION='discover_cast_choice'
 DISCOVER_FINISH_OPERATION='discover_finish'
+NONLAND_SCAN_CAPABILITY = 'library.exile_until_nonland.cast_without_mana'
+NONLAND_SCAN_MECHANIC = 'exile-until-nonland-cast'
+NONLAND_SCAN_OPERATION = 'exile_until_nonland_then_cast'
+NONLAND_SCAN_STEP_OPERATION = 'exile_until_nonland_step'
+NONLAND_SCAN_CAST_OPERATION = 'exile_until_nonland_cast_choice'
 
 
 def discover_options_fingerprint(options):
@@ -40,15 +45,16 @@ def discover_card_qualifies(amount,*,types,mana_value):
 
 
 @dataclass(frozen=True,slots=True)
-class DiscoverProgress:
-    amount: int
+class ExileCastProgress:
+    amount: int | None
     exiled: tuple[LibrarySelectionObjectIdentity,...]
     candidate_ref: str | None
 
     def __post_init__(self):
-        ManaValueLimitSpec(self.amount)
+        if self.amount is not None:
+            ManaValueLimitSpec(self.amount)
         if not isinstance(self.exiled,(tuple,list)):
-            raise ValueError('Discover requires an ordered public exile history')
+            raise ValueError('An exile scan requires an ordered public exile history')
         exiled=tuple(self.exiled)
         if (any(not isinstance(card,LibrarySelectionObjectIdentity) for card in exiled)
                 or any(len({getattr(card,key) for card in exiled})!=len(exiled)
@@ -56,7 +62,7 @@ class DiscoverProgress:
                 or self.candidate_ref is not None and (
                     type(self.candidate_ref) is not str or not exiled
                     or self.candidate_ref!=exiled[-1].ref)):
-            raise ValueError('Discover requires distinct exile incarnations and its final candidate')
+            raise ValueError('An exile scan requires distinct exile incarnations and its final candidate')
         for card in exiled:discover_zone_counter(card)
         object.__setattr__(self,'exiled',exiled)
 
@@ -69,17 +75,31 @@ class DiscoverProgress:
         return self.exiled[:-1] if self.candidate_ref is not None else self.exiled
 
     def to_dict(self):
-        return {'schema_version':1,'amount':self.amount,'exiled':[card.to_dict() for card in self.exiled],
-                'candidate_ref':self.candidate_ref}
+        search = {'schema_version': 2, 'scan': 'first_nonland'} if self.amount is None else {
+            'schema_version': 1, 'amount': self.amount,
+        }
+        return {**search, 'exiled': [card.to_dict() for card in self.exiled], 'candidate_ref': self.candidate_ref}
 
     @classmethod
     def from_dict(cls,value):
-        if (not isinstance(value,Mapping) or set(value)!={'schema_version','amount','exiled','candidate_ref'}
-                or type(value['schema_version']) is not int or value['schema_version']!=1
-                or not isinstance(value['exiled'],(list,tuple))):
-            raise ValueError('Discover progress has a closed versioned shape')
-        return cls(value['amount'],tuple(LibrarySelectionObjectIdentity.from_dict(card)
-                   for card in value['exiled']),value['candidate_ref'])
+        common = {'schema_version', 'exiled', 'candidate_ref'}
+        if not isinstance(value, Mapping) or type(value.get('schema_version')) is not int:
+            raise ValueError('Exile scan progress has a closed versioned shape')
+        if value['schema_version'] == 1 and set(value) == common | {'amount'}:
+            amount = value['amount']
+            ManaValueLimitSpec(amount)
+        elif (value['schema_version'] == 2 and set(value) == common | {'scan'}
+              and value['scan'] == 'first_nonland'):
+            amount = None
+        else:
+            raise ValueError('Exile scan progress has a closed versioned shape')
+        if not isinstance(value['exiled'], (list, tuple)):
+            raise ValueError('Exile scan progress requires an ordered history')
+        return cls(amount, tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in value['exiled']),
+                   value['candidate_ref'])
+
+
+DiscoverProgress = ExileCastProgress
 
 
 def require_current_discover_cards(progress,query,*,actor,include_candidate=True):
@@ -111,16 +131,32 @@ def validate_discover_effect(effect,*,resolved=False):
 
 
 def discover_payload_dependencies(value):
-    if not isinstance(value,Mapping) or value.get('op')!=DISCOVER_OPERATION:return ()
-    validate_discover_effect(value)
-    return (DISCOVER_CAPABILITY,)
+    if not isinstance(value, Mapping):
+        return ()
+    if value.get('op') == DISCOVER_OPERATION:
+        validate_discover_effect(value)
+        return (DISCOVER_CAPABILITY,)
+    if value.get('op') == NONLAND_SCAN_OPERATION:
+        validate_nonland_scan_effect(value)
+        return (NONLAND_SCAN_CAPABILITY,)
+    return ()
+
+
+def validate_nonland_scan_effect(effect, *, resolved=False):
+    if (not isinstance(effect, Mapping) or set(effect) != {'op', 'schema_version', 'player'}
+            or effect['op'] != NONLAND_SCAN_OPERATION or type(effect['schema_version']) is not int
+            or effect['schema_version'] != 1 or type(effect['player']) is not str or not effect['player']
+            or not resolved and effect['player'] != '$controller'):
+        raise ValueError('The nonland scan requires its exact controller-bound instruction')
 
 
 @dataclass(frozen=True,slots=True)
 class DiscoverCastIntent:
+    """The shared resolving exile cast carried by the historical intent wire."""
+
     actor: str
     stack_ref: str
-    progress: DiscoverProgress
+    progress: ExileCastProgress
     options_fingerprint: str
     response: FrozenMap
     replacement_selections: tuple[str|FrozenMap,...]=()
@@ -129,7 +165,7 @@ class DiscoverCastIntent:
         from .semantic_runtime.zone_move_intent import _freeze_replacement_selections
         if (any(type(value) is not str or not value for value in
                 (self.actor,self.stack_ref,self.options_fingerprint))
-                or not isinstance(self.progress,DiscoverProgress) or self.progress.candidate is None
+                or not isinstance(self.progress,ExileCastProgress) or self.progress.candidate is None
                 or not isinstance(self.response,FrozenMap)):
             raise ValueError('Discover cast requires its current controller, resolution, candidate and options')
         if any(type(key) is not str or key.startswith('_') for key in self.response):
@@ -146,7 +182,7 @@ def decode_discover_cast_identity(value):
     if not isinstance(value,Mapping) or set(value)!={'actor','stack_ref','progress','options_fingerprint','response'}:
         raise ValueError('Discover casting has a closed continuation identity')
     if not isinstance(value['response'],Mapping):raise ValueError('Discover casting response must be an object')
-    return DiscoverCastIntent(value['actor'],value['stack_ref'],DiscoverProgress.from_dict(value['progress']),
+    return DiscoverCastIntent(value['actor'],value['stack_ref'],ExileCastProgress.from_dict(value['progress']),
         value['options_fingerprint'],FrozenMap(value['response'])).identity()
 
 
@@ -154,13 +190,13 @@ def decode_discover_cast_identity(value):
 class DiscoverCleanupIntent:
     actor: str
     stack_ref: str
-    progress: DiscoverProgress
+    progress: ExileCastProgress
     replacement_selections: tuple[str|FrozenMap,...]=()
 
     def __post_init__(self):
         from .semantic_runtime.zone_move_intent import _freeze_replacement_selections
         if (any(type(value) is not str or not value for value in (self.actor,self.stack_ref))
-                or not isinstance(self.progress,DiscoverProgress)):
+                or not isinstance(self.progress,ExileCastProgress) or self.progress.amount is None):
             raise ValueError('Discover cleanup requires its current controller and resolution')
         object.__setattr__(self,'replacement_selections',_freeze_replacement_selections(
             self.replacement_selections,family='Discover cleanup'))
@@ -172,4 +208,4 @@ class DiscoverCleanupIntent:
 def decode_discover_cleanup_identity(value):
     if not isinstance(value,Mapping) or set(value)!={'actor','stack_ref','progress'}:
         raise ValueError('Discover cleanup has a closed continuation identity')
-    return DiscoverCleanupIntent(value['actor'],value['stack_ref'],DiscoverProgress.from_dict(value['progress'])).identity()
+    return DiscoverCleanupIntent(value['actor'],value['stack_ref'],ExileCastProgress.from_dict(value['progress'])).identity()

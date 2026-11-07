@@ -4,6 +4,45 @@ import unittest
 
 
 class DiscoverValueTests(unittest.TestCase):
+    def test_nonland_scan_wire_and_compiler_exclude_other_cast_permissions(self):
+        import json
+        import re
+        from dataclasses import replace
+        from unittest.mock import patch
+        from common import ROOT
+        from test_bound_effect_programs import record
+        from quorune.compiler import discover_templates
+        from quorune.discover_model import ExileCastProgress, NONLAND_SCAN_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card
+        from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+
+        empty = ExileCastProgress(None, (), None)
+        self.assertEqual(empty, ExileCastProgress.from_dict(empty.to_dict()))
+        for forged in ({**empty.to_dict(), 'scan': 'discover'},
+                       {'schema_version': 1, 'amount': None, 'exiled': [], 'candidate_ref': None}):
+            with self.assertRaises(ValueError):
+                ExileCastProgress.from_dict(forged)
+
+        text = ('Exile cards from the top of your library until you exile a nonland card. '
+                'You may cast that card without paying its mana cost.')
+        source = record(text)
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(source, capability_registry=registry)
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        self.assertIn(NONLAND_SCAN_CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
+        raw = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        owner = next(row for row in raw['capabilities'] if row['id'] == NONLAND_SCAN_CAPABILITY)
+        owner.update(status='blocked', blockers=['Withdrawn for focused mutation'])
+        disabled = compile_oracle_card(source, capability_registry=CapabilityRegistry(raw))
+        self.assertNotEqual('exact', disabled.status)
+        for changed in (text.replace('cast that card', 'play that card'), text[:-1] + ' this turn.',
+                        text.replace('nonland card', 'creature card')):
+            with self.subTest(text=changed):
+                self.assertNotEqual('exact', compile_oracle_card(replace(source, oracle_text=changed),
+                                                                capability_registry=registry).status)
+        with patch.object(discover_templates, '_FIRST_NONLAND_CAST', re.compile(r'(?!)')):
+            self.assertNotEqual('exact', compile_oracle_card(source, capability_registry=registry).status)
+
     def test_resolving_cast_identity_rejects_internal_payment_fields_and_preserves_choices(self):
         from quorune.discover_model import DiscoverProgress,DiscoverCastIntent
         from quorune.rules.library_selection import LibrarySelectionObjectIdentity as Identity
@@ -226,6 +265,23 @@ class DiscoverStepTests(unittest.TestCase):
         with self.assertRaises(ValueError):DiscoverScanHandler('discover_step').prepare(effect,context)
         with self.assertRaises(ValueError):DiscoverScanHandler('discover').prepare({**initial,'extra':True},context)
 
+    def test_nonland_scan_exhaustion_continues_and_rejects_discover_progress(self):
+        from quorune.discover_model import ExileCastProgress, NONLAND_SCAN_OPERATION, NONLAND_SCAN_STEP_OPERATION
+        from quorune.semantic_choices.discover import DiscoverScanHandler
+
+        context, _ = self.context()
+        context.query.library = []
+        initial = {'op': NONLAND_SCAN_OPERATION, 'schema_version': 1, 'player': 'A'}
+        preparation = DiscoverScanHandler(NONLAND_SCAN_OPERATION).prepare(initial, context)
+        self.assertIsNone(preparation.request)
+        self.assertEqual((), preparation.preparation_intents)
+        self.assertEqual((), preparation.auto_continue.prepend_effects)
+        step = {'op': NONLAND_SCAN_STEP_OPERATION, 'schema_version': 1, 'player': 'A',
+                'progress': ExileCastProgress(3, (), None).to_dict(),
+                'pending': {'object_id': 'LAND', 'logical_object_id': 'LAND@0', 'ref': 'LAND'}}
+        with self.assertRaisesRegex(ValueError, 'printed search rule'):
+            DiscoverScanHandler(NONLAND_SCAN_STEP_OPERATION).prepare(step, context)
+
 
 class DiscoverNativeTests(unittest.TestCase):
     register_fixture_cards_on_add=True
@@ -243,7 +299,8 @@ class DiscoverNativeTests(unittest.TestCase):
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
             ROOT/'tests/fixtures/discover-cards.json',ROOT/'tests/fixtures/cascade-cards.json',
             ROOT/'tests/fixtures/state-based-destination-cards.json',
-            ROOT/'tests/fixtures/conditional-exile-cards.json'],path)
+            ROOT/'tests/fixtures/conditional-exile-cards.json',
+            ROOT/'tests/fixtures/qualified-spell-ordinal-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Discover',[DeckEntry('Generic Bound Commander',1,'commander'),
             DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
@@ -259,6 +316,110 @@ class DiscoverNativeTests(unittest.TestCase):
             semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
         binding=bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')
         self.assertTrue(binding['strict_capability_ready'],binding['blockers'])
+
+    def test_actual_nico_casts_first_nonland_or_leaves_every_unused_card_exiled(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        from quorune.record import authoritative_state_hash
+
+        for index, choice in enumerate(('cast', 'decline')):
+            with self.subTest(choice=choice):
+                session = H.session(self, 6082701 + index)
+                engine = session.engine
+                session.state.config.semantic_policy = 'trusted_only'
+                source = H.add(self, engine, 'Nico Minoru, Runaway', ref='NICO')
+                source.acquired_control_turn_count = -1
+                discard = H.add(self, engine, 'Generic Bound Plains', zone='hand', ref='NICO_DISCARD')
+                names = ('Forest', 'Lightning Bolt', 'Generic Bound Growth')
+                cards = [H.add(self, engine, name, zone='library', ref=f'NICO_TOP{position}')
+                         for position, name in enumerate(names)]
+                library = engine.state.players['A'].zones['library']
+                for card in cards:
+                    library.remove(card.object_id)
+                library.extend(card.object_id for card in reversed(cards))
+                self.closed(source)
+                self.closed(cards[1])
+                action = H.ready(self, session, source, {'C': 2, 'R': 1})
+                H.checkpoint(self, session)
+
+                accepted = session.act('pilot:A', {'action_id': action['id'], 'cost_cards': [discard.ref], 'pay': 'auto'})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertEqual('graveyard', session.state.cards[discard.object_id].zone)
+                self.assertTrue(session.state.cards[source.object_id].tapped)
+                self.assertFalse(any(session.state.players['A'].mana_pool.values()))
+                pending = H.resolve(self, session)
+                self.assertIsNotNone(pending)
+                self.assertEqual('semantic.choice', pending.kind)
+                self.assertEqual(['exile', 'exile', 'library'], [session.state.cards[c.object_id].zone for c in cards])
+                self.assertNotIn(cards[2].ref, str(session.packet('pilot:B', full=True)))
+                session = H.replay(self, session, load=True)
+                public = session.packet('pilot:A', full=True)['decision']['ctx']
+                option, = public['cast_options']
+                command = {'action_id': 'choose', 'choice': choice}
+                if choice == 'cast':
+                    command['cast'] = {'cost_option': option['id'], 'targets': ['B']}
+                before = authoritative_state_hash(session.state)
+                self.assertFalse(session.act('pilot:B', command).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+                if choice == 'cast':
+                    malformed = {**command, 'cast': {**command['cast'], 'targets': [discard.ref]}}
+                    self.assertFalse(session.act('pilot:A', malformed).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                accepted = session.act('pilot:A', command)
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertIsNone(H.resolve(self, session))
+                self.assertEqual('exile', session.state.cards[cards[0].object_id].zone)
+                self.assertEqual('library', session.state.cards[cards[2].object_id].zone)
+                if choice == 'cast':
+                    self.assertEqual('graveyard', session.state.cards[cards[1].object_id].zone)
+                    self.assertEqual([35, 38, 38], [session.state.players[seat].life for seat in 'BCD'])
+                else:
+                    self.assertEqual('exile', session.state.cards[cards[1].object_id].zone)
+                    self.assertEqual([40, 40, 40], [session.state.players[seat].life for seat in 'BCD'])
+                self.assertFalse(any(event.code == 'library.discover' for event in session.state.events))
+                H.replay(self, session, load=True)
+
+    def test_actual_wandas_vision_casts_from_exile_only_on_the_second_spell(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+
+        session = H.session(self, 6082703)
+        engine = session.engine
+        session.state.config.semantic_policy = 'trusted_only'
+        source = H.add(self, engine, "Wanda's Vision", ref='WANDA')
+        first = H.add(self, engine, 'Lightning Bolt', zone='hand', ref='FIRST_BOLT')
+        second = H.add(self, engine, 'Lightning Bolt', zone='hand', ref='SECOND_BOLT')
+        land = H.add(self, engine, 'Forest', zone='library', ref='WANDA_LAND')
+        third = H.add(self, engine, 'Lightning Bolt', zone='library', ref='WANDA_BOLT')
+        library = engine.state.players['A'].zones['library']
+        for card in (land, third):
+            library.remove(card.object_id)
+        library.extend((third.object_id, land.object_id))
+        self.closed(source)
+        action = H.ready(self, session, first, {'R': 2})
+        H.checkpoint(self, session)
+
+        result = session.act('pilot:A', {'action_id': action['id'], 'targets': ['B'], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(H.resolve(self, session))
+        self.assertEqual(37, session.state.players['B'].life)
+        self.assertEqual('library', session.state.cards[land.object_id].zone)
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        action = next(row for row in actions if row.get('card') == second.ref)
+        result = session.act('pilot:A', {'action_id': action['id'], 'targets': ['B'], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        pending = H.resolve(self, session)
+        self.assertEqual('semantic.choice', pending.kind)
+        self.assertEqual(37, session.state.players['B'].life)
+        self.assertEqual('exile', session.state.cards[land.object_id].zone)
+        self.assertEqual('exile', session.state.cards[third.object_id].zone)
+        option, = session.packet('pilot:A', full=True)['decision']['ctx']['cast_options']
+        result = session.act('pilot:A', {'action_id': 'choose', 'choice': 'cast',
+                                         'cast': {'cost_option': option['id'], 'targets': ['B']}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(H.resolve(self, session))
+        self.assertEqual(31, session.state.players['B'].life)
+        self.assertEqual('graveyard', session.state.cards[third.object_id].zone)
+        self.assertEqual('exile', session.state.cards[land.object_id].zone)
+        H.replay(self, session, load=True)
 
     def test_original_dinosaur_egg_uses_last_known_toughness_zero_and_optional_decline(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H

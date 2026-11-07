@@ -3844,6 +3844,11 @@ next-upkeep optional cast through the existing one-shot exile owner. A
 countered initial spell and an exile card that left and returned do not
 Rebound.
 
+The closed controller exile-through-first-nonland instruction shares Discover's
+one-card zone scan and resolving cast payment. The first nonland result supplies
+one immediate free-cast choice. Declining keeps every unused card in exile.
+This instruction has its own capability and ends with the enclosing resolution.
+
 Aftermath binds only its selected split-card half. It grants owner-graveyard
 casting and prohibits that half from all other zones, including under another
 casting permission. Every actual graveyard cast retains its mandatory

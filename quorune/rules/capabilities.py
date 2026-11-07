@@ -382,6 +382,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'created-token-counter-followup':('token.creation.post_creation_counter',),
     'incubate':('token.creation.incubate',),
     'discover':('library.discover.controller',),
+    'exile-until-nonland-cast': ('library.exile_until_nonland.cast_without_mana',),
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
     'fixed-target-reanimation-set':('zone.reanimate.fixed_target_set',),

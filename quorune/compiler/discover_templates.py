@@ -1,15 +1,25 @@
 from __future__ import annotations
 
-"""Controller Discover with separately owned fixed or declared result amounts."""
+"""Closed controller exile scans with their printed cast choices."""
 
 import re
 
-from ..discover_model import DISCOVER_OPERATION
+from ..discover_model import DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
 
 
+_FIRST_NONLAND_CAST = re.compile(
+    r'Exile cards from the top of your library until you exile a nonland card\. '
+    r'You may cast (?:that card|it) without paying its mana cost\.?', re.I,
+)
+
+
 def discover_effect_template(text,*,source_name='',cast_x_available=False,forbid_public_x=False,**context):
+    if _FIRST_NONLAND_CAST.fullmatch(text.strip()):
+        return ('exile-until-nonland-cast-v1', ({'op': NONLAND_SCAN_OPERATION, 'schema_version': 1,
+                'player': '$controller'},), None, (NONLAND_SCAN_MECHANIC,))
+
     def fixed(body):
         match=re.fullmatch(r'Discover (?P<amount>0|[1-9][0-9]*)\.?',body.strip(),re.I)
         if match is None:return None,(),None,()

@@ -453,7 +453,9 @@ class SemanticChoiceCoordinationMixin:
         source_ref: str | None,
         stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
-        if effect.get('op')=='discover_cast_choice':
+        from ..discover_model import DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION
+
+        if effect.get('op') in (DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION):
             from ..discover_casting import discover_cast_options
             return discover_cast_options(self,item=stack_item,actor=actor,effect=effect)
         if effect.get('op') == 'miracle_cast_choice':

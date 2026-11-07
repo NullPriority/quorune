@@ -989,6 +989,12 @@ its intent identity. Resume checks the choosing controller, source
 incarnation and amount against the parent stack ability. Ordinary counter
 placement intents encode effect provenance by omission.
 
+Resolving exile scans record each public incarnation as it arrives in exile.
+The first-nonland scan uses version-two progress with `scan: first_nonland`.
+Discover keeps its version-one progress and printed mana-value limit. The
+current resolving stack item, candidate identity and offered options bind
+the cast and its payment-replacement continuation.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads

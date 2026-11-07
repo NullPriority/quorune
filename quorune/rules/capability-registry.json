@@ -45393,6 +45393,88 @@
     {
       "applicability": {
         "exclusions": [
+          "paid play and land plays",
+          "delayed permissions and other suppliers",
+          "multiple cast recipients",
+          "arbitrary filter predicates"
+        ],
+        "inputs": [
+          "resolving controller and authorized current stack item",
+          "owned library and its actual public exile results",
+          "canonical available casting options"
+        ],
+        "outputs": [
+          "exile through first nonland or empty library",
+          "one optional cast during current resolution",
+          "unused cards stay in exile"
+        ],
+        "summary": "Exile from the resolving controller’s library through the first nonland card and allow one immediate free cast of its public exile incarnation."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.permission.one_shot_exile_without_mana"
+      ],
+      "dependency_fail_closed_rationale": "The exact printed result requires the nonland scan capability, and withdrawing it keeps the effect residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "library.exile_until_nonland.cast_without_mana",
+      "implementation_components": [
+        "quorune.discover_model.ExileCastProgress",
+        "quorune.discover_model.validate_nonland_scan_effect",
+        "quorune.compiler.discover_templates.discover_effect_template",
+        "quorune.semantic_choices.discover.DiscoverScanHandler",
+        "quorune.semantic_choices.discover_cast.DiscoverCastChoiceHandler",
+        "quorune.discover_casting.execute_discover_cast"
+      ],
+      "implementation_mutation_rationale": "Suppressing the literal production leaves the otherwise supported scan-and-cast instruction materially unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_nico_casts_first_nonland_or_leaves_every_unused_card_exiled"
+      ],
+      "multiplayer_tests": [
+        "test_actual_nico_casts_first_nonland_or_leaves_every_unused_card_exiled"
+      ],
+      "negative_tests": [
+        "test_nonland_scan_wire_and_compiler_exclude_other_cast_permissions",
+        "test_actual_nico_casts_first_nonland_or_leaves_every_unused_card_exiled"
+      ],
+      "official_rules": [
+        "118.9",
+        "400.7j",
+        "601.2",
+        "608.2c",
+        "608.2d",
+        "608.2g",
+        "701.13a"
+      ],
+      "positive_tests": [
+        "test_actual_nico_casts_first_nonland_or_leaves_every_unused_card_exiled",
+        "test_nonland_scan_wire_and_compiler_exclude_other_cast_permissions"
+      ],
+      "privacy_tests": [
+        "test_actual_nico_casts_first_nonland_or_leaves_every_unused_card_exiled"
+      ],
+      "replay_tests": [
+        "test_actual_nico_casts_first_nonland_or_leaves_every_unused_card_exiled"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "Variable count",
           "Opponent library or actor/player substitutions",
           "Unowned coupled results"

@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-"""One-at-a-time Discover exiling over the existing zone-intent continuation."""
+"""One-at-a-time exile scanning over the existing zone-intent continuation."""
 
 from dataclasses import dataclass
 
 from ..discover_model import (
     DISCOVER_CAPABILITY,DISCOVER_OPERATION,DISCOVER_STEP_OPERATION,DISCOVER_CAST_OPERATION,
-    DISCOVER_FINISH_OPERATION,DiscoverProgress,discover_card_qualifies,discover_zone_counter,
-    require_current_discover_cards,validate_discover_effect,
+    DISCOVER_FINISH_OPERATION, NONLAND_SCAN_OPERATION, NONLAND_SCAN_STEP_OPERATION, NONLAND_SCAN_CAST_OPERATION,
+    ExileCastProgress, discover_spell_qualifies, discover_zone_counter,
+    require_current_discover_cards, validate_discover_effect, validate_nonland_scan_effect,
 )
 from ..replacement.immutable import FrozenMap
 from ..rules.library_selection import LibrarySelectionObjectIdentity
@@ -19,10 +20,10 @@ def _identity(row):
     return LibrarySelectionObjectIdentity(row.object_id,row.logical_object_id,row.ref)
 
 
-def _automatic(effect,follow,intents=()):
+def _automatic(effect, follow=None, intents=(), *, reason='Continue the current Discover procedure.'):
     return SemanticChoicePreparation(request=None,continuation_effect=FrozenMap(effect),
         preparation_intents=tuple(intents),auto_continue=AutoContinue(
-            reason='Continue the current Discover procedure.',prepend_effects=(FrozenMap(follow),)))
+            reason=reason, prepend_effects=(FrozenMap(follow),) if follow is not None else ()))
 
 
 def _after_pending(progress,pending,query,actor):
@@ -40,27 +41,35 @@ def _after_pending(progress,pending,query,actor):
     expected=f'{card.object_id}@{discover_zone_counter(card)+1}'
     if row.owner!=actor or row.object_id!=card.object_id or row.logical_object_id!=expected:
         raise SemanticChoiceError('The current Discover exile incarnation changed')
-    candidate=discover_card_qualifies(progress.amount,types=row.types,mana_value=row.mana_value)
-    return DiscoverProgress(progress.amount,(*progress.exiled,_identity(row)),row.ref if candidate else None)
+    candidate = 'land' not in row.types and (
+        progress.amount is None or discover_spell_qualifies(progress.amount, mana_value=row.mana_value)
+    )
+    return ExileCastProgress(progress.amount, (*progress.exiled, _identity(row)), row.ref if candidate else None)
 
 
 def _scan(effect,context,progress):
     require_current_discover_cards(progress,context.query,actor=context.actor)
+    nonland = progress.amount is None
+    reason = 'Continue exiling through the first nonland card.' if nonland else 'Continue the current Discover procedure.'
     if progress.candidate_ref is not None:
-        return _automatic(effect,{'op':DISCOVER_CAST_OPERATION,'player':context.actor,
-            'progress':progress.to_dict()})
+        return _automatic(effect, {'op': NONLAND_SCAN_CAST_OPERATION if nonland else DISCOVER_CAST_OPERATION,
+                                   'player': context.actor, 'progress': progress.to_dict()}, reason=reason)
     refs=context.query.library_refs(context.actor,top_first=True)
     if not refs:
+        if nonland:
+            return _automatic(effect, reason='The exile scan found no nonland card.')
         return _automatic(effect,{'op':DISCOVER_FINISH_OPERATION,'player':context.actor,
             'progress':progress.to_dict()})
     row=context.query.object(refs[0],zones=('library',))
     if row is None or row.owner!=context.actor or row.token:
         raise SemanticChoiceError('Discover requires an owned physical library top')
     card=_identity(row)
-    move=ZoneMoveIntent(context.actor,card.ref,('library',),'exile','Discover',owned_only=True,
+    move=ZoneMoveIntent(context.actor,card.ref,('library',),'exile',
+        'Exile through the first nonland card' if nonland else 'Discover',owned_only=True,
         expected_zone_change_counter=discover_zone_counter(card))
-    return _automatic(effect,{'op':DISCOVER_STEP_OPERATION,'schema_version':1,'player':context.actor,
-        'progress':progress.to_dict(),'pending':card.to_dict()},(move,))
+    return _automatic(effect, {'op': NONLAND_SCAN_STEP_OPERATION if nonland else DISCOVER_STEP_OPERATION,
+                               'schema_version': 1, 'player': context.actor,
+                               'progress': progress.to_dict(), 'pending': card.to_dict()}, (move,), reason=reason)
 
 
 @dataclass(frozen=True,slots=True)
@@ -84,13 +93,18 @@ class DiscoverScanHandler:
                 raise SemanticChoiceError('Discover requires the resolving controller')
             if self.operation==DISCOVER_OPERATION:
                 validate_discover_effect(effect,resolved=True)
-                progress=DiscoverProgress(effect['amount'],(),None)
-            elif self.operation==DISCOVER_STEP_OPERATION:
+                progress = ExileCastProgress(effect['amount'], (), None)
+            elif self.operation == NONLAND_SCAN_OPERATION:
+                validate_nonland_scan_effect(effect, resolved=True)
+                progress = ExileCastProgress(None, (), None)
+            elif self.operation in {DISCOVER_STEP_OPERATION, NONLAND_SCAN_STEP_OPERATION}:
                 if (set(effect)!={'op','schema_version','player','progress','pending'}
                         or type(effect['schema_version']) is not int or effect['schema_version']!=1):
                     raise SemanticChoiceError('Discover step has a closed continuation shape')
-                progress=_after_pending(DiscoverProgress.from_dict(effect['progress']),effect['pending'],
-                    context.query,context.actor)
+                progress = ExileCastProgress.from_dict(effect['progress'])
+                if (progress.amount is None) != (self.operation == NONLAND_SCAN_STEP_OPERATION):
+                    raise SemanticChoiceError('The exile scan changed its printed search rule')
+                progress = _after_pending(progress, effect['pending'], context.query, context.actor)
             else:raise SemanticChoiceError('Unknown Discover scan operation')
             return _scan(effect,context,progress)
         except (ValueError,TypeError,KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
