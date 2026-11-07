@@ -25,7 +25,8 @@ from .creature_subtypes import canonical_creature_subtype
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .counted_zone_costs import fixed_counted_zone_change_cost_clause
 from ..rules.reveal_additional_cost import FixedRevealAdditionalCost
-from ..rules.tap_additional_cost import FixedTapAdditionalCost
+from ..rules.tap_additional_cost import COLOR_TAP_SCHEMA_VERSION, FixedTapAdditionalCost
+from ..rules.casting_additional_costs import COLOR_RETURN_SCHEMA_VERSION
 from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
 from ..rules.casting_additional_cost_groups import AnnouncedXLifeAdditionalCost
 
@@ -235,6 +236,7 @@ class FixedZoneChangeAdditionalCostTemplate:
     operation: str
     predicate: ObjectQuerySpec
     count: int = 1
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         if type(self.count) is not int or not 1 <= self.count <= 10:
@@ -268,13 +270,13 @@ class FixedZoneChangeAdditionalCostTemplate:
             terms.append("card")
         if self.count != 1:
             terms.append(str(self.count))
-        return "spell-additional-cost-fixed-" + "-".join(terms) + "-v1"
+        return "spell-additional-cost-fixed-" + "-".join(terms) + f"-v{self.schema_version}"
 
     @property
     def descriptor(self) -> Mapping[str, Any]:
         _, _, choice_field = FIXED_ZONE_CHANGE_COST_CONTRACTS[self.operation]
         return {
-            "schema_version": 1,
+            "schema_version": self.schema_version,
             "kind": ZONE_CHANGE_COST_KIND,
             "operation": self.operation,
             "count": self.count,
@@ -417,18 +419,27 @@ class FixedRevealAdditionalCostTemplate:
 class FixedTapAdditionalCostTemplate:
     count: int
     permanent_types: tuple[str,...]
+    colors_all: tuple[str, ...] = ()
 
     @property
-    def template_id(self):return 'spell-additional-cost-fixed-tap-v1'
+    def template_id(self):
+        return "spell-additional-cost-fixed-color-tap-v1" if self.colors_all else "spell-additional-cost-fixed-tap-v1"
 
     @property
-    def descriptor(self):return FixedTapAdditionalCost(self.count,self.permanent_types).to_descriptor()
+    def descriptor(self):
+        return FixedTapAdditionalCost(self.count, self.permanent_types,
+            schema_version=COLOR_TAP_SCHEMA_VERSION if self.colors_all else 1,
+            colors_all=self.colors_all).to_descriptor()
 
     @property
     def cost_schema(self):return {'additional_costs':[self.descriptor]}
 
 
 def fixed_tap_additional_cost_template(text):
+    colored = re.fullmatch(r"As an additional cost to cast this spell, tap an untapped "
+        r"(?P<color>white|blue|black|red|green) creature you control\.?", text.strip(), re.I)
+    if colored is not None:
+        return FixedTapAdditionalCostTemplate(1, ("creature",), (_COLOR_WORDS[colored["color"].casefold()],))
     match=re.fullmatch(rf'As an additional cost to cast this spell, tap (?P<count>an|{FIXED_COUNT_PATTERN}) untapped '
         r'(?P<types>artifacts?, creatures?, and/or lands?|creatures? and/or lands?|artifacts?|creatures?|lands?) you control\.?',text.strip(),re.I)
     if match is None:return None
@@ -677,7 +688,7 @@ def fixed_zone_change_additional_cost_template(
             template = FixedZoneChangeAdditionalCostTemplate(
                 SACRIFICE_ONE_COST, ObjectQuerySpec.from_dict(legacy.descriptor['predicate'])
             )
-        return FixedZoneChangeAdditionalCostTemplate(template.operation, template.predicate, count)
+        return FixedZoneChangeAdditionalCostTemplate(template.operation, template.predicate, count, template.schema_version)
     match = _FIXED_DISCARD_COST.fullmatch(stripped)
     if match is not None:
         raw_quality = match.group("quality")
@@ -744,6 +755,11 @@ def fixed_zone_change_additional_cost_template(
         quality = " ".join(match.group("quality").casefold().split())
         if not _article_matches(match.group("article"), quality):
             return None
+        words = quality.split()
+        if len(words) == 2 and words[1] == "creature" and _COLOR_WORDS.get(words[0]) in frozenset("WUBRG"):
+            predicate = _controlled_permanent_query(types_all=("creature",), colors_all=(_COLOR_WORDS[words[0]],))
+            return FixedZoneChangeAdditionalCostTemplate(RETURN_ONE_TO_OWNER_HAND_COST,
+                predicate, schema_version=COLOR_RETURN_SCHEMA_VERSION)
         if quality not in {"land", "creature", "permanent"}:
             return None
         predicate = _controlled_permanent_query(

@@ -10,8 +10,7 @@ from ...effect_runtime.hand_inspection import commit_selected_hand_reveal, valid
 from ...replacement.immutable import thaw_value
 from ...semantic_runtime.cast_costs import default_cast_cost_component_registry
 from ...targets import available_modes
-from ..casting_additional_cost_groups import fixed_zone_change_additional_cost_capability
-from ..casting_additional_costs import fixed_zone_change_additional_cost
+from ..casting_additional_costs import FixedZoneChangeAdditionalCost, fixed_zone_change_additional_cost
 from ..modal_selection import canonical_modes
 from ..splice import SPLICE_HANDLER, SPLICE_INTERNAL_SELECTION, SPLICE_REQUEST, SPLICE_SELECTION, SpliceSpec
 from .model import CastProposalError
@@ -45,8 +44,7 @@ def _printed_splice_source(host, card):
             if descriptor.get("handler_id") != SPLICE_HANDLER:
                 continue
             spec, = default_cast_cost_component_registry().lower(descriptor, None)
-            if (spec.zone_change is not None
-                and fixed_zone_change_additional_cost_capability(spec.zone_change) not in program.capability_dependencies):
+            if not set(spec.price_capabilities()).issubset(program.capability_dependencies):
                 continue
             specs.append(spec)
     if len(specs) != 1:
@@ -87,13 +85,13 @@ def splice_offer_fields(host, seat, card, program, *, type_line, enabled):
     }}
 
 
-def _splice_zone_prices(option, mandatory, sources):
-    prices = [source.spec.zone_change for source in sources if source.spec.zone_change is not None]
+def _splice_nonmana_prices(option, mandatory, sources):
+    prices = [source.spec.nonmana_price for source in sources if source.spec.nonmana_price is not None]
     selected = option.get("_selected_additional_costs")
     existing = (*(mandatory if selected is None else selected), *option.get("_additional_option_costs", ()))
     fields = [price.choice_field for descriptor in existing
         if (price := fixed_zone_change_additional_cost(descriptor)) is not None]
-    fields.extend(price.choice_field for price in prices)
+    fields.extend(price.choice_field for price in prices if isinstance(price, FixedZoneChangeAdditionalCost))
     if len(fields) != len(set(fields)):
         return None
     return [*option.get("_additional_option_costs", ()), *(price.to_descriptor() for price in prices)]
@@ -118,8 +116,8 @@ def apply_splice_declaration(host, seat, card, program, option, mandatory, submi
     identities = [source.identity(seat) for source in sources]
     if pinned and list(declared) != identities:
         return None
-    zone_prices = _splice_zone_prices(option, mandatory, sources)
-    if zone_prices is None:
+    nonmana = _splice_nonmana_prices(option, mandatory, sources)
+    if nonmana is None:
         return None
     schema = option.get("target_schema", program.target_schema)
     try:
@@ -140,7 +138,7 @@ def apply_splice_declaration(host, seat, card, program, option, mandatory, submi
         if source.spec.mana is not None:
             for symbol, count in source.spec.mana.items():
                 requirements[symbol] += count
-    return {**option, **composed.seal(), "requirements": requirements, "_additional_option_costs": zone_prices,
+    return {**option, **composed.seal(), "requirements": requirements, "_additional_option_costs": nonmana,
         "target_schema": thaw_value(composed.target_schema) or {"groups": []}, "splice_modes": list(modes),
         SPLICE_SELECTION: identities}
 

@@ -1259,6 +1259,11 @@ and combines their fixed prices before the ordinary cost modifiers. The cast
 reveals the chosen cards during its atomic announcement. Later copies retain the
 already announced text and targeting source through the standard copy owners.
 
+Color-qualified casting prices query the current controlled creature. A
+combined color tap and fixed zone price reads the proposed tap before offering
+the later payment. The same creature can pay both when it still qualifies after
+the tap. The return owner routes it to its owner's hand.
+
 `abilities.py` generically lowers represented colon abilities, the supported
 Craft reminder grammar, and typed activation-usage limits for
 printed Exhaust and ordinary once-only abilities. `activation_usage.py` is the single owner for the

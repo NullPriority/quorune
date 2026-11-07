@@ -9,6 +9,7 @@ from .casting_additional_cost_groups import (
     FixedLifePaymentAdditionalCost, fixed_zone_change_additional_cost_capability,
 )
 from .casting_additional_costs import FixedZoneChangeAdditionalCost
+from .tap_additional_cost import COLOR_TAP_SCHEMA_VERSION, TAP_ADDITIONAL_COST_KIND, FixedTapAdditionalCost
 
 
 FIXED_LIFE_ZONE_CAPABILITY = 'casting.additional_cost.fixed_life_zone'
@@ -39,3 +40,22 @@ def fixed_life_zone_dependencies(values):
     _, zone = decode_fixed_life_zone_costs(values)
     return tuple(sorted((FIXED_LIFE_ZONE_CAPABILITY, 'casting.additional_cost.fixed_life_payment',
         fixed_zone_change_additional_cost_capability(zone))))
+
+
+def fixed_color_tap_zone_costs(values):
+    """Recognize a color tap followed by a single independently typed zone price."""
+    if (not isinstance(values, (list, tuple)) or len(values) != 2
+        or any(not isinstance(value, Mapping) for value in values)):
+        return None
+    taps = [index for index, value in enumerate(values) if value.get("kind") == TAP_ADDITIONAL_COST_KIND]
+    if len(taps) != 1:
+        return None
+    index = taps[0]
+    try:
+        tap = FixedTapAdditionalCost.from_descriptor(values[index])
+        zone = FixedZoneChangeAdditionalCost.from_descriptor(values[1 - index])
+    except (TypeError, ValueError):
+        return None
+    if tap.schema_version != COLOR_TAP_SCHEMA_VERSION or zone.count_parameter is not None or zone.unblocked_attacker:
+        return None
+    return tap, zone

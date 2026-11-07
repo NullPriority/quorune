@@ -474,10 +474,11 @@ def _resolve_fixed_zone_change_additional_cost(
         raise CastProposalError(
             str(exc), reason="additional_cost_malformed"
         ) from exc
-    from ..fixed_payment_groups import fixed_life_zone_costs
+    from ..fixed_payment_groups import fixed_color_tap_zone_costs, fixed_life_zone_costs
     from ...nonmana_kicker import distinct_kicker_zone_costs
     if cost is None or (len(raw_costs) != 1 and not fixed_life_zone_costs(raw_costs)
-            and not distinct_kicker_zone_costs(selected_option,raw_costs)):
+            and not distinct_kicker_zone_costs(selected_option,raw_costs)
+            and not fixed_color_tap_zone_costs(raw_costs)):
         raise CastProposalError(
             "The zone-change additional cost is outside the represented family",
             reason="additional_cost_unsupported",

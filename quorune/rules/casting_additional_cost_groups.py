@@ -338,6 +338,9 @@ def fixed_zone_change_additional_cost_capability(
     if cost.schema_version == 5:
         from ..sacrifice_union_model import SACRIFICE_UNION_CAPABILITY
         return SACRIFICE_UNION_CAPABILITY
+    from .casting_additional_costs import COLOR_RETURN_ADDITIONAL_COST_CAPABILITY, COLOR_RETURN_SCHEMA_VERSION
+    if cost.schema_version == COLOR_RETURN_SCHEMA_VERSION:
+        return COLOR_RETURN_ADDITIONAL_COST_CAPABILITY
 
     return {
         DISCARD_ONE_COST: "casting.additional_cost.zone_change.fixed_discard",

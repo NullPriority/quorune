@@ -8116,6 +8116,84 @@
     {
       "applicability": {
         "exclusions": [
+          "variable counts",
+          "multiple tap prices",
+          "unrepresented compound cost groups"
+        ],
+        "inputs": [
+          "fixed color price descriptor",
+          "current controlled creature and untapped state"
+        ],
+        "outputs": [
+          "one exact tap selection",
+          "canonical tap payment and post-tap price read"
+        ],
+        "summary": "Tap one untapped controlled creature of one fixed current color. The same typed price may precede one selected fixed zone payment."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.additional_cost.fixed_tap"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing this exact color capability leaves its own price residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.additional_cost.fixed_color_tap",
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.fixed_tap_additional_cost_template",
+        "quorune.rules.tap_additional_cost.FixedTapAdditionalCost",
+        "quorune.rules.casting.additional_tap_costs.finalize_fixed_tap_option",
+        "quorune.rules.casting.source_placement.prospective_fixed_tap_price_host",
+        "quorune.rules.casting.commit._commit_tap_costs"
+      ],
+      "implementation_mutation_rationale": "Withholding the typed price production leaves its printed declaration unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "multiplayer_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "negative_tests": [
+        "test_color_price_capabilities_fail_closed_independently",
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "official_rules": [
+        "105.2",
+        "105.3",
+        "302.6",
+        "601.2h",
+        "701.26a",
+        "702.47a",
+        "702.47b"
+      ],
+      "positive_tests": [
+        "test_color_prices_use_closed_owner_descriptors",
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "privacy_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "replay_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "variable or optional Blight costs",
           "groups with additional nonmana leaves",
           "unrepresented results triggered specifically by blighting"
@@ -9399,7 +9477,7 @@
     {
       "applicability": {
         "exclusions": [
-          "unrepresented variable and color-qualified prices",
+          "unrepresented variable prices and price predicates",
           "additional zone prices sharing one unsupported selection field",
           "separate cast-during-resolution Splice choice windows",
           "unrepresented donor bodies"
@@ -9407,14 +9485,14 @@
         "inputs": [
           "trusted printed source from the caster's hand",
           "eligible exact instant or sorcery body",
-          "ordinary mana or a fixed zone-change price"
+          "ordinary mana, typed fixed zone or fixed tap price"
         ],
         "outputs": [
           "one paid cast with the host's characteristics",
           "ordered scoped effects",
           "disclosed selected sources"
         ],
-        "summary": "Private ordered Splice declarations reuse ordinary fixed mana or typed zone-change prices and append independently compiled resolution bodies to one target plan."
+        "summary": "Private ordered Splice declarations reuse ordinary mana and closed fixed nonmana prices and append independently compiled resolution bodies to one target plan."
       },
       "blockers": [],
       "dependencies": [
@@ -9440,7 +9518,8 @@
         "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards",
         "test_actual_splice_sacrifices_two_mountains_and_fizzles_as_one_spell",
         "test_spliced_storm_copy_keeps_its_text_after_the_original_is_countered",
-        "test_actual_modal_cast_keeps_declared_modes_and_added_targets"
+        "test_actual_modal_cast_keeps_declared_modes_and_added_targets",
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
       ],
       "multiplayer_tests": [
         "test_actual_ordered_splice_uses_host_color_and_reveals_only_selected_cards",
@@ -9646,6 +9725,82 @@
       ],
       "replay_tests": [
         "test_pending_mana_replacement_preserves_waterbend_reservation_and_replays"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "unknown color unions or colorless filters",
+          "unrepresented cost-order groups"
+        ],
+        "inputs": [
+          "fixed colored return descriptor",
+          "current color and control"
+        ],
+        "outputs": [
+          "one typed price selection",
+          "replacement-aware move to the owner's hand"
+        ],
+        "summary": "A fixed price returns a controlled creature of one current color through the ordinary owner-hand zone transition."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.additional_cost.zone_change.fixed_return_to_owner_hand"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing this exact color capability leaves its own price residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "casting.additional_cost.zone_change.fixed_color_return",
+      "implementation_components": [
+        "quorune.compiler.spell_additional_cost_templates.fixed_zone_change_additional_cost_template",
+        "quorune.rules.casting_additional_costs.FixedZoneChangeAdditionalCost",
+        "quorune.rules.casting_additional_costs.fixed_zone_change_cost_candidates",
+        "quorune.rules.casting.additional_zone_costs.select_zone_change_additional_cost",
+        "quorune.rules.casting.commit._resolve_fixed_zone_change_additional_cost"
+      ],
+      "implementation_mutation_rationale": "Withholding the typed price production leaves its printed declaration unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "multiplayer_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "negative_tests": [
+        "test_color_price_capabilities_fail_closed_independently",
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "official_rules": [
+        "105.2",
+        "105.3",
+        "400.3",
+        "601.2h",
+        "702.47a",
+        "702.47b"
+      ],
+      "positive_tests": [
+        "test_color_prices_use_closed_owner_descriptors",
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "privacy_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
+      ],
+      "replay_tests": [
+        "test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner"
       ],
       "required_evidence": [
         "positive",

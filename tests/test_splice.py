@@ -13,20 +13,26 @@ from test_granted_skulk import record
 from quorune.carddb import CardDatabase
 from quorune.card_programs import bind_card_program_runtime
 from quorune.card_programs.adapters import compile_best_available_card_program
+from quorune.compiler.splice_nodes import printed_splice_spec
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+from quorune.rules.casting_additional_costs import COLOR_RETURN_ADDITIONAL_COST_CAPABILITY, COLOR_RETURN_SCHEMA_VERSION
 from quorune.rules.splice import SPLICE_CAPABILITY, SpliceSpec
+from quorune.rules.tap_additional_cost import COLOR_TAP_ADDITIONAL_COST_CAPABILITY, COLOR_TAP_SCHEMA_VERSION, FixedTapAdditionalCost
 from quorune.semantics import SemanticRegistry
 from scripts.build_test_database import build_fixture_database
 
 
 ORIGINALS = (
     "Blessed Breath", "Candles' Glow", "Consuming Vortex", "Dampen Thought", "Desperate Ritual",
-    "Everdream", "Glacial Ray", "Hideous Laughter", "Kodama's Might", "Lifted by Clouds",
+    "Everdream", "Glacial Ray", "Hideous Laughter", "Hundred-Talon Strike", "Kodama's Might", "Lifted by Clouds",
     "Psychic Puppetry", "Soulless Revival", "Spiritual Visit", "Splicer's Skill",
-    "Torrent of Stone", "Vital Surge", "Wear Away",
+    "Torrent of Stone", "Veil of Secrecy", "Vital Surge", "Wear Away",
 )
+
+COLOR_RETURN = "Splice onto Arcane—Return a blue creature you control to its owner's hand."
+COLOR_TAP = "Splice onto Arcane—Tap an untapped white creature you control."
 
 
 class SpliceCompilerTests(unittest.TestCase):
@@ -41,24 +47,28 @@ class SpliceCompilerTests(unittest.TestCase):
         self.assertEqual(SpliceSpec("instant_or_sorcery", {"GENERIC": 2, "U": 1}).mana["U"],
             node.handlers[0]["splice"]["mana"]["U"])
         for invalid in ("Splice onto creature {U}", "Splice onto Arcane {X}",
-            "Splice onto Arcane—Tap an untapped white creature you control."):
+            "Splice onto Arcane—Tap two untapped white creatures you control."):
             with self.subTest(invalid=invalid):
                 ir = compile_oracle_card(record(f"Draw a card.\n{invalid}", "Instant"), capability_registry=registry)
                 self.assertNotEqual("exact", ir.status)
 
-    def test_withdrawn_splice_authority_leaves_the_printed_cost_residual(self):
+    def registry_with_withdrawal(self, capability):
         from quorune.rules.evidence import validate_capability_evidence_index
         from quorune.rules.evidence_storage import read_evidence_document
         from scripts.update_capability_evidence import build_index, discover_tests
 
         raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
-        owner = next(row for row in raw["capabilities"] if row["id"] == SPLICE_CAPABILITY)
+        owner = next(row for row in raw["capabilities"] if row["id"] == capability)
         owner.update(status="blocked", blockers=["withdrawn for the dependency witness"])
         registry = CapabilityRegistry(raw)
         declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
         index = build_index(registry_value=raw, declaration_source=declarations,
             discovered_test_ids=set(discover_tests(ROOT).values()))
         registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        return registry
+
+    def test_withdrawn_splice_authority_leaves_the_printed_cost_residual(self):
+        registry = self.registry_with_withdrawal(SPLICE_CAPABILITY)
         original = record("Draw a card.\nSplice onto Arcane {U}", "Instant — Arcane")
         self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=registry).status)
         self.assertEqual("exact", compile_oracle_card(record("Draw a card.", "Instant"),
@@ -70,6 +80,45 @@ class SpliceCompilerTests(unittest.TestCase):
         self.assertEqual("exact", compile_oracle_card(original, capability_registry=registry).status)
         with patch("quorune.compiler.splice_nodes.printed_splice_spec", return_value=None):
             self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=registry).status)
+
+    def test_color_prices_use_closed_owner_descriptors(self):
+        registry = load_default_capability_registry()
+        blue = printed_splice_spec(COLOR_RETURN)
+        white = printed_splice_spec(COLOR_TAP)
+        self.assertEqual((COLOR_RETURN_SCHEMA_VERSION, ("U",)),
+            (blue.zone_change.schema_version, blue.zone_change.predicate.colors_all))
+        self.assertEqual((COLOR_TAP_SCHEMA_VERSION, ("W",)), (white.tap.schema_version, white.tap.colors_all))
+        for spec in (blue, white):
+            self.assertEqual(spec, SpliceSpec.from_dict(spec.to_dict()))
+        legacy = FixedTapAdditionalCost(1, ("creature",)).to_descriptor()
+        self.assertEqual({"schema_version": 1, "kind": "fixed_tap", "count": 1,
+            "permanent_types": ["creature"]}, legacy)
+        with self.assertRaises(ValueError):
+            FixedTapAdditionalCost.from_descriptor({**legacy, "colors_all": ["W"]})
+        for text in (COLOR_RETURN, COLOR_TAP):
+            ir = compile_oracle_card(record(f"Draw a card.\n{text}", "Instant — Arcane"), capability_registry=registry)
+            self.assertEqual("exact", ir.status, ir.material_residuals)
+
+    def test_color_price_capabilities_fail_closed_independently(self):
+        for capability, blocked, retained in (
+            (COLOR_RETURN_ADDITIONAL_COST_CAPABILITY, COLOR_RETURN, COLOR_TAP),
+            (COLOR_TAP_ADDITIONAL_COST_CAPABILITY, COLOR_TAP, COLOR_RETURN),
+        ):
+            with self.subTest(capability=capability):
+                registry = self.registry_with_withdrawal(capability)
+                for expected, text in ((False, blocked), (True, retained)):
+                    ir = compile_oracle_card(record(f"Draw a card.\n{text}", "Instant — Arcane"), capability_registry=registry)
+                    self.assertEqual(expected, ir.status == "exact", ir.material_residuals)
+
+    def test_color_price_lowering_omission_is_killed(self):
+        registry = load_default_capability_registry()
+        for helper, text in (("fixed_zone_change_additional_cost_template", COLOR_RETURN),
+            ("fixed_tap_additional_cost_template", COLOR_TAP)):
+            with self.subTest(helper=helper):
+                original = record(f"Draw a card.\n{text}", "Instant — Arcane")
+                self.assertEqual("exact", compile_oracle_card(original, capability_registry=registry).status)
+                with patch(f"quorune.compiler.splice_nodes.{helper}", return_value=None):
+                    self.assertNotEqual("exact", compile_oracle_card(original, capability_registry=registry).status)
 
 
 class SpliceRuntimeTests(unittest.TestCase):
@@ -251,5 +300,57 @@ class SpliceRuntimeTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         self.assertEqual("graveyard", session.state.cards[artifact.object_id].zone)
         self.assertEqual(life - 2, session.state.players["B"].life)
+        self.assertEqual(hand, len(session.state.players["A"].zones["hand"]))
+        self.replay(session, load=True)
+
+    def test_actual_colored_splice_prices_share_tapped_creature_then_return_to_owner(self):
+        session = self.session(7024708)
+        engine = session.engine
+        source = self.add(engine, "Reach Through Mists", zone="hand")
+        veil = self.add(engine, "Veil of Secrecy", zone="hand")
+        strike = self.add(engine, "Hundred-Talon Strike", zone="hand")
+        borrowed = self.add(engine, "Zealous Guardian", seat="B", zone="hand")
+        engine.move_card(borrowed.object_id, "battlefield", controller="A", log=False)
+        white = self.add(engine, "Generic Bound Body", ref="only-white")
+        tapped = self.add(engine, "Generic Bound Body", ref="already-tapped-white")
+        tapped.tapped = True
+        painted = self.add(engine, "Generic Bound Body", ref="current-blue")
+        painted.annotations["copy_overrides"] = {"colors": ["U"]}
+        blue = self.add(engine, "Cloud of Faeries", ref="only-blue")
+        target = self.add(engine, "Generic Bound Body", seat="B", ref="foreign-white")
+        power = engine._numeric_stat(target.object_id, "power")
+        self.fund(session, {"U": 1})
+        self.start_splice(session, source)
+        self.add_splice(session, veil)
+        self.add_splice(session, strike)
+        choice = self.splice_actions(session)["cast"]["cost_options"][0]["choice_schema"]
+        returned = next(key for key, value in choice.items() if value.get("payment") == "return")
+        self.assertEqual({borrowed.ref, white.ref}, set(choice["tap_cost_cards"]["legal_refs"]))
+        self.assertEqual({borrowed.ref, blue.ref, painted.ref}, set(choice[returned]["legal_refs"]))
+        spectator = session.packet("pilot:D", full=True)
+        self.assertIsNone(spectator["decision"])
+        self.assertNotIn(veil.ref, json.dumps(spectator))
+        self.assertNotIn(strike.ref, json.dumps(spectator))
+        session = self.replay(session, load=True)
+        command = {"action_id": "cast", "targets": [target.ref, target.ref], "pay": "auto"}
+        for tap_ref, return_ref in ((tapped.ref, borrowed.ref), (painted.ref, borrowed.ref),
+            (target.ref, borrowed.ref), (borrowed.ref, white.ref)):
+            self.reject(session, **command, tap_cost_cards=[tap_ref], **{returned: [return_ref]})
+        before = len(session.state.events)
+        hand = len(session.state.players["A"].zones["hand"])
+        result = session.act("pilot:A", {**command, "tap_cost_cards": [borrowed.ref], returned: [borrowed.ref]})
+        self.assertTrue(result.ok, result.summary)
+        current = session.state.cards[borrowed.object_id]
+        self.assertEqual(("B", "hand"), (current.owner, current.zone))
+        self.assertIn(borrowed.object_id, session.state.players["B"].zones["hand"])
+        price_events = [event.code for event in session.state.events[before:]
+            if borrowed.object_id in event.changed_objects and event.code.startswith("cost.")]
+        self.assertEqual(["cost.tap", "cost.return"], price_events)
+        self.assertEqual(["hand", "hand"], [session.state.cards[card.object_id].zone for card in (veil, strike)])
+        self.assertIsNone(self.resolve(session))
+        current_target = session.state.cards[target.object_id]
+        keywords = {word.casefold() for word in session.engine._effective_card_data(current_target)["keywords"]}
+        self.assertTrue({"shroud", "first strike"}.issubset(keywords))
+        self.assertEqual(power + 1, session.engine._numeric_stat(target.object_id, "power"))
         self.assertEqual(hand, len(session.state.players["A"].zones["hand"]))
         self.replay(session, load=True)

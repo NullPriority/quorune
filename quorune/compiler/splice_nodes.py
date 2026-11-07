@@ -5,11 +5,11 @@ from __future__ import annotations
 import re
 
 from ..card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
-from ..rules.casting_additional_cost_groups import fixed_zone_change_additional_cost_capability
 from ..rules.casting_additional_costs import FixedZoneChangeAdditionalCost
+from ..rules.tap_additional_cost import FixedTapAdditionalCost
 from ..rules.splice import SPLICE_CAPABILITY, SPLICE_HANDLER, SpliceSpec
 from ..util import mana_cost_to_vector
-from .spell_additional_cost_templates import fixed_zone_change_additional_cost_template
+from .spell_additional_cost_templates import fixed_tap_additional_cost_template, fixed_zone_change_additional_cost_template
 from .static_runtime_nodes import runtime_handler_node
 
 
@@ -31,7 +31,10 @@ def printed_splice_spec(material: str) -> SpliceSpec | None:
     action = match["action"]
     text = "As an additional cost to cast this spell, " + action[0].lower() + action[1:] + "."
     cost = fixed_zone_change_additional_cost_template(text, allow_counted=True)
-    return SpliceSpec(quality, zone_change=FixedZoneChangeAdditionalCost.from_descriptor(cost.descriptor)) if cost else None
+    if cost is not None:
+        return SpliceSpec(quality, zone_change=FixedZoneChangeAdditionalCost.from_descriptor(cost.descriptor))
+    tap = fixed_tap_additional_cost_template(text)
+    return SpliceSpec(quality, tap=FixedTapAdditionalCost.from_descriptor(tap.descriptor)) if tap is not None else None
 
 
 def splice_static_node(*, record, node_id, line, material_line, span, capability_registry,
@@ -43,11 +46,10 @@ def splice_static_node(*, record, node_id, line, material_line, span, capability
         return None
     descriptor = {"handler_id": SPLICE_HANDLER, "schema_version": 1, "event": "cast.cost",
         REQUIRES_COMPLETE_CARD_PROGRAM_FIELD: True, "splice": spec.to_dict()}
-    cost_capability = fixed_zone_change_additional_cost_capability(spec.zone_change) if spec.zone_change else None
     return runtime_handler_node(
         node_id=node_id, line=line, span=span,
         compiled=("fixed-splice-text-v1", descriptor,
-            (SPLICE_CAPABILITY, *((cost_capability,) if cost_capability else ()))),
+            (SPLICE_CAPABILITY, *spec.price_capabilities())),
         kind="keyword_ability", event="cast.cost", active_zone="hand",
         runtime_coverage=("typed_splice_text",),
         dependency_reason="Splice requires trusted casting and ordered spell text",

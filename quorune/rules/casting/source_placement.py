@@ -1,8 +1,11 @@
-"""Casting source placement reads and its immediate trigger observations."""
-from dataclasses import dataclass
+"""Casting source placement, prospective prices, and immediate triggers."""
+from collections import ChainMap
+from dataclasses import dataclass, replace
+from types import MappingProxyType
 from ...cast_source_placement_model import cast_source_placement_version
 from .public_conditions import prospective_cost_condition_view
 from ...characteristic_read_frames import CharacteristicReadHost as _ProspectiveCharacteristicReadHost
+from ...characteristic_read_frames import CharacteristicStateView
 
 
 @dataclass(frozen=True,slots=True)
@@ -45,6 +48,16 @@ def prospective_sacrifice_read_host(host, actor, source_object_id):
             and cast_source_placement_version(getattr(host.state, 'cast_source_placement_version', None)) == 1):
         return prospective_characteristic_read_host(host, actor, source)
     return host
+
+
+def prospective_fixed_tap_price_host(host, seat, source_object_id, tapped):
+    """Read a later zone price after the reserved tap, without changing game state."""
+    base = prospective_sacrifice_read_host(host, seat, source_object_id)
+    original = base.original if isinstance(base, _ProspectiveCharacteristicReadHost) else base
+    changes = {card.object_id: replace(base.state.cards[card.object_id], tapped=True) for card in tapped}
+    state = CharacteristicStateView(base.state, ChainMap(MappingProxyType(changes), base.state.cards),
+        base.state.players)
+    return _ProspectiveCharacteristicReadHost(original, state)
 
 
 def power_sacrifice_read_host(host, actor, source_object_id):

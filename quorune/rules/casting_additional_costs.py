@@ -311,6 +311,19 @@ def _validate_announced_zone_cost(cost):
         raise AdditionalCostError('Declared-X hand discard requires unrestricted, creature or land cards')
 
 
+COLOR_RETURN_ADDITIONAL_COST_CAPABILITY = "casting.additional_cost.zone_change.fixed_color_return"
+COLOR_RETURN_SCHEMA_VERSION = 6
+
+
+def _validate_color_return_cost(cost) -> None:
+    colors = cost.predicate.colors_all
+    if (cost.operation != RETURN_ONE_TO_OWNER_HAND_COST or cost.unblocked_attacker
+        or len(colors) != 1 or colors[0] not in frozenset("WUBRG")
+        or cost.predicate != ObjectQuerySpec(zones=("battlefield",), controller="$actor",
+            known_to_actor=True, types_all=("creature",), colors_all=colors)):
+        raise AdditionalCostError("Color return requires one current color of controlled creature")
+
+
 @dataclass(frozen=True, slots=True)
 class FixedZoneChangeAdditionalCost:
     """Move one fixed-size selected set between operation-owned zones."""
@@ -328,7 +341,7 @@ class FixedZoneChangeAdditionalCost:
     def __post_init__(self) -> None:
         if (
             type(self.schema_version) is not int
-            or self.schema_version not in {1, 2, 3, 4, 5}
+            or self.schema_version not in {1, 2, 3, 4, 5, COLOR_RETURN_SCHEMA_VERSION}
         ):
             raise AdditionalCostError(
                 "Zone-change additional-cost schema version is unsupported"
@@ -356,6 +369,8 @@ class FixedZoneChangeAdditionalCost:
             raise AdditionalCostError(
                 "Zone-change additional costs require a typed object predicate"
             )
+        if self.schema_version == COLOR_RETURN_SCHEMA_VERSION:
+            _validate_color_return_cost(self)
         from ..power_sacrifice_model import validate_power_sacrifice_variant
         try:validate_power_sacrifice_variant(self.schema_version,self.operation,self.count,self.predicate,self.unblocked_attacker,self.count_parameter)
         except ValueError as exc:raise AdditionalCostError(str(exc)) from exc
@@ -483,6 +498,8 @@ class FixedZoneChangeAdditionalCost:
                 "Zone-change additional-cost descriptor fields are closed"
             )
         try:
+            if value["schema_version"] == COLOR_RETURN_SCHEMA_VERSION and set(value) != _FIXED_ZONE_CHANGE_FIELDS:
+                raise ValueError("Color return fields are closed")
             predicate = ObjectQuerySpec.from_dict(value["predicate"])
             if ('predicate_union' in value) != (value['schema_version'] == 5):
                 raise ValueError('Sacrifice union fields require exactly schema five')
@@ -680,7 +697,7 @@ def fixed_zone_change_cost_candidates(
 ) -> tuple[str, ...]:
     """Return operation-owned candidates through one immutable query path."""
 
-    if cost.schema_version in {4,5}:
+    if cost.schema_version in {4, 5, COLOR_RETURN_SCHEMA_VERSION}:
         from .casting.source_placement import prospective_sacrifice_read_host
         host = prospective_sacrifice_read_host(host, actor, exclude_object_id)
 
