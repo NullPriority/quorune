@@ -950,6 +950,7 @@
       "test_myrel_composition",
       "test_myriad_keyword_composition",
       "test_ordered_quantity_results",
+      "test_power_toughness_switch",
       "test_prepared_creature_power_damage_native",
       "test_prototype_rules",
       "test_public_condition_self_replacements",

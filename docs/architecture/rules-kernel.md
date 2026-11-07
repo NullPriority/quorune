@@ -2209,6 +2209,13 @@ subject applicability, validate their closed codecs and capability dependencies,
 and store no mutable quantity cache. Existing operation payloads retain their
 serialized fields.
 
+Temporary power and toughness switches resolve through the same continuous
+effect owner and lock each current battlefield incarnation. Source, targeted,
+and whole-battlefield switches share the layer 7d operation. It follows
+modifiers and counters and expires at cleanup. A whole-battlefield switch
+includes untargetable creatures and leaves later entrants unaffected. Declared
+target sets use the canonical announcement and resolution revalidation owners.
+
 Keyword-qualified characteristic counts use explicit quantity schema six and
 read candidate characteristics through layer six. Their later P/T modifiers
 are not materialized in an earlier view. This retains current keyword grants

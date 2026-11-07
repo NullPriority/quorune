@@ -17,7 +17,7 @@ from ..rules.target_hand_count_shapes import target_hand_count_runtime_dependenc
 from ..rules.temporary_keyword_removal import temporary_keyword_removal_runtime_dependencies
 from ..rules.increment_condition import increment_runtime_dependencies
 from ..targeted_spell_costs import self_target_reduction_runtime_dependencies
-from ..rules.target_characteristic_sets import target_characteristic_set_runtime_dependencies
+from ..rules.target_characteristic_sets import characteristic_set_runtime_dependencies
 from ..multikicker_result_amounts import multikicker_amount_runtime_dependencies
 from ..mana_spent_amounts import mana_color_amount_runtime_dependencies
 from ..rules.selected_counter_costs import selected_counter_runtime_dependencies
@@ -393,7 +393,7 @@ def program_dynamic_runtime_requirements(program):
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_selected_counter_cost:invalid:{exc}')
     try:
-        required.update(target_characteristic_set_runtime_dependencies(program))
+        required.update(characteristic_set_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_target_characteristics:invalid:{exc}')
     try:

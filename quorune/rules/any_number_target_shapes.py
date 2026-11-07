@@ -148,7 +148,9 @@ def any_number_target_node_capabilities(*, effects, target_schema, mechanic_ids)
     from .target_characteristic_sets import target_characteristic_set_capabilities
     from .counter_target_set_shapes import quantified_counter_target_capabilities
     from .all_kind_counter_shapes import all_kind_counter_node_capabilities
-    for owner in (fixed_homogeneous_target_set_node_capabilities, target_characteristic_set_capabilities, quantified_counter_target_capabilities, all_kind_counter_node_capabilities):
+    from .power_toughness_switch import power_toughness_switch_node_capabilities
+    for owner in (fixed_homogeneous_target_set_node_capabilities, target_characteristic_set_capabilities,
+            quantified_counter_target_capabilities, all_kind_counter_node_capabilities, power_toughness_switch_node_capabilities):
         required = owner(effects=(effect,), target_schema=schema, mechanic_ids=mechanic_ids)
         if required:
             from .capabilities import capability_dependencies_for_node

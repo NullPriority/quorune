@@ -7,6 +7,9 @@ from ..resolution_characteristic_model import FIXED_CHARACTERISTIC_INSTRUCTION_V
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     version=effect.get('schema_version')
+    if version == 12:
+        from ..continuous_effect_state import apply_power_toughness_switch
+        return True, apply_power_toughness_switch(host, effect, actor=actor, reason=reason)
     if version==11:
         from ..rules.temporary_keyword_removal import apply_temporary_keyword_removal
         return True,apply_temporary_keyword_removal(host,effect,actor=actor,reason=reason)

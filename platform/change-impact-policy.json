@@ -6424,6 +6424,24 @@
       ]
     },
     {
+      "id": "fixed-power-toughness-switch",
+      "patterns": [
+        "quorune/compiler/power_toughness_switch.py",
+        "quorune/rules/power_toughness_switch.py",
+        "quorune/continuous_effect_state.py",
+        "quorune/effect_runtime/characteristic_version_dispatch.py",
+        "tests/fixtures/power-toughness-switch-cards.json",
+        "tests/test_power_toughness_switch.py"
+      ],
+      "test_modules": [
+        "test_power_toughness_switch",
+        "test_continuous_effect_components",
+        "test_card_program_trust",
+        "test_fixed_entwine",
+        "test_splice"
+      ]
+    },
+    {
       "id": "public-negative-supertype-query-contract",
       "patterns": [
         "quorune/compiler/public_state_queries.py",

@@ -31258,6 +31258,96 @@
     {
       "applicability": {
         "exclusions": [
+          "unbound source pronouns",
+          "arbitrary characteristic exchanges",
+          "unclosed compound abilities"
+        ],
+        "inputs": [
+          "typed resolving source identity",
+          "closed source, creature target, announced target set, or whole-battlefield creature selector",
+          "until-end-of-turn duration"
+        ],
+        "outputs": [
+          "immutable fixed-recipient layer 7d switch",
+          "cleanup expiration"
+        ],
+        "summary": "Resolve a closed temporary power and toughness switch on the source, legal declared creature targets, or every current battlefield creature. Lock those battlefield incarnations and apply the shared layer 7d operation after layer 7c modifiers. Cleanup expires the effect."
+      },
+      "blockers": [],
+      "dependencies": [
+        "continuous.resolution.fixed_characteristics_until_end_of_turn"
+      ],
+      "dependency_fail_closed_rationale": "Blocking the shared fixed resolution characteristic owner removes trusted closure for the switch while independent keyword compilation stays available.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.fixed_power_toughness_switch",
+      "implementation_components": [
+        "quorune.compiler.power_toughness_switch.power_toughness_switch_effect_template",
+        "quorune.rules.power_toughness_switch.power_toughness_switch_runtime_dependencies",
+        "quorune.continuous_effect_state.apply_power_toughness_switch",
+        "quorune.continuous_stat_operations.apply_stat_operation"
+      ],
+      "implementation_mutation_rationale": "test_switch_producer_omission_is_killed removes the typed compiler producer and the exact-closure assertion rejects the omission.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_real_switch_draw_and_spliced_switch_follow_layer_7d_then_expire",
+        "test_global_switch_locks_current_creatures_and_triggers_zero_toughness_sba",
+        "test_any_number_combat_trigger_switches_only_surviving_targets",
+        "test_entwine_combines_the_power_modifier_and_switch_on_the_same_target"
+      ],
+      "multiplayer_tests": [
+        "test_real_switch_draw_and_spliced_switch_follow_layer_7d_then_expire",
+        "test_global_switch_locks_current_creatures_and_triggers_zero_toughness_sba",
+        "test_any_number_combat_trigger_switches_only_surviving_targets"
+      ],
+      "negative_tests": [
+        "test_source_target_and_locked_set_switches_compile_with_closed_scopes",
+        "test_withdrawing_switch_authority_leaves_switch_residual",
+        "test_switch_and_draw_spell_fizzles_when_its_sole_target_leaves"
+      ],
+      "official_rules": [
+        "400.7",
+        "514.2",
+        "608.2b",
+        "611.2c",
+        "613.4d",
+        "704.5f"
+      ],
+      "positive_tests": [
+        "test_source_target_and_locked_set_switches_compile_with_closed_scopes",
+        "test_real_switch_draw_and_spliced_switch_follow_layer_7d_then_expire",
+        "test_global_switch_locks_current_creatures_and_triggers_zero_toughness_sba",
+        "test_any_number_combat_trigger_switches_only_surviving_targets",
+        "test_entwine_combines_the_power_modifier_and_switch_on_the_same_target"
+      ],
+      "privacy_tests": [
+        "test_real_switch_draw_and_spliced_switch_follow_layer_7d_then_expire"
+      ],
+      "replay_tests": [
+        "test_real_switch_draw_and_spliced_switch_follow_layer_7d_then_expire",
+        "test_global_switch_locks_current_creatures_and_triggers_zero_toughness_sba",
+        "test_any_number_combat_trigger_switches_only_surviving_targets",
+        "test_switch_and_draw_spell_fizzles_when_its_sole_target_leaves",
+        "test_entwine_combines_the_power_modifier_and_switch_on_the_same_target"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unvalidated dynamic values",
           "choice-dependent characteristics",
           "copy, text, control, protection, qualified landwalk, Banding, and unsupported keyword effects",

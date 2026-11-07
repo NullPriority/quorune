@@ -52,6 +52,11 @@ def fixed_resolution_characteristics_effect_template(
     source_card_types: tuple[str, ...],
 ) -> tuple[str, tuple[Mapping[str, Any], ...], Mapping[str, Any] | None, tuple[str, ...]] | None:
     """Consume one complete fixed end-of-turn instruction, never an open tail."""
+    from .power_toughness_switch import power_toughness_switch_effect_template
+    switch = power_toughness_switch_effect_template(text, source_name=source_name,
+        source_is_permanent=source_is_permanent, source_card_types=source_card_types)
+    if switch is not None:
+        return switch
     normalized = text.strip()
     if any(value in normalized.casefold() for value in ('"','where',' if ',' when ','copy','all creature types')):
         return None

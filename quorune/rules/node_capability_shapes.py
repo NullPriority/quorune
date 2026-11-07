@@ -924,6 +924,9 @@ def fixed_target_characteristics_node_capabilities(
 ) -> tuple[str, ...]:
     """Return ownership for one closed targeted fixed characteristic effect."""
 
+    if any(effect.get("schema_version") == 12 and effect.get("op") == "apply_source_characteristics_until_end_of_turn" for effect in effects):
+        from .power_toughness_switch import power_toughness_switch_node_capabilities
+        return power_toughness_switch_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
     if any(effect.get('schema_version')==11 and effect.get('op')=='apply_source_characteristics_until_end_of_turn' for effect in effects):
         from .temporary_keyword_removal import temporary_keyword_removal_capabilities
         return temporary_keyword_removal_capabilities(effects=effects,target_schema=target_schema,mechanic_ids=mechanic_ids)

@@ -324,6 +324,41 @@ def apply_fixed_resolution_characteristics(
     return refs
 
 
+def apply_power_toughness_switch(host, effect, *, actor, reason):
+    from .errors import GameRuleError
+    from .rules.power_toughness_switch import decode_switch_recipient
+
+    try:
+        selection = decode_switch_recipient({key: value for key, value in effect.items()
+            if key != "_runtime_source"}, resolved=True)
+        if isinstance(selection, ObjectQuerySpec):
+            cards = matching_battlefield_objects(host, selection)
+        else:
+            refs = selection if isinstance(selection, tuple) else (selection,)
+            present = []
+            for ref in refs:
+                try:
+                    card = host._resolve_object(actor, ref, zones={"battlefield"})
+                except GameRuleError:
+                    continue
+                if not card.phased_out:
+                    present.append(card)
+            cards = tuple(present)
+        if not cards:
+            return []
+        create_resolution_continuous_effect_components(
+            host, source=resolution_effect_source(host, effect, fallback_card=cards[0]), targets=cards,
+            components=(ResolutionContinuousComponent(Layer.POWER_TOUGHNESS, "7d",
+                (ContinuousOperation("switch_power_toughness"),)),),
+        )
+    except (ValueError, TypeError, KeyError) as exc:
+        raise GameRuleError(str(exc)) from exc
+    refs = [card.ref for card in cards]
+    host._log(actor, "permanent.characteristics", "Switched power and toughness until end of turn.",
+        {"objects": refs, "reason": reason}, importance=1, changed_objects=[card.object_id for card in cards])
+    return refs
+
+
 def apply_target_characteristics(host,effect,*,actor,reason):
     from .rules.target_characteristic_sets import decode_target_characteristics
     from .errors import GameRuleError

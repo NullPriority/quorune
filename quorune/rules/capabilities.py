@@ -79,6 +79,7 @@ from .entry_permanent_results import (
     ENTRY_PERMANENT_RESULT_CAPABILITY,
     ENTRY_PERMANENT_RESULT_MECHANIC,
 )
+from .power_toughness_switch import SWITCH_CAPABILITY, SWITCH_MECHANIC
 from .node_capability_shapes import (
     FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
@@ -340,6 +341,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'cast-event-spell-copy': ('stack.copy.cast_event_spell',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
     ENTRY_PERMANENT_RESULT_MECHANIC: (ENTRY_PERMANENT_RESULT_CAPABILITY,),
+    SWITCH_MECHANIC: (SWITCH_CAPABILITY,),
     'ascend':('player.designation.citys_blessing',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
@@ -577,6 +579,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-entwine-mode-costs',
         'fixed-public-event-set-counter',
         ENTRY_PERMANENT_RESULT_MECHANIC,
+        SWITCH_MECHANIC,
         'ascend',
         "fixed-extra-turn-after-current",
         *FIXED_RULE_ACTION_CAPABILITIES,
