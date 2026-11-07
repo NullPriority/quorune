@@ -2993,7 +2993,10 @@ class CommanderEngine(
         if record is None:
             return [], False
         from .rules.casting.face_queries import current_printed_cast_mana_cost
+        from .printed_mana_cost_model import CURRENT_PRINTED_MANA_COST_VERSION, PRINTED_MANA_COST_VERSION_FIELD
         mana_cost = current_printed_cast_mana_cost(self,card,record)
+        if getattr(self.state, PRINTED_MANA_COST_VERSION_FIELD, None) == CURRENT_PRINTED_MANA_COST_VERSION and not mana_cost.strip():
+            return [], False
         variants = [self._mana_vector(None)]
         has_x = False
         for symbol in parse_mana_symbols(mana_cost):

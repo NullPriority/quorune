@@ -8,8 +8,9 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+import test_fixed_reveal_additional_costs as reveal
 from quorune.carddb import CardDatabase, CardRecord
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.continuous_effect_state import commit_continuous_effect
 from quorune.continuous_effects import (
     ContinuousEffect,
@@ -21,7 +22,8 @@ from quorune.continuous_effects import (
 )
 from quorune.errors import GameRuleError
 from quorune.haste import has_effective_haste
-from quorune.model import CardInstance
+from quorune.model import CardInstance, GameState
+from quorune.record_state_provenance import format_state_versions, validate_state_versions
 from quorune.oracle_ir import (
     compile_oracle_card,
     register_generated_programs,
@@ -811,6 +813,83 @@ class SuspendRuntimeTests(unittest.TestCase):
             {item.ref for item in items},
             {row["id"] for row in decision["ctx"]["triggers"]},
         )
+
+
+class PrintedManaCostAuthorityTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = reveal.FixedRevealCostRuntimeTests.session
+    add = reveal.FixedRevealCostRuntimeTests.add
+    fund = reveal.FixedRevealCostRuntimeTests.fund
+    checkpoint = reveal.FixedRevealCostRuntimeTests.checkpoint
+    resolve = reveal.FixedRevealCostRuntimeTests.resolve
+    replay = reveal.FixedRevealCostRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "printed-prices.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/suspend-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Printed price witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30)], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    @staticmethod
+    def offers(session):
+        return session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+
+    def test_current_absent_price_rejects_ordinary_cast_and_retains_zero_and_suspend(self):
+        session = self.session(118604)
+        vision = self.add(session.engine, "Ancestral Vision", zone="hand")
+        bloom = self.add(session.engine, "Lotus Bloom", zone="hand")
+        thopter = self.add(session.engine, "Ornithopter", zone="hand")
+        self.fund(session, {"U": 1})
+        offers = self.offers(session)
+        cast_refs = {row.get("card") for row in offers if row["action"] == "cast"}
+        self.assertEqual({thopter.ref}, cast_refs)
+        before = authoritative_state_hash(session.state)
+        for card, targets in ((vision, ["A"]), (bloom, [])):
+            with self.assertRaisesRegex(GameRuleError, "no currently payable"):
+                session.engine._cast("A", {"card": card.ref, "targets": targets, "pay": "auto"})
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        actual = session.act("pilot:A", {"action_id": f"cast:{thopter.ref}", "pay": "auto"})
+        self.assertTrue(actual.ok, actual.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("battlefield", session.state.cards[thopter.object_id].zone)
+        suspend = next(row["id"] for row in self.offers(session)
+            if row["action"] == "suspend" and row.get("card") == bloom.ref)
+        actual = session.act("pilot:A", {"action_id": suspend, "pay": "auto"})
+        self.assertTrue(actual.ok, actual.summary)
+        current = session.state.cards[bloom.object_id]
+        self.assertEqual(("exile", 3), (current.zone, current.counters["time"]))
+        reloaded = self.replay(session, load=True)
+        self.assertEqual(1, reloaded.state.printed_mana_cost_version)
+
+    def test_absent_price_legacy_record_replays_and_mismatched_versions_fail_closed(self):
+        session = self.session(118605)
+        session.state.printed_mana_cost_version = None
+        vision = self.add(session.engine, "Ancestral Vision", zone="hand")
+        self.fund(session, {})
+        before = len(session.state.players["A"].zones["hand"])
+        actual = session.act("pilot:A", {"action_id": f"cast:{vision.ref}", "targets": ["A"], "pay": "auto"})
+        self.assertTrue(actual.ok, actual.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(before + 2, len(session.state.players["A"].zones["hand"]))
+        reloaded = self.replay(session, load=True)
+        fields = format_state_versions(reloaded.state)
+        self.assertNotIn("printed_mana_cost_version", fields)
+        self.assertNotIn("printed_mana_cost_version", reloaded.state.to_dict())
+        for invalid in (True, None, 0, 2):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "printed mana cost"):
+                GameState.from_dict({**reloaded.state.to_dict(), "printed_mana_cost_version": invalid})
+        with self.assertRaisesRegex(ValueError, "Printed mana cost authority provenance"):
+            validate_state_versions({"format": {**fields, "printed_mana_cost_version": 1}}, reloaded.state)
 
 
 if __name__ == "__main__":

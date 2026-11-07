@@ -1402,6 +1402,20 @@
       ]
     },
     {
+      "id": "printed-mana-cost-authority",
+      "patterns": [
+        "quorune/printed_mana_cost_model.py",
+        "quorune/model.py",
+        "quorune/record_state_provenance.py",
+        "tests/fixtures/suspend-cards.json",
+        "tests/test_suspend_rules.py"
+      ],
+      "test_modules": [
+        "test_casting_spells_rules",
+        "test_suspend_rules"
+      ]
+    },
+    {
       "id": "fixed-suspend-lifecycle-contract",
       "patterns": [
         "quorune/cast_lifecycles.py",

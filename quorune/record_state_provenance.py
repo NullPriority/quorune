@@ -5,6 +5,11 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from .stack_resolution_authority_model import stack_resolution_authority_version
+from .printed_mana_cost_model import (
+    PRINTED_MANA_COST_VERSION_FIELD,
+    printed_mana_cost_format_fields,
+    read_printed_mana_cost_version,
+)
 from .record_commander_identity import (
     commander_damage_identity_version,
     validate_commander_damage_identity_provenance,
@@ -43,6 +48,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
         **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
            if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
+        **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
@@ -127,6 +133,8 @@ def validate_state_versions(
     placement=format_value.get('cast_source_placement_version',0)
     if type(placement) is not int or placement not in {0,1} or placement!=(cast_source_placement_version(getattr(state,'cast_source_placement_version',None)) or 0):
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')
+    if read_printed_mana_cost_version(format_value) != getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None):
+        raise ValueError("Printed mana cost authority provenance does not match the initial checkpoint")
     from .transform_timestamp_model import transform_timestamp_version
     timestamp=format_value.get('transform_timestamp_version',0)
     if (type(timestamp) is not int or timestamp not in {0,1}
