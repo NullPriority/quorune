@@ -26,6 +26,7 @@ class EnlistCompilerTests(unittest.TestCase):
         self.assertEqual('printed-enlist-reflexive-growth-v1',trigger.template_id)
         self.assertEqual(1,trigger.effects[0]['power']['schema_version'])
         self.assertEqual('event_object_characteristic',trigger.effects[0]['power']['origin'])
+        self.assertIn('quantity_expression.scalar_effect_amount', trigger.capability_dependencies)
         repeated=compile_oracle_card(replace(query_record('Enlist, enlist'),keywords=('Enlist',)),capability_registry=registry)
         self.assertEqual(4,len(repeated.faces[0].nodes))
 
@@ -279,7 +280,16 @@ class EnlistRuntimeTests(unittest.TestCase):
         self.assertEqual('combat.attackers',e.state.pending_decision.kind)
 
     def test_actual_faithbonder_enlists_eligible_body_then_growth_and_replay(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
         s=self.session(327001);e=s.engine;source=self.add(e,'Benalish Faithbonder');source.acquired_control_turn_count=-1
+        program = compile_best_available_card_program(
+            self.db, self.db.lookup('Benalish Faithbonder'), semantic_registry=e.semantics,
+            capability_registry=self.registry, capability_profile='commander_review',
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
         body=self.add(e,'Generic Bound Body');body.acquired_control_turn_count=-1
         self.attacks(s);self.checkpoint(s)
         packet=s.packet('pilot:A',full=True)['decision'];self.assertTrue(packet['ctx']['enlist'])
