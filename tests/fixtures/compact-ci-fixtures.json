@@ -505,6 +505,7 @@
     "tests/fixtures/creature-power-departure-cards.json",
     "tests/fixtures/creature-power-multiple-cards.json",
     "tests/fixtures/creature-subtype-addition-cards.json",
+    "tests/fixtures/crew-power-bonus-cards.json",
     "tests/fixtures/crime-cards.json",
     "tests/fixtures/cycle-or-discard-event-cards.json",
     "tests/fixtures/damage-death-exile-cards.json",

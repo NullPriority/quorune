@@ -11,6 +11,7 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping, Protocol, Sequence
 
+from .ability_fragment_primitives import CREW_POWER_BONUS_KIND, CrewPowerBonusSpec
 from .object_query import exact_numeric_characteristic
 from .replacement.immutable import FrozenMap
 from .tap_state import dispatch_tapped_cost_group, set_permanent_tapped
@@ -173,6 +174,8 @@ class CrewCostHost(Protocol):
 
 @dataclass(frozen=True, slots=True)
 class CrewCandidate:
+    """A candidate and its signed contribution to this Crew cost."""
+
     object_id: str
     object_ref: str
     logical_object_id: str
@@ -265,6 +268,7 @@ def crew_candidates(
     ):
         return ()
     result: list[CrewCandidate] = []
+    source_is_vehicle = None
     for object_id in host.state.players[seat].zones["battlefield"]:
         card = host.state.cards[object_id]
         if (
@@ -283,6 +287,18 @@ def crew_candidates(
         power = exact_numeric_characteristic(card, effective, "power")
         if power is None:
             raise CrewAbilityError("Effective Crew power is unresolved")
+        bonus = sum(
+            CrewPowerBonusSpec.from_dict(fragment["value"]).amount
+            for fragment in effective.get("ability_fragments", ())
+            if fragment["kind"] == CREW_POWER_BONUS_KIND
+        )
+        if bonus:
+            if source_is_vehicle is None:
+                source_data = host._effective_card_data(source)
+                _, source_subtypes, _ = host._type_parts(str(source_data.get("type_line") or ""))
+                source_is_vehicle = "vehicle" in source_subtypes
+            if source_is_vehicle:
+                power += bonus
         result.append(
             CrewCandidate(
                 object_id=card.object_id,

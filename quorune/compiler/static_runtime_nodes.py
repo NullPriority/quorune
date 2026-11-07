@@ -129,6 +129,15 @@ def static_runtime_node(
             runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
             dependency_reason='Legend-rule exemptions require their current static ability and state-based owner',
             capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
+    from .crew_nodes import crew_power_bonus_handler
+    crew_power = (crew_power_bonus_handler(material_line)
+        if not source_is_class and card_types.intersection(permanent_card_types) else None)
+    if crew_power is not None:
+        return runtime_handler_node(node_id=node_id, line=line, span=span, compiled=crew_power,
+            kind='static_ability', event='characteristics.evaluate',
+            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+            dependency_reason='Crew power bonuses require their shared cost owner',
+            capability_registry=capability_registry, capability_profile=capability_profile, residuals=residuals)
     from .counter_permission_templates import static_counter_prohibition_handler
     from ..counter_permission import COUNTER_PROHIBITION_EVENT
     counter_prohibition = (static_counter_prohibition_handler(material_line, source_name=source_name)

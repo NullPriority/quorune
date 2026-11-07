@@ -8,6 +8,8 @@ from typing import Any, Iterable, Mapping, TypeAlias
 
 from .ability_fragment_primitives import (
     AbilityFragmentError,
+    CREW_POWER_BONUS_KIND,
+    CrewPowerBonusSpec,
     normalized_protection_terms as _normalized_protection_terms,
     PARTNER_WITH_FRAGMENT_HANDLER_ID,
     PartnerWithSpec,
@@ -788,6 +790,7 @@ StaticAbilityFragment: TypeAlias = (
     | LinkedGraveyardCreatureEnchantSpec
     | ProtectionSpec
     | GrantedActivatedAbilitySpec
+    | CrewPowerBonusSpec
     | AttachedUntapRestraintSpec
     | EnchantedPlayerAttackRequirementSpec
     | BoundStaticDeclarationRulesSpec
@@ -844,6 +847,8 @@ def ability_fragment_to_dict(
         kind = "protection"
     elif isinstance(fragment, GrantedActivatedAbilitySpec):
         kind = "granted_activated"
+    elif isinstance(fragment, CrewPowerBonusSpec):
+        kind = CREW_POWER_BONUS_KIND
     elif isinstance(fragment, AttachedUntapRestraintSpec):
         kind = 'attached_untap_restraint'
     elif isinstance(fragment, EnchantedPlayerAttackRequirementSpec):
@@ -950,6 +955,8 @@ def ability_fragment_from_dict(
         return ProtectionSpec.from_dict(value["value"])
     if value["kind"] == "granted_activated":
         return GrantedActivatedAbilitySpec.from_dict(value["value"])
+    if value["kind"] == CREW_POWER_BONUS_KIND:
+        return CrewPowerBonusSpec.from_dict(value["value"])
     if value['kind']=='attached_untap_restraint':
         return AttachedUntapRestraintSpec.from_dict(value['value'])
     if value['kind']=='enchanted_player_attack_requirement':
@@ -1082,6 +1089,7 @@ def canonical_ability_fragments(
                 LinkedGraveyardCreatureEnchantSpec,
                 ProtectionSpec,
                 GrantedActivatedAbilitySpec,
+                CrewPowerBonusSpec,
                 AttachedUntapRestraintSpec,
                 EnchantedPlayerAttackRequirementSpec,
                 BoundStaticDeclarationRulesSpec,

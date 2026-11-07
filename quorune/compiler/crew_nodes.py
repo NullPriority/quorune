@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import re
+
+from ..ability_fragment_primitives import CREW_POWER_BONUS_CAPABILITY, CREW_POWER_BONUS_HANDLER_ID, CrewPowerBonusSpec
+from ..ability_fragments import ability_fragment_to_dict
 from ..crew import (
     CREW_CAPABILITY_ID,
     CREW_MECHANIC_ID,
@@ -10,6 +14,23 @@ from ..rules.capabilities import CapabilityRegistry
 from .activated_costs import activated_ability_cost
 from .dependency_gate import explicit_capability_gate
 from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
+
+
+def crew_power_bonus_handler(text: str):
+    """Compile a complete fixed self-relative Crew power clause."""
+    match = re.fullmatch(
+        r"This creature crews Vehicles as though its power were ([1-9][0-9]*) greater\.?",
+        text, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    spec = CrewPowerBonusSpec(int(match[1]))
+    return "crew-power-bonus-v1", {
+        "handler_id": CREW_POWER_BONUS_HANDLER_ID,
+        "schema_version": 1,
+        "event": "characteristics.evaluate",
+        "fragment": ability_fragment_to_dict(spec),
+    }, CREW_POWER_BONUS_CAPABILITY
 
 
 def ordinary_crew_keyword_node(
@@ -112,4 +133,4 @@ def ordinary_crew_keyword_node(
     )
 
 
-__all__ = ["ordinary_crew_keyword_node"]
+__all__ = ["crew_power_bonus_handler", "ordinary_crew_keyword_node"]

@@ -1618,6 +1618,10 @@ supertypes and while retaining the source's existing card types and subtypes,
 as required for an "artifact creature" result, and binds that layer-4 effect
 to the source incarnation that created the stack object. A Vehicle that leaves
 and returns is not affected.
+The same cost owner applies fixed self-relative Crew power bonuses from the
+current abilities of printed creatures and typed token definitions. A bonus
+applies to the candidate's signed contribution when the source is a Vehicle.
+The creature's actual power remains available to combat and other rules.
 Crew prohibitions, alternative costs, becomes-crewed triggers, granted or
 copied Crew, and effects that crew without activating the ability remain
 explicitly unsupported.

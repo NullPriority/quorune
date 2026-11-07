@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping, Sequence
 
+from ..ability_fragment_primitives import CrewPowerBonusSpec
 from ..ability_fragments import (
     AbilityFragmentError,
     AllCreatureTypesCharacteristicDefinitionSpec,
@@ -418,6 +419,10 @@ def _fixed_creature_effect_closure(
         elif isinstance(fragment, QueryCharacteristicModifierSpec):
             typed_ability_definition = True
             capabilities.add("continuous.characteristics.query_count_modifier")
+            typed_ability_fragment = True
+        elif isinstance(fragment, CrewPowerBonusSpec):
+            typed_ability_definition = True
+            capabilities.add(fragment.capability_id)
             typed_ability_fragment = True
         elif isinstance(fragment, QueryPowerToughnessDefinitionSpec):
             typed_ability_definition = True

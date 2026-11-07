@@ -42,6 +42,7 @@ from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY,
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER
 from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER
 from ..umbra_armor_model import UmbraArmorSpec, UMBRA_ARMOR_FRAGMENT_CAPABILITY, UMBRA_ARMOR_HANDLER
+from ..ability_fragment_primitives import CREW_POWER_BONUS_CAPABILITY, CREW_POWER_BONUS_HANDLER_ID, CrewPowerBonusSpec
 from ..untap_restraint_model import AttachedUntapRestraintSpec,UNTAP_RESTRAINT_CAPABILITY,UNTAP_RESTRAINT_HANDLER
 from ..enchanted_player_model import EnchantedPlayerAttackRequirementSpec,ENCHANTED_PLAYER_ATTACK_CAPABILITY,ENCHANTED_PLAYER_ATTACK_HANDLER
 from ..bound_declaration_model import BoundStaticDeclarationRulesSpec,BOUND_DECLARATION_CAPABILITY,BOUND_DECLARATION_HANDLER
@@ -452,6 +453,19 @@ class DeclarationRestrictionAbilityFragmentHandler:
     ) -> tuple[StaticAbilityFragment, ...]:
         del context
         return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True,slots=True)
+class CrewPowerBonusHandler(DeclarationRequirementAbilityFragmentHandler):
+    handler_id: str = CREW_POWER_BONUS_HANDLER_ID
+    family: str = "ability.static.crew_power_bonus"
+    event: str = "characteristics.evaluate"
+    rule_references: tuple[str, ...] = ("609.4", "611.3b", "702.122a", "702.122b")
+    capability_dependencies: tuple[str, ...] = (CREW_POWER_BONUS_CAPABILITY,)
+
+    def validate(self, descriptor):
+        return _fragment(descriptor, handler_id=self.handler_id, event=self.event,
+            expected_type=CrewPowerBonusSpec)
 
 
 @dataclass(frozen=True,slots=True)
@@ -1527,6 +1541,7 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             UmbraArmorFragmentHandler(),
             DeclarationRequirementAbilityFragmentHandler(),
             AttachedUntapRestraintHandler(),
+            CrewPowerBonusHandler(),
             EnchantedPlayerAttackRequirementHandler(),
             BoundStaticDeclarationRulesHandler(),
             AttachedActivationRuleHandler(),

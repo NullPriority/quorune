@@ -289,6 +289,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "ability.static.declaration_cost",
                 "ability.static.declaration_requirement",
                 "ability.static.attached_untap_restraint",
+                "ability.static.crew_power_bonus",
                 "ability.static.enchanted_player_attack_requirement",
                 "ability.static.bound_declaration_rules",
                 "ability.static.attached_activation_rule",

@@ -9541,6 +9541,25 @@
       ]
     },
     {
+      "id": "crew-power-bonus",
+      "patterns": [
+        "quorune/ability_fragment_primitives.py",
+        "quorune/ability_fragments.py",
+        "quorune/compiler/crew_nodes.py",
+        "quorune/compiler/static_runtime_nodes.py",
+        "quorune/crew.py",
+        "quorune/rules/token_creation_capability_shapes.py",
+        "quorune/semantic_runtime/ability_fragments.py",
+        "tests/test_ordinary_crew.py",
+        "tests/fixtures/crew-power-bonus-cards.json"
+      ],
+      "test_modules": [
+        "test_ordinary_crew",
+        "test_attacking_token_results",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "enchanted-player-static-scope",
       "patterns": [
         "quorune/enchanted_player_model.py",
