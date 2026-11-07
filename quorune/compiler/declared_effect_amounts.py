@@ -250,9 +250,25 @@ def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:
         for node in face.nodes)) for face in faces)
 
 
-def declared_amount_dependencies(mechanics: set[str]) -> set[str]:
+def declared_amount_dependencies(
+    mechanics: set[str], *, effects: Sequence[Mapping[str, Any]] = (),
+) -> set[str]:
+    from ..object_predicate import object_query_capabilities
     from ..scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY, SCALAR_AMOUNT_MECHANIC
-    return ({DECLARED_AMOUNT_CAPABILITY} if DECLARED_EFFECT_AMOUNT_MECHANIC in mechanics else set()) | ({SCALAR_AMOUNT_CAPABILITY} if SCALAR_AMOUNT_MECHANIC in mechanics else set()) | ({ENTRY_X_AMOUNT_CAPABILITY} if ENTRY_X_AMOUNT_MECHANIC in mechanics else set())
+    from .public_query_effect_amounts import PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC
+
+    dependencies = {
+        capability
+        for mechanic, capability in (
+            (DECLARED_EFFECT_AMOUNT_MECHANIC, DECLARED_AMOUNT_CAPABILITY),
+            (SCALAR_AMOUNT_MECHANIC, SCALAR_AMOUNT_CAPABILITY),
+            (ENTRY_X_AMOUNT_MECHANIC, ENTRY_X_AMOUNT_CAPABILITY),
+        )
+        if mechanic in mechanics
+    }
+    if PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC in mechanics:
+        dependencies.update(object_query_capabilities(effects))
+    return dependencies
 
 
 def is_closed_declared_amount_program(program: Any, *, required_dependencies: Sequence[str],

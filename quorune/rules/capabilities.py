@@ -1208,10 +1208,7 @@ def capability_dependencies_for_node(
     all_operations = _nested_effect_operations(effects)
     if (shape_context := _query.public_query_amount_shape_context(effects, mechanics,target_schema=target_schema)) is None: return ()
     shape_effects, shape_mechanics = shape_context
-    dependencies: set[str] = _query.declared_amount_dependencies(mechanics)
-    if _query.PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC in mechanics:
-        from ..object_predicate import object_query_capabilities
-        dependencies.update(object_query_capabilities(effects))
+    dependencies: set[str] = _query.declared_amount_dependencies(mechanics, effects=effects)
     from .random_discard_additional_cost import random_spell_cost_dependencies
     dependencies.update(random_spell_cost_dependencies(cost_schema))
     from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
