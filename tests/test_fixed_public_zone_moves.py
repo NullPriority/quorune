@@ -1062,6 +1062,29 @@ class _RuntimeBase(unittest.TestCase):
 
 
 class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
+    def test_original_blinding_light_registers_its_exact_tap_set(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        card = self.db.lookup('Blinding Light')
+        semantics = SemanticRegistry()
+        registry = load_default_capability_registry()
+        profile = 'commander_review'
+        register_generated_programs(
+            self.db, semantics, (card,), capability_registry=registry, capability_profile=profile,
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        registered, = semantics.programs_for_oracle(card.oracle_id)
+        self.assertEqual('trusted', registered.trust_level)
+        program = compile_best_available_card_program(
+            self.db, card, semantic_registry=semantics,
+            capability_registry=registry, capability_profile=profile,
+        )
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile=profile)
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+
     def test_actual_inundate_keeps_multicolored_blue_and_returns_borrowed_nonblue(self):
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program

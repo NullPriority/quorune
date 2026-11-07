@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "public_exact-list_card_data",
-  "source": "Synthetic exact grammar witnesses and pinned Inundate for fixed public zone-move tests",
+  "source": "Synthetic exact grammar witnesses and pinned originals for fixed public set tests",
   "cards": [
     {
       "oracle_id": "00000000-0000-4000-8000-000000000294",
@@ -420,6 +420,26 @@
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2008-07-25",
+      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "faces": []
+    },
+    {
+      "oracle_id": "6b315dc3-c330-4b30-b6ad-4da12ccf6ca3",
+      "name": "Blinding Light",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Tap all nonwhite creatures.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2000-10-02",
       "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
       "faces": []
     }
