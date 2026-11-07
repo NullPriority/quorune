@@ -415,6 +415,9 @@ class StateProjector:
             obj["suspected"] = True
         if card.renowned:
             obj["renowned"] = True
+        from .saddle import is_saddled
+        if is_saddled(card):
+            obj["saddled"] = True
         if card.zone == 'battlefield' and not card.phased_out and getattr(self.state, 'soulbond_pairs', None):
             from .soulbond_state import paired_object_identity
             partner = paired_object_identity(self.state, card)

@@ -7,6 +7,7 @@ from dataclasses import replace
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility, choose_ability
+from ...crew import activation_power_tap_hint
 from .pricing import (
     payable_activation_mana_options,
     select_activation_mana_option,
@@ -591,20 +592,9 @@ def build_activation_offer(
             }
             for choice in selected.choices
         ]
-    threshold = host._crew_threshold(selected)
-    if threshold is not None:
-        hint["choose_cost"] = [
-            {
-                "k": "crew",
-                "z": "battlefield",
-                "minimum": 0 if threshold == 0 else 1,
-                "minimum_total_power": threshold,
-                "legal_refs": [
-                    candidate.ref
-                    for candidate in host._crew_candidates(seat, source)
-                ],
-            }
-        ]
+    power_tap = activation_power_tap_hint(host, seat, source, selected)
+    if power_tap is not None:
+        hint["choose_cost"] = [power_tap]
     if station_cost_choice(selected) is not None:
         hint["choose_cost"] = [
             {

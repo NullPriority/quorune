@@ -168,6 +168,7 @@ class ActivatedAbility:
     reconfigure: bool = False
     forecast: bool = False
     granting_attachment_payment: GrantingAttachmentPayment | None = None
+    saddle_threshold: int | None = None
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
@@ -182,6 +183,9 @@ class ActivatedAbility:
         _validate_ability_sequences_and_scalars(self)
         _normalize_and_validate_ability_descriptors(self)
         _validate_ability_closed_vocabulary(self)
+        if self.saddle_threshold is not None:
+            from .saddle import validate_saddle_ability
+            validate_saddle_ability(self)
         validate_boast_ability(self)
         validate_forecast_ability(self)
 
@@ -256,6 +260,8 @@ class ActivatedAbility:
         if self.forecast:result['forecast']=True
         if self.granting_attachment_payment is not None:
             result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = self.granting_attachment_payment.to_dict()
+        if self.saddle_threshold is not None:
+            result["saddle_threshold"] = self.saddle_threshold
         return result
 
     @classmethod
@@ -315,6 +321,7 @@ class ActivatedAbility:
                 else FrozenMap(value["target_schema"])
             ),
             crew_threshold=value["crew_threshold"],
+            saddle_threshold=value.get("saddle_threshold"),
             fixed_mana_outputs=tuple(
                 FixedManaMode.from_dict(mode)
                 for mode in value["fixed_mana_outputs"]
@@ -401,6 +408,8 @@ class ActivatedAbility:
             result["target_schema"] = thaw_value(self.target_schema)
         if self.crew_threshold is not None:
             result["crew"] = self.crew_threshold
+        if self.saddle_threshold is not None:
+            result["saddle"] = self.saddle_threshold
         if self.activation_limit is not None:
             result["activation_limit"] = self.activation_limit.value
         if self.library_search_types:
@@ -764,35 +773,6 @@ def _fixed_equip_keyword_ability(
         activation_limit=(
             ActivationLimit.ONCE_PER_TURN if spec.once_per_turn else None
         ),
-    )
-
-
-def _legacy_crew_keyword_ability(
-    line: str,
-    line_index: int,
-) -> ActivatedAbility | None:
-    """Interpret historical Game Record v3 Crew text.
-
-    Current source-pinned programs use ``OrdinaryCrewAbilitySpec`` and mask
-    their owned Oracle line before this compatibility parser runs.
-    """
-
-    match = re.fullmatch(r"Crew\s+(?P<power>\d+)", line, re.IGNORECASE)
-    if match is None:
-        return None
-    threshold = int(match.group("power"))
-    return ActivatedAbility(
-        ability_id="crew",
-        line_index=line_index,
-        oracle_line=line,
-        cost_text=f"Crew {threshold}",
-        effect_text=(
-            "This Vehicle becomes an artifact creature until end of turn. "
-            f"Crew {threshold}."
-        ),
-        zones=("battlefield",),
-        mana=normalize_mana_bundle(None),
-        crew_threshold=threshold,
     )
 
 
@@ -1330,8 +1310,10 @@ def _parse_activated_line(
     card_name: str,
     keywords: Sequence[str],
 ) -> tuple[ActivatedAbility, ...]:
+    from .crew import legacy_crew_keyword_ability
+
     raw = raw_line.strip()
-    crew = _legacy_crew_keyword_ability(raw, line_index)
+    crew = legacy_crew_keyword_ability(raw, line_index)
     if crew is not None:
         return (crew,)
     craft = _craft_keyword_abilities(raw, line_index)

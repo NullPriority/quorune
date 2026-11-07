@@ -945,6 +945,13 @@ def _public_damage_spec(
 
 
 def _public_attack_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    saddled = re.fullmatch(r"(?:When|Whenever) this creature attacks while saddled, (?P<body>.+)",
+        material_line, re.I)
+    if saddled is not None:
+        from ..saddle import SADDLED_ATTACK_CAPABILITY, saddled_attack_condition
+        return _spec("creature.attacks", "source_attacks", saddled["body"],
+            "fixed-counter-public-attack-trigger-v1", "trigger-event-normalized-public-action",
+            condition=saddled_attack_condition(), capabilities=(SADDLED_ATTACK_CAPABILITY,))
     match = _PUBLIC_ATTACK_TRIGGER.fullmatch(material_line)
     if match is None:
         from .qualified_attack_subjects import qualified_attack_binding_spec

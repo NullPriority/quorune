@@ -721,6 +721,7 @@
     "tests/fixtures/ordered-clause-cards.json",
     "tests/fixtures/ordered-composition-followup-cards.json",
     "tests/fixtures/ordered-quantity-results.json",
+    "tests/fixtures/ordinary-saddle-cards.json",
     "tests/fixtures/ordinary-token-cleanup-cards.json",
     "tests/fixtures/owned-commander-setting-cards.json",
     "tests/fixtures/paid-color-entry-cards.json",

@@ -5,7 +5,7 @@ from typing import Any, Protocol
 from ...abilities import ActivatedAbility
 from .pricing import payable_activation_mana_options
 from .x_costs import activation_requirements
-from ...crew import available_crew_power
+from ...crew import CrewAbilityError, activation_power_tap_cost, available_crew_power
 from ...haste import summoning_sickness_prohibits_tap_or_untap_cost
 from ...mana_restrictions import ability_mana_spend_context
 from ...station import (
@@ -120,11 +120,14 @@ def activation_availability(
         seat, card, ability
     ):
         return "unpayable", "mandatory_cost_object_unavailable"
-    crew_threshold = host._crew_threshold(ability)
-    if crew_threshold is not None and available_crew_power(
-        host._crew_candidates(seat, card)
-    ) < crew_threshold:
-        return "unpayable", "insufficient_crew_power"
+    try:
+        power_cost = activation_power_tap_cost(host, seat, card, ability)
+    except CrewAbilityError:
+        return "unresolved", "unresolved_saddle_power"
+    if power_cost is not None:
+        kind, threshold, candidates = power_cost
+        if available_crew_power(candidates) < threshold:
+            return "unpayable", f"insufficient_{kind}_power"
     return _activation_mana_availability(host, seat, card, ability)
 
 

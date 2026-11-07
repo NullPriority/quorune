@@ -3449,6 +3449,87 @@
     {
       "applicability": {
         "exclusions": [
+          "nonfixed or additional Saddle costs",
+          "alternative payments",
+          "granted or copied keyword producers without a complete typed catalog"
+        ],
+        "inputs": [
+          "source-pinned fixed Saddle threshold",
+          "sorcery-speed priority",
+          "distinct other untapped controlled creatures with exact current power"
+        ],
+        "outputs": [
+          "shared offer and atomic tap payment",
+          "sealed saddled-by identities",
+          "public designation on resolution"
+        ],
+        "summary": "One printed Saddle N ability uses the current signed power of selected other creatures, then designates the source incarnation through cleanup."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "The shared tap payment and short-lived designation are the canonical components of this capability.",
+      "dependency_fail_closed_status": "not_applicable",
+      "id": "activation.saddle.fixed_power",
+      "implementation_components": [
+        "quorune.compiler.saddle_nodes.ordinary_saddle_keyword_node",
+        "quorune.crew.prepare_crew_cost",
+        "quorune.crew.commit_crew_cost",
+        "quorune.saddle.apply_saddle_effect",
+        "quorune.saddle.saddle_activation_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "The source-spanned witness fails when its typed compiler producer is removed.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup",
+        "test_saddle_result_leaves_the_returned_incarnation_unsaddled"
+      ],
+      "multiplayer_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup"
+      ],
+      "negative_tests": [
+        "test_fixed_saddle_compiles_closed_catalog_and_activation",
+        "test_saddle_result_leaves_the_returned_incarnation_unsaddled"
+      ],
+      "official_rules": [
+        "302.6",
+        "307.5",
+        "400.7",
+        "514.2",
+        "602.2",
+        "702.171a",
+        "702.171b",
+        "702.171c"
+      ],
+      "positive_tests": [
+        "test_fixed_saddle_compiles_closed_catalog_and_activation",
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup"
+      ],
+      "privacy_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup"
+      ],
+      "replay_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup",
+        "test_saddle_result_leaves_the_returned_incarnation_unsaddled"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "other counter kinds or amounts",
           "foreign-controlled, noncreature, phased-out or empty payers",
           "multiple selectable payment groups, mana abilities and granted cost forms"
@@ -66420,6 +66501,81 @@
         "commander_review"
       ],
       "version": 4
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "creatures put onto the battlefield attacking",
+          "other objects’ saddled facts",
+          "resolution-time if-saddled clauses"
+        ],
+        "inputs": [
+          "normalized declared-attacker occurrence",
+          "source reference",
+          "sealed saddled fact"
+        ],
+        "outputs": [
+          "ordinary APNAP trigger using the declared source"
+        ],
+        "summary": "A self-attack trigger with the while-saddled qualifier matches the source only when its designation was present at declaration."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.saddle.fixed_power",
+        "trigger.event.normalized_public_action"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the designation owner makes the saddled trigger residual while leaving an unrelated flying control exact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.combat.source_attacks_while_saddled",
+      "implementation_components": [
+        "quorune.compiler.fixed_public_event_trigger_bindings._public_attack_spec",
+        "quorune.attack_transition_engine_adapter",
+        "quorune.saddle.saddled_attack_runtime_dependencies"
+      ],
+      "implementation_mutation_rationale": "The source-spanned witness fails when its typed compiler producer is removed.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup",
+        "test_saddled_attack_trigger_uses_declared_fact_after_source_returns"
+      ],
+      "multiplayer_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup"
+      ],
+      "negative_tests": [
+        "test_attacks_while_saddled_binds_declared_self",
+        "test_saddle_owner_withdrawal_rejects_attack"
+      ],
+      "official_rules": [
+        "603.2",
+        "603.2a",
+        "702.171b",
+        "508.3a"
+      ],
+      "positive_tests": [
+        "test_attacks_while_saddled_binds_declared_self",
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup"
+      ],
+      "privacy_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup"
+      ],
+      "replay_tests": [
+        "test_actual_saddle_pays_signed_power_and_seals_attack_before_cleanup"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {

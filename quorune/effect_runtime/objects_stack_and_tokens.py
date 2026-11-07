@@ -25,6 +25,7 @@ from ..continuous_effect_state import (
 )
 from ..creature_subtypes import canonical_creature_subtype
 from ..errors import GameRuleError
+from ..saddle import SADDLE_OPERATION, apply_saddle_effect
 from ..effect_contracts import effect_family_contract
 from ..impulse_access import grant_temporary_cast_permission
 from ..impulse_access_model import (
@@ -1344,6 +1345,7 @@ HANDLERS = {
     'add_type': _apply_add_type,
     'add_type_until_end_of_turn': _apply_add_type_until_end_of_turn,
     'add_types_until_end_of_turn': _apply_add_types_until_end_of_turn,
+    SADDLE_OPERATION: apply_saddle_effect,
     'apply_source_characteristics_until_end_of_turn': _apply_source_characteristics_until_end_of_turn,
     'change_control': _apply_change_control,
     'change_control_until_end_of_turn': _apply_change_control_until_end_of_turn,

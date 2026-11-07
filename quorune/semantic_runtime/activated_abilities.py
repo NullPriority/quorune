@@ -65,6 +65,8 @@ class ActivatedAbilityCatalogHandler:
                 raise ValueError('Announced activation X requires complete-card admission')
             if compiled.reconfigure and not required:
                 raise ValueError('Reconfigure requires complete-card admission')
+            if compiled.saddle_threshold is not None and not required:
+                raise ValueError("Saddle requires complete-card admission")
             return compiled
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -96,7 +98,8 @@ def activated_ability_catalog_descriptor(
     ability: ActivatedAbility,
     *, requires_complete_card_program: bool = False,
 ) -> dict[str, Any]:
-    requires_complete_card_program = requires_complete_card_program or ability.announced_x_symbols is not None or ability.reconfigure
+    requires_complete_card_program = (requires_complete_card_program or ability.announced_x_symbols is not None
+        or ability.reconfigure or ability.saddle_threshold is not None)
     return {
         "handler_id": ACTIVATED_ABILITY_CATALOG_HANDLER_ID,
         "schema_version": 1,

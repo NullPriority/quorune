@@ -1622,9 +1622,19 @@ The same cost owner applies fixed self-relative Crew power bonuses from the
 current abilities of printed creatures and typed token definitions. A bonus
 applies to the candidate's signed contribution when the source is a Vehicle.
 The creature's actual power remains available to combat and other rules.
+The Crew owner also decodes the historical Game Record v3 Crew syntax.
 Crew prohibitions, alternative costs, becomes-crewed triggers, granted or
 copied Crew, and effects that crew without activating the ability remain
 explicitly unsupported.
+
+Printed fixed `Saddle N` shares the signed-power tap payment with Crew and
+uses ordinary sorcery timing. Payment captures the selected creature
+incarnations, then resolution designates the original battlefield object.
+The designation appears in the public object view and expires at cleanup or
+when that object leaves the battlefield. Copiable values are independent of
+that designation. A self-attack trigger with the while-saddled qualifier
+matches the fact sealed at declaration, so a later zone change preserves the
+trigger on the stack.
 
 Mandatory fixed nonmana casting costs use source-spanned typed descriptors.
 The counter-placement and single-object zone-change families share the ordinary

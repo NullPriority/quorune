@@ -295,9 +295,12 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
             for participant in event.participants
         }
         from .rules.qualified_attacks import attack_characteristic_context
+        from .saddle import SADDLED_ATTACK_FIELD, is_saddled
         characteristic_contexts = {assignment.attacker_object_id:
             attack_characteristic_context(engine, engine.state.cards[assignment.attacker_object_id])
             for assignment in event.assignments}
+        saddled_attackers = frozenset(object_id for object_id in characteristic_contexts
+            if is_saddled(engine.state.cards[object_id]))
         from .rules.attack_batches import seal_attack_declaration
         from .attack_batch_model import ATTACK_BATCH_CONTEXT
         declaration_context = ({ATTACK_BATCH_CONTEXT:seal_attack_declaration(event,characteristic_contexts)}
@@ -335,6 +338,7 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
                         "attacking_alone": len(event.assignments) == 1,
                         "attacker_count": len(event.assignments),
                         "attack_transition": event.to_dict(),
+                        **({SADDLED_ATTACK_FIELD: True} if source.object_id in saddled_attackers else {}),
                         **characteristic_contexts[assignment.attacker_object_id],
                         **declaration_context,
                         **({'attacked_recipient_kind':assignment.recipient.kind.value} if declaration_context else {}),

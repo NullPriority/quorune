@@ -95,6 +95,7 @@ def _event_query_runtime_requirements(program):
     from ..public_history_query_model import public_history_query_dependencies
     from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
+    from ..saddle import saddle_activation_runtime_dependencies, saddled_attack_runtime_dependencies
     from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
     from ..rules.block_characteristics import qualified_block_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
@@ -186,6 +187,8 @@ def _event_query_runtime_requirements(program):
         (public_history_query_dependencies,program.event_condition,'public_history'),
         (qualified_spell_ordinal_dependencies,program.event_condition,'qualified_spell_ordinal'),
         (qualified_attack_runtime_dependencies,program,'qualified_attack'),
+        (saddle_activation_runtime_dependencies,program,'saddle_activation'),
+        (saddled_attack_runtime_dependencies,program,'saddled_attack'),
         (unblocked_attacker_runtime_dependencies,program,'unblocked_attacker'),
         (qualified_block_runtime_dependencies,program,'qualified_block'),
         (qualified_attack_batch_runtime_dependencies,program,'qualified_attack_batch'),

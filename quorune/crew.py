@@ -9,13 +9,16 @@ or copied Crew, and "becomes crewed" triggers remain separate capabilities.
 
 from dataclasses import dataclass
 import re
-from typing import Any, Mapping, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, Mapping, Protocol, Sequence
 
 from .ability_fragment_primitives import CREW_POWER_BONUS_KIND, CrewPowerBonusSpec
 from .object_query import exact_numeric_characteristic
 from .replacement.immutable import FrozenMap
 from .tap_state import dispatch_tapped_cost_group, set_permanent_tapped
 from .util import normalize_mana_bundle
+
+if TYPE_CHECKING:
+    from .abilities import ActivatedAbility
 
 
 CREW_HANDLER_ID = "ability.activated.crew.v1"
@@ -150,6 +153,29 @@ def ordinary_crew_handler_descriptor(
     }
 
 
+def legacy_crew_keyword_ability(line: str, line_index: int) -> ActivatedAbility | None:
+    """Decode historical Game Record v3 Crew text after typed lines are masked."""
+    from .abilities import ActivatedAbility
+
+    match = re.fullmatch(r"Crew\s+(?P<power>\d+)", line, re.IGNORECASE)
+    if match is None:
+        return None
+    threshold = int(match.group("power"))
+    return ActivatedAbility(
+        ability_id="crew",
+        line_index=line_index,
+        oracle_line=line,
+        cost_text=f"Crew {threshold}",
+        effect_text=(
+            "This Vehicle becomes an artifact creature until end of turn. "
+            f"Crew {threshold}."
+        ),
+        zones=("battlefield",),
+        mana=normalize_mana_bundle(None),
+        crew_threshold=threshold,
+    )
+
+
 class CrewCostHost(Protocol):
     state: Any
 
@@ -209,39 +235,43 @@ class CrewCostPlan:
     threshold: int
     selected: tuple[CrewCandidate, ...]
     total_power: int
+    kind: str = "crew"
 
     def __post_init__(self) -> None:
+        if type(self.kind) is not str or self.kind not in {"crew", "saddle"}:
+            raise CrewAbilityError("Unknown power tap cost")
+        label = self.kind.title()
         if not isinstance(self.seat, str) or not self.seat:
-            raise CrewAbilityError("Crew cost seat is required")
+            raise CrewAbilityError(f"{label} cost seat is required")
         if not isinstance(self.source_object_id, str) or not self.source_object_id:
-            raise CrewAbilityError("Crew source identity is required")
+            raise CrewAbilityError(f"{label} source identity is required")
         if (
             not isinstance(self.source_logical_object_id, str)
             or not self.source_logical_object_id
         ):
-            raise CrewAbilityError("Crew source logical identity is required")
+            raise CrewAbilityError(f"{label} source logical identity is required")
         if type(self.threshold) is not int or self.threshold < 0:
-            raise CrewAbilityError("Crew threshold must be nonnegative")
+            raise CrewAbilityError(f"{label} threshold must be nonnegative")
         if type(self.total_power) is not int:
-            raise CrewAbilityError("Crew total power must be an integer")
+            raise CrewAbilityError(f"{label} total power must be an integer")
         identities = [candidate.object_id for candidate in self.selected]
         if len(identities) != len(set(identities)):
-            raise CrewAbilityError("Crew candidates must be distinct")
+            raise CrewAbilityError(f"{label} candidates must be distinct")
         if self.total_power != sum(
             candidate.power for candidate in self.selected
         ):
-            raise CrewAbilityError("Crew total power does not match candidates")
+            raise CrewAbilityError(f"{label} total power does not match candidates")
         if self.total_power < self.threshold:
-            raise CrewAbilityError("Selected creatures do not meet Crew power")
+            raise CrewAbilityError(f"Selected creatures do not meet {label} power")
         if not self.selected and self.threshold > 0:
-            raise CrewAbilityError("Positive Crew costs require a creature")
+            raise CrewAbilityError(f"Positive {label} costs require a creature")
 
     def context_dict(self) -> dict[str, Any]:
         return {
             "threshold": self.threshold,
             "total_power": self.total_power,
             "source_logical_object_id": self.source_logical_object_id,
-            "crewed_by": [
+            ("crewed_by" if self.kind == "crew" else "saddled_by"): [
                 {
                     "object_id": candidate.object_id,
                     "object_ref": candidate.object_ref,
@@ -257,8 +287,10 @@ def crew_candidates(
     host: CrewCostHost,
     seat: str,
     source: Any,
+    *,
+    kind: str = "crew",
 ) -> tuple[CrewCandidate, ...]:
-    """Return the current CR 702.122a cost candidates in zone order."""
+    """Return current Crew or Saddle cost candidates in zone order."""
 
     if not isinstance(seat, str) or seat not in host.state.players:
         raise CrewAbilityError("Crew seat is unavailable")
@@ -291,7 +323,7 @@ def crew_candidates(
             CrewPowerBonusSpec.from_dict(fragment["value"]).amount
             for fragment in effective.get("ability_fragments", ())
             if fragment["kind"] == CREW_POWER_BONUS_KIND
-        )
+        ) if kind == "crew" else 0
         if bonus:
             if source_is_vehicle is None:
                 source_data = host._effective_card_data(source)
@@ -316,11 +348,33 @@ def available_crew_power(candidates: Sequence[CrewCandidate]) -> int:
     return sum(max(0, candidate.power) for candidate in candidates)
 
 
-def _submitted_refs(response: Mapping[str, Any]) -> tuple[str, ...]:
+def activation_power_tap_cost(host: Any, seat: str, source: Any, ability: Any):
+    """Read the same cost and candidate set for the catalog and availability."""
+    saddle = getattr(ability, "saddle_threshold", None)
+    if saddle is not None:
+        return "saddle", saddle, crew_candidates(host, seat, source, kind="saddle")
+    crew = host._crew_threshold(ability)
+    if crew is None:
+        return None
+    return "crew", crew, host._crew_candidates(seat, source)
+
+
+def activation_power_tap_hint(host: Any, seat: str, source: Any, ability: Any):
+    cost = activation_power_tap_cost(host, seat, source, ability)
+    if cost is None:
+        return None
+    kind, threshold, candidates = cost
+    return {
+        "k": kind, "z": "battlefield", "minimum": 0 if threshold == 0 else 1,
+        "minimum_total_power": threshold, "legal_refs": [candidate.ref for candidate in candidates],
+    }
+
+
+def _submitted_refs(response: Mapping[str, Any], *, label: str) -> tuple[str, ...]:
     has_cards = "cost_cards" in response
     has_objects = "cost_objects" in response
     if has_cards and has_objects:
-        raise CrewAbilityError("Submit only one Crew cost-object field")
+        raise CrewAbilityError(f"Submit only one {label} cost-object field")
     raw = (
         response.get("cost_cards")
         if has_cards
@@ -331,10 +385,10 @@ def _submitted_refs(response: Mapping[str, Any]) -> tuple[str, ...]:
     if not isinstance(raw, (list, tuple)) or any(
         not isinstance(value, str) or not value for value in raw
     ):
-        raise CrewAbilityError("Crew cost objects must be nonempty references")
+        raise CrewAbilityError(f"{label} cost objects must be nonempty references")
     values = tuple(raw)
     if len(values) != len(set(values)):
-        raise CrewAbilityError("Crew cost objects must be distinct")
+        raise CrewAbilityError(f"{label} cost objects must be distinct")
     return values
 
 
@@ -345,23 +399,27 @@ def prepare_crew_cost(
     source: Any,
     threshold: int,
     response: Mapping[str, Any],
+    kind: str = "crew",
 ) -> CrewCostPlan:
-    """Validate one submitted Crew cost completely before mutation."""
+    """Validate one submitted Crew or Saddle cost before mutation."""
 
+    if kind not in {"crew", "saddle"}:
+        raise CrewAbilityError("Unknown power tap cost")
+    label = kind.title()
     if type(threshold) is not int or threshold < 0:
-        raise CrewAbilityError("Crew threshold is not compiled")
+        raise CrewAbilityError(f"{label} threshold is not compiled")
     if (
         source.zone != "battlefield"
         or source.controller != seat
         or source.phased_out
     ):
-        raise CrewAbilityError("Crew source is no longer available")
-    refs = _submitted_refs(response)
-    candidates = crew_candidates(host, seat, source)
+        raise CrewAbilityError(f"{label} source is no longer available")
+    refs = _submitted_refs(response, label=label)
+    candidates = crew_candidates(host, seat, source, kind=kind)
     available = {candidate.object_ref: candidate for candidate in candidates}
     if any(ref not in available for ref in refs):
         raise CrewAbilityError(
-            "Crew cost objects must be other untapped creatures you control"
+            f"{label} cost objects must be other untapped creatures you control"
         )
     selected_refs = frozenset(refs)
     selected = tuple(
@@ -377,6 +435,7 @@ def prepare_crew_cost(
         threshold=threshold,
         selected=selected,
         total_power=total_power,
+        kind=kind,
     )
 
 
@@ -384,7 +443,7 @@ def commit_crew_cost(
     host: CrewCostHost,
     plan: CrewCostPlan,
 ) -> list[str]:
-    """Revalidate and atomically commit one prepared Crew tap cost."""
+    """Revalidate and atomically commit a prepared power tap cost."""
 
     source = host.state.cards.get(plan.source_object_id)
     if (
@@ -394,39 +453,40 @@ def commit_crew_cost(
         or source.phased_out
         or source.logical_object_id != plan.source_logical_object_id
     ):
-        raise CrewAbilityError("Crew source changed before cost commitment")
+        raise CrewAbilityError(f"{plan.kind.title()} source changed before cost commitment")
     current = {
         candidate.object_id: candidate
-        for candidate in crew_candidates(host, plan.seat, source)
+        for candidate in crew_candidates(host, plan.seat, source, kind=plan.kind)
     }
     for expected in plan.selected:
         actual = current.get(expected.object_id)
         if actual != expected:
             raise CrewAbilityError(
-                "A selected Crew creature changed before cost commitment"
+                f"A selected {plan.kind.title()} creature changed before cost commitment"
             )
+    reason = f"{plan.kind.title()} {plan.threshold} activation cost"
     for candidate in plan.selected:
         set_permanent_tapped(
             host,
             candidate.object_ref,
             actor=plan.seat,
             tapped=True,
-            reason=f"Crew {plan.threshold} activation cost",
+            reason=reason,
             logical_object_id=candidate.logical_object_id,
             log=False,
             semantic_events=False,
         )
     dispatch_tapped_cost_group(
         host, (host.state.cards[candidate.object_id] for candidate in plan.selected),
-        reason=f"Crew {plan.threshold} activation cost",
+        reason=reason,
     )
     if plan.selected:
         host._log(
             plan.seat,
-            "cost.crew",
+            f"cost.{plan.kind}",
             (
                 f"{plan.seat} tapped {len(plan.selected)} creature(s) with "
-                f"{plan.total_power} total power to crew {source.ref}."
+                f"{plan.total_power} total power to {plan.kind} {source.ref}."
             ),
             {
                 "source": source.ref,
@@ -452,6 +512,7 @@ def pay_crew_cost(
     source: Any,
     threshold: int,
     response: Mapping[str, Any],
+    kind: str = "crew",
 ) -> tuple[list[str], FrozenMap]:
     plan = prepare_crew_cost(
         host,
@@ -459,6 +520,7 @@ def pay_crew_cost(
         source=source,
         threshold=threshold,
         response=response,
+        kind=kind,
     )
     paid = commit_crew_cost(host, plan)
     return paid, FrozenMap(plan.context_dict())

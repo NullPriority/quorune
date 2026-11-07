@@ -830,6 +830,7 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/counter_keyword_abilities.py",
         "quorune/class_levels.py",
         "quorune/crew.py",
+        "quorune/saddle.py",
         "quorune/cycling_abilities.py",
         "quorune/transmute.py",
         "quorune/station.py",

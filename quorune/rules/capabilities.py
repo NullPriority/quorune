@@ -51,7 +51,7 @@ from .counter_capability_shapes import fixed_counter_placement_group_node_capabi
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_covered_mechanics, fixed_creature_power_damage_node_capabilities
 from .prepared_creature_power_damage_shapes import PREPARED_POWER_DAMAGE_CAPABILITY, PREPARED_POWER_DAMAGE_MECHANIC
 from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
-from .crew_capability_shapes import ordinary_crew_node_capabilities
+from .crew_capability_shapes import ordinary_crew_node_capabilities, ordinary_saddle_node_capabilities
 from .station_capability_shapes import ordinary_station_node_capabilities
 from .graveyard_card_targets import (
     targeted_own_graveyard_return_node_capabilities,
@@ -1258,6 +1258,9 @@ def capability_dependencies_for_node(
             cost_schema=cost_schema,
         )
     )
+    dependencies.update(ordinary_saddle_node_capabilities(
+        effects=effects, target_schema=target_schema, mechanic_ids=mechanics, cost_schema=cost_schema,
+    ))
     for mechanic in mechanics:
         if mechanic not in _SHAPE_GATED_MECHANICS:
             dependencies.update(

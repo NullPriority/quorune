@@ -48,7 +48,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {"announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "source_counter_removal_cost", "waterbend"}
+    {"announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "saddle_threshold", "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -91,6 +91,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
         raise ValueError('Announced X symbol count must be a positive integer')
     if 'boast' in value and value['boast'] is not True:raise ValueError('Optional Boast marker must be true')
     if 'forecast' in value and value['forecast'] is not True:raise ValueError('Optional Forecast marker must be true')
+    if "saddle_threshold" in value and (type(value["saddle_threshold"]) is not int or value["saddle_threshold"] < 0):
+        raise ValueError("Optional Saddle threshold must be a nonnegative integer")
     if 'random_discard_payment' in value and (type(value['random_discard_payment']) is not int or not 1<=value['random_discard_payment']<=4):
         raise ValueError('Optional random-discard cost must be an exact positive supported count')
     if any(not isinstance(value[field], list) for field in _SEQUENCE_FIELDS):

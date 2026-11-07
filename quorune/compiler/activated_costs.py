@@ -139,6 +139,8 @@ def activated_ability_cost(ability: ActivatedAbility) -> dict[str, Any]:
     if ability.random_discard_payment:result['random_discard_payment']=ability.random_discard_payment
     if ability.crew_threshold is not None:
         result["crew"] = ability.crew_threshold
+    if ability.saddle_threshold is not None:
+        result["saddle"] = ability.saddle_threshold
     return result
 
 

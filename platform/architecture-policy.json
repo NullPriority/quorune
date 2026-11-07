@@ -459,6 +459,7 @@
     "quorune/counter_state.py",
     "quorune/counter_keyword_abilities.py",
     "quorune/crew.py",
+    "quorune/saddle.py",
     "quorune/cycling_abilities.py",
     "quorune/station.py",
     "quorune/damage.py",

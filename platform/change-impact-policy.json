@@ -9560,6 +9560,32 @@
       ]
     },
     {
+      "id": "ordinary-saddle",
+      "patterns": [
+        "quorune/saddle.py",
+        "quorune/crew.py",
+        "quorune/abilities.py",
+        "quorune/activated_ability_descriptor.py",
+        "quorune/compiler/saddle_nodes.py",
+        "quorune/compiler/keyword_templates.py",
+        "quorune/compiler/nonleaf_effect_closure.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/attack_transition_engine_adapter.py",
+        "quorune/rules/crew_capability_shapes.py",
+        "quorune/semantic_runtime/activated_abilities.py",
+        "quorune/semantic_runtime/effect_handlers.py",
+        "tests/test_ordinary_saddle.py",
+        "tests/fixtures/ordinary-saddle-cards.json"
+      ],
+      "test_modules": [
+        "test_ordinary_saddle",
+        "test_ordinary_crew",
+        "test_activated_abilities",
+        "test_qualified_attack_subjects",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "enchanted-player-static-scope",
       "patterns": [
         "quorune/enchanted_player_model.py",

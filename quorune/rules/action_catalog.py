@@ -6,6 +6,7 @@ from typing import Any, Protocol
 
 from ..semantic_runtime.action_permissions import land_play_permission_options
 from ..mana_undo import priority_actions_with_mana_undo
+from ..crew import activation_power_tap_hint
 from ..station import (
     StationAbilityError,
     station_candidates,
@@ -225,20 +226,9 @@ def _ability_hint(
             }
             for choice in ability.choices
         ]
-    threshold = host._crew_threshold(ability)
-    if threshold is not None:
-        hint["choose_cost"] = [
-            {
-                "k": "crew",
-                "z": "battlefield",
-                "minimum": 0 if threshold == 0 else 1,
-                "minimum_total_power": threshold,
-                "legal_refs": [
-                    candidate.ref
-                    for candidate in host._crew_candidates(seat, card)
-                ],
-            }
-        ]
+    power_tap = activation_power_tap_hint(host, seat, card, ability)
+    if power_tap is not None:
+        hint["choose_cost"] = [power_tap]
     if station_cost_choice(ability) is not None:
         try:
             candidates = station_candidates(host, seat, card)
