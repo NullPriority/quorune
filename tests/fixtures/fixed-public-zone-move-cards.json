@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "public_exact-list_card_data",
-  "source": "Synthetic exact grammar witnesses for fixed public zone-move tests",
+  "source": "Synthetic exact grammar witnesses and pinned Inundate for fixed public zone-move tests",
   "cards": [
     {
       "oracle_id": "00000000-0000-4000-8000-000000000294",
@@ -400,6 +400,26 @@
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
+      "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
+      "faces": []
+    },
+    {
+      "oracle_id": "0390a3dc-386c-402f-a89c-b94867bfb0a2",
+      "name": "Inundate",
+      "mana_cost": "{3}{U}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Return all nonblue creatures to their owners' hands.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2008-07-25",
       "legalities": {"commander": "legal", "duel": "legal", "legacy": "legal", "vintage": "legal"},
       "faces": []
     }
