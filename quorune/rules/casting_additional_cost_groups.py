@@ -532,8 +532,29 @@ def expand_fixed_alternative_options(
     return alternatives, []
 
 
+def fixed_additional_cost_node_capabilities(*, cost_schema):
+    """Collect the closed fixed price dependencies through their existing owners."""
+    from .node_capability_shapes import (
+        fixed_counter_additional_cost_node_capabilities,
+        fixed_sacrifice_additional_cost_node_capabilities,
+        fixed_zone_change_additional_cost_node_capabilities,
+    )
+    from .tap_additional_cost import fixed_tap_additional_cost_node_capabilities
+
+    owners = (
+        fixed_alternative_additional_cost_node_capabilities,
+        fixed_tap_additional_cost_node_capabilities,
+        fixed_counter_additional_cost_node_capabilities,
+        fixed_life_payment_additional_cost_node_capabilities,
+        fixed_sacrifice_additional_cost_node_capabilities,
+        fixed_zone_change_additional_cost_node_capabilities,
+    )
+    return tuple(capability for owner in owners for capability in owner(cost_schema=cost_schema))
+
+
 __all__ = [
     "expand_fixed_alternative_options",
+    "fixed_additional_cost_node_capabilities",
     "FixedAdditionalCostLeaf",
     "FixedAlternativeAdditionalCost",
     "FixedLifePaymentAdditionalCost",

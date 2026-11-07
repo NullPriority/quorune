@@ -14,7 +14,7 @@ import test_self_public_zone_casting as actions
 from quorune.activation_mana_cost import fixed_complex_activation_mana_options
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
-from quorune.fixed_effect_payment import FixedEffectPaymentSpec, compound_payment_payload_dependencies
+from quorune.fixed_effect_payment import FixedEffectPaymentSpec, fixed_payment_payload_dependencies
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
@@ -41,7 +41,7 @@ class HybridResolutionPaymentCompilerTests(unittest.TestCase):
         spec = FixedEffectPaymentSpec.from_dict(effect["payment"])
         self.assertEqual({(("W", 2),), (("B", 1), ("W", 1)), (("B", 2),)}, prices(spec))
         self.assertIn(HYBRID_RESOLUTION_PAYMENT_CAPABILITY, node.capability_dependencies)
-        self.assertIn(HYBRID_RESOLUTION_PAYMENT_CAPABILITY, compound_payment_payload_dependencies(effect))
+        self.assertIn(HYBRID_RESOLUTION_PAYMENT_CAPABILITY, fixed_payment_payload_dependencies(effect))
         two_brid = compile_oracle_card(record(TEXT.replace("{W/B}{W/B}", "{2/W}"), "Creature — Human"),
             capability_registry=registry)
         self.assertEqual("exact", two_brid.status, two_brid.material_residuals)
@@ -105,6 +105,7 @@ class HybridResolutionPaymentNativeTests(unittest.TestCase):
     native_until = attacking.AttackingCardEntryNativeTests.native_until
     until = attacking.AttackingCardEntryNativeTests.until
     attack_player = attacking.AttackingCardEntryNativeTests.attack_player
+    declare_attackers = attacking.AttackingCardEntryNativeTests.declare_attackers
     cast = actions.SelfPublicZoneRuntimeTests.cast
 
     @classmethod

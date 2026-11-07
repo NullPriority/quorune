@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from .tap_additional_cost import fixed_tap_additional_cost_node_capabilities,PAYMENT_COMPOSITION_CAPABILITY,PAYMENT_COMPOSITION_MECHANIC
+from .tap_additional_cost import PAYMENT_COMPOSITION_CAPABILITY,PAYMENT_COMPOSITION_MECHANIC
+from .casting_additional_cost_groups import fixed_additional_cost_node_capabilities
 from ..landwalk import QUALIFIED_LANDWALK_KEYWORDS
 from .counter_placement_capability_shapes import counter_placement_covered_mechanics
 from .control_capability_shapes import fixed_control_node_capabilities
@@ -84,11 +85,6 @@ from .power_toughness_switch import SWITCH_CAPABILITY, SWITCH_MECHANIC
 from .node_capability_shapes import (
     FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
-    fixed_alternative_additional_cost_node_capabilities,
-    fixed_counter_additional_cost_node_capabilities,
-    fixed_life_payment_additional_cost_node_capabilities,
-    fixed_sacrifice_additional_cost_node_capabilities,
-    fixed_zone_change_additional_cost_node_capabilities,
     fixed_counter_placement_batch_node_capabilities,
     fixed_counter_placement_node_capabilities,
     fixed_counter_placement_set_node_capabilities,
@@ -1226,34 +1222,9 @@ def capability_dependencies_for_node(
     from ..waterbend import WATERBEND_COMPOSITION_CAPABILITY,WATERBEND_COMPOSITION_MECHANIC
     if WATERBEND_COMPOSITION_MECHANIC in mechanics:dependencies.add(WATERBEND_COMPOSITION_CAPABILITY)
     if PAYMENT_COMPOSITION_MECHANIC in mechanics:dependencies.add(PAYMENT_COMPOSITION_CAPABILITY)
-    dependencies.update(
-        fixed_alternative_additional_cost_node_capabilities(
-            cost_schema=cost_schema
-        )
-    )
+    dependencies.update(fixed_additional_cost_node_capabilities(cost_schema=cost_schema))
     from ..waterbend import waterbend_node_capabilities
     dependencies.update(waterbend_node_capabilities(cost_schema=cost_schema))
-    dependencies.update(fixed_tap_additional_cost_node_capabilities(cost_schema=cost_schema))
-    dependencies.update(
-        fixed_counter_additional_cost_node_capabilities(
-            cost_schema=cost_schema
-        )
-    )
-    dependencies.update(
-        fixed_life_payment_additional_cost_node_capabilities(
-            cost_schema=cost_schema
-        )
-    )
-    dependencies.update(
-        fixed_sacrifice_additional_cost_node_capabilities(
-            cost_schema=cost_schema
-        )
-    )
-    dependencies.update(
-        fixed_zone_change_additional_cost_node_capabilities(
-            cost_schema=cost_schema
-        )
-    )
     dependencies.update(
         ordinary_crew_node_capabilities(
             effects=effects,
