@@ -9711,6 +9711,9 @@
       "patterns": [
         "quorune/compiler/event_player_results.py",
         "quorune/rules/event_player_result_shapes.py",
+        "quorune/rules/occurrence_object_results.py",
+        "quorune/target_controller_information.py",
+        "quorune/trigger_discovery.py",
         "tests/test_event_player_fixed_damage.py",
         "tests/fixtures/event-player-fixed-damage-cards.json"
       ],

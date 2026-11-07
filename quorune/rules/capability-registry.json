@@ -59146,17 +59146,17 @@
           "Client-selected recipient",
           "Variable/unrepresented damage amounts",
           "Ambiguous event-player antecedents",
-          "Unowned creature-controller current/LKI reads"
+          "Unrepresented occurrence subjects"
         ],
         "inputs": [
-          "Existing closed normalized event-player subject binding",
+          "Closed normalized event-player role or public entry/departure occurrence",
           "Explicit ability source",
           "Fixed positive integer damage amount"
         ],
         "outputs": [
           "Existing canonical damage instruction with a sealed event-player recipient"
         ],
-        "summary": "One fixed untargeted source-damage instruction addressed to the existing normalized event-player role. Source and sealed recipient remain distinct; canonical damage handles consequences, prevention and source information."
+        "summary": "One fixed untargeted source-damage instruction addressed to a normalized event-player role or the controller of one bound public permanent. Entry reads the original permanent's current or last-known controller. Graveyard departure uses the previous controller. The canonical damage transaction retains the explicit ability source."
       },
       "blockers": [],
       "dependencies": [
@@ -59171,21 +59171,30 @@
       "implementation_components": [
         "quorune.compiler.event_player_results.fixed_event_player_damage_result",
         "quorune.rules.event_player_result_shapes.fixed_event_player_result_node_capabilities",
-        "quorune.rules.event_player_result_shapes.event_player_damage_runtime_dependencies"
+        "quorune.rules.event_player_result_shapes.event_player_damage_runtime_dependencies",
+        "quorune.target_controller_information.occurrence_entry_controller_context"
       ],
-      "implementation_mutation_rationale": "Replacing the sealed occurrence recipient with the trigger controller fails the independent source/recipient witness.",
+      "implementation_mutation_rationale": "Replacing the sealed occurrence recipient with the trigger controller fails the source and recipient witness. Substituting the entering controller for the current controller fails the native Ankh of Mishra witness.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_ankh_reads_current_land_controller_after_native_flash_control",
+        "test_actual_ankh_keeps_last_controller_after_land_returns",
+        "test_actual_dingus_egg_uses_the_departing_land_controller",
+        "test_actual_magnetic_mine_sees_another_artifact_die_with_it",
         "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ],
       "multiplayer_tests": [
+        "test_actual_ankh_reads_current_land_controller_after_native_flash_control",
+        "test_actual_magnetic_mine_sees_another_artifact_die_with_it",
         "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ],
       "negative_tests": [
+        "test_zone_damage_preserves_the_kind_of_controller_read",
+        "test_entry_controller_damage_requires_its_runtime_authority",
         "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws",
@@ -59200,6 +59209,9 @@
         "608.2h"
       ],
       "positive_tests": [
+        "test_zone_damage_preserves_the_kind_of_controller_read",
+        "test_actual_ankh_reads_current_land_controller_after_native_flash_control",
+        "test_actual_dingus_egg_uses_the_departing_land_controller",
         "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws",
@@ -59207,10 +59219,13 @@
         "test_verified_damage_withdrawal_keeps_existing_event_player_life_result"
       ],
       "privacy_tests": [
+        "test_actual_ankh_reads_current_land_controller_after_native_flash_control",
         "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
       ],
       "replay_tests": [
+        "test_actual_ankh_keeps_last_controller_after_land_returns",
+        "test_actual_magnetic_mine_sees_another_artifact_die_with_it",
         "test_actual_death_damage_uses_departing_controller_and_preserves_attached_attack_rule",
         "test_actual_shadow_first_noncreature_is_separate_for_each_foreign_caster",
         "test_actual_underworld_draw_damage_survives_source_destruction_and_preserves_private_draws"
@@ -59502,13 +59517,13 @@
           "one information-derived player recipient without another target announcement",
           "canonical damage source and player-life result"
         ],
-        "summary": "Read the current or captured departure controller of an already announced target incarnation for one fixed untargeted player result. A distinct untargeted tap-occurrence reference reuses the same controller-information owner and typed departure record; stacked and queued occurrences read current control or exact-incarnation departure LKI without target announcement. New tap/untap life, mill and damage results that name the occurring permanent controller use current or exact departure-LKI information, independently from the sealed event controller and Aura trigger controller. Historical locked reference tokens retain their existing codecs. A printed-order fixed target instruction and damage sentence reuse this information for the same target incarnation, including departure during the first instruction."
+        "summary": "Read the current or captured departure controller of an announced target or a sealed public occurrence incarnation. Tap and untap results and fixed entry damage use the same typed departure record for stacked and queued occurrences. A printed-order fixed target instruction and damage sentence use the same identity, including departure during the first instruction. Historical locked references retain their recorded controller."
       },
       "blockers": [],
       "dependencies": [
         "target.revalidate_resolution"
       ],
-      "dependency_fail_closed_rationale": "The original legal target, matching incarnation and current/LKI controller information are mandatory; unavailable information cannot fall back to the caster or owner.",
+      "dependency_fail_closed_rationale": "The controller read requires the announced target or sealed event incarnation and current or exact departure information.",
       "dependency_fail_closed_status": "passed",
       "id": "resolution.target_controller_information",
       "implementation_components": [
@@ -59516,6 +59531,7 @@
         "quorune.target_controller_information.pin_target_controller_departures",
         "quorune.target_controller_information.resolve_occurrence_controller_information",
         "quorune.target_controller_information.pin_occurrence_controller_departures",
+        "quorune.target_controller_information.occurrence_entry_controller_context",
         "quorune.compiler.tap_state_event_bindings.tap_state_event_player_effect_template",
         "quorune.rules.tap_state_event_capability_shapes.tap_state_event_player_node_capabilities",
         "quorune.rules.occurrence_object_results.occurrence_object_runtime_dependencies"
@@ -59523,6 +59539,8 @@
       "implementation_mutation_rationale": "A fresh native Searing Barrage witness distinguishes observer A, owner B and current controller C; a reader omission mapping the recipient to A fails.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
+        "test_actual_ankh_reads_current_land_controller_after_native_flash_control",
+        "test_actual_ankh_keeps_last_controller_after_land_returns",
         "test_actual_searing_barrage_adds_damage_to_current_controller_not_owner_or_caster",
         "test_controller_information_uses_current_then_lki_and_not_a_returned_incarnation",
         "test_searing_uses_control_after_cast_and_not_its_targeting_time_snapshot",
@@ -59552,6 +59570,7 @@
         "test_structural_distortion_uses_departure_controller_after_a_real_response"
       ],
       "negative_tests": [
+        "test_entry_controller_damage_requires_its_runtime_authority",
         "test_condition_reference_result_and_information_codecs_reject_wrong_shapes",
         "test_verified_authority_withdrawals_and_stripped_runtime_dependencies_reject",
         "test_whole_spell_fizzles_after_target_departure_without_food_or_draw",

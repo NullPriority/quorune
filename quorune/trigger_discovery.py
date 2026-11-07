@@ -1070,7 +1070,10 @@ def _semantic_trigger_context(
     stack_context.update(state_trigger_context(source,program))
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
     from .rules.event_spell_copy import event_spell_copy_trigger_context
-    try:stack_context.update(event_spell_copy_trigger_context(host,program,event,context))
+    from .target_controller_information import occurrence_entry_controller_context
+    try:
+        stack_context.update(event_spell_copy_trigger_context(host,program,event,context))
+        stack_context.update(occurrence_entry_controller_context(host, program, event, context))
     except (TypeError,ValueError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     stack_context.update(printed_backup_source_context(source,program))
     from .rules.trigger_limits import event_source_usage_context

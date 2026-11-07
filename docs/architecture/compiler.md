@@ -2595,6 +2595,10 @@ instruction addressed to an established occurrence-player subject. The same
 binder selects the caster, drawing player, defending player or supported
 departed-object controller. The explicit ability source remains the damage
 source, while the sealed player reference becomes its untargeted recipient.
+For damage to the entering permanent's controller, the trigger retains the
+original public incarnation and uses its controller at resolution or the
+captured departure controller. Graveyard occurrences supply the controller
+from before the move.
 `resolution.event_player.fixed_damage` requires the existing player-result and
 damage owners. Unrepresented amounts and ambiguous subject/event pairs remain
 residual. Runtime inference checks the instruction independently of its

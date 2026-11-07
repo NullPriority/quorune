@@ -729,6 +729,13 @@ controller only for a represented target-information reference. Loading keeps
 that original incarnation; re-entry does not replace it. Earlier records omit
 the book, and earlier resolution-condition schemas keep their payloads.
 
+A controller-reading entry trigger retains `card_object_id` with the original
+`card_object_identity`. If that permanent leaves before resolution, the
+canonical departure owner records `occurrence_controller_information_lki`
+for the stacked or queued trigger. A returning permanent has a new identity.
+Graveyard-trigger damage reads the previous controller already recorded in
+the departure occurrence.
+
 Scalar amount schema eight represents a committed cast spell's mana value.
 Its origin and `mana_value` characteristic are closed, and it reads the
 original normalized cast context rather than a current zone object or casting
