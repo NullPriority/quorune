@@ -184,6 +184,6 @@ class StaticStepSkipNativeTests(InheritedNativeFixture, unittest.TestCase):
                 self.replay(session, load=True)
 
     def test_scheduler_omission_mutant_is_killed(self):
-        with patch("quorune.turn_step_owner.current_step_is_skipped", return_value=False):
+        with patch("quorune.turn_skip_replacements.current_step_is_skipped", return_value=False):
             with self.assertRaises(AssertionError):
                 self.test_actual_stasis_skips_untap_until_its_upkeep_payment_is_declined()
