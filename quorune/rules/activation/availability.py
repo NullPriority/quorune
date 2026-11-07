@@ -234,6 +234,10 @@ def _source_cost_availability(
         return "unavailable", "discard_source_wrong_zone"
     if ability.sacrifice_source and zone != "battlefield":
         return "unavailable", "sacrifice_source_wrong_zone"
+    if ability.granting_attachment_payment is not None:
+        from .granting_attachment import payable_granting_attachment
+        if payable_granting_attachment(host, seat, card, ability.granting_attachment_payment) is None:
+            return 'unpayable', 'granting_equipment_payment_unpayable'
     return None
 
 

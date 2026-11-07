@@ -13,7 +13,10 @@ from ..ability_fragments import (
 )
 from ..fixed_mana_abilities import compile_fixed_activated_mana_ability
 from ..mana_restrictions import valid_mana_spend_restriction
-from ..granted_activation_model import RESTRICTED_MANA_GRANT_CAPABILITY
+from ..granted_activation_model import (
+    GRANTING_ATTACHMENT_PAYMENT_CAPABILITY, GRANTING_ATTACHMENT_PAYMENT_FIELD,
+    GrantingAttachmentPayment, GrantingAttachmentPaymentKind, RESTRICTED_MANA_GRANT_CAPABILITY,
+)
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
 from .continuous_templates import (
@@ -142,6 +145,8 @@ def attached_granted_ability_plan(
     node_id: str | None = None,
     display_text: str | None = None,
     allow_static_cost: bool = False,
+    granting_attachment_payment: GrantingAttachmentPayment | None = None,
+    printed_cost_text: str | None = None,
 ) -> AttachedGrantedAbilityPlan | None:
     """Build one closed typed grant from an independently exact inner node."""
 
@@ -168,6 +173,9 @@ def attached_granted_ability_plan(
         if len(abilities) != 1 or not _closed_granted_activation(abilities[0]):
             return None
         ability = abilities[0]
+        if granting_attachment_payment is not None and (not ability.tap_source or ability.mana_ability
+                or ability.sorcery_speed or not printed_cost_text):
+            return None
         fixed_mana = (
             compile_fixed_activated_mana_ability(ability)
             if ability.mana_ability
@@ -201,7 +209,7 @@ def attached_granted_ability_plan(
             GrantedActivatedAbilitySpec(
                 ability_id=ability_id,
                 semantic_key=semantic_key,
-                cost_text=ability.cost_text,
+                cost_text=printed_cost_text or ability.cost_text,
                 effect_text=ability.effect_text,
                 mana=tuple(ability.mana.items()),
                 tap_source=ability.tap_source,
@@ -219,7 +227,9 @@ def attached_granted_ability_plan(
                 choices=tuple(choice.to_dict() for choice in ability.choices),
                 mana_spend_restriction=ability.mana_spend_restriction,
                 crew_threshold=ability.crew_threshold,
-                schema_version=4 if restricted_grant else 3 if ability.crew_threshold is not None else 2 if extended_cost else 1,
+                granting_attachment_payment=granting_attachment_payment,
+                schema_version=(5 if granting_attachment_payment is not None else 4 if restricted_grant
+                                else 3 if ability.crew_threshold is not None else 2 if extended_cost else 1),
             )
         )
         return AttachedGrantedAbilityPlan(
@@ -227,7 +237,10 @@ def attached_granted_ability_plan(
             ability_id=ability_id,
             semantic_key=semantic_key,
             fragment=fragment,
-            capability_dependencies=(RESTRICTED_MANA_GRANT_CAPABILITY,) if restricted_grant else (),
+            capability_dependencies=(
+                *((RESTRICTED_MANA_GRANT_CAPABILITY,) if restricted_grant else ()),
+                *((GRANTING_ATTACHMENT_PAYMENT_CAPABILITY,) if granting_attachment_payment is not None else ()),
+            ),
         )
     if node.kind != "triggered_ability" or not node.event:
         return None
@@ -279,14 +292,17 @@ def _compile_granted_ability_pair(
     effect_template: Any,
     trigger_effect_template: Any,
     material_line_for: Callable[[str], str],
+    compiled_quote: str | None = None,
+    granting_attachment_payment: GrantingAttachmentPayment | None = None,
 ) -> tuple[OracleNode, OracleNode] | None:
     """Compile one accepted grant shell and one independent inner ability."""
 
     inner_residuals: list[OracleResidual] = []
+    inner_text = compiled_quote or quoted
     inner = compile_static_cost_or_ordinary_inner(compile_inner,
         node_id=f"{node_id}:granted",
-        line=quoted,
-        material_line=material_line_for(quoted),
+        line=inner_text,
+        material_line=material_line_for(inner_text),
         span=span,
         card_name="Granted creature",
         type_line="Creature — Fixture",
@@ -320,9 +336,10 @@ def _compile_granted_ability_pair(
             capability_closure=closure.reachable, capability_profile=closure.profile,
             capability_fingerprint=closure.fingerprint,
         )
+    printed_cost_text = quoted.partition(':')[0].strip() if granting_attachment_payment is not None else None
     plan = attached_granted_ability_plan(
         node=inner,
-        quoted_text=quoted,
+        quoted_text=inner_text,
         oracle_id=record.oracle_id,
         face_id=face_id,
         source_line=span.line,
@@ -330,9 +347,16 @@ def _compile_granted_ability_pair(
         card_name="Granted creature",
         keywords=(),
         allow_static_cost=True,
+        granting_attachment_payment=granting_attachment_payment,
+        printed_cost_text=printed_cost_text,
     )
     if plan is None:
         return None
+    if granting_attachment_payment is not None:
+        if inner.cost is None or plan.node_kind != GRANTED_ACTIVATED_ABILITY_KIND:
+            return None
+        inner = replace(inner, cost={**inner.cost, 'text': printed_cost_text,
+                                     GRANTING_ATTACHMENT_PAYMENT_FIELD: granting_attachment_payment.to_dict()})
     from .granted_static_costs import bind_granted_plan_dependencies
     inner = bind_granted_plan_dependencies(inner, plan, capability_registry, capability_profile)
     if inner is None:
@@ -370,6 +394,18 @@ def _compile_granted_ability_pair(
     return outer, granted
 
 
+def _granting_equipment_payment_quote(quoted: str, source_name: str) -> tuple[str, GrantingAttachmentPayment] | None:
+    cost, colon, body = quoted.partition(':')
+    if not colon or not body.strip():
+        return None
+    match = re.fullmatch(r'(?P<fixed>(?:(?:\{(?:[WUBRGC]|[0-9]+)\})+, )?\{T\}), '
+                         r'(?P<kind>Unattach|Sacrifice) (?P<equipment>.+)', cost.strip(), re.I)
+    if match is None or match['equipment'].casefold() not in {source_name.casefold(), 'this equipment'}:
+        return None
+    kind = GrantingAttachmentPaymentKind(match['kind'].casefold())
+    return f"{match['fixed']}: {body.strip()}", GrantingAttachmentPayment(kind)
+
+
 def compile_attached_granted_ability_nodes(
     *,
     record: CardRecord,
@@ -402,10 +438,15 @@ def compile_attached_granted_ability_nodes(
         material_line,
         source_name=source_name,
     )
-    if quoted is None or (_EXTERNAL_ATTACHMENT_REFERENCE.search(quoted) and not granted_characteristic_reference_is_closed(quoted)):
+    if quoted is None:
+        return None
+    payment_quote = (_granting_equipment_payment_quote(quoted, source_name)
+                     if paired is None and source_attachment_relation is AttachmentReferenceKind.EQUIPPED else None)
+    compiled_quote, payment = payment_quote if payment_quote is not None else (quoted, None)
+    if _EXTERNAL_ATTACHMENT_REFERENCE.search(compiled_quote) and not granted_characteristic_reference_is_closed(compiled_quote):
         return None
     normalized_name = source_name.casefold().strip()
-    if normalized_name and normalized_name in quoted.casefold():
+    if normalized_name and normalized_name in compiled_quote.casefold():
         return None
     return _compile_granted_ability_pair(
         record=record,
@@ -415,6 +456,8 @@ def compile_attached_granted_ability_nodes(
         material_line=material_line,
         span=span,
         quoted=quoted,
+        compiled_quote=compiled_quote,
+        granting_attachment_payment=payment,
         compile_shell=lambda fragment, fragment_capabilities: (
             (paired_quoted_handler if paired is not None else attached_quoted_ability_handler)(
                 material_line,

@@ -48,7 +48,7 @@ ACTIVATED_ABILITY_DESCRIPTOR_FIELDS = frozenset(
     }
 )
 _OPTIONAL_DESCRIPTOR_FIELDS = frozenset(
-    {"announced_x_symbols", "boast", "forecast", "fixed_mana_result", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "source_counter_removal_cost", "waterbend"}
+    {"announced_x_symbols", "boast", "forecast", "fixed_mana_result", "granting_attachment_payment", "mana_cost_options", "power_up", "random_discard_payment", "reconfigure", "source_counter_removal_cost", "waterbend"}
 )
 
 _SEQUENCE_FIELDS = (
@@ -133,4 +133,8 @@ def validate_activated_ability_descriptor(value: Any) -> Mapping[str, Any]:
     if 'fixed_mana_result' in value:
         from .fixed_mana_results import FixedManaResultSpec
         FixedManaResultSpec.from_dict(value['fixed_mana_result'])
+    if 'granting_attachment_payment' in value:
+        from .granted_activation_model import GrantingAttachmentPayment
+        if GrantingAttachmentPayment.from_dict(value['granting_attachment_payment']).granting_object is None:
+            raise ValueError('Granted activation must name the Equipment incarnation')
     return value

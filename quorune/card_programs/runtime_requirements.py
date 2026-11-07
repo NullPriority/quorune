@@ -70,7 +70,7 @@ def nonmana_equip_runtime_dependencies(program):
     return ()
 
 
-def _cost_metric_runtime_requirements(handlers):
+def _cost_metric_runtime_requirements(program):
     required, blockers = set(), set()
     for resolver, label in (
         (public_value_cost_dependencies, 'runtime_public_value_cost'),
@@ -79,9 +79,14 @@ def _cost_metric_runtime_requirements(handlers):
         (self_cost_turn_count_dependencies, 'runtime_self_cost_turn_count'),
     ):
         try:
-            required.update(resolver(handlers))
+            required.update(resolver(program.handlers))
         except (TypeError, ValueError) as exc:
             blockers.add(f'{label}:invalid:{exc}')
+    from ..rules.activation.granting_attachment import granting_attachment_runtime_dependencies
+    try:
+        required.update(granting_attachment_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f'runtime_granting_attachment_payment:invalid:{exc}')
     return required, blockers
 
 
@@ -353,7 +358,7 @@ def program_dynamic_runtime_requirements(program):
         required.update(reconfigure_runtime_dependencies(program))
     except (TypeError,ValueError) as exc:
         blockers.add(f'runtime_reconfigure:invalid:{exc}')
-    cost_required, cost_blockers = _cost_metric_runtime_requirements(program.handlers)
+    cost_required, cost_blockers = _cost_metric_runtime_requirements(program)
     required.update(cost_required)
     blockers.update(cost_blockers)
     try:

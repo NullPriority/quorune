@@ -627,6 +627,7 @@
     "tests/fixtures/granted-skulk-cards.json",
     "tests/fixtures/granted-static-characteristic-cards.json",
     "tests/fixtures/granted-static-cost-cards.json",
+    "tests/fixtures/granting-equipment-payment-cards.json",
     "tests/fixtures/graveyard-copy-keyword-cards.json",
     "tests/fixtures/graveyard-exile-payment-cards.json",
     "tests/fixtures/graveyard-resolution-condition-cards.json",

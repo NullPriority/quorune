@@ -1704,6 +1704,14 @@ restriction grammar treats “instant and sorcery spells” as the same two spel
 types as “an instant or sorcery spell”. Additional results, unknown restrictions
 and unsupported output quantities remain residual.
 
+Version-five attached grants can charge the recipient's tap and fixed mana
+costs together with a payment involving the exact granting Equipment. The
+applicable attachment component binds that Equipment's incarnation. Offers
+identify it, and payment rechecks the current reciprocal relation. The
+creature's controller can unattach it. Sacrificing it also requires control of
+the Equipment and uses the existing zone replacement continuation. The
+creature supplies the targeting and resolving ability source.
+
 Live quoted grants also admit pinned land subtype recipients and flat
 land-or-creature-subtype unions through the existing public query owner. The
 controller relation applies to every branch, matching an object once. “Other”

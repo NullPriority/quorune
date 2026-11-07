@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from hashlib import sha256
 from typing import Any, Protocol
 
 from ...abilities import ActivatedAbility, CostChoice
@@ -63,14 +64,22 @@ def _typed_granted_abilities(
     counts: dict[str, int] = {}
     result: list[ActivatedAbility] = []
     for index, spec in enumerate(specs):
-        ordinal = counts.get(spec.ability_id, 0) + 1
-        counts[spec.ability_id] = ordinal
+        ability_id = spec.ability_id
+        payment = spec.granting_attachment_payment
+        if payment is not None:
+            identity = payment.granting_object
+            if identity is None:
+                continue
+            suffix = sha256(identity.logical_object_id.encode('utf-8')).hexdigest()[:20]
+            ability_id = f'{ability_id}#equipment-{suffix}'
+        ordinal = counts.get(ability_id, 0) + 1
+        counts[ability_id] = ordinal
         result.append(
             ActivatedAbility(
                 ability_id=(
-                    spec.ability_id
+                    ability_id
                     if ordinal == 1
-                    else f"{spec.ability_id}#{ordinal}"
+                    else f"{ability_id}#{ordinal}"
                 ),
                 line_index=25_000 + index,
                 oracle_line=f"{spec.cost_text}: {spec.effect_text}",
@@ -97,6 +106,7 @@ def _typed_granted_abilities(
                 ),
                 builtin_semantic_key=spec.semantic_key,
                 mana_spend_restriction=spec.mana_spend_restriction,
+                granting_attachment_payment=payment,
             )
         )
     return tuple(result)

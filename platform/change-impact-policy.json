@@ -2103,6 +2103,26 @@
       ]
     },
     {
+      "id": "granting-equipment-activation-payments",
+      "patterns": [
+        "quorune/activated_ability_descriptor.py",
+        "quorune/compiler/attached_granted_ability_nodes.py",
+        "quorune/granted_activation_model.py",
+        "quorune/rules/activation/granting_attachment.py",
+        "quorune/rules/activation/offer_payload.py",
+        "quorune/rules/activation/payment_commit.py",
+        "quorune/rules/activation_zone_change_costs.py",
+        "quorune/semantic_runtime/attached_continuous.py",
+        "tests/fixtures/granting-equipment-payment-cards.json"
+      ],
+      "test_modules": [
+        "test_attached_quote_delimiters",
+        "test_card_program_trust",
+        "test_counted_activation_costs",
+        "test_fixed_activated_zone_change_costs"
+      ]
+    },
+    {
       "id": "public-activation-condition-contract",
       "patterns": [
         "quorune/abilities.py",

@@ -29,6 +29,7 @@ from .model import (
     ActivationProposalRequest,
     ActivationProposalResult,
 )
+from .offer_payload import activation_offer_cost_hint
 
 
 class ActivationProposalHost(Protocol):
@@ -178,6 +179,16 @@ def _validate_activation_cost_contract(
             status="unresolved",
             reason="uncompiled_cost",
         )
+    from ...granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_FIELD
+    payment = ability.granting_attachment_payment
+    program = host.semantics.get(host._semantic_key_for_ability(source, ability))
+    cost = program.cost_schema if program is not None else None
+    declared = cost.get(GRANTING_ATTACHMENT_PAYMENT_FIELD) if isinstance(cost, Mapping) else None
+    if payment is not None or declared is not None:
+        if (payment is None or declared != {'kind': payment.kind.value} or program is None
+                or not host.semantic_program_is_current_trusted(program)):
+            raise ActivationProposalError('Granting Equipment payment requires its trusted activation body',
+                                          status='unresolved', reason='untrusted_granting_equipment_payment')
     if host.state.config.semantic_policy == 'trusted_only' and not activation_result_is_represented(host, source, ability):
         raise ActivationProposalError('This ability has no compiled result semantics',
             status='unresolved', reason='unresolved_result_semantics')
@@ -566,17 +577,10 @@ def build_activation_offer(
         )
         if public_schema is None:
             return ActivationProposalResult("unavailable", "mandatory_target_unavailable")
-    hint = selected.compact(source_ref=source.ref, zone=source.zone)
-    if selected.mana_cost_options:
-        hint["mana_options"] = [
-            option.compact()
-            for option in payable_activation_mana_options(
-                host,
-                seat,
-                source,
-                selected,
-            )
-        ]
+    cost_hint = activation_offer_cost_hint(host, seat, source, selected)
+    if cost_hint is None:
+        return ActivationProposalResult('unpayable', 'granting_equipment_payment_unpayable')
+    hint, attachment_label = cost_hint
     if selected.choices:
         hint["choose_cost"] = [
             {
@@ -661,7 +665,7 @@ def build_activation_offer(
         action_id=f"activate:{source.ref}:{selected.ability_id}",
         action="activate",
         seat=seat,
-        label=f"{host.display_name(source.object_id)} — {selected.effect_text}",
+        label=f"{host.display_name(source.object_id)} — {selected.effect_text}{attachment_label}",
         expiry_revision=host.state.revision,
         payload=freeze_json(payload),
     )

@@ -69,6 +69,14 @@ def activation_zone_change_cost_reference(
         return object_ref
     if source_flags or type(source_ref) is not str or not source_ref:
         return None
+    if 'granting_attachment' in cost_summary:
+        payment = cost_summary['granting_attachment']
+        return object_ref if (
+            isinstance(payment, Mapping) and payment == {'kind': 'sacrifice', 'card': object_ref}
+            and object_ref != source_ref and response.get('from') == 'battlefield'
+            and origin == 'battlefield' and destination == 'graveyard'
+            and not {'random_discard', 'choose_cost'}.intersection(cost_summary)
+        ) else None
     if 'random_discard' in cost_summary:
         refs=response.get('_random_discard_cost_refs')
         payment_id=response.get('_mana_payment_id')

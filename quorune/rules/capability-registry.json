@@ -1738,6 +1738,94 @@
     {
       "applicability": {
         "exclusions": [
+          "independently unrepresented results",
+          "granting Equipment as a damage source",
+          "unrepresented additional or alternate activation costs"
+        ],
+        "inputs": [
+          "one present equipped creature and its bound granting Equipment",
+          "fixed tap and optional fixed mana cost",
+          "ordinary announced target"
+        ],
+        "outputs": [
+          "the exact Equipment is unattached or sacrificed",
+          "the creature remains the source of the activated ability",
+          "the existing movement and replacement owners handle sacrifice"
+        ],
+        "summary": "Pay one printed unattach or sacrifice cost with the exact Equipment granting a creature's activated ability with a tap cost."
+      },
+      "blockers": [],
+      "dependencies": [
+        "attachment.action.fixed_source",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "The typed grant and the corresponding activation body independently require the payment capability.",
+      "dependency_fail_closed_status": "passed",
+      "id": "activation.granting_attachment.fixed_payment",
+      "implementation_components": [
+        "quorune.compiler.attached_granted_ability_nodes.compile_attached_granted_ability_nodes",
+        "quorune.granted_activation_model.GrantingAttachmentPayment",
+        "quorune.semantic_runtime.attached_continuous._bind_granting_equipment",
+        "quorune.rules.activation.granting_attachment.payable_granting_attachment",
+        "quorune.rules.activation.granting_attachment.pay_granting_attachment"
+      ],
+      "implementation_mutation_rationale": "Omitting the bound Equipment grant removes the native recipient's required activation.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting",
+        "test_actual_hammer_offers_only_the_controlled_sacrifice_payment",
+        "test_actual_hammer_sacrifice_suspends_and_replays_the_exact_payment"
+      ],
+      "multiplayer_tests": [
+        "test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting",
+        "test_actual_hammer_offers_only_the_controlled_sacrifice_payment"
+      ],
+      "negative_tests": [
+        "test_equipment_payment_dependency_is_required_for_grant_and_body",
+        "test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting",
+        "test_actual_hammer_offers_only_the_controlled_sacrifice_payment"
+      ],
+      "official_rules": [
+        "113.7a",
+        "301.5d",
+        "601.2h",
+        "602.2b",
+        "701.3d",
+        "701.21a"
+      ],
+      "positive_tests": [
+        "test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting",
+        "test_actual_hammer_offers_only_the_controlled_sacrifice_payment",
+        "test_actual_leonin_bola_taps_the_target_after_the_attachment_cost"
+      ],
+      "privacy_tests": [
+        "test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting",
+        "test_actual_hammer_sacrifice_suspends_and_replays_the_exact_payment"
+      ],
+      "replay_tests": [
+        "test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting",
+        "test_actual_hammer_offers_only_the_controlled_sacrifice_payment",
+        "test_actual_hammer_sacrifice_suspends_and_replays_the_exact_payment"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "replay",
+        "privacy"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "nonmana, hybrid, variable and snow keyword costs",
           "unsupported whole-card siblings",
           "runtime Oracle interpretation"

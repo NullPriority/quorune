@@ -30,6 +30,10 @@ from .activation_condition_model import (
 )
 from .activation_restriction_composition import activation_restriction_from_effect
 from .activated_ability_descriptor import validate_activated_ability_descriptor
+from .granted_activation_model import (
+    GRANTING_ATTACHMENT_PAYMENT_FIELD, GrantingAttachmentPayment,
+    validate_bound_granting_attachment_payment,
+)
 from .boast import keyword_activation_restrictions,validate_boast_ability,validate_forecast_ability
 from .forecast_model import FORECAST_UNCOMPILED
 from .ability_line_normalization import forecast_cost_without_source_reveal
@@ -163,10 +167,13 @@ class ActivatedAbility:
     boast: bool = False
     reconfigure: bool = False
     forecast: bool = False
+    granting_attachment_payment: GrantingAttachmentPayment | None = None
 
     def __post_init__(self) -> None:
         if type(self.reconfigure) is not bool:
             raise ValueError('Reconfigure marker must be boolean')
+        if self.granting_attachment_payment is not None:
+            validate_bound_granting_attachment_payment(self)
         from .activation_x import validate_activation_x_ability
         validate_activation_x_ability(self)
         if self.fixed_mana_result is not None and not isinstance(self.fixed_mana_result,FixedManaResultSpec):
@@ -247,6 +254,8 @@ class ActivatedAbility:
         if self.boast:result['boast']=True
         if self.reconfigure:result['reconfigure']=True
         if self.forecast:result['forecast']=True
+        if self.granting_attachment_payment is not None:
+            result[GRANTING_ATTACHMENT_PAYMENT_FIELD] = self.granting_attachment_payment.to_dict()
         return result
 
     @classmethod
@@ -258,6 +267,8 @@ class ActivatedAbility:
             boast=value.get('boast',False),
             reconfigure=value.get('reconfigure', False),
             forecast=value.get('forecast', False),
+            granting_attachment_payment=(GrantingAttachmentPayment.from_dict(value[GRANTING_ATTACHMENT_PAYMENT_FIELD])
+                                         if GRANTING_ATTACHMENT_PAYMENT_FIELD in value else None),
             fixed_mana_result=FixedManaResultSpec.from_dict(value['fixed_mana_result']) if 'fixed_mana_result' in value else None,
             power_up=PowerUpSpec.from_dict(value['power_up']) if 'power_up' in value else None,
             line_index=value["line_index"],

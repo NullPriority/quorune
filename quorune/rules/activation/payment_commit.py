@@ -23,6 +23,11 @@ def commit_activation_payments(host, proposal, source, ability, response, mana_o
         response,
         mana_option,
     )
+    if ability.granting_attachment_payment is not None:
+        from .granting_attachment import pay_granting_attachment
+        equipment_id = pay_granting_attachment(host, actor=proposal.seat, source=source,
+                                                payment=ability.granting_attachment_payment, response=response)
+        paid_objects = [*paid_objects, equipment_id]
     try:
         commit_activation_usage(
             source,

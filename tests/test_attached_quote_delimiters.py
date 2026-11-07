@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 import test_job_select as controls
 from quorune.attachments import attach_objects
 from quorune.carddb import CardDatabase
@@ -239,3 +240,186 @@ class AttachedQuoteDelimiterRuntimeTests(unittest.TestCase):
         method = 'test_actual_combat_draw_belongs_to_recipient_and_survives_equipment_removal'
         with patch.object(owner, 'attached_granted_ability_plan', return_value=None), self.assertRaises(AssertionError):
             getattr(type(self)(method), method)()
+
+
+class GrantingEquipmentPaymentNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        from scripts.build_test_database import build_fixture_database
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'granting-equipment-payment.sqlite3'
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/fixed-resolution-payment-cards.json',
+            ROOT / 'tests/fixtures/granting-equipment-payment-cards.json',
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Granting Equipment payment', [
+            DeckEntry('Isamaru, Hound of Konda', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30),
+        ], ['Isamaru, Hound of Konda'])
+
+    def equip_fixture(self, session, creature, equipment):
+        attach_objects(session.state.cards, equipment, creature, source_timestamp=equipment.zone_timestamp,
+                       players=session.state.players)
+
+    def offers(self, session, creature):
+        actions = session.packet('pilot:A', full=True)['decision']['legal_actions']
+        return [action for action in actions if action['id'].startswith(f'activate:{creature.ref}:')
+                and 'granting_attachment' in action.get('cost_summary', {})]
+
+    def test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting(self):
+        session = self.session(60277801)
+        creature = self.add(session.engine, 'Grizzly Bears', ref='heartseeker-recipient')
+        target = self.add(session.engine, 'Tel-Jilad Chosen', seat='C')
+        first = self.add(session.engine, 'Heartseeker', seat='B', ref='heartseeker-first')
+        second = self.add(session.engine, 'Heartseeker', seat='D', ref='heartseeker-second')
+        hidden = self.add(session.engine, 'Generic Bound Growth', zone='hand', ref='heartseeker-private-hand')
+        creature.acquired_control_turn_count = -1
+        for equipment in (first, second):
+            self.assert_closed(session, equipment)
+            self.equip_fixture(session, creature, equipment)
+        self.prepare(session)
+        self.checkpoint(session)
+        offers = {row['cost_summary']['granting_attachment']['card']: row for row in self.offers(session, creature)}
+        self.assertEqual({first.ref, second.ref}, set(offers))
+        action = offers[second.ref]
+        self.assertIn(target.ref, action['target_schema']['legal_refs'])
+        command = {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:D', command).ok)
+        self.assertFalse(session.act('pilot:A', {**command, 'targets': ['C']}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[creature.object_id].tapped)
+        self.assertEqual(creature.object_id, session.state.cards[first.object_id].attached_to)
+        self.assertIsNone(session.state.cards[second.object_id].attached_to)
+        self.assertEqual('battlefield', session.state.cards[second.object_id].zone)
+        self.assertNotIn(hidden.ref, json.dumps(session.packet('pilot:D', full=True)))
+        trigger, = session.state.stack
+        self.assertEqual(creature.object_id, trigger.source_object_id)
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual('graveyard', session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_hammer_offers_only_the_controlled_sacrifice_payment(self):
+        session = self.session(60277802)
+        creature = self.add(session.engine, 'Grizzly Bears', ref='hammer-recipient')
+        owned = self.add(session.engine, 'Deconstruction Hammer', ref='hammer-owned')
+        foreign = self.add(session.engine, 'Deconstruction Hammer', seat='B', ref='hammer-foreign')
+        target = self.add(session.engine, 'Sol Ring', seat='C')
+        creature.acquired_control_turn_count = -1
+        for equipment in (owned, foreign):
+            self.assert_closed(session, equipment)
+            self.equip_fixture(session, creature, equipment)
+        self.prepare(session, mana={'C': 3})
+        self.checkpoint(session)
+        offered, = self.offers(session, creature)
+        self.assertEqual(owned.ref, offered['cost_summary']['granting_attachment']['card'])
+        result = session.act('pilot:A', {'action_id': offered['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('graveyard', session.state.cards[owned.object_id].zone)
+        self.assertEqual(creature.object_id, session.state.cards[foreign.object_id].attached_to)
+        self.assertEqual('battlefield', session.state.cards[target.object_id].zone)
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual('graveyard', session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_actual_leonin_bola_taps_the_target_after_the_attachment_cost(self):
+        session = self.session(60277804)
+        creature = self.add(session.engine, 'Grizzly Bears', ref='bola-recipient')
+        target = self.add(session.engine, 'Grizzly Bears', seat='B', ref='bola-target')
+        bola = self.add(session.engine, 'Leonin Bola', seat='C')
+        creature.acquired_control_turn_count = -1
+        self.assert_closed(session, bola)
+        self.equip_fixture(session, creature, bola)
+        self.prepare(session)
+        self.checkpoint(session)
+        action, = self.offers(session, creature)
+        result = session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[creature.object_id].tapped)
+        self.assertIsNone(session.state.cards[bola.object_id].attached_to)
+        self.assertFalse(session.state.cards[target.object_id].tapped)
+        self.resolve_top(session)
+        self.assertTrue(session.state.cards[target.object_id].tapped)
+        self.replay(session, load=True)
+
+    def test_actual_hammer_sacrifice_suspends_and_replays_the_exact_payment(self):
+        session = self.session(60277803)
+        creature = self.add(session.engine, 'Grizzly Bears', ref='hammer-replacement-recipient')
+        hammer = self.add(session.engine, 'Deconstruction Hammer', ref='hammer-replacement-cost')
+        target = self.add(session.engine, 'Sol Ring', seat='B')
+        creature.acquired_control_turn_count = -1
+        self.assert_closed(session, hammer)
+        self.equip_fixture(session, creature, hammer)
+        for seat, name in (
+            ('B', 'Generic Payment Destination Replacement'),
+            ('C', 'Generic Payment Competing Replacement'),
+        ):
+            replacement = self.add(session.engine, name, seat=seat)
+            self.assert_closed(session, replacement)
+        self.prepare(session, mana={'C': 3})
+        self.checkpoint(session)
+        action, = self.offers(session, creature)
+        result = session.act('pilot:A', {'action_id': action['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('replacement.order', session.state.pending_decision.kind)
+        self.assertEqual(['pilot:A'], list(session.pending_principals()))
+        self.assertIsNone(session.packet('pilot:B', full=True)['decision'])
+        self.assertFalse(session.state.cards[creature.object_id].tapped)
+        self.assertEqual(3, session.state.players['A'].mana_pool['C'])
+        self.assertEqual(creature.object_id, session.state.cards[hammer.object_id].attached_to)
+        self.assertFalse(session.state.stack)
+
+        session = self.replay(session, load=True)
+        options = session.packet('pilot:A', full=True)['decision']['ctx']['options']
+        command = {'action_id': 'choose', 'replacement': options[0]['id']}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:C', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act('pilot:A', command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        paid = session.state.cards[hammer.object_id]
+        self.assertEqual('exile', paid.zone)
+        self.assertEqual(1, sum(paid.counters.values()))
+        self.assertTrue(session.state.cards[creature.object_id].tapped)
+        self.assertEqual(0, session.state.players['A'].mana_pool.get('C', 0))
+        item, = session.state.stack
+        self.assertEqual(creature.object_id, item.source_object_id)
+        self.assertEqual('battlefield', session.state.cards[target.object_id].zone)
+        self.resolve_top(session)
+        self.assertEqual('exile', session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_equipment_payment_dependency_is_required_for_grant_and_body(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.granted_activation_model import GRANTING_ATTACHMENT_PAYMENT_CAPABILITY
+        from quorune.oracle_ir import register_generated_programs
+
+        card = self.db.lookup('Heartseeker', fuzzy=False)
+        semantics = SemanticRegistry()
+        profile = 'commander_review'
+        register_generated_programs(self.db, semantics, (card,), capability_registry=self.registry,
+                                    capability_profile=profile, promote_exact_runtime_handlers=True,
+                                    promote_exact_effect_programs=True)
+        required = GRANTING_ATTACHMENT_PAYMENT_CAPABILITY
+        programs = [p for p in semantics.programs_for_oracle(card.oracle_id) if required in p.capability_dependencies]
+        self.assertEqual({'activate', 'characteristics.evaluate'}, {p.event for p in programs})
+        for program in programs:
+            self.assertEqual('trusted', program.trust_level)
+            deps = tuple(cap for cap in program.capability_dependencies if cap != required)
+            altered = replace(program, capability_dependencies=deps, coverage=(),
+                              capability_closure=self.registry.closure(deps, profile=profile).to_dict())
+            binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile=profile)
+            self.assertIn(f'capability:undeclared_runtime_dependency:{required}', binding['blockers'])
+
+    def test_granting_equipment_binding_omission_mutant_is_killed(self):
+        with patch('quorune.semantic_runtime.attached_continuous._bind_granting_equipment', return_value=()):
+            with self.assertRaises(AssertionError):
+                self.test_actual_heartseeker_uses_exact_foreign_granter_and_creature_targeting()
