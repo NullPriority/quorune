@@ -62,6 +62,13 @@ unblocked occurrences. Historical absence emits no new occurrence and remains
 absent on serialization. Unknown, boolean and manifest/checkpoint-mismatched
 versions reject through the same strict state-provenance owner.
 
+Current records carry `departed_turn_boundary_version: 1` in the checkpoint and
+manifest format. That mode expires goad when the departed player's next turn
+would have begun. Its pending extra-turn slots stay in the authoritative turn
+queue until the scheduler reaches the expiry boundary. Historical records omit
+the marker and replay their earlier turn handling. A malformed marker or a
+checkpoint and manifest mismatch rejects before replay.
+
 Current checkpoints and format provenance independently carry
 `block_characteristics_version: 1`. Block relationships seal public counterpart
 qualities before trigger discovery. Historical absence retains the earlier

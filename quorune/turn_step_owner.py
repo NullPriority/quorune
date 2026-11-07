@@ -22,6 +22,7 @@ from .model import (
     YieldPolicy,
 )
 from .turn_history import roll_turn_history
+from .turn_priority_model import apnap_participants
 from .trigger_processing import (
     clear_pending_trigger_batches,
     matching_delayed_triggers,
@@ -62,7 +63,7 @@ class TurnStepHost(Protocol):
 
     def _increment_optimization(self, seat: str, key: str) -> None: ...
 
-    def _expire_goad_designations(self, player: str) -> None: ...
+    def _expire_goad_designations(self, player: str, *, departed_turn: bool = False) -> None: ...
 
     def _clear_mana(self, *, reason: str) -> None: ...
 
@@ -184,6 +185,30 @@ class TurnStepOwner:
         )
         return entry
 
+    def retire_departed_turns(self, seat: str) -> None:
+        """Retain scheduled slots only when a current effect still uses them."""
+        if (self.state.departed_turn_boundary_version == 1
+                and any(entry.player == seat for entry in self.state.extra_turns)
+                and any(designation.player == seat for card in self.state.cards.values()
+                        for designation in card.goaded_by)):
+            return
+        self.state.extra_turns = [entry for entry in self.state.extra_turns if entry.player != seat]
+
+    def _observe_departed_turn(self, seat: str) -> None:
+        if self.state.departed_turn_boundary_version == 1:
+            self._host._expire_goad_designations(seat, departed_turn=True)
+            self.retire_departed_turns(seat)
+
+    def _advance_normal_rotation(self, seat: str) -> None:
+        previous = self.state.last_normal_turn_player
+        if self.state.departed_turn_boundary_version == 1 and previous is not None and self.state.eliminated_players:
+            seats = self.state.turn_order
+            for candidate in apnap_participants(seats, seats, previous)[1:]:
+                if self.state.players[candidate].in_game:
+                    break
+                self._observe_departed_turn(candidate)
+        self.state.last_normal_turn_player = seat
+
     def next_normal_player(self) -> str:
         anchor = (
             self.state.last_normal_turn_player
@@ -196,6 +221,7 @@ class TurnStepOwner:
             entry = self.state.extra_turns.pop(0)
             if self.state.players[entry.player].in_game:
                 return entry
+            self._observe_departed_turn(entry.player)
         seat = self.next_normal_player()
         return TurnEntry(
             turn_id=self._host._next_ref("N"),
@@ -215,6 +241,7 @@ class TurnStepOwner:
                 f"Turn entry names unknown player {entry.player!r}"
             )
         if not self.state.players[entry.player].in_game:
+            self._observe_departed_turn(entry.player)
             self.begin_turn(self.select_next_turn())
             return
 
@@ -223,10 +250,10 @@ class TurnStepOwner:
             if self.state.current_turn is not None
             else None
         )
+        if not entry.extra:
+            self._advance_normal_rotation(entry.player)
         self.state.current_turn = entry
         self.state.active_player = entry.player
-        if not entry.extra:
-            self.state.last_normal_turn_player = entry.player
         self.state.turn_sequence += 1
         if self.state.turn_history is not None:
             self.state.turn_history = roll_turn_history(

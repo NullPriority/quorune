@@ -75,6 +75,8 @@
         "quorune/rules/goad_capability_shapes.py",
         "quorune/compiler/fixed_instruction_program_closure.py",
         "quorune/compiler/bound_effect_programs.py",
+        "quorune/turn_step_owner.py",
+        "quorune/record_state_provenance.py",
         "tests/fixtures/fixed-goad-instruction-cards.json"
       ],
       "test_modules": [

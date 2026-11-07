@@ -500,6 +500,7 @@ class StateProjector:
             "passes": list(self.state.priority_passes),
             "extra_q": [
                 entry.player for entry in reversed(self.state.extra_turns)
+                if self.state.departed_turn_boundary_version is None or self.state.players[entry.player].in_game
             ],
         }
 

@@ -1059,6 +1059,7 @@ class GameState:
     unblocked_attacker_event_version: int | None = 1
     legend_rule_choice_version: int | None = 1
     effect_destruction_replacement_version: int | None = 1
+    departed_turn_boundary_version: int | None = None
 
     @staticmethod
     def _effect_destruction_replacement_version(value: Any) -> int | None:
@@ -1066,11 +1067,18 @@ class GameState:
             raise ValueError("Unsupported effect destruction replacement version")
         return value
 
+    @staticmethod
+    def _departed_turn_boundary_version(value: Any) -> int | None:
+        if value is not None and (type(value) is not int or value != 1):
+            raise ValueError("Unsupported departed-turn boundary version")
+        return value
+
     def active_seats(self) -> list[str]:
         return [seat for seat in self.turn_order if self.players[seat].in_game]
 
     def to_dict(self, *, include_ephemeral: bool = True) -> dict[str, Any]:
         legend_rule_choice_version(self.legend_rule_choice_version)
+        departed_turn_version = self._departed_turn_boundary_version(self.departed_turn_boundary_version)
         effect_destruction_version = self._effect_destruction_replacement_version(
             self.effect_destruction_replacement_version
         )
@@ -1146,6 +1154,7 @@ class GameState:
             "turn_order": list(self.turn_order),
             "current_turn": self.current_turn.to_dict() if self.current_turn else None,
             "last_normal_turn_player": self.last_normal_turn_player,
+            **({"departed_turn_boundary_version": departed_turn_version} if departed_turn_version is not None else {}),
             "extra_turns": [turn.to_dict() for turn in self.extra_turns],
             "active_player": self.active_player,
             "priority_player": self.priority_player,
@@ -1209,6 +1218,7 @@ class GameState:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "GameState":
         return cls(
+            departed_turn_boundary_version=cls._departed_turn_boundary_version(data.get("departed_turn_boundary_version")),
             legend_rule_choice_version=legend_rule_choice_version(data.get('legend_rule_choice_version')),
             effect_destruction_replacement_version=cls._effect_destruction_replacement_version(
                 data.get("effect_destruction_replacement_version")

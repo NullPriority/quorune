@@ -1143,6 +1143,13 @@ does not perform turn-based actions: in particular, draw-step entry records an
 explicit skipped draw instead of submitting an inactive affected player to the
 strict draw and replacement owners.
 
+The turn owner expires goad at the first eligible turn the departed goader
+would have taken. Queued extra turns retain their relative order for this
+purpose, then ordinary rotation crosses the departed physical seats. These
+expiry boundaries stay internal to the scheduler. Public queues expose turns
+that surviving players can take. The departure marker in Game Record v3 pins
+this behavior so earlier records can replay their original schedule.
+
 `CommanderEngine.apnap_order` rotates the physical seat order from the retained
 turn anchor before omitting departed players. During a departed player's
 continuing turn, the next surviving seat is first in APNAP order; that successor

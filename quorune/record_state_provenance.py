@@ -21,9 +21,11 @@ def format_state_versions(state: Any) -> dict[str, int]:
     from .state_based_legend_model import legend_rule_choice_version
     legend = legend_rule_choice_version(getattr(state, 'legend_rule_choice_version', None))
     stack_authority = stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None))
+    departed_turns = getattr(state, "departed_turn_boundary_version", None)
     return {
         **({'legend_rule_choice_version': legend} if legend is not None else {}),
         **({"stack_resolution_authority_version": stack_authority} if stack_authority is not None else {}),
+        **({"departed_turn_boundary_version": departed_turns} if departed_turns is not None else {}),
         "commander_damage_identity_version": commander_damage_identity_version(
             state.commander_damage_identity_version
         ),
@@ -73,6 +75,11 @@ def validate_state_versions(
         or stack_authority != (stack_resolution_authority_version(getattr(state, "stack_resolution_authority_version", None)) or 0)
     ):
         raise ValueError("Stack resolution authority provenance does not match the initial checkpoint")
+    departed_turns = format_value.get("departed_turn_boundary_version")
+    if (departed_turns != getattr(state, "departed_turn_boundary_version", None)
+            or "departed_turn_boundary_version" in format_value
+            and (type(departed_turns) is not int or departed_turns != 1)):
+        raise ValueError("Departed-turn boundary provenance does not match the initial checkpoint")
     declared = format_value.get("departure_history_version", 0)
     current = getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
     if type(declared) is not int or declared not in {0, 1} or declared != current:

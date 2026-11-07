@@ -217,6 +217,7 @@ class GoadDepartedTurnTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual(["A"], [entry.player for entry in session.state.cards[body.object_id].goaded_by])
         packet = session.packet("pilot:C", full=True)
         self.assertEqual(["C"], packet["state"]["turn"]["extra_q"])
+        session = self.replay(session, load=True)
 
         self.until(session, lambda game: game.state.active_player == "C"
                    and game.state.pending_decision.kind == "combat.attackers")
@@ -517,6 +518,66 @@ class GoadRuleTests(unittest.TestCase):
                 for event in engine.state.events
             )
         )
+
+    def test_departed_goad_waits_through_earlier_extra_turns_and_keeps_other_goader(self):
+        for has_extra in (False, True):
+            with self.subTest(departed_extra=has_extra):
+                engine = self.make_combat_session(7011580 + int(has_extra)).engine
+                creature = self.attacker(engine, controller="C")
+                for seat in "BA":
+                    engine.apply_effect({"op": "goad", "card": creature.ref}, actor=seat)
+                if has_extra:
+                    engine.schedule_extra_turn("B")
+                engine.schedule_extra_turn("D")
+                engine._eliminate_players(("B",), reason="goad turn-boundary witness")
+                self.assertEqual(["B", "A"], [entry.player for entry in creature.goaded_by])
+                sequence = engine.state.turn_sequence
+                departed_turns = engine.state.players["B"].turns_begun
+                with mock.patch.object(engine.turn_steps, "enter_step"):
+                    engine._begin_turn(engine._select_next_turn())
+                    self.assertEqual(("D", True), (engine.state.active_player, engine.state.current_turn.extra))
+                    self.assertEqual(["B", "A"], [entry.player for entry in creature.goaded_by])
+                    following = engine._select_next_turn()
+                    self.assertEqual(("C", False), (following.player, following.extra))
+                    before_normal_begin = ["A"] if has_extra else ["B", "A"]
+                    self.assertEqual(before_normal_begin, [entry.player for entry in creature.goaded_by])
+                    engine._begin_turn(following)
+                self.assertEqual(["A"], [entry.player for entry in creature.goaded_by])
+                self.assertEqual(sequence + 2, engine.state.turn_sequence)
+                self.assertEqual(departed_turns, engine.state.players["B"].turns_begun)
+                expiry, = (event for event in engine.state.events if event.code == "permanent.goad.expire")
+                self.assertIs(expiry.details["departed_turn"], True)
+                self.assertEqual("D", expiry.active_player)
+
+    def test_departed_turn_boundary_is_bound_to_record_provenance(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        key = "departed_turn_boundary_version"
+        state = self.make_combat_session(7011582).state
+        raw = state.to_dict()
+        versions = format_state_versions(state)
+        self.assertEqual(1, raw[key])
+        self.assertEqual(1, versions[key])
+        restored = GameState.from_dict(raw)
+        validate_state_versions({"format": versions}, restored)
+        self.assertEqual(raw, restored.to_dict())
+        for value in (True, 0, 2, "1"):
+            with self.subTest(version=value):
+                with self.assertRaisesRegex(ValueError, "Unsupported departed-turn boundary version"):
+                    GameState.from_dict({**raw, key: value})
+                with self.assertRaisesRegex(ValueError, "Departed-turn boundary provenance"):
+                    validate_state_versions({"format": {**versions, key: value}}, restored)
+        del raw[key]
+        historical = GameState.from_dict(raw)
+        self.assertNotIn(key, historical.to_dict())
+        self.assertNotIn(key, format_state_versions(historical))
+        with self.assertRaisesRegex(ValueError, "Departed-turn boundary provenance"):
+            validate_state_versions({"format": versions}, historical)
+        del versions[key]
+        validate_state_versions({"format": versions}, historical)
+        with self.assertRaisesRegex(ValueError, "Departed-turn boundary provenance"):
+            validate_state_versions({"format": versions}, restored)
 
     def test_zone_change_removes_the_noncopiable_designation(self):
         session = self.make_combat_session(7011506)
