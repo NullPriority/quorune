@@ -1188,33 +1188,8 @@ def _is_closed_public_graveyard_card_exile_program(
     )
 
 
-def _is_closed_fixed_public_zone_move_set_program(
-    program: SemanticProgram,
-) -> bool:
-    from ..rules.public_exile_result_model import PUBLIC_EXILE_RESULT_MECHANIC
-
-    required = set(
-        fixed_public_zone_move_set_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=(
-                value
-                for value in program.coverage
-                if value
-                in {
-                    "exile",
-                    "return-to-owner-hand",
-                    "fixed-public-zone-move",
-                    "fixed-public-zone-move-set", "fixed-private-hand-entry",
-                    PUBLIC_EXILE_RESULT_MECHANIC,
-                    "cr-115-targets",
-                }
-            ),
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
-    )
+def _is_closed_fixed_public_zone_move_set_program(program: SemanticProgram) -> bool:
+    return _node_capabilities_close_program(program, fixed_public_zone_move_set_node_capabilities)
 
 
 def _is_closed_fixed_control_program(program: SemanticProgram) -> bool:

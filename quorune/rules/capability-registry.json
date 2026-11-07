@@ -31604,8 +31604,8 @@
       "implementation_components": [
         "quorune.source_tap_effect.split_source_tap_effect",
         "quorune.compiler.source_tap_characteristics.tapped_source_characteristics_template",
-        "quorune.control_effects.prepare_tapped_characteristic_duration",
-        "quorune.control_effects.tapped_characteristic_duration_is_current",
+        "quorune.control_effects.prepare_tapped_source_duration",
+        "quorune.control_effects.tapped_source_duration_is_current",
         "quorune.continuous_effect_state.create_resolution_continuous_effect_components"
       ],
       "implementation_mutation_rationale": "Reducing continuity to the source's current tapped flag incorrectly restores an expired pending activation after a retap and fails the printed Flowstone Armor witness.",
@@ -76408,6 +76408,91 @@
         "commander_review"
       ],
       "version": 3
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "general untap prohibitions outside controller untap steps",
+          "unsupported target predicates, tap subjects, and additional riders"
+        ],
+        "inputs": [
+          "one revalidated target or a public tap-set snapshot",
+          "the resolving ability's original permanent and retained tap continuity"
+        ],
+        "outputs": [
+          "a tap attempt through the existing tap-state owner",
+          "a controller-step restriction for the original subject incarnations",
+          "expiry at source untap, departure, or phase-out"
+        ],
+        "summary": "Keep the tap instruction and lock its original subjects against their controllers' untap steps while the original permanent source remains tapped. The physical untap plan fixes the eligible set before any selected permanent untaps."
+      },
+      "blockers": [],
+      "dependencies": [
+        "untap.step.static_participation"
+      ],
+      "dependency_fail_closed_rationale": "The tap handler retains its existing dependency and the duration marker independently requires the source-untap restraint capability. The untap planner consumes only the stored incarnation and current duration.",
+      "dependency_fail_closed_status": "passed",
+      "id": "untap.step.while_source_remains_tapped",
+      "implementation_components": [
+        "quorune.compiler.source_tap_duration.tapped_source_untap_restraint_template",
+        "quorune.source_tap_effect.split_source_tap_untap_restraint",
+        "quorune.source_untap_rule_model.ResolvedSourceUntapRestraint",
+        "quorune.rules.untap_permissions.commit_source_untap_restraint",
+        "quorune.rules.untap_permissions.resolved_restraint_step_participations",
+        "quorune.tap_state.set_permanent_tapped",
+        "quorune.public_tap_state_sets.resolve_public_tap_state_set"
+      ],
+      "implementation_mutation_rationale": "Omitting the resolved rule from the untap plan lets the original held artifact untap at the same time as the source. The native Rust Tick witness detects the change.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_ice_floe_requires_a_ground_attacker_against_its_controller",
+        "test_actual_rust_tick_can_begin_a_new_interval_during_resolution",
+        "test_actual_rust_tick_survives_other_untaps_and_follows_new_controller",
+        "test_actual_thalakos_dreamsower_locks_a_target_after_its_damage_trigger",
+        "test_actual_kill_switch_locks_the_original_other_artifact_set",
+        "test_actual_kill_switch_still_taps_after_source_departure"
+      ],
+      "multiplayer_tests": [
+        "test_actual_rust_tick_snapshots_untap_step_before_its_source_untaps",
+        "test_actual_kill_switch_locks_the_original_other_artifact_set"
+      ],
+      "negative_tests": [
+        "test_source_untap_restraint_descriptor_requires_closed_tap_shapes",
+        "test_source_untap_restraint_journal_rejects_duplicate_or_malformed_incarnations",
+        "test_source_untap_restraint_requires_its_runtime_capability"
+      ],
+      "official_rules": [
+        "400.7",
+        "502.3",
+        "611.2b",
+        "702.26f"
+      ],
+      "positive_tests": [
+        "test_actual_rust_tick_snapshots_untap_step_before_its_source_untaps",
+        "test_actual_kill_switch_locks_the_original_other_artifact_set"
+      ],
+      "privacy_tests": [
+        "test_actual_rust_tick_snapshots_untap_step_before_its_source_untaps"
+      ],
+      "replay_tests": [
+        "test_actual_rust_tick_snapshots_untap_step_before_its_source_untaps",
+        "test_actual_kill_switch_locks_the_original_other_artifact_set"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {

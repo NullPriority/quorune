@@ -23,6 +23,7 @@ from .creation_intents import CreateCompiledEmblemIntent, CreateRegenerationShie
 from .champion_intent import ChampionExileIntent, ReturnLinkedAbilityExileIntent
 from .energy_payment import PayEnergyIntent
 from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
+from ..source_untap_rule_model import PendingSourceUntapRestraint
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
@@ -149,6 +150,7 @@ class SetPermanentTappedIntent:
     tapped: bool
     reason: str
     logical_object_id: str | None = None
+    untap_restraint: PendingSourceUntapRestraint | None = None
 
 
 @dataclass(frozen=True, slots=True)

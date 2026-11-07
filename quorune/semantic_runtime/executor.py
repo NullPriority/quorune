@@ -758,6 +758,7 @@ def _execute_tap_state_intent(
             tapped=intent.tapped,
             reason=intent.reason,
             logical_object_id=intent.logical_object_id,
+            untap_restraint=intent.untap_restraint,
         )
         return intent.object_ref, result
     if isinstance(intent, SetPublicPermanentsTappedIntent):
@@ -769,6 +770,7 @@ def _execute_tap_state_intent(
                 tapped=intent.tapped,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                untap_restraint=intent.untap_restraint,
             )
         except PublicTapStateSetError as exc:
             raise SemanticNodeError(str(exc)) from exc

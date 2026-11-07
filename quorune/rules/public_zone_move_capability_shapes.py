@@ -437,7 +437,12 @@ def fixed_public_tap_state_set_node_capabilities(
         or len(effects) != 1
     ):
         return ()
-    effect = effects[0]
+    from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
+    try:
+        effect, restraint = split_source_tap_untap_restraint(effects[0])
+    except ValueError:
+        return ()
+    dependencies = ("permanent.tap_state.fixed_set", *((SOURCE_TAP_UNTAP_CAPABILITY,) if restraint else ()))
     if (
         set(effect) != {"op", "source", "set", "tapped"}
         or effect.get("op") != "set_public_tap_state"
@@ -460,12 +465,12 @@ def fixed_public_tap_state_set_node_capabilities(
         ):
             return ()
         return (
-            "permanent.tap_state.fixed_set",
+            *dependencies,
             "target.revalidate_resolution",
         )
     if target_schema is not None or "cr-115-targets" in mechanics:
         return ()
-    return ("permanent.tap_state.fixed_set",)
+    return dependencies
 
 
 __all__ = [

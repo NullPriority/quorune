@@ -9,6 +9,9 @@ from ..affected_permanents import (
     PermanentControllerRelation,
 )
 from ..public_tap_state_sets import SetPublicPermanentsTappedIntent
+from ..continuous_effect_model import ContinuousObjectIdentity
+from ..source_tap_effect import split_source_tap_untap_restraint
+from ..source_untap_rule_model import PendingSourceUntapRestraint
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .direct_target_fields import validate_direct_target_effect
 from .intents import (
@@ -40,6 +43,21 @@ def _source_logical_object_id(
     return source.logical_object_id
 
 
+def _source_untap_restraint(effect, context):
+    try:
+        instruction, enabled = split_source_tap_untap_restraint(effect)
+        if not enabled:
+            return instruction, None
+        source = context.source
+        if source is None:
+            raise ValueError("Untap restraint requires the resolving ability's source context")
+        identity = (ContinuousObjectIdentity(source.object_id, source.logical_object_id)
+                    if source.object_id is not None else None)
+        return instruction, PendingSourceUntapRestraint(identity, source.duration_history, source.duration_resolution_timestamp)
+    except ValueError as exc:
+        raise SemanticNodeError(str(exc)) from exc
+
+
 def _require_fields(
     effect: Mapping[str, Any], allowed: frozenset[str]
 ) -> None:
@@ -66,6 +84,7 @@ class TapPermanentHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        effect, restraint = _source_untap_restraint(effect, context)
         fields = validate_direct_target_effect(
             effect,
             context,
@@ -93,6 +112,7 @@ class TapPermanentHandler:
                         object_ref,
                         context,
                     ),
+                    untap_restraint=restraint,
                 ),
             ),
         )
@@ -207,6 +227,7 @@ class SetPublicTapStateSetHandler:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan:
+        effect, restraint = _source_untap_restraint(effect, context)
         if (
             set(effect) != {"op", "source", "set", "tapped"}
             or effect.get("op") != self.operation
@@ -240,6 +261,7 @@ class SetPublicTapStateSetHandler:
                     tapped=effect["tapped"],
                     reason=context.default_reason,
                     source_ref=source_ref,
+                    untap_restraint=restraint,
                 ),
             ),
         )

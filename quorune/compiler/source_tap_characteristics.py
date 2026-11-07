@@ -4,32 +4,14 @@ import re
 
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import CHARACTERISTIC_OPERATION, PERMANENT_CHARACTERISTIC_MECHANIC
-from ..rules.source_references import SourceReferenceSpec
 from ..source_tap_effect import SOURCE_TAP_EFFECT_FIELD, SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
 from .target_characteristic_sets import target_characteristic_set_template
 
 
-_DURATION = re.compile(
-    r"(?P<body>.+?) for as long as (?P<source>.+?) remains tapped"
-    r"(?P<land>\. It['’]s still a land\.)?\.?", re.IGNORECASE,
-)
-_SOURCE_KIND = re.compile(r"this (artifact|creature|enchantment|land|permanent|planeswalker|battle)", re.IGNORECASE)
 _CREATURE_SET = re.compile(r"all creatures get (?P<p>[+-][0-9]+)/(?P<t>[+-][0-9]+)", re.IGNORECASE)
 
 
-def tapped_source_characteristics_template(text, *, card_name, source_context, compile_atomic):
-    if source_context.get("source_is_permanent") is not True or "remains tapped" not in text.casefold():
-        return None
-    match = _DURATION.fullmatch(text.strip())
-    if match is None:
-        return None
-    raw_source = match["source"]
-    kind = _SOURCE_KIND.fullmatch(raw_source)
-    if kind is not None:
-        if kind[1].casefold() not in {"permanent", *source_context.get("source_card_types", ())}:
-            return None
-    elif not SourceReferenceSpec(card_name).matches(raw_source):
-        return None
+def tapped_source_characteristics_template(match, *, compile_atomic):
     body = match["body"]
     affected = _CREATURE_SET.fullmatch(body)
     if affected is not None and match["land"] is None:

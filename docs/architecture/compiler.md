@@ -3078,7 +3078,14 @@ The existing source continuity owner records that interval for the pending
 ability and the resulting layers. Targeted deltas, keyword grants, fixed
 animation, and the locked creature set use the ordinary resolution journal.
 An untap, phase-out, or departure ends the interval. The affected objects are
-fixed when the effect begins. Untap-step restrictions use their own rule owner.
+fixed when the effect begins.
+
+`compiler/source_tap_duration.py` also lowers a tap followed by a controller
+untap-step restriction with the same source interval. It delegates target and
+affected-set selection to the existing tap owners. The tap still resolves
+when the source interval has ended. The untap planner reads the locked subject
+incarnations and their current controllers before any selected permanents
+untap. Untaps outside the affected controller's untap step remain separate.
 
 `compiler/untap_step_templates.py` lowers mandatory self untaps on other
 players' turns and fixed untap prohibitions against nonbasic lands, legendary

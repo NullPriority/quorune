@@ -16,6 +16,7 @@ from .continuous_effects import order_continuous_effects
 from .object_predicate import ObjectQuerySpec
 from .source_continuity import SourceContinuityHistory, SourceContinuitySnapshot
 from .source_tap_effect import SOURCE_TAP_EFFECT_FIELD
+from .source_untap_rule_model import ResolvedSourceUntapRestraint
 from .model import CONTROL_HISTORY_VERSION
 from . import control_history
 from .errors import GameRuleError
@@ -205,8 +206,8 @@ def _duration_condition(
     return resolution_timestamp is not None and max(beginnings) > resolution_timestamp
 
 
-def prepare_tapped_characteristic_duration(
-    state: Any, source: ResolutionEffectSource, snapshot: SourceContinuitySnapshot | None,
+def prepare_tapped_source_duration(
+    state: Any, source: ResolutionEffectSource | ContinuousObjectIdentity, snapshot: SourceContinuitySnapshot | None,
     resolution_timestamp: int,
 ) -> SourceContinuitySnapshot | None:
     card = _current_duration_source(state, source)
@@ -222,10 +223,12 @@ def prepare_tapped_characteristic_duration(
     return card.source_continuity.snapshot()
 
 
-def tapped_characteristic_duration_is_current(state: Any, effect: ContinuousEffect) -> bool:
-    card = _current_duration_source(state, effect.duration_source)
+def tapped_source_duration_is_current(
+    state: Any, source: ContinuousObjectIdentity, snapshot: SourceContinuitySnapshot,
+) -> bool:
+    card = _current_duration_source(state, source)
     return card is not None and _duration_condition(
-        card, effect.duration, card.controller, effect.duration_history,
+        card, ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS, card.controller, snapshot,
     )
 
 
@@ -390,6 +393,14 @@ def _next_source_expiration(host: ControlEffectHost, ending: Sequence[Continuous
     return next(effect for effect in ending if effect.effect_id == ordered[0].effect_id)
 
 
+def _expired_tapped_duration(state, effect) -> bool:
+    return (
+        isinstance(effect, ResolvedSourceUntapRestraint)
+        or isinstance(effect, ContinuousEffect) and effect.layer is not Layer.CONTROL
+        and effect.duration_source is not None
+    ) and not tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history)
+
+
 def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool:
     """Compute monotonic source expiration before committing resulting custody."""
     if host.state.control_history_version != CONTROL_HISTORY_VERSION:
@@ -399,12 +410,8 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     journal = host.state.continuous_effects
     if not journal:
         return _exile_phased_permanents_without_live_custody(host, (), static)
-    retained = [effect for effect in journal if not (
-        isinstance(effect, ContinuousEffect) and effect.layer is not Layer.CONTROL
-        and effect.duration_source is not None
-        and not tapped_characteristic_duration_is_current(host.state, effect)
-    )]
-    expired_characteristics = len(retained) != len(journal)
+    retained = [effect for effect in journal if not _expired_tapped_duration(host.state, effect)]
+    expired_tapped_durations = len(retained) != len(journal)
     expired = []
     # Each changing pass removes at least one source-bound effect. Expired
     # durations never reappear, so source cycles terminate without guessing.
@@ -455,7 +462,7 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     phased_exiled = _exile_phased_permanents_without_live_custody(host, journal, static)
     from .rules.city_blessing import synchronize_citys_blessing
     city_changed=synchronize_citys_blessing(host,reason='control changes committed')
-    return bool(changes or expired or expired_characteristics or phased_exiled or city_changed)
+    return bool(changes or expired or expired_tapped_durations or phased_exiled or city_changed)
 
 
 def _exile_phased_permanents_without_live_custody(host, journal, static):

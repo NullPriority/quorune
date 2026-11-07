@@ -802,6 +802,11 @@ and continuity snapshot. Their locked effects carry `duration_source` and
 An ended interval is removed during stabilization. Pending abilities and
 committed effects retain their respective continuity across save and load.
 
+The optional `resolution_source_untap_restraint` journal record retains the
+original source's tap interval and the subject incarnations selected by its
+tap instruction. The untap plan uses those identities and current controllers.
+Each pending untap choice retains the plan from before any selected untaps.
+
 The optional `soulbond_pairs` array retains version-one pair identities,
 both exact object incarnations, their original controller, and control/phase
 continuity snapshots. It is absent until a pair is first committed, preserving

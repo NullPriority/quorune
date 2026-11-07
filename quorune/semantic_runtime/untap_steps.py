@@ -247,6 +247,8 @@ class StaticUntapStepParticipationHandler:
         return node
 
     def _validate_instruction(self, node: UntapStepNode) -> None:
+        if node.subject_relation is UntapSubjectRelation.LOCKED_OBJECT:
+            raise SemanticNodeError("Locked untap-step subjects require a resolution-created rule")
         if node.instruction is UntapInstruction.OPTIONAL:
             raise SemanticNodeError("Static untap handler cannot represent optional untaps")
         if node.subject_relation is not UntapSubjectRelation.QUERY and node.controller_relation != "any":
@@ -516,8 +518,9 @@ def collect_untap_step_participations(
                 )
             )
     participations.extend(attached_activation_untap_participations(host))
-    from ..rules.untap_permissions import attached_restraint_step_participations
+    from ..rules.untap_permissions import attached_restraint_step_participations, resolved_restraint_step_participations
     participations.extend(attached_restraint_step_participations(host))
+    participations.extend(resolved_restraint_step_participations(host))
     return tuple(
         sorted(
             participations,

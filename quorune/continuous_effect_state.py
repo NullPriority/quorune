@@ -29,6 +29,7 @@ from .object_query import ObjectQueryResult, object_matches_query, object_query_
 from .keyword_prohibition import prepare_resolution_keyword_exclusions
 from .source_continuity import SourceContinuitySnapshot
 from .source_tap_effect import RUNTIME_SOURCE_CONTINUITY_FIELD, SOURCE_TAP_EFFECT_FIELD
+from .source_untap_rule_model import ResolvedSourceUntapRestraint
 
 
 class ContinuousEffectStateError(ValueError):
@@ -178,7 +179,7 @@ def commit_continuous_effect(
 
     if not isinstance(
         effect,
-        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile),
+        (ContinuousEffect, ResolutionDeclarationRuleEffect, AsUnblockedAssignmentRule, ResolvedToughnessAssignmentRule, ResolvedBlockCapacityRule, ResolvedCastRestriction, ResolvedSourceBlockPair, ResolvedLibrarySearchProhibition, ResolvedDamageDeathExile, ResolvedSourceUntapRestraint),
     ):
         raise ContinuousEffectStateError(
             "Continuous-effect commits require a typed effect"
@@ -255,7 +256,7 @@ def _characteristic_effect_timing(host, effect, *, actor, source):
     if SOURCE_TAP_EFFECT_FIELD not in effect:
         expiry = actor if NEXT_TURN_EFFECT_FIELD in effect else None
         return ContinuousEffectDuration.UNTIL_END_OF_TURN, expiry, None
-    from .control_effects import prepare_tapped_characteristic_duration
+    from .control_effects import prepare_tapped_source_duration
 
     facts = effect.get(RUNTIME_SOURCE_CONTINUITY_FIELD)
     if not isinstance(facts, Mapping) or set(facts) != {"history", "resolution_timestamp"}:
@@ -265,7 +266,7 @@ def _characteristic_effect_timing(host, effect, *, actor, source):
         raise ContinuousEffectStateError("Tapped-source resolution timestamp is malformed")
     raw_history = facts["history"]
     history = SourceContinuitySnapshot.from_dict(raw_history) if raw_history is not None else None
-    active = prepare_tapped_characteristic_duration(host.state, source, history, timestamp)
+    active = prepare_tapped_source_duration(host.state, source, history, timestamp)
     if active is None:
         return None
     return ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS, None, active
@@ -535,7 +536,7 @@ def create_resolution_declaration_rule_effect(
 def active_resolution_effects(
     state: Any, card: Any
 ) -> tuple[ContinuousEffect, ...]:
-    from .control_effects import tapped_characteristic_duration_is_current
+    from .control_effects import tapped_source_duration_is_current
 
     journal = state.continuous_effects
     if not journal:
@@ -550,7 +551,7 @@ def active_resolution_effects(
         if isinstance(effect, ContinuousEffect)
         and identity in effect.locked_objects
         and (effect.duration_source is None or effect.layer is Layer.CONTROL
-             or tapped_characteristic_duration_is_current(state, effect))
+             or tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history))
         and (effect.attachment_duration is None
             or effect.attachment_duration.is_current(state.cards))
     )
