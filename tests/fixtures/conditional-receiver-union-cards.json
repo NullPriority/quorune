@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "public_exact-list_card_data",
-  "source": "Pinned Swarmweaver conditional receiver-union defect and canonical normal-registration graveyard, control, overlap and private-draw controls.",
+  "source": "Pinned Swarmweaver conditional receiver-union defect and canonical normal-registration graveyard, control, overlap and private-draw controls. Pinned Mount and Vehicle receiver and target controls.",
   "cards": [
     {
       "oracle_id": "50120e90-2fdf-43c1-93e2-2230ee4e63fc",
@@ -538,6 +538,303 @@
       "released_at": "2022-07-08",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Saddle",
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Brightfield Glider",
+      "oracle_id": "acff6e5c-7f25-4ae1-8672-8672450ad844",
+      "oracle_text": "Vigilance\nWhenever this creature attacks while saddled, it gets +1/+2 and gains flying until end of turn.\nSaddle 3 (Tap any number of other creatures you control with total power 3 or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "1",
+      "type_line": "Creature — Possum Mount"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Cloudspire Captain",
+      "oracle_id": "c86bac69-96d6-4b9f-87e4-2d7faecaa112",
+      "oracle_text": "Mounts and Vehicles you control get +1/+1.\nThis creature saddles Mounts and crews Vehicles as though its power were 2 greater.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "3",
+      "type_line": "Creature — Human Pilot"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Crew"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Cultivator's Caravan",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "oracle_text": "{T}: Add one mana of any color.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": "5",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": "5",
+      "type_line": "Artifact — Vehicle"
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Saddle"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{W}",
+      "name": "Lagorin, Soul of Alacria",
+      "oracle_id": "f7b6f5d4-b122-4ab4-a2c2-449ac781359a",
+      "oracle_text": "Flying\nWhenever Lagorin attacks while saddled, put a +1/+1 counter on each of up to two target Mounts and/or Vehicles.\nSaddle 1 (Tap any number of other creatures you control with total power 1 or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery.)",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2025-02-14",
+      "toughness": "1",
+      "type_line": "Legendary Creature — Beast Mount"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}{W}",
+      "name": "Miriam, Herd Whisperer",
+      "oracle_id": "1d88014b-8189-4a88-bee3-c2310d36f6e8",
+      "oracle_text": "During your turn, Mounts and Vehicles you control have hexproof.\nWhenever a Mount or Vehicle you control attacks, put a +1/+1 counter on it.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Human Druid"
     }
   ],
   "rulings": [
@@ -570,6 +867,162 @@
       "published_at": "2010-06-15",
       "source": "wotc",
       "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\"."
+    },
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers when a creature “attacks while saddled” will trigger only if that creature was saddled when it was declared as an attacker.",
+      "oracle_id": "acff6e5c-7f25-4ae1-8672-8672450ad844",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creatures with saddle can attack or block as normal even if they aren’t saddled.",
+      "oracle_id": "acff6e5c-7f25-4ae1-8672-8672450ad844",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent becomes a copy of a saddled Mount, the copy won’t be saddled.",
+      "oracle_id": "acff6e5c-7f25-4ae1-8672-8672450ad844",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may activate a permanent’s saddle ability even if that permanent is already saddled.",
+      "oracle_id": "acff6e5c-7f25-4ae1-8672-8672450ad844",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "“Saddle N” means “Tap any number of other untapped creatures you control with total power N or greater: This permanent becomes saddled until end of turn. Activate only as a sorcery.”",
+      "oracle_id": "acff6e5c-7f25-4ae1-8672-8672450ad844",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "“Saddled” isn’t an ability that a creature has. It’s just something true about that creature. It won’t stop being saddled until the turn ends or it leaves the battlefield.",
+      "oracle_id": "acff6e5c-7f25-4ae1-8672-8672450ad844",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "As long as Cultivator's Caravan isn't an artifact creature, its {T} ability can be activated if it came under your control this turn.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2016-09-20",
+      "source": "wotc"
+    },
+    {
+      "comment": "Any untapped creature you control can be tapped to pay a crew cost, even one that just came under your control.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creatures that crew a Vehicle aren't attached to it or related in any other way. Effects that affect the Vehicle, such as by destroying it or giving it a +1/+1 counter, don't affect the creatures that crewed it.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each Vehicle is printed with a power and toughness, but it's not a creature. If it becomes a creature (most likely through its crew ability), it will have that power and toughness.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "For a Vehicle to be able to attack, it must be a creature as the declare attackers step begins, so the latest you can activate its crew ability to attack with it is during the beginning of combat step. For a Vehicle to be able to block, it must be a creature as the declare blockers step begins, so the latest you can activate its crew ability to block with it is during the declare attackers step. In either case, players may take actions after the crew ability resolves but before the Vehicle has been declared as an attacking or blocking creature.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent becomes a copy of a Vehicle, the copy won't be a creature, even if the Vehicle it's copying has become an artifact creature.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect causes a Vehicle to become an artifact creature with a specified power and toughness, that effect overwrites the Vehicle's printed power and toughness.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a Vehicle becomes a creature, it behaves exactly like any other artifact creature. It can't attack unless you've controlled it continuously since your turn began, it can block if it's untapped, it can be tapped to pay a Vehicle's crew cost, and so on.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a player announces that they are activating a crew ability, no player may take other actions until the ability has been paid for. Notably, players can't try to stop the ability by changing a creature's power or by removing or tapping a creature.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Vehicle is an artifact type, not a creature type. A Vehicle that's crewed won't normally have any creature type.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a Vehicle becomes a creature, that doesn't count as having a creature enter the battlefield. The permanent was already on the battlefield; it only changed its types. Abilities that trigger whenever a creature enters the battlefield won't trigger.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may activate a crew ability of a Vehicle even if it's already an artifact creature. Doing so has no effect on the Vehicle. It doesn't change its power and toughness.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may tap more creatures than necessary to activate a crew ability.",
+      "oracle_id": "c1eb530c-dd36-40ae-8617-6bb6969565e1",
+      "published_at": "2017-09-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "An ability that triggers when a creature “attacks while saddled” will trigger only if that creature was saddled when it was declared as an attacker.",
+      "oracle_id": "f7b6f5d4-b122-4ab4-a2c2-449ac781359a",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creatures with saddle can attack or block as normal even if they aren’t saddled.",
+      "oracle_id": "f7b6f5d4-b122-4ab4-a2c2-449ac781359a",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent becomes a copy of a saddled Mount, the copy won’t be saddled.",
+      "oracle_id": "f7b6f5d4-b122-4ab4-a2c2-449ac781359a",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You may activate a permanent’s saddle ability even if that permanent is already saddled.",
+      "oracle_id": "f7b6f5d4-b122-4ab4-a2c2-449ac781359a",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "“Saddle N” means “Tap any number of other untapped creatures you control with total power N or greater: This permanent becomes saddled until end of turn. Activate only as a sorcery.”",
+      "oracle_id": "f7b6f5d4-b122-4ab4-a2c2-449ac781359a",
+      "published_at": "2025-02-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "“Saddled” isn’t an ability that a creature has. It’s just something true about that creature. It won’t stop being saddled until the turn ends or it leaves the battlefield.",
+      "oracle_id": "f7b6f5d4-b122-4ab4-a2c2-449ac781359a",
+      "published_at": "2025-02-07",
+      "source": "wotc"
     }
   ]
 }

@@ -1905,6 +1905,11 @@ ability-qualified unions remain residual.
 Public query amounts retain the query dependencies of the original typed
 descriptor during fixed consumer-shape validation.
 
+Controlled Mounts and Vehicles share a compact subtype predicate for fixed
+characteristic effects. Qualified attack triggers use the subtype facts
+captured at declaration. Optional mixed target sets normalize the plural
+subtypes through the same scalar target owner used for counter placement.
+
 The public quantity compiler recognizes single-color and two-distinct-color
 devotion through a dedicated versioned reduction. It retains the CR 700.5a
 timing boundary instead of treating devotion as an ordinary color or object

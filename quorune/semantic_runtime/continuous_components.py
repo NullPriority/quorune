@@ -34,6 +34,7 @@ from ..object_query import ObjectQueryResult
 from ..object_query_union import bind_receiver_union_source, validate_receiver_union_template
 from ..counter_names import normalized_counter_name
 from ..creature_subtypes import canonical_creature_subtype
+from ..type_subtype_vocabulary import MOUNT_VEHICLE_SUBTYPES
 from ..replacement.immutable import FrozenMap
 from ..continuous_conditions import FixedPublicStateConditionSnapshot
 from ..defender_permission import DefenderAttackPermission
@@ -474,6 +475,8 @@ class FixedQueryPowerToughnessAnthemHandler:
             )
         if not (
             "creature" in predicate.types_all
+            or (condition["target_controller"] == "source_controller" and predicate == ObjectQuerySpec(
+                zones=("battlefield",), subtypes_any=MOUNT_VEHICLE_SUBTYPES))
             or (not predicate.types_all and (predicate.subtypes_all or predicate.subtypes_any)
                 and all(canonical_creature_subtype(value) == value
                         for value in (*predicate.subtypes_all, *predicate.subtypes_any)))
@@ -483,7 +486,7 @@ class FixedQueryPowerToughnessAnthemHandler:
                 for part in predicate.any_of))
         ):
             raise SemanticNodeError(
-                "fixed query anthem requires creatures or a canonical creature-subtype set"
+                "fixed query anthem requires an admitted creature or subtype set"
             )
         modifier = descriptor["modifier"]
         if not isinstance(modifier, Mapping):

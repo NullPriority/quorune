@@ -9310,8 +9310,12 @@
       "id": "conditional-receiver-union-consumer",
       "patterns": [
         "quorune/semantic_runtime/conditional_continuous.py",
+        "quorune/semantic_runtime/continuous_components.py",
         "quorune/object_query_union.py",
+        "quorune/type_subtype_vocabulary.py",
         "quorune/compiler/receiver_union_queries.py",
+        "quorune/compiler/fixed_homogeneous_target_sets.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
         "tests/test_conditional_receiver_unions.py",
         "tests/fixtures/conditional-receiver-union-cards.json"
       ],
