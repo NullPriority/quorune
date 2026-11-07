@@ -395,6 +395,11 @@ def fixed_private_hand_entry_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
+    from .hand_entry_followup import (
+        HAND_ENTRY_FOLLOWUP_CAPABILITY, HAND_ENTRY_FOLLOWUP_FIELDS, decode_hand_entry_followup,
+    )
+    from .reanimation_followup import battlefield_entry_followup_capabilities
+
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if (
         not {"fixed-private-hand-entry", "fixed-public-zone-move"}.issubset(
@@ -406,7 +411,7 @@ def fixed_private_hand_entry_node_capabilities(
         return ()
     effect = effects[0]
     if (
-        set(effect) != {"op", "player", "query", "tapped"}
+        set(effect) != {"op", "player", "query", "tapped"} | HAND_ENTRY_FOLLOWUP_FIELDS.intersection(effect)
         or effect.get("op") != "put_card_from_hand"
         or effect.get("player") != "$controller"
         or type(effect.get("tapped")) is not bool
@@ -415,9 +420,13 @@ def fixed_private_hand_entry_node_capabilities(
     from ..hand_entry_queries import decode_hand_entry_queries
     try:
         decode_hand_entry_queries(effect["query"])
+        followup = decode_hand_entry_followup(effect)
     except (KeyError, TypeError, ValueError):
         return ()
-    return ("zone.move.fixed_private_hand_choice", "zone.change.destination_replacement")
+    base = ("zone.move.fixed_private_hand_choice", "zone.change.destination_replacement")
+    if followup is None:
+        return base
+    return tuple(dict.fromkeys((*base, HAND_ENTRY_FOLLOWUP_CAPABILITY, *battlefield_entry_followup_capabilities(followup))))
 
 
 def fixed_public_tap_state_set_node_capabilities(

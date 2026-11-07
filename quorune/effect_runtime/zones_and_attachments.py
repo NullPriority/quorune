@@ -57,9 +57,20 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         "bounce": {"battlefield"},
         "discard": {"hand"},
     }
+    followup = None
     if 'hand_entry_query' in effect:
         from ..hand_entry_move import resolve_selected_hand_entry_card
+        from ..rules.hand_entry_followup import decode_hand_entry_followup
+        from ..continuous_effect_state import ResolutionEffectSource
+
         card=resolve_selected_hand_entry_card(host,effect,actor=actor)
+        followup = decode_hand_entry_followup(effect)
+        if followup is not None:
+            try:
+                source = ResolutionEffectSource.from_effect(effect)
+            except ContinuousEffectStateError as exc:
+                raise GameRuleError(str(exc)) from exc
+            previous_zone_counter = card.zone_change_counter
     else:
         card = host._resolve_object(actor,str(effect["card"]),zones=implicit_zones.get(op))
     if op == "destroy":
@@ -80,7 +91,7 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
         "bounce": "hand",
         "discard": "graveyard",
     }.get(op, str(effect.get("destination") or "graveyard"))
-    return host.move_card(
+    moved = host.move_card(
         card.object_id,
         destination,
         controller=effect.get("controller"),
@@ -112,6 +123,12 @@ def _apply_bounce_or_destroy_or_discard_or_exile_or_move_or_sacrifice(
             else None
         ),
     )
+    if followup is not None:
+        from ..rules.reanimation_followup import commit_battlefield_entry_followup
+
+        commit_battlefield_entry_followup(host, moved, previous_zone_counter=previous_zone_counter,
+            actor=actor, source=source, followup=followup)
+    return moved
 
 
 
@@ -875,11 +892,11 @@ def _apply_reanimate(
         replacement_selections=tuple(selections),
         aura_target_ref=aura_target_ref,
     )
-    if (followup is not None and entered.zone == "battlefield" and not entered.phased_out
-        and entered.zone_change_counter == subject["zone_change_counter"] + 1):
+    if followup is not None:
         from ..rules.reanimation_followup import commit_battlefield_entry_followup
 
-        commit_battlefield_entry_followup(host, entered, actor=actor, source=source, followup=followup)
+        commit_battlefield_entry_followup(host, entered, previous_zone_counter=subject["zone_change_counter"],
+            actor=actor, source=source, followup=followup)
     return entered
 
 

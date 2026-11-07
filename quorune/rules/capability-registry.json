@@ -81669,7 +81669,7 @@
         ],
         "inputs": [
           "one source-spanned optional hand-entry clause or exact preceding fixed draw",
-          "one closed land, basic-land, creature, Equipment, artifact, historic-permanent union, fixed-color creature, multicolored creature, or Minotaur-permanent predicate",
+          "one closed land, basic-land, creature including one canonical subtype, Equipment, artifact, historic-permanent union, fixed-color creature, multicolored creature, or Minotaur-permanent predicate",
           "actor-private current hand identities",
           "fixed tapped or ordinary entry policy",
           "represented destination-replacement selections"
@@ -81704,10 +81704,14 @@
       "implementation_mutation_rationale": "Focused compiler and runtime tests alter the operation, private query, owner, tapped policy, or selected identity and reject the mutation before zone movement.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
-        "test_private_hand_entry_is_projected_revalidated_and_replays"
+        "test_private_hand_entry_is_projected_revalidated_and_replays",
+        "test_quinjet_announces_its_mode_before_the_private_hero_choice",
+        "test_warren_offers_a_fresh_private_goblin_choice_after_each_hit"
       ],
       "multiplayer_tests": [
-        "test_private_hand_entry_is_projected_revalidated_and_replays"
+        "test_private_hand_entry_is_projected_revalidated_and_replays",
+        "test_quinjet_announces_its_mode_before_the_private_hero_choice",
+        "test_warren_offers_a_fresh_private_goblin_choice_after_each_hit"
       ],
       "negative_tests": [
         "test_private_hand_entry_matrix_compiles_through_one_choice_owner",
@@ -81732,13 +81736,19 @@
       ],
       "positive_tests": [
         "test_private_hand_entry_matrix_compiles_through_one_choice_owner",
-        "test_private_hand_entry_is_projected_revalidated_and_replays"
+        "test_private_hand_entry_is_projected_revalidated_and_replays",
+        "test_quinjet_announces_its_mode_before_the_private_hero_choice",
+        "test_warren_offers_a_fresh_private_goblin_choice_after_each_hit"
       ],
       "privacy_tests": [
-        "test_private_hand_entry_is_projected_revalidated_and_replays"
+        "test_private_hand_entry_is_projected_revalidated_and_replays",
+        "test_quinjet_announces_its_mode_before_the_private_hero_choice",
+        "test_warren_offers_a_fresh_private_goblin_choice_after_each_hit"
       ],
       "replay_tests": [
-        "test_private_hand_entry_is_projected_revalidated_and_replays"
+        "test_private_hand_entry_is_projected_revalidated_and_replays",
+        "test_quinjet_announces_its_mode_before_the_private_hero_choice",
+        "test_warren_offers_a_fresh_private_goblin_choice_after_each_hit"
       ],
       "required_evidence": [
         "positive",
@@ -81755,6 +81765,119 @@
         "commander_review"
       ],
       "version": 2
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "opponent hand choices",
+          "controller-relative sacrifice and linked source return",
+          "additional triggered ability grants"
+        ],
+        "inputs": [
+          "one closed private hand selector",
+          "sealed selected hand incarnation",
+          "typed resolving source and fixed haste duration"
+        ],
+        "outputs": [
+          "private choose or decline decision",
+          "one successful canonical battlefield move",
+          "one incarnation-pinned haste grant and delayed sacrifice"
+        ],
+        "summary": "Resolve an optional private hand choice through its existing authority and preserve the selected incarnation through entry replacements. A successful battlefield entry grants haste for its printed duration and schedules one next-end-step sacrifice. The trigger keeps its creating source and controller and moves only the same battlefield incarnation if that controller can sacrifice it."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.tap_untap_cost.haste",
+        "choice.affected_player.fixed_sacrifice",
+        "combat.attack.haste",
+        "trigger.delayed.fixed_object_action",
+        "trigger.placement.apnap",
+        "zone.change.destination_replacement",
+        "zone.move.fixed_private_hand_choice"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing delayed object action blocks the linked instruction while ordinary private hand entry remains exact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.move.fixed_private_hand_haste_and_sacrifice",
+      "implementation_components": [
+        "quorune.compiler.hand_entry_templates.fixed_private_hand_entry_followup_template",
+        "quorune.rules.hand_entry_followup.hand_entry_followup_runtime_dependencies",
+        "quorune.semantic_choices.object_selection.PutTypedCardFromHandHandler",
+        "quorune.hand_entry_move.resolve_selected_hand_entry_card",
+        "quorune.rules.reanimation_followup.commit_battlefield_entry_followup"
+      ],
+      "implementation_mutation_rationale": "Removing the linked compiler production leaves a material residual for its complete printed instruction.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_sneak_attack_keeps_declined_cards_private_and_resumes_the_selected_entry",
+        "test_soulstoke_requires_an_elemental_creature_and_temporary_haste_expires_first",
+        "test_arms_race_admits_an_artifact_without_making_it_a_creature",
+        "test_spliced_through_the_breach_keeps_the_private_choice_and_host_source"
+      ],
+      "multiplayer_tests": [
+        "test_sneak_attack_keeps_declined_cards_private_and_resumes_the_selected_entry",
+        "test_soulstoke_requires_an_elemental_creature_and_temporary_haste_expires_first",
+        "test_spliced_through_the_breach_keeps_the_private_choice_and_host_source"
+      ],
+      "negative_tests": [
+        "test_linked_hand_entry_closes_only_the_complete_receiver_and_rider",
+        "test_withdrawing_delayed_authority_preserves_ordinary_private_entry",
+        "test_sneak_attack_keeps_declined_cards_private_and_resumes_the_selected_entry",
+        "test_soulstoke_requires_an_elemental_creature_and_temporary_haste_expires_first",
+        "test_arms_race_admits_an_artifact_without_making_it_a_creature"
+      ],
+      "official_rules": [
+        "400.2",
+        "400.7",
+        "400.7j",
+        "513.2",
+        "514.2",
+        "603.3b",
+        "603.7a",
+        "603.7b",
+        "603.7c",
+        "603.7d",
+        "603.7e",
+        "608.2c",
+        "608.2d",
+        "611.2a",
+        "611.2c",
+        "701.21a",
+        "702.10",
+        "702.47a",
+        "702.47c"
+      ],
+      "positive_tests": [
+        "test_linked_hand_entry_closes_only_the_complete_receiver_and_rider",
+        "test_sneak_attack_keeps_declined_cards_private_and_resumes_the_selected_entry",
+        "test_soulstoke_requires_an_elemental_creature_and_temporary_haste_expires_first",
+        "test_arms_race_admits_an_artifact_without_making_it_a_creature",
+        "test_spliced_through_the_breach_keeps_the_private_choice_and_host_source"
+      ],
+      "privacy_tests": [
+        "test_sneak_attack_keeps_declined_cards_private_and_resumes_the_selected_entry",
+        "test_spliced_through_the_breach_keeps_the_private_choice_and_host_source"
+      ],
+      "replay_tests": [
+        "test_sneak_attack_keeps_declined_cards_private_and_resumes_the_selected_entry",
+        "test_soulstoke_requires_an_elemental_creature_and_temporary_haste_expires_first",
+        "test_arms_race_admits_an_artifact_without_making_it_a_creature",
+        "test_spliced_through_the_breach_keeps_the_private_choice_and_host_source"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {

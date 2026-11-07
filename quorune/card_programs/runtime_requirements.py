@@ -107,6 +107,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.event_player_targets import event_player_target_runtime_dependencies
     from ..rules.per_player_target_sets import per_player_target_runtime_dependencies
     from ..rules.reanimation_entry_counters import reanimation_entry_counter_runtime_dependencies
+    from ..rules.hand_entry_followup import hand_entry_followup_runtime_dependencies
     from ..rules.finality_counters import finality_counter_runtime_dependencies
     from ..rules.target_set_result_sequences import target_set_result_sequence_runtime_dependencies
     from ..rules.target_player_sequences import target_player_sequence_runtime_dependencies
@@ -201,6 +202,7 @@ def _event_query_runtime_requirements(program):
         (event_player_target_runtime_dependencies,program,'event_player_target'),
         (per_player_target_runtime_dependencies,program,'per_player_targets'),
         (reanimation_entry_counter_runtime_dependencies,program,'reanimation_entry_counters'),
+        (hand_entry_followup_runtime_dependencies,program,'hand_entry_followup'),
         (finality_counter_runtime_dependencies,program,'finality_counter'),
         (target_set_result_sequence_runtime_dependencies,program,'target_set_result_sequence'),
         (target_player_sequence_runtime_dependencies,program,'target_player_sequence'),

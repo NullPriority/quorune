@@ -205,6 +205,8 @@ class PutTypedCardFromHandHandler:
         "player",
         "query",
         "tapped",
+        "schema_version",
+        "followup",
         "_choice_actor",
         "_choice_query",
         "_legal_refs",
@@ -233,7 +235,9 @@ class PutTypedCardFromHandHandler:
         *,
         actor: str | None = None,
     ) -> tuple[ObjectQuerySpec, ...]:
-        allowed = {"op", "player", "query", "tapped", "prompt"}
+        from ..rules.hand_entry_followup import HAND_ENTRY_FOLLOWUP_FIELDS, decode_hand_entry_followup
+
+        allowed = {"op", "player", "query", "tapped", "prompt", *HAND_ENTRY_FOLLOWUP_FIELDS}
         if (
             set(effect) - allowed
             or set(effect).intersection({"op", "player", "query", "tapped"})
@@ -247,6 +251,7 @@ class PutTypedCardFromHandHandler:
                 "Private hand-entry effect has an invalid shape"
             )
         try:
+            decode_hand_entry_followup(effect)
             queries = decode_hand_entry_queries(effect["query"])
         except (KeyError, TypeError, ValueError) as exc:
             raise SemanticChoiceError(
@@ -321,6 +326,12 @@ class PutTypedCardFromHandHandler:
         response: Mapping[str, Any],
         query: SemanticChoiceQuery,
     ) -> SemanticChoiceCompletion:
+        from ..rules.hand_entry_followup import HAND_ENTRY_FOLLOWUP_VERSION, decode_hand_entry_followup
+
+        try:
+            followup = decode_hand_entry_followup(continuation.effect)
+        except (TypeError, ValueError) as exc:
+            raise SemanticChoiceError(str(exc)) from exc
         selected = str(response.get("card") or "")
         legal = {
             str(value) for value in continuation.effect.get("_legal_refs", ())
@@ -341,6 +352,8 @@ class PutTypedCardFromHandHandler:
                 "Private hand-entry continuation query is malformed"
             ) from exc
         identities = continuation.effect.get('_legal_logical_ids')
+        if followup is not None and identities is None:
+            raise SemanticChoiceError('Private hand-entry follow-up requires the sealed hand incarnation')
         if identities is not None and (
             not isinstance(identities, Mapping)
             or set(identities) != legal
@@ -362,13 +375,15 @@ class PutTypedCardFromHandHandler:
             raise SemanticChoiceError(
                 "Private hand-entry tapped policy is malformed"
             )
-        move = FrozenMap({
+        move = {
             'op': 'move', 'card': selected, 'from': 'hand',
             'destination': 'battlefield', 'controller': actor, 'tapped': tapped,
             'expected_object_identity': row.logical_object_id,
             'hand_entry_query': continuation.effect['_choice_query'],
-        })
-        return SemanticChoiceCompletion(prepend_effects=(move,))
+        }
+        if followup is not None:
+            move.update(schema_version=HAND_ENTRY_FOLLOWUP_VERSION, followup=followup.to_dict())
+        return SemanticChoiceCompletion(prepend_effects=(FrozenMap(move),))
 
 
 

@@ -8,6 +8,7 @@ import re
 from typing import Any, Mapping
 
 from ..object_predicate import ObjectQuerySpec
+from ..creature_subtypes import canonical_creature_subtype
 from ..hand_entry_queries import decode_hand_entry_queries, historic_hand_entry_query_descriptor
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..util import stable_json
@@ -83,7 +84,10 @@ def _hand_entry_query(subject: str) -> ObjectQuerySpec | None:
                 subtypes_all=("minotaur",),
             )
         else:
-            return None
+            subtype = canonical_creature_subtype(normalized.removesuffix(" creature")) if normalized.endswith(" creature") else None
+            if subtype is None:
+                return None
+            fields.update(types_all=("creature",), subtypes_all=(subtype,))
     return ObjectQuerySpec(**fields)
 
 
@@ -186,6 +190,30 @@ def fixed_draw_then_hand_entry_template(text: str):
         'fixed-draw-then-private-hand-entry-v1', (*draw[1], *entry.effects), None,
         tuple(dict.fromkeys(('closed-effect-program', *draw[3], *entry.mechanics))),
     )
+
+
+def fixed_private_hand_entry_followup_template(text):
+    from ..rules.hand_entry_followup import HAND_ENTRY_FOLLOWUP_VERSION, decode_hand_entry_followup
+    from .reanimation_followup_templates import fixed_battlefield_entry_followup
+
+    entry_text, separator, tail = text.strip().partition(". ")
+    if not separator or "haste" not in tail.casefold():
+        return None
+    entry = fixed_private_hand_entry_effect_template(entry_text)
+    if entry is None:
+        return None
+    queries = decode_hand_entry_queries(entry.effects[0]["query"])
+    receiver_types = set(queries[0].types_all).intersection(*(query.types_all for query in queries[1:]))
+    followup = fixed_battlefield_entry_followup(tail, receiver_types=receiver_types)
+    if followup is None:
+        return None
+    effect = {**entry.effects[0], "schema_version": HAND_ENTRY_FOLLOWUP_VERSION, "followup": followup.to_dict()}
+    try:
+        decode_hand_entry_followup(effect)
+    except ValueError:
+        return None
+    template = entry.template_id.removesuffix("-v1") + f"-{followup.haste_duration}-sacrifice-v2"
+    return (template, (effect,), None, entry.mechanics)
 
 
 __all__ = [

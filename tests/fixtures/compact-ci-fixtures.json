@@ -641,6 +641,7 @@
     "tests/fixtures/half-library-mill-cards.json",
     "tests/fixtures/half-sacrifice-sequence-cards.json",
     "tests/fixtures/hand-entry-expansion-cards.json",
+    "tests/fixtures/hand-entry-followup-cards.json",
     "tests/fixtures/hand-size-adjustment-cards.json",
     "tests/fixtures/history-entry-characteristic-cards.json",
     "tests/fixtures/history-entry-counters.json",

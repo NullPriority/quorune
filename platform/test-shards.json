@@ -597,6 +597,7 @@
       "test_fixed_source_counter_activation_costs",
       "test_fixed_tap_payments",
       "test_fixed_zone_cast_lifecycles",
+      "test_hand_entry_followup",
       "test_keyword_counter_composition",
       "test_land_condition_quantities",
       "test_land_search_view_equivalence",

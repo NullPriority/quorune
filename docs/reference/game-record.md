@@ -642,6 +642,11 @@ The manifest pins engine, card-data, rules, compiler, CardProgram, capability,
 semantic-handler, runtime-component, profile, and record-format identity as
 applicable. Loading rejects internal disagreement before replay begins.
 
+Private hand-entry schema two retains its haste and delayed sacrifice together
+with the choice and selected move. Save and load preserve the selected hand
+incarnation through any entry replacement. Unversioned hand-entry effects
+retain their existing payloads.
+
 ## Replay contract
 
 New records pin `ninjutsu_band_retention_version: 1`. The Ninja joins combat

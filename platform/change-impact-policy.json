@@ -1033,6 +1033,25 @@
       ]
     },
     {
+      "id": "linked-private-hand-haste-and-sacrifice",
+      "patterns": [
+        "quorune/compiler/hand_entry_templates.py",
+        "quorune/rules/hand_entry_followup.py",
+        "quorune/hand_entry_move.py",
+        "quorune/hand_entry_queries.py",
+        "quorune/semantic_choices/object_selection.py",
+        "tests/fixtures/hand-entry-followup-cards.json",
+        "tests/test_hand_entry_followup.py"
+      ],
+      "test_modules": [
+        "test_hand_entry_followup",
+        "test_hand_entry_expansion",
+        "test_reanimation_followup",
+        "test_card_program_trust",
+        "test_splice"
+      ]
+    },
+    {
       "id": "linked-reanimation-haste-and-departure",
       "patterns": [
         "quorune/compiler/reanimation_followup_templates.py",

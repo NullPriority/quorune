@@ -112,7 +112,18 @@ def linked_departure_intent(effect, *, actor, reason):
         replacement_selections=tuple(effect.get("_replacement_selections", ())))
 
 
-def commit_battlefield_entry_followup(host, card, *, actor, source, followup):
+def battlefield_entry_followup_capabilities(followup):
+    duration = ("continuous.resolution.fixed_keyword_zone_object" if followup.haste_duration == "zone_object"
+        else "continuous.resolution.fixed_characteristics_until_end_of_turn")
+    departure = {"exile": "permanent.exile.effect", "sacrifice": "choice.affected_player.fixed_sacrifice",
+        "bounce": "permanent.return.owner_hand"}[followup.departure]
+    return ("trigger.delayed.fixed_object_action", "trigger.placement.apnap", "zone.change.destination_replacement",
+        "combat.attack.haste", "activation.tap_untap_cost.haste", duration, departure)
+
+
+def commit_battlefield_entry_followup(host, card, *, previous_zone_counter, actor, source, followup):
+    if (card.zone != "battlefield" or card.phased_out or card.zone_change_counter != previous_zone_counter + 1):
+        return
     from ..continuous_effect_state import (
         ContinuousEffectDuration, ContinuousOperation, Layer, ResolutionContinuousComponent,
         create_resolution_continuous_effect_components,

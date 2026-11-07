@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 from .object_predicate import ObjectQuerySpec
 from .object_query import object_matches_query
+from .creature_subtypes import canonical_creature_subtype
 
 PERMANENT_TYPES = ('artifact', 'battle', 'creature', 'enchantment', 'land', 'planeswalker')
 HISTORIC_QUERY_KIND = 'hand_entry_query_union'
@@ -37,7 +38,11 @@ def _single_hand_query_is_closed(query: ObjectQuerySpec) -> bool:
     if query.types_all==('land',):
         return not query.types_any and not query.subtypes_all and not query.colors_any and query.minimum_color_count is None and query.supertypes_all in {(),('basic',)}
     if query.types_all==('creature',):
-        return not query.types_any and not query.subtypes_all and not query.supertypes_all and len(query.colors_any)<=2 and query.minimum_color_count in {None,2} and not(query.colors_any and query.minimum_color_count is not None)
+        if query.subtypes_all:
+            return (len(query.subtypes_all) == 1 and canonical_creature_subtype(query.subtypes_all[0]) is not None
+                and not query.types_any and not query.supertypes_all and not query.colors_any
+                and query.minimum_color_count is None)
+        return not query.types_any and not query.supertypes_all and len(query.colors_any)<=2 and query.minimum_color_count in {None,2} and not(query.colors_any and query.minimum_color_count is not None)
     if query.types_all==('artifact',):
         return not query.types_any and query.subtypes_all in {(),('equipment',)} and not query.supertypes_all and not query.colors_any and query.minimum_color_count is None
     return query.types_any==PERMANENT_TYPES and not query.types_all and query.subtypes_all==('minotaur',) and not query.supertypes_all and not query.colors_any and query.minimum_color_count is None

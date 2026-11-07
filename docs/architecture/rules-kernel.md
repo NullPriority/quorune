@@ -2135,6 +2135,12 @@ The delayed instruction checks the retained incarnation before it moves the
 object and requires current control for sacrifice. A temporary power modifier
 and haste share one timestamp and expire at cleanup.
 
+Optional private hand entry can carry the same haste and next-end-step
+sacrifice. The versioned choice retains the follow-up alongside the sealed hand
+identity. Declining creates no effect. The existing move owner resolves entry
+replacements before the follow-up captures the new battlefield incarnation.
+Creature subtype filters require the creature card type as well as the subtype.
+
 Closed fixed source-counter sequences use the same owners. The compiler emits
 `$source.zone_object`; resolution requires the current battlefield source and
 its stack-pinned logical identity before constructing the counter intent. A

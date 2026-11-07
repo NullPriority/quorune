@@ -11,7 +11,7 @@ from ..compiler.reanimation_templates import (
 from ..effect_contracts import REANIMATE_OPERATION
 from .reanimation_followup import (
     REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC,
-    REANIMATION_FOLLOWUP_VERSION, validate_reanimation_followup,
+    REANIMATION_FOLLOWUP_VERSION, battlefield_entry_followup_capabilities, validate_reanimation_followup,
 )
 from ..targets import TargetGroup
 from ..target_numeric import (
@@ -150,13 +150,8 @@ def _reanimation_followup_capabilities(effect, *, target_schema, mechanics):
         target_schema=target_schema, mechanic_ids=mechanics)
     if not required:
         return ()
-    duration = ("continuous.resolution.fixed_keyword_zone_object" if followup.haste_duration == "zone_object"
-        else "continuous.resolution.fixed_characteristics_until_end_of_turn")
-    departure = {"exile": "permanent.exile.effect", "sacrifice": "choice.affected_player.fixed_sacrifice",
-        "bounce": "permanent.return.owner_hand"}[followup.departure]
     return (*required, REANIMATION_FOLLOWUP_CAPABILITY, "target.revalidate_resolution",
-        "trigger.delayed.fixed_object_action", "trigger.placement.apnap", "zone.change.destination_replacement",
-        "combat.attack.haste", "activation.tap_untap_cost.haste", duration, departure)
+        *battlefield_entry_followup_capabilities(followup))
 
 
 __all__ = [
