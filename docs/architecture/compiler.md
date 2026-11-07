@@ -3849,6 +3849,14 @@ one-card zone scan and resolving cast payment. The first nonland result supplies
 one immediate free-cast choice. Declining keeps every unused card in exile.
 This instruction has its own capability and ends with the enclosing resolution.
 
+The closed instant-or-sorcery exile scan binds its supplying player to a target
+or a normalized source combat-damage occurrence. The server scan reads the next
+card from that library and records its public incarnation after exile. The
+resolving controller can cast the qualifying card through the shared casting
+and payment owners. Cleanup randomizes unused cards onto the supplying
+library's bottom. Ownership, cast control, and the supplier remain separate
+through the continuation.
+
 Fixed life loss unless each affected player discards or sacrifices one object
 shares the APNAP choice owner. Players choose in turn order. Earlier payment
 decisions are visible, and selected hand identities stay private until the

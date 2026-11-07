@@ -63,6 +63,9 @@ class SemanticChoiceCoordinationMixin:
             "battlefield", "graveyard", "exile", "command", "stack"
         }
         choice_effect = effect or {}
+        from ..discover_casting import qualified_scan_library_refs
+        scan_refs = {ref for refs in qualified_scan_library_refs(self, actor=actor, effect=choice_effect).values()
+                     for ref in refs}
         inspected_hand_owner = (
             str(choice_effect.get("target") or "")
             if choice_effect.get("op") == FIXED_HAND_INSPECTION_OPERATION
@@ -82,6 +85,7 @@ class SemanticChoiceCoordinationMixin:
                 and card.owner != actor
                 and not inspected_hidden_card
                 and not known_hand
+                and not (card.zone == 'library' and card.ref in scan_refs)
             ):
                 continue
             effective = self._effective_card_data(card)
@@ -453,9 +457,9 @@ class SemanticChoiceCoordinationMixin:
         source_ref: str | None,
         stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
-        from ..discover_model import DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION
+        from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
 
-        if effect.get('op') in (DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION):
+        if effect.get('op') in EXILE_CAST_CHOICE_OPERATIONS:
             from ..discover_casting import discover_cast_options
             return discover_cast_options(self,item=stack_item,actor=actor,effect=effect)
         if effect.get('op') == 'miracle_cast_choice':
@@ -498,8 +502,9 @@ class SemanticChoiceCoordinationMixin:
         source_ref: str | None = None,
         stack_item: StackItem | None = None,
     ) -> SnapshotSemanticChoiceQuery:
-        """Materialize only actor-visible, immutable choice facts."""
+        """Materialize immutable facts under the instruction's visibility scope."""
 
+        from ..discover_casting import qualified_scan_library_refs
         choice_effect = effect or {}
         object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
@@ -549,7 +554,8 @@ class SemanticChoiceCoordinationMixin:
                 actor: [
                     self.state.cards[object_id].ref
                     for object_id in self.state.players[actor].zones["library"]
-                ]
+                ],
+                **qualified_scan_library_refs(self, actor=actor, effect=choice_effect),
             },
             mana_by_seat={
                 actor: dict(self.state.players[actor].mana_pool)

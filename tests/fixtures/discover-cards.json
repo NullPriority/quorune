@@ -2058,6 +2058,194 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "0b95c115-6745-4ce1-896b-9021e93c161e",
+      "name": "Chaos Wand",
+      "mana_cost": "{3}",
+      "cmc": 3.0,
+      "type_line": "Artifact",
+      "oracle_text": "{4}, {T}: Target opponent exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then put the exiled cards that weren't cast this way on the bottom of that library in a random order.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "00e8b4c9-3a79-4864-a730-c0081d397c5b",
+      "name": "Dazzling Sphinx",
+      "mana_cost": "{3}{U}{U}",
+      "cmc": 5.0,
+      "type_line": "Creature — Sphinx",
+      "oracle_text": "Flying\nWhenever this creature deals combat damage to a player, that player exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.",
+      "power": "4",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-04-19",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9df60bb7-2dd4-4d22-b814-f52145356424",
+      "name": "Gríma, Saruman's Footman",
+      "mana_cost": "{2}{U}{B}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Human Advisor",
+      "oracle_text": "Gríma can't be blocked.\nWhenever Gríma deals combat damage to a player, that player exiles cards from the top of their library until they exile an instant or sorcery card. You may cast that card without paying its mana cost. Then that player puts the exiled cards that weren't cast this way on the bottom of their library in a random order.",
+      "power": "1",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "U"
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2026-08-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f307b5b4-e949-4f69-8dc7-856e33a45a16",
+      "name": "Tormenting Voice",
+      "mana_cost": "{1}{R}",
+      "cmc": 2.0,
+      "type_line": "Sorcery",
+      "oracle_text": "As an additional cost to cast this spell, discard a card.\nDraw two cards.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -3812,6 +4000,108 @@
       "published_at": "2022-12-08",
       "source": "wotc",
       "comment": "A split card's characteristics are a combination of its two halves while it is not on the stack. For example, Assault // Battery has a mana value of 5 while it is in your library. If an effect allows you to search your library for a card with mana value 4 or less, you can't find Assault // Battery."
+    },
+    {
+      "oracle_id": "0b95c115-6745-4ce1-896b-9021e93c161e",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If you wish to cast the exiled card, you must cast it while Chaos Wand's ability is resolving. You can't cast it later in the turn. A spell cast this way may be cast at a time you normally wouldn't be able to cast a spell of that type, but other restrictions (such as \"Cast this spell only during combat\") are enforced."
+    },
+    {
+      "oracle_id": "0b95c115-6745-4ce1-896b-9021e93c161e",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If you cast a card \"without paying its mana cost,\" you can't choose to cast it for any alternative costs. You can, however, pay additional costs. If the card has any mandatory additional costs, such as that of Tormenting Voice, those must be paid to cast the card."
+    },
+    {
+      "oracle_id": "0b95c115-6745-4ce1-896b-9021e93c161e",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If you don't cast the exiled instant or sorcery card, it's put on the bottom of that library with the other cards."
+    },
+    {
+      "oracle_id": "0b95c115-6745-4ce1-896b-9021e93c161e",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If the exiled card has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "0b95c115-6745-4ce1-896b-9021e93c161e",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "If the opponent exiles their entire library without exiling an instant or sorcery card, that player stops exiling cards, and the exiled cards are put into their library in a random order."
+    },
+    {
+      "oracle_id": "0b95c115-6745-4ce1-896b-9021e93c161e",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "The opponent stops exiling cards as soon as they exile any instant or sorcery card. You don't choose which card type to look for."
+    },
+    {
+      "oracle_id": "00e8b4c9-3a79-4864-a730-c0081d397c5b",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "Dazzling Sphinx's triggered ability lets you cast the exiled card during the resolution of the ability. It doesn't allow you to wait and cast the card later."
+    },
+    {
+      "oracle_id": "00e8b4c9-3a79-4864-a730-c0081d397c5b",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If the exiled instant or sorcery card has an {X} in its mana cost, you must choose 0 as the value of {X}."
+    },
+    {
+      "oracle_id": "00e8b4c9-3a79-4864-a730-c0081d397c5b",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "You may choose not to cast the instant or sorcery card that you exiled. In that case, it will be put on the bottom of the library with the rest of the exiled cards."
+    },
+    {
+      "oracle_id": "9df60bb7-2dd4-4d22-b814-f52145356424",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If the spell you cast has {X} in its mana cost, you must choose 0 as the value of X when casting it without paying its mana cost."
+    },
+    {
+      "oracle_id": "9df60bb7-2dd4-4d22-b814-f52145356424",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If you cast a spell \"without paying its mana cost,\" you can't pay any alternative costs. You can, however, pay additional costs, such as kicker costs. If the card has any mandatory additional costs, you must pay those."
+    },
+    {
+      "oracle_id": "9df60bb7-2dd4-4d22-b814-f52145356424",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If that player exiles their entire library without exiling an instant or sorcery card, they will randomize the order of the exiled cards, and the cards then become that player's library, ending the effect. They will not continue to exile and randomize their library forever."
+    },
+    {
+      "oracle_id": "9df60bb7-2dd4-4d22-b814-f52145356424",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "If you choose not to cast the card, it is put on the bottom of its owner's library in a random order along with the other exiled cards."
+    },
+    {
+      "oracle_id": "9df60bb7-2dd4-4d22-b814-f52145356424",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "You cast the card while the ability is resolving and still on the stack. You can't wait to cast it later in the turn."
+    },
+    {
+      "oracle_id": "9df60bb7-2dd4-4d22-b814-f52145356424",
+      "published_at": "2023-06-16",
+      "source": "wotc",
+      "comment": "The cards are exiled face up. All players will be able to see them."
+    },
+    {
+      "oracle_id": "f307b5b4-e949-4f69-8dc7-856e33a45a16",
+      "published_at": "2018-07-13",
+      "source": "wotc",
+      "comment": "You must discard exactly one card to cast Tormenting Voice; you can't cast it without discarding a card, and you can't discard additional cards."
+    },
+    {
+      "oracle_id": "f307b5b4-e949-4f69-8dc7-856e33a45a16",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "You must discard exactly one card to cast Tormenting Voice; you can't cast it without discarding a card, and you can't discard additional cards."
     }
   ]
 }

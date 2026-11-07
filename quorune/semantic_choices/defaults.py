@@ -12,7 +12,7 @@ from .incubate import INCUBATE_HANDLERS
 from .investigate import SequentialInvestigateHandler
 from .endure import SourceEndureChoiceHandler
 from .blight import FixedBlightChoiceHandler
-from .discover import DiscoverScanHandler
+from .discover import DiscoverScanHandler, QUALIFIED_SCAN_HANDLERS
 from .discover_cast import DiscoverCastChoiceHandler
 from .variable_library_selection import VariableLibrarySelectionHandler
 from .reveal_until_library_selection import RevealUntilLibrarySelectionHandler
@@ -108,6 +108,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
                 mutation_path=('DiscoverCastIntent',),
                 replay_fixture='first-nonland-exile-and-optional-cast',
             ),
+            *QUALIFIED_SCAN_HANDLERS,
             VariableLibrarySelectionHandler(),
             RevealUntilLibrarySelectionHandler(),
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,

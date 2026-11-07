@@ -994,6 +994,9 @@ The first-nonland scan uses version-two progress with `scan: first_nonland`.
 Discover keeps its version-one progress and printed mana-value limit. The
 current resolving stack item, candidate identity and offered options bind
 the cast and its payment-replacement continuation.
+The instant-or-sorcery scan uses version-three progress to retain its supplying
+library owner independently from the casting controller. Cleanup retains the
+same public exile identities and returns unused cards to that supplier.
 
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public

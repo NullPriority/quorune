@@ -3,20 +3,27 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from ..discover_model import (DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION,
-                              discover_payload_dependencies)
+    QUALIFIED_SCAN_MECHANIC, QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_TARGET, discover_payload_dependencies)
+from ..replacement.immutable import FrozenMap
 
 
 def discover_node_capabilities(*,effects,target_schema,mechanic_ids):
-    if target_schema is not None or len(effects) != 1 or not isinstance(effects[0], Mapping):
+    if len(effects) != 1 or not isinstance(effects[0], Mapping):
         return ()
     operation = effects[0].get('op')
     if type(operation) is not str:
         return ()
-    mechanic = {DISCOVER_OPERATION: 'discover', NONLAND_SCAN_OPERATION: NONLAND_SCAN_MECHANIC}.get(operation)
+    mechanic = {DISCOVER_OPERATION: 'discover', NONLAND_SCAN_OPERATION: NONLAND_SCAN_MECHANIC,
+                QUALIFIED_SCAN_OPERATION: QUALIFIED_SCAN_MECHANIC}.get(operation)
     if mechanic is None or mechanic not in mechanic_ids:
         return ()
     try:
-        return discover_payload_dependencies(effects[0])
+        required = discover_payload_dependencies(effects[0])
+        if operation == QUALIFIED_SCAN_OPERATION and effects[0]['supplier'] == '$target.0':
+            if not isinstance(target_schema, Mapping) or FrozenMap(target_schema) != QUALIFIED_SCAN_TARGET:
+                return ()
+            return (*required, 'target.revalidate_resolution')
+        return required if target_schema is None else ()
     except (TypeError, ValueError, KeyError):
         return ()
 

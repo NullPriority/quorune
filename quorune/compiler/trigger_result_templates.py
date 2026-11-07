@@ -12,6 +12,10 @@ from .endure_templates import binding_endure_trigger_result
 
 
 def binding_effect_template(binding, body: str, *, card_name: str, effect_template, _allow_payment: bool = True, source_counter_variants=(), _allow_optional: bool = True):
+    from .discover_templates import damage_player_qualified_exile_cast
+    exile_cast = damage_player_qualified_exile_cast(binding, body)
+    if exile_cast is not None:
+        return exile_cast, False
     if _allow_payment:
         from .source_sacrifice_payments import normalized_source_sacrifice_payment_text
         body=normalized_source_sacrifice_payment_text(binding,body,card_name=card_name)

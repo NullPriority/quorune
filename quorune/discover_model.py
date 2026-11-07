@@ -21,6 +21,16 @@ NONLAND_SCAN_MECHANIC = 'exile-until-nonland-cast'
 NONLAND_SCAN_OPERATION = 'exile_until_nonland_then_cast'
 NONLAND_SCAN_STEP_OPERATION = 'exile_until_nonland_step'
 NONLAND_SCAN_CAST_OPERATION = 'exile_until_nonland_cast_choice'
+QUALIFIED_SCAN_CAPABILITY = 'library.exile_until_instant_or_sorcery.cast_and_return'
+QUALIFIED_SCAN_MECHANIC = 'exile-until-instant-or-sorcery-cast'
+QUALIFIED_SCAN_OPERATION = 'exile_until_instant_or_sorcery'
+QUALIFIED_SCAN_STEP_OPERATION = 'exile_until_instant_or_sorcery_step'
+QUALIFIED_SCAN_CAST_OPERATION = 'exile_until_instant_or_sorcery_cast_choice'
+QUALIFIED_SCAN_FINISH_OPERATION = 'exile_until_instant_or_sorcery_finish'
+QUALIFIED_SCAN_TARGET = FrozenMap({'zones': ['player'], 'categories': ['player'],
+                                  'player_relation': 'opponent', 'count': 1})
+EXILE_CAST_CHOICE_OPERATIONS = (DISCOVER_CAST_OPERATION, NONLAND_SCAN_CAST_OPERATION, QUALIFIED_SCAN_CAST_OPERATION)
+EXILE_CAST_FINISH_OPERATIONS = (DISCOVER_FINISH_OPERATION, QUALIFIED_SCAN_FINISH_OPERATION)
 
 
 def discover_options_fingerprint(options):
@@ -49,10 +59,15 @@ class ExileCastProgress:
     amount: int | None
     exiled: tuple[LibrarySelectionObjectIdentity,...]
     candidate_ref: str | None
+    supplier: str | None = None
 
     def __post_init__(self):
         if self.amount is not None:
             ManaValueLimitSpec(self.amount)
+        if self.supplier is not None and (
+            self.amount is not None or type(self.supplier) is not str or not self.supplier
+        ):
+            raise ValueError('A qualified exile scan requires one supplying library owner')
         if not isinstance(self.exiled,(tuple,list)):
             raise ValueError('An exile scan requires an ordered public exile history')
         exiled=tuple(self.exiled)
@@ -74,10 +89,30 @@ class ExileCastProgress:
     def cleanup_cards(self):
         return self.exiled[:-1] if self.candidate_ref is not None else self.exiled
 
+    @property
+    def step_operation(self):
+        if self.supplier is not None:
+            return QUALIFIED_SCAN_STEP_OPERATION
+        return NONLAND_SCAN_STEP_OPERATION if self.amount is None else DISCOVER_STEP_OPERATION
+
+    @property
+    def cast_operation(self):
+        if self.supplier is not None:
+            return QUALIFIED_SCAN_CAST_OPERATION
+        return NONLAND_SCAN_CAST_OPERATION if self.amount is None else DISCOVER_CAST_OPERATION
+
+    @property
+    def finish_operation(self):
+        if self.supplier is not None:
+            return QUALIFIED_SCAN_FINISH_OPERATION
+        return DISCOVER_FINISH_OPERATION if self.amount is not None else None
+
     def to_dict(self):
         search = {'schema_version': 2, 'scan': 'first_nonland'} if self.amount is None else {
             'schema_version': 1, 'amount': self.amount,
         }
+        if self.supplier is not None:
+            search = {'schema_version': 3, 'scan': 'first_instant_or_sorcery', 'supplier': self.supplier}
         return {**search, 'exiled': [card.to_dict() for card in self.exiled], 'candidate_ref': self.candidate_ref}
 
     @classmethod
@@ -85,27 +120,33 @@ class ExileCastProgress:
         common = {'schema_version', 'exiled', 'candidate_ref'}
         if not isinstance(value, Mapping) or type(value.get('schema_version')) is not int:
             raise ValueError('Exile scan progress has a closed versioned shape')
+        supplier = None
         if value['schema_version'] == 1 and set(value) == common | {'amount'}:
             amount = value['amount']
             ManaValueLimitSpec(amount)
         elif (value['schema_version'] == 2 and set(value) == common | {'scan'}
               and value['scan'] == 'first_nonland'):
             amount = None
+        elif (value['schema_version'] == 3 and set(value) == common | {'scan', 'supplier'}
+              and value['scan'] == 'first_instant_or_sorcery'
+              and type(value['supplier']) is str and value['supplier']):
+            amount, supplier = None, value['supplier']
         else:
             raise ValueError('Exile scan progress has a closed versioned shape')
         if not isinstance(value['exiled'], (list, tuple)):
             raise ValueError('Exile scan progress requires an ordered history')
         return cls(amount, tuple(LibrarySelectionObjectIdentity.from_dict(card) for card in value['exiled']),
-                   value['candidate_ref'])
+                   value['candidate_ref'], supplier)
 
 
 DiscoverProgress = ExileCastProgress
 
 
 def require_current_discover_cards(progress,query,*,actor,include_candidate=True):
+    owner = progress.supplier or actor
     for card in progress.exiled if include_candidate else progress.cleanup_cards:
         row=query.object(card.ref,zones=('exile',))
-        if (row is None or row.owner!=actor or row.object_id!=card.object_id
+        if (row is None or row.owner!=owner or row.object_id!=card.object_id
                 or row.logical_object_id!=card.logical_object_id):
             raise ValueError('A Discover exile incarnation changed')
 
@@ -139,6 +180,9 @@ def discover_payload_dependencies(value):
     if value.get('op') == NONLAND_SCAN_OPERATION:
         validate_nonland_scan_effect(value)
         return (NONLAND_SCAN_CAPABILITY,)
+    if value.get('op') == QUALIFIED_SCAN_OPERATION:
+        validate_qualified_scan_effect(value)
+        return (QUALIFIED_SCAN_CAPABILITY,)
     return ()
 
 
@@ -148,6 +192,19 @@ def validate_nonland_scan_effect(effect, *, resolved=False):
             or effect['schema_version'] != 1 or type(effect['player']) is not str or not effect['player']
             or not resolved and effect['player'] != '$controller'):
         raise ValueError('The nonland scan requires its exact controller-bound instruction')
+
+
+def validate_qualified_scan_effect(effect, *, resolved=False):
+    if (
+        not isinstance(effect, Mapping)
+        or set(effect) != {'op', 'schema_version', 'player', 'supplier'}
+        or effect['op'] != QUALIFIED_SCAN_OPERATION
+        or type(effect['schema_version']) is not int or effect['schema_version'] != 1
+        or type(effect['player']) is not str or not effect['player']
+        or type(effect['supplier']) is not str or not effect['supplier']
+        or not resolved and (effect['player'] != '$controller' or effect['supplier'] not in {'$target.0', '$context.target'})
+    ):
+        raise ValueError('The qualified exile scan requires its bound controller and library supplier')
 
 
 @dataclass(frozen=True,slots=True)
@@ -196,7 +253,7 @@ class DiscoverCleanupIntent:
     def __post_init__(self):
         from .semantic_runtime.zone_move_intent import _freeze_replacement_selections
         if (any(type(value) is not str or not value for value in (self.actor,self.stack_ref))
-                or not isinstance(self.progress,ExileCastProgress) or self.progress.amount is None):
+                or not isinstance(self.progress,ExileCastProgress) or self.progress.finish_operation is None):
             raise ValueError('Discover cleanup requires its current controller and resolution')
         object.__setattr__(self,'replacement_selections',_freeze_replacement_selections(
             self.replacement_selections,family='Discover cleanup'))
