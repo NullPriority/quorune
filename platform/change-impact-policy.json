@@ -1003,6 +1003,19 @@
       ]
     },
     {
+      "id": "reviewed-predefined-token-choice-names",
+      "patterns": [
+        "quorune/semantic_packs/v081-predefined-token-name-corrections.json",
+        "tests/test_exact_deck_triggers.py"
+      ],
+      "test_modules": [
+        "test_exact_deck_triggers",
+        "test_fixed_token_creation_effects",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "fixed-single-object-reanimation-contract",
       "patterns": [
         "quorune/compiler/reanimation_templates.py",

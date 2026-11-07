@@ -548,6 +548,10 @@ execution, including the Incubator front face. The historical mode uses the
 absent marker and preserves the previous execution-time definition. Explicit
 names and copiable snapshots supply their own name values.
 
+The bundled reviewed Food and Treasure choice uses the same literal name
+authority. New sessions load the corrected program version. Saved sessions
+retain the exact choice program and token definitions in their pinned registry.
+
 New compiler-owned fixed creature definitions carry
 `literal_token_name_version: 1` with their fully resolved name. The marker
 travels in the fixed definition and any pending replacement payload. Creation
