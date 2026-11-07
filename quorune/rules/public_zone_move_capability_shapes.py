@@ -439,7 +439,6 @@ def fixed_public_tap_state_set_node_capabilities(
         effect, restraint = split_source_tap_untap_restraint(effects[0])
     except ValueError:
         return ()
-    dependencies = ("permanent.tap_state.fixed_set", *((SOURCE_TAP_UNTAP_CAPABILITY,) if restraint else ()))
     if (
         set(effect) != {"op", "source", "set", "tapped"}
         or effect.get("op") != "set_public_tap_state"
@@ -451,7 +450,11 @@ def fixed_public_tap_state_set_node_capabilities(
         spec = AffectedPermanentSetSpec.from_dict(effect["set"])
     except (KeyError, TypeError, AffectedPermanentSetError):
         return ()
-    dependencies = ("permanent.tap_state.fixed_set", *object_query_capabilities(spec.query))
+    dependencies = (
+        "permanent.tap_state.fixed_set",
+        *object_query_capabilities(spec.query),
+        *((SOURCE_TAP_UNTAP_CAPABILITY,) if restraint else ()),
+    )
     targeted = (
         spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER
     )

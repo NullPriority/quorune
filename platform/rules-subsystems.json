@@ -8315,7 +8315,7 @@
     },
     "semantic_transition_declaration": {
       "transition_id": "oracle-ir-v800-consolidated-runtime-defect-repair",
-      "compiler_version": "oracle-ir-v800",
+      "compiler_version": "oracle-ir-v803",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
