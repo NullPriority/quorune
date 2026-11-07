@@ -1038,7 +1038,9 @@ def _public_trigger_binding(
     spec = public_trigger_binding_spec(material_line, card_name=card_name)
     if spec is None:
         return None
-    return public_binding_from_spec(spec, binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
+    from .attacking_card_entry_templates import source_graveyard_attacking_entry_binding
+    return public_binding_from_spec(source_graveyard_attacking_entry_binding(spec),
+        binding_type=FixedCounterTriggerBinding, event_type=FixedCounterTriggerEvent)
 
 
 def fixed_counter_trigger_binding(

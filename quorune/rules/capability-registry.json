@@ -23036,21 +23036,21 @@
     {
       "applicability": {
         "exclusions": [
-          "fixed event recipient, paid or linked follow-up instructions",
+          "fixed event recipient and unrepresented paid or linked follow-up instructions",
           "attacker declaration and declaration costs",
           "unrepresented selectors"
         ],
         "inputs": [
-          "one eligible hand incarnation or declared graveyard creature target",
+          "one eligible hand incarnation, declared graveyard creature target, or sealed graveyard trigger source",
           "known resolving controller and replacement selections",
           "fresh defending recipient with permanent incarnation when needed"
         ],
         "outputs": [
-          "one tapped battlefield entry if allowed",
+          "one tapped battlefield entry with any represented entry counter",
           "one combat assignment before entry events when the creature and recipient qualify",
           "principal-private hand selection with replayable defender and replacement continuations"
         ],
-        "summary": "Resolve a sealed private hand selection or revalidated graveyard target as a tapped battlefield entry. Preview entry replacement before offering a live defending player, planeswalker, or battle. Commit the exact creature and its still-current combat recipient through the existing zone and combat owners before entry events, preserving previous attack relationships."
+        "summary": "Resolve a sealed private hand selection, revalidated graveyard target, or the original graveyard source of a paid attack trigger as a tapped battlefield entry. Preview entry replacement before offering a live defending player, planeswalker, or battle. Commit the entry and combat assignment before entry events while preserving existing attack relationships."
       },
       "blockers": [],
       "dependencies": [
@@ -23063,6 +23063,8 @@
       "id": "combat.entry.selected_card_attacking",
       "implementation_components": [
         "quorune.compiler.attacking_card_entry_templates.fixed_attacking_card_entry_template",
+        "quorune.compiler.attacking_card_entry_templates.fixed_source_graveyard_attacking_entry_template",
+        "quorune.rules.attacking_card_entry.graveyard_attacking_entry_sources",
         "quorune.semantic_choices.attacking_card_entry.prepare_attacking_card_entry_choice",
         "quorune.rules.attacking_card_entry.apply_attacking_entry_move",
         "quorune.zone_transitions.ZoneTransitionOwner._publish_simultaneous_zone_batch",
@@ -23073,20 +23075,32 @@
       "interaction_tests": [
         "test_entry_preserves_attack_bands_and_skips_a_stale_defender_incarnation",
         "test_captain_keeps_its_hand_private_and_enters_attacking_without_declaring_again",
-        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker"
+        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker",
+        "test_graveyard_phoenix_counts_declarations_and_enters_with_its_printed_counter",
+        "test_marshstalker_checks_threshold_at_declaration_and_before_payment",
+        "test_paid_graveyard_return_cannot_move_its_new_incarnation"
       ],
       "multiplayer_tests": [
         "test_captain_keeps_its_hand_private_and_enters_attacking_without_declaring_again",
-        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker"
+        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker",
+        "test_graveyard_phoenix_counts_declarations_and_enters_with_its_printed_counter",
+        "test_interceptor_qualifies_across_defenders_once_and_can_decline"
       ],
       "negative_tests": [
         "test_attacking_card_entry_closes_fixed_hand_and_graveyard_selectors",
         "test_withdrawing_defender_authority_preserves_ordinary_graveyard_entry",
         "test_entry_preserves_attack_bands_and_skips_a_stale_defender_incarnation",
         "test_captain_keeps_its_hand_private_and_enters_attacking_without_declaring_again",
-        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker"
+        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker",
+        "test_graveyard_phoenix_counts_declarations_and_enters_with_its_printed_counter",
+        "test_interceptor_qualifies_across_defenders_once_and_can_decline",
+        "test_marshstalker_checks_threshold_at_declaration_and_before_payment",
+        "test_paid_graveyard_return_cannot_move_its_new_incarnation"
       ],
       "official_rules": [
+        "113.6m",
+        "118.12",
+        "122.6",
         "400.2",
         "400.7",
         "506.3a",
@@ -23101,20 +23115,27 @@
         "608.2b",
         "608.2d",
         "614.12",
-        "802.3"
+        "802.3",
+        "603.4",
+        "608.2g"
       ],
       "positive_tests": [
         "test_attacking_card_entry_closes_fixed_hand_and_graveyard_selectors",
         "test_entry_preserves_attack_bands_and_skips_a_stale_defender_incarnation",
         "test_captain_keeps_its_hand_private_and_enters_attacking_without_declaring_again",
-        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker"
+        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker",
+        "test_graveyard_phoenix_counts_declarations_and_enters_with_its_printed_counter",
+        "test_interceptor_qualifies_across_defenders_once_and_can_decline",
+        "test_marshstalker_checks_threshold_at_declaration_and_before_payment"
       ],
       "privacy_tests": [
         "test_captain_keeps_its_hand_private_and_enters_attacking_without_declaring_again"
       ],
       "replay_tests": [
         "test_captain_keeps_its_hand_private_and_enters_attacking_without_declaring_again",
-        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker"
+        "test_yore_tiller_resumes_entry_replacement_before_choosing_a_planeswalker",
+        "test_graveyard_phoenix_counts_declarations_and_enters_with_its_printed_counter",
+        "test_paid_graveyard_return_cannot_move_its_new_incarnation"
       ],
       "required_evidence": [
         "positive",

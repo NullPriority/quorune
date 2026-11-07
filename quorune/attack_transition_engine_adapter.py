@@ -305,8 +305,10 @@ def attack_transition_stack_items(engine: Any) -> tuple[Any, ...]:
         from .attack_batch_model import ATTACK_BATCH_CONTEXT
         declaration_context = ({ATTACK_BATCH_CONTEXT:seal_attack_declaration(event,characteristic_contexts)}
             if any(characteristic_contexts.values()) else {})
-        semantic_sources = tuple(
-            engine._semantic_event_sources(zones={"battlefield"})
+        from .rules.attacking_card_entry import graveyard_attacking_entry_sources
+        semantic_sources = (
+            *engine._semantic_event_sources(zones={"battlefield"}),
+            *graveyard_attacking_entry_sources(engine, event.active_player),
         )
         for assignment in event.assignments:
             source = engine.state.cards.get(

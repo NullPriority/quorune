@@ -10,6 +10,8 @@ from ..errors import GameRuleError
 
 ATTACKING_CARD_ENTRY_CAPABILITY = "combat.entry.selected_card_attacking"
 ATTACKING_HAND_ENTRY_VERSION = 3
+SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC = "source-graveyard-attacking-entry"
+SOURCE_GRAVEYARD_IDENTITY = "$context.source_logical_object_id"
 _MOVE_FIELDS = {"op", "card", "from", "destination", "controller", "tapped", "attacking_entry"}
 _RUNTIME_FIELDS = {"_replacement_selections", "_runtime_source", "_aura_target_ref"}
 
@@ -61,10 +63,15 @@ def validate_attacking_entry_move(move, *, actor, compiled=False, selected=False
     if not isinstance(move, Mapping):
         raise ValueError("Attacking entry requires a closed move")
     origin = move.get("from")
+    source_bound = "source_identity" in move
     fields = _MOVE_FIELDS
-    if not compiled and origin == "hand":
+    if source_bound:
+        fields = fields | {"source_identity"}
+        if "entry_counter" in move:
+            fields = fields | {"entry_counter", "entry_source"}
+    elif not compiled and origin == "hand":
         fields = fields | {"hand_entry_query", "expected_object_identity"}
-    if not compiled and origin == "graveyard" and move.get("card") is not None:
+    elif not compiled and origin == "graveyard" and move.get("card") is not None:
         fields = fields | {"target_snapshot"}
     allowed = fields if compiled or not selected else fields | _RUNTIME_FIELDS
     if (not fields <= set(move) <= allowed or origin not in ("hand", "graveyard")
@@ -73,14 +80,24 @@ def validate_attacking_entry_move(move, *, actor, compiled=False, selected=False
         or not isinstance(move.get("_replacement_selections", ()), (list, tuple))):
         raise ValueError("Attacking entry requires a tapped own-hand or graveyard battlefield move")
     card = move["card"]
-    if (compiled and card != "$target.0" or not compiled and card is not None and (type(card) is not str or not card)
+    reference = "$source" if source_bound else "$target.0"
+    if (compiled and card != reference or not compiled and card is not None and (type(card) is not str or not card)
         or origin == "hand" and card is None):
         raise ValueError("Attacking entry is missing its selected card")
+    if source_bound:
+        identity = move["source_identity"]
+        if (origin != "graveyard" or type(identity) is not str or not identity
+            or compiled and identity != SOURCE_GRAVEYARD_IDENTITY):
+            raise ValueError("Attacking graveyard source requires its sealed source identity")
+        if "entry_counter" in move and (move["entry_counter"] != "+1/+1"
+            or type(move["entry_source"]) is not str or not move["entry_source"]
+            or compiled and move["entry_source"] != "$stack"):
+            raise ValueError("Attacking graveyard source requires a closed entry counter")
     if not compiled and origin == "hand":
         validate_attacking_hand_query(move["hand_entry_query"])
         if type(move["expected_object_identity"]) is not str or not move["expected_object_identity"]:
             raise ValueError("Attacking hand entry requires its selected hand incarnation")
-    if not compiled and origin == "graveyard" and card is not None:
+    if not compiled and not source_bound and origin == "graveyard" and card is not None:
         subject = move["target_snapshot"]
         if (not isinstance(subject, Mapping) or set(subject) != {"ref", "object_id", "zone_change_counter"}
             or subject["ref"] != card or type(subject["object_id"]) is not str or not subject["object_id"]
@@ -115,9 +132,36 @@ def selected_attacking_entry_card(host, move, *, actor):
             {key: value for key, value in move.items() if key != "attacking_entry"}, actor=actor)
     if move["card"] is None:
         return None
+    if "source_identity" in move:
+        try:
+            source = host._resolve_object(actor, move["card"], zones=("graveyard",), owned_only=True)
+        except GameRuleError:
+            return None
+        return source if source.logical_object_id == move["source_identity"] else None
     from .reanimation_followup import current_linked_subject
 
     return current_linked_subject(host, move["target_snapshot"], zone="graveyard")
+
+
+def graveyard_attacking_entry_sources(host, actor):
+    """Collect the owner's graveyard cards with a registered attack return."""
+    oracle_ids = {
+        program.oracle_id for program in host.semantics.programs_for_event("creature.attacks")
+        if program.active_zone == "graveyard" and SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC in program.coverage
+    }
+    if not oracle_ids:
+        return ()
+    cards = host.state.cards
+    return tuple(cards[object_id] for object_id in host.state.players[actor].zones["graveyard"]
+        if cards[object_id].oracle_id in oracle_ids)
+
+
+def attacking_entry_counters(move, actor):
+    if "entry_counter" not in move:
+        return ()
+    from ..entry_counter_model import EffectEntryCounter
+
+    return (EffectEntryCounter(move["entry_counter"], 1, actor, move["entry_source"], "122.6a"),)
 
 
 def is_attacking_player(host, actor):
@@ -143,7 +187,8 @@ def attacking_card_entry_choice_facts(host, actor, effect):
     characteristics, type_line = capture_prospective_entry_characteristics(host, card=card, enter_face=None)
     preview = prepare_zone_change_replacement(host, card, "battlefield", destination_controller=actor,
         entry_characteristics=characteristics, requested_tapped=True, error_type=GameRuleError,
-        selections=tuple(effect.get("_replacement_selections", ())))
+        selections=tuple(effect.get("_replacement_selections", ())),
+        effect_entry_counters=attacking_entry_counters(move, actor))
     copied = preview.event.payload.get("entry_copy") or {}
     current_type = str(copied.get("type_line", type_line))
     can_attack = (preview.destination == "battlefield" and preview.destination_controller == actor
@@ -162,10 +207,12 @@ def apply_attacking_entry_move(host, effect, *, actor, reason):
     if card is None:
         return None
     attacking_entries = {card.object_id: recipient} if recipient is not None else None
+    counters = attacking_entry_counters(effect, actor)
     ZoneTransitionOwner(host).move_cards_simultaneously(((card.object_id, "battlefield"),),
         reason=reason, log=True, tapped=True, destination_controllers={card.object_id: actor},
         aura_target_refs={card.object_id: effect["_aura_target_ref"]} if effect.get("_aura_target_ref") is not None else None,
-        replacement_selections=tuple(effect.get("_replacement_selections", ())), attacking_entries=attacking_entries)
+        replacement_selections=tuple(effect.get("_replacement_selections", ())), attacking_entries=attacking_entries,
+        effect_entry_counters={card.object_id: counters} if counters else None)
     return card
 
 

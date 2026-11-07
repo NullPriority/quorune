@@ -1053,7 +1053,9 @@
     {
       "id": "selected-card-attacking-entry",
       "patterns": [
+        "quorune/attack_transition_engine_adapter.py",
         "quorune/compiler/attacking_card_entry_templates.py",
+        "quorune/compiler/graveyard_self_return.py",
         "quorune/rules/attacking_card_entry.py",
         "quorune/semantic_choices/attacking_card_entry.py",
         "quorune/zone_transitions.py",
@@ -1064,6 +1066,7 @@
       "test_modules": [
         "test_attacking_card_entry",
         "test_attacking_token_results",
+        "test_qualified_attack_batches",
         "test_hand_entry_followup",
         "test_reanimation_followup",
         "test_card_program_trust"

@@ -28,9 +28,13 @@ _PERMANENT_TYPES = frozenset(
 def fixed_target_reanimation_covered_mechanics(
     capability_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    if FIXED_TARGET_REANIMATION_CAPABILITY not in set(capability_ids):
-        return ()
-    return (FIXED_TARGET_REANIMATION_MECHANIC, "cr-115-targets")
+    from .attacking_card_entry import ATTACKING_CARD_ENTRY_CAPABILITY, SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC
+
+    supplied = set(capability_ids)
+    covered = (FIXED_TARGET_REANIMATION_MECHANIC, "cr-115-targets") if FIXED_TARGET_REANIMATION_CAPABILITY in supplied else ()
+    if ATTACKING_CARD_ENTRY_CAPABILITY in supplied:
+        return (*covered, SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC)
+    return covered
 
 
 def fixed_target_reanimation_node_capabilities(
@@ -43,13 +47,22 @@ def fixed_target_reanimation_node_capabilities(
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if len(effects) == 1 and "attacking_card_entry" in effects[0]:
-        from .attacking_card_entry import ATTACKING_CARD_ENTRY_CAPABILITY, validate_attacking_entry_choice
+        from .attacking_card_entry import (
+            ATTACKING_CARD_ENTRY_CAPABILITY,
+            SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC,
+            validate_attacking_entry_choice,
+        )
 
         try:
             move = validate_attacking_entry_choice(effects[0], actor="$controller", compiled=True)
             target = TargetGroup.from_mapping(target_schema) if target_schema is not None else None
         except (ValueError, TypeError):
             return ()
+        if move["card"] == "$source":
+            if target_schema is not None or SOURCE_GRAVEYARD_ATTACKING_ENTRY_MECHANIC not in mechanics:
+                return ()
+            counters = ("counter.producer.effect_entry",) if "entry_counter" in move else ()
+            return (ATTACKING_CARD_ENTRY_CAPABILITY, "zone.change.destination_replacement", *counters)
         if target is None or target.types_any != ("creature",) and "creature" not in target.types_all:
             return ()
         base = {"op": REANIMATE_OPERATION, "card": move["card"], "controller": move["controller"], "tapped": True}
