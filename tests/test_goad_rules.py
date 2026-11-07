@@ -184,7 +184,8 @@ class GoadDepartedTurnTests(InheritedNativeFixture, unittest.TestCase):
         path = Path(cls.temporary.name) / "goad-departed-turn.sqlite3"
         build_fixture_database([
             fixtures / "bound-effect-program-cards.json", fixtures / "fixed-goad-instruction-cards.json",
-            fixtures / "fixed-extra-turn-cards.json",
+            fixtures / "fixed-extra-turn-cards.json", fixtures / "scheduled-turn-skip-cards.json",
+            fixtures / "next-turn-duration-cards.json",
         ], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
@@ -229,6 +230,60 @@ class GoadDepartedTurnTests(InheritedNativeFixture, unittest.TestCase):
         result = session.act("pilot:C", command)
         self.assertTrue(result.ok, result.summary)
         self.assertEqual([], session.state.cards[body.object_id].goaded_by)
+        self.replay(session, load=True)
+
+    def test_actual_sly_instigator_waits_past_a_skipped_departed_extra_turn(self):
+        # CR 500.7, 614.10a, 701.15a and 800.4m. C's extra turn lies
+        # between A's two slots. Meditate skips the newer of A's slots.
+        session = self.session(800461116)
+        sly = self.add(session.engine, "Sly Instigator")
+        sly.acquired_control_turn_count = -1
+        meditate = self.add(session.engine, "Meditate", zone="hand")
+        warps = [self.add(session.engine, "Time Warp", zone="hand", ref=f"warp-{index}")
+                 for index in range(3)]
+        body = self.add(session.engine, "Generic Bound Body", seat="C", ref="goaded-c")
+        body.acquired_control_turn_count = -1
+        for original in (sly, meditate, warps[0]):
+            self.assert_closed(session, original)
+        self.prepare(session, mana={"C": 11, "U": 8})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action = next(row for row in actions if row["id"].startswith(f"activate:{sly.ref}:"))
+        result = session.act("pilot:A", {"action_id": action["id"], "targets": [body.ref], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        self.cast_for(session, "A", meditate)
+        self.resolve_top(session)
+        for spell, target in zip(warps, "ACA"):
+            self.cast_for(session, "A", spell, [target])
+            self.resolve_top(session)
+        self.assertEqual(["A", "C", "A"], [entry.player for entry in session.state.extra_turns])
+        self.priority(session, "A")
+        result = session.act("pilot:A", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(["C"], session.packet("pilot:C", full=True)["state"]["turn"]["extra_q"])
+        session = self.replay(session, load=True)
+
+        self.until(session, lambda game: game.state.active_player == "C"
+                   and game.state.pending_decision.kind == "combat.attackers")
+        self.assertTrue(session.state.current_turn.extra)
+        self.assertEqual([], session.state.scheduled_turn_skips)
+        self.assertEqual(["A"], [entry.player for entry in session.state.cards[body.object_id].goaded_by])
+        rule, = session.state.continuous_effects
+        self.assertEqual("A", rule.expires_on_next_turn_of)
+        self.assertEqual(body.object_id, rule.locked_objects[0].object_id)
+        before = authoritative_state_hash(session.state)
+        result = session.act("pilot:C", {"action_id": "attack", "attackers": {}})
+        self.assertFalse(result.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:C", {"action_id": "attack", "attackers": {body.ref: "D"}})
+        self.assertTrue(result.ok, result.summary)
+
+        self.until(session, lambda game: game.state.active_player == "B")
+        self.assertFalse(session.state.current_turn.extra)
+        self.assertEqual([], session.state.extra_turns)
+        self.assertEqual([], session.state.cards[body.object_id].goaded_by)
+        self.assertEqual([], session.state.continuous_effects)
         self.replay(session, load=True)
 
 
