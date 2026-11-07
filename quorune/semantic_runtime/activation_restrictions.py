@@ -411,11 +411,11 @@ class ActivationRestrictionHost(Protocol):
 
 def _resolved_activation_prohibitions(state, source, candidate_name) -> list[ActivationProhibition]:
     from ..continuous_effect_state import active_resolution_declaration_rule_effects
-    from ..rules.detain import DETAIN_HANDLER_ID
 
     if not getattr(state, "continuous_effects", None):
         return []
-    return [ActivationProhibition(effect.source_id, str(candidate_name), DETAIN_HANDLER_ID, "detained")
+    return [ActivationProhibition(effect.source_id, str(candidate_name),
+                                  "resolution.declaration-rule.activation-prohibition.v4", "resolved_activation_prohibition")
             for effect in active_resolution_declaration_rule_effects(state, source) if effect.forbid_activations]
 
 

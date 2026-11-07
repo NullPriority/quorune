@@ -9,7 +9,11 @@ from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_E
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import DomainEffectIntent, IntentPlan
 from ..blocking_requirement_model import BLOCKING_REQUIREMENT_CAPABILITY,BLOCKING_REQUIREMENT_OPERATION
-from ..rules.detain import DETAIN_CAPABILITY, DETAIN_OPERATION, DETAIN_RULES, validate_detain_instruction
+from ..rules.detain import (
+    DETAIN_CAPABILITY, DETAIN_OPERATION, DETAIN_RULES, DIRECT_PROHIBITION_CAPABILITY,
+    DIRECT_PROHIBITION_OPERATION, DIRECT_PROHIBITION_RULES, validate_detain_instruction,
+    validate_direct_action_prohibition,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -31,6 +35,8 @@ class DomainEffectHandler:
     def rule_references(self) -> tuple[str, ...]:
         if self.operation == DETAIN_OPERATION:
             return DETAIN_RULES
+        if self.operation == DIRECT_PROHIBITION_OPERATION:
+            return DIRECT_PROHIBITION_RULES
         if self.operation=='turn_face_up':
             from ..face_up_effect_model import FACE_UP_EFFECT_RULES
             return FACE_UP_EFFECT_RULES
@@ -82,9 +88,10 @@ class DomainEffectHandler:
             from ..goad_instruction import validate_fixed_goad
             try:validate_fixed_goad(effect)
             except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
-        if operation == DETAIN_OPERATION:
+        if operation in {DETAIN_OPERATION, DIRECT_PROHIBITION_OPERATION}:
+            validate = validate_detain_instruction if operation == DETAIN_OPERATION else validate_direct_action_prohibition
             try:
-                validate_detain_instruction(effect, resolved=True)
+                validate(effect, resolved=True)
             except (TypeError, ValueError) as exc:
                 raise SemanticNodeError(str(exc)) from exc
         if operation == LINKED_EXILE_RETURN_OPERATION:
@@ -111,6 +118,8 @@ class DomainEffectHandler:
 def _domain_capabilities(operation):
     if operation == DETAIN_OPERATION:
         return (DETAIN_CAPABILITY,)
+    if operation == DIRECT_PROHIBITION_OPERATION:
+        return (DIRECT_PROHIBITION_CAPABILITY,)
     if operation in {'schedule_fixed_object_action','resolve_fixed_object_action'}:
         from ..delayed_object_model import DELAYED_OBJECT_CAPABILITY
         return (DELAYED_OBJECT_CAPABILITY,)

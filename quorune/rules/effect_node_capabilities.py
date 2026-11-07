@@ -68,7 +68,7 @@ from .fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
 from .created_token_counter_shapes import created_token_counter_node_capabilities
 from .incubate_capability_shapes import incubate_node_capabilities
 from .discover_capability_shapes import discover_node_capabilities
-from .detain import detain_node_capabilities
+from .detain import detain_node_capabilities, direct_action_prohibition_node_capabilities
 from .variable_library_selection_shapes import variable_library_selection_node_capabilities
 from .reveal_until_library_selection_shapes import reveal_until_library_selection_node_capabilities
 from .fixed_controller_effect_shapes import fixed_counter_controller_effect_sequence_node_capabilities, fixed_controller_effect_sequence_node_capabilities, fixed_life_node_capabilities
@@ -113,6 +113,7 @@ def effect_node_capabilities(
         incubate_node_capabilities,
         discover_node_capabilities,
         detain_node_capabilities,
+        direct_action_prohibition_node_capabilities,
         variable_library_selection_node_capabilities,
         reveal_until_library_selection_node_capabilities,
         temporary_library_search_node_capabilities,

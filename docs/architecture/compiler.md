@@ -32,6 +32,11 @@ up to two matching targets, and a fixed mana-bounded set of opposing nonland
 permanents. Targeted forms use the ordinary announcement and revalidation
 owners. The untargeted form reads effective public characteristics at
 resolution and locks the matching incarnations to one journal entry.
+Printed next-turn attack, block, and activation prohibitions lower a single
+creature target to that same journal entry. The printed activation condition
+stays on the ability and uses the ordinary proposal owner.
+Native registration checks the closed instruction and its declared capabilities
+before offering a Detain or printed prohibition activation.
 
 A closed fixed token definition may identify one target player or opponent as
 the creator. The ordinary public player target schema chooses and revalidates

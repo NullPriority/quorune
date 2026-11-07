@@ -1198,6 +1198,39 @@ class GroupDeclarationCompilerTests(unittest.TestCase):
 
 
 class DetainCompilerTests(unittest.TestCase):
+    def test_printed_next_turn_prohibition_requires_its_exact_shape(self):
+        import re
+        from test_bound_effect_programs import record
+        from quorune.compiler import detain_templates
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.detain import (
+            DIRECT_PROHIBITION_CAPABILITY, DIRECT_PROHIBITION_OPERATION,
+            direct_action_prohibition_node_capabilities,
+        )
+
+        text = ("Until your next turn, target creature can't attack or block "
+                "and its activated abilities can't be activated.")
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(record(text), capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertIn(DIRECT_PROHIBITION_CAPABILITY, node.capability_dependencies)
+        effect, = node.effects
+        self.assertEqual(DIRECT_PROHIBITION_OPERATION, effect["op"])
+        self.assertNotIn("controller_relation", node.target_schema)
+        for forged in ({**effect, "card": "$source"}, {**effect, "schema_version": True}):
+            self.assertEqual((), direct_action_prohibition_node_capabilities(
+                effects=(forged,), target_schema=node.target_schema, mechanic_ids=(),
+            ))
+        self.assertIsNone(detain_templates.fixed_direct_action_prohibition_template(
+            text.replace("Until your next turn", "Until end of turn")))
+        with patch.object(detain_templates, "_DIRECT_PROHIBITION", re.compile(r"(?!)")):
+            self.assertNotEqual("exact", compile_oracle_card(record(text), capability_registry=registry).status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        entry = next(row for row in raw["capabilities"] if row["id"] == DIRECT_PROHIBITION_CAPABILITY)
+        entry.update(status="blocked", blockers=["Withdrawn for the printed prohibition test"])
+        self.assertNotEqual("exact", compile_oracle_card(record(text), capability_registry=CapabilityRegistry(raw)).status)
+
     def test_detain_grammar_and_authority(self):
         import re
         from test_bound_effect_programs import record
@@ -1310,6 +1343,91 @@ class GroupDeclarationRuntimeTests(unittest.TestCase):
         )
         binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
         self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+    def test_original_guildmage_offers_and_resolves_detain(self):
+        session = self.session(7013508)
+        engine = session.engine
+        session.state.config.semantic_policy = "trusted_only"
+        source = self.add(engine, "New Prahv Guildmage", ref="guildmage-detain-source")
+        target = self.add(engine, "Gilded Lotus", seat="B", ref="guildmage-detain-target")
+        self.assert_whole_admission(source.printed_name)
+        engine.permissions.invalidate_current()
+        session.state.pending_decision = None
+        session.state.active_player = "A"
+        session.state.started = True
+        session.state.phase, session.state.step = "precombat_main", "main"
+        session.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        session.state.players["A"].mana_pool.update({"C": 3, "W": 1, "U": 1})
+        engine._grant_priority("A")
+        engine.pump()
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        action_id = f"activate:{source.ref}:ab2"
+        self.assertIn(action_id, {row["id"] for row in actions})
+        accepted = session.act("pilot:A", {"action_id": action_id, "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        rule, = [effect for effect in session.state.continuous_effects if getattr(effect, "forbid_activations", False)]
+        self.assertEqual(("A", target.logical_object_id), (rule.expires_on_next_turn_of, rule.locked_objects[0].logical_object_id))
+        self.priority_to(session, "B")
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row["id"].startswith(f"activate:{target.ref}:") for row in actions))
+        self.replay(session, load=True)
+
+    def test_original_edifice_uses_brick_threshold_and_restricts_own_creature(self):
+        session = self.session(7013507)
+        engine = session.engine
+        session.state.config.semantic_policy = "trusted_only"
+        source = self.add(engine, "Edifice of Authority", ref="brick-source")
+        key = self.add(engine, "Voltaic Key", ref="brick-untap")
+        selected = self.add(engine, "Llanowar Elves", ref="brick-selected")
+        free = self.add(engine, "Llanowar Elves", ref="brick-free")
+        for card in (source, key, selected):
+            self.assert_whole_admission(card.printed_name)
+        for card in (selected, free):
+            card.acquired_control_turn_count = -1
+        source.counters["brick"] = 2
+        session.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        initial = self.ready(session, source, {"C": 3})
+        self.assertEqual(f"activate:{source.ref}:ab1", initial["id"])
+        self.checkpoint(session)
+        second = {"action_id": f"activate:{source.ref}:ab2", "targets": [selected.ref], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", second).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", {"action_id": initial["id"], "targets": [selected.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(3, session.state.cards[source.object_id].counters["brick"])
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertTrue(any(row["id"].startswith(f"activate:{selected.ref}:") for row in actions))
+        untap = next(row for row in actions if row["id"].startswith(f"activate:{key.ref}:"))
+        accepted = session.act("pilot:A", {"action_id": untap["id"], "targets": [source.ref], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(session.state.cards[source.object_id].tapped)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertIn(second["action_id"], {row["id"] for row in actions})
+        before = authoritative_state_hash(session.state)
+        self.assertIsNone(session.packet("pilot:B", full=True)["decision"])
+        self.assertFalse(session.act("pilot:B", second).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:A", second)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        rule, = [row for row in session.state.continuous_effects if getattr(row, "forbid_activations", False)]
+        self.assertEqual(("A", selected.logical_object_id),
+                         (rule.expires_on_next_turn_of, rule.locked_objects[0].logical_object_id))
+        self.assertFalse(session.state.cards[selected.object_id].tapped)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertFalse(any(row["id"].startswith(f"activate:{selected.ref}:") for row in actions))
+        usable = next(row for row in actions if row["id"].startswith(f"activate:{free.ref}:"))
+        accepted = session.act("pilot:A", {"action_id": usable["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        codes = {event.code for event in session.state.events}
+        self.assertIn("permanent.actions_restricted", codes)
+        self.assertNotIn("permanent.detained", codes)
+        self.replay(session, load=True)
 
     def test_original_lyev_detains_mana_and_activations_until_departed_deadline(self):
         session = self.session(7013501)

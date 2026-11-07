@@ -29865,17 +29865,20 @@
         "quorune.rules.detain.resolve_detain",
         "quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect",
         "quorune.continuous_effect_state.create_resolution_declaration_rule_effect",
-        "quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions"
+        "quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions",
+        "quorune.rules.detain.is_closed_permanent_action_prohibition_program"
       ],
       "implementation_mutation_rationale": "Removing the fixed Detain target production leaves the complete source instruction residual.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
-        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality",
+        "test_original_guildmage_offers_and_resolves_detain"
       ],
       "multiplayer_tests": [
         "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
-        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality",
+        "test_original_guildmage_offers_and_resolves_detain"
       ],
       "negative_tests": [
         "test_detain_grammar_and_authority",
@@ -29895,14 +29898,16 @@
       "positive_tests": [
         "test_detain_grammar_and_authority",
         "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
-        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality",
+        "test_original_guildmage_offers_and_resolves_detain"
       ],
       "privacy_tests": [
         "test_original_detain_groups_lock_opponents_and_share_combat_legality"
       ],
       "replay_tests": [
         "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
-        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality",
+        "test_original_guildmage_offers_and_resolves_detain"
       ],
       "required_evidence": [
         "positive",
@@ -30946,6 +30951,85 @@
         "negative",
         "interaction",
         "multiplayer",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "alternative durations",
+          "unbound recipients",
+          "unrepresented linked-result clauses"
+        ],
+        "inputs": [
+          "resolving controller and stack provenance",
+          "one revalidated creature target"
+        ],
+        "outputs": [
+          "one locked attack, block, and all-activation prohibition",
+          "expiry at the resolving controller’s next turn"
+        ],
+        "summary": "Bind the printed next-turn attack, block, and activation prohibition to one revalidated creature incarnation."
+      },
+      "blockers": [],
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "continuous.resolution.until_controller_next_turn"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the printed action-prohibition capability leaves the entire instruction residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.next_turn_action_prohibition",
+      "implementation_components": [
+        "quorune.compiler.detain_templates.fixed_direct_action_prohibition_template",
+        "quorune.rules.detain.direct_action_prohibition_node_capabilities",
+        "quorune.rules.detain.resolve_direct_action_prohibition",
+        "quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect",
+        "quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions",
+        "quorune.rules.detain.is_closed_permanent_action_prohibition_program"
+      ],
+      "implementation_mutation_rationale": "Removing the exact printed grammar leaves the source instruction residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_edifice_uses_brick_threshold_and_restricts_own_creature"
+      ],
+      "multiplayer_tests": [
+        "test_original_edifice_uses_brick_threshold_and_restricts_own_creature"
+      ],
+      "negative_tests": [
+        "test_printed_next_turn_prohibition_requires_its_exact_shape",
+        "test_original_edifice_uses_brick_threshold_and_restricts_own_creature"
+      ],
+      "official_rules": [
+        "506.4a",
+        "508.1c",
+        "509.1b",
+        "602.5",
+        "611.2a",
+        "800.4m"
+      ],
+      "positive_tests": [
+        "test_printed_next_turn_prohibition_requires_its_exact_shape",
+        "test_original_edifice_uses_brick_threshold_and_restricts_own_creature"
+      ],
+      "privacy_tests": [
+        "test_original_edifice_uses_brick_threshold_and_restricts_own_creature"
+      ],
+      "replay_tests": [
+        "test_original_edifice_uses_brick_threshold_and_restricts_own_creature"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
         "replay"
       ],
       "status": "trusted",
@@ -81539,7 +81623,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 757,
+  "registry_version": 758,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

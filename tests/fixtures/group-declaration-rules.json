@@ -650,6 +650,192 @@
       "released_at": "2026-06-26",
       "toughness": null,
       "type_line": "Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Edifice of Authority",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "oracle_text": "{1}, {T}: Target creature can't attack this turn. Put a brick counter on this artifact.\n{1}, {T}: Until your next turn, target creature can't attack or block and its activated abilities can't be activated. Activate only if there are three or more brick counters on this artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Llanowar Elves",
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": "1",
+      "type_line": "Creature — Elf Druid"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Voltaic Key",
+      "oracle_id": "09aeea91-b1dc-443f-a509-4758f052c0a7",
+      "oracle_text": "{1}, {T}: Untap target artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2010-07-16",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Detain"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}",
+      "name": "New Prahv Guildmage",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "oracle_text": "{W}{U}: Target creature gains flying until end of turn.\n{3}{W}{U}: Detain target nonland permanent an opponent controls. (Until your next turn, that permanent can't attack or block and its activated abilities can't be activated.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "2",
+      "type_line": "Creature — Human Wizard"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -867,6 +1053,60 @@
     {
       "comment": "If a noncreature permanent is detained and later turns into a creature, it won’t be able to attack or block.",
       "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Edifice of Authority can’t be used to undo an attack or block once it has been declared. Its abilities must be activated no later than the beginning of combat step to stop a creature from attacking, and no later than the declare attackers step to stop a creature from blocking.",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a player has announced that they are activating the ability of a creature, Edifice of Authority can’t be used to undo it. Its last ability must be activated before the player activates that creature’s ability. The player may respond to Edifice of Authority’s ability with the target creature’s ability if able.",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities contain a colon. They’re generally written “[Cost]: [Effect].” Some keyword abilities are activated abilities and will have colons in their reminder text. Triggered abilities (starting with “when,” “whenever,” or “at”) are unaffected by the last ability of Edifice of Authority. Notably, exerting a creature isn’t an activated ability.",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature is already attacking or blocking when it’s detained, it won’t be removed from combat. It will continue to attack or block.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player leaves a multiplayer game, any continuous effects with durations that last until that player’s next turn or until a specific point in that turn will last until that turn would have begun. They neither expire immediately nor last indefinitely.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a noncreature permanent is detained and later turns into a creature, it won’t be able to attack or block.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The static abilities of a detained permanent still apply. The triggered abilities of a detained permanent can still trigger.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities include a colon and are written in the form “[cost]: [effect].” No one can activate any activated abilities, including mana abilities, of a detained permanent.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent’s activated ability is on the stack when that permanent is detained, the ability will be unaffected.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
       "published_at": "2013-04-15",
       "source": "wotc"
     }

@@ -12,7 +12,7 @@ from ..continuous_effect_model import ContinuousEffectError
 from ..continuous_effect_state import resolution_effect_source
 from ..effect_contracts import effect_family_contract
 from ..errors import GameRuleError
-from ..rules.detain import DETAIN_OPERATION, resolve_detain
+from ..rules.detain import DETAIN_OPERATION, DIRECT_PROHIBITION_OPERATION, resolve_detain, resolve_direct_action_prohibition
 from ..rules.temporary_declaration_restrictions import (
     commit_temporary_declaration_restriction,
     TemporaryDeclarationRestrictionError,
@@ -29,9 +29,10 @@ def _apply_require_blocking_this_combat(host,effect,*,actor,operation,reason):
     except (TypeError,ValueError) as exc:raise GameRuleError(str(exc)) from exc
 
 
-def _apply_detain(host, effect, *, actor, operation, reason):
+def _apply_locked_action_prohibition(host, effect, *, actor, operation, reason):
+    resolve = resolve_detain if operation == DETAIN_OPERATION else resolve_direct_action_prohibition
     try:
-        return resolve_detain(host, effect, actor=actor, reason=reason)
+        return resolve(host, effect, actor=actor, reason=reason)
     except (TypeError, ValueError) as exc:
         raise GameRuleError(str(exc)) from exc
 
@@ -149,7 +150,8 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
 
 
 HANDLERS = {
-    DETAIN_OPERATION: _apply_detain,
+    DETAIN_OPERATION: _apply_locked_action_prohibition,
+    DIRECT_PROHIBITION_OPERATION: _apply_locked_action_prohibition,
     'require_blocking_this_combat':_apply_require_blocking_this_combat,
     "grant_declaration_restriction_until_end_of_turn": (
         _apply_grant_declaration_restriction_until_end_of_turn

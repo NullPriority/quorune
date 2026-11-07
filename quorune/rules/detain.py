@@ -1,17 +1,22 @@
 from __future__ import annotations
 
-"""Closed Detain instructions and their locked continuous-effect owner."""
+"""Detain and printed action prohibitions sharing one locked rule."""
 
 from typing import Any, Mapping
 
 from ..mana_value_limit import ManaValueLimitSpec
-from ..replacement.immutable import thaw_value
+from ..replacement.immutable import FrozenMap, thaw_value
 
 
 DETAIN_OPERATION = "detain_permanents"
 DETAIN_CAPABILITY = "continuous.resolution.detain"
-DETAIN_RULES = ("506.4a", "508.1c", "509.1b", "602.5", "611.2a", "701.35a", "800.4m")
-DETAIN_HANDLER_ID = f"effect.declaration.{DETAIN_OPERATION}.v1"
+DIRECT_PROHIBITION_OPERATION = "restrict_permanent_actions_until_next_turn"
+DIRECT_PROHIBITION_CAPABILITY = "continuous.resolution.next_turn_action_prohibition"
+DIRECT_PROHIBITION_RULES = ("506.4a", "508.1c", "509.1b", "602.5", "611.2a", "800.4m")
+DETAIN_RULES = (*DIRECT_PROHIBITION_RULES, "701.35a")
+DIRECT_PROHIBITION_TARGET = FrozenMap({
+    "zones": ["battlefield"], "categories": ["permanent"], "count": 1, "types_any": ["creature"],
+})
 
 
 def detain_target_schema(*, creatures_only: bool, up_to_two: bool) -> dict[str, Any]:
@@ -64,6 +69,33 @@ def detain_node_capabilities(*, effects, target_schema, mechanic_ids):
     return (DETAIN_CAPABILITY, "target.revalidate_resolution") if thaw_value(target_schema) in schemas else ()
 
 
+def validate_direct_action_prohibition(effect: Mapping[str, Any], *, resolved: bool = False) -> None:
+    if not isinstance(effect, Mapping) or effect.get("op") != DIRECT_PROHIBITION_OPERATION:
+        raise ValueError("Action prohibition requires its closed instruction")
+    fields = set(effect) - ({"reason", "_runtime_source"} if resolved else set())
+    if (fields != {"op", "schema_version", "card"}
+            or type(effect["schema_version"]) is not int or effect["schema_version"] != 1
+            or type(effect["card"]) is not str or not effect["card"]
+            or not resolved and effect["card"] != "$target.0"):
+        raise ValueError("Action prohibition requires its version-one target slot")
+
+
+def direct_action_prohibition_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if len(effects) != 1 or not isinstance(target_schema, Mapping) or FrozenMap(target_schema) != DIRECT_PROHIBITION_TARGET:
+        return ()
+    try:
+        validate_direct_action_prohibition(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return (DIRECT_PROHIBITION_CAPABILITY, "target.revalidate_resolution")
+
+
+def is_closed_permanent_action_prohibition_program(program):
+    inputs = dict(effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage)
+    required = detain_node_capabilities(**inputs) or direct_action_prohibition_node_capabilities(**inputs)
+    return bool(required) and set(required) <= set(program.capability_dependencies)
+
+
 def _nonland_opponents_at_most(host, *, actor, maximum_mana_value):
     from ..affected_permanents import AffectedPermanentSetSpec, PermanentControllerRelation, select_affected_permanents
     from ..object_predicate import ObjectQuerySpec
@@ -81,26 +113,40 @@ def _nonland_opponents_at_most(host, *, actor, maximum_mana_value):
     return tuple(row.ref for row in rows if limit.permits(row.mana_value))
 
 
-def resolve_detain(host, effect, *, actor, reason):
+def _commit_locked_prohibition(host, effect, cards, *, actor, reason, event):
     from ..continuous_effect_state import create_resolution_declaration_rule_effect, resolution_effect_source
     from ..declaration_rule_effects import ATTACK_BLOCK_PROHIBITION
 
-    validate_detain_instruction(effect, resolved=True)
-    refs = (tuple(effect["cards"]) if "cards" in effect else
-            _nonland_opponents_at_most(host, actor=actor, maximum_mana_value=effect["maximum_mana_value"]))
-    if not refs:
+    if not cards:
         return []
-    cards = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in refs)
-    if any(card.phased_out or card.controller == actor for card in cards):
-        raise ValueError("Detain requires current phased-in opposing permanents")
+    if any(card.phased_out for card in cards):
+        raise ValueError("Action prohibitions require phased-in permanents")
     committed = create_resolution_declaration_rule_effect(
         host, source=resolution_effect_source(host, effect, fallback_card=cards[0]),
         targets=cards, restriction=ATTACK_BLOCK_PROHIBITION,
         expires_on_next_turn_of=actor, forbid_activations=True,
     )
     if committed is None:
-        raise ValueError("Detain requires the continuous-effect journal")
-    host._log(actor, "permanent.detained", reason,
-              {"objects": list(refs), "continuous_effect": committed.effect_id, "expires_on_next_turn_of": actor},
+        raise ValueError("Action prohibitions require the continuous-effect journal")
+    refs = [card.ref for card in cards]
+    host._log(actor, event, reason,
+              {"objects": refs, "continuous_effect": committed.effect_id, "expires_on_next_turn_of": actor},
               importance=1, changed_objects=[card.object_id for card in cards])
-    return list(refs)
+    return refs
+
+
+def resolve_detain(host, effect, *, actor, reason):
+    validate_detain_instruction(effect, resolved=True)
+    refs = (tuple(effect["cards"]) if "cards" in effect else
+            _nonland_opponents_at_most(host, actor=actor, maximum_mana_value=effect["maximum_mana_value"]))
+    cards = tuple(host._resolve_object(actor, ref, zones={"battlefield"}) for ref in refs)
+    if any(card.controller == actor for card in cards):
+        raise ValueError("Detain requires current opposing permanents")
+    return _commit_locked_prohibition(host, effect, cards, actor=actor, reason=reason, event="permanent.detained")
+
+
+def resolve_direct_action_prohibition(host, effect, *, actor, reason):
+    validate_direct_action_prohibition(effect, resolved=True)
+    card = host._resolve_object(actor, effect["card"], zones={"battlefield"})
+    return _commit_locked_prohibition(host, effect, (card,), actor=actor, reason=reason,
+                                      event="permanent.actions_restricted")

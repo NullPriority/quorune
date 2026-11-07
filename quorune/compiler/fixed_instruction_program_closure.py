@@ -16,6 +16,7 @@ from ..rules.incubate_capability_shapes import is_closed_incubate_program
 from ..rules.discover_capability_shapes import is_closed_discover_program
 from ..rules.variable_library_selection_shapes import is_closed_variable_library_selection_program
 from ..rules.reveal_until_library_selection_shapes import is_closed_reveal_until_library_selection_program
+from ..rules.detain import is_closed_permanent_action_prohibition_program
 
 
 def is_closed_fixed_instruction_program(program):
@@ -25,6 +26,7 @@ def is_closed_fixed_instruction_program(program):
         is_closed_fixed_endure_program,
         is_closed_fixed_blight_program,
         is_closed_discover_program,
+        is_closed_permanent_action_prohibition_program,
         is_closed_variable_library_selection_program,
         is_closed_reveal_until_library_selection_program,
         is_closed_fixed_extra_turn_program, is_closed_fixed_connive_program, is_closed_fixed_goad_program,

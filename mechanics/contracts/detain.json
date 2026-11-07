@@ -29,11 +29,12 @@
     "zone_change": ["a new incarnation falls outside the locked set"],
     "source_leaves": ["the resolved rule uses its recorded deadline independently of source presence"]
   },
-  "variants": ["single target", "up to two targets", "fixed mana-bounded untargeted set", "controller departure expiry", "command replay"],
+  "variants": ["single target", "activated target", "up to two targets", "fixed mana-bounded untargeted set", "controller departure expiry", "command replay"],
   "witness_cards": [
     {"name": "Lyev Skyknight", "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536"},
     {"name": "Azorius Justiciar", "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90"},
-    {"name": "Lavinia of the Tenth", "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd"}
+    {"name": "Lavinia of the Tenth", "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd"},
+    {"name": "New Prahv Guildmage", "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f"}
   ],
   "rulings": [
     "The pinned Wizards rulings apply the restriction to mana abilities and keep an already declared attacker or blocker in combat.",
@@ -43,7 +44,8 @@
     "test_detain_grammar_and_authority",
     "test_detain_journal_rejects_mixed_scope_and_preserves_old_wire",
     "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
-    "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+    "test_original_detain_groups_lock_opponents_and_share_combat_legality",
+    "test_original_guildmage_offers_and_resolves_detain"
   ],
   "implementation": {"component": "fixed Detain compiler, resolution declaration-rule journal, shared activation and combat legality, and TurnStepOwner", "version": "detain-v1"},
   "known_blockers": ["additional recipient grammar and the independent Tax Collector tax mode remain outside the fixed slice"],

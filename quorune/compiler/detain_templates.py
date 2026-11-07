@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-"""Fixed target and mana-bounded Detain clauses."""
+"""Fixed Detain and printed next-turn action prohibitions."""
 
 import re
 
-from ..rules.detain import DETAIN_OPERATION, detain_target_schema
+from ..replacement.immutable import thaw_value
+from ..rules.detain import (
+    DETAIN_OPERATION, DIRECT_PROHIBITION_OPERATION, DIRECT_PROHIBITION_TARGET, detain_target_schema,
+)
 
 
 _DETAIN_TARGET = re.compile(
@@ -14,6 +17,11 @@ _DETAIN_TARGET = re.compile(
 )
 _DETAIN_SET = re.compile(
     r"Detain each nonland permanent your opponents control with mana value (?P<maximum>0|[1-9][0-9]{0,2}) or less\.?",
+    re.IGNORECASE,
+)
+_DIRECT_PROHIBITION = re.compile(
+    r"Until your next turn, target creature can['’]t attack or block "
+    r"and its activated abilities can['’]t be activated\.?",
     re.IGNORECASE,
 )
 
@@ -32,3 +40,11 @@ def fixed_detain_effect_template(text: str):
         return ("fixed-detain-opponents-set-v1", ({"op": DETAIN_OPERATION, "schema_version": 1,
                 "maximum_mana_value": int(selection["maximum"])},), None, ())
     return None
+
+
+def fixed_direct_action_prohibition_template(text: str):
+    if not _DIRECT_PROHIBITION.fullmatch(text.strip()):
+        return None
+    return ("fixed-next-turn-action-prohibition-v1",
+            ({"op": DIRECT_PROHIBITION_OPERATION, "schema_version": 1, "card": "$target.0"},),
+            thaw_value(DIRECT_PROHIBITION_TARGET), ("cr-115-targets",))

@@ -9,6 +9,10 @@ def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str
         from ..rules.detain import DETAIN_CAPABILITY, validate_detain_instruction
         validate_detain_instruction(value)
         return (DETAIN_CAPABILITY,)
+    if value.get("op") == "restrict_permanent_actions_until_next_turn":
+        from ..rules.detain import DIRECT_PROHIBITION_CAPABILITY, validate_direct_action_prohibition
+        validate_direct_action_prohibition(value)
+        return (DIRECT_PROHIBITION_CAPABILITY,)
     if value.get("op") == "schedule_turn_skip":
         from ..turn_skip_model import TURN_SKIP_CAPABILITY, decode_turn_skip_instruction
         decode_turn_skip_instruction(value)
