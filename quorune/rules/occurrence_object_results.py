@@ -83,6 +83,12 @@ def occurrence_object_runtime_dependencies(program):
     controller=any(isinstance(e.get(field),Mapping) and e[field].get('kind')=='occurrence_controller_information'
         for e in program.effects for field in ('target','player'))
     if controller:
+        if program.event == 'creature.blocks':
+            from .event_player_result_shapes import blocking_controller_runtime_dependencies
+            required = blocking_controller_runtime_dependencies(program)
+            if not required:
+                raise ValueError('Blocking controller information requires one closed untargeted result')
+            return required
         from ..received_damage_model import RECEIVED_DAMAGE_EVENTS
         from ..target_controller_information import OCCURRENCE_CONTROLLER_ENTRY_EVENTS
         if program.event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS:

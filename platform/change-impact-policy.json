@@ -11804,6 +11804,21 @@
       ]
     },
     {
+      "id": "blocking-controller-results",
+      "patterns": [
+        "quorune/compiler/event_player_results.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/rules/event_player_result_shapes.py",
+        "quorune/rules/occurrence_object_results.py",
+        "quorune/target_controller_information.py",
+        "tests/fixtures/blocking-controller-results-cards.json"
+      ],
+      "test_modules": [
+        "test_block_transitions",
+        "test_event_player_fixed_damage"
+      ]
+    },
+    {
       "id": "post-declaration-unblocked-attacker-events",
       "patterns": [
         "quorune/unblocked_attacker_model.py",

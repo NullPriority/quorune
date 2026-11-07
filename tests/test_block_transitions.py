@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import replace
+from pathlib import Path
+import tempfile
 from types import SimpleNamespace
 import unittest
 
+from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import (
     CombatKeywordTriggerKind,
     CombatKeywordTriggerSpec,
@@ -18,12 +23,17 @@ from quorune.block_transitions import (
     derive_block_keyword_trigger_occurrences,
     resolve_block_keyword_trigger,
 )
+from quorune.carddb import CardDatabase
 from quorune.combat_relationship_state import (
     BlockDeclarationAssignment,
     CombatRelationshipStateError,
     commit_block_declaration,
 )
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.model import CombatState
+from quorune.record import authoritative_state_hash
+from quorune.rules.capabilities import load_default_capability_registry
+from scripts.build_test_database import build_fixture_database
 
 
 def _spec(
@@ -592,6 +602,137 @@ class BlockTransitionCommitAndResolutionTests(unittest.TestCase):
         self.assertTrue(applied)
         operation = host.state.continuous_effects[0].operations[0]
         self.assertEqual([-1, -1], list(operation.value))
+
+
+class BlockingControllerNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'blocking-controller.sqlite3'
+        build_fixture_database([
+            ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+            ROOT / 'tests/fixtures/blocking-controller-results-cards.json',
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Blocking controller', [
+            DeckEntry('Isamaru, Hound of Konda', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30),
+        ], ['Isamaru, Hound of Konda'])
+
+    def declare_wall_blocks(self, session, wall, attackers):
+        self.attack(session, [(attacker, 'B') for attacker in attackers])
+        self.until(session, lambda s: s.state.pending_decision.kind == 'combat.blockers')
+        assigned = [attacker.ref for attacker in attackers]
+        command = {'action_id': 'block', 'blocks': {wall.ref: assigned}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:C', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:B', command)
+        self.assertTrue(result.ok, result.summary)
+
+    def add_control_response(self, session):
+        theft = self.add(session.engine, 'Turn Against', seat='C', zone='hand')
+        for i in range(4):
+            self.add(session.engine, 'Generic Bound Plains', seat='C', ref=f'control-plains-{i}')
+        self.add(session.engine, 'Mountain', seat='C')
+        return theft
+
+    def test_blocking_results_trigger_once_per_creature_and_use_current_controller(self):
+        session = self.session(50977601)
+        strain = self.add(session.engine, 'Battle Strain')
+        gladiator = self.add(session.engine, 'Carnage Gladiator', seat='D')
+        wall = self.add(session.engine, 'Wall of Glare', seat='B')
+        attackers = [self.add(session.engine, 'Grizzly Bears', ref=f'blocking-attacker-{i}') for i in range(2)]
+        for card in attackers:
+            card.acquired_control_turn_count = -1
+        salve = self.add(session.engine, 'Healing Salve', seat='B', zone='hand')
+        self.add(session.engine, 'Generic Bound Plains', seat='B')
+        theft = self.add_control_response(session)
+        for source in (strain, gladiator, wall):
+            self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.declare_wall_blocks(session, wall, attackers)
+        self.assertEqual([strain.object_id, gladiator.object_id], [item.source_object_id for item in session.state.stack])
+        self.assertTrue(all(not item.targets for item in session.state.stack))
+        self.cast_for(session, 'C', theft, [wall.ref])
+        self.resolve_top(session)
+        self.assertEqual('C', session.state.cards[wall.object_id].controller)
+        self.priority(session, 'B')
+        offered = self.action(session, 'B', salve)
+        result = session.act('pilot:B', {
+            'action_id': offered['id'], 'modes': ['mode_2'], 'targets': ['C'], 'pay': 'auto',
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        after_life_loss = {**life, 'C': life['C'] - 1}
+        self.assertEqual(after_life_loss, {seat: player.life for seat, player in session.state.players.items()})
+        self.resolve_top(session)
+        self.assertEqual(after_life_loss, {seat: player.life for seat, player in session.state.players.items()})
+        self.replay(session, load=True)
+
+    def test_blocking_damage_keeps_the_departure_controller_after_blink(self):
+        session = self.session(50977602)
+        heat = self.add(session.engine, 'Heat of Battle')
+        wall = self.add(session.engine, 'Wall of Glare', seat='B')
+        attacker = self.add(session.engine, 'Grizzly Bears')
+        attacker.acquired_control_turn_count = -1
+        theft = self.add_control_response(session)
+        blink = self.add(session.engine, 'Planar Incision', seat='D', zone='hand')
+        for i in range(2):
+            self.add(session.engine, 'Island', seat='D', ref=f'blink-island-{i}')
+        self.assert_closed(session, heat)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.declare_wall_blocks(session, wall, [attacker])
+        trigger, = session.state.stack
+        self.assertEqual(heat.object_id, trigger.source_object_id)
+        identity = wall.logical_object_id
+        self.cast_for(session, 'C', theft, [wall.ref])
+        self.resolve_top(session)
+        self.assertEqual('C', session.state.cards[wall.object_id].controller)
+        self.cast_for(session, 'D', blink, [wall.ref])
+        self.resolve_top(session)
+        current = session.state.cards[wall.object_id]
+        self.assertNotEqual(identity, current.logical_object_id)
+        self.assertEqual('B', current.controller)
+        self.assertEqual([trigger.ref], [item.ref for item in session.state.stack])
+        session = self.replay(session, load=True)
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        self.resolve_top(session)
+        self.assertEqual({**life, 'C': life['C'] - 1}, {seat: p.life for seat, p in session.state.players.items()})
+        self.replay(session, load=True)
+
+    def test_blocking_controller_requires_the_event_and_runtime_authority(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import register_generated_programs
+        from quorune.semantics import SemanticRegistry
+        from quorune.target_controller_information import TARGET_CONTROLLER_INFORMATION_CAPABILITY
+
+        records = tuple(self.db.lookup(name, fuzzy=False) for name in ('Battle Strain', 'Carnage Gladiator'))
+        semantics = SemanticRegistry()
+        profile = 'commander_review'
+        register_generated_programs(self.db, semantics, records, capability_registry=self.registry,
+                                    capability_profile=profile, promote_exact_trigger_programs=True)
+
+        def bind(program):
+            return bind_semantic_program_runtime(program, capability_registry=self.registry, profile=profile)
+
+        for record in records:
+            with self.subTest(card=record.name):
+                program = next(p for p in semantics.programs_for_oracle(record.oracle_id) if p.event == 'creature.blocks')
+                self.assertEqual('trusted', program.trust_level)
+                self.assertTrue(bind(program)['strict'])
+                removed = TARGET_CONTROLLER_INFORMATION_CAPABILITY
+                dependencies = tuple(cap for cap in program.capability_dependencies if cap != removed)
+                altered = replace(program, coverage=(), capability_dependencies=dependencies,
+                                  capability_closure=self.registry.closure(dependencies, profile=profile).to_dict())
+                self.assertIn(f'capability:undeclared_runtime_dependency:{removed}', bind(altered)['blockers'])
+                self.assertFalse(bind(replace(program, event='creature.becomes_blocked'))['strict'])
 
 
 if __name__ == "__main__":

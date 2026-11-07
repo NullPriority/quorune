@@ -2608,6 +2608,11 @@ read its controller at resolution, using its departure information if it has
 left the battlefield. An attached trigger matches the Aura's enchanted
 creature when damage occurs. The reflected damage still comes from the source
 of the trigger, including when the Aura and creature have both left.
+An unrestricted blocking trigger can deal fixed damage or cause fixed life
+loss to the original blocker's controller. Each blocker supplies one
+occurrence even when it blocks several attackers. The result uses the
+controller at resolution or the captured controller when that incarnation
+left the battlefield.
 `resolution.event_player.fixed_damage` requires the existing player-result and
 damage owners. Unrepresented amounts and ambiguous subject/event pairs remain
 residual. Runtime inference checks the instruction independently of its

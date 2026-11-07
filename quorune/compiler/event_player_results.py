@@ -37,9 +37,9 @@ def _event_player(binding,subject):
 def _occurrence_player(event,condition,variant,subject):
     if subject=='you':return '$controller'
     if subject.replace('\u2019', "'")=="that creature's controller":
-        # CR 608.2h: an object-controller read is not an occurrence player.
-        # Death supplies that departed incarnation's LKI; other events would
-        # require a current/LKI object reference absent from this closed family.
+        # CR 608.2h uses current information while the original blocker remains.
+        if event == 'creature.blocks' and variant == 'a_creature_blocks' and condition is None:
+            return occurrence_controller_reference()
         return '$context.previous_controller' if event=='creature.dies' else None
     if subject=='defending player':
         if event=='creature.attacks' and (variant=='source_attacks' or variant.startswith('public_attack_')):player='$context.defending_player'
@@ -129,10 +129,13 @@ def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
     if match is None:return None
     received = (match['kind'] is not None and match['kind'].casefold() == 'creature'
                 and is_creature_receiving_event(binding.event.value, binding.event_condition))
-    player = occurrence_controller_reference() if received else (
-        _zone_damage_controller(binding, match['kind'].casefold())
-        if match['kind'] is not None else _event_player(binding, match['subject'].casefold())
-    )
+    kind = match['kind'].casefold() if match['kind'] is not None else None
+    if received:
+        player = occurrence_controller_reference()
+    elif kind is None or kind == 'creature' and binding.event.value == 'creature.blocks':
+        player = _event_player(binding, match['subject'].casefold())
+    else:
+        player = _zone_damage_controller(binding, kind)
     if player is None:return None
     normalized = match['prefix'] + 'you.'
     if received:
@@ -146,6 +149,7 @@ def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
+            or binding.event.value == 'creature.blocks' and type(effect.get('amount')) is not int
             or effect.get('target')!='$controller' or event_result_value_capabilities(
                 'damage', 'amount', effect.get('amount'), committed_damage=received) is None):return None
     return ('fixed-event-player-damage-v1',({**effect,'target':player},),None,

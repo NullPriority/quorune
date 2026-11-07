@@ -34,6 +34,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "source_or_controlled_creature_or_artifact_dies",
         "this_creature_becomes_blocked_by_creature",
         "a_creature_you_control_becomes_blocked",
+        "a_creature_blocks",
         "the end step",
         "each combat",
     }
