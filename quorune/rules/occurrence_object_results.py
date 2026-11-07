@@ -29,6 +29,10 @@ def _permanent_occurrence_subscriptions(program):
 
 
 def occurrence_object_runtime_dependencies(program):
+    from .combat_removal_shapes import combat_removal_runtime_dependencies
+    combat_removal = combat_removal_runtime_dependencies(program)
+    if combat_removal:
+        return combat_removal
     from .damage_permanent_recipients import damage_permanent_runtime_dependencies
     damaged=damage_permanent_runtime_dependencies(program)
     if damaged:return damaged

@@ -1955,6 +1955,20 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/combat_removal.py",
+      "layer": "rules",
+      "owning_subsystem": "combat_damage",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/commander.py",
       "layer": "rules",
       "owning_subsystem": "commander_variant",
@@ -3314,6 +3328,21 @@
     },
     {
       "file": "quorune/compiler/combat_metadata_templates.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
+      "file": "quorune/compiler/combat_removal_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
       "allowed_dependency_layers": [
@@ -16114,6 +16143,20 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/rules/combat_removal_shapes.py",
+      "layer": "rules",
+      "owning_subsystem": "rules_capabilities",
+      "allowed_dependency_layers": [
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/rules/commander_learn_shapes.py",
       "layer": "rules",
       "owning_subsystem": "rules_capabilities",
@@ -21418,6 +21461,21 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/semantic_runtime/combat_removal_handler.py",
+      "layer": "semantics",
+      "owning_subsystem": "semantic_runtime",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "authoritative"
+    },
+    {
       "file": "quorune/semantic_runtime/command_object_execution.py",
       "layer": "semantics",
       "owning_subsystem": "semantic_runtime",
@@ -25609,5 +25667,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "07a5e434679246816680f47b109fb4feedaff1373869f0b51581bd0fd9d47517"
+  "fingerprint": "41b56dacbb43daaa7f2f63786855f103bd4095bd3413fe478e8e574b50db6188"
 }

@@ -762,6 +762,14 @@ Validated pairs sort by attacker and blocker identity before commit. Client
 mapping order therefore cannot change the authoritative blocker list or saved
 command replay.
 
+Printed removal selects a legal attacking or blocking creature through the
+ordinary target owner, or retains the original attacker from a becoming-blocked
+occurrence. Both routes commit through the combat relationship owner. Removing
+the last blocker leaves its attacker blocked. When the instruction also untaps,
+the normal untap owner applies the printed order and any stun replacement.
+Attacking creatures remain available to this effect until they leave combat,
+including during end of combat after damage.
+
 Ordinary Banding declares optional disjoint groups of current attacking
 incarnations through `rules/banding.py`. Every group attacks the same player,
 planeswalker, or battle and contains at least one creature with Banding and at

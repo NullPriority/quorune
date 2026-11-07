@@ -396,6 +396,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/combat_damage_trample.py",
         "quorune/combat_damage_values.py",
         "quorune/combat_relationship_state.py",
+        "quorune/combat_removal.py",
         "quorune/combat_entry_activations.py",
         "quorune/combat_constraints.py",
         "quorune/combat_evasion.py",
@@ -1065,6 +1066,7 @@ def _owner(relative: str, layer: str) -> str:
         return "damage"
     if relative.startswith("quorune/combat_damage_") or relative in {
         "quorune/combat_relationship_state.py",
+        "quorune/combat_removal.py",
     }:
         return "combat_damage"
     if relative in {
@@ -1263,6 +1265,7 @@ def build_classifications() -> dict[str, Any]:
                             "commander.py",
                             "combat_damage_",
                             "combat_relationship_state.py",
+                            "combat_removal.py",
                             "combat_entry_activations.py",
                             "damage.py",
                             "damage_modifier_state.py",

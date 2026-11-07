@@ -27,6 +27,11 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
         binding,text,card_name=card_name,effect_template=effect_template,_allow_payment=_allow_payment,
         source_counter_variants=source_counter_variants,_allow_optional=_allow_optional))
     if defending_target is not None:return defending_target
+    if _allow_optional:
+        from .combat_removal_templates import optional_blocked_combat_removal_template
+        combat_removal = optional_blocked_combat_removal_template(binding, body)
+        if combat_removal is not None:
+            return combat_removal, True
     return _binding_result_template(binding,body,card_name=card_name,effect_template=effect_template,
         _allow_payment=_allow_payment,source_counter_variants=source_counter_variants,_allow_optional=_allow_optional)
 

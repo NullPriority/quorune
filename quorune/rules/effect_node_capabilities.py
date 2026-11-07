@@ -11,6 +11,7 @@ from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
+from .combat_removal_shapes import combat_removal_node_capabilities
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
 from .endure_shapes import fixed_endure_node_capabilities
@@ -125,6 +126,7 @@ def effect_node_capabilities(
         fixed_stack_spell_copy_node_capabilities,
         fixed_extra_turn_node_capabilities,
         scheduled_turn_skip_node_capabilities,
+        combat_removal_node_capabilities,
         ascend_spell_node_capabilities,
         public_event_counter_set_node_capabilities,
         unchosen_hand_discard_node_capabilities,

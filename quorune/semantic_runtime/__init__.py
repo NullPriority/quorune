@@ -405,6 +405,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
     from .revealed_library_top import RevealEachLibraryTopHandler
     from .scheduled_turn_skip import ScheduledTurnSkipHandler
     from .suspect_handler import SuspectHandler
+    from .combat_removal_handler import CombatRemovalHandler
     registry = SemanticHandlerRegistry(
         (
             CreateCompiledEmblemHandler(),
@@ -412,6 +413,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             RevealEachLibraryTopHandler(),
             ScheduledTurnSkipHandler(),
             SuspectHandler(),
+            CombatRemovalHandler(),
             *EARTHBEND_HANDLERS,
             *GENERIC_HANDLERS,
             FixedLibraryShuffleHandler(),

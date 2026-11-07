@@ -6,6 +6,7 @@ from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
+from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
@@ -1602,6 +1603,7 @@ SemanticIntent: TypeAlias = (
     | FinishEarthbendIntent
     | ReturnEarthbentObjectsIntent
     | SuspectIntent
+    | CombatRemovalIntent
     | ProhibitLibrarySearchIntent
     | AscendIntent
 )

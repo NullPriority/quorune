@@ -208,16 +208,18 @@
       "status": "blocked",
       "assertion_kind": "unsupported_fail_closed",
       "reviewed": true,
-      "implementation_components": ["CommanderEngine._remove_object_from_combat", "CommanderEngine._remove_invalid_combat_objects", "CommanderEngine.change_control", "CommanderEngine._reset_zone_change", "quorune.destruction.commit_destruction_plan"],
+      "implementation_components": ["CommanderEngine._remove_object_from_combat", "CommanderEngine._remove_invalid_combat_objects", "CommanderEngine.change_control", "CommanderEngine._reset_zone_change", "quorune.combat_removal.execute_combat_removal", "quorune.destruction.commit_destruction_plan"],
       "executable_test_ids": [
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_labyrinth_keeps_the_attacker_blocked_and_hollowhenge_removes_the_other_attacker",
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_reconnaissance_removes_then_untaps_after_damage_in_end_of_combat",
         "tests.test_combat_phase_rules.CombatPhaseRuleTests.test_zone_and_control_changes_remove_objects_from_combat",
         "tests.test_combat_phase_rules.CombatPhaseRuleTests.test_phasing_and_type_loss_remove_combatants_during_stabilization",
         "tests.test_regeneration_rules.RegenerationRuntimeTests.test_regeneration_taps_clears_damage_and_removes_from_combat"
       ],
       "required_scenarios": ["positive", "negative", "interaction", "multiplayer"],
-      "covered_scenarios": ["positive", "negative", "interaction"],
-      "blockers": ["explicit_removal_attacked_object_and_hybrid_type_cases_incomplete", "protector_change_removal_for_attacked_battles_not_implemented"],
-      "notes": ["Zone/control changes, stabilization for phasing or type loss, and regeneration remove represented combatants. The current snapshot additionally removes an attacked Battle when its protector changes; that path, attacked-object state, explicit effect removal, and hybrid type cases remain blocked."]
+      "covered_scenarios": ["positive", "negative", "interaction", "multiplayer"],
+      "blockers": ["attacked_object_and_hybrid_type_cases_incomplete", "protector_change_removal_for_attacked_battles_not_implemented"],
+      "notes": ["Zone and control changes, stabilization for phasing or type loss, regeneration, and printed creature-removal effects remove represented combatants. Attacked-object removal, Battle protector changes, and hybrid type cases remain incomplete."]
     },
     {
       "rule_id": "506.4a",

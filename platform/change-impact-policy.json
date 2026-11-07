@@ -3741,6 +3741,24 @@
       ]
     },
     {
+      "id": "printed-combat-removal",
+      "patterns": [
+        "quorune/combat_removal.py",
+        "quorune/combat_relationship_state.py",
+        "quorune/compiler/activated_mana_nodes.py",
+        "quorune/compiler/combat_removal_templates.py",
+        "quorune/event_counter_reference.py",
+        "quorune/rules/combat_removal_shapes.py",
+        "quorune/semantic_runtime/combat_removal_handler.py",
+        "tests/fixtures/combat-removal-cards.json"
+      ],
+      "test_modules": [
+        "test_block_transitions",
+        "test_card_program_trust",
+        "test_combat_phase_rules"
+      ]
+    },
+    {
       "browser_focuses": [
         "combat"
       ],

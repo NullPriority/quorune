@@ -3,15 +3,22 @@ from __future__ import annotations
 import json
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
+from unittest.mock import patch
 
-from common import keep_all, load_assets, make_session
+from common import ROOT, keep_all, load_assets, make_session
 from declaration_support import compiled_declaration_fragments
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.ability_fragments import ability_fragment_to_dict
 from quorune.aura import SimpleEnchantSpec
+from quorune.carddb import CardDatabase
+from quorune.deck import DeckDefinition, DeckEntry
 from quorune.engine import GameRuleError, TURN_STEPS
 from quorune.model import CombatState, DecisionGroup
-from quorune.record import checkpoint_envelope, replay_record
+from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
+from quorune.rules.capabilities import load_default_capability_registry
+from scripts.build_test_database import build_fixture_database
 
 
 class CombatPhaseRuleTests(unittest.TestCase):
@@ -383,6 +390,195 @@ class CombatPhaseRuleTests(unittest.TestCase):
         self.assertFalse(engine._remove_invalid_combat_objects())
         self.assertEqual("B", attacker.attacking)
         self.assertIn(attacker.object_id, engine.state.combat.attackers)
+
+
+class PrintedCombatRemovalTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / 'printed-combat-removal.sqlite3'
+        build_fixture_database([ROOT / 'tests/fixtures/bound-effect-program-cards.json',
+                                ROOT / 'tests/fixtures/combat-removal-cards.json'], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition('Printed combat removal', [DeckEntry('Isamaru, Hound of Konda', 1, 'commander'),
+            DeckEntry('Generic Bound Plains', 30)], ['Isamaru, Hound of Konda'])
+
+    def declare_blocks(self, session, assignments):
+        self.until(session, lambda s: s.state.pending_decision.kind == 'combat.blockers')
+        command = {'action_id': 'block', 'blocks': {blocker.ref: attacker.ref for blocker, attacker in assignments}}
+        result = session.act('pilot:B', command)
+        self.assertTrue(result.ok, result.summary)
+
+    def activation(self, session, seat, source):
+        self.priority(session, seat)
+        legal = session.packet('pilot:' + seat, full=True)['decision']['legal_actions']
+        return next(action for action in legal if action['id'].startswith(f'activate:{source.ref}:')
+                    and 'target_schema' in action)
+
+    def test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules(self):
+        session = self.session(50677501)
+        runner = self.add(session.engine, 'Gustcloak Runner')
+        blockers = [self.add(session.engine, 'Grizzly Bears', seat='B', ref=f'runner-blocker-{i}') for i in range(2)]
+        runner.acquired_control_turn_count = -1
+        runner.counters['stun'] = 1
+        self.assert_closed(session, runner)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(runner, 'B')])
+        self.declare_blocks(session, [(blocker, runner) for blocker in blockers])
+        self.assertEqual(1, self.trigger_count(session, runner))
+        self.assertEqual('semantic.choice', self.resolve(session).kind)
+        self.assertEqual(['pilot:A'], session.pending_principals())
+        self.assertIsNone(session.packet('pilot:B', full=True)['decision'])
+        for choice in ('decline', 'apply'):
+            with self.subTest(choice=choice):
+                branch = self.replay(session, load=True)
+                command = {'action_id': 'choose', 'choice': choice}
+                before = authoritative_state_hash(branch.state)
+                self.assertFalse(branch.act('pilot:B', command).ok)
+                self.assertEqual(before, authoritative_state_hash(branch.state))
+                applied = branch.act('pilot:A', command)
+                self.assertTrue(applied.ok, applied.summary)
+                current = branch.state.cards[runner.object_id]
+                self.assertTrue(current.tapped)
+                self.assertEqual(int(choice == 'decline'), current.counters.get('stun', 0))
+                self.assertEqual(choice == 'decline', runner.object_id in branch.state.combat.attackers)
+                for blocker in blockers:
+                    self.assertEqual(runner.object_id, branch.state.cards[blocker.object_id].blocking)
+                self.replay(branch, load=True)
+
+    def test_actual_gustcloak_savior_does_not_untap_the_returned_attacker(self):
+        session = self.session(50677502)
+        savior = self.add(session.engine, 'Gustcloak Savior')
+        attacker = self.add(session.engine, 'Grizzly Bears', ref='savior-attacker')
+        blocker = self.add(session.engine, 'Grizzly Bears', seat='B', ref='savior-blocker')
+        self.add(session.engine, 'Imposing Sovereign', seat='B')
+        blink = self.add(session.engine, 'Planar Incision', seat='C', zone='hand')
+        for i in range(2):
+            self.add(session.engine, 'Island', seat='C', ref=f'savior-island-{i}')
+        attacker.acquired_control_turn_count = -1
+        self.assert_closed(session, savior)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(attacker, 'B')])
+        self.declare_blocks(session, [(blocker, attacker)])
+        trigger, = session.state.stack
+        self.assertEqual(savior.object_id, trigger.source_object_id)
+        self.assertEqual(attacker.logical_object_id, trigger.context['event_counter_recipient']['logical_object_id'])
+        identity = attacker.logical_object_id
+        self.cast_for(session, 'C', blink, [attacker.ref])
+        self.resolve_top(session)
+        returned = session.state.cards[attacker.object_id]
+        self.assertNotEqual(identity, returned.logical_object_id)
+        self.assertTrue(returned.tapped)
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertTrue(session.state.cards[attacker.object_id].tapped)
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_actual_labyrinth_keeps_the_attacker_blocked_and_hollowhenge_removes_the_other_attacker(self):
+        session = self.session(50677503)
+        attackers = [self.add(session.engine, 'Grizzly Bears', ref=f'combat-attacker-{i}') for i in range(2)]
+        blocker = self.add(session.engine, 'Grizzly Bears', seat='B')
+        idle = self.add(session.engine, 'Imposing Sovereign', seat='B')
+        labyrinth = self.add(session.engine, 'Labyrinth of Skophos', seat='B')
+        spirit = self.add(session.engine, 'Hollowhenge Spirit', seat='C', zone='hand')
+        for seat in 'BC':
+            for i in range(4):
+                self.add(session.engine, 'Generic Bound Plains', seat=seat, ref=f'combat-payment-{seat}-{i}')
+        for attacker in attackers:
+            attacker.acquired_control_turn_count = -1
+        for source in (labyrinth, spirit):
+            self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        first, second = attackers
+        self.attack(session, [(attacker, 'B') for attacker in attackers])
+        self.declare_blocks(session, [(blocker, first)])
+        action = self.activation(session, 'B', labyrinth)
+        self.assertEqual({first.ref, second.ref, blocker.ref}, set(action['target_schema']['legal_refs']))
+        command = {'action_id': action['id'], 'targets': [blocker.ref], 'pay': 'auto'}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:B', {**command, 'targets': [idle.ref]}).ok)
+        self.assertFalse(session.act('pilot:D', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:B', command)
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        self.assertIn(first.object_id, session.state.combat.attackers)
+        self.assertEqual([], session.state.combat.blockers[first.object_id])
+        self.assertIsNone(session.state.cards[blocker.object_id].blocking)
+
+        self.cast_for(session, 'C', spirit)
+        self.resolve_top(session)
+        self.target(session, 'C', [second.ref])
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertTrue(session.state.cards[second.object_id].tapped)
+        self.assertNotIn(second.object_id, session.state.combat.attackers)
+        life = session.state.players['B'].life
+        self.until(session, lambda s: s.state.step == 'end_combat')
+        self.assertEqual(life, session.state.players['B'].life)
+        self.replay(session, load=True)
+
+    def test_actual_reconnaissance_removes_then_untaps_after_damage_in_end_of_combat(self):
+        session = self.session(50677504)
+        source = self.add(session.engine, 'Reconnaissance')
+        attacker = self.add(session.engine, 'Grizzly Bears', ref='reconnaissance-attacker')
+        self.add(session.engine, 'Grizzly Bears', seat='B', ref='reconnaissance-blocker')
+        attacker.acquired_control_turn_count = -1
+        self.assert_closed(session, source)
+        self.prepare(session)
+        self.checkpoint(session)
+        life = session.state.players['B'].life
+        self.attack(session, [(attacker, 'B')])
+        self.declare_blocks(session, [])
+        self.until(session, lambda s: s.state.step == 'end_combat')
+        self.assertEqual(life - 2, session.state.players['B'].life)
+        self.assertTrue(session.state.cards[attacker.object_id].tapped)
+        action = self.activation(session, 'A', source)
+        self.assertEqual([attacker.ref], action['target_schema']['legal_refs'])
+        accepted = session.act('pilot:A', {'action_id': action['id'], 'targets': [attacker.ref], 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+        after = session.state.event_sequence
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertNotIn(attacker.object_id, session.state.combat.attackers)
+        self.assertFalse(session.state.cards[attacker.object_id].tapped)
+        self.assertEqual(life - 2, session.state.players['B'].life)
+        events = [event.code for event in session.state.events if event.event_id > after
+                  and event.details.get('object') == attacker.ref]
+        self.assertEqual(['combat.remove', 'permanent.untap'], [code for code in events
+                         if code in {'combat.remove', 'permanent.untap'}])
+        self.replay(session, load=True)
+
+    def test_combat_removal_requires_the_exact_announcement_and_runtime_authority(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.combat_removal import COMBAT_REMOVAL_CAPABILITY
+        from quorune.oracle_ir import compile_oracle_card, register_generated_programs
+        from quorune.semantics import SemanticRegistry
+
+        source = self.db.lookup('Reconnaissance', fuzzy=False)
+        profile = 'commander_review'
+        self.assertEqual('exact', compile_oracle_card(source, capability_registry=self.registry,
+                                                     capability_profile=profile).status)
+        with patch('quorune.compiler.combat_removal_templates.combat_removal_effect_template', return_value=None):
+            self.assertNotEqual('exact', compile_oracle_card(source, capability_registry=self.registry,
+                                                            capability_profile=profile).status)
+        semantics = SemanticRegistry()
+        register_generated_programs(self.db, semantics, (source,), capability_registry=self.registry,
+            capability_profile=profile, promote_exact_effect_programs=True)
+        program = next(program for program in semantics.programs_for_oracle(source.oracle_id) if program.event == 'activate')
+        self.assertEqual('trusted', program.trust_level)
+        dependencies = tuple(cap for cap in program.capability_dependencies if cap != COMBAT_REMOVAL_CAPABILITY)
+        altered = replace(program, capability_dependencies=dependencies, coverage=(),
+            capability_closure=self.registry.closure(dependencies, profile=profile).to_dict())
+        binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile=profile)
+        self.assertIn('capability:undeclared_runtime_dependency:' + COMBAT_REMOVAL_CAPABILITY, binding['blockers'])
+        malformed = replace(program, target_schema={**program.target_schema, 'combat_state': 'blocking'})
+        self.assertFalse(bind_semantic_program_runtime(malformed, capability_registry=self.registry, profile=profile)['strict'])
 
 
 if __name__ == "__main__":

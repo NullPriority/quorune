@@ -257,6 +257,10 @@ def typed_resolution_effect_template(
     from .graveyard_return_choice_templates import graveyard_return_choice_template
     returned = graveyard_return_choice_template(text)
     if returned is not None:return returned
+    from .combat_removal_templates import combat_removal_effect_template
+    combat_removal = combat_removal_effect_template(text)
+    if combat_removal is not None:
+        return combat_removal
     independent = _source_independent_resolution_template(text)
     if independent is not None:
         return independent

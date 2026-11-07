@@ -22,6 +22,7 @@ from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
+from ..combat_removal import CombatRemovalIntent, execute_combat_removal, unavailable_optional_combat_removal
 from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
@@ -402,6 +403,7 @@ PermanentObjectIntent = (
     | DestroyPermanentTargetsIntent
     | ExilePermanentIntent
     | ExilePublicGraveyardCardIntent
+    | CombatRemovalIntent
     | MovePublicZoneSetIntent
     | ReturnPermanentToOwnerHandIntent
     | ReturnGraveyardCardToOwnerHandIntent
@@ -419,6 +421,7 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     DestroyPermanentTargetsIntent,
     ExilePermanentIntent,
     ExilePublicGraveyardCardIntent,
+    CombatRemovalIntent,
     MovePublicZoneSetIntent,
     ReturnPermanentToOwnerHandIntent,
     ReturnGraveyardCardToOwnerHandIntent,
@@ -429,6 +432,8 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, CombatRemovalIntent):
+        return intent.object_ref, execute_combat_removal(sink, intent)
     if isinstance(intent,SelectMutateMergeIntent):
         from ..rules.mutate_resolution import commit_mutate_merge
         return intent.actor,commit_mutate_merge(sink,intent)
@@ -841,6 +846,8 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         return None
 
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
+    if raw_effect.get('op') == 'offer_optional_effect' and unavailable_optional_combat_removal(host, raw_effect, effect):
+        return None
     if raw_effect.get("players") == "$targets":
         if effect.get("players") == []:
             return None

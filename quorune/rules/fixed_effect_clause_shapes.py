@@ -5,6 +5,7 @@ from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .temporary_cast_restrictions import temporary_cast_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
 from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
+from .combat_removal_shapes import combat_removal_node_capabilities
 from .earthbend_shapes import earthbend_node_capabilities
 from .suspect_shapes import suspect_node_capabilities
 from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
@@ -156,6 +157,7 @@ _COMPONENT_RESOLVERS = (
     fixed_prevention_component_capabilities,
     fixed_extra_turn_node_capabilities,
     scheduled_turn_skip_node_capabilities,
+    combat_removal_node_capabilities,
     earthbend_node_capabilities,
     suspect_node_capabilities,
     fixed_resolution_characteristic_capabilities,

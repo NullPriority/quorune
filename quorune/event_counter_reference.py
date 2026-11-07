@@ -48,6 +48,13 @@ def event_counter_recipient_context(program,event,context):
         transition=AttackTransitionEvent.from_dict(context.get('attack_transition'))
         participant=next((p for p in transition.participants if p.reference==reference),None)
         identity=participant.logical_object_id if participant is not None else None
+    elif event == 'creature.becomes_blocked':
+        from .block_transitions import BlockTransitionEvent
+        transition = BlockTransitionEvent.from_dict(context.get('block_transition'))
+        attacker_ids = {row.attacker_object_id for row in transition.assignments}
+        participant = next((p for p in transition.participants if p.reference == reference
+                            and p.object_id in attacker_ids), None)
+        identity = participant.logical_object_id if participant is not None else None
     if type(reference) is not str or not reference or type(identity) is not str or not identity:
         raise ValueError('Counter event recipient has no sealed public incarnation')
     return {EVENT_COUNTER_CONTEXT:{'reference':reference,'logical_object_id':identity}}

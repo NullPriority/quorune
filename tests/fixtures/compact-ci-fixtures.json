@@ -456,6 +456,7 @@
     "tests/fixtures/colorless-nonland-target-cards.json",
     "tests/fixtures/combat-defending-player-cards.json",
     "tests/fixtures/combat-goad-prohibition-cards.json",
+    "tests/fixtures/combat-removal-cards.json",
     "tests/fixtures/combined-tap-activation-costs.json",
     "tests/fixtures/commander-characteristic-grants.json",
     "tests/fixtures/commander-learn-cards.json",

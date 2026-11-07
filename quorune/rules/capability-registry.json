@@ -22200,6 +22200,95 @@
     {
       "applicability": {
         "exclusions": [
+          "changing blocked status",
+          "removing attacked objects",
+          "unrepresented target predicates or arbitrary follow-ups"
+        ],
+        "inputs": [
+          "announced combat creature or exact newly blocked attacker",
+          "closed printed untap order"
+        ],
+        "outputs": [
+          "current combat role removed",
+          "block history and original incarnation preserved",
+          "ordered untap or its replacement"
+        ],
+        "summary": "Remove one original attacking or blocking creature through the canonical relationship owner. A printed ordered untap uses the ordinary untap and replacement owner."
+      },
+      "blockers": [],
+      "dependencies": [
+        "combat.declaration.typed_components"
+      ],
+      "dependency_fail_closed_rationale": "Removing the combat removal dependency or changing the announced combat scope defeats strict runtime admission.",
+      "dependency_fail_closed_status": "passed",
+      "id": "combat.effect.remove_from_combat",
+      "implementation_components": [
+        "quorune.combat_removal.execute_combat_removal",
+        "quorune.combat_relationship_state.remove_combat_relationships",
+        "quorune.compiler.combat_removal_templates.combat_removal_effect_template",
+        "quorune.compiler.combat_removal_templates.optional_blocked_combat_removal_template",
+        "quorune.rules.combat_removal_shapes.combat_removal_runtime_dependencies",
+        "quorune.semantic_runtime.combat_removal_handler.CombatRemovalHandler"
+      ],
+      "implementation_mutation_rationale": "Withdrawing the exact targeted removal compiler leaves the real activated ability unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules",
+        "test_actual_labyrinth_keeps_the_attacker_blocked_and_hollowhenge_removes_the_other_attacker",
+        "test_actual_gustcloak_savior_does_not_untap_the_returned_attacker",
+        "test_actual_reconnaissance_removes_then_untaps_after_damage_in_end_of_combat"
+      ],
+      "multiplayer_tests": [
+        "test_actual_labyrinth_keeps_the_attacker_blocked_and_hollowhenge_removes_the_other_attacker",
+        "test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules"
+      ],
+      "negative_tests": [
+        "test_combat_removal_requires_the_exact_announcement_and_runtime_authority",
+        "test_actual_gustcloak_savior_does_not_untap_the_returned_attacker"
+      ],
+      "official_rules": [
+        "400.7",
+        "506.4",
+        "509.1h",
+        "509.3c",
+        "511.3",
+        "608.2c",
+        "608.2d",
+        "608.2k"
+      ],
+      "positive_tests": [
+        "test_actual_labyrinth_keeps_the_attacker_blocked_and_hollowhenge_removes_the_other_attacker",
+        "test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules",
+        "test_actual_reconnaissance_removes_then_untaps_after_damage_in_end_of_combat"
+      ],
+      "privacy_tests": [
+        "test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules"
+      ],
+      "replay_tests": [
+        "test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules",
+        "test_actual_gustcloak_savior_does_not_untap_the_returned_attacker",
+        "test_actual_labyrinth_keeps_the_attacker_blocked_and_hollowhenge_removes_the_other_attacker",
+        "test_actual_reconnaissance_removes_then_untaps_after_damage_in_end_of_combat"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "variable, hybrid, Phyrexian, snow, nonmana, modified, conditional, repeated, copied, granted, or text-changed forms",
           "team-specific attack destinations and unsupported team formats",
           "alternative-cost combinations outside one selected fixed option",

@@ -8,6 +8,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from ..activation_usage import ActivationLimit
 from ..activation_condition_model import activation_restriction_spec
+from ..combat_removal import COMBAT_REMOVAL_OPERATION
 from ..abilities import (
     ActivatedAbility,
     parse_activated_abilities,
@@ -310,6 +311,7 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    COMBAT_REMOVAL_OPERATION,
     "life_loss_then_gain_actual",
     'discover',
     'exile_until_nonland_then_cast',
