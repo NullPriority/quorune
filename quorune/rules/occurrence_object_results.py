@@ -79,12 +79,13 @@ def occurrence_object_runtime_dependencies(program):
     controller=any(isinstance(e.get(field),Mapping) and e[field].get('kind')=='occurrence_controller_information'
         for e in program.effects for field in ('target','player'))
     if controller:
+        from ..received_damage_model import RECEIVED_DAMAGE_EVENTS
         from ..target_controller_information import OCCURRENCE_CONTROLLER_ENTRY_EVENTS
-        if program.event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS:
+        if program.event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS:
             from .event_player_result_shapes import event_player_damage_runtime_dependencies
             required = event_player_damage_runtime_dependencies(program) if len(program.effects) == 1 else ()
             if not required:
-                raise ValueError('Entry controller information requires one closed untargeted damage result')
+                raise ValueError('Occurrence controller information requires one closed untargeted damage result')
             return required
         if len(program.effects)==1 and program.effects[0].get('op') in {'life','lose_life','mill','damage'}:
             from .tap_state_event_capability_shapes import tap_state_event_player_node_capabilities

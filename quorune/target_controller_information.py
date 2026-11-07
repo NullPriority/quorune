@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
+from .received_damage_model import RECEIVED_DAMAGE_EVENTS
 from .selection.target_query import target_identity_matches_snapshot
 
 TARGET_CONTROLLER_INFORMATION_KIND='target_controller_information'
@@ -136,17 +137,25 @@ def _uses_occurrence_controller(value):
     return False
 
 
-def occurrence_entry_controller_context(host, program, event, context):
-    """Seal the physical identity only for entry triggers that read it."""
-    if event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS or not _uses_occurrence_controller(program.effects):
+def occurrence_controller_context(host, program, event, context):
+    """Seal the original permanent for entry or received-damage controller reads."""
+    if (event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | RECEIVED_DAMAGE_EVENTS
+            or not _uses_occurrence_controller(program.effects)):
         return {}
-    identity = context.get('card_object_identity')
-    object_id = identity.rpartition('@')[0] if type(identity) is str else ''
+    if event in RECEIVED_DAMAGE_EVENTS:
+        if (context.get('target_kind') != 'permanent' or 'creature' not in context.get('target_types', ())
+                or type(context.get('amount')) is not int or context['amount'] <= 0):
+            raise ValueError('Damage controller information requires a committed creature receipt')
+        identity = context.get('target_logical_object_id')
+        object_id = context.get('target_object_id')
+    else:
+        identity = context.get('card_object_identity')
+        object_id = identity.rpartition('@')[0] if type(identity) is str else ''
     card = host.state.cards.get(object_id) if object_id else None
     if (card is None or card.zone != 'battlefield' or card.ref != context.get('card')
             or card.logical_object_id != identity):
-        raise ValueError('Entry controller information requires the original public permanent')
-    return {'card_object_id': object_id}
+        raise ValueError('Occurrence controller information requires the original public permanent')
+    return {'card_object_id': object_id, 'card_object_identity': identity}
 
 
 def _occurrence_identity(item):

@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 RECEIVED_DAMAGE_EVENT = 'damage.received'
 RECEIVED_COMBAT_DAMAGE_EVENT = 'combat.damage.received'
+RECEIVED_DAMAGE_EVENTS = frozenset({RECEIVED_DAMAGE_EVENT, RECEIVED_COMBAT_DAMAGE_EVENT})
 RECEIVED_DAMAGE_CAPABILITY = 'trigger.event.normalized_received_damage'
 RECEIVED_DAMAGE_MECHANIC = 'trigger-event-normalized-received-damage'
 

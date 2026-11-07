@@ -2599,6 +2599,12 @@ For damage to the entering permanent's controller, the trigger retains the
 original public incarnation and uses its controller at resolution or the
 captured departure controller. Graveyard occurrences supply the controller
 from before the move.
+Received-damage results can use the positive amount committed to one creature
+after prevention and replacement. They retain that creature's incarnation and
+read its controller at resolution, using its departure information if it has
+left the battlefield. An attached trigger matches the Aura's enchanted
+creature when damage occurs. The reflected damage still comes from the source
+of the trigger, including when the Aura and creature have both left.
 `resolution.event_player.fixed_damage` requires the existing player-result and
 damage owners. Unrepresented amounts and ambiguous subject/event pairs remain
 residual. Runtime inference checks the instruction independently of its

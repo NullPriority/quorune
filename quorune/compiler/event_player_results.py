@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping
 from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT
+from ..rules.received_damage_events import is_creature_receiving_event
 from ..event_player_result_values import event_result_value_capabilities
 from ..target_controller_information import (
     OCCURRENCE_CONTROLLER_ENTRY_EVENTS, OCCURRENCE_CONTROLLER_GRAVEYARD_EVENTS, occurrence_controller_reference,
@@ -126,15 +127,26 @@ def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
     match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|defending player|that "
                        r"(?P<kind>artifact|creature|enchantment|land|permanent)['’]s controller)\.?",body,re.I)
     if match is None:return None
-    player = (
+    received = (match['kind'] is not None and match['kind'].casefold() == 'creature'
+                and is_creature_receiving_event(binding.event.value, binding.event_condition))
+    player = occurrence_controller_reference() if received else (
         _zone_damage_controller(binding, match['kind'].casefold())
         if match['kind'] is not None else _event_player(binding, match['subject'].casefold())
     )
     if player is None:return None
-    compiled=_bound_result_template(binding,match['prefix']+'you.',effect_template=effect_template,card_name=card_name)
+    normalized = match['prefix'] + 'you.'
+    if received:
+        from .scalar_effect_amounts import scalar_effect_amount_template
+        compiled = scalar_effect_amount_template(normalized, source_name=card_name, event=binding.event.value,
+            compile_fixed=lambda value: effect_template(value, card_name=card_name))
+        if compiled is None:
+            return None
+    else:
+        compiled = _bound_result_template(binding, normalized, effect_template=effect_template, card_name=card_name)
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
-            or effect.get('target')!='$controller' or event_result_value_capabilities('damage','amount',effect.get('amount')) is None):return None
+            or effect.get('target')!='$controller' or event_result_value_capabilities(
+                'damage', 'amount', effect.get('amount'), committed_damage=received) is None):return None
     return ('fixed-event-player-damage-v1',({**effect,'target':player},),None,
         tuple(dict.fromkeys((*compiled[3],EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC)))),False

@@ -10138,9 +10138,13 @@
       "id": "committed-recipient-damage-occurrences",
       "patterns": [
         "quorune/compiler/trigger_runtime_coverage.py",
+        "quorune/compiler/event_player_results.py",
+        "quorune/event_player_result_values.py",
         "quorune/received_damage_model.py",
         "quorune/damage_received_events.py",
+        "quorune/rules/event_player_result_shapes.py",
         "quorune/rules/received_damage_events.py",
+        "quorune/target_controller_information.py",
         "quorune/damage.py",
         "quorune/compiler/fixed_counter_trigger_nodes.py",
         "quorune/compiler/fixed_public_event_trigger_bindings.py",
