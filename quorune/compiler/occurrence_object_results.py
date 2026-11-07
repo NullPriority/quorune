@@ -9,6 +9,23 @@ from .received_damage_bindings import RECEIVED_PERMANENT_VARIANTS
 OCCURRENCE_OBJECT='$event.permanent_object'
 
 
+def entry_permanent_result(binding, body):
+    from ..rules.entry_permanent_results import (
+        ENTRY_ANIMATION_OPERATION, ENTRY_PERMANENT_RESULT_MECHANIC,
+        entry_permanent_result_binding, entry_permanent_result_effect,
+    )
+    from ..saddle import SADDLE_OPERATION
+
+    operation = {
+        "it becomes an artifact creature until end of turn.": ENTRY_ANIMATION_OPERATION,
+        "it becomes saddled until end of turn.": SADDLE_OPERATION,
+    }.get(body.casefold())
+    if operation is None or not entry_permanent_result_binding(binding.event.value, binding.event_condition, operation):
+        return None
+    return ('fixed-entry-permanent-result-v1', (entry_permanent_result_effect(operation),), None,
+        (ENTRY_PERMANENT_RESULT_MECHANIC,)), True
+
+
 def occurrence_object_result(binding,body,*,effect_template,card_name):
     if binding.variant == 'source_block_pair_counterpart':
         moved=re.fullmatch(r"(?P<destroy>Destroy that creature\.)(?P<prohibit> It can['’]t be regenerated\.)?|(?P<bounce>Return that creature to its owner's hand\.)",body,re.I)

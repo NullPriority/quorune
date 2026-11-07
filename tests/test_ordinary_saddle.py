@@ -21,6 +21,10 @@ from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
+from quorune.rules.entry_permanent_results import (
+    ENTRY_ANIMATION_OPERATION, ENTRY_PERMANENT_RESULT_CAPABILITY,
+    entry_permanent_result_runtime_dependencies,
+)
 from quorune.saddle import (
     SADDLE_CAPABILITY, SADDLED_ATTACK_CAPABILITY, SADDLE_OPERATION,
     is_saddled, saddle_activation_runtime_dependencies, saddled_attack_condition,
@@ -32,6 +36,8 @@ from scripts.build_test_database import build_fixture_database
 
 
 ATTACK = "Whenever this creature attacks while saddled, it gets +1/+2 and gains flying until end of turn."
+ENTRY_SADDLE = "Whenever a Mount you control enters, it becomes saddled until end of turn."
+ENTRY_ANIMATION = "Whenever a Vehicle you control enters, it becomes an artifact creature until end of turn."
 
 
 class SaddleCompilerTests(unittest.TestCase):
@@ -107,6 +113,58 @@ class SaddleCompilerTests(unittest.TestCase):
         with patch("quorune.compiler.fixed_public_event_trigger_bindings._public_attack_spec", return_value=None):
             with self.assertRaises(AssertionError):
                 self.test_attacks_while_saddled_binds_declared_self()
+
+    def test_entry_permanent_results_bind_the_closed_occurrence(self):
+        for text, operation in ((ENTRY_SADDLE, SADDLE_OPERATION), (ENTRY_ANIMATION, ENTRY_ANIMATION_OPERATION)):
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual((text, 0, len(text)), (node.text, node.span.start, node.span.end))
+                self.assertIn(ENTRY_PERMANENT_RESULT_CAPABILITY, node.capability_dependencies)
+                self.assertIsNone(node.target_schema)
+                self.assertEqual("$event.entry_object", node.effects[0]["card"])
+                program = SimpleNamespace(event=node.event, active_zone=node.active_zone,
+                    target_schema=node.target_schema, coverage=node.mechanics, effects=node.effects,
+                    event_condition=node.event_condition)
+                self.assertIn(ENTRY_PERMANENT_RESULT_CAPABILITY,
+                    entry_permanent_result_runtime_dependencies(program, operation))
+                original = program.event_condition
+                program.event_condition = original["all"][1]
+                with self.assertRaises(ValueError):
+                    entry_permanent_result_runtime_dependencies(program, operation)
+                program.event_condition = original
+                program.effects = ({**node.effects[0], "card": "$source.zone_object"},)
+                with self.assertRaises(ValueError):
+                    entry_permanent_result_runtime_dependencies(program, operation)
+        for invalid in (ENTRY_SADDLE.replace("a Mount you control", "a creature"),
+                        ENTRY_ANIMATION.replace("it becomes", "you may have it become")):
+            with self.subTest(invalid=invalid):
+                self.assertNotEqual("exact", self.compile(invalid).status)
+
+    def test_entry_permanent_results_require_the_normalized_zone_event(self):
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        owner = next(row for row in raw["capabilities"] if row["id"] == "trigger.event.normalized_zone_change")
+        owner.update(status="blocked", blockers=["withdrawn for the dependency witness"])
+        registry = CapabilityRegistry(raw)
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        index = build_index(registry_value=raw, declaration_source=declarations,
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        for text in (ENTRY_SADDLE, ENTRY_ANIMATION):
+            self.assertNotEqual("exact", self.compile(text, registry=registry).status)
+        self.assertEqual("exact", self.compile("Flying", registry=registry).status)
+
+    def test_entry_permanent_result_lowering_omission_is_killed(self):
+        for text in (ENTRY_SADDLE, ENTRY_ANIMATION):
+            with self.subTest(text=text):
+                self.assertEqual("exact", self.compile(text).status)
+                with patch("quorune.compiler.occurrence_object_results.entry_permanent_result", return_value=None):
+                    self.assertNotEqual("exact", self.compile(text).status)
 
 
 class SaddleNativeTests(unittest.TestCase):
@@ -310,3 +368,77 @@ class SaddleNativeTests(unittest.TestCase):
         self.assertTrue(is_saddled(session.state.cards[mount.object_id]))
         self.assertEqual(1, engine._numeric_stat(token.object_id, "power"))
         self.replay(session, load=True)
+
+    def test_kolodin_entry_results_use_the_entrant_after_the_source_leaves(self):
+        session = self.session(70217105)
+        engine = session.engine
+        kolodin = self.add(engine, "Kolodin, Triumph Caster")
+        mount = self.add(engine, "Brightfield Glider", zone="hand")
+        vehicle = self.add(engine, "Cultivator's Caravan", zone="hand")
+        bounce = self.add(engine, "Unsummon", seat="B", zone="hand")
+        self.assert_closed(session, kolodin)
+        self.prepare(session, mana={"C": 3, "W": 1})
+        session.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(session)
+
+        self.cast(session, "A", mount)
+        self.until(session, lambda game: game.state.cards[mount.object_id].zone == "battlefield")
+        self.assertFalse(is_saddled(session.state.cards[mount.object_id]))
+        self.assertIsNone(self.resolve(session))
+        current_mount = session.state.cards[mount.object_id]
+        self.assertTrue(is_saddled(current_mount))
+        self.assertFalse(current_mount.tapped)
+        self.assertFalse(is_saddled(session.state.cards[kolodin.object_id]))
+
+        self.cast(session, "A", vehicle)
+        self.until(session, lambda game: game.state.cards[vehicle.object_id].zone == "battlefield")
+        current_vehicle = session.state.cards[vehicle.object_id]
+        self.assertEqual({"artifact"}, engine._type_parts(engine._effective_card_data(current_vehicle)["type_line"])[0])
+        self.assertIn("haste", engine._combat_keywords(current_vehicle))
+        pending, = session.state.stack
+        self.assertEqual(current_vehicle.logical_object_id, pending.context["card_object_identity"])
+        spectator = session.packet("pilot:D", full=True)
+        visible, = spectator["state"]["stack"]
+        self.assertEqual((pending.ref, "A"), (visible["id"], visible["ctl"]))
+        self.assertNotIn("targets", visible)
+        self.assertNotIn("card_object_identity", json.dumps(spectator))
+        self.assertNotIn(bounce.ref, json.dumps(spectator))
+        self.cast(session, "B", bounce, [kolodin.ref])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("hand", session.state.cards[kolodin.object_id].zone)
+        current_vehicle = session.state.cards[vehicle.object_id]
+        types, subtypes, _ = engine._type_parts(engine._effective_card_data(current_vehicle)["type_line"])
+        self.assertEqual(({"artifact", "creature"}, {"vehicle"}), (types, subtypes))
+        self.assertNotIn("haste", engine._combat_keywords(current_vehicle))
+        self.replay(session, load=True)
+
+    def test_fleetwheel_entry_animation_expires_or_skips_the_departed_vehicle(self):
+        for removed in (False, True):
+            with self.subTest(removed=removed):
+                session = self.session(70217106 + removed)
+                engine = session.engine
+                vehicle = self.add(engine, "Fleetwheel Cruiser", zone="hand")
+                removal = self.add(engine, "Disenchant", seat="B", zone="hand")
+                self.assert_closed(session, vehicle)
+                self.prepare(session, mana={"C": 4})
+                session.state.players["B"].mana_pool.update({"C": 1, "W": 1})
+                self.checkpoint(session)
+                self.cast(session, "A", vehicle)
+                self.until(session, lambda game: game.state.cards[vehicle.object_id].zone == "battlefield")
+                current = session.state.cards[vehicle.object_id]
+                self.assertEqual({"artifact"}, engine._type_parts(engine._effective_card_data(current)["type_line"])[0])
+                if removed:
+                    self.cast(session, "B", removal, [vehicle.ref])
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual("graveyard", session.state.cards[vehicle.object_id].zone)
+                else:
+                    self.assertIsNone(self.resolve(session))
+                    current = session.state.cards[vehicle.object_id]
+                    types, subtypes, _ = engine._type_parts(engine._effective_card_data(current)["type_line"])
+                    self.assertEqual(({"artifact", "creature"}, {"vehicle"}), (types, subtypes))
+                    self.assertEqual((5, 3), tuple(engine._numeric_stat(current.object_id, stat)
+                        for stat in ("power", "toughness")))
+                    self.until(session, lambda game: game.state.active_player == "B" and game.state.step == "upkeep")
+                    current = session.state.cards[vehicle.object_id]
+                    self.assertEqual({"artifact"}, engine._type_parts(engine._effective_card_data(current)["type_line"])[0])
+                self.replay(session, load=True)

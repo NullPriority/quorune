@@ -3,10 +3,10 @@ from __future__ import annotations
 """Whole fixed counter result on one typed entry occurrence."""
 
 import re
+from ..event_counter_reference import EVENT_ENTRY_OBJECT
 
 EVENT_COUNTER_CAPABILITY='counter.producer.fixed_event_object'
 EVENT_COUNTER_MECHANIC='fixed-entry-event-object-counter'
-EVENT_ENTRY_OBJECT='$event.entry_object'
 PUBLIC_SOURCE_COUNTER_CAPABILITY='counter.producer.fixed_public_source_event'
 PUBLIC_SOURCE_COUNTER_MECHANIC='fixed-public-event-source-counter'
 PUBLIC_TARGET_COUNTER_MECHANIC='fixed-public-event-target-counter'

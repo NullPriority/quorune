@@ -9591,6 +9591,24 @@
       ]
     },
     {
+      "id": "fixed-entry-permanent-results",
+      "patterns": [
+        "quorune/event_counter_reference.py",
+        "quorune/rules/entry_permanent_results.py",
+        "quorune/compiler/occurrence_object_results.py",
+        "quorune/compiler/trigger_result_templates.py",
+        "quorune/saddle.py",
+        "tests/test_ordinary_saddle.py",
+        "tests/fixtures/ordinary-saddle-cards.json"
+      ],
+      "test_modules": [
+        "test_ordinary_saddle",
+        "test_ordinary_crew",
+        "test_fixed_counter_event_triggers",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "enchanted-player-static-scope",
       "patterns": [
         "quorune/enchanted_player_model.py",

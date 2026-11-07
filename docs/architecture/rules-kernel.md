@@ -1637,6 +1637,11 @@ that designation. A self-attack trigger with the while-saddled qualifier
 matches the fact sealed at declaration, so a later zone change preserves the
 trigger on the stack.
 
+Fixed entry triggers can saddle the entering Mount or animate the entering
+Vehicle through cleanup. Both results bind to the entrant's sealed
+incarnation. A later departure of the trigger's source leaves that binding
+available while the entrant is still present.
+
 Mandatory fixed nonmana casting costs use source-spanned typed descriptors.
 The counter-placement and single-object zone-change families share the ordinary
 cast proposal and commit boundary, but retain distinct mutation owners. The

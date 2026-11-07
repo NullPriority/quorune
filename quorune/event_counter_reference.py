@@ -7,6 +7,7 @@ from .damage_recipient_model import (DAMAGE_PERMANENT_OBJECT,DAMAGE_PERMANENT_CO
     uses_damaged_permanent,capture_damaged_permanent)
 
 EVENT_COUNTER_OBJECT='$event.counter_object'
+EVENT_ENTRY_OBJECT='$event.entry_object'
 EVENT_COUNTER_CONTEXT='event_counter_recipient'
 BLOCK_COUNTERPART_OBJECT = '$event.block_counterpart'
 BLOCK_COUNTERPART_CONTEXT = 'block_counterpart_recipient'
@@ -81,8 +82,8 @@ def resolve_sealed_event_object_value(host, item, value):
         return True,_resolve_public_incarnation(host,item.context.get(DAMAGE_PERMANENT_CONTEXT))
     if value == BLOCK_COUNTERPART_OBJECT:
         return True, resolve_block_counterpart_recipient(host, item)
-    if value in {'$event.entry_object', EVENT_COUNTER_OBJECT, '$event.permanent_object'}:
-        resolver = resolve_entry_event_counter_recipient if value == '$event.entry_object' else resolve_event_counter_recipient
+    if value in {EVENT_ENTRY_OBJECT, EVENT_COUNTER_OBJECT, '$event.permanent_object'}:
+        resolver = resolve_entry_event_counter_recipient if value == EVENT_ENTRY_OBJECT else resolve_event_counter_recipient
         return True, resolver(host, item)
     return False, None
 

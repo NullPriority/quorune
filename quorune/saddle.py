@@ -39,7 +39,7 @@ def is_saddled(card: Any) -> bool:
 def apply_saddle_effect(
     host: Any, effect: Mapping[str, Any], *, actor: str, operation: str, reason: str,
 ) -> str | None:
-    """Apply one already bound source-incarnation result."""
+    """Apply the result to its already bound battlefield incarnation."""
     ref = effect.get("card")
     if operation != SADDLE_OPERATION or type(ref) is not str or not ref:
         raise GameRuleError("Saddle requires a bound battlefield source")
@@ -70,6 +70,11 @@ def saddle_activation_runtime_dependencies(program: Any) -> tuple[str, ...]:
         and "saddle_threshold" in handler["ability"] for handler in program.handlers)
     if not described and SADDLE_OPERATION not in nested_effect_operations(program.effects):
         return ()
+    if not described and program.event == "permanent.enter":
+        from .rules.entry_permanent_results import entry_permanent_result_runtime_dependencies
+        required = entry_permanent_result_runtime_dependencies(program, SADDLE_OPERATION)
+        if required:
+            return required
     abilities = activated_abilities_from_descriptors(program.handlers)
     if (program.event != "activate" or program.active_zone != "battlefield" or len(abilities) != 1
         or abilities[0].saddle_threshold is None

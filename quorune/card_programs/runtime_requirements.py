@@ -96,6 +96,7 @@ def _event_query_runtime_requirements(program):
     from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies
     from ..rules.qualified_attacks import qualified_attack_runtime_dependencies
     from ..saddle import saddle_activation_runtime_dependencies, saddled_attack_runtime_dependencies
+    from ..rules.entry_permanent_results import entry_animation_runtime_dependencies
     from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
     from ..rules.block_characteristics import qualified_block_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
@@ -188,6 +189,7 @@ def _event_query_runtime_requirements(program):
         (qualified_spell_ordinal_dependencies,program.event_condition,'qualified_spell_ordinal'),
         (qualified_attack_runtime_dependencies,program,'qualified_attack'),
         (saddle_activation_runtime_dependencies,program,'saddle_activation'),
+        (entry_animation_runtime_dependencies,program,'entry_animation'),
         (saddled_attack_runtime_dependencies,program,'saddled_attack'),
         (unblocked_attacker_runtime_dependencies,program,'unblocked_attacker'),
         (qualified_block_runtime_dependencies,program,'qualified_block'),

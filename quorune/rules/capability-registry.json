@@ -59407,6 +59407,87 @@
     {
       "applicability": {
         "exclusions": [
+          "entry replacement effects",
+          "other entry recipients",
+          "variable or optional type changes"
+        ],
+        "inputs": [
+          "sealed public battlefield entry and exact incarnation",
+          "one self Vehicle or fixed controlled Mount or Vehicle subject"
+        ],
+        "outputs": [
+          "the appropriate turn-duration result on the entrant",
+          "a skipped result after the entrant leaves"
+        ],
+        "summary": "One fixed entry trigger applies the typed Saddle designation or additive artifact-creature change to the same entering permanent through cleanup."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_zone_change"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the normalized zone event leaves both entry instructions residual while a flying control still compiles.",
+      "dependency_fail_closed_status": "passed",
+      "id": "resolution.event_object.fixed_entry_permanent_result",
+      "implementation_components": [
+        "quorune.compiler.occurrence_object_results.entry_permanent_result",
+        "quorune.rules.entry_permanent_results.entry_permanent_result_runtime_dependencies",
+        "quorune.event_counter_reference.resolve_entry_event_counter_recipient",
+        "quorune.saddle.apply_saddle_effect",
+        "quorune.effect_runtime.objects_stack_and_tokens._apply_add_types_until_end_of_turn"
+      ],
+      "implementation_mutation_rationale": "Removing the entry result compiler producer fails the exact source-spanned occurrence witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_kolodin_entry_results_use_the_entrant_after_the_source_leaves",
+        "test_fleetwheel_entry_animation_expires_or_skips_the_departed_vehicle"
+      ],
+      "multiplayer_tests": [
+        "test_kolodin_entry_results_use_the_entrant_after_the_source_leaves"
+      ],
+      "negative_tests": [
+        "test_entry_permanent_results_bind_the_closed_occurrence",
+        "test_entry_permanent_results_require_the_normalized_zone_event",
+        "test_fleetwheel_entry_animation_expires_or_skips_the_departed_vehicle"
+      ],
+      "official_rules": [
+        "205.1b",
+        "400.7",
+        "514.2",
+        "603.6a",
+        "611.2c",
+        "702.171b"
+      ],
+      "positive_tests": [
+        "test_entry_permanent_results_bind_the_closed_occurrence",
+        "test_kolodin_entry_results_use_the_entrant_after_the_source_leaves",
+        "test_fleetwheel_entry_animation_expires_or_skips_the_departed_vehicle"
+      ],
+      "privacy_tests": [
+        "test_kolodin_entry_results_use_the_entrant_after_the_source_leaves"
+      ],
+      "replay_tests": [
+        "test_kolodin_entry_results_use_the_entrant_after_the_source_leaves",
+        "test_fleetwheel_entry_animation_expires_or_skips_the_departed_vehicle"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "other events and aggregate occurrences",
           "new-object or ambiguous antecedents",
           "unrepresented result siblings",

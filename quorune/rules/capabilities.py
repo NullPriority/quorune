@@ -75,6 +75,10 @@ from .affected_player_discard_capability_shapes import (
     fixed_context_player_discard_node_capabilities,
 )
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
+from .entry_permanent_results import (
+    ENTRY_PERMANENT_RESULT_CAPABILITY,
+    ENTRY_PERMANENT_RESULT_MECHANIC,
+)
 from .node_capability_shapes import (
     FIXED_SOURCE_CHARACTERISTIC_CAPABILITY,
     FIXED_SOURCE_CHARACTERISTIC_MECHANIC,
@@ -335,6 +339,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'fixed-stack-spell-copy': ('stack.copy.fixed_instant_or_sorcery', 'target.revalidate_resolution'),
     'cast-event-spell-copy': ('stack.copy.cast_event_spell',),
     'fixed-public-event-set-counter':('counter.producer.fixed_public_set_event',),
+    ENTRY_PERMANENT_RESULT_MECHANIC: (ENTRY_PERMANENT_RESULT_CAPABILITY,),
     'ascend':('player.designation.citys_blessing',),
     **{name: ('keyword_action.manifest.card',) for name in ('manifest', 'cr-701-manifest')}, 'manifest dread': ('keyword_action.manifest_dread',), 'predefined-role-token': ('token.creation.predefined_role',),
     CLASS_MECHANIC_ID: (CLASS_LIFECYCLE_CAPABILITY_ID,),
@@ -571,6 +576,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-spree-mode-costs',
         'fixed-entwine-mode-costs',
         'fixed-public-event-set-counter',
+        ENTRY_PERMANENT_RESULT_MECHANIC,
         'ascend',
         "fixed-extra-turn-after-current",
         *FIXED_RULE_ACTION_CAPABILITIES,

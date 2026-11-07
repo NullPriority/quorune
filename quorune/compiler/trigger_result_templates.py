@@ -16,6 +16,11 @@ def binding_effect_template(binding, body: str, *, card_name: str, effect_templa
     exile_cast = damage_player_qualified_exile_cast(binding, body)
     if exile_cast is not None:
         return exile_cast, False
+    if _allow_payment and _allow_optional and body == binding.body:
+        from .occurrence_object_results import entry_permanent_result
+        entry = entry_permanent_result(binding, body)
+        if entry is not None:
+            return entry
     if _allow_payment:
         from .source_sacrifice_payments import normalized_source_sacrifice_payment_text
         body=normalized_source_sacrifice_payment_text(binding,body,card_name=card_name)
