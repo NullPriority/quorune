@@ -62,6 +62,7 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'unblocked_attacker_event_version':state.unblocked_attacker_event_version} if getattr(state,'unblocked_attacker_event_version',None) is not None else {}),
         **({'permanent_event_state_version':state.permanent_event_state_version} if getattr(state,'permanent_event_state_version',None) is not None else {}),
         **({'battle_cry_resolution_version':state.battle_cry_resolution_version} if getattr(state,'battle_cry_resolution_version',None) is not None else {}),
+        **({'ninjutsu_band_retention_version':state.ninjutsu_band_retention_version} if getattr(state,'ninjutsu_band_retention_version',None) is not None else {}),
     }
 
 
@@ -160,10 +161,15 @@ def validate_state_versions(
     from .unblocked_attacker_model import unblocked_attacker_event_version
     from .permanent_event_state_model import permanent_event_state_version
     from .battle_cry_resolution_model import battle_cry_resolution_version
+    from .banding_model import ninjutsu_band_retention_version
     battle_cry=format_value.get('battle_cry_resolution_version',0)
     if (type(battle_cry) is not int or battle_cry not in {0,1}
             or battle_cry!=(battle_cry_resolution_version(getattr(state,'battle_cry_resolution_version',None)) or 0)):
         raise ValueError('Battle Cry resolution provenance does not match the initial checkpoint')
+    ninjutsu_bands = format_value.get('ninjutsu_band_retention_version')
+    if ('ninjutsu_band_retention_version' in format_value and (type(ninjutsu_bands) is not int or ninjutsu_bands != 1)
+        or ninjutsu_bands != ninjutsu_band_retention_version(getattr(state, 'ninjutsu_band_retention_version', None))):
+        raise ValueError('Ninjutsu band retention provenance does not match the initial checkpoint')
     permanent_state=format_value.get('permanent_event_state_version',0)
     if (type(permanent_state) is not int or permanent_state not in {0,1}
             or permanent_state!=(permanent_event_state_version(getattr(state,'permanent_event_state_version',None)) or 0)):

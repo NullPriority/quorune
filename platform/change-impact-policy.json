@@ -1003,6 +1003,22 @@
       ]
     },
     {
+      "id": "ninjutsu-attack-band-retention",
+      "patterns": [
+        "quorune/banding_model.py",
+        "quorune/combat_entry_activations.py",
+        "quorune/combat_relationship_state.py",
+        "quorune/record_state_provenance.py",
+        "tests/fixtures/banding-cards.json",
+        "tests/test_banding.py"
+      ],
+      "test_modules": [
+        "test_banding",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "reviewed-predefined-token-choice-names",
       "patterns": [
         "quorune/semantic_packs/v081-predefined-token-name-corrections.json",

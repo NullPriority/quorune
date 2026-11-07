@@ -45,7 +45,7 @@ from .stack_resolution_authority_model import stack_resolution_authority_version
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
-from .banding_model import normalize_attack_bands
+from .banding_model import ninjutsu_band_retention_version, normalize_attack_bands
 from .counter_placement_event_model import counter_quantity_provenance_version
 
 CONTROL_HISTORY_VERSION = 2
@@ -1106,6 +1106,7 @@ class GameState:
     qualified_attack_facts_version: int | None = 1
     permanent_event_state_version: int | None = 1
     battle_cry_resolution_version: int | None = 1
+    ninjutsu_band_retention_version: int | None = 1
     block_characteristics_version: int | None = 1
     unblocked_attacker_event_version: int | None = 1
     legend_rule_choice_version: int | None = 1
@@ -1166,6 +1167,7 @@ class GameState:
         qualified_attack_facts_version(self.qualified_attack_facts_version)
         permanent_event_state_version(self.permanent_event_state_version)
         battle_cry_resolution_version(self.battle_cry_resolution_version)
+        ninjutsu_bands = ninjutsu_band_retention_version(self.ninjutsu_band_retention_version)
         block_characteristics_version(self.block_characteristics_version)
         unblocked_attacker_event_version(self.unblocked_attacker_event_version)
         if self.tap_state_event_version is not None and (
@@ -1203,6 +1205,7 @@ class GameState:
             **({'qualified_attack_facts_version':self.qualified_attack_facts_version} if self.qualified_attack_facts_version is not None else {}),
             **({'permanent_event_state_version':self.permanent_event_state_version} if self.permanent_event_state_version is not None else {}),
             **({'battle_cry_resolution_version':self.battle_cry_resolution_version} if self.battle_cry_resolution_version is not None else {}),
+            **({'ninjutsu_band_retention_version':ninjutsu_bands} if ninjutsu_bands is not None else {}),
             **({'block_characteristics_version':self.block_characteristics_version} if self.block_characteristics_version is not None else {}),
             **({'unblocked_attacker_event_version':self.unblocked_attacker_event_version} if self.unblocked_attacker_event_version is not None else {}),
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
@@ -1326,6 +1329,7 @@ class GameState:
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
             permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
             battle_cry_resolution_version=battle_cry_resolution_version(data.get('battle_cry_resolution_version')),
+            ninjutsu_band_retention_version=ninjutsu_band_retention_version(data.get('ninjutsu_band_retention_version')),
             block_characteristics_version=block_characteristics_version(data.get('block_characteristics_version')),
             unblocked_attacker_event_version=unblocked_attacker_event_version(data.get('unblocked_attacker_event_version')),
             counter_quantity_provenance_version=counter_quantity_provenance_version(

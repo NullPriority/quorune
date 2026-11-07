@@ -623,6 +623,12 @@ applicable. Loading rejects internal disagreement before replay begins.
 
 ## Replay contract
 
+New records pin `ninjutsu_band_retention_version: 1`. The Ninja joins combat
+as an individual attacker while the current unrelated attack bands retain
+their members. A checkpoint without the marker keeps the recorded Ninjutsu
+behavior and omits the marker on serialization. The manifest and checkpoint
+must agree.
+
 Native records use `command_replay`. Verification loads the exact initial
 checkpoint and pinned semantic identity, then resubmits each accepted command
 through the ordinary permission and rules boundary. It verifies the before hash,

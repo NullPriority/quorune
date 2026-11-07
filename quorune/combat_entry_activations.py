@@ -8,6 +8,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from .abilities import ActivatedAbility, CostChoice
 from .additional_cost_vocabulary import RETURN_ONE_TO_OWNER_HAND_COST
+from .banding_model import ninjutsu_band_retention_version
 from .card_programs.admission import REQUIRES_COMPLETE_CARD_PROGRAM_FIELD
 from .combat_relationship_state import (
     AttackDeclarationAssignment,
@@ -426,6 +427,7 @@ def resolve_ninjutsu_entry(
         host.state.combat,
         host.state.cards,
         controller=intent.actor,
+        preserve_bands=ninjutsu_band_retention_version(getattr(host.state, 'ninjutsu_band_retention_version', None)) == 1,
         assignments=(
             AttackDeclarationAssignment(
                 attacker_object_id=source.object_id,
