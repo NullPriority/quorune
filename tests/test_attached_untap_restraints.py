@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from common import ROOT
 from test_qualified_zone_event_queries import query_record
+import test_granted_static_characteristics as attachment
 import test_type_replacement_grants as native
 import test_ring_native_actions as turns
 from quorune.ability_fragments import ability_fragment_from_dict,ability_fragment_to_dict
@@ -52,6 +53,27 @@ class AttachedUntapRestraintCompilerTests(unittest.TestCase):
                 ABSOLUTE.replace("can't become untapped","can't become untapped this turn"),
                 STEP.replace('loses all abilities','has flying')):
             self.assertNotEqual('exact',compile_oracle_card(query_record(text),capability_registry=registry).status)
+
+    def test_fixed_stat_and_untap_clause_requires_both_owners_and_exact_scope(self):
+        registry = load_default_capability_registry()
+        for relation, type_line in (('Enchanted', 'Enchantment — Aura'), ('Equipped', 'Artifact — Equipment')):
+            with self.subTest(relation=relation):
+                text = f"{relation} creature gets +4/+2 and doesn't untap during its controller's untap step."
+                record = replace(query_record(text), type_line=type_line)
+                ir = compile_oracle_card(record, capability_registry=registry, capability_profile='commander_review')
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual((text, 0, len(text)), (node.text, node.span.start, node.span.end))
+                self.assertLessEqual({CAPABILITY, 'continuous.attached.fixed_characteristics',
+                    'untap.step.static_participation'}, set(node.capability_dependencies))
+                stats, restraint = node.handlers
+                self.assertEqual((4, 2), (stats['modifier']['power'], stats['modifier']['toughness']))
+                self.assertEqual(AttachedUntapRestraintSpec('controller_step', ('creature',)),
+                    ability_fragment_from_dict(restraint['fragment']))
+                changed = replace(record, oracle_text=text.replace("its controller's", "your next"))
+                boundary = compile_oracle_card(changed, capability_registry=registry, capability_profile='commander_review')
+                self.assertNotEqual('exact', boundary.status)
+                self.assertTrue(boundary.material_residuals)
 
     def test_closed_fragment_codec_and_legacy_descriptor_reject_unknown_fields(self):
         from quorune.compiler.untap_step_templates import static_untap_step_handler
@@ -97,6 +119,8 @@ class AttachedUntapRestraintNativeTests(unittest.TestCase):
     replay=native.TypeReplacementGrantNativeTests.replay
     assert_closed=native.TypeReplacementGrantNativeTests.assert_closed
     until=turns.RingNativeActionTests.until
+    equip=attachment.GrantedStaticCharacteristicNativeTests.equip
+    stats=attachment.GrantedStaticCharacteristicNativeTests.stats
 
     @classmethod
     def setUpClass(cls):
@@ -145,6 +169,46 @@ class AttachedUntapRestraintNativeTests(unittest.TestCase):
                 self.assertTrue(session.engine._activated_abilities(session.state.cards[target.object_id]))
                 for seat in 'ABC':self.assertNotIn(private.ref,json.dumps(session.packet('pilot:'+seat,full=True)))
                 self.replay(session,load=True)
+
+    def test_actual_stat_attachments_allow_manual_untap_and_end_when_giver_leaves(self):
+        from quorune.semantic_runtime.untap_steps import current_untap_step_plan
+
+        cases = (('Leaden Fists', 'B', 'A', (4, 4)), ('Vulshok Gauntlets', 'A', 'B', (5, 3)))
+        for index, (name, controller, other, modified) in enumerate(cases):
+            with self.subTest(name=name):
+                session = self.session(205620040 + index)
+                for object_id in session.state.players['A'].zones['hand'][4:]:
+                    session.engine.move_card(object_id, 'library', log=False)
+                source = self.add(session.engine, name, zone='hand')
+                target = self.add(session.engine, 'Llanowar Elves', seat=controller)
+                target.tapped = True
+                untap = self.add(session.engine, 'Twiddle', seat='B', zone='hand')
+                removal = self.add(session.engine, 'Disenchant', zone='hand')
+                self.add(session.engine, 'Island', seat='B')
+                self.add(session.engine, 'Plains')
+                self.add(session.engine, 'Wastes')
+                self.assert_closed(session, source)
+                self.prepare(session, mana={'C': 2, 'U': 1} if controller == 'B' else {'C': 5})
+                self.checkpoint(session)
+                self.cast(session, 'A', source, [target.ref] if controller == 'B' else [])
+                self.assertIsNone(self.resolve(session))
+                if controller == 'A':
+                    self.assertEqual((1, 1), self.stats(session, target))
+                    self.equip(session, source, target)
+                self.assertEqual(modified, self.stats(session, target))
+                self.assertIn(target.object_id, current_untap_step_plan(session.engine, controller).prohibited_object_ids)
+                self.assertNotIn(target.object_id, current_untap_step_plan(session.engine, other).prohibited_object_ids)
+                if controller == 'B':
+                    self.until(session, lambda game: game.state.active_player == 'B' and game.state.step == 'upkeep')
+                self.assertTrue(session.state.cards[target.object_id].tapped)
+                self.twiddle(session, untap, target)
+                self.assertFalse(session.state.cards[target.object_id].tapped)
+                self.assertEqual(modified, self.stats(session, target))
+                self.cast(session, 'A', removal, [source.ref])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual((1, 1), self.stats(session, target))
+                self.assertNotIn(target.object_id, current_untap_step_plan(session.engine, controller).prohibited_object_ids)
+                self.replay(session, load=True)
 
     def test_actual_frozen_blocks_effect_and_physical_step_before_stun_until_source_leaves(self):
         session,aura,target,removal,spells,private=self.fixture(205620020,'Frozen in Ice','Llanowar Elves',3)
