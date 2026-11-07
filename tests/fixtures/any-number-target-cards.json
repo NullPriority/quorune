@@ -1735,6 +1735,55 @@
       "released_at": "2005-07-29",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "oracle_id": "07b222d7-24f2-4994-9004-ff6672ebe161",
+      "name": "Electrolyze",
+      "mana_cost": "{1}{U}{R}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Electrolyze deals 2 damage divided as you choose among one or two targets.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R",
+        "U"
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-11-17",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -2673,6 +2722,24 @@
       "published_at": "2014-11-24",
       "source": "wotc",
       "comment": "If some but not all of Pyrotechnics’s targets become illegal, you can’t change the division of damage. Damage that would have been dealt to illegal targets simply isn’t dealt."
+    },
+    {
+      "oracle_id": "07b222d7-24f2-4994-9004-ff6672ebe161",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "You divide the damage as you cast Electrolyze, not as it resolves. Each target must be assigned at least 1 damage. In other words, as you cast Electrolyze, you choose whether to have it deal 2 damage to a single target, or deal 1 damage to each of two targets."
+    },
+    {
+      "oracle_id": "07b222d7-24f2-4994-9004-ff6672ebe161",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "If all chosen targets are illegal as Electrolyze tries to resolve, it won't resolve and none of its effects will happen. No damage will be dealt and you won't draw a card."
+    },
+    {
+      "oracle_id": "07b222d7-24f2-4994-9004-ff6672ebe161",
+      "published_at": "2017-11-17",
+      "source": "wotc",
+      "comment": "If Electrolyze targets two creatures and one becomes an illegal target, the remaining target is dealt 1 damage, not 2. You'll still draw a card."
     }
   ]
 }

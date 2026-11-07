@@ -123,6 +123,28 @@ class AnnouncedDamageTests(unittest.TestCase):
         self.assertEqual([39, 39, 38, 38], [s.state.players[seat].life for seat in 'ABCD'])
         self.replay(s, load=True)
 
+    def test_actual_electrolyze_keeps_its_draw_when_only_one_target_remains(self):
+        s = self.session(769007)
+        source = self.add(s.engine, 'Electrolyze', zone='hand')
+        bounce = self.add(s.engine, 'Unsummon', seat='B', zone='hand')
+        target = self.add(s.engine, 'Generic Bound Body', seat='B')
+        s.state.players['B'].mana_pool['U'] = 1
+        self.prepare(s, mana={'U': 1, 'R': 1, 'C': 1})
+        self.checkpoint(s)
+        initial_hand = len(s.state.players['A'].zones['hand'])
+        accepted = s.act('pilot:A', {
+            'action_id': self.action(s, source)['id'], 'targets': [target.ref, 'D'],
+            'damage_allocation': {target.ref: 1, 'D': 1}, 'pay': 'auto',
+        })
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.cast(s, 'B', bounce, [target.ref])
+        s = self.replay(s, load=True)
+        self.assertIsNone(self.resolve(s))
+        self.assertEqual('hand', s.state.cards[target.object_id].zone)
+        self.assertEqual(39, s.state.players['D'].life)
+        self.assertEqual(initial_hand, len(s.state.players['A'].zones['hand']))
+        self.replay(s, load=True)
+
     def test_actual_cascade_offers_and_requires_the_same_split_before_free_cast(self):
         s = self.session(769003)
         party = self.add(s.engine, 'Boarding Party', zone='hand')

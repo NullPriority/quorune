@@ -52,14 +52,16 @@ _WITNESSES = {
     "bound-effect-replacement-boundary": _Witness(
         'Generic Bound Effect Replacement Boundary Fixture',
         'Artifact',
-        'Skip your draw step.\n'
+        'As this artifact enters, you may pay any amount of life. '
+        'This artifact enters with that many charge counters on it.\n'
         '{1}: Untap target creature. It gains flying until end of turn.',
         '{2}',
     ),
     "temporary-target-replacement-boundary": _Witness(
         "Generic Temporary Target Replacement Boundary Fixture",
         "Artifact",
-        "Skip your draw step.\n"
+        "As this artifact enters, you may pay any amount of life. "
+        "This artifact enters with that many charge counters on it.\n"
         "{1}: Target creature gains protection from artifacts until end of turn.",
         "{2}",
     ),
@@ -129,8 +131,8 @@ _WITNESSES = {
     "fixed-characteristic-set-regeneration": _Witness(
         "Generic Fixed Characteristic Set Regeneration Boundary Fixture",
         "Sorcery",
-        "Destroy all creatures. They can't be regenerated. Draw a card for "
-        "each creature destroyed this way.\n"
+        "Destroy all creatures with the chosen name. They can't be regenerated. "
+        "Draw a card for each creature destroyed this way.\n"
         "Cycling {3}{B}{B}\n"
         "When you cycle this card, all creatures get -2/-2 until end of turn.",
         "{6}{B}{B}",
@@ -553,10 +555,10 @@ _WITNESSES = {
         ("Madness",),
     ),
     "madness-divided-choice": _Witness(
-        "Generic Madness Divided Choice Fixture",
+        "Generic Madness Derived Damage Boundary Fixture",
         "Instant",
-        "Generic Madness Divided Choice Fixture deals 2 damage divided as you "
-        "choose among one or two targets.\nMadness {B}",
+        "This spell deals X damage divided as you choose among one or two targets, "
+        "where X is the number of cards in your hand as you cast this spell.\nMadness {B}",
         "{2}{B}",
         ("Madness",),
     ),
@@ -593,12 +595,12 @@ _WITNESSES = {
         "{2}{W}{U}",
         ("Addendum",),
     ),
-    "electrolyze": _Witness(
-        "Electrolyze",
+    "variable-divided-damage-draw-boundary": _Witness(
+        "Generic Variable Divided Damage Draw Boundary Fixture",
         "Instant",
-        "Electrolyze deals 2 damage divided as you choose among one or two "
+        "This spell deals X damage divided as you choose among one or two "
         "targets.\nDraw a card.",
-        "{1}{U}{R}",
+        "{X}{U}{R}",
     ),
     "cunning-strike": _Witness(
         "Cunning Strike",
@@ -1619,7 +1621,7 @@ _bind(
 )
 _bind("dauthi-voidwalker", ZONE_AND_CHOICE_PAIRS[0])
 _bind("sphinxs-insight", ZONE_AND_CHOICE_PAIRS[1])
-_bind("electrolyze", ZONE_AND_CHOICE_PAIRS[2], ZONE_AND_CHOICE_PAIRS[4])
+_bind("variable-divided-damage-draw-boundary", ZONE_AND_CHOICE_PAIRS[2], ZONE_AND_CHOICE_PAIRS[4])
 _bind("cunning-strike", ZONE_AND_CHOICE_PAIRS[3])
 _bind("blink-draw-target-predicate", ZONE_AND_CHOICE_PAIRS[5])
 _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])

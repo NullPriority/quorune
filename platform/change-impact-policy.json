@@ -6531,6 +6531,7 @@
         "test_declared_effect_amounts",
         "test_casting_payment_keywords",
         "test_fixed_damage_source_lki",
+        "test_high_risk_interaction_assurance",
         "test_card_program_trust"
       ]
     },
