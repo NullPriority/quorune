@@ -103,7 +103,7 @@ class SourceCounterQuantityNativeTests(InheritedNativeFixture,unittest.TestCase)
         self.cast(s,'A',spells[0],[]);self.assertIsNone(self.resolve(s))
         self.assertEqual(1,s.state.cards[source.object_id].counters['rally'])
         self.cast(s,'A',spells[1],[]);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
-        tokens=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Monk']
+        tokens=[c for c in s.state.cards.values() if c.zone=='battlefield' and c.is_token and c.printed_name=='Monk Token']
         self.assertEqual(2,len(tokens));self.assertEqual(2,s.state.cards[source.object_id].counters['rally'])
         self.priority(s,'A');rows=s.packet('pilot:A',full=True)['decision']['ctx']['legal']['actions']
         mana=next(row for row in rows if row.get('mana_ability') and land.ref in row['id'])

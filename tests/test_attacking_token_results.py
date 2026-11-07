@@ -343,7 +343,7 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         self.until(s, lambda game: game.state.pending_decision is not None
             and game.state.pending_decision.kind == 'semantic.choice')
         s = self.replay(s, load=True); self.choose_destinations(s, ('C', 'D')); self.settle(s)
-        angels = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Angel']
+        angels = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.is_token and c.printed_name == 'Angel Token']
         self.assertEqual(2, len(angels)); self.assertTrue(all(not c.tapped for c in angels))
         self.assertEqual({'C', 'D'}, {c.attacking for c in angels})
         self.assertFalse(s.state.delayed_triggers)

@@ -89,7 +89,7 @@ class NumberOfTokenNativeTests(InheritedNativeFixture,unittest.TestCase):
         before=authoritative_state_hash(s.state);wrong=next(seat for seat in 'ABCD' if 'pilot:'+seat not in s.pending_principals())
         self.assertFalse(s.act('pilot:'+wrong,{'action_id':'pass'}).ok);self.assertEqual(before,authoritative_state_hash(s.state))
         s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
-        self.assertEqual(expected,len(self.tokens(s,'Rabbit')));self.replay(s,load=True)
+        self.assertEqual(expected,len(self.tokens(s,'Rabbit Token')));self.replay(s,load=True)
 
     def test_actual_mouser_death_retains_doubled_counters_before_zone_reset(self):
         s=self.session(608200303)
@@ -107,4 +107,4 @@ class NumberOfTokenNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.cast(s,'B',kill,[source.ref]);self.resolve_top(s)
         self.assertEqual({},s.state.cards[source.object_id].counters)
         s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
-        self.assertEqual(4,len(self.tokens(s,'Robot')));self.replay(s,load=True)
+        self.assertEqual(4,len(self.tokens(s,'Robot Token')));self.replay(s,load=True)

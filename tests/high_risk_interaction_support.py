@@ -933,7 +933,7 @@ _WITNESSES = {
     "resolution-mana-replacement-boundary": _Witness(
         "Generic Resolution Mana Replacement Boundary", "Creature — Human",
         "When this creature enters, add {R}{R}.\n"
-        "When this creature enters, add one mana of any color.\nSkip your draw step.",
+        f"When this creature enters, add one mana of any color.\n{CONDITIONAL_DRAW_STEP_REPLACEMENT}",
         "{3}", power="2", toughness="2",
     ),
 }
