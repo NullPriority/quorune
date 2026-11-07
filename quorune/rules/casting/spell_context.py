@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 from typing import Any
+from ...announced_damage import ANNOUNCED_DAMAGE_CONTEXT
 from ..action_proposals import thaw_json
 from ...evoke import EVOKE_PAYMENT_FIELD
 from ...kicker import KICKER_MECHANIC_ID
@@ -49,6 +50,8 @@ def declared_spell_context(proposal,details,selected_option,costs,*,provenance,l
         method_spec,used_uncounterable,intrinsic_uncounterable,used_improvise):
     return {
         **provenance,
+        **({ANNOUNCED_DAMAGE_CONTEXT: copy.deepcopy(details[ANNOUNCED_DAMAGE_CONTEXT])}
+           if ANNOUNCED_DAMAGE_CONTEXT in details else {}),
         **paid_entry_copy_cast_context(selected_option),
         **multikicker_cast_context(selected_option),
         **replicate_cast_context(selected_option),

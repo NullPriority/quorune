@@ -698,6 +698,7 @@
     "functional-03": [
       "test_ability_word_event_triggers",
       "test_aggregated_zone_event_triggers",
+      "test_announced_damage",
       "test_attached_untap_restraints",
       "test_basic_land_type_mana",
       "test_battlefield_library_selection",

@@ -704,6 +704,13 @@ original spell is still on the stack. Records without runtime-trust metadata
 retain their earlier fallback-lookup behavior. This does not admit an
 unsupported copy-producing card or alter copied casting decisions.
 
+A spell with fixed divided damage records `announced_damage_allocation` in
+its stack context. The version-one value stores the positive `shares` array
+in target slot order, or an empty array for a legal cast with no targets.
+Spell copies preserve the array. Resolution skips the share for each illegal
+target slot. A pending replacement decision retains the surviving recipients,
+their assigned shares, and the damage event identities for resumption.
+
 An event-bound spell-copy trigger stores an optional `event_spell_copy_source`
 version-one context containing the original stack item, logical incarnation,
 copiable characteristics, target schema and departure flag. Live references

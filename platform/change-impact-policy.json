@@ -6512,16 +6512,20 @@
     {
       "id": "compound-public-damage-recipient-union-contract",
       "patterns": [
+        "quorune/announced_damage.py",
+        "quorune/compiler/announced_damage_templates.py",
         "quorune/compiler/damage_templates.py",
         "quorune/fixed_damage_set.py",
         "quorune/fixed_damage_set_model.py",
         "quorune/semantic_runtime/fixed_damage_set_handlers.py",
         "quorune/rules/damage_capability_shapes.py",
         "quorune/object_query.py",
+        "tests/test_announced_damage.py",
         "tests/test_compound_damage_recipients.py",
         "tests/fixtures/compound-damage-recipient-cards.json"
       ],
       "test_modules": [
+        "test_announced_damage",
         "test_compound_damage_recipients",
         "test_fixed_mass_damage",
         "test_declared_effect_amounts",

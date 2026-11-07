@@ -623,6 +623,8 @@ def delegated_choice_fields(
     decision_kind: str,
     context: Mapping[str, Any],
 ) -> set[str]:
+    from .announced_damage import DAMAGE_ALLOCATION_FIELD
+
     form = build_action_form(
         action,
         decision_kind=decision_kind,
@@ -639,6 +641,8 @@ def delegated_choice_fields(
                 result.add(name)
             if field.get("control") == "targets":
                 result.add("modes")
+                if DAMAGE_ALLOCATION_FIELD in (field.get("schema") or {}):
+                    result.add(DAMAGE_ALLOCATION_FIELD)
 
     add_fields(list(form.get("fields") or []))
     variants = form.get("variants")

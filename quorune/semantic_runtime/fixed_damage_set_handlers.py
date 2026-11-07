@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, AllocatedDamageRecipient
 from ..fixed_damage_set_model import (
     FixedDamageSetError,
     FixedDamageSetSpec,
@@ -21,6 +22,7 @@ _FIELDS = frozenset(
         "source",
         "amount",
         "groups",
+        ANNOUNCED_DAMAGE_EFFECT_FIELD,
         _REASON_FIELD,
         "_replacement_selections",
         "_replacement_event_ids",
@@ -76,13 +78,22 @@ class FixedDamageSetHandler:
             raise SemanticNodeError(
                 "Fixed damage-set amount must be a nonnegative integer"
             )
-        try:
-            spec = FixedDamageSetSpec.from_dict(
-                {"groups": effect.get("groups")}
-            )
-        except FixedDamageSetError as exc:
-            raise SemanticNodeError(str(exc)) from exc
-        for group in spec.groups:
+        spec = None
+        allocated_recipients = None
+        if ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
+            recipients = effect[ANNOUNCED_DAMAGE_EFFECT_FIELD]
+            if "groups" in effect or not isinstance(recipients, (list, tuple)):
+                raise SemanticNodeError("Announced damage requires bound allocated recipients")
+            try:
+                allocated_recipients = tuple(AllocatedDamageRecipient.from_dict(row) for row in recipients)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+        else:
+            try:
+                spec = FixedDamageSetSpec.from_dict({"groups": effect.get("groups")})
+            except FixedDamageSetError as exc:
+                raise SemanticNodeError(str(exc)) from exc
+        for group in spec.groups if spec is not None else ():
             if (
                 isinstance(group, PermanentDamageGroup)
                 and group.controller_relation
@@ -121,6 +132,7 @@ class FixedDamageSetHandler:
                 replacement_event_ids=event_ids,
                 source_snapshot=effect.get('source_snapshot'),
                 death_exile_scope=damage_death_exile_scope(effect),
+                allocated_recipients=allocated_recipients,
             )
         except ValueError as exc:
             raise SemanticNodeError(str(exc)) from exc

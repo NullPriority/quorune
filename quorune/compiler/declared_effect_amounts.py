@@ -215,7 +215,7 @@ def _bargain_declaration_available(record, text):
 
 def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: str,
                                    compile_effect: Callable[..., Any]) -> Callable[..., Any]:
-    """Select X only from an ordinary mana cost or one represented price."""
+    """Compile the effect with the declarations available during casting."""
     _, symbols = mana_cost_to_vector(record.mana_cost)
     available = bool(is_spell and not record.faces and 'X' in symbols
         and all(symbol=='X' or re.fullmatch(r'[WUBRG]/[WUBRG]',symbol) for symbol in symbols))
@@ -227,8 +227,18 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         kicked_self_replacement_available=bool(is_spell and not record.faces),
         bargain_available=bool(is_spell and _bargain_declaration_available(record, oracle_text)))
     from .spell_self_exile import terminal_spell_move_effect_compiler
-    return terminal_spell_move_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
+    terminal = terminal_spell_move_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
         ordinary_spell=bool(is_spell and not record.faces))
+    if not is_spell or " damage divided as you choose among " not in oracle_text.casefold():
+        return terminal
+
+    from .announced_damage_templates import fixed_announced_damage_template
+
+    def compile_spell_effect(text: str, **context):
+        allocation = fixed_announced_damage_template(text, card_name=context.get("card_name") or record.name)
+        return allocation or terminal(text, **context)
+
+    return compile_spell_effect
 
 
 def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:

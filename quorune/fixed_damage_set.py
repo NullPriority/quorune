@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import hashlib
 from typing import Any, Mapping, Protocol, Sequence
 
+from .announced_damage import AllocatedDamageRecipient
 from .damage import (
     DamageBatchResult,
     DamageError,
@@ -230,7 +231,7 @@ def resolve_fixed_damage_set(
     actor: str,
     source_ref: str,
     amount: int,
-    spec: FixedDamageSetSpec,
+    spec: FixedDamageSetSpec | None,
     reason: str,
     replacement_selections: Sequence[
         str | None | Mapping[str, object]
@@ -238,6 +239,7 @@ def resolve_fixed_damage_set(
     replacement_event_ids: Sequence[str] = (),
     source_override: Mapping[str, Any] | None = None,
     death_exile_scope: DamageDeathExileScope | None = None,
+    allocated_recipients: tuple[AllocatedDamageRecipient, ...] | None = None,
 ) -> DamageBatchResult:
     """Resolve one fixed set as one canonical simultaneous damage batch."""
 
@@ -261,49 +263,50 @@ def resolve_fixed_damage_set(
     if source_override is not None:
         from .rules.stack_damage_sources import refresh_stack_damage_source
         source = refresh_stack_damage_source(host, source, sealed=bool(replacement_event_ids))
-    snapshot = snapshot_fixed_damage_set(
-        host,
-        actor=actor,
-        spec=spec,
-        source_ref=source_ref,
-        source_logical_object_id=source.logical_object_id,
-    )
+    snapshot = None
+    if allocated_recipients is None:
+        if spec is None:
+            raise FixedDamageSetError("Fixed damage requires a recipient set")
+        snapshot = snapshot_fixed_damage_set(
+            host,
+            actor=actor,
+            spec=spec,
+            source_ref=source_ref,
+            source_logical_object_id=source.logical_object_id,
+        )
+        recipients = tuple((row.ref, row.logical_object_id, amount) for row in snapshot.recipients)
+    else:
+        recipients = tuple((row.ref, row.logical_object_id, row.amount) for row in allocated_recipients)
     event_ids = tuple(replacement_event_ids)
     if any(type(value) is not str or not value for value in event_ids):
         raise FixedDamageSetError(
             "Fixed damage replacement event identities must be nonempty strings"
         )
-    if event_ids and len(event_ids) != len(snapshot.recipients):
+    if event_ids and len(event_ids) != len(recipients):
         raise FixedDamageSetError(
             "Fixed damage replacement event identity count is stale"
         )
     try:
         proposals: list[DamageProposal] = []
-        for index, recipient in enumerate(snapshot.recipients):
-            current = recipient_snapshot(host, recipient.ref, actor=actor)
-            current_identity = (
-                f"player:{current.ref}"
-                if current.kind == "player"
-                else f"permanent:{current.logical_object_id}"
-            )
-            if current_identity != recipient.identity:
+        for index, (ref, logical_object_id, share) in enumerate(recipients):
+            current = recipient_snapshot(host, ref, actor=actor)
+            if current.logical_object_id != logical_object_id:
                 raise FixedDamageSetError(
                     "Fixed damage recipient snapshot became stale before commit"
                 )
+            prefix = f"{host.state.revision}:{host.state.event_sequence + 1}:{index}"
+            if event_ids:
+                proposal_id = event_ids[index]
+            elif snapshot is not None:
+                proposal_id = f"damage.fixed-set:{prefix}:{snapshot.fingerprint[:12]}"
+            else:
+                proposal_id = f"damage.announced-allocation:{prefix}"
             proposals.append(
                 DamageProposal(
-                    proposal_id=(
-                        event_ids[index]
-                        if event_ids
-                        else (
-                            f"damage.fixed-set:{host.state.revision}:"
-                            f"{host.state.event_sequence + 1}:{index}:"
-                            f"{snapshot.fingerprint[:12]}"
-                        )
-                    ),
+                    proposal_id=proposal_id,
                     source=source,
                     recipient=current,
-                    amount=amount,
+                    amount=share,
                     combat=False,
                     reason=reason,
                 )
@@ -315,6 +318,8 @@ def resolve_fixed_damage_set(
         )
     except DamageError as exc:
         raise FixedDamageSetError(str(exc)) from exc
+    if snapshot is None:
+        return result
     if death_exile_scope is not None:
         commit_damage_death_exile(host, scope=death_exile_scope, source_ref=source_ref, events=result.events)
     host._log(

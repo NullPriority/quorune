@@ -5,6 +5,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable, Mapping
 
+from .announced_damage import ANNOUNCED_DAMAGE_CONTEXT
 from .carddb import CardDatabase
 from .characteristic_evaluation import evaluate_card_characteristics
 from .choice_forms import build_action_form
@@ -526,6 +527,12 @@ class StateProjector:
                 "label": "Face-down spell" if hidden_face_down else item.label,
                 **({"targets": item.targets} if item.targets else {}),
             }
+            allocation = item.context.get(ANNOUNCED_DAMAGE_CONTEXT)
+            if isinstance(allocation, Mapping) and not hidden_face_down:
+                shares = allocation.get("shares")
+                if (isinstance(shares, (list, tuple)) and len(shares) == len(item.targets)
+                        and all(type(share) is int and share > 0 for share in shares)):
+                    row["damage_shares"] = list(shares)
             if card is not None:
                 row.update(
                     {

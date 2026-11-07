@@ -33,6 +33,7 @@ from ..rules.public_exile_result_model import PublicExileFollowup
 from ..rules.revealed_library_top import RevealedLibraryTopSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
+from ..announced_damage import AllocatedDamageRecipient
 from ..fixed_damage_set_model import FixedDamageSetSpec
 from ..damage_death_exile_model import DamageDeathExileScope
 from ..impulse_access_model import ImpulseAccessDuration
@@ -443,12 +444,13 @@ class DealFixedDamageSetIntent:
     actor: str
     source_ref: str
     amount: int
-    spec: FixedDamageSetSpec
+    spec: FixedDamageSetSpec | None
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     replacement_event_ids: tuple[str, ...] = ()
     source_snapshot: FrozenMap | None = None
     death_exile_scope: DamageDeathExileScope | None = None
+    allocated_recipients: tuple[AllocatedDamageRecipient, ...] | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -462,10 +464,17 @@ class DealFixedDamageSetIntent:
             raise ValueError(
                 "Fixed damage-set intent amount must be a nonnegative integer"
             )
-        if not isinstance(self.spec, FixedDamageSetSpec):
-            raise ValueError(
-                "Fixed damage-set intents require a typed recipient set"
-            )
+        if self.allocated_recipients is None:
+            if not isinstance(self.spec, FixedDamageSetSpec):
+                raise ValueError("Fixed damage-set intents require a typed recipient set")
+        else:
+            recipients = self.allocated_recipients
+            if (self.spec is not None or self.death_exile_scope is not None
+                    or not isinstance(recipients, tuple) or self.amount < 1
+                    or any(not isinstance(recipient, AllocatedDamageRecipient) for recipient in recipients)
+                    or len({recipient.ref for recipient in recipients}) != len(recipients)
+                    or sum(recipient.amount for recipient in recipients) > self.amount):
+                raise ValueError("Announced damage intents require distinct recipients and bounded shares")
         if self.death_exile_scope is not None and self.death_exile_scope is not DamageDeathExileScope.DEALT_CREATURES:
             raise ValueError('Fixed damage-set death exile follows actual damaged creatures')
         object.__setattr__(

@@ -163,8 +163,11 @@ def _resolve_effect_mapping(host, value, item):
         return {**value,'player':resolve_semantic_value(host,value['player'],item),
             'cast_fact':resolve_semantic_value(host,value['cast_fact'],item)}
     from ..rules.stack_damage_sources import bound_stack_damage_source
+    from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
+        if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
+            value = {**value, ANNOUNCED_DAMAGE_EFFECT_FIELD: bind_announced_damage_recipients(host, value, item)}
         missing = bound_mutation_target_overrides(host, value, item,
             lambda reference: resolve_semantic_value(host, reference, item))
         if missing:

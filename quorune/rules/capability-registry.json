@@ -38795,6 +38795,93 @@
     {
       "applicability": {
         "exclusions": [
+          "derived damage totals and variable X target counts",
+          "multiple target groups, triggered or activated assignments, and linked riders"
+        ],
+        "inputs": [
+          "fixed positive printed damage total and a bounded group of distinct targets",
+          "one positive integer share per announced target or an empty legal target selection",
+          "resolution revalidation for each original slot"
+        ],
+        "outputs": [
+          "immutable ordered allocation on the cast proposal and copied stack item",
+          "one replacement-aware simultaneous batch for the surviving shares"
+        ],
+        "summary": "Announce and record a fixed damage division before payment, then apply the original shares to legal target slots in one simultaneous damage batch. Copies retain shares in their original slots."
+      },
+      "blockers": [],
+      "dependencies": [
+        "damage.batch.fixed_set",
+        "damage.source.stack_current_or_lki",
+        "target.revalidate_resolution"
+      ],
+      "dependency_fail_closed_rationale": "The compiler checks the matching allocation schema and existing target and damage authority. Runtime binding independently rejects a descriptor that omits its allocation requirement.",
+      "dependency_fail_closed_status": "passed",
+      "id": "damage.batch.announced_allocation",
+      "implementation_components": [
+        "quorune.announced_damage.DamageAllocationSpec",
+        "quorune.announced_damage.cast_allocation_details",
+        "quorune.announced_damage.bind_announced_damage_recipients",
+        "quorune.compiler.announced_damage_templates.fixed_announced_damage_template",
+        "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities",
+        "quorune.fixed_damage_set.resolve_fixed_damage_set",
+        "quorune.selection.copy_targets.prepare_copy_targets"
+      ],
+      "implementation_mutation_rationale": "Removing allocation validation at the cast proposal allows an unallocated native Arc Lightning cast and fails the atomic rejection witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_cascade_offers_and_requires_the_same_split_before_free_cast",
+        "test_actual_pyrotechnics_resumes_one_replacement_batch_after_reload",
+        "test_actual_reverberate_copies_shares_to_new_targets_in_slot_order"
+      ],
+      "multiplayer_tests": [
+        "test_actual_arc_lightning_pins_shares_before_payment_and_loses_the_illegal_share",
+        "test_actual_pyrotechnics_resumes_one_replacement_batch_after_reload"
+      ],
+      "negative_tests": [
+        "test_actual_arc_lightning_pins_shares_before_payment_and_loses_the_illegal_share",
+        "test_announced_damage_rejects_unowned_totals_riders_and_runtime_dependency"
+      ],
+      "official_rules": [
+        "107.1c",
+        "115.7",
+        "120.4",
+        "601.2d",
+        "608.2b",
+        "616.1",
+        "707.10"
+      ],
+      "positive_tests": [
+        "test_actual_arc_lightning_pins_shares_before_payment_and_loses_the_illegal_share",
+        "test_actual_pyrotechnics_zero_targets_resolves_with_no_damage"
+      ],
+      "privacy_tests": [
+        "test_actual_arc_lightning_pins_shares_before_payment_and_loses_the_illegal_share"
+      ],
+      "replay_tests": [
+        "test_actual_arc_lightning_pins_shares_before_payment_and_loses_the_illegal_share",
+        "test_actual_pyrotechnics_resumes_one_replacement_batch_after_reload",
+        "test_actual_reverberate_copies_shares_to_new_targets_in_slot_order"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unowned variable or divided amounts",
           "chosen, linked-result, history-derived, and dynamic-characteristic predicates",
           "additive affected groups that cannot be identity-deduplicated",

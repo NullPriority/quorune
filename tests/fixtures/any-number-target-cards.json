@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture_kind": "public_exact-list_card_data",
-  "source": "Pinned complete Oracle/rulings and generic any-number interaction sources",
+  "source": "Pinned complete Oracle/rulings and generic any-number and divided-damage interaction sources",
   "cards": [
     {
       "oracle_id": "b0168b7e-a8b8-4ce3-af12-a43f3818b6a1",
@@ -1547,6 +1547,194 @@
       },
       "power": "2",
       "toughness": "6"
+    },
+    {
+      "oracle_id": "5acc8b39-3c3e-4012-8cfd-ac3c2c4ca982",
+      "name": "Arc Lightning",
+      "mana_cost": "{2}{R}",
+      "cmc": 3.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Arc Lightning deals 3 damage divided as you choose among one, two, or three targets.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-09-26",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "794b9ddf-1660-441f-9cc2-a0f5d4d0cf22",
+      "name": "Pyrotechnics",
+      "mana_cost": "{4}{R}",
+      "cmc": 5.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Pyrotechnics deals 4 damage divided as you choose among any number of targets.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2015-01-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Mending Hands",
+      "oracle_id": "a612f30d-cd55-438b-a7de-8c80509183aa",
+      "oracle_text": "Prevent the next 4 damage that would be dealt to any target this turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2005-07-29",
+      "toughness": null,
+      "type_line": "Instant"
     }
   ],
   "rulings": [
@@ -2455,6 +2643,36 @@
       "published_at": "2014-04-26",
       "source": "wotc",
       "comment": "You choose how many targets each spell with a strive ability has and what those targets are as you cast it. It's legal to cast such a spell with no targets, although this is rarely a good idea. You can't choose the same target more than once for a single strive spell."
+    },
+    {
+      "oracle_id": "5acc8b39-3c3e-4012-8cfd-ac3c2c4ca982",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "You choose how many targets Arc Lightning has and how the damage is divided as you cast the spell. Each target must receive at least 1 damage."
+    },
+    {
+      "oracle_id": "5acc8b39-3c3e-4012-8cfd-ac3c2c4ca982",
+      "published_at": "2014-09-20",
+      "source": "wotc",
+      "comment": "If some of the creatures are illegal targets as Arc Lightning tries to resolve, the original division of damage still applies but no damage is dealt to the illegal targets. If all targets are illegal, Arc Lightning doesn’t resolve."
+    },
+    {
+      "oracle_id": "794b9ddf-1660-441f-9cc2-a0f5d4d0cf22",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "If an effect creates a copy of Pyrotechnics, the number of targets and division of damage can’t be changed. The effect that creates the copy may allow you to change the targets, however."
+    },
+    {
+      "oracle_id": "794b9ddf-1660-441f-9cc2-a0f5d4d0cf22",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "You choose how the damage is divided as you cast the spell, not as it resolves. Each target must be assigned at least 1 damage."
+    },
+    {
+      "oracle_id": "794b9ddf-1660-441f-9cc2-a0f5d4d0cf22",
+      "published_at": "2014-11-24",
+      "source": "wotc",
+      "comment": "If some but not all of Pyrotechnics’s targets become illegal, you can’t change the division of damage. Damage that would have been dealt to illegal targets simply isn’t dealt."
     }
   ]
 }
