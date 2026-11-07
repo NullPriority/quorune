@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import re
 
-from ..ability_fragment_primitives import CREW_POWER_BONUS_CAPABILITY, CREW_POWER_BONUS_HANDLER_ID, CrewPowerBonusSpec
+from ..ability_fragment_primitives import (
+    CREW_POWER_BONUS_HANDLER_ID, CREW_SADDLE_POWER_BONUS_HANDLER_ID, CrewPowerBonusSpec,
+)
 from ..ability_fragments import ability_fragment_to_dict
 from ..crew import (
     CREW_CAPABILITY_ID,
@@ -17,20 +19,23 @@ from .ir_model import append_residual, OracleNode, OracleResidual, SourceSpan
 
 
 def crew_power_bonus_handler(text: str):
-    """Compile a complete fixed self-relative Crew power clause."""
+    """Compile a complete fixed self-relative Crew or Crew-and-Saddle clause."""
     match = re.fullmatch(
-        r"This creature crews Vehicles as though its power were ([1-9][0-9]*) greater\.?",
+        r"This creature (?P<saddle>saddles Mounts and )?crews Vehicles "
+        r"as though its power were (?P<amount>[1-9][0-9]*) greater\.?",
         text, re.IGNORECASE,
     )
     if match is None:
         return None
-    spec = CrewPowerBonusSpec(int(match[1]))
-    return "crew-power-bonus-v1", {
-        "handler_id": CREW_POWER_BONUS_HANDLER_ID,
+    saddle = match["saddle"] is not None
+    spec = CrewPowerBonusSpec(int(match["amount"]), schema_version=2 if saddle else 1, saddle_mounts=saddle)
+    template = "crew-and-saddle-power-bonus-v1" if saddle else "crew-power-bonus-v1"
+    return template, {
+        "handler_id": CREW_SADDLE_POWER_BONUS_HANDLER_ID if saddle else CREW_POWER_BONUS_HANDLER_ID,
         "schema_version": 1,
         "event": "characteristics.evaluate",
         "fragment": ability_fragment_to_dict(spec),
-    }, CREW_POWER_BONUS_CAPABILITY
+    }, spec.capability_id
 
 
 def ordinary_crew_keyword_node(

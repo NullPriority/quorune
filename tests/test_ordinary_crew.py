@@ -15,6 +15,9 @@ import test_self_public_zone_casting as public_actions
 from quorune.ability_fragment_primitives import (
     AbilityFragmentError,
     CREW_POWER_BONUS_CAPABILITY,
+    CREW_POWER_BONUS_HANDLER_ID,
+    CREW_SADDLE_POWER_BONUS_CAPABILITY,
+    CREW_SADDLE_POWER_BONUS_HANDLER_ID,
     CrewPowerBonusSpec,
 )
 from quorune.ability_fragments import ability_fragment_from_dict, ability_fragment_to_dict
@@ -53,6 +56,9 @@ from quorune.semantics import SemanticRegistry
 from quorune.tap_state import set_permanent_tapped
 
 
+COMBINED_POWER_BONUS = "This creature saddles Mounts and crews Vehicles as though its power were 2 greater."
+
+
 def crew_record(
     base: CardRecord,
     oracle_text: str,
@@ -73,11 +79,23 @@ def crew_record(
 class OrdinaryCrewModelTests(unittest.TestCase):
     def test_fixed_crew_bonus_codec_rejects_invalid_amounts(self):
         spec = CrewPowerBonusSpec(2)
+        self.assertEqual({"schema_version": 1, "amount": 2}, spec.to_dict())
         self.assertEqual(spec, ability_fragment_from_dict(ability_fragment_to_dict(spec)))
         for change in ({"amount": 0}, {"amount": -2}, {"amount": True},
                        {"amount": "2"}, {"schema_version": True}, {"scope": "saddle"}):
             with self.subTest(change=change), self.assertRaises(AbilityFragmentError):
                 CrewPowerBonusSpec.from_dict({**spec.to_dict(), **change})
+
+    def test_combined_power_bonus_codec_keeps_payment_scope_closed(self):
+        spec = CrewPowerBonusSpec(2, schema_version=2, saddle_mounts=True)
+        self.assertEqual({"schema_version": 2, "amount": 2, "saddle_mounts": True}, spec.to_dict())
+        self.assertEqual(spec, ability_fragment_from_dict(ability_fragment_to_dict(spec)))
+        for value in ({"schema_version": 2, "amount": 2},
+                      {**spec.to_dict(), "schema_version": 1},
+                      {**spec.to_dict(), "saddle_mounts": 1},
+                      {**spec.to_dict(), "saddle_mounts": False}):
+            with self.subTest(value=value), self.assertRaises(AbilityFragmentError):
+                CrewPowerBonusSpec.from_dict(value)
 
     def test_ordinary_crew_descriptor_is_strict_immutable_and_round_trips(self):
         spec = compile_ordinary_crew_ability(
@@ -212,7 +230,7 @@ class OrdinaryCrewCompilerTests(unittest.TestCase):
 
         for text in (
             "Creatures you control crew Vehicles as though their power were 2 greater.",
-            "This creature saddles Mounts and crews Vehicles as though its power were 2 greater.",
+            "This creature saddles legendary Mounts and crews Vehicles as though its power were 2 greater.",
             "Target Vehicle becomes crewed until end of turn.",
             "Whenever this Vehicle becomes crewed, draw a card.",
             "This creature can't crew Vehicles.",
@@ -255,6 +273,58 @@ class OrdinaryCrewCompilerTests(unittest.TestCase):
         self.assertNotEqual("exact", affected.status)
         self.assertTrue(affected.material_residuals)
         self.assertEqual("exact", control.status)
+
+    def test_combined_power_bonus_is_source_spanned_and_bound(self):
+        from quorune.semantic_runtime.ability_fragments import default_ability_fragment_registry
+        from quorune.semantic_runtime.context import SemanticNodeError
+
+        ir = compile_oracle_card(query_record(COMBINED_POWER_BONUS), capability_registry=self.capabilities,
+            capability_profile="commander_review")
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        handler, = node.handlers
+        self.assertEqual(COMBINED_POWER_BONUS, node.text[node.span.start:node.span.end])
+        self.assertEqual((CREW_SADDLE_POWER_BONUS_CAPABILITY,), node.capability_dependencies)
+        self.assertEqual(CREW_SADDLE_POWER_BONUS_HANDLER_ID, handler["handler_id"])
+        registry = default_ability_fragment_registry()
+        self.assertEqual((CrewPowerBonusSpec(2, schema_version=2, saddle_mounts=True),),
+            registry.lower(handler, None))
+        with self.assertRaises(SemanticNodeError):
+            registry.lower({**handler, "handler_id": CREW_POWER_BONUS_HANDLER_ID}, None)
+        with self.assertRaises(SemanticNodeError):
+            registry.lower({**handler, "fragment": ability_fragment_to_dict(CrewPowerBonusSpec(2))}, None)
+
+    def test_combined_power_bonus_preserves_crew_only_when_saddle_owner_is_withdrawn(self):
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.evidence import validate_capability_evidence_index
+        from quorune.rules.evidence_storage import read_evidence_document
+        from scripts.update_capability_evidence import build_index, discover_tests
+
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_bytes())
+        saddle = next(row for row in raw["capabilities"] if row["id"] == "activation.saddle.fixed_power")
+        saddle.update(status="blocked", blockers=["withdrawn for the dependency witness"])
+        registry = CapabilityRegistry(raw)
+        declarations = read_evidence_document(ROOT / "platform/capability-evidence-declarations.json")
+        index = build_index(registry_value=raw, declaration_source=declarations,
+            discovered_test_ids=set(discover_tests(ROOT).values()))
+        registry.mark_evidence_verified(validate_capability_evidence_index(index, registry=registry))
+        combined = compile_oracle_card(query_record(COMBINED_POWER_BONUS), capability_registry=registry,
+            capability_profile="commander_review")
+        crew_only = compile_oracle_card(query_record(COMBINED_POWER_BONUS.replace("saddles Mounts and ", "")),
+            capability_registry=registry, capability_profile="commander_review")
+        self.assertNotEqual("exact", combined.status)
+        self.assertTrue(combined.material_residuals)
+        self.assertEqual("exact", crew_only.status)
+
+    def test_combined_power_bonus_scope_omission_is_killed(self):
+        original = crew_nodes_module.crew_power_bonus_handler
+
+        def drop_saddle(text):
+            return original(text.replace("saddles Mounts and ", ""))
+
+        with mock.patch.object(crew_nodes_module, "crew_power_bonus_handler", side_effect=drop_saddle):
+            with self.assertRaises(AssertionError):
+                self.test_combined_power_bonus_is_source_spanned_and_bound()
 
     def test_fixed_crew_bonus_compiler_omission_is_killed(self):
         with mock.patch.object(crew_nodes_module, "crew_power_bonus_handler", return_value=None):

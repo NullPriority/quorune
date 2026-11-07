@@ -16,6 +16,7 @@ import test_ring_native_actions as turns
 import test_self_public_zone_casting as actions
 from quorune.abilities import ActivatedAbility
 from quorune.carddb import CardDatabase
+from quorune.crew import crew_candidates
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
@@ -243,4 +244,69 @@ class SaddleNativeTests(unittest.TestCase):
         self.assertNotEqual(original, returned.logical_object_id)
         self.assertFalse(is_saddled(returned))
         self.assertEqual(life - 2, session.state.players["D"].life)
+        self.replay(session, load=True)
+
+    def test_printed_and_created_pilots_pay_crew_and_saddle(self):
+        session = self.session(70217104)
+        engine = session.engine
+        mount = self.add(engine, "Brightfield Glider")
+        vehicle = self.add(engine, "Cultivator's Caravan")
+        pilot = self.add(engine, "Deathless Pilot")
+        crew_only = self.add(engine, "Hotshot Mechanic")
+        roads = self.add(engine, "Country Roads")
+        for card in (mount, vehicle, pilot, crew_only, roads):
+            self.assert_closed(session, card)
+
+        def contributions(source, kind):
+            return {candidate.object_ref: candidate.power
+                for candidate in crew_candidates(engine, "A", source, kind=kind)}
+
+        for source, kind, unqualified_type in (
+            (mount, "saddle", "Creature — Possum"),
+            (vehicle, "crew", "Artifact"),
+        ):
+            self.assertEqual(4, contributions(source, kind)[pilot.ref])
+            source.annotations["copy_overrides"] = {"type_line": unqualified_type}
+            self.assertEqual(2, contributions(source, kind)[pilot.ref])
+            del source.annotations["copy_overrides"]
+        self.assertEqual(2, contributions(mount, "saddle")[crew_only.ref])
+        self.assertEqual(4, contributions(vehicle, "crew")[crew_only.ref])
+        self.prepare(session, mana={"C": 1, "W": 1})
+        self.checkpoint(session)
+
+        def power_action(source, kind):
+            return next(row for row in self.offers(session, source)
+                if any(choice["k"] == kind for choice in row.get("cost_summary", {}).get("choose_cost", ())))
+
+        crew = power_action(vehicle, "crew")
+        result = session.act("pilot:A", {"action_id": crew["id"], "cost_cards": [pilot.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(4, session.state.stack[-1].context["crew"]["total_power"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(2, engine._numeric_stat(pilot.object_id, "power"))
+
+        maker = next(ability for ability in engine._activated_abilities(roads) if ability.sacrifice_source)
+        offered = next(row for row in self.offers(session, roads) if row["id"] == f"activate:{roads.ref}:{maker.ability_id}")
+        result = session.act("pilot:A", {"action_id": offered["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("graveyard", session.state.cards[roads.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        token, = [card for card in session.state.cards.values() if card.is_token and card.controller == "A"
+            and "pilot" in engine._type_parts(engine._effective_card_data(card)["type_line"])[1]]
+        self.assertEqual(1, engine._numeric_stat(token.object_id, "power"))
+        self.assertEqual(3, contributions(vehicle, "crew")[token.ref])
+        self.assertEqual(3, contributions(mount, "saddle")[token.ref])
+        saddle = power_action(mount, "saddle")
+        self.assertIsNone(session.packet("pilot:D", full=True)["decision"])
+        before = authoritative_state_hash(session.state)
+        for seat, rejected_ref in (("D", token.ref), ("A", crew_only.ref), ("A", pilot.ref)):
+            result = session.act(f"pilot:{seat}", {"action_id": saddle["id"], "cost_cards": [rejected_ref]})
+            self.assertFalse(result.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", {"action_id": saddle["id"], "cost_cards": [token.ref]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(3, session.state.stack[-1].context["saddle"]["total_power"])
+        self.assertIsNone(self.resolve(session))
+        self.assertTrue(is_saddled(session.state.cards[mount.object_id]))
+        self.assertEqual(1, engine._numeric_stat(token.object_id, "power"))
         self.replay(session, load=True)

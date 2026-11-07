@@ -293,14 +293,15 @@ def crew_candidates(
     """Return current Crew or Saddle cost candidates in zone order."""
 
     if not isinstance(seat, str) or seat not in host.state.players:
-        raise CrewAbilityError("Crew seat is unavailable")
+        raise CrewAbilityError(f"{kind.title()} seat is unavailable")
     if (
         getattr(source, "zone", None) != "battlefield"
         or bool(getattr(source, "phased_out", False))
     ):
         return ()
     result: list[CrewCandidate] = []
-    source_is_vehicle = None
+    source_has_cost_subtype = None
+    crew = kind == "crew"
     for object_id in host.state.players[seat].zones["battlefield"]:
         card = host.state.cards[object_id]
         if (
@@ -318,19 +319,19 @@ def crew_candidates(
             continue
         power = exact_numeric_characteristic(card, effective, "power")
         if power is None:
-            raise CrewAbilityError("Effective Crew power is unresolved")
-        bonus = sum(
-            CrewPowerBonusSpec.from_dict(fragment["value"]).amount
+            raise CrewAbilityError(f"Effective {kind.title()} power is unresolved")
+        bonuses = (
+            CrewPowerBonusSpec.from_dict(fragment["value"])
             for fragment in effective.get("ability_fragments", ())
             if fragment["kind"] == CREW_POWER_BONUS_KIND
-        ) if kind == "crew" else 0
-        if bonus:
-            if source_is_vehicle is None:
-                source_data = host._effective_card_data(source)
-                _, source_subtypes, _ = host._type_parts(str(source_data.get("type_line") or ""))
-                source_is_vehicle = "vehicle" in source_subtypes
-            if source_is_vehicle:
-                power += bonus
+        )
+        bonus = sum(spec.amount for spec in bonuses if crew or spec.saddle_mounts)
+        if bonus and source_has_cost_subtype is None:
+            source_data = host._effective_card_data(source)
+            _, source_subtypes, _ = host._type_parts(str(source_data.get("type_line") or ""))
+            source_has_cost_subtype = ("vehicle" if crew else "mount") in source_subtypes
+        if source_has_cost_subtype:
+            power += bonus
         result.append(
             CrewCandidate(
                 object_id=card.object_id,

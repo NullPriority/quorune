@@ -3530,6 +3530,87 @@
     {
       "applicability": {
         "exclusions": [
+          "other tap costs",
+          "nonfixed amounts",
+          "source type or subtype restrictions beyond Vehicle and Mount"
+        ],
+        "inputs": [
+          "fixed positive amount",
+          "current typed combined ability",
+          "current source subtype and payment kind"
+        ],
+        "outputs": [
+          "adjusted signed contribution for the eligible tap payment",
+          "unchanged power for all other purposes"
+        ],
+        "summary": "One current printed or token ability adds a fixed positive contribution to Crew for a Vehicle and Saddle for a Mount."
+      },
+      "blockers": [],
+      "dependencies": [
+        "activation.crew.fixed_power_bonus",
+        "activation.saddle.fixed_power"
+      ],
+      "dependency_fail_closed_rationale": "The combined clause remains residual after withdrawing Saddle while the Crew-only control still closes.",
+      "dependency_fail_closed_status": "passed",
+      "id": "activation.saddle.fixed_power_bonus",
+      "implementation_components": [
+        "quorune.ability_fragment_primitives.CrewPowerBonusSpec",
+        "quorune.compiler.crew_nodes.crew_power_bonus_handler",
+        "quorune.semantic_runtime.ability_fragments.CrewPowerBonusHandler",
+        "quorune.crew.crew_candidates",
+        "quorune.rules.token_creation_capability_shapes._fixed_token_effect_closure"
+      ],
+      "implementation_mutation_rationale": "Compiling only the Crew half fails the combined typed scope witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_printed_and_created_pilots_pay_crew_and_saddle"
+      ],
+      "multiplayer_tests": [
+        "test_printed_and_created_pilots_pay_crew_and_saddle"
+      ],
+      "negative_tests": [
+        "test_combined_power_bonus_codec_keeps_payment_scope_closed",
+        "test_combined_power_bonus_preserves_crew_only_when_saddle_owner_is_withdrawn",
+        "test_printed_and_created_pilots_pay_crew_and_saddle"
+      ],
+      "official_rules": [
+        "113.2c",
+        "609.4",
+        "611.3b",
+        "702.122a",
+        "702.122b",
+        "702.171a",
+        "702.171c"
+      ],
+      "positive_tests": [
+        "test_combined_power_bonus_is_source_spanned_and_bound",
+        "test_printed_and_created_pilots_pay_crew_and_saddle"
+      ],
+      "privacy_tests": [
+        "test_printed_and_created_pilots_pay_crew_and_saddle"
+      ],
+      "replay_tests": [
+        "test_printed_and_created_pilots_pay_crew_and_saddle"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "other counter kinds or amounts",
           "foreign-controlled, noncreature, phased-out or empty payers",
           "multiple selectable payment groups, mana abilities and granted cost forms"

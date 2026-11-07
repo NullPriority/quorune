@@ -9555,6 +9555,7 @@
       ],
       "test_modules": [
         "test_ordinary_crew",
+        "test_ordinary_saddle",
         "test_attacking_token_results",
         "test_card_program_trust"
       ]

@@ -42,7 +42,10 @@ from ..block_capacity_model import BlockCapacitySpec, BLOCK_CAPACITY_CAPABILITY,
 from ..as_unblocked import AsUnblockedAssignmentPermission, AS_UNBLOCKED_CAPABILITY, AS_UNBLOCKED_HANDLER
 from ..toughness_assignment_model import ToughnessAssignmentSpec,TOUGHNESS_ASSIGNMENT_CAPABILITY,TOUGHNESS_ASSIGNMENT_HANDLER
 from ..umbra_armor_model import UmbraArmorSpec, UMBRA_ARMOR_FRAGMENT_CAPABILITY, UMBRA_ARMOR_HANDLER
-from ..ability_fragment_primitives import CREW_POWER_BONUS_CAPABILITY, CREW_POWER_BONUS_HANDLER_ID, CrewPowerBonusSpec
+from ..ability_fragment_primitives import (
+    CREW_POWER_BONUS_CAPABILITY, CREW_POWER_BONUS_HANDLER_ID,
+    CREW_SADDLE_POWER_BONUS_CAPABILITY, CREW_SADDLE_POWER_BONUS_HANDLER_ID, CrewPowerBonusSpec,
+)
 from ..untap_restraint_model import AttachedUntapRestraintSpec,UNTAP_RESTRAINT_CAPABILITY,UNTAP_RESTRAINT_HANDLER
 from ..enchanted_player_model import EnchantedPlayerAttackRequirementSpec,ENCHANTED_PLAYER_ATTACK_CAPABILITY,ENCHANTED_PLAYER_ATTACK_HANDLER
 from ..bound_declaration_model import BoundStaticDeclarationRulesSpec,BOUND_DECLARATION_CAPABILITY,BOUND_DECLARATION_HANDLER
@@ -462,10 +465,14 @@ class CrewPowerBonusHandler(DeclarationRequirementAbilityFragmentHandler):
     event: str = "characteristics.evaluate"
     rule_references: tuple[str, ...] = ("609.4", "611.3b", "702.122a", "702.122b")
     capability_dependencies: tuple[str, ...] = (CREW_POWER_BONUS_CAPABILITY,)
+    saddle_mounts: bool = False
 
     def validate(self, descriptor):
-        return _fragment(descriptor, handler_id=self.handler_id, event=self.event,
+        fragment = _fragment(descriptor, handler_id=self.handler_id, event=self.event,
             expected_type=CrewPowerBonusSpec)
+        if fragment.saddle_mounts is not self.saddle_mounts:
+            raise SemanticNodeError("Crew power bonus has the wrong payment scope")
+        return fragment
 
 
 @dataclass(frozen=True,slots=True)
@@ -1542,6 +1549,11 @@ def default_ability_fragment_registry() -> AbilityFragmentRegistry:
             DeclarationRequirementAbilityFragmentHandler(),
             AttachedUntapRestraintHandler(),
             CrewPowerBonusHandler(),
+            CrewPowerBonusHandler(
+                handler_id=CREW_SADDLE_POWER_BONUS_HANDLER_ID, family="ability.static.crew_and_saddle_power_bonus",
+                rule_references=("609.4", "611.3b", "702.122a", "702.122b", "702.171a", "702.171c"),
+                capability_dependencies=(CREW_SADDLE_POWER_BONUS_CAPABILITY,), saddle_mounts=True,
+            ),
             EnchantedPlayerAttackRequirementHandler(),
             BoundStaticDeclarationRulesHandler(),
             AttachedActivationRuleHandler(),
