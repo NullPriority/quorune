@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from common import ROOT
 import test_fixed_copy_type_exceptions as controls
@@ -184,8 +184,11 @@ class JobSelectRuntimeTests(unittest.TestCase):
 
     def test_token_profile_and_attachment_omissions_fail_native_consequences(self):
         import quorune.compiler.fixed_attachment_keyword_nodes as compiler
+        from quorune.effect_runtime.zones_and_attachments import HANDLERS
         method = 'test_native_hero_and_flavored_equip_actions_resume_with_private_rollback'
         with patch.dict(compiler._SPECS, {'job select':('trigger.keyword.job_select', 'Create a 2/2 red Rebel creature token.')}), self.assertRaises(AssertionError):
             getattr(type(self)(method), method)()
-        with patch('quorune.effect_runtime.zones_and_attachments._apply_attach', return_value=None), self.assertRaises(AssertionError):
+        omitted_attachment = Mock(return_value=None)
+        with patch.dict(HANDLERS, {'attach': omitted_attachment}), self.assertRaises(AssertionError):
             getattr(type(self)(method), method)()
+        omitted_attachment.assert_called_once()
