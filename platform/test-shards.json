@@ -912,6 +912,7 @@
     ],
     "functional-06": [
       "test_activation_restriction_material",
+      "test_amplify",
       "test_application_protocol",
       "test_as_unblocked_assignment",
       "test_attached_pt_keyword_removal",

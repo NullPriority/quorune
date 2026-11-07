@@ -79353,6 +79353,107 @@
     {
       "applicability": {
         "exclusions": [
+          "variable multipliers",
+          "arbitrary hand reveals",
+          "cards entering in the same simultaneous event"
+        ],
+        "inputs": [
+          "fixed typed Amplify descriptor",
+          "sealed prospective entry and controller",
+          "private hand incarnation candidates"
+        ],
+        "outputs": [
+          "optional set of revealed hand cards",
+          "one additive contribution to the prospective entry counter placement"
+        ],
+        "summary": "Fixed Amplify selects a distinct private subset using prospective creature types and excludes simultaneous entrants. It reveals only selected hand incarnations and contributes their count to entry counters."
+      },
+      "blockers": [],
+      "dependencies": [
+        "counter.placement.quantity_replacement",
+        "zone.change.destination_replacement",
+        "trigger.event.normalized_zone_change",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing normalized zone entry authority leaves the Amplify span residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.entry.amplify",
+      "implementation_components": [
+        "quorune.compiler.amplify_nodes.amplify_keyword_nodes",
+        "quorune.semantic_runtime.amplify.AmplifyEntryHandler",
+        "quorune.semantic_runtime.amplify.amplify_replacement_effects",
+        "quorune.replacement.amplify.apply_amplify_entry_operation",
+        "quorune.entry_results.validate_pending_amplify_reveals",
+        "quorune.effect_runtime.hand_inspection.commit_entry_hand_reveal",
+        "quorune.replacement.entry_counter_ordering.entry_counter_order_effects",
+        "quorune.semantic_runtime.zone_replacement_inputs.snapshot_entry_scope"
+      ],
+      "implementation_mutation_rationale": "Omitting the other simultaneous entrants from the sealed exclusion set fails the offered-choice witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_amplify_uses_prospective_types_and_excludes_simultaneous_entrants",
+        "test_independent_amplify_instances_share_the_entry_counter_occurrence",
+        "test_actual_warhawk_privately_reveals_only_selected_cards_and_combines_counters",
+        "test_copied_amplify_uses_the_copier_controller_and_current_types",
+        "test_all_amplify_contributions_precede_nested_quantity_replacement",
+        "test_simultaneous_original_entries_exclude_both_hand_entrants"
+      ],
+      "multiplayer_tests": [
+        "test_actual_warhawk_privately_reveals_only_selected_cards_and_combines_counters",
+        "test_copied_amplify_uses_the_copier_controller_and_current_types"
+      ],
+      "negative_tests": [
+        "test_fixed_amplify_spans_and_repeated_instances",
+        "test_amplify_requires_normalized_entry_authority",
+        "test_amplify_uses_prospective_types_and_excludes_simultaneous_entrants",
+        "test_actual_warhawk_privately_reveals_only_selected_cards_and_combines_counters"
+      ],
+      "official_rules": [
+        "122.6",
+        "400.7",
+        "614.12",
+        "614.12a",
+        "616.1c",
+        "616.1e",
+        "616.1f",
+        "616.1g",
+        "701.20a",
+        "702.38a",
+        "702.38b"
+      ],
+      "positive_tests": [
+        "test_fixed_amplify_spans_and_repeated_instances",
+        "test_all_seven_original_amplify_cards_bind_strictly",
+        "test_actual_warhawk_privately_reveals_only_selected_cards_and_combines_counters",
+        "test_copied_amplify_uses_the_copier_controller_and_current_types"
+      ],
+      "privacy_tests": [
+        "test_actual_warhawk_privately_reveals_only_selected_cards_and_combines_counters",
+        "test_copied_amplify_uses_the_copier_controller_and_current_types"
+      ],
+      "replay_tests": [
+        "test_actual_warhawk_privately_reveals_only_selected_cards_and_combines_counters",
+        "test_copied_amplify_uses_the_copier_controller_and_current_types"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "unrepresented qualities or variable formulas",
           "unclosed linked devoured-result consumers",
           "unrepresented sacrifice prevention"

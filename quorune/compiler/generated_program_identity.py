@@ -143,6 +143,7 @@ def generated_ability_id(
                 _TOXIC_MECHANIC,
                 "affinity",
                 "devour",
+                "amplify",
             }
         ):
             return f"static:{face_id}:n{line}:{parts[-2]}:{parts[-1]}"

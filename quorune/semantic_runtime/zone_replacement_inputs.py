@@ -6,7 +6,7 @@ from typing import Any, Mapping, Sequence
 
 from ..entry_counters import EffectEntryCounter
 from ..zone_trigger_events import ZoneTransitionKind
-from ..replacement_effects import AffectedObject, ReplaceableEvent
+from ..replacement_effects import AffectedObject, EntryReplacementScope, ReplaceableEvent
 from .zone_replacement_model import ZoneChangeReplacementSnapshot, ZoneChangeSubjectSnapshot
 
 
@@ -243,6 +243,27 @@ def zone_change_snapshot_event(
             ),
         },
     )
+
+
+def snapshot_entry_scope(snapshot: ZoneChangeReplacementSnapshot) -> EntryReplacementScope:
+    """Seal the same simultaneous entry set for all private and public selections."""
+    entering = tuple(subject for subject in snapshot.subjects if subject.destination == "battlefield")
+    scope = EntryReplacementScope(tuple(subject.object_id for subject in entering),
+        tuple(subject.object_id for subject in entering if subject.origin == "library"))
+    leaving = tuple(subject.object_id for subject in snapshot.subjects if subject.destination != "battlefield")
+    return scope.reserve_zone_changes(leaving) if leaving else scope
+
+
+def zone_change_snapshot_events(snapshot: ZoneChangeReplacementSnapshot) -> tuple[ReplaceableEvent, ...]:
+    from dataclasses import replace
+    from ..replacement.amplify import AmplifyEntryOperation
+
+    events = tuple(zone_change_snapshot_event(snapshot, subject) for subject in snapshot.subjects)
+    if not any(isinstance(operation, AmplifyEntryOperation)
+        for effect in snapshot.effects for operation in effect.operations):
+        return events
+    scope = snapshot_entry_scope(snapshot)
+    return tuple(replace(event, entry_scope=scope) for event in events)
 
 
 __all__ = [

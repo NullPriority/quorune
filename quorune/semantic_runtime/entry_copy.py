@@ -7,6 +7,7 @@ import hashlib
 from ..util import stable_json
 from typing import Any, Mapping
 
+from ..rules.amplify import AMPLIFY_HANDLER
 from ..entry_copy import (EntryCopySpec, ENTRY_COPY_HANDLER, ENTRY_COPY_CAPABILITY,
     ENTRY_COPY_QUERY_HANDLER, ENTRY_COPY_QUERY_CAPABILITIES, ENTRY_COPY_VALUES_HANDLER, ENTRY_COPY_VALUES_CAPABILITY,
     COPIABLE_ORACLE_FIELD, COPIABLE_FACE_FIELD, copiable_oracle_id)
@@ -142,10 +143,15 @@ def _copied_entry_effects(host, subject, source, target, values, *, form_key):
             from ..entry_reveal import ENTRY_REVEAL_HANDLER
             from ..devour import DEVOUR_HANDLER
             from ..preparation_model import PREPARATION_HANDLER
-            if descriptor.get('handler_id')==PREPARATION_HANDLER:
+            if descriptor.get('handler_id') in {PREPARATION_HANDLER, AMPLIFY_HANDLER}:
                 from .self_entry_counters import program_static_component_is_applicable
                 if not program_static_component_is_applicable(host,program,preview,prospective_zone='battlefield',
                         prospective_controller=subject.destination_controller):continue
+            if descriptor.get("handler_id") == AMPLIFY_HANDLER:
+                from .amplify import amplify_replacement_effects
+                effects.extend(amplify_replacement_effects(host, copied_subject, descriptor,
+                    component_id=f"{program.key}:{index}"))
+                continue
             if descriptor.get('handler_id')==DEVOUR_HANDLER:
                 from .devour import DevourEntryHandler,devour_effects_for_spec
                 effects.extend(devour_effects_for_spec(host,copied_subject,DevourEntryHandler().validate(descriptor),component_id=f'{program.key}:{index}'))

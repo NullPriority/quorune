@@ -69,6 +69,8 @@ from .entry_designations import EntryDesignationHandler
 from .entry_color_exclusion import ExcludedColorEntryDesignationHandler
 from .entry_copy import EntryCopyHandler, entry_copy_handler, entry_copy_replacement_effects
 from .entry_reveal import EntryRevealHandler,entry_reveal_replacement_effects
+from ..rules.amplify import AMPLIFY_HANDLER, amplify_hand_reveals
+from .amplify import AmplifyEntryHandler, amplify_replacement_effects
 from .devour import DevourEntryHandler,devour_replacement_effects,capture_devour_candidates
 from .preparation import PreparationEntryHandler
 from .kicker import FixedKickedEntryHandler
@@ -102,7 +104,7 @@ from .zone_replacement_inputs import (
     active_zone_replacement_sources,
     zone_change_subject_characteristics,
     validated_zone_change_snapshot_inputs,
-    zone_change_snapshot_event as _snapshot_event,
+    zone_change_snapshot_events,
     zone_change_subject_card,
 )
 
@@ -479,6 +481,7 @@ def default_zone_change_replacement_registry(
             entry_copy_handler(4),
             entry_copy_handler(5),
             EntryRevealHandler(),
+            AmplifyEntryHandler(),
             DevourEntryHandler(),
             PreparationEntryHandler(),
             ReadAheadEntryChoiceHandler(),
@@ -1022,6 +1025,10 @@ def _zone_change_snapshot_effects(
             ):
                 continue
             for descriptor_index, descriptor in enumerate(program.handlers):
+                if descriptor.get("handler_id") == AMPLIFY_HANDLER:
+                    self_entry_effects.extend(amplify_replacement_effects(host, subject, descriptor,
+                        component_id=f"{program.key}:{descriptor_index}"))
+                    continue
                 self_entry_effects.extend(
                     registry.subject_replacement_effects(
                         descriptor,
@@ -1332,7 +1339,9 @@ def prepare_zone_change_replacement_batch(
     from ..entry_reveal import ENTRY_REVEAL_FIELD
     from ..effect_runtime.hand_inspection import validate_entry_hand_reveal
     for result in prepared.values():
-        validate_entry_hand_reveal(host,result.event.payload.get(ENTRY_REVEAL_FIELD))
+        payload = result.event.payload
+        for selection in (payload.get(ENTRY_REVEAL_FIELD), *amplify_hand_reveals(payload)):
+            validate_entry_hand_reveal(host, selection)
     return prepared
 
 
@@ -1352,9 +1361,7 @@ def prepare_zone_change_replacement_snapshot(
     if any(isinstance(op,DevourEntryOperation) for effect in snapshot.effects for op in effect.operations):
         from .devour_preparation import prepare_devour_snapshot
         return prepare_devour_snapshot(snapshot,selections=selections,error_type=error_type)
-    events = tuple(
-        _snapshot_event(snapshot, subject) for subject in snapshot.subjects
-    )
+    events = zone_change_snapshot_events(snapshot)
     applicable = tuple(
         (subject, event)
         for subject, event in zip(snapshot.subjects, events, strict=True)

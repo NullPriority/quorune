@@ -660,6 +660,13 @@ and publishes its reveal; unchosen candidates remain private. The replacement
 journal preserves the decision through save/load and replay. Decline sets tapped
 entry, while acceptance leaves other tap-state replacements in force.
 
+Amplify uses the replacement decision to select any number of distinct cards
+from the entering controller's hand. The offered and accepted set uses the
+entrant's prospective creature types and excludes the simultaneous entrants.
+Only chosen hand incarnations are revealed. Each Amplify instance has a separate
+choice, and its contribution joins the same prospective entry counter placement
+before counter replacement and entry observers.
+
 Fixed external entry-tapped replacements use the same immutable zone-entry
 snapshot and commit owner. A current battlefield source selects a fixed union
 of permanent card types and a global, controller, or opponent scope. The
