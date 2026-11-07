@@ -113,7 +113,7 @@ def _apply_step(host, frame, step, index, spend_context, excluded):
     replay.validate()
 
 
-def apply_assist_cast_mana(host, frame, proposal, card, response, *, spend_context, excluded):
+def apply_assist_cast_mana(host, frame, proposal, card, response, *, spend_context, excluded, spliced_cards):
     for index, step in enumerate(frame.plans):
         _apply_step(host, frame, step, index, spend_context, excluded)
     if frame.pending is not None:
@@ -121,10 +121,15 @@ def apply_assist_cast_mana(host, frame, proposal, card, response, *, spend_conte
     if response.get(ASSIST_PREVIEW_FIELD) is not True:
         return
     actor_excluded = excluded if frame.actor == frame.caster else set()
+    announcement = {
+        "caster": frame.caster, "helper": frame.helper, "spell": host.display_name(card.object_id),
+        "targets": list(proposal.targets), "stage": frame.stage,
+        "mana_activations": [{"seat": step.seat, **step.activation()} for step in frame.plans],
+    }
+    if spliced_cards:
+        announcement["spliced_cards"] = list(spliced_cards)
     raise _AssistPreviewReady(_AssistView(
-        announcement={"caster": frame.caster, "helper": frame.helper, "spell": host.display_name(card.object_id),
-                      "targets": list(proposal.targets), "stage": frame.stage,
-                      "mana_activations": [{"seat": step.seat, **step.activation()} for step in frame.plans]},
+        announcement=announcement,
         requirements=dict(thaw_json(proposal.requirements)),
         modes=_available_steps(host, frame.actor, spend_context, actor_excluded) if frame.stage.endswith("_mana") else (),
         helper_pool=host._spendable_mana_pool(frame.helper, spend_context),
@@ -150,7 +155,13 @@ def commit_assist_cast_payment(host, frame, response, requirements, spend_contex
         frame.caster, {**requirements, "GENERIC": requirements["GENERIC"] - generic},
         {"pay": "manual", "payment": caster_payment}, spend_context=spend_context,
     )
-    return helper_spent, caster_spent
+    from .spell_mana_payments import capture_spell_mana_payment
+
+    payment_triggers = capture_spell_mana_payment(host, player=frame.helper, spent=helper_spent)
+    payment_triggers.extend(capture_spell_mana_payment(host, player=frame.caster, spent=caster_spent))
+    spent = {color: helper_spent.get(color, 0) + caster_spent.get(color, 0) for color in "WUBRGC"}
+    activations = [{"seat": step.seat, **step.activation()} for step in frame.plans]
+    return spent, activations, payment_triggers
 
 
 def _preview(host, frame):

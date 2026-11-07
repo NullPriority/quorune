@@ -143,11 +143,11 @@ def apply_splice_declaration(host, seat, card, program, option, mandatory, submi
         SPLICE_SELECTION: identities}
 
 
-def announce_splice_sources(host, proposal, source, selected_option):
-    """Reveal only preflighted announcements before any price moves the cards."""
+def announce_splice_sources(host, proposal, source, selected_option) -> tuple[dict[str, str], ...]:
+    """Reveal the validated selections and return their public card identities."""
     selected = selected_option.get(SPLICE_SELECTION)
     if selected is None:
-        return
+        return ()
     if not isinstance(selected, (list, tuple)) or not selected or any(
         not isinstance(identity, Mapping) or identity.get("player") != proposal.seat for identity in selected
     ):
@@ -159,3 +159,4 @@ def announce_splice_sources(host, proposal, source, selected_option):
     for identity in selected:
         commit_selected_hand_reveal(host, identity, source_ref=source.ref,
             summary="A card was revealed for Splice.")
+    return tuple({"id": card.ref, "name": card.printed_name} for card in cards)

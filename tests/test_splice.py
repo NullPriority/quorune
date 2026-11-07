@@ -131,6 +131,7 @@ class SpliceRuntimeTests(unittest.TestCase):
     replay = reveal.FixedRevealCostRuntimeTests.replay
     reject = reveal.FixedRevealCostRuntimeTests.reject
     cast = actions.SelfPublicZoneRuntimeTests.cast
+    assert_closed = actions.SelfPublicZoneRuntimeTests.assert_closed
 
     @classmethod
     def setUpClass(cls):
@@ -138,7 +139,8 @@ class SpliceRuntimeTests(unittest.TestCase):
         path = Path(cls.temporary.name) / "splice.sqlite3"
         build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
             ROOT / "tests/fixtures/composed-spell-text-cards.json", ROOT / "tests/fixtures/splice-cards.json",
-            ROOT / "tests/fixtures/fixed-nonrepeating-modal-cards.json"], path)
+            ROOT / "tests/fixtures/fixed-nonrepeating-modal-cards.json",
+            ROOT / "tests/fixtures/assist-payment-cards.json"], path)
         cls.db = CardDatabase(path)
         cls.registry = load_default_capability_registry()
         cls.deck = DeckDefinition("Splice witness", [DeckEntry("Generic Bound Commander", 1, "commander"),
@@ -353,4 +355,59 @@ class SpliceRuntimeTests(unittest.TestCase):
         self.assertTrue({"shroud", "first strike"}.issubset(keywords))
         self.assertEqual(power + 1, session.engine._numeric_stat(target.object_id, "power"))
         self.assertEqual(hand, len(session.state.players["A"].zones["hand"]))
+        self.replay(session, load=True)
+
+
+    def test_actual_assist_reveals_only_the_selected_splice_before_contribution(self):
+        session = self.session(7024714)
+        spell = self.add(session.engine, "Bring Down", zone="hand")
+        spliced = self.add(session.engine, "Splicer's Skill", zone="hand")
+        private = self.add(session.engine, "Dampen Thought", zone="hand", ref="private-splice-control")
+        target = self.add(session.engine, "Generic Bound Body", seat="C")
+        target.counters["+1/+1"] = 2
+        for card in (spell, spliced):
+            self.assert_closed(session, card)
+        session.state.players["B"].mana_pool["C"] = 5
+        self.fund(session, {"W": 2, "C": 1})
+        self.start_splice(session, spell)
+        self.add_splice(session, spliced)
+        before = json.dumps(session.packet("pilot:B", full=True))
+        self.assertNotIn(spliced.ref, before)
+        self.assertNotIn(private.ref, before)
+        cast = self.splice_actions(session)["cast"]
+        option, = cast["cost_options"]
+        self.assertEqual(["B"], option["choice_schema"]["assist_helper"]["legal_values"])
+        self.assertEqual((6, 2), (option["requirements"]["GENERIC"], option["requirements"]["W"]))
+        command = {"action_id": cast["id"], "targets": [target.ref], "pay": "auto", "assist_helper": "B"}
+        self.reject(session, "D", **command)
+        accepted = session.act("pilot:A", command)
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("cast.assist", session.state.pending_decision.kind)
+        self.assertEqual(["B"], session.state.pending_decision.actors)
+        expected = [{"id": spliced.ref, "name": spliced.printed_name}]
+        for actor in ("B", "D"):
+            packet = session.packet(f"pilot:{actor}", full=True)
+            self.assertEqual(expected, packet["state"]["assist_cast"]["spliced_cards"])
+            self.assertNotIn(private.ref, json.dumps(packet))
+        self.assertEqual(expected, session.packet("pilot:B", full=True)["decision"]["ctx"]["spliced_cards"])
+        self.assertIsNone(session.packet("pilot:D", full=True)["decision"])
+        self.assertFalse(session.state.stack)
+        session = self.replay(session, load=True)
+        self.assertEqual(expected, session.packet("pilot:B", full=True)["decision"]["ctx"]["spliced_cards"])
+
+        for actor in ("B", "A"):
+            accepted = session.act(f"pilot:{actor}", {"action_id": "assist:finish-mana"})
+            self.assertTrue(accepted.ok, accepted.summary)
+        self.reject(session, "B", action_id="assist:contribute", assist_amount=6)
+        accepted = session.act("pilot:B", {"action_id": "assist:contribute", "assist_amount": 5})
+        self.assertTrue(accepted.ok, accepted.summary)
+        accepted = session.act("pilot:A", {"action_id": "assist:pay"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual(0, sum(session.state.players["A"].mana_pool.values()))
+        self.assertEqual(0, sum(session.state.players["B"].mana_pool.values()))
+        self.assertEqual("hand", session.state.cards[spliced.object_id].zone)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        token, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual(("A", "Phyrexian Golem Token"), (token.controller, token.printed_name))
         self.replay(session, load=True)

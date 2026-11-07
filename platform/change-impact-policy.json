@@ -7431,6 +7431,7 @@
       ],
       "test_modules": [
         "test_assist_payment",
+        "test_splice",
         "test_blight",
         "test_card_program_trust",
         "test_mana_abilities",
@@ -8591,6 +8592,7 @@
       ],
       "test_modules": [
         "test_splice",
+        "test_assist_payment",
         "test_composed_spell_text",
         "test_fixed_reveal_additional_costs",
         "test_fixed_replicate",

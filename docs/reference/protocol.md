@@ -172,8 +172,11 @@ offers changes to the target references in their original slots. Public stack
 rows show `damage_shares` in the same order as their `targets` array.
 
 An active Assist transaction projects a public `assist_cast` announcement
-in the view state. Only the principal for the current mana or payment window
-receives the `cast.assist` decision and its legal actions.
+in the view state. If the caster chose Splice, the announcement includes
+`spliced_cards` in declaration order. Each entry contains the public
+`id` and `name` of one revealed card. Only the principal for the current
+mana or payment window receives the `cast.assist` decision and its legal
+actions.
 
 Dynamic `mana_modes` fields declare `allowed_colors`, an integral `total`, and
 `single_color` instead of enumerating allocations. Clients accept only objects

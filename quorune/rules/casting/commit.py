@@ -1466,18 +1466,17 @@ def _commit_cast_costs_and_stack(
         host.state.stack.append(prepared_item)
         observe_cast_source_placement(host, prepared_item)
     from .splice_costs import announce_splice_sources
-    announce_splice_sources(host, proposal, card, selected_option)
+    spliced_cards = announce_splice_sources(host, proposal, card, selected_option)
     from .spell_mana_payments import capture_spell_mana_payment
     excluded = {payment_card.object_id for payment_card in tap_cards}
     spend_context = host._spell_mana_spend_context(proposal.type_line)
     blight_payment = prepare_blight_cast_payment(host, proposal, selected_option, response)
     if assist is not None:
-        apply_assist_cast_mana(host, assist, proposal, card, response, spend_context=spend_context, excluded=excluded)
-        helper_spent, caster_spent = commit_assist_cast_payment(host, assist, response, requirements, spend_context)
-        payment_triggers = capture_spell_mana_payment(host, player=assist.helper, spent=helper_spent)
-        payment_triggers.extend(capture_spell_mana_payment(host, player=assist.caster, spent=caster_spent))
-        spent = {color: helper_spent.get(color, 0) + caster_spent.get(color, 0) for color in "WUBRGC"}
-        activations = [{"seat": step.seat, **step.activation()} for step in assist.plans]
+        apply_assist_cast_mana(host, assist, proposal, card, response, spend_context=spend_context,
+                               excluded=excluded, spliced_cards=spliced_cards)
+        spent, activations, payment_triggers = commit_assist_cast_payment(
+            host, assist, response, requirements, spend_context,
+        )
     else:
         mana_response, mana_replay = blight_cast_mana_response(blight_payment, response)
         payer_protection = {"preserve_source_id": blight_payment.payer_id} if blight_payment is not None else {}
