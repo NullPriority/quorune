@@ -7878,14 +7878,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v764-private-card-rebase",
-      "compiler_version": "oracle-ir-v764",
+      "transition_id": "oracle-ir-v765-draw-and-reveal-capability-declaration",
+      "compiler_version": "oracle-ir-v765",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "non_harvest_reason": "Reconcile the previously measured private card cohort with the verified main branch. Measure additional admissions in their feature delivery."
+      "non_harvest_reason": "Declare the base draw capability for the existing closed draw and reveal instruction so the published support and strict runtime binding agree."
     },
     "forecast_corrections": [
       {
