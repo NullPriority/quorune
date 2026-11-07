@@ -2783,6 +2783,7 @@
       "patterns": [
         "quorune/object_predicate.py",
         "quorune/object_query.py",
+        "quorune/rules/attacked_player_life.py",
         "quorune/continuous_effects.py",
         "quorune/characteristic_evaluation.py",
         "quorune/compiler/public_state_queries.py",

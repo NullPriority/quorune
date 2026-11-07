@@ -98,6 +98,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.unblocked_attackers import unblocked_attacker_runtime_dependencies
     from ..rules.block_characteristics import qualified_block_runtime_dependencies
     from ..rules.attack_batches import qualified_attack_batch_runtime_dependencies
+    from ..rules.attacked_player_life import attacked_player_life_runtime_dependencies
     from ..rules.event_player_result_shapes import event_player_damage_runtime_dependencies
     from ..rules.scheduled_turn_skip_shapes import scheduled_turn_skip_event_dependencies
     from ..rules.combat_defending_players import combat_defending_player_runtime_dependencies
@@ -188,6 +189,7 @@ def _event_query_runtime_requirements(program):
         (unblocked_attacker_runtime_dependencies,program,'unblocked_attacker'),
         (qualified_block_runtime_dependencies,program,'qualified_block'),
         (qualified_attack_batch_runtime_dependencies,program,'qualified_attack_batch'),
+        (attacked_player_life_runtime_dependencies,program,'attacked_player_life'),
         (event_player_damage_runtime_dependencies,program,'event_player_damage'),
         (scheduled_turn_skip_event_dependencies,program,'scheduled_turn_skip_player'),
         (combat_defending_player_runtime_dependencies,program,'combat_defending_player'),

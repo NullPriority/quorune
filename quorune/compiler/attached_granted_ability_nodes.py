@@ -7,6 +7,7 @@ from typing import Any, Callable, Mapping, Sequence
 from ..attachment_references import AttachmentReferenceKind
 from ..abilities import ActivatedAbility, parse_activated_abilities
 from ..ability_fragments import (
+    CURRENT_ABILITY_FRAGMENT_COVERAGE,
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
     ability_fragment_to_dict,
@@ -19,6 +20,7 @@ from ..granted_activation_model import (
 )
 from ..carddb import CardRecord
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE
 from .continuous_templates import (
     attached_quoted_ability_handler,
     attached_quoted_ability_text,
@@ -383,12 +385,17 @@ def _compile_granted_ability_pair(
         capability_profile=capability_profile,
         residuals=residuals,
     )
+    coverage = inner.runtime_coverage
+    if ATTACKED_PLAYER_LIFE_COVERAGE in coverage:
+        # The typed grant itself supplies current ability presence for its recipient.
+        coverage = tuple(tag for tag in coverage if tag != CURRENT_ABILITY_FRAGMENT_COVERAGE)
     granted = replace(
         inner,
         node_id=f"{node_id}:granted",
         kind=plan.node_kind,
         text=quoted,
         active_zone="battlefield",
+        runtime_coverage=coverage,
         residual_ids=(),
     )
     return outer, granted

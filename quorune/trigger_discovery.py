@@ -38,6 +38,7 @@ from .continuous_conditions import (
 )
 from .rules.event_subscriptions import (
     FixedEventSubscriptionSet, intervening_recheck_condition, public_state_intervening_actual,
+    source_event_intervening_recheck,
 )
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
@@ -338,8 +339,11 @@ def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
     from .attack_batch_model import ATTACK_BATCH_CONDITION
     from .block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
+    from .rules.attacked_player_life import ATTACKED_PLAYER_LIFE_FIELD, attacked_player_life_holds
     from .spell_history_ordinal_model import QUALIFIED_SPELL_ORDINAL_FIELD
     try:
+        if field == ATTACKED_PLAYER_LIFE_FIELD:
+            return True, attacked_player_life_holds(host, context, source_object_id=source.object_id, controller=source.controller)
         if field==BLOCK_CHARACTERISTIC_CONDITION:
             from .rules.block_characteristics import block_counterpart_matches
             return True,block_counterpart_matches(condition,context)
@@ -666,25 +670,11 @@ def semantic_intervening_condition_matches(
 ) -> bool:
     """Recheck one intervening-if program at its trigger-owner boundary."""
 
-    if 'ravenous_entry_x' in program.coverage:
-        from .ravenous_model import EntryXInformation,ENTRY_X_FIELD,validate_ravenous_condition
-        try:
-            validate_ravenous_condition(program.event_condition)
-            info=EntryXInformation.from_dict(context.get(ENTRY_X_FIELD))
-            if info.object_id!=source_object_id or info.logical_object_id!=context.get('source_logical_object_id'):
-                raise ValueError('Ravenous recheck changed its original entry identity')
-            return info.amount>=5
-        except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
-    if 'source_entry_cast_intervening' in program.coverage:
-        from .rules.entry_cast_information import source_entry_cast_value
-        from .source_entry_cast_information import validate_source_entry_cast_condition
-        from .continuous_effect_model import ContinuousObjectIdentity
-        try:
-            validate_source_entry_cast_condition(program.event_condition)
-            return source_entry_cast_value(host,context,controller=controller,
-                source=ContinuousObjectIdentity(source_object_id,context.get('source_logical_object_id')),
-                origin=program.event_condition.get('origin'))
-        except (ValueError,TypeError) as exc:raise GameRuleError(str(exc)) from exc
+    source_event_result = source_event_intervening_recheck(
+        host, program, context=context, controller=controller, source_object_id=source_object_id,
+    )
+    if source_event_result is not None:
+        return source_event_result
     return bool(
         source is not None
         and program.event_condition is not None

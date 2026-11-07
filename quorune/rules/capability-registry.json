@@ -66344,6 +66344,92 @@
     {
       "applicability": {
         "exclusions": [
+          "attacks aimed at permanents",
+          "arbitrary comparison predicates",
+          "effects without independent exact lowering"
+        ],
+        "inputs": [
+          "one sealed source attack and its recipient",
+          "live public opponent life totals",
+          "the ability controller"
+        ],
+        "outputs": [
+          "ordinary trigger placement only if the condition holds",
+          "independent resolution recheck"
+        ],
+        "summary": "Check that no opponent of the ability controller has more life than the player attacked. Preserve the declared recipient and evaluate current public life both when the attack triggers and before resolution."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_self_attack",
+        "trigger.placement.apnap"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the life comparison leaves the original intervening trigger untrusted.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.condition.attacked_player_life",
+      "implementation_components": [
+        "quorune.compiler.attached_granted_ability_nodes._compile_granted_ability_pair",
+        "quorune.compiler.fixed_counter_trigger_nodes.fixed_counter_trigger_binding",
+        "quorune.rules.attacked_player_life.attacked_player_life_condition",
+        "quorune.rules.attacked_player_life.attacked_player_life_holds",
+        "quorune.rules.attacked_player_life.attacked_player_life_runtime_dependencies",
+        "quorune.trigger_discovery.semantic_intervening_condition_matches"
+      ],
+      "implementation_mutation_rationale": "Omitting the resolution recheck incorrectly places a counter after the defending player stops sharing the highest opponent life total.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_agent_uses_borrowed_attackers_opponents_and_rechecks_life",
+        "test_actual_hardy_uses_the_original_attackers_power_after_departure",
+        "test_actual_sailor_makes_the_attacking_commander_unblockable"
+      ],
+      "multiplayer_tests": [
+        "test_actual_agent_uses_borrowed_attackers_opponents_and_rechecks_life"
+      ],
+      "negative_tests": [
+        "test_actual_agent_uses_borrowed_attackers_opponents_and_rechecks_life",
+        "test_attacked_player_life_condition_is_closed_and_required",
+        "test_attacked_player_life_rejects_permanent_and_forged_attack_facts"
+      ],
+      "official_rules": [
+        "109.5",
+        "113.8",
+        "508.3a",
+        "603.4",
+        "800.4i"
+      ],
+      "positive_tests": [
+        "test_actual_agent_uses_borrowed_attackers_opponents_and_rechecks_life",
+        "test_actual_hardy_uses_the_original_attackers_power_after_departure",
+        "test_actual_sailor_makes_the_attacking_commander_unblockable",
+        "test_attacked_player_life_condition_is_closed_and_required"
+      ],
+      "privacy_tests": [
+        "test_actual_agent_uses_borrowed_attackers_opponents_and_rechecks_life"
+      ],
+      "replay_tests": [
+        "test_actual_agent_uses_borrowed_attackers_opponents_and_rechecks_life",
+        "test_actual_hardy_uses_the_original_attackers_power_after_departure",
+        "test_actual_sailor_makes_the_attacking_commander_unblockable"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "reflexive, delayed, first-time, once-per-turn, chosen, secret, hidden-zone, and otherwise unrepresented conditions",
           "conditions outside the closed public-state descriptor",
           "otherwise branches and linked results",

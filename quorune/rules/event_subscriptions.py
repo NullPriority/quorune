@@ -303,6 +303,39 @@ def intervening_recheck_condition(program, *, context, controller):
     return shared
 
 
+def source_event_intervening_recheck(host, program, *, context, controller, source_object_id):
+    """Recheck a condition whose source occurrence carries the relevant facts."""
+    from .attacked_player_life import ATTACKED_PLAYER_LIFE_COVERAGE, attacked_player_life_holds
+
+    if ATTACKED_PLAYER_LIFE_COVERAGE in program.coverage:
+        try:
+            return attacked_player_life_holds(host, context, source_object_id=source_object_id, controller=controller)
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    if 'ravenous_entry_x' in program.coverage:
+        from ..ravenous_model import EntryXInformation, ENTRY_X_FIELD, validate_ravenous_condition
+        try:
+            validate_ravenous_condition(program.event_condition)
+            info = EntryXInformation.from_dict(context.get(ENTRY_X_FIELD))
+            if info.object_id != source_object_id or info.logical_object_id != context.get('source_logical_object_id'):
+                raise ValueError('Ravenous recheck changed its original entry identity')
+            return info.amount >= 5
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    if 'source_entry_cast_intervening' in program.coverage:
+        from .entry_cast_information import source_entry_cast_value
+        from ..source_entry_cast_information import validate_source_entry_cast_condition
+        from ..continuous_effect_model import ContinuousObjectIdentity
+        try:
+            validate_source_entry_cast_condition(program.event_condition)
+            return source_entry_cast_value(host, context, controller=controller,
+                source=ContinuousObjectIdentity(source_object_id, context.get('source_logical_object_id')),
+                origin=program.event_condition.get('origin'))
+        except (ValueError, TypeError) as exc:
+            raise GameRuleError(str(exc)) from exc
+    return None
+
+
 __all__ = [
     "EVENT_SUBSCRIPTIONS_FIELD",
     "EventSubscriptionError",
@@ -312,4 +345,5 @@ __all__ = [
     "intervening_recheck_condition",
     "public_state_intervening_actual",
     "upkeep_hand_runtime_dependencies",
+    "source_event_intervening_recheck",
 ]

@@ -22,7 +22,7 @@ from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE,
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .trigger_result_templates import binding_effect_template
-from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition
+from .fixed_public_event_trigger_bindings import source_damage_incarnation_condition, validate_public_trigger_metadata
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
 from .fixed_source_combat_growth import (
     FIXED_SOURCE_COMBAT_GROWTH_TEMPLATE_IDS,
@@ -486,6 +486,7 @@ class FixedCounterTriggerBinding:
     public_template_id: str | None = None
     public_capabilities: tuple[str, ...] = ()
     public_state_condition: PublicTriggerCondition | None = None
+    attacked_player_life: bool = False
 
     def __post_init__(self) -> None:
         if not isinstance(self.event, FixedCounterTriggerEvent):
@@ -494,6 +495,11 @@ class FixedCounterTriggerBinding:
             raise ValueError("Fixed counter trigger variants must be nonempty")
         if type(self.body) is not str or not self.body:
             raise ValueError("Fixed counter trigger bodies must be nonempty")
+        if type(self.attacked_player_life) is not bool or self.attacked_player_life and (
+            self.event is not FixedCounterTriggerEvent.SOURCE_ATTACKS or self.variant != 'source_attacks'
+            or self.public_mechanic is not None or self.public_state_condition is not None
+        ):
+            raise ValueError('Attacked-player life requires one source attack')
         zone_events = {
             FixedCounterTriggerEvent.PERMANENT_ENTER,
             FixedCounterTriggerEvent.ARTIFACT_ENTER,
@@ -517,48 +523,7 @@ class FixedCounterTriggerBinding:
             raise ValueError(
                 "Fixed spell-cast events require exactly one typed subject"
             )
-        if self.public_mechanic is not None and self.spell_subject is not None:
-            raise ValueError(
-                "Public event triggers cannot carry a parallel spell subject"
-            )
-        if self.public_mechanic is not None:
-            if not self.public_mechanic or not self.public_template_id:
-                raise ValueError(
-                    "Public event triggers require typed owner identities"
-                )
-            if self.public_active_zone not in {None, "battlefield", "hand", "graveyard"}:
-                raise ValueError(
-                    "Public event triggers require a closed active zone"
-                )
-        elif any(
-            value is not None
-            for value in (
-                self.public_condition,
-                self.public_active_zone,
-                self.public_mechanic,
-                self.public_template_id,
-            )
-        ):
-            raise ValueError(
-                "Only public event triggers accept public predicate metadata"
-            )
-        if not isinstance(self.public_capabilities, tuple) or any(
-            type(value) is not str or not value
-            for value in self.public_capabilities
-        ):
-            raise ValueError(
-                "Public event trigger capabilities must be nonempty strings"
-            )
-        if len(set(self.public_capabilities)) != len(
-            self.public_capabilities
-        ):
-            raise ValueError(
-                "Public event trigger capabilities must be unique"
-            )
-        if self.public_mechanic is None and self.public_capabilities:
-            raise ValueError(
-                "Only public event triggers accept explicit capabilities"
-            )
+        validate_public_trigger_metadata(self)
         if self.public_state_condition is not None and not isinstance(
             self.public_state_condition,
             PublicTriggerCondition,
@@ -660,6 +625,7 @@ class FixedCounterTriggerBinding:
     @property
     def explicit_capabilities(self) -> tuple[str, ...]:
         from ..received_damage_model import RECEIVED_DAMAGE_CAPABILITY
+        from ..rules.attacked_player_life import ATTACKED_PLAYER_LIFE_CAPABILITY
         receiving = (RECEIVED_DAMAGE_CAPABILITY,) if self.event in {
             FixedCounterTriggerEvent.SOURCE_DEALT_DAMAGE, FixedCounterTriggerEvent.SOURCE_RECEIVED_COMBAT_DAMAGE,
         } else ()
@@ -668,7 +634,8 @@ class FixedCounterTriggerBinding:
         condition_capabilities=characteristic_quantity_capabilities(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {})
         ordinal=self.spell_subject.qualified_ordinal_spec if self.spell_subject is not None else None
-        return (*receiving,*self.public_capabilities,*condition_capabilities,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
+        attacked_life = (ATTACKED_PLAYER_LIFE_CAPABILITY,) if self.attacked_player_life else ()
+        return (*receiving,*self.public_capabilities,*condition_capabilities,*attacked_life,*(ordinal.capability_dependencies if ordinal else ()),*public_history_query_dependencies(
             self.public_state_condition.to_dict() if self.public_state_condition is not None else {}), *(("trigger.event.spell_cast_creature_target",)
             if self.spell_subject is not None and self.spell_subject.targets_creature else ()))
 
@@ -849,6 +816,9 @@ class FixedCounterTriggerBinding:
 
     @property
     def event_condition(self) -> Mapping[str, Any] | None:
+        if self.attacked_player_life:
+            from ..rules.attacked_player_life import attacked_player_life_condition
+            return attacked_player_life_condition()
         condition = self._base_event_condition
         if self.public_state_condition is None:
             return condition
@@ -1089,6 +1059,12 @@ def fixed_counter_trigger_binding(
         if source_binding is not None:return source_binding
     intervening = PUBLIC_INTERVENING_IF_TRIGGER.fullmatch(material_line)
     if intervening is not None:
+        if (intervening['prefix'].casefold() == 'whenever this creature attacks a player'
+                and intervening['condition'].casefold() == 'no opponent has more life than that player'):
+            return FixedCounterTriggerBinding(
+                event=FixedCounterTriggerEvent.SOURCE_ATTACKS,
+                variant='source_attacks', body=intervening['body'], attacked_player_life=True,
+            )
         return bind_public_intervening_trigger(
             intervening, card_name=card_name, compile_binding=fixed_counter_trigger_binding,
             compile_source_binding=_public_state_source_self_trigger_binding,

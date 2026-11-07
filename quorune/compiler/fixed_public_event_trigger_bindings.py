@@ -14,6 +14,27 @@ from .fixed_entry_return_requirements import (
 )
 
 
+def validate_public_trigger_metadata(binding):
+    """Validate the public metadata carried by a fixed trigger binding."""
+    if binding.public_mechanic is not None:
+        if binding.spell_subject is not None:
+            raise ValueError("Public event triggers cannot carry a parallel spell subject")
+        if not binding.public_mechanic or not binding.public_template_id:
+            raise ValueError("Public event triggers require typed owner identities")
+        if binding.public_active_zone not in {None, "battlefield", "hand", "graveyard"}:
+            raise ValueError("Public event triggers require a closed active zone")
+    elif any(value is not None for value in (binding.public_condition, binding.public_active_zone, binding.public_template_id)):
+        raise ValueError("Only public event triggers accept public predicate metadata")
+    if not isinstance(binding.public_capabilities, tuple) or any(
+        type(value) is not str or not value for value in binding.public_capabilities
+    ):
+        raise ValueError("Public event trigger capabilities must be nonempty strings")
+    if len(set(binding.public_capabilities)) != len(binding.public_capabilities):
+        raise ValueError("Public event trigger capabilities must be unique")
+    if binding.public_mechanic is None and binding.public_capabilities:
+        raise ValueError("Only public event triggers accept explicit capabilities")
+
+
 _PUBLIC_DAMAGE_TRIGGER = re.compile(
     r"^Whenever (?P<subject>"
     r"a creature you control|an artifact creature you control|"

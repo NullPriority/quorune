@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from common import ROOT,keep_all
+from common import ROOT,keep_all,pass_current
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.model import GameConfig
@@ -25,6 +25,61 @@ import test_counter_placement_events as counter_witnesses
 
 
 class CommanderCharacteristicQueryTests(unittest.TestCase):
+    def test_attacked_player_life_condition_is_closed_and_required(self):
+        from types import SimpleNamespace
+        from quorune.rules.attacked_player_life import (
+            ATTACKED_PLAYER_LIFE_CAPABILITY, ATTACKED_PLAYER_LIFE_COVERAGE,
+            attacked_player_life_runtime_dependencies,
+        )
+
+        text = ('Whenever this creature attacks a player, if no opponent has more life than that player, '
+                'this creature can\'t be blocked this turn.')
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(query_record(text), capability_registry=registry, capability_profile='commander_review')
+        self.assertEqual('exact', ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        self.assertIn(ATTACKED_PLAYER_LIFE_CAPABILITY, node.capability_dependencies)
+        program = dict(event=node.event, active_zone=node.active_zone, event_condition=node.event_condition,
+                       coverage=node.runtime_coverage)
+        self.assertEqual((ATTACKED_PLAYER_LIFE_CAPABILITY,),
+                         attacked_player_life_runtime_dependencies(SimpleNamespace(**program)))
+        for change in ({'coverage': (ATTACKED_PLAYER_LIFE_COVERAGE,)}, {'event': 'creature.dies'},
+                       {'event_condition': {'any': node.event_condition['all']}}):
+            with self.assertRaises(ValueError):
+                attacked_player_life_runtime_dependencies(SimpleNamespace(**{**program, **change}))
+        unsupported = text.replace('no opponent has more life', 'no player has more life')
+        self.assertNotEqual('exact', compile_oracle_card(query_record(unsupported), capability_registry=registry).status)
+        value = json.loads((ROOT / 'quorune/rules/capability-registry.json').read_text(encoding='utf-8'))
+        row = next(item for item in value['capabilities'] if item['id'] == ATTACKED_PLAYER_LIFE_CAPABILITY)
+        row.update(status='blocked', blockers=['Attacked-player life comparison withdrawn'])
+        blocked = CapabilityRegistry(value)
+        blocked.mark_evidence_verified('0' * 64)
+        self.assertNotEqual('exact', compile_oracle_card(query_record(text), capability_registry=blocked).status)
+
+    def test_attacked_player_life_rejects_permanent_and_forged_attack_facts(self):
+        from types import SimpleNamespace
+        from quorune.attack_transition_model import (
+            AttackRecipient, AttackRecipientKind, AttackTransitionAssignment,
+            AttackTransitionEvent, AttackTransitionParticipant,
+        )
+        from quorune.rules.attacked_player_life import attacked_player_life_holds
+
+        attacker = AttackTransitionParticipant('attacker', 'attacker@1', 'attacker-ref', 'A', True)
+        defender = AttackRecipient(AttackRecipientKind.PLANESWALKER, 'planeswalker-ref', 'B', 'walker@1')
+        transition = AttackTransitionEvent.create(
+            turn_sequence=1, priority_epoch=2, active_player='A', participants=(attacker,),
+            assignments=(AttackTransitionAssignment(attacker.object_id, defender),),
+        )
+        host = SimpleNamespace(active_seats=('A', 'B', 'C'), state=SimpleNamespace(
+            players={seat: SimpleNamespace(life=life) for seat, life in zip('ABC', (50, 40, 35))},
+        ))
+        context = {'attack_transition': transition.to_dict(), 'event_id': transition.transition_id,
+                   'card': attacker.reference, 'controller': 'A', 'defender': defender.reference, 'defending_player': 'B'}
+        self.assertFalse(attacked_player_life_holds(host, context, source_object_id='attacker', controller='A'))
+        with self.assertRaises(ValueError):
+            attacked_player_life_holds(host, {**context, 'defender': 'B'}, source_object_id='attacker', controller='A')
+
     def test_designation_query_serializes_additively_and_matches_physical_status(self):
         legacy=ObjectQuerySpec(zones=('battlefield',),types_all=('creature',)).to_dict()
         self.assertNotIn('commander',legacy);self.assertEqual(legacy,ObjectQuerySpec.from_dict(legacy).to_dict())
@@ -73,7 +128,8 @@ class CommanderCharacteristicGrantRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'commander-grants.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/commander-characteristic-grants.json'],path)
+        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/commander-characteristic-grants.json',
+                                ROOT/'tests/fixtures/scheduled-half-life-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Commander grant',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
     @classmethod
@@ -98,6 +154,154 @@ class CommanderCharacteristicGrantRuntimeTests(unittest.TestCase):
 
     def commander(self,e,seat):
         return next(c for c in e.state.cards.values() if c.is_commander and c.owner==seat)
+
+    def _prepare_life_attack(self, seed, background_name, *, other_life=40, response_name=None):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.model import CombatState
+
+        s = self.session(seed)
+        e = s.engine
+        background = self.add(e, background_name)
+        response = self.add(e, response_name, seat='D', zone='hand', ref='life-attack-private-response') if response_name else None
+        records = [self.db.lookup(background_name)]
+        if response_name is not None:
+            records.append(self.db.lookup(response_name))
+        register_generated_programs(
+            self.db, e.semantics, records, trust_level='provisional', capability_registry=self.registry,
+            capability_profile='commander_review', promote_exact_runtime_handlers=True,
+            promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+            promote_exact_capability_declarations=True,
+        )
+        program = compile_best_available_card_program(self.db, records[0], semantic_registry=e.semantics,
+            capability_registry=self.registry, capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        self.assertEqual('A', background.controller)
+        attacker = self.commander(e, 'A')
+        e.move_card(attacker.object_id, 'battlefield', controller='B', log=False)
+        attacker.acquired_control_turn_count = -1
+        for seat, life in zip('ABCD', (30, 60, 40, other_life)):
+            s.state.players[seat].life = life
+        s.state.active_player = 'B'
+        s.state.phase = 'combat'
+        s.state.step = 'declare_attackers'
+        s.state.phase_index = 5
+        s.state.combat = CombatState()
+        return s, attacker, response
+
+    def _declare_life_attack(self, s, attacker):
+        s.engine._issue_attackers()
+        self.checkpoint(s)
+        command = {'action_id': 'attack', 'attackers': {attacker.ref: 'C'}}
+        before = authoritative_state_hash(s.state)
+        self.assertFalse(s.act('pilot:A', command).ok)
+        self.assertEqual(before, authoritative_state_hash(s.state))
+        accepted = s.act('pilot:B', command)
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def _cast_life_attack_response(self, s, response, *, targets=()):
+        self.assertIn(response.ref, json.dumps(s.packet('pilot:D', full=True)))
+        self.assertNotIn(response.ref, json.dumps(s.packet('pilot:B', full=True)))
+        for _ in range(3):
+            if 'pilot:D' in s.pending_principals():
+                break
+            pass_current(s)
+        self.assertIn('pilot:D', s.pending_principals())
+        options = s.packet('pilot:D', full=True)['decision']['ctx']['legal']['actions']
+        action = next(option for option in options if option.get('card') == response.ref)
+        accepted = s.act('pilot:D', {'action_id': action['id'], 'targets': list(targets), 'pay': 'auto'})
+        self.assertTrue(accepted.ok, accepted.summary)
+
+    def _agent_life_attack(self, seed, *, other_life, respond, depart=False):
+        s, attacker, response = self._prepare_life_attack(
+            seed, 'Agent of the Shadow Thieves', other_life=other_life,
+            response_name='Revitalize' if respond else None,
+        )
+        if respond:
+            s.state.players['D'].mana_pool.update({'C': 1, 'W': 1})
+        self._declare_life_attack(s, attacker)
+        e = s.engine
+        if other_life > 40:
+            self.assertFalse(s.state.stack)
+        else:
+            item, = s.state.stack
+            self.assertEqual(('B', attacker.object_id), (item.controller, item.source_object_id))
+            self.assertTrue(e.semantic_program_is_current_trusted(e.semantics.get(item.semantic_key)))
+        if response is not None:
+            self._cast_life_attack_response(s, response)
+        if depart:
+            pass_current(s)
+            self.assertIn('pilot:C', s.pending_principals())
+            accepted = s.act('pilot:C', {'action_id': 'concede', 'choices': {'confirm_concede': True}})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.assertNotIn('C', e.active_seats)
+            self.assertEqual(40, s.state.players['C'].life)
+        self.resolve(s)
+        result = s.state.cards[attacker.object_id]
+        expected = other_life <= 40 and not respond
+        self.assertEqual(int(expected), result.counters.get('+1/+1', 0))
+        self.assertEqual(expected, {'deathtouch', 'indestructible'} <= set(e._combat_keywords(result)))
+        if respond:
+            self.assertEqual(other_life + 3, s.state.players['D'].life)
+        return s
+
+    def test_actual_agent_uses_borrowed_attackers_opponents_and_rechecks_life(self):
+        cases = ((40, False, False), (41, False, False), (40, True, False), (39, False, True))
+        for index, (other_life, respond, depart) in enumerate(cases):
+            with self.subTest(other_life=other_life, respond=respond, depart=depart):
+                session = self._agent_life_attack(314007 + index, other_life=other_life, respond=respond, depart=depart)
+                self.replay(session, load=True)
+
+    def test_attacked_player_life_recheck_omission_mutant_is_killed(self):
+        with patch('quorune.engine.semantic_intervening_condition_matches', return_value=True):
+            with self.assertRaises(AssertionError):
+                self._agent_life_attack(314011, other_life=40, respond=True)
+
+    def test_actual_sailor_makes_the_attacking_commander_unblockable(self):
+        s, attacker, _ = self._prepare_life_attack(314012, 'Sword Coast Sailor')
+        self.add(s.engine, 'Generic Bound Body', seat='C')
+        self._declare_life_attack(s, attacker)
+        item, = s.state.stack
+        self.assertEqual(attacker.object_id, item.source_object_id)
+        self.resolve(s)
+        for _ in range(8):
+            if s.state.combat.blockers_declared:
+                break
+            pass_current(s)
+        self.assertTrue(s.state.combat.blockers_declared)
+        self.assertFalse(s.state.combat.blockers)
+        block = next(event for event in reversed(s.state.events) if event.code == 'combat.block')
+        self.assertTrue(block.details['automatic'])
+        self.replay(s, load=True)
+
+    def test_actual_hardy_uses_the_original_attackers_power_after_departure(self):
+        s, attacker, response = self._prepare_life_attack(314013, 'Hardy Outlander', response_name='Unsummon')
+        e = s.engine
+        target = self.add(e, 'Generic Bound Body', seat='B')
+        s.state.players['D'].mana_pool['U'] = 1
+        attacker_power = e._numeric_stat(attacker.object_id, 'power')
+        before_stats = tuple(e._numeric_stat(target.object_id, stat) for stat in ('power', 'toughness'))
+        self._declare_life_attack(s, attacker)
+        self.assertEqual('semantic.target', s.state.pending_decision.kind)
+        before = authoritative_state_hash(s.state)
+        self.assertFalse(s.act('pilot:B', {'action_id': 'choose', 'targets': [attacker.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(s.state))
+        accepted = s.act('pilot:B', {'action_id': 'choose', 'targets': [target.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self._cast_life_attack_response(s, response, targets=[attacker.ref])
+        self.resolve(s)
+        while s.state.pending_decision is not None and s.state.pending_decision.kind == 'replacement.order':
+            principal = s.pending_principals()[0]
+            options = s.packet(principal, full=True)['decision']['ctx']['options']
+            decline = next(option['id'] for option in options if option['id'].startswith('decline:'))
+            accepted = s.act(principal, {'action_id': 'choose', 'replacement': decline})
+            self.assertTrue(accepted.ok, accepted.summary)
+            self.resolve(s)
+        self.assertEqual('hand', s.state.cards[attacker.object_id].zone)
+        self.assertEqual(tuple(stat + attacker_power for stat in before_stats),
+                         tuple(e._numeric_stat(target.object_id, stat) for stat in ('power', 'toughness')))
+        self.replay(s, load=True)
 
     def test_actual_bastion_applies_only_to_current_controlled_designated_creatures(self):
         s=self.session(314001);e=s.engine

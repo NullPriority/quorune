@@ -764,6 +764,10 @@ draw-step triggers use the existing fixed step predicate. Fixed "additional
 card" wording lowers to an ordinary draw instruction; the turn's ordinary
 draw precedes trigger placement and the extra draw resolves through the stack.
 Existing public intervening conditions are checked at occurrence and resolution.
+The attacked-player life condition keeps the original player from the sealed
+attack assignment. Both checks compare that player's life with the ability
+controller's other opponents. The original defender's last known life remains
+available if that player leaves the game.
 The multi-event compiler also composes an explicit source-entry prefix with
 one independently exact distinct same-zone event prefix. A scheduled step may
 pair with one independently closed source-entry or controller spell-cast
