@@ -4,6 +4,7 @@ from typing import Mapping
 from ..reflexive_trigger_model import REFLEXIVE_PAYMENT_CAPABILITY, REFLEXIVE_PAYMENT_MECHANIC, ReflexiveTriggerProgram
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
 from ..replacement.immutable import thaw_value
+from .hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 
 
 def reflexive_payment_parts(effect):
@@ -13,6 +14,8 @@ def reflexive_payment_parts(effect):
             or effect['schema_version'] != 4 or type(effect['player']) is not str or not effect['player']):
         raise ValueError('Reflexive payment instructions use a closed versioned schema')
     payment = FixedEffectPaymentSpec.from_dict(effect['payment'])
+    if payment.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
+        raise ValueError('Reflexive payment has no hybrid payment authority')
     if (('cost' in effect) != (payment.kind == 'mana')
             or payment.kind == 'mana' and dict(effect['cost']) != dict(payment.requirements)):
         raise ValueError('Reflexive payment mana identity changed')

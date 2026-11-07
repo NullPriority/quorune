@@ -43557,6 +43557,99 @@
     {
       "applicability": {
         "exclusions": [
+          "life, snow, variable, and unrepresented hybrid symbols",
+          "reflexive or maintenance wrapper stages",
+          "cast and activation price changes"
+        ],
+        "inputs": [
+          "ordinary mana requirements plus fixed colored hybrid or two-brid symbols",
+          "one active resolving payer",
+          "independently closed optional consequence"
+        ],
+        "outputs": [
+          "principal-scoped affordable equivalent identifiers and decline",
+          "one canonical mana payment when selected",
+          "replay-pinned price and choice"
+        ],
+        "summary": "Expand a fixed mana-only hybrid price into its distinct equivalent requirements. Offer only currently affordable options and a decline. Seal and revalidate the selected equivalent before the existing mana intent spends it and the previously bound optional consequence continues."
+      },
+      "blockers": [],
+      "dependencies": [
+        "effect.choice.optional_fixed_mana_payment"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing the shared optional payment authority leaves the hybrid instruction residual while an ordinary trigger body remains exact.",
+      "dependency_fail_closed_status": "passed",
+      "id": "effect.choice.optional_hybrid_mana_payment",
+      "implementation_components": [
+        "quorune.compiler.fixed_effect_payment_templates.fixed_effect_payment_spec",
+        "quorune.fixed_effect_payment.FixedEffectPaymentSpec",
+        "quorune.rules.hybrid_resolution_payment.hybrid_resolution_mana_options",
+        "quorune.semantic_choices.hybrid_payment.prepare_hybrid_payment",
+        "quorune.semantic_choices.hybrid_payment.complete_hybrid_payment",
+        "quorune.semantic_choices.intent_host.SemanticChoiceIntentHostMixin.pay_mana_cost_intent"
+      ],
+      "implementation_mutation_rationale": "Removing the mixed equivalent from the canonical expansion fails the price witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_alesha_pays_the_only_mixed_option_then_chooses_a_fresh_defender",
+        "test_kels_declines_then_draws_from_its_own_sacrifice_for_one_blue",
+        "test_shu_yun_pays_for_a_legal_target_and_skips_payment_for_an_illegal_one"
+      ],
+      "multiplayer_tests": [
+        "test_alesha_pays_the_only_mixed_option_then_chooses_a_fresh_defender",
+        "test_shu_yun_pays_for_a_legal_target_and_skips_payment_for_an_illegal_one"
+      ],
+      "negative_tests": [
+        "test_hybrid_payment_compiles_to_closed_mixed_and_two_brid_alternatives",
+        "test_withdrawing_optional_payment_authority_leaves_hybrid_cost_residual",
+        "test_alesha_pays_the_only_mixed_option_then_chooses_a_fresh_defender",
+        "test_kels_declines_then_draws_from_its_own_sacrifice_for_one_blue",
+        "test_shu_yun_pays_for_a_legal_target_and_skips_payment_for_an_illegal_one"
+      ],
+      "official_rules": [
+        "107.4e",
+        "117.2e",
+        "118.3",
+        "118.3a",
+        "603.3d",
+        "605.3a",
+        "608.2b",
+        "608.2c",
+        "608.2d"
+      ],
+      "positive_tests": [
+        "test_hybrid_payment_compiles_to_closed_mixed_and_two_brid_alternatives",
+        "test_alesha_pays_the_only_mixed_option_then_chooses_a_fresh_defender",
+        "test_kels_declines_then_draws_from_its_own_sacrifice_for_one_blue",
+        "test_shu_yun_pays_for_a_legal_target_and_skips_payment_for_an_illegal_one"
+      ],
+      "privacy_tests": [
+        "test_alesha_pays_the_only_mixed_option_then_chooses_a_fresh_defender"
+      ],
+      "replay_tests": [
+        "test_alesha_pays_the_only_mixed_option_then_chooses_a_fresh_defender",
+        "test_kels_declines_then_draws_from_its_own_sacrifice_for_one_blue",
+        "test_shu_yun_pays_for_a_legal_target_and_skips_payment_for_an_illegal_one"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "arbitrary mixed costs",
           "discarded-card value or linked results",
           "battlefield deaths as nonbattlefield arrivals",

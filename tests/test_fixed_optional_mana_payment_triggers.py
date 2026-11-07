@@ -415,10 +415,13 @@ class FixedOptionalManaPaymentCompilerTests(unittest.TestCase):
         promoted = self.compile('Whenever you cast a creature spell, you may pay {G}. When you do, draw a card.')
         self.assertEqual('exact', promoted.status, promoted.material_residuals)
         self.assertIn('trigger.reflexive.fixed_action_result', promoted.faces[0].nodes[0].capability_dependencies)
+        hybrid = self.compile('Whenever you cast a creature spell, you may pay {G/U}. If you do, draw a card.')
+        self.assertEqual('exact', hybrid.status, hybrid.material_residuals)
+        self.assertIn('effect.choice.optional_hybrid_mana_payment', hybrid.faces[0].nodes[0].capability_dependencies)
         fixtures = (
             "Whenever you cast a creature spell, you may pay {X}. If you do, "
             "draw a card.",
-            "Whenever you cast a creature spell, you may pay {G/U}. If you do, "
+            "Whenever you cast a creature spell, you may pay {G/U}. When you do, "
             "draw a card.",
             "Whenever you cast a creature spell, you may pay {G/P}. If you do, "
             "draw a card.",

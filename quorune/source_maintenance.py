@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from .fixed_effect_payment import FIXED_EFFECT_PAYMENT_CAPABILITY, FixedEffectPaymentSpec
+from .rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 
 
 SOURCE_MAINTENANCE_CAPABILITY = "trigger.source.fixed_maintenance"
@@ -22,6 +23,8 @@ class SourceMaintenanceSpec:
             raise ValueError("Source maintenance requires version 3")
         if self.payment is not None and not isinstance(self.payment, FixedEffectPaymentSpec):
             raise ValueError("Source maintenance requires a fixed typed payment")
+        if self.payment is not None and self.payment.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
+            raise ValueError("Source maintenance has no hybrid payment authority")
 
     def effect(self) -> dict[str, Any]:
         return {

@@ -392,6 +392,13 @@ class SemanticChoiceCoordinationMixin:
     ) -> frozenset[str]:
         if effect.get('op')=='extort' and effect.get('stage')=='pay':
             return frozenset(SnapshotSemanticChoiceQuery._cost_key(actor,{color:1}) for color in ('W','B') if self._cost_is_affordable(actor,{color:1}))
+        if (effect.get('op') == 'offer_optional_mana_payment' and effect.get('schema_version') == 2
+            and isinstance(effect.get('payment'), Mapping) and effect['payment'].get('kind') == 'hybrid_mana'):
+            from ..fixed_effect_payment import FixedEffectPaymentSpec
+
+            payment = FixedEffectPaymentSpec.from_dict(effect['payment'])
+            return frozenset(SnapshotSemanticChoiceQuery._cost_key(actor, option.requirements)
+                for option in payment.hybrid_mana_options if self._cost_is_affordable(actor, option.requirements))
         cost_value: Mapping[str, Any] | None = None
         if isinstance(effect.get("_requirements"), Mapping):
             cost_value = effect["_requirements"]

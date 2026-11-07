@@ -647,6 +647,11 @@ with the choice and selected move. Save and load preserve the selected hand
 incarnation through any entry replacement. Unversioned hand-entry effects
 retain their existing payloads.
 
+Version-ten optional hybrid prices record their fixed symbol components and
+seal the offered equivalent payment identifiers in the resolution choice.
+The accepted identifier still requires the complete price to be payable.
+Ordinary fixed costs keep their existing continuation shape.
+
 ## Replay contract
 
 New records pin `ninjutsu_band_retention_version: 1`. The Ninja joins combat

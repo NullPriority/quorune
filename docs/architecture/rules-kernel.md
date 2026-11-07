@@ -1538,6 +1538,11 @@ and restriction payability, and a stale option rejects before source tap, mana
 spend, life payment, or stack placement. The lot journal is authoritative
 checkpoint state but is not projected as mana-source identity.
 
+An optional fixed hybrid price during resolution uses the same canonical mana
+alternatives. The resolving controller can decline or select an affordable
+equivalent. The payment owner revalidates that choice before the mana owner
+spends it and the previously bound effect continues.
+
 Ordinary announced activation X uses that catalog and the same proposal and
 payment path. `activation_x.py` validates the optional symbol count;
 `rules/activation/x_costs.py` prices each symbol at the explicit nonnegative

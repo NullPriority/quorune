@@ -9,6 +9,7 @@ from ..fixed_effect_payment import FixedEffectPaymentSpec
 from ..object_query import object_matches_query
 from ..replacement.immutable import FrozenMap
 from ..rules.blight_model import blight_decline_branch_is_closed
+from ..rules.hybrid_resolution_payment import HYBRID_RESOLUTION_PAYMENT_KIND
 from ..semantic_runtime.intents import MoveObjectsSimultaneouslyIntent, PayLifeIntent, PayManaCostIntent, SetPermanentsTappedIntent, RemoveCountersIntent
 from ..semantic_runtime.energy_payment import PayEnergyIntent
 from ..zone_trigger_events import ZoneTransitionKind
@@ -50,6 +51,8 @@ def _validated(
     if "declined_effects" in effect:
         fields.add("declined_effects")
     local = {'_choice_actor', '_legal_objects', '_stack_label'} if continuation else set()
+    if continuation and isinstance(effect.get('payment'), Mapping) and effect['payment'].get('kind') == HYBRID_RESOLUTION_PAYMENT_KIND:
+        local.add('_legal_mana_options')
     if (
         set(effect) not in (fields | local, fields | local | {'cost'})
         or effect.get('op') != 'offer_optional_mana_payment'
@@ -111,6 +114,10 @@ def prepare_fixed_payment_cost(
     context: SemanticChoiceContext,
 ) -> SemanticChoicePreparation:
     """Publish the existing closed cost independently of its result branch."""
+    if spec.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
+        from .hybrid_payment import prepare_hybrid_payment
+
+        return prepare_hybrid_payment(spec, effect, context)
     actor = context.actor
     if spec.kind=='mana_discard':
         prepared=prepare_fixed_payment_cost(FixedEffectPaymentSpec('discard',predicate=spec.predicate),effect,context)
@@ -215,6 +222,10 @@ def complete_fixed_payment_cost(
     response: Mapping[str, Any], query: SemanticChoiceQuery,
 ) -> SemanticChoiceCompletion:
     """Validate and commit one fixed cost through the canonical intent owner."""
+    if spec.kind == HYBRID_RESOLUTION_PAYMENT_KIND:
+        from .hybrid_payment import complete_hybrid_payment
+
+        return complete_hybrid_payment(spec, effect, response, query)
     actor = effect['_choice_actor']
     label = effect['_stack_label']
     if spec.kind=='mana_discard':

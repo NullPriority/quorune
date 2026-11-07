@@ -1033,6 +1033,24 @@
       ]
     },
     {
+      "id": "optional-hybrid-resolution-payment",
+      "patterns": [
+        "quorune/compiler/fixed_effect_payment_templates.py",
+        "quorune/fixed_effect_payment.py",
+        "quorune/rules/hybrid_resolution_payment.py",
+        "quorune/semantic_choices/hybrid_payment.py",
+        "tests/fixtures/hybrid-resolution-payment-cards.json",
+        "tests/test_hybrid_resolution_payment.py"
+      ],
+      "test_modules": [
+        "test_hybrid_resolution_payment",
+        "test_fixed_optional_mana_payment_triggers",
+        "test_reflexive_payments",
+        "test_attacking_card_entry",
+        "test_card_program_trust"
+      ]
+    },
+    {
       "id": "selected-card-attacking-entry",
       "patterns": [
         "quorune/compiler/attacking_card_entry_templates.py",

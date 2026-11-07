@@ -1175,6 +1175,7 @@ PAYMENT_CHOICE_HANDLERS = (
             "reflexive_program",
             "_parent_stack_ref",
             "_legal_objects",
+            "_legal_mana_options",
             "_choice_actor",
             "_requirements",
             "_source_ref",
