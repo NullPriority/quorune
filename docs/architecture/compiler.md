@@ -3690,8 +3690,10 @@ pre-cost source snapshot supplies the token after source exile. Embalm creates
 a white Zombie copy; Eternalize creates a black 4/4 Zombie copy. Other printed
 characteristics and supported abilities are retained. Nonmana keyword costs
 and unsupported siblings remain residual.
-Quoted granted abilities use the existing typed-token child programs; recurring
-copied cleanup is not converted to an independent delayed trigger. Normal
+Quoted granted abilities use the existing typed-token child programs. An ordered
+effect sequence keeps that authority on the token-creation component and checks
+each sibling against its own capability. Recurring copied cleanup stays bound
+to the copied ability. Normal
 Populate uses the existing token-copy choice owner without the historical
 Haste-and-sacrifice rider. Every form reaches the existing replacement-aware
 `token_creation.py` transaction. Incubate, Roles, attached or attacking tokens,

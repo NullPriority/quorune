@@ -896,6 +896,11 @@ def token_creation_component_mechanics(effects, parent_mechanics):
         return parent_mechanics
     if "target" in effect and "cr-115-targets" in parent_mechanics:
         mechanics.add("cr-115-targets")
+    if (TYPED_TOKEN_ABILITY_MECHANIC_ID in parent_mechanics and effect.get('op') == 'create_token'
+            and isinstance(characteristics, Mapping) and characteristics.get('ability_fragments')):
+        closure = _fixed_token_effect_closure(effect)
+        if closure is not None and TYPED_TOKEN_ABILITY_CAPABILITY_ID in closure[0]:
+            mechanics.add(TYPED_TOKEN_ABILITY_MECHANIC_ID)
     try:
         if effect.get('op') == 'choose_fixed_attacking_token_destinations':
             from .attacking_token_results import attacking_token_result_closure, ATTACKING_TOKEN_MECHANIC
