@@ -72,7 +72,7 @@ class ExactArtifactEngineTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.is_token
             and card.controller == "A"
-            and card.printed_name == "Thopter"
+            and card.printed_name == "Thopter Token"
             and card.zone == "battlefield"
         ]
         self.assertEqual(1, len(thopters))

@@ -125,6 +125,21 @@ def compile_mana_mode_effects(
     return tuple(compiled)
 
 
+def _mana_damage_payment_prefix(payment_id: str) -> str:
+    return f"damage.mana:{payment_id}:"
+
+
+def mana_damage_event_belongs_to_payment(event_id: str, payment_id: str) -> bool:
+    if type(event_id) is not str or type(payment_id) is not str or not payment_id:
+        return False
+    prefix = _mana_damage_payment_prefix(payment_id)
+    if not event_id.startswith(prefix):
+        return False
+    source, separator, index = event_id[len(prefix):].rpartition(":")
+    return bool(source and separator and index.isascii() and index.isdecimal()
+                and (index == "0" or not index.startswith("0")))
+
+
 def _damage_proposal_id(
     host: ManaModeEffectHost,
     effect: DealDamageToController,
@@ -135,7 +150,7 @@ def _damage_proposal_id(
 ) -> str:
     if payment_id:
         source_identity = source.object_id if source is not None else seat
-        return f"damage.mana:{payment_id}:{source_identity}:{effect.effect_index}"
+        return f"{_mana_damage_payment_prefix(payment_id)}{source_identity}:{effect.effect_index}"
     return (
         f"damage.mana:{host.state.revision}:"
         f"{host.state.event_sequence + 1}:{effect.effect_index}"
@@ -209,11 +224,17 @@ def _apply_life_payment(
         raise GameRuleError(str(exc)) from exc
 
 
+def mana_sacrifice_payment_event_id(payment_id: str, source_ref: str) -> str:
+    return f"zone.mana:{payment_id}:{source_ref}"
+
+
 def _apply_sacrifice(
     host: ManaModeEffectHost,
     *,
     seat: str,
     source: Any | None,
+    payment_id: str | None,
+    replacement_selections_by_event: Mapping[str, Any] | None,
 ) -> None:
     if (
         source is None
@@ -221,11 +242,15 @@ def _apply_sacrifice(
         or source.zone != "battlefield"
     ):
         raise GameRuleError("The mana source cannot be sacrificed")
+    selections = _replacement_selections(
+        replacement_selections_by_event, mana_sacrifice_payment_event_id(payment_id, source.ref),
+    ) if payment_id else ()
     host.move_card(
         source.object_id,
         "graveyard",
         reason="mana ability cost",
         semantic_events=True,
+        **({"replacement_selections": selections} if selections else {}),
     )
 
 
@@ -258,7 +283,10 @@ def apply_mana_mode_effects(
             if source is None:raise GameRuleError('Next-actor untap mana result requires its original source')
             prohibit_next_player_untap(host,source,actor=seat)
         else:
-            _apply_sacrifice(host, seat=seat, source=source)
+            _apply_sacrifice(
+                host, seat=seat, source=source, payment_id=payment_id,
+                replacement_selections_by_event=replacement_selections_by_event,
+            )
 
 
 __all__ = [

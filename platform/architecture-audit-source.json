@@ -375,6 +375,7 @@
       "owners": [
         "quorune/engine.py",
         "quorune/abilities.py",
+        "quorune/activation_cost_choice.py",
         "quorune/activation_mana_cost.py",
         "quorune/mana.py",
         "quorune/mana_activation.py",
@@ -530,6 +531,7 @@
       "missing_dedicated_owner": false,
       "owners": [
         "quorune/token_creation.py",
+        "quorune/token_creation_events.py",
         "quorune/semantic_runtime/token_replacements.py",
         "quorune/engine.py",
         "quorune/face_down_copy.py",
@@ -602,7 +604,9 @@
         "quorune/state_based_execution.py",
         "quorune/engine.py",
         "quorune/state_based_legend_model.py",
-        "quorune/state_based_legend_choices.py"
+        "quorune/state_based_legend_choices.py",
+        "quorune/legend_rule_model.py",
+        "quorune/rules/legend_rule.py"
       ],
       "status": "dedicated_evaluator_with_engine_mutation"
     },

@@ -340,3 +340,327 @@ class AnyNumberTargetTests(unittest.TestCase):
         method='test_each_original_pays_two_target_price_and_applies_its_complete_result'
         with patch.object(FixedManaPerTargetCostSpec,'requirements_for_count',side_effect=lambda count:dict.fromkeys(('GENERIC','W','U','B','R','G','C'),0)):
             with self.assertRaises(AssertionError):getattr(type(self)(method),method)()
+
+
+
+class SelectedPlayerResultCompilerTests(unittest.TestCase):
+    def test_selected_player_shapes_infer_cardinality_and_leaf_authority(self):
+        from quorune.compiler.any_number_target_sets import any_number_player_result_template
+        from quorune.oracle_ir import _reviewed_atomic_effect_template
+        from quorune.rules.any_number_target_shapes import (
+            selected_player_payload_dependencies, selected_player_result_node_capabilities,
+        )
+        from quorune.target_cardinality import SELECTED_PLAYER_RESULT_CAPABILITY, ordered_selected_players
+
+        compile_leaf = lambda text: _reviewed_atomic_effect_template(text, card_name="Selected Player Witness")
+        template = any_number_player_result_template(
+            "Destroy all creatures, then any number of target players each mill half their library, rounded down.",
+            compile_independent=compile_leaf,
+        )
+        self.assertIsNotNone(template)
+        _name, effects, schema, mechanics = template
+        self.assertEqual(["destroy_all", "mill"], [effect["op"] for effect in effects])
+        self.assertIn(SELECTED_PLAYER_RESULT_CAPABILITY, selected_player_result_node_capabilities(
+            effects=effects, target_schema=schema, mechanic_ids=mechanics))
+        self.assertIn(CAP, selected_player_payload_dependencies(effects[1]))
+        self.assertIn("zone.mill.half_library", selected_player_payload_dependencies(effects[1]))
+        self.assertEqual((), selected_player_result_node_capabilities(
+            effects=effects, target_schema={**schema, "count_parameter": AnnouncedTargetCardinality().to_dict()},
+            mechanic_ids=mechanics))
+        with self.assertRaises(ValueError):
+            selected_player_payload_dependencies({**effects[1], "player": "$controller"})
+        for raw in (["B", "B"], ["foreign"], [True], "B"):
+            with self.subTest(raw=raw), self.assertRaises(ValueError):
+                ordered_selected_players(raw, ("A", "B", "C", "D"))
+        self.assertEqual(("B", "D"), ordered_selected_players(["D", "B"], ("A", "B", "C", "D")))
+        self.assertEqual((), ordered_selected_players([], ("A", "B")))
+
+    def test_selected_player_producer_omission_and_unrepresented_siblings_fail_closed(self):
+        from quorune.compiler.any_number_target_sets import any_number_player_result_template
+        from quorune.oracle_ir import _reviewed_atomic_effect_template
+
+        compile_leaf = lambda text: _reviewed_atomic_effect_template(text, card_name="Selected Player Witness")
+        valid = "Any number of target players each gain 6 life."
+        self.assertIsNotNone(any_number_player_result_template(valid, compile_independent=compile_leaf))
+        with patch("quorune.compiler.any_number_target_sets._PLAYER_RESULT") as pattern:
+            pattern.fullmatch.return_value = None
+            self.assertIsNone(any_number_player_result_template(valid, compile_independent=compile_leaf))
+        for text in (
+            "Any number of target players each mill half your library, rounded down.",
+            "Any number of target players each mill a card, then put it into their hand.",
+            "Any number of target players each lose half their life, rounded up.",
+        ):
+            with self.subTest(text=text):
+                compiled = any_number_player_result_template(text, compile_independent=compile_leaf)
+                if compiled is not None:
+                    from quorune.rules.any_number_target_shapes import selected_player_result_node_capabilities
+                    self.assertEqual((), selected_player_result_node_capabilities(
+                        effects=compiled[1], target_schema=compiled[2], mechanic_ids=compiled[3]))
+
+    def test_shared_amount_requires_the_current_controller_maximum(self):
+        from quorune.compiler.any_number_target_sets import any_number_player_result_template
+        from quorune.oracle_ir import _reviewed_atomic_effect_template
+        from quorune.query_effect_amount_model import PUBLIC_QUERY_AMOUNT_CAPABILITY
+        from quorune.rules.any_number_target_shapes import selected_player_payload_dependencies
+
+        def compile_leaf(text):
+            return _reviewed_atomic_effect_template(text, card_name="Selected Player Witness")
+
+        for clause, field in (("gain life", "delta"), ("discard a number of cards", "count")):
+            with self.subTest(clause=clause):
+                text = f"Any number of target players each {clause} equal to the greatest mana value among permanents you control."
+                _, (effect,), _, _ = any_number_player_result_template(text, compile_independent=compile_leaf)
+                self.assertIn(PUBLIC_QUERY_AMOUNT_CAPABILITY, selected_player_payload_dependencies(effect))
+                self.assertIsNone(any_number_player_result_template(
+                    text.replace("you control", "they control"), compile_independent=compile_leaf))
+                for change in ({"coefficient": -1}, {"quantity": {**effect[field]["quantity"], "offset": 1}},
+                               {"kind": "scalar_effect_amount"}):
+                    with self.subTest(change=change), self.assertRaises(ValueError):
+                        selected_player_payload_dependencies({**effect, field: {**effect[field], **change}})
+
+
+class SelectedPlayerResultRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = AnyNumberTargetTests.session
+    add = AnyNumberTargetTests.add
+    prepare = AnyNumberTargetTests.prepare
+    checkpoint = AnyNumberTargetTests.checkpoint
+    resolve = AnyNumberTargetTests.resolve
+    replay = AnyNumberTargetTests.replay
+    binding = AnyNumberTargetTests.binding
+    actions = AnyNumberTargetTests.actions
+    reject = AnyNumberTargetTests.reject
+
+    from test_mill_rules import HalfLibraryMillRuntimeTests as _MillWitness
+    _pass_until = _MillWitness._pass_until
+    _library = _MillWitness._library
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory()
+        path = Path(cls.temp.name) / "selected-player-results.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/selected-player-result-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Selected player results", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temp.cleanup()
+
+    def _act(self, session, seat, command):
+        result = session.act(f"pilot:{seat}", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def _cast_selected(self, session, spell, targets):
+        binding = self.binding(session, spell)
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+        action_id = f"cast:{spell.ref}"
+        self.assertIn(action_id, {row["id"] for row in self.actions(session)})
+        self._act(session, "A", {"action_id": action_id, "targets": list(targets), "pay": "auto"})
+
+    def test_singularity_distinguishes_zero_from_lost_targets_and_resolves_ordered_mill(self):
+        for index, targets in enumerate(((), ("C",), ("C", "D"))):
+            with self.subTest(targets=targets):
+                session = self.session(729100 + index)
+                spell = self.add(session.engine, "Singularity Rupture", zone="hand")
+                bodies = [self.add(session.engine, "Generic Bound Body", seat=seat, ref=f"singularity-{seat}")
+                          for seat in "ABD"]
+                tops = self._library(session, "D", 5)
+                self.prepare(session, mana={"C": 3, "U": 1, "B": 2})
+                self.checkpoint(session)
+                self._cast_selected(session, spell, targets)
+                if targets:
+                    self._pass_until(session, lambda: session.pending_principals() == ["pilot:C"])
+                    self._act(session, "C", {"action_id": "concede", "choices": {"confirm_concede": True}})
+                    session = self.replay(session, load=True)
+                from quorune.milling import prepare_mill
+                seen = []
+
+                def observe(host, request):
+                    seen.append(request.player)
+                    self.assertTrue(all(session.state.cards[body.object_id].zone == "graveyard" for body in bodies))
+                    return prepare_mill(host, request)
+
+                with patch("quorune.milling.prepare_mill", observe):
+                    self.assertIsNone(self.resolve(session))
+                expected_zone = "battlefield" if targets == ("C",) else "graveyard"
+                self.assertTrue(all(session.state.cards[body.object_id].zone == expected_zone for body in bodies))
+                milled = 2 if targets == ("C", "D") else 0
+                self.assertEqual(["D"] if milled else [], seen)
+                self.assertEqual(["graveyard"] * milled + ["library"] * (5 - milled),
+                                 [session.state.cards[oid].zone for oid in tops])
+                self.replay(session)
+
+    def test_tinybones_uses_selected_private_discard_and_the_same_set_for_mill_and_loss(self):
+        session = self.session(729110)
+        source = self.add(session.engine, "Tinybones Joins Up", zone="hand")
+        legend = self.add(session.engine, "Generic Bound Commander", zone="hand", ref="tinybones-legend")
+        hidden = self.add(session.engine, "Generic Bound Growth", seat="B", zone="hand",
+                          ref="tinybones-private-hand")
+        self.prepare(session, mana={"W": 1, "B": 1})
+        self.checkpoint(session)
+        self._cast_selected(session, source, ())
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        self.reject(session, {"action_id": "choose", "targets": ["B", "B"]})
+        self._act(session, "A", {"action_id": "choose", "targets": ["D", "B"]})
+        self.resolve(session)
+        sizes = {seat: len(session.state.players[seat].zones["hand"]) for seat in "BCD"}
+        for seat in "BD":
+            self.assertEqual([f"pilot:{seat}"], session.pending_principals())
+            self.assertEqual(1, session.state.pending_decision.payload_by_actor[seat]["count"])
+            self.assertNotIn(hidden.ref, json.dumps(session.packet("pilot:C", full=True)))
+            card = session.state.cards[session.state.players[seat].zones["hand"][0]]
+            self._act(session, seat, {"action_id": "choose", "cards": [card.ref]})
+        self.resolve(session)
+        self.assertEqual([sizes["B"] - 1, sizes["C"], sizes["D"] - 1],
+                         [len(session.state.players[seat].zones["hand"]) for seat in "BCD"])
+        self._pass_until(session, lambda: session.pending_principals() == ["pilot:A"])
+        self._cast_selected(session, legend, ())
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        self._act(session, "A", {"action_id": "choose", "targets": ["D", "C"]})
+        session = self.replay(session, load=True)
+        libraries = {seat: len(session.state.players[seat].zones["library"]) for seat in "ABCD"}
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([40, 40, 39, 39], [session.state.players[seat].life for seat in "ABCD"])
+        self.assertEqual([0, 0, 1, 1],
+            [libraries[seat] - len(session.state.players[seat].zones["library"]) for seat in "ABCD"])
+        self.replay(session)
+
+    def test_hunters_feast_changes_only_selected_players_and_replays(self):
+        session = self.session(729120)
+        source = self.add(session.engine, "Hunters' Feast", zone="hand")
+        self.prepare(session, mana={"C": 3, "G": 1})
+        self.checkpoint(session)
+        self._cast_selected(session, source, ("B", "D"))
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([40, 46, 40, 46], [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session)
+
+    def test_reward_the_faithful_reads_controller_maximum_after_response(self):
+        session = self.session(730100)
+        source = self.add(session.engine, "Reward the Faithful", zone="hand")
+        high = self.add(session.engine, "Frost Lynx")
+        self.add(session.engine, "Generic Bound Body")
+        rival = self.add(session.engine, "Jace, Memory Adept", seat="C")
+        rival.counters["loyalty"] = 4
+        response = self.add(session.engine, "Murder", seat="C", zone="hand")
+        session.state.players["C"].mana_pool.update({"C": 1, "B": 2})
+        self.prepare(session, mana={"W": 1})
+        self.checkpoint(session)
+        self._cast_selected(session, source, ("D", "B"))
+        self._pass_until(session, lambda: session.pending_principals() == ["pilot:C"])
+        self._act(session, "C", {"action_id": f"cast:{response.ref}", "targets": [high.ref], "pay": "auto"})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[high.object_id].zone)
+        self.assertEqual([40, 41, 40, 41], [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session)
+
+    def test_cabal_conditioning_collects_private_choices_before_discarding(self):
+        session = self.session(730110)
+        source = self.add(session.engine, "Cabal Conditioning", zone="hand")
+        high = self.add(session.engine, "Jace, Memory Adept")
+        high.counters["loyalty"] = 4
+        private = self.add(session.engine, "Generic Bound Growth", seat="B", zone="hand")
+        for object_id in tuple(session.state.players["D"].zones["hand"])[2:]:
+            session.engine.move_card(object_id, "library", reason="Bounded hand fixture", log=False, semantic_events=False)
+        hands = {seat: tuple(session.state.players[seat].zones["hand"]) for seat in "BCD"}
+        self.prepare(session, mana={"C": 6, "B": 1})
+        self.checkpoint(session)
+        self._cast_selected(session, source, ("D", "B"))
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        self.assertEqual(["pilot:B"], session.pending_principals())
+        offer = session.state.pending_decision.payload_by_actor["B"]
+        self.assertEqual(5, offer["count"])
+        self.assertIn(private.ref, offer["options"])
+        for seat in "ACD":
+            self.assertNotIn(private.ref, json.dumps(session.packet(f"pilot:{seat}", full=True)))
+        self.reject(session, {"action_id": "choose", "cards": offer["options"][:5]}, principal="pilot:D")
+        chosen = [private.ref, *[ref for ref in offer["options"] if ref != private.ref][:4]]
+        self._act(session, "B", {"action_id": "choose", "cards": chosen})
+        self.assertEqual(["pilot:D"], session.pending_principals())
+        session = self.replay(session, load=True)
+        offer = session.state.pending_decision.payload_by_actor["D"]
+        self.assertEqual(2, offer["count"])
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:D", full=True)))
+        for seat in "BCD":
+            self.assertEqual(hands[seat], tuple(session.state.players[seat].zones["hand"]))
+        self._act(session, "D", {"action_id": "choose", "cards": offer["options"]})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[private.object_id].zone)
+        self.assertEqual([len(hands["B"]) - 5, len(hands["C"]), 0],
+                         [len(session.state.players[seat].zones["hand"]) for seat in "BCD"])
+        self.replay(session)
+
+    def test_zero_shared_quantity_emits_no_gain_or_discard_choice(self):
+        for index, (name, mana) in enumerate((
+            ("Reward the Faithful", {"W": 1}),
+            ("Cabal Conditioning", {"C": 6, "B": 1}),
+        )):
+            with self.subTest(name=name):
+                session = self.session(730120 + index)
+                source = self.add(session.engine, name, zone="hand")
+                self.add(session.engine, "Frost Lynx", seat="D")
+                self.prepare(session, mana=mana)
+                self.checkpoint(session)
+                hand = tuple(session.state.players["D"].zones["hand"])
+                start = len(session.state.events)
+                self._cast_selected(session, source, ("D",))
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual("graveyard", session.state.cards[source.object_id].zone)
+                self.assertEqual(hand, tuple(session.state.players["D"].zones["hand"]))
+                self.assertEqual(40, session.state.players["D"].life)
+                self.assertNotIn("effect.life", [event.code for event in session.state.events[start:]])
+
+    def test_jace_pays_loyalty_and_selected_players_draw_privately_in_apnap_order(self):
+        session = self.session(730130)
+        source = self.add(session.engine, "Jace, Memory Adept")
+        source.counters["loyalty"] = 8
+        self.prepare(session, mana={})
+        self.checkpoint(session)
+        self.assertTrue(self.binding(session, source)["strict_capability_ready"])
+        libraries = {seat: len(session.state.players[seat].zones["library"]) for seat in "ABCD"}
+        top = session.state.cards[session.state.players["B"].zones["library"][-1]].ref
+        start = len(session.state.events)
+        action = f"activate:{source.ref}:ab3"
+        self.assertIn(action, {row["id"] for row in self.actions(session)})
+        self.reject(session, {"action_id": action, "targets": ["B", "B"]})
+        self._act(session, "A", {"action_id": action, "targets": ["D", "B"]})
+        self.assertEqual(1, session.state.cards[source.object_id].counters["loyalty"])
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(["B"] * 20 + ["D"] * 20,
+                         [event.actor for event in session.state.events[start:] if event.code == "card.draw"])
+        self.assertEqual([0, 20, 0, 20],
+            [libraries[seat] - len(session.state.players[seat].zones["library"]) for seat in "ABCD"])
+        for seat in "ABCD":
+            visible = top in json.dumps(session.packet(f"pilot:{seat}", full=True))
+            self.assertEqual(seat == "B", visible)
+        self.replay(session)
+
+    def test_wheel_and_deal_discards_only_selected_opponents_then_draws_and_replays(self):
+        session = self.session(729130)
+        source = self.add(session.engine, "Wheel and Deal", zone="hand")
+        self.prepare(session, mana={"C": 3, "U": 1})
+        hand_ids = {seat: tuple(session.state.players[seat].zones["hand"]) for seat in "BCD"}
+        libraries = {seat: len(session.state.players[seat].zones["library"]) for seat in "ABCD"}
+        self.checkpoint(session)
+        self.reject(session, {"action_id": f"cast:{source.ref}", "targets": ["A"], "pay": "auto"})
+        self._cast_selected(session, source, ("D", "B"))
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        for seat in "BD":
+            player = session.state.players[seat]
+            self.assertTrue(set(hand_ids[seat]).issubset(player.zones["graveyard"]))
+            self.assertEqual(7, len(player.zones["hand"]))
+            self.assertEqual(libraries[seat] - 7, len(player.zones["library"]))
+        self.assertEqual(hand_ids["C"], tuple(session.state.players["C"].zones["hand"]))
+        self.assertEqual(libraries["C"], len(session.state.players["C"].zones["library"]))
+        self.assertEqual(libraries["A"] - 1, len(session.state.players["A"].zones["library"]))
+        self.replay(session)

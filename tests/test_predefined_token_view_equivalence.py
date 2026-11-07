@@ -19,6 +19,32 @@ import test_land_search_view_equivalence as controls
 NAME = 'Warren Soultrader'
 
 
+class PredefinedNameDescriptorTests(unittest.TestCase):
+    def test_current_and_historical_definitions_keep_the_same_profile_authority(self):
+        from quorune.compiler.token_templates import fixed_token_creation_effect_template
+        from quorune.fixed_token_production import historical_unnamed_token_view
+        from quorune.rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+
+        for subtype in ("Treasure", "Clue", "Food", "Map", "Powerstone", "Junk", "Vibranium", "Blood", "Lander", "Mutagen"):
+            with self.subTest(subtype=subtype):
+                template = fixed_token_creation_effect_template(f"Create a {subtype} token.")
+                effect = template.effect
+                self.assertEqual(f"{subtype} Token", effect["name"])
+                self.assertEqual(1, effect["characteristics"]["literal_token_name_version"])
+                old_name, old_values = historical_unnamed_token_view(effect["name"], effect["characteristics"])
+                self.assertEqual(subtype, old_name)
+                self.assertEqual(effect["characteristics"]["activated_ability_profile"], old_values["activated_ability_profile"])
+                current = fixed_token_creation_node_capabilities(
+                    effects=(effect,), target_schema=None, mechanic_ids=template.mechanics,
+                )
+                historical = fixed_token_creation_node_capabilities(
+                    effects=({**effect, "name": old_name, "characteristics": old_values},),
+                    target_schema=None, mechanic_ids=template.mechanics,
+                )
+                self.assertTrue(current)
+                self.assertEqual(current, historical)
+
+
 class PredefinedTokenViewEquivalenceTests(unittest.TestCase):
     register_fixture_cards_on_add = True
     session = controls.LandSearchViewEquivalenceTests.session
@@ -103,7 +129,7 @@ class PredefinedTokenViewEquivalenceTests(unittest.TestCase):
 
     def treasures(self,s,seat='A'):
         return [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.is_token
-            and c.printed_name == 'Treasure' and c.controller == seat]
+            and c.printed_name == 'Treasure Token' and c.controller == seat]
 
     def test_real_paid_sick_source_creature_token_prices_and_all_five_treasure_colors(self):
         s = self.session(826020)
@@ -131,6 +157,8 @@ class PredefinedTokenViewEquivalenceTests(unittest.TestCase):
             self.assertEqual(1,len(tokens))
             token = tokens[0]
             data = s.engine._effective_card_data(token)
+            self.assertEqual("Treasure Token", data["name"])
+            self.assertEqual("Treasure Token", s.engine._copyable_characteristics(token)["name"])
             self.assertEqual([],list(data['colors']))
             self.assertIn('Treasure',data['type_line'])
             self.assertIn('Artifact',data['type_line'])

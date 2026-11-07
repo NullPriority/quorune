@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from common import ROOT
 import test_fixed_copy_type_exceptions as controls
@@ -37,9 +37,11 @@ class JobSelectModelTests(unittest.TestCase):
         ir = compile_oracle_card(card, capability_registry=load_default_capability_registry())
         self.assertEqual('exact', ir.status)
         effect = ir.faces[0].nodes[0].effects[0]
-        self.assertEqual('create_attached_token', effect['op'])
-        self.assertEqual('Hero', effect['name'])
-        self.assertEqual(('1', '1', []), tuple(effect['characteristics'][key] for key in ('power', 'toughness', 'colors')))
+        self.assertEqual('create_token_then_attach_source', effect['op'])
+        self.assertEqual('$source.zone_object', effect['source'])
+        token = effect['token']
+        self.assertEqual('Hero Token', token['name'])
+        self.assertEqual(('1', '1', []), tuple(token['characteristics'][key] for key in ('power', 'toughness', 'colors')))
         self.assertEqual('Named Tool — Equip {2}', ir.faces[0].nodes[-1].text)
         spec = fixed_equip_ability_spec('Named Tool — Equip {2}')
         self.assertIsNotNone(spec)
@@ -136,7 +138,7 @@ class JobSelectRuntimeTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         hero = next(card for card in session.state.cards.values() if card.is_token and card.zone == 'battlefield')
         self.assertEqual('A', hero.controller)
-        self.assertEqual('Hero', hero.printed_name)
+        self.assertEqual('Hero Token', hero.printed_name)
         self.assertEqual(hero.object_id, session.state.cards[source.object_id].attached_to)
         self.assertEqual([], session.engine._effective_card_data(hero)['colors'])
         self.assertEqual((3, 2), tuple(session.engine._numeric_stat(hero.object_id, stat) for stat in ('power', 'toughness')))
@@ -175,15 +177,18 @@ class JobSelectRuntimeTests(unittest.TestCase):
         self.assertEqual('graveyard', session.state.cards[source.object_id].zone)
         hero = next(card for card in session.state.cards.values() if card.is_token and card.zone == 'battlefield')
         self.assertEqual('A', hero.controller)
-        self.assertEqual('Hero', hero.printed_name)
+        self.assertEqual('Hero Token', hero.printed_name)
         self.assertEqual((1, 1), tuple(session.engine._numeric_stat(hero.object_id, stat) for stat in ('power', 'toughness')))
         self.assertIsNone(session.state.cards[source.object_id].attached_to)
         self.replay(session, load=True)
 
     def test_token_profile_and_attachment_omissions_fail_native_consequences(self):
         import quorune.compiler.fixed_attachment_keyword_nodes as compiler
+        from quorune.effect_runtime.zones_and_attachments import HANDLERS
         method = 'test_native_hero_and_flavored_equip_actions_resume_with_private_rollback'
         with patch.dict(compiler._SPECS, {'job select':('trigger.keyword.job_select', 'Create a 2/2 red Rebel creature token.')}), self.assertRaises(AssertionError):
             getattr(type(self)(method), method)()
-        with patch('quorune.effect_runtime.zones_and_attachments._apply_attach', return_value=None), self.assertRaises(AssertionError):
+        omitted_attachment = Mock(return_value=None)
+        with patch.dict(HANDLERS, {'attach': omitted_attachment}), self.assertRaises(AssertionError):
             getattr(type(self)(method), method)()
+        omitted_attachment.assert_called_once()

@@ -1445,6 +1445,155 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "0d6dc95d-55ce-4ef8-b065-d7203f5bf642",
+      "name": "Resolute Archangel",
+      "mana_cost": "{5}{W}{W}",
+      "type_line": "Creature — Angel",
+      "oracle_text": "Flying\nWhen this creature enters, if your life total is less than your starting life total, it becomes equal to your starting life total.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-07-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 7.0
+    },
+    {
+      "oracle_id": "bfd614d5-4c7f-416b-9cb2-bb167c0893a0",
+      "name": "Elenda, Saint of Dusk",
+      "mana_cost": "{2}{W}{B}",
+      "type_line": "Legendary Creature — Vampire Knight",
+      "oracle_text": "Lifelink, hexproof from instants\nAs long as your life total is greater than your starting life total, Elenda gets +1/+1 and has menace. Elenda gets an additional +5/+5 as long as your life total is at least 10 greater than your starting life total.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [
+        "Lifelink",
+        "Hexproof from",
+        "Hexproof"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "b1385b03-cb4b-4812-857f-7421f1df39af",
+      "name": "Revitalize",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "You gain 3 life.\nDraw a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 2.0
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -1454,6 +1603,18 @@
       "oracle_id": "da72a4bc-ce6f-4b72-bc66-2ee33cfa87df",
       "published_at": "2022-04-29",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "0d6dc95d-55ce-4ef8-b065-d7203f5bf642",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "Your starting life total is the life total you began the game with. For most two-player formats, this is 20. For Two-Headed Giant, it’s the life total your team started with, usually 30. In Commander games, your starting life total is 40."
+    },
+    {
+      "oracle_id": "0d6dc95d-55ce-4ef8-b065-d7203f5bf642",
+      "published_at": "2014-07-18",
+      "source": "wotc",
+      "comment": "If your life total is less than your starting life total, you actually gain the appropriate amount of life. Other effects that interact with life gain will interact with Resolute Archangel’s ability accordingly."
     }
   ],
   "schema_version": 1,

@@ -17,6 +17,39 @@ from .public_state_queries import fixed_battlefield_query_subject
 UntapStepHandlerTemplate = tuple[str, Mapping[str, Any], str]
 
 
+def static_turn_step_skip_handler(text: str) -> UntapStepHandlerTemplate | None:
+    """Lower one continuously applicable, complete step-skip instruction."""
+    normalized = " ".join(text.casefold().split())
+    own = re.fullmatch(r"skip your (?P<step>untap|upkeep|draw) step\.?", normalized)
+    everyone = re.fullmatch(
+        r"(?:players skip their (?P<steps>untap|upkeep|draw) steps"
+        r"|each player skips their (?P<step>untap|upkeep|draw) step)\.?",
+        normalized,
+    )
+    hellbent = normalized.removeprefix("hellbent — ").rstrip(".") == (
+        "skip your upkeep step if you have no cards in hand"
+    )
+    if own is None and everyone is None and not hellbent:
+        return None
+    from ..semantic_runtime.untap_steps import (
+        STATIC_STEP_SKIP_CAPABILITY, STATIC_STEP_SKIP_EVENT, STATIC_STEP_SKIP_HANDLER_ID,
+    )
+
+    step = "upkeep"
+    if own is not None:
+        step = own["step"]
+    elif everyone is not None:
+        step = everyone["step"] or everyone["steps"]
+    return "static-turn-step-skip-v1", {
+        "handler_id": STATIC_STEP_SKIP_HANDLER_ID,
+        "schema_version": 1,
+        "event": STATIC_STEP_SKIP_EVENT,
+        "step": step,
+        "scope": "all_players" if everyone else "source_controller",
+        "requires_empty_hand": hellbent,
+    }, STATIC_STEP_SKIP_CAPABILITY
+
+
 _GLOBAL_PROHIBITION = re.compile(
     r"^(?P<kind>Creatures|Permanents) don['’]t untap during their "
     r"controllers['’] untap steps?\.?$",

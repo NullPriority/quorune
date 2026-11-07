@@ -9,6 +9,22 @@ from .object_predicate import ObjectQuerySpec
 
 
 PUBLIC_STAT_AGGREGATE_CAPABILITY='quantity_expression.public_characteristic_aggregate'
+DISTINCT_PUBLIC_CHARACTERISTIC_COUNT_CAPABILITY = 'quantity_expression.distinct_public_characteristic_count'
+PUBLIC_POWER_THRESHOLD_CAPABILITY = "condition.characteristics.public_power_aggregate"
+CONTROLLED_CREATURES_POWER_QUERY = ObjectQuerySpec(zones=("battlefield",), types_all=("creature",))
+
+
+def _is_closed_distinct_query(characteristic: str, query: ObjectQuerySpec) -> bool:
+    if characteristic == 'power':
+        return query == CONTROLLED_CREATURES_POWER_QUERY
+    if characteristic != 'mana_value':
+        return False
+    return query in (
+        ObjectQuerySpec(zones=('battlefield',), excluded_types=('land',)),
+        ObjectQuerySpec(zones=('graveyard',), token=False),
+        ObjectQuerySpec(zones=('graveyard',), token=False, excluded_types=('land',)),
+        ObjectQuerySpec(zones=('graveyard',), token=False, types_any=('instant', 'sorcery')),
+    )
 
 
 @dataclass(frozen=True,slots=True)
@@ -20,6 +36,12 @@ class PublicCharacteristicAggregateSpec:
     schema_version: int=1
 
     def __post_init__(self):
+        if type(self.schema_version) is int and self.schema_version == 2:
+            if (self.reduction != 'distinct_count' or self.controller_relation != 'source_controller'
+                    or not isinstance(self.query, ObjectQuerySpec)
+                    or not _is_closed_distinct_query(self.characteristic, self.query)):
+                raise ValueError('Distinct counts require a closed controlled public characteristic query')
+            return
         if (type(self.schema_version) is not int or self.schema_version!=1
                 or self.characteristic not in {'power','toughness'} or self.reduction not in {'sum','maximum'}
                 or self.controller_relation not in {'any','source_controller','source_opponents'}):
@@ -32,6 +54,12 @@ class PublicCharacteristicAggregateSpec:
                     query.state_predicate.entered_this_turn or query.state_predicate.enchanted is not None
                     or query.state_predicate.equipped is not None or query.state_predicate.modified is not None))):
             raise ValueError('Public stat aggregates require a fixed public battlefield query')
+
+    @property
+    def capability_dependencies(self) -> tuple[str, ...]:
+        if self.schema_version == 2:
+            return (PUBLIC_STAT_AGGREGATE_CAPABILITY, DISTINCT_PUBLIC_CHARACTERISTIC_COUNT_CAPABILITY)
+        return (PUBLIC_STAT_AGGREGATE_CAPABILITY,)
 
     def to_dict(self):
         return {'schema_version':self.schema_version,'characteristic':self.characteristic,'reduction':self.reduction,

@@ -6,6 +6,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC, FixedEffectPaymentSpec
 from ..compiler.optional_payment_templates import OPTIONAL_MANA_PAYMENT_OPERATION
+from .blight_model import blight_decline_branch_is_closed
 
 
 def fixed_payment_result_capabilities(*,effects:Sequence[Mapping[str,Any]],target_schema:Mapping[str,Any]|None,
@@ -57,7 +58,7 @@ def fixed_payment_event_player_runtime_dependencies(program):
             if value.get('op')==OPTIONAL_MANA_PAYMENT_OPERATION and value.get('schema_version')==2:
                 payment=value.get('payment')
                 if not isinstance(payment,Mapping):raise ValueError('Fixed payment descriptor is unavailable')
-                refs=references(value.get('effects',()))
+                refs=references(value.get('effects',())) | references(value.get('declined_effects',()))
                 if refs or payment.get('kind')=='source_sacrifice':
                     owned=fixed_effect_payment_node_capabilities(effects=(value,),target_schema=program.target_schema,mechanic_ids=program.coverage)
                     if not owned or any(not _event_player_reference_is_closed(program,ref) for ref in refs):
@@ -97,15 +98,21 @@ def fixed_effect_payment_node_capabilities(*,effects:Sequence[Mapping[str,Any]],
             return ()
         return spec.capabilities
     fields={'op','schema_version','player','payment','effects'}
+    if isinstance(wrapper, Mapping) and "declined_effects" in wrapper:
+        fields.add("declined_effects")
     if not isinstance(wrapper,Mapping) or set(wrapper) not in (fields,fields|{'cost'}) or wrapper.get('op')!=OPTIONAL_MANA_PAYMENT_OPERATION or type(wrapper.get('schema_version'))is not int or wrapper['schema_version']!=2 or wrapper.get('player')!='$controller':return ()
-    try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'])
+    try:payment=FixedEffectPaymentSpec.from_dict(wrapper['payment'], allow_mandatory=True)
     except (ValueError,TypeError,KeyError):return ()
     if ('cost'in wrapper)!=(payment.kind=='mana') or payment.kind=='mana'and dict(wrapper['cost'])!=dict(payment.requirements):return ()
     if payment.kind in {'discard','exile','mana_discard'}and payment.predicate.owner!='$controller':return ()
-    if payment.kind in {'sacrifice','tap'}and payment.predicate.controller!='$controller':return ()
+    if payment.kind in {'sacrifice','tap','blight'}and payment.predicate.controller!='$controller':return ()
     if payment.kind=='sacrifice' and payment.schema_version==6 and payment.predicate.exclude_ref!='$source.zone_object':return ()
     if payment.kind in {'remove_source_counter','source_sacrifice'} and payment.source_ref!='$source.zone_object':return ()
     nested=wrapper['effects']
+    if "declined_effects" in wrapper:
+        if target_schema is not None or not blight_decline_branch_is_closed(payment.kind, nested, wrapper["declined_effects"]):
+            return ()
+        nested = wrapper["declined_effects"]
     if not isinstance(nested,(list,tuple))or not 1<=len(nested)<=4 or any(not isinstance(e,Mapping)or e.get('op')in {'offer_optional_effect',OPTIONAL_MANA_PAYMENT_OPERATION}for e in nested):return ()
     dependencies=set(payment.capabilities)
     components=fixed_payment_result_capabilities(effects=nested,target_schema=target_schema,

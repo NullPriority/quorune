@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from .casting_payment_keywords import DelveSpec, ImproviseSpec
+from .casting_payment_keywords import AssistSpec, DelveSpec, ImproviseSpec
 from .convoke import ConvokeSpec
 from .evoke import FixedManaEvokeSpec
 from .semantic_runtime.cast_costs import (
@@ -92,6 +92,15 @@ def compiled_affinity_specs(
                 if isinstance(value, AffinitySpec)
             )
     return tuple(result)
+
+
+def compiled_assist_specs(
+    host: CompiledCastCostHost,
+    oracle_id: str,
+    *,
+    spell_program: Any,
+) -> tuple[AssistSpec, ...]:
+    return _compiled_specs(host, oracle_id, spell_program=spell_program, spec_type=AssistSpec)
 
 
 def compiled_improvise_specs(
@@ -207,6 +216,7 @@ def _compiled_specs(
 __all__ = [
     "CompiledCastCostHost",
     "compiled_affinity_specs",
+    "compiled_assist_specs",
     "compiled_convoke_specs",
     "compiled_delve_specs",
     "compiled_evoke_specs",

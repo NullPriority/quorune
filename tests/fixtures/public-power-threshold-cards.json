@@ -1,0 +1,431 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Formidable"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Atarka Beastbreaker",
+      "oracle_id": "fdd4ef61-607a-4090-9380-dabbbb448519",
+      "oracle_text": "Formidable — {4}{G}: This creature gets +4/+4 until end of turn. Activate only if creatures you control have total power 8 or greater.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2015-03-27",
+      "toughness": "2",
+      "type_line": "Creature — Human Warrior"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Formidable"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Circle of Elders",
+      "oracle_id": "f720f80a-74bc-4681-ad4f-d33152ff988b",
+      "oracle_text": "Vigilance\nFormidable — {T}: Add {C}{C}{C}. Activate only if creatures you control have total power 8 or greater.",
+      "power": "2",
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2015-03-27",
+      "toughness": "4",
+      "type_line": "Creature — Human Shaman"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "keywords": [
+        "Indestructible"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "mana_cost": "{3}",
+      "name": "Darksteel Ingot",
+      "oracle_id": "a2529491-7389-4cfa-92d2-145eda779603",
+      "oracle_text": "Indestructible (Effects that say \"destroy\" don't destroy this artifact.)\n{T}: Add one mana of any color.",
+      "power": null,
+      "released_at": "2024-04-19",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance",
+        "Coven"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{W}",
+      "name": "Dawnhart Wardens",
+      "oracle_id": "0604ed6c-a85f-41da-a163-0c414e57d133",
+      "oracle_text": "Vigilance\nCoven — At the beginning of combat on your turn, if you control three or more creatures with different powers, creatures you control get +1/+0 until end of turn.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2021-09-24",
+      "toughness": "3",
+      "type_line": "Creature — Human Warlock"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Coven"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Might of the Old Ways",
+      "oracle_id": "266d3f06-c982-4427-b421-7520e5da5c2e",
+      "oracle_text": "Target creature gets +2/+2 until end of turn.\nCoven — Then if you control three or more creatures with different powers, draw a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-09-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}",
+      "name": "Owlbear Shepherd",
+      "oracle_id": "e81035b5-d922-48f8-af20-0025da4721c6",
+      "oracle_text": "At the beginning of your end step, if creatures you control have total power 8 or greater, draw a card.",
+      "power": "1",
+      "produced_mana": [],
+      "released_at": "2022-06-10",
+      "toughness": "4",
+      "type_line": "Creature — Goblin Druid"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "A creature has different power from another if their powers are different numbers. For example, a 1/1 creature and a 2/1 creature have different powers.",
+      "oracle_id": "0604ed6c-a85f-41da-a163-0c414e57d133",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "For three creatures to have different powers from one another, each of their powers needs to be different. A 1/1 creature, a 2/1 creature, and another 2/1 creature aren't three creatures with different powers, even though both 2/1 creatures have different power than the 1/1 creature.",
+      "oracle_id": "0604ed6c-a85f-41da-a163-0c414e57d133",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Many coven abilities, such as that of Dawnhart Wardens above, are triggered abilities with intervening if clauses. You must control three or more creatures with different powers at the time the ability triggers and at the time the ability tries to resolve. They do not, however, need to be the same set of creatures in both cases.",
+      "oracle_id": "0604ed6c-a85f-41da-a163-0c414e57d133",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "A creature has different power from another if their powers are different numbers. For example, a 1/1 creature and a 2/1 creature have different powers.",
+      "oracle_id": "266d3f06-c982-4427-b421-7520e5da5c2e",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "For three creatures to have different powers from one another, each of their powers needs to be different. A 1/1 creature, a 2/1 creature, and another 2/1 creature aren't three creatures with different powers, even though both 2/1 creatures have different power than the 1/1 creature.",
+      "oracle_id": "266d3f06-c982-4427-b421-7520e5da5c2e",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Many coven abilities, such as that of Dawnhart Wardens above, are triggered abilities with intervening if clauses. You must control three or more creatures with different powers at the time the ability triggers and at the time the ability tries to resolve. They do not, however, need to be the same set of creatures in both cases.",
+      "oracle_id": "266d3f06-c982-4427-b421-7520e5da5c2e",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "The effects of Might of the Old Ways happen in the listed order, so the +2/+2 bonus happens before you check the powers of creatures you control. For example, if you control two 2/2 creatures and a 5/5 creatures, choosing one of the 2/2 creatures as the target will allow you to draw a card. Conversely, if you control a 1/1 creature, a 3/3 creature, and a 5/5 creature, targeting either of the two smaller creatures will not allow you to draw a card.",
+      "oracle_id": "266d3f06-c982-4427-b421-7520e5da5c2e",
+      "published_at": "2021-09-24",
+      "source": "wotc"
+    },
+    {
+      "comment": "Owlbear Shepherd's ability has an intervening if clause, which means that it checks to see if creatures you control have total power 8 or greater both as it would trigger and as it resolves. If enough creatures have been removed or their total power is reduced to below 8 by the time the ability tries to resolve, you will not draw a card.",
+      "oracle_id": "e81035b5-d922-48f8-af20-0025da4721c6",
+      "published_at": "2022-06-10",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a creature with power less than 0, use its actual power when calculating the total power of creatures you control. For example, if you control three creatures with powers 4, 5, and -2, the total power of creatures you control is 7.",
+      "oracle_id": "f720f80a-74bc-4681-ad4f-d33152ff988b",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Other formidable abilities are triggered abilities with an “intervening ‘if’” clause. Such abilities check the total power of creatures you control twice: once at the appropriate time to see if the ability will trigger, and again as the ability tries to resolve. If, at that time, the total power of creatures you control is no longer 8 or greater, the ability will have no effect.",
+      "oracle_id": "f720f80a-74bc-4681-ad4f-d33152ff988b",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some formidable abilities are activated abilities that require creatures you control to have total power 8 or greater. Once you activate these abilities, it doesn’t matter what happens to the total power of creatures you control.",
+      "oracle_id": "f720f80a-74bc-4681-ad4f-d33152ff988b",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you control a creature with power less than 0, use its actual power when calculating the total power of creatures you control. For example, if you control three creatures with powers 4, 5, and -2, the total power of creatures you control is 7.",
+      "oracle_id": "fdd4ef61-607a-4090-9380-dabbbb448519",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Other formidable abilities are triggered abilities with an \"intervening 'if'\" clause. Such abilities check the total power of creatures you control twice: once at the appropriate time to see if the ability will trigger, and again as the ability tries to resolve. If, at that time, the total power of creatures you control is no longer 8 or greater, the ability will have no effect.",
+      "oracle_id": "fdd4ef61-607a-4090-9380-dabbbb448519",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some formidable abilities are activated abilities that require creatures you control to have total power 8 or greater. Once you activate these abilities, it doesn't matter what happens to the total power of creatures you control.",
+      "oracle_id": "fdd4ef61-607a-4090-9380-dabbbb448519",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall originals for signed power thresholds and their native controls."
+}

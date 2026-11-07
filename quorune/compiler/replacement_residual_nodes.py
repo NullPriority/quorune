@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import re
 
+from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_MECHANIC
+from ..turn_skip_model import TURN_SKIP_MECHANIC
 from .ir_model import OracleNode,append_residual
 from .kicked_self_replacement_templates import is_fixed_spell_self_replacement
 
@@ -31,6 +33,13 @@ def unowned_replacement_node(*,node_id,line,material_line,span,source_name,
     if spell and is_fixed_spell_self_replacement(material_line,source_name,
             compile_effect,has_faces=has_faces):
         return None
+    if spell and re.search(r"\bskip\b", material_line, re.I):
+        if TURN_SKIP_MECHANIC in compile_effect(material_line, card_name=source_name)[3]:
+            return None
+    if 'would die this turn, exile it instead.' in material_line.casefold():
+        body = material_line if spell else material_line.partition(': ')[2]
+        if body and DAMAGE_DEATH_EXILE_MECHANIC in compile_effect(body, card_name=source_name)[3]:
+            return None
     residual_id=append_residual(residuals,kind='replacement_effect',text=line,span=span,
         reason='replacement/prevention ordering is not compiled',blockers=(
             'replacement applicability','affected-player ordering',

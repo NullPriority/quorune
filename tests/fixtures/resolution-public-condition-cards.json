@@ -111,6 +111,131 @@
       }
     },
     {"oracle_id":"ce588fd3-642e-4df9-8061-6fcfc6e81270","name":"Jace's Ingenuity","mana_cost":"{3}{U}{U}","type_line":"Instant","oracle_text":"Draw three cards.","power":null,"toughness":null,"loyalty":null,"defense":null,"colors":["U"],"color_identity":["U"],"keywords":[],"produced_mana":[],"layout":"normal","released_at":"2014-07-18","faces":[],"cmc":5.0,"legalities":{"alchemy":"not_legal","brawl":"not_legal","commander":"legal","competitivebrawl":"not_legal","duel":"legal","future":"not_legal","gladiator":"not_legal","historic":"not_legal","legacy":"legal","modern":"legal","oathbreaker":"legal","oldschool":"not_legal","pauper":"not_legal","paupercommander":"not_legal","penny":"legal","pioneer":"legal","predh":"legal","premodern":"not_legal","standard":"not_legal","standardbrawl":"not_legal","timeless":"not_legal","tlr":"not_legal","vintage":"legal"}},
-    {"oracle_id":"00000000-0000-4000-8000-000000004005","name":"Generic Qualified Entry Death Draw","mana_cost":"{G}","cmc":1,"type_line":"Enchantment","oracle_text":"Whenever another creature you control enters or dies, draw a card.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","legalities":{"commander":"legal"}}
+    {"oracle_id":"00000000-0000-4000-8000-000000004005","name":"Generic Qualified Entry Death Draw","mana_cost":"{G}","cmc":1,"type_line":"Enchantment","oracle_text":"Whenever another creature you control enters or dies, draw a card.","colors":["G"],"color_identity":["G"],"keywords":[],"layout":"normal","legalities":{"commander":"legal"}},
+    {
+      "oracle_id": "ed7300f4-831a-4ba4-b5e6-ceba8d079eaa",
+      "name": "Cosmos Elixir",
+      "mana_cost": "{4}",
+      "type_line": "Artifact",
+      "oracle_text": "At the beginning of your end step, draw a card if your life total is greater than your starting life total. Otherwise, you gain 2 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-02-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "cmc": 4.0
+    },
+    {
+      "oracle_id": "45ef5ea9-70a6-4999-8778-6a11cb97d28e",
+      "name": "Gravelighter",
+      "mana_cost": "{2}{B}",
+      "type_line": "Creature — Spirit",
+      "oracle_text": "Flying\nWhen this creature enters, draw a card if a creature died this turn. Otherwise, each player sacrifices a creature of their choice.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "00000000-0000-4000-8000-000000071601",
+      "name": "Generic Public Alternative Mill",
+      "mana_cost": "{U}",
+      "cmc": 1,
+      "type_line": "Instant",
+      "oracle_text": "Target player mills three cards. Then if a graveyard has twenty or more cards in it, you draw three cards. Otherwise, you draw a card.",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      }
+    }
+  ],
+  "rulings": [
+    {
+      "oracle_id": "ed7300f4-831a-4ba4-b5e6-ceba8d079eaa",
+      "published_at": "2021-02-05",
+      "source": "wotc",
+      "comment": "You compare your current life total to your starting life total as Cosmos Elixir’s ability resolves to determine whether you draw a card or gain 2 life. There are no situations in which you’ll do both."
+    },
+    {
+      "oracle_id": "45ef5ea9-70a6-4999-8778-6a11cb97d28e",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "The word “otherwise” in Gravelighter's triggered ability refers to whether or not a creature died this turn, not whether or not a card was drawn."
+    }
   ]
 }

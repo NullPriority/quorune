@@ -40,19 +40,6 @@ def _registry_value() -> dict:
     return json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
 
 
-def _test_ids() -> set[str]:
-    result: set[str] = set()
-    for path in sorted((ROOT / "tests").glob("test_*.py")):
-        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
-        result.update(
-            node.name
-            for node in ast.walk(tree)
-            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
-            and node.name.startswith("test_")
-        )
-    return result
-
-
 def _lightning_bolt_record() -> CardRecord:
     """Return a compiler fixture independent of the selected card database."""
 
@@ -275,7 +262,10 @@ class CapabilityRegistryTests(unittest.TestCase):
             rule_index["source_sha256"], value["source_sha256"]
         )
         known_rules = {row["rule_id"] for row in rule_index["rules"]}
-        known_tests = _test_ids()
+        from scripts.update_capability_evidence import discover_tests
+
+        tests = discover_tests(ROOT)
+        known_tests = {*tests, *tests.values()}
         for capability in value["capabilities"]:
             with self.subTest(capability["id"]):
                 self.assertFalse(

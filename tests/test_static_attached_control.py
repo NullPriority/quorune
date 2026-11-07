@@ -248,7 +248,7 @@ class StaticAttachedControlRuntimeTests(unittest.TestCase):
         self.replay(session,load=True)
 
     def test_original_gift_aura_replacement_siblings_reject_whole_runtime_admission(self):
-        from high_risk_interaction_support import _observed_piece_ids
+        from high_risk_interaction_support import CONDITIONAL_DRAW_STEP_REPLACEMENT, _observed_piece_ids
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
         record=self.db.lookup('Kitnap')
         ir=compile_oracle_card(record,capability_registry=self.registry,capability_profile='commander_review')
@@ -266,7 +266,7 @@ class StaticAttachedControlRuntimeTests(unittest.TestCase):
         from dataclasses import replace
         boundary=replace(record,name='Generic Attached Control Replacement Boundary',
             oracle_id='fixture:attached-control-replacement',
-            oracle_text='Enchant creature\nYou control enchanted creature.\nSkip your draw step.')
+            oracle_text=f'Enchant creature\nYou control enchanted creature.\n{CONDITIONAL_DRAW_STEP_REPLACEMENT}')
         ir=compile_oracle_card(boundary,capability_registry=self.registry,capability_profile='commander_review')
         program=compile_best_available_card_program(self.db,boundary,semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
         row=analyze_card_unlocks(ir,program=program,program_error=None,capabilities=self.registry,profile='commander_review')

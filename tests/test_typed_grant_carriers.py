@@ -704,7 +704,7 @@ class TypedGrantCarrierTests(unittest.TestCase):
         self.resolve(session)
         self.assertEqual("graveyard", aura.zone)
         self.assertFalse(any(a.builtin_semantic_key == ability.builtin_semantic_key for a in session.engine._activated_abilities(land)))
-        squirrels = [c for c in session.state.cards.values() if c.zone == "battlefield" and c.printed_name == "Squirrel"]
+        squirrels = [c for c in session.state.cards.values() if c.zone == "battlefield" and c.printed_name == "Squirrel Token"]
         self.assertEqual(1, len(squirrels))
         self.assertEqual("A", squirrels[0].controller)
         private = session.state.players["A"].zones["hand"]

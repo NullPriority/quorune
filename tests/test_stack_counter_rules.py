@@ -789,12 +789,12 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
     def test_partial_intrinsic_spell_pauses_and_replays_authorized_arbitration(self):
         session = self.session(128608220)
         session.state.config = replace(session.state.config, semantic_policy="arbitrate_or_pause")
-        spell = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        spell = self.add(session.engine, "Commence the Endgame", zone="hand")
         target = self.add(session.engine, "Generic Bound Body", seat="B")
         hidden = self.add(session.engine, "Void Rend", seat="D", zone="hand")
         target.tapped = True
         self.assertFalse(self.binding(session, spell)["strict_capability_ready"])
-        self.prepare(session, mana={"C": 4, "R": 1})
+        self.prepare(session, mana={"C": 4, "U": 2})
         self.checkpoint(session)
         action, = [row for row in self.actions(session) if row["id"] == "cast:" + spell.ref]
         self.assertFalse(action.get("target_schema"))
@@ -837,11 +837,11 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
     def test_trusted_only_admits_the_complete_intrinsic_spell_and_keeps_its_target(self):
         session = self.session(128608221)
         session.state.config = replace(session.state.config, semantic_policy="trusted_only")
-        partial = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        partial = self.add(session.engine, "Commence the Endgame", zone="hand")
         spell = self.add(session.engine, "Void Rend", zone="hand")
         target = self.add(session.engine, "Generic Bound Body", seat="B")
         self.assertTrue(self.binding(session, spell)["strict_capability_ready"])
-        self.prepare(session, mana={"C": 4, "R": 1, "W": 1, "U": 1, "B": 1})
+        self.prepare(session, mana={"C": 4, "W": 1, "U": 2, "B": 1})
         self.checkpoint(session)
         actions = {row["id"]: row for row in self.actions(session)}
         partial_id = "cast:" + partial.ref
@@ -865,11 +865,11 @@ class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
 
     def test_unregistered_arbiter_resolution_replays_after_a_replacement_choice(self):
         session = self.session(128608222)
-        spell = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        spell = self.add(session.engine, "Commence the Endgame", zone="hand")
         target = self.add(session.engine, "Generic Bound Body")
         adder = self.add(session.engine, "Generic Bound Counter Adder")
         self.add(session.engine, "Generic Bound Counter Doubler")
-        self.prepare(session, mana={"C": 4, "R": 1})
+        self.prepare(session, mana={"C": 4, "U": 2})
         self.checkpoint(session)
         action, = [row for row in self.actions(session) if row["id"] == "cast:" + spell.ref]
         cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})

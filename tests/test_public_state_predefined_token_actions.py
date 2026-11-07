@@ -17,7 +17,7 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
         self.checkpoint(session)
         self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
         self.assertIsNone(self.resolve(session))
-        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Lander')
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Lander Token')
         while session.state.priority_player != 'A':
             self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
         action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
@@ -52,7 +52,7 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
         self.checkpoint(session)
         self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
         self.assertIsNone(self.resolve(session))
-        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Lander')
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Lander Token')
         while session.state.priority_player != 'A':
             self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
         action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
@@ -83,7 +83,7 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
         self.checkpoint(session)
         self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
         self.assertIsNone(self.resolve(session))
-        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Mutagen')
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Mutagen Token')
         while session.state.priority_player != 'A':
             self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
         action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
@@ -113,7 +113,7 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
         self.checkpoint(session)
         self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
         self.assertIsNone(self.resolve(session))
-        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Mutagen')
+        token = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Mutagen Token')
         while session.state.priority_player != 'A':
             self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
         draw_action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
@@ -155,7 +155,7 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
         self.assertIsNone(self.resolve(session))
         for seat in 'BCD':
             self.assertEqual(40, session.state.players[seat].life)
-        blood = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Blood')
+        blood = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Blood Token')
         while session.state.priority_player != 'A':
             self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
         action = next(a for a in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
@@ -196,7 +196,7 @@ class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unitte
         self.assertTrue(session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'}).ok)
         self.assertIsNone(self.resolve(session))
         self.assertEqual([], session.state.players['A'].zones['hand'])
-        blood = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Blood')
+        blood = next(card for card in session.state.cards.values() if card.is_token and card.printed_name == 'Blood Token')
         while session.state.priority_player != 'A':
             self.assertTrue(session.act(session.pending_principals()[0], {'action_id': 'pass'}).ok)
         actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']

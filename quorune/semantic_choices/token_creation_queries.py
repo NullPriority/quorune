@@ -62,6 +62,27 @@ def semantic_choice_token_creation_preview(
     return tuple(FrozenMap(value) for value in resolved.specs)
 
 
+def attached_token_candidate_refs(host, effect: Mapping[str, Any]) -> tuple[str, ...]:
+    """Materialize exact current legal Equipment recipients from the committed result."""
+    from ..effect_runtime.zones_and_attachments import _attachment_target_is_legal
+
+    refs, source_ref = effect.get("cards"), effect.get("source")
+    if not isinstance(refs, (list, tuple)) or any(type(ref) is not str for ref in refs) or type(source_ref) is not str:
+        return ()
+    battlefield = {
+        card.ref: card for card in host.state.cards.values()
+        if card.zone == "battlefield" and not card.phased_out
+    }
+    source = battlefield.get(source_ref)
+    if source is None:
+        return ()
+    return tuple(
+        ref for ref in refs
+        if ref in battlefield and battlefield[ref].is_token
+        and _attachment_target_is_legal(host, source, battlefield[ref], attachment_kind="equipment")
+    )
+
+
 def token_creation_choice_facts(host, actor, effect):
     return {"materialized_token_creation_preview": host._semantic_choice_token_creation_preview(actor, effect),
         "attacking_token_entry_allowed": host.state.phase == "combat" and host.state.active_player == actor}

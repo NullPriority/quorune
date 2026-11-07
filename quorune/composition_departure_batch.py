@@ -142,14 +142,24 @@ def publish_composition_departure_batch(owner,batch,committed,counter_results):
     synchronize_citys_blessing(owner.host,reason='physical departure batch before trigger facts')
     end_pairs_containing(owner.host,(group.plan.card.object_id for group in batch.groups),reason='physical departure batch')
     reconcile_soulbond_pairs(owner.host)
-    facts=tuple((fact,card,group.departure.trigger_sources) for group,cards,departures,order in committed
-        for fact,card in _group_facts(owner,group,cards,departures,order,batch.reason))
-    for fact,_card,_sources in facts:record_zone_change_history(owner.host,fact)
+    grouped_facts = tuple(
+        (group.departure.trigger_sources, _group_facts(owner, group, cards, departures, order, batch.reason))
+        for group, cards, departures, order in committed
+    )
+    for _sources, facts in grouped_facts:
+        for fact, _card in facts:
+            record_zone_change_history(owner.host, fact)
     triggers=[]
-    for fact,card,sources in facts:
-        dispatch_zone_change_occurrence(owner.host,fact,card,departure_sources=sources.sources,
-            departure_source_zones=sources.source_zones,departure_source_characteristics=sources.source_characteristics,
-            trigger_batch=triggers,history_pre_recorded=True)
+    for sources, facts in grouped_facts:
+        physical_departures = tuple(fact for fact, _card in facts[1:])
+        for index, (fact, card) in enumerate(facts):
+            dispatch_zone_change_occurrence(
+                owner.host, fact, card, departure_sources=sources.sources,
+                departure_source_zones=sources.source_zones,
+                departure_source_characteristics=sources.source_characteristics,
+                trigger_batch=triggers, history_pre_recorded=True,
+                composition_departures=physical_departures if index == 0 else (),
+            )
     dispatch_counter_event_trees(owner.host,tuple(counter_results),reason=batch.reason,trigger_batch=triggers)
     observe_public_state_triggers(owner.host,trigger_batch=triggers)
     enqueue_trigger_batch(owner.host,triggers)

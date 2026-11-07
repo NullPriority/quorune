@@ -72,6 +72,70 @@ A returning incarnation never substitutes. Missing snapshots fail closed,
 while a known empty counter map yields zero. Version-one scalar descriptors
 retain their original field set and serialization.
 
+A destruction instruction with a committed-result quantity retains its fixed
+battlefield set and following instruction in one source-spanned node. The
+result uses the type, token status, and controller recorded before movement.
+It counts successful logical destructions after the destruction and destination
+choices, including a destruction redirected to exile. The following draw,
+life change, token creation, or source counter instruction receives that quantity
+after the destruction commits and any required physical order is complete.
+
+A targeted public graveyard exile can bind a follow-up to its committed card
+incarnations. The scope uses the public front-face characteristics before the
+move. A union counts one card once, and the resulting life, token, or source
+counter instruction runs in the chosen ability or modal sequence.
+
+A fixed multiplayer top-card reveal uses one actual card from each nonempty
+library of a player still in the game. The reveal uses the front face of a
+double-faced card. The resulting land and nonland counts drive the supported
+instructions in printed order before the ordinary APNAP draws. A draw
+replacement can change a later draw without changing the reveal results.
+An activated ability that adds mana and instructs a draw uses the stack
+under CR 605.1a.
+
+Current-turn conditions read committed casts, declared attacks, discards,
+permanent entries, graveyard arrivals and life changes from the existing
+history journal. An intervening condition is checked at occurrence and
+resolution, including a scheduled self-sacrifice. A casting discount or
+static ability uses the same facts at its own evaluation boundary. A missing
+journal remains unavailable even for a condition that requires zero events.
+
+Committed public conditions can read a paid Warp cast and an actual
+graveyard departure. Void uses a paid Warp cast or a nonland permanent
+departure by any player. A graveyard condition uses the card owner's
+departure fact, including when the card is cast. Token creation conditions
+share the creation owner's per-turn count, which excludes a permanent
+spell copy becoming a token on resolution.
+
+Distinct-value amounts count the locked controller's current creature powers
+or mana values in a closed public collection. Battlefield reads use effective
+characteristics. Graveyard reads use the public card view, including combined
+split-card mana values and the front face of a double-faced card.
+
+Draw and token amounts for each card the controller discarded this turn or
+each creature that died this turn use the typed scalar history reader. The
+amount uses committed events when the instruction applies, including events
+from earlier instructions of the same spell or ability.
+
+Power thresholds read the current effective powers of creatures the controller
+controls. Coven counts distinct signed powers and Formidable sums signed powers.
+A trigger with an intervening condition checks at occurrence and resolution.
+An activation uses the same aggregate when generating and validating legal actions.
+An ordered conditional instruction reads the game after its preceding instruction applies.
+
+Qualified battlefield counts read current effective power, toughness, or
+represented modifications at the instruction that uses the count. A granted
+draw may read its own independent count. In an ordered spell, a later declared
+amount can read the hand after an earlier draw commits.
+Variable damage to each opponent uses the existing simultaneous damage batch.
+A declared amount shared by damage and life gain is determined at resolution
+and remains independent of how much damage prevention allows through.
+Counted energy uses the controller's current battlefield quantity at the
+instruction that grants it. A zero count creates no counter placement event.
+Spells with one fixed creature sacrifice can read the power or toughness
+sealed when that price is paid. The receipt follows the spell through copies
+and replay. Result amounts apply the ordinary zero floor.
+
 For each Oracle face and material ability, compilation records:
 
 - Oracle ID, face identity, stable ability key, and active zones;
@@ -191,6 +255,9 @@ Versioned scheduled-player results retain the step participant selected at
 occurrence. If that participant leaves before resolution, instructions addressed
 to that player are skipped and instructions for surviving players continue in
 their original order.
+An intervening condition on the upkeep participant's hand count checks the
+public count at occurrence and again at resolution. If the participant leaves,
+the recheck uses the count immediately before departure.
 Combat declaration costs, restrictions, and requirements are lowered as
 closed static-ability fragments. Their registered handlers add the fragments
 to the same effective layer-6 ability snapshot used by other static abilities;

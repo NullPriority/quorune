@@ -2,7 +2,7 @@
 title: "Compact CI card dependencies"
 status: "generated"
 authoritative_source: "tests/fixtures/compact-ci-fixtures.json and platform/test-shards.json"
-verified: "d58fdc900d68e1ac74d8dc2739bd88e1b2df389d79c090c92cb25bfa55c70ccd"
+verified: "b4defdc50f9a97f0980adb1cce3f11ff17b7785456975ad6549d2ef7f2b7a443"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -17,11 +17,11 @@ Overall closure: **closed**.
 
 | Measure | Value |
 | --- | ---: |
-| Fixture files | 535 |
-| Cards | 5704 |
-| Rulings | 16979 |
-| Modules inspected | 890 |
-| Static requirements | 2530 |
+| Fixture files | 573 |
+| Cards | 5922 |
+| Rulings | 17651 |
+| Modules inspected | 918 |
+| Static requirements | 2766 |
 | Declared dynamic requirements | 177 |
 | Unresolved dynamic sites | 0 |
 | Missing cards | 0 |
@@ -34,23 +34,23 @@ Overall closure: **closed**.
 | --- | ---: | --- |
 | casting-costs-mana | 71 | closed |
 | combat-declarations | 25 | closed |
-| compiler-cardprogram | 94 | closed |
+| compiler-cardprogram | 95 | closed |
 | core-domain | 14 | closed |
-| counter-continuous-effects | 61 | closed |
+| counter-continuous-effects | 64 | closed |
 | deterministic-game-regressions | 6 | closed |
-| events-replacement-zone | 56 | closed |
-| functional-01 | 62 | closed |
-| functional-02 | 64 | closed |
-| functional-03 | 80 | closed |
-| functional-04 | 68 | closed |
+| events-replacement-zone | 60 | closed |
+| functional-01 | 65 | closed |
+| functional-02 | 66 | closed |
+| functional-03 | 81 | closed |
+| functional-04 | 71 | closed |
 | functional-05 | 56 | closed |
-| functional-06 | 60 | closed |
-| functional-07 | 62 | closed |
-| functional-08 | 117 | closed |
-| functional-09 | 92 | closed |
-| functional-10 | 60 | closed |
-| functional-11 | 71 | closed |
-| functional-12 | 64 | closed |
+| functional-06 | 61 | closed |
+| functional-07 | 68 | closed |
+| functional-08 | 120 | closed |
+| functional-09 | 93 | closed |
+| functional-10 | 63 | closed |
+| functional-11 | 72 | closed |
+| functional-12 | 68 | closed |
 | generated-validation | 34 | closed |
 | main-integration-smoke | 3 | closed |
 | main-smoke | 6 | closed |
@@ -58,7 +58,7 @@ Overall closure: **closed**.
 | multiplayer-commander | 17 | closed |
 | nightly-property | 3 | closed |
 | server-replay-privacy | 37 | closed |
-| state-actions-damage | 19 | closed |
+| state-actions-damage | 22 | closed |
 | targets-choices-continuations | 39 | closed |
 | triggers-turns-exact-decks | 20 | closed |
 | windows-compat | 18 | closed |

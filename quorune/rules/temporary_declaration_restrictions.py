@@ -20,7 +20,7 @@ from ..continuous_effect_state import (
     create_resolution_declaration_rule_effect,
 )
 from ..declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
-from ..declaration_rule_effects import ResolutionDeclarationRuleEffect
+from ..declaration_rule_effects import ATTACK_BLOCK_PROHIBITION, ResolutionDeclarationRuleEffect
 from ..object_query import ObjectQueryResult
 from ..characteristic_read_frames import characteristic_read_method
 
@@ -105,11 +105,7 @@ def temporary_declaration_restriction(
             scope="self",
         )
     if kind == "cant_attack_or_block":
-        return DeclarationRestrictionTemplate(
-            template_id="intrinsic-attack-block-prohibition-v1",
-            declarations=("attack", "block"),
-            scope="self",
-        )
+        return ATTACK_BLOCK_PROHIBITION
     if kind == "unblockable":
         return DeclarationRestrictionTemplate(
             template_id="intrinsic-unblockable-v1",
@@ -127,8 +123,9 @@ def commit_temporary_declaration_restriction(
     card: Any,
     source: ResolutionEffectSource,
     kind: TemporaryDeclarationRestrictionKind | str | Mapping,
+    expires_on_next_turn_of: str | None = None,
 ) -> ResolutionDeclarationRuleEffect:
-    """Create one locked declaration rule that lasts until cleanup."""
+    """Create one locked, duration-bound declaration rule."""
 
     if getattr(card, "zone", None) != "battlefield" or bool(
         getattr(card, "phased_out", False)
@@ -148,6 +145,7 @@ def commit_temporary_declaration_restriction(
             targets=(card,),
             restriction=restriction,
             duration=ContinuousEffectDuration.UNTIL_END_OF_TURN,
+            expires_on_next_turn_of=expires_on_next_turn_of,
         )
     except (ContinuousEffectError, ContinuousEffectStateError) as exc:
         raise TemporaryDeclarationRestrictionError(str(exc)) from exc

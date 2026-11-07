@@ -469,11 +469,18 @@ def activation_choice_candidates(
     actor: str,
     source: Any,
     choice: Any,
+    *,
+    ability: Any = None,
 ) -> tuple[str, ...]:
     """Return the canonical legal objects for one activation cost choice."""
 
-    from .selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, selected_counter_cost_candidates
-    if choice.kind == SELECTED_PLUS_COUNTER_COST_KIND:
+    from .selected_counter_costs import (
+        BLIGHT_ACTIVATION_COST_KIND, SELECTED_COUNTER_COST_CAPABILITIES,
+        blight_activation_cost_candidates, selected_counter_cost_candidates,
+    )
+    if choice.kind == BLIGHT_ACTIVATION_COST_KIND and ability is not None:
+        return blight_activation_cost_candidates(host, actor, source, ability, choice)
+    if choice.kind in SELECTED_COUNTER_COST_CAPABILITIES:
         return selected_counter_cost_candidates(host, actor, choice)
     typed_cost = choice.fixed_zone_change_cost()
     if typed_cost is not None:

@@ -7,9 +7,12 @@ from .control_capability_shapes import fixed_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .fixed_rule_action_coverage import FIXED_RULE_ACTION_CAPABILITIES
 from .destruction_regeneration_capability_shapes import regeneration_covered_mechanics as _regeneration_covered_mechanics
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
+from .endure_model import ENDURE_CAPABILITY, ENDURE_MECHANIC
+from .blight_model import BLIGHT_CAPABILITY, BLIGHT_MECHANIC
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
@@ -312,8 +315,10 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'random-own-graveyard-return': ('zone.return.random_own_graveyard',),
     'own-graveyard-return-choice': ('zone.return.own_graveyard_choice',),
     'spell-resolution-self-exile': ('zone.exile.resolving_spell',),
+    'spell-resolution-self-shuffle': ('zone.shuffle.resolving_spell',),
     'mana-announced-target-set': ('target.cardinality.mana_announced_x',),
     'any-number-target-set': ('target.cardinality.any_number',),
+    'selected-player-result-set': ('resolution.target_set.selected_player_results',),
     'quantified-counter-target-set': ('counter.producer.quantified_target_set',),
     'all-kind-counter-doubling': ('counter.producer.all_kind_doubling',),
     'paid-entry-copy-offspring': ('casting.additional.paid_entry_copy',),
@@ -377,12 +382,15 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'created-token-counter-followup':('token.creation.post_creation_counter',),
     'incubate':('token.creation.incubate',),
     'discover':('library.discover.controller',),
+    'exile-until-nonland-cast': ('library.exile_until_nonland.cast_without_mana',),
+    'exile-until-instant-or-sorcery-cast': ('library.exile_until_instant_or_sorcery.cast_and_return',),
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
     'fixed-target-reanimation-set':('zone.reanimate.fixed_target_set',),
     'variable-library-selection':('library.select.variable_controller',),
     'reveal-until-library-selection':('library.select.reveal_until_controller',),
     'fixed-extra-turn-after-current': ('turn.extra.fixed_after_current',),
+    **FIXED_RULE_ACTION_CAPABILITIES,
     'whole-hand-discard': ('zone.discard.whole_hand',),
     'whole-hand-discard-result': ('zone.discard.whole_hand_result',),
     'declared-cast-cost-fact': ('casting.additional_cost.declared_instance',),
@@ -410,6 +418,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     _MENTOR_MECHANIC: ("counter.producer.mentor",),
     _DETHRONE_MECHANIC: ("counter.producer.dethrone",),
     _TRAINING_MECHANIC: ("counter.producer.training",),
+    "decayed": ("combat.trigger.decayed",),
     _RENOWN_MECHANIC: ("counter.producer.renown",),
     _MODULAR_MECHANIC: ("counter.producer.modular",),
     _EXHAUST_MECHANIC: ("activation.exhaust.once_per_object",),
@@ -564,6 +573,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'fixed-public-event-set-counter',
         'ascend',
         "fixed-extra-turn-after-current",
+        *FIXED_RULE_ACTION_CAPABILITIES,
         "declared-effect-amount",
         "cr-121-drawing-a-card",
         "cr-119-life",
@@ -1321,7 +1331,16 @@ def capability_dependencies_for_node(
 
 
 def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
+    from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_CAPABILITY, DAMAGE_DEATH_EXILE_MECHANIC
+    from .destruction_result_model import DESTRUCTION_RESULT_CAPABILITY, DESTRUCTION_RESULT_MECHANIC
+    from .public_exile_result_model import PUBLIC_EXILE_RESULT_CAPABILITY, PUBLIC_EXILE_RESULT_MECHANIC
+    from .revealed_library_top import REVEAL_TOP_CAPABILITY, REVEAL_TOP_MECHANIC
+
     mapping = {
+        DAMAGE_DEATH_EXILE_CAPABILITY: DAMAGE_DEATH_EXILE_MECHANIC,
+        DESTRUCTION_RESULT_CAPABILITY: DESTRUCTION_RESULT_MECHANIC,
+        PUBLIC_EXILE_RESULT_CAPABILITY: PUBLIC_EXILE_RESULT_MECHANIC,
+        REVEAL_TOP_CAPABILITY: REVEAL_TOP_MECHANIC,
         'resolution.target_set.ordered_results':'shared-target-set-result-sequence',
         'zone.reanimate.entry_counters':'fixed-target-entry-counter-reanimation',
         'target.set.one_per_player':'fixed-per-player-target-set',
@@ -1352,6 +1371,8 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         MONARCH_DESIGNATION_CAPABILITY: MONARCH_MECHANIC,
         RING_TEMPTATION_CAPABILITY: RING_MECHANIC,
         CHAMPION_CAPABILITY: CHAMPION_MECHANIC,
+        ENDURE_CAPABILITY: ENDURE_MECHANIC,
+        BLIGHT_CAPABILITY: BLIGHT_MECHANIC,
         EVENT_PLAYER_CHOICE_CAPABILITY: EVENT_PLAYER_CHOICE_MECHANIC,
         "permanent.return.owner_hand": FIXED_SELF_RETURN_MECHANIC,
         "continuous.resolution.temporary_target_interactions": "temporary-target-interaction",

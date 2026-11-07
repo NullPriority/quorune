@@ -92,7 +92,9 @@ class TransmuteCompilerTests(unittest.TestCase):
         row=record('', 'Creature');card=CardInstance(object_id='matching',ref='matching',oracle_id=row.oracle_id,
             printed_name=row.name,owner='A',controller='A',zone='library')
         host=SimpleNamespace(card_record=lambda card:row,_effective_card_data=lambda card:{'type_line':'Creature','mana_value':2},
-            _type_parts=lambda text:({'creature'},set(),set()))
+            _type_parts=lambda text:({'creature'},set(),set()),
+            _search_characteristic_query=HiddenSearchOwnerMixin._search_characteristic_query,
+            _search_leaf_matches=HiddenSearchOwnerMixin._search_leaf_matches)
         self.assertFalse(HiddenSearchOwnerMixin._search_candidate_matches(host,card,effect['selector']))
 
 

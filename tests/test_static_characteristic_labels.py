@@ -65,7 +65,7 @@ class StaticCharacteristicLabelCompilerTests(unittest.TestCase):
         self.assertEqual((),query.types_all)
         self.assertIsNone(fixed_characteristic_battlefield_query_subject('Other Wolves and Boguses you control'))
 
-    def test_original_werewolf_union_with_unrepresented_sibling_rejects_whole_card_admission(self):
+    def test_werewolf_union_with_unrepresented_sibling_rejects_whole_card_admission(self):
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.semantics import SemanticRegistry
@@ -73,7 +73,11 @@ class StaticCharacteristicLabelCompilerTests(unittest.TestCase):
             path=Path(temporary)/'boundary.sqlite3'
             build_fixture_database([ROOT/'tests/fixtures/static-characteristic-labels.json'],path)
             with CardDatabase(path) as db:
-                registry=load_default_capability_registry();record=db.lookup('Nightpack Ambusher')
+                registry = load_default_capability_registry()
+                original = db.lookup("Nightpack Ambusher")
+                record = replace(original, oracle_text=original.oracle_text.replace(
+                    "didn't cast a spell this turn", "didn't cast a spell last turn",
+                ))
                 program=compile_best_available_card_program(db,record,semantic_registry=SemanticRegistry(),
                     capability_registry=registry,capability_profile='commander_review')
                 self.assertTrue(any(a.template_id=='continuous-fixed-query-anthem-v2'

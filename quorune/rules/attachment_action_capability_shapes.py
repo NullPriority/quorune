@@ -5,10 +5,12 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 from .attachment_actions import (
+    CREATE_AND_ATTACH,
     FIXED_SOURCE_ATTACHMENT_CAPABILITY,
     FOR_MIRRODIN_CAPABILITY,
     LIVING_WEAPON_CAPABILITY,
     JOB_SELECT_CAPABILITY,
+    validate_created_token_attachment,
 )
 from .reconfigure import RECONFIGURE_CAPABILITY
 
@@ -46,13 +48,18 @@ def fixed_attachment_action_node_capabilities(
     mechanics = {str(value).casefold() for value in mechanic_ids}
     if 'reconfigure' in mechanics:
         return reconfigure_node_capabilities(effects=effects, target_schema=target_schema)
-    if (
-        "cr-701-3-attach" not in mechanics
-        or len(effects) != 1
-        or not isinstance(target_schema, Mapping)
-    ):
+    if "cr-701-3-attach" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if effect.get("op") == CREATE_AND_ATTACH:
+        if target_schema is not None:
+            return ()
+        try:
+            return validate_created_token_attachment(effect)
+        except (TypeError, ValueError):
+            return ()
+    if not isinstance(target_schema, Mapping):
+        return ()
     if (
         set(effect) != {"op", "attachment_kind", "source", "target"}
         or effect.get("op") != "attach"

@@ -10,6 +10,9 @@ from .characteristic_fragments import (
 )
 from .counter_names import CounterStateError, normalized_counter_name
 from .object_predicate import ObjectQueryError, ObjectQuerySpec
+from .public_characteristic_aggregate_model import (
+    CONTROLLED_CREATURES_POWER_QUERY, PublicCharacteristicAggregateSpec,
+)
 
 
 class FixedPublicStateConditionError(ValueError):
@@ -50,6 +53,7 @@ FIXED_PUBLIC_STATE_INTERVENING_COVERAGE = (
 
 
 class FixedPublicStateConditionKind(StrEnum):
+    PUBLIC_POWER_AGGREGATE_AT_LEAST = "public_power_aggregate_at_least"
     HISTORY_COUNT_AT_LEAST='history_count_at_least'
     HISTORY_COUNT_AT_MOST='history_count_at_most'
     ALL = 'all'
@@ -95,6 +99,7 @@ class FixedPublicStateFact(StrEnum):
     OPPONENT_HAND_EMPTY = 'opponent_hand_empty'
     OPPONENT_OWNS_EXILED_CARD = 'opponent_owns_exiled_card'
     ANY_LIBRARY_COUNT_AT_MOST = 'any_library_count_at_most'
+    ANY_GRAVEYARD_COUNT_AT_LEAST = "any_graveyard_count_at_least"
     CONTROLLER_CONTROLS_OWN_COMMANDER = 'controller_controls_own_commander'
     PERMANENT_COLOR_IS_MOST_COMMON = 'permanent_color_is_most_common'
     CONTROLLER_GRAVEYARD_DISTINCT_CARD_TYPES = (
@@ -126,6 +131,7 @@ class FixedPublicStateFact(StrEnum):
     )
     ANY_CREATURE_DIED_THIS_TURN = "any_creature_died_this_turn"
     CONTROLLER_ATTACKED_THIS_TURN = "controller_attacked_this_turn"
+    CONTROLLER_TOKENS_CREATED_THIS_TURN = "controller_tokens_created_this_turn"
     CONTROLLER_PERMANENT_LEFT_THIS_TURN = "controller_permanent_left_this_turn"
     OPPONENT_LOST_LIFE_THIS_TURN = "opponent_lost_life_this_turn"
     CONTROLLER_ATTACKED_WITH_SUBTYPE_THIS_TURN = (
@@ -133,6 +139,8 @@ class FixedPublicStateFact(StrEnum):
     )
     CONTROLLER_HAND_ADVANTAGE = "controller_hand_advantage"
     CONTROLLER_LIFE_ABOVE_STARTING = "controller_life_above_starting"
+    CONTROLLER_AT_OR_ABOVE_STARTING_LIFE = "controller_at_or_above_starting_life"
+    CONTROLLER_BELOW_STARTING_LIFE = "controller_below_starting_life"
     CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE = (
         "controller_at_or_below_half_starting_life"
     )
@@ -299,9 +307,17 @@ def _validate_public_fact_fields(
     if fact is FixedPublicStateFact.SOURCE_RENOWNED and (
             schema_version != 4 or amount != 1 or parameter is not None):
         raise FixedPublicStateConditionError('Renowned state requires one current source designation fact')
+    if fact is FixedPublicStateFact.CONTROLLER_TOKENS_CREATED_THIS_TURN and (
+            schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError("Token creation requires one current-turn boolean")
     if fact is FixedPublicStateFact.CONTROLLER_COMMITTED_CRIME_THIS_TURN and (
             schema_version!=4 or amount!=1 or parameter is not None):
         raise FixedPublicStateConditionError('Crime qualification requires one current-turn history boolean')
+    if fact in {
+        FixedPublicStateFact.CONTROLLER_AT_OR_ABOVE_STARTING_LIFE,
+        FixedPublicStateFact.CONTROLLER_BELOW_STARTING_LIFE,
+    } and (schema_version != 4 or amount != 1 or parameter is not None):
+        raise FixedPublicStateConditionError("Starting-life comparisons require a current boolean fact")
     if schema_version not in {3, 4}:
         if (schema_version != 7 or fact is not FixedPublicStateFact.PERMANENT_COLOR_IS_MOST_COMMON
                 or amount != 1 or type(parameter) is not str or parameter not in 'WUBRG' or len(parameter) != 1):
@@ -346,6 +362,7 @@ class FixedPublicStateConditionSpec:
     schema_version: int = 1
     terms: tuple['FixedPublicStateConditionSpec', ...] = ()
     history_query: Any = None
+    aggregate: PublicCharacteristicAggregateSpec | None = None
 
     def leaf_conditions(self):
         return self.terms if self.terms else (self,)
@@ -367,7 +384,27 @@ class FixedPublicStateConditionSpec:
                 or any(v is not None for v in (self.counter_name,self.predicate,self.quantity,self.fact,self.fact_parameter)) or self.terms):
             raise FixedPublicStateConditionError('History conditions require version8, one typed query and a nonnegative threshold')
 
+    def _validate_power_aggregate(self) -> None:
+        aggregate = self.aggregate
+        if (
+            type(self.schema_version) is not int or self.schema_version != 9
+            or self.kind is not FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST
+            or type(self.amount) is not int or self.amount <= 0
+            or not isinstance(aggregate, PublicCharacteristicAggregateSpec)
+            or aggregate.characteristic != "power" or aggregate.reduction not in ("sum", "distinct_count")
+            or aggregate.controller_relation != "source_controller"
+            or aggregate.query != CONTROLLED_CREATURES_POWER_QUERY
+            or any(value is not None for value in (
+                self.counter_name, self.predicate, self.quantity, self.fact, self.fact_parameter, self.history_query,
+            ))
+            or self.terms
+        ):
+            raise FixedPublicStateConditionError("Power thresholds require one closed controlled-creature aggregate")
+
     def __post_init__(self) -> None:
+        if self.schema_version == 9 or self.aggregate is not None or self.kind == FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST:
+            self._validate_power_aggregate()
+            return
         if self.schema_version==8 or self.history_query is not None or self.kind in {
                 FixedPublicStateConditionKind.HISTORY_COUNT_AT_LEAST,FixedPublicStateConditionKind.HISTORY_COUNT_AT_MOST}:
             self._validate_history()
@@ -516,6 +553,11 @@ class FixedPublicStateConditionSpec:
             )
 
     def to_dict(self) -> dict[str, Any]:
+        if self.schema_version == 9:
+            return {
+                "schema_version": 9, "kind": self.kind.value, "amount": self.amount,
+                "counter_name": None, "aggregate": self.aggregate.to_dict(),
+            }
         if self.schema_version==8:
             return {'schema_version':8,'kind':self.kind.value,'amount':self.amount,'counter_name':None,'history_query':self.history_query.to_dict()}
         value = {
@@ -556,6 +598,17 @@ class FixedPublicStateConditionSpec:
     def from_dict(
         cls, value: Mapping[str, Any]
     ) -> "FixedPublicStateConditionSpec":
+        if isinstance(value, Mapping) and (value.get("schema_version") == 9 or "aggregate" in value):
+            if set(value) != {"schema_version", "kind", "amount", "counter_name", "aggregate"} or value["counter_name"] is not None:
+                raise FixedPublicStateConditionError("Power threshold condition fields are malformed")
+            try:
+                return cls(
+                    FixedPublicStateConditionKind(value["kind"]), amount=value["amount"],
+                    schema_version=value["schema_version"],
+                    aggregate=PublicCharacteristicAggregateSpec.from_dict(value["aggregate"]),
+                )
+            except (ValueError, TypeError, KeyError) as exc:
+                raise FixedPublicStateConditionError(str(exc)) from exc
         if isinstance(value,Mapping) and (value.get('schema_version')==8 or 'history_query' in value):
             from .public_history_query_model import PublicHistoryQuerySpec,public_history_query_dependencies
             try:
@@ -727,7 +780,10 @@ class FixedPublicStateConditionSpec:
             return counters.get(str(self.counter_name), 0) >= int(self.amount)
         if self.kind is FixedPublicStateConditionKind.SOURCE_MATCHES_QUERY:
             return snapshot.source_query_matches is True
-        if self.kind is FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS:
+        if self.kind in {
+            FixedPublicStateConditionKind.CONTROLLER_CREATURE_NUMERIC_EXISTS,
+            FixedPublicStateConditionKind.PUBLIC_POWER_AGGREGATE_AT_LEAST,
+        }:
             return snapshot.condition_quantity is not None and snapshot.condition_quantity > 0
         if self.kind is FixedPublicStateConditionKind.ATTACHED_MATCHES_QUERY:
             return snapshot.attached_query_matches is True

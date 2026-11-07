@@ -11,6 +11,13 @@ from .mana_symbol_counts import colored_mana_symbol_count
 from .counter_snapshot import permanent_counter_total
 
 
+def public_mana_value(data: Mapping[str, Any]) -> int:
+    value = data.get('mana_value')
+    if type(value) not in {int, float} or not math.isfinite(value) or value < 0 or int(value) != value:
+        raise ValueError('A matched public mana value is unavailable or unsupported')
+    return int(value)
+
+
 def reduce_public_quantity(
     rows: Sequence[tuple[ObjectQueryResult, Mapping[str, Any], str]],
     reduction: CharacteristicQuantityReduction,
@@ -31,12 +38,7 @@ def reduce_public_quantity(
         CharacteristicQuantityReduction.MAXIMUM_MANA_VALUE,
         CharacteristicQuantityReduction.TOTAL_MANA_VALUE,
     }:
-        values = []
-        for _row, data, _kind in rows:
-            value = data.get("mana_value")
-            if type(value) not in {int, float} or not math.isfinite(value) or value < 0 or int(value) != value:
-                raise ValueError("A matched public mana value is unavailable or unsupported")
-            values.append(int(value))
+        values = [public_mana_value(data) for _row, data, _kind in rows]
         return max(values, default=0) if reduction is CharacteristicQuantityReduction.MAXIMUM_MANA_VALUE else sum(values)
     terms: set[str] = set()
     for row, _data, kind in rows:

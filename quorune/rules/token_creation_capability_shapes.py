@@ -8,6 +8,7 @@ from typing import Any, Mapping, Sequence
 from ..ability_fragments import (
     AbilityFragmentError,
     AllCreatureTypesCharacteristicDefinitionSpec,
+    CombatKeywordTriggerSpec,
     GrantedActivatedAbilitySpec,
     GrantedTriggeredAbilitySpec,
     QueryCharacteristicModifierSpec,
@@ -16,6 +17,7 @@ from ..ability_fragments import (
     SpellCastKeywordTriggerSpec,
     ToxicSpec,
     canonical_ability_fragments,
+    decayed_ability_fragments,
 )
 from ..cast_face_offers import OMEN_COVERAGE
 from ..compiler.token_templates import (
@@ -24,6 +26,7 @@ from ..compiler.token_templates import (
 )
 from ..compiler.direct_target import direct_permanent_target_spec
 from ..declaration_fragments import (
+    DECLARATION_COMPONENT_CAPABILITY_ID,
     DeclarationRequirementTemplate,
     DeclarationRestrictionTemplate,
 )
@@ -33,6 +36,12 @@ from ..fixed_token_production import (
     FIXED_DELAYED_TOKEN_CAPABILITY_ID,
     FIXED_TOKEN_COPY_CAPABILITY_ID,
     FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID,
+    FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_OPERATION,
+    FixedTokenCreatorScope,
+    fixed_token_creator_scope,
+    fixed_token_effect_shape_is_closed,
     FixedTokenProductionError,
     INVESTIGATE_CAPABILITY_ID,
     INVESTIGATE_MECHANIC_ID,
@@ -42,6 +51,11 @@ from ..fixed_token_production import (
     afterlife_token_effect,
     clue_token_effect,
     sequential_investigate_count,
+    fixed_token_player_target_schema,
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
+    literal_token_name_version,
+    fixed_ordinary_token_name,
+    historical_unnamed_token_view,
 )
 
 
@@ -49,27 +63,67 @@ _TOKEN_MECHANIC = "cr-111-tokens"
 _COLOR_ORDER = "WUBRG"
 
 
+def _is_fixed_token_action_effect(effect: Mapping[str, Any], build_effect) -> bool:
+    from ..replacement.immutable import thaw_value
+
+    quantity = effect.get("quantity")
+    characteristics = effect.get("characteristics")
+    if type(quantity) is not int or not isinstance(characteristics, Mapping):
+        return False
+    try:
+        legacy_name = literal_token_name_version(characteristics) is None
+        return thaw_value(effect) == build_effect(quantity, legacy_name=legacy_name)
+    except FixedTokenProductionError:
+        return False
+
+
+def query_defined_token_stat_dependencies(
+    characteristics: Mapping[str, Any],
+) -> tuple[str, ...]:
+    """Require a unique intrinsic definition for every star-valued token stat."""
+    fields = tuple(field for field in ("power", "toughness") if characteristics.get(field) == "*")
+    if not fields:
+        return ()
+    definitions = tuple(
+        fragment for fragment in canonical_ability_fragments(characteristics.get("ability_fragments", ()))
+        if isinstance(fragment, QueryPowerToughnessDefinitionSpec)
+    )
+    if any(sum(getattr(definition, f"define_{field}") for definition in definitions) != 1 for field in fields):
+        raise FixedTokenProductionError("Star-valued token stats require one intrinsic definition per stat")
+    return (
+        TYPED_TOKEN_ABILITY_CAPABILITY_ID,
+        "continuous.characteristics.query_power_toughness_definition",
+    )
+
+
 def token_definition_payload_dependencies(value: Any, mechanics: Sequence[str] = ()) -> tuple[str, ...]:
-    """Require the existing owner for an explicit creature definition.
+    """Infer fixed token and selected creator dependencies from the payload.
 
     Copy recipes keep their separate owner. Legacy token references without an
     explicit definition retain their existing compatibility path.
     """
+    if isinstance(value, Mapping) and value.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
+        return distributed_token_creation_payload_dependencies(value)
+    targeted = (
+        isinstance(value, Mapping)
+        and value.get("op") == "create_token"
+        and "target" in value
+    )
+    target_dependencies = ("target.revalidate_resolution",) if targeted else ()
     if (isinstance(value,Mapping) and value.get('op')=='create_token'
             and isinstance(value.get('characteristics'),Mapping)
             and {'power','toughness'}<=set(value['characteristics'])
             and not value.get('copy_of') and not value.get('copy_spec')):
-        quantity=value.get('quantity')
-        if AFTERLIFE_MECHANIC_ID in mechanics and type(quantity) is int:
-            try:
-                from ..replacement.immutable import thaw_value
-                if thaw_value(value)==afterlife_token_effect(quantity):return (AFTERLIFE_CAPABILITY_ID,)
-            except FixedTokenProductionError:pass
+        if AFTERLIFE_MECHANIC_ID in mechanics and _is_fixed_token_action_effect(value, afterlife_token_effect):
+            return (AFTERLIFE_CAPABILITY_ID,)
         return (
             'token.creation.fixed_definition',
             *token_toxic_definition_dependencies(value['characteristics']),
+            *token_decayed_definition_dependencies(value['characteristics']),
+            *query_defined_token_stat_dependencies(value['characteristics']),
+            *target_dependencies,
         )
-    return ()
+    return target_dependencies
 
 
 def token_toxic_definition_dependencies(characteristics: Mapping[str, Any]) -> tuple[str, ...]:
@@ -94,9 +148,31 @@ def token_toxic_definition_dependencies(characteristics: Mapping[str, Any]) -> t
     return ("damage.result.toxic",) if toxic else ()
 
 
+def token_decayed_definition_dependencies(
+    characteristics: Mapping[str, Any],
+) -> tuple[str, ...]:
+    """Require both typed abilities for an ordinary Decayed token definition."""
+
+    keywords = characteristics.get("keywords", ())
+    fragments = canonical_ability_fragments(characteristics.get("ability_fragments", ()))
+    printed = sum(
+        isinstance(keyword, str) and keyword.casefold() == "decayed"
+        for keyword in keywords
+    )
+    trigger, block_restriction = decayed_ability_fragments()
+    instances = fragments.count(trigger)
+    if printed != instances or printed > 1 or (printed and block_restriction not in fragments):
+        raise ValueError("Token Decayed requires matching attack and block abilities")
+    return (
+        ("combat.trigger.decayed", DECLARATION_COMPONENT_CAPABILITY_ID)
+        if printed else ()
+    )
+
+
 _CREATURE_KEYWORDS = frozenset(
     {
         "Deathtouch",
+        "Decayed",
         "Defender",
         "Double Strike",
         "First Strike",
@@ -176,40 +252,42 @@ def _fixed_predefined_effect_is_closed(
     effect: Mapping[str, Any],
 ) -> tuple[tuple[str, ...], set[str]] | None:
     name = effect.get("name")
-    if name not in _PREDEFINED_CAPABILITIES:
+    characteristics = effect.get("characteristics")
+    if not isinstance(name, str) or not isinstance(characteristics, Mapping):
+        return None
+    former = historical_unnamed_token_view(name, characteristics)
+    base_name = former[0] if former is not None else name
+    if base_name not in _PREDEFINED_CAPABILITIES:
         return None
     expected = fixed_token_creation_effect_template(
-        f"Create a {name} token."
+        f"Create a {base_name} token."
     )
     if expected is None:
         return None
     canonical = dict(expected.effect)
+    if former is None:
+        legacy = historical_unnamed_token_view(canonical["name"], canonical["characteristics"])
+        if legacy is None:
+            return None
+        canonical["name"], canonical["characteristics"] = legacy
     supplied = dict(effect)
     supplied["quantity"] = 1
     supplied.pop("tapped", None)
     if supplied != canonical:
         return None
-    characteristics = effect.get("characteristics")
-    keywords = (
-        characteristics.get("keywords", [])
-        if isinstance(characteristics, Mapping)
-        else []
-    )
+    keywords = characteristics.get("keywords", [])
     return (
         (
             "token.creation.fixed_definition",
-            *_PREDEFINED_CAPABILITIES[str(name)],
+            *_PREDEFINED_CAPABILITIES[base_name],
         ),
         {_TOKEN_MECHANIC, *(str(value).casefold() for value in keywords)},
     )
 
 
-def _fixed_creature_effect_closure(
-    effect: Mapping[str, Any],
-) -> tuple[tuple[str, ...], set[str]] | None:
-    characteristics = effect.get("characteristics")
-    if not isinstance(characteristics, Mapping):
-        return None
+def _fixed_creature_definition_fields_are_closed(
+    characteristics: Mapping[str, Any],
+) -> bool:
     allowed = {
         "type_line",
         "colors",
@@ -217,9 +295,38 @@ def _fixed_creature_effect_closure(
         "toughness",
         "keywords",
         "ability_fragments",
+        TOKEN_LITERAL_NAME_VERSION_FIELD,
     }
     required = {"type_line", "colors", "power", "toughness"}
     if not required.issubset(characteristics) or set(characteristics) - allowed:
+        return False
+    colors = characteristics.get("colors")
+    if (
+        not isinstance(colors, list)
+        or len(colors) > 3
+        or any(color not in _COLOR_ORDER for color in colors)
+        or colors != sorted(set(colors), key=_COLOR_ORDER.index)
+    ):
+        return False
+    for field in ("power", "toughness"):
+        value = characteristics.get(field)
+        if not isinstance(value, str) or (value != "*" and not value.isdigit()):
+            return False
+    return True
+
+
+def _fixed_creature_effect_closure(
+    effect: Mapping[str, Any],
+) -> tuple[tuple[str, ...], set[str]] | None:
+    characteristics = effect.get("characteristics")
+    if (
+        not isinstance(characteristics, Mapping)
+        or not _fixed_creature_definition_fields_are_closed(characteristics)
+    ):
+        return None
+    try:
+        name_version = literal_token_name_version(characteristics)
+    except FixedTokenProductionError:
         return None
     name = effect.get("name")
     if not isinstance(name, str) or re.fullmatch(
@@ -233,18 +340,6 @@ def _fixed_creature_effect_closure(
         type_line,
     ) is None:
         return None
-    colors = characteristics.get("colors")
-    if (
-        not isinstance(colors, list)
-        or len(colors) > 3
-        or any(color not in _COLOR_ORDER for color in colors)
-        or colors != sorted(set(colors), key=_COLOR_ORDER.index)
-    ):
-        return None
-    for field in ("power", "toughness"):
-        value = characteristics.get(field)
-        if not isinstance(value, str) or not value.isdigit():
-            return None
     keywords = characteristics.get("keywords", [])
     if (
         not isinstance(keywords, list)
@@ -262,7 +357,8 @@ def _fixed_creature_effect_closure(
         *("toxic" if keyword.startswith("Toxic ") else keyword.casefold() for keyword in keywords),
     }
     subtype_text = type_line.split(" — ", 1)[1]
-    if name != subtype_text or "Legendary" in type_line:
+    default_name = fixed_ordinary_token_name(subtype_text) if name_version is not None else subtype_text
+    if name != default_name or "Legendary" in type_line:
         mechanics.add("fixed-named-token")
     raw_fragments = characteristics.get("ability_fragments", [])
     if not isinstance(raw_fragments, list) or len(raw_fragments) > 3:
@@ -275,6 +371,8 @@ def _fixed_creature_effect_closure(
         return None
     try:
         capabilities.update(token_toxic_definition_dependencies(characteristics))
+        capabilities.update(token_decayed_definition_dependencies(characteristics))
+        capabilities.update(query_defined_token_stat_dependencies(characteristics))
     except (AbilityFragmentError, TypeError, ValueError):
         return None
     from .token_prowess_requirements import token_prowess_definition_dependencies
@@ -282,6 +380,7 @@ def _fixed_creature_effect_closure(
     except (TypeError,ValueError):return None
     typed_ability_definition = False
     typed_ability_fragment = False
+    decayed_trigger, decayed_restriction = decayed_ability_fragments()
     for fragment in fragments:
         if isinstance(fragment, ToxicSpec):
             capabilities.add("damage.result.toxic")
@@ -293,7 +392,12 @@ def _fixed_creature_effect_closure(
             if fragment.kind is not SpellCastKeywordTriggerKind.PROWESS or 'Prowess' not in keywords:
                 return None
             capabilities.add('trigger.keyword.prowess')
+        elif isinstance(fragment, CombatKeywordTriggerSpec):
+            if fragment != decayed_trigger:
+                return None
         elif isinstance(fragment, DeclarationRestrictionTemplate):
+            if "Decayed" in keywords and fragment == decayed_restriction:
+                continue
             legacy_declaration = fragment.template_id in {
                 "intrinsic-block-prohibition-v1",
                 "intrinsic-unblockable-v1",
@@ -348,35 +452,10 @@ def _fixed_creature_effect_closure(
     return tuple(sorted(capabilities)), mechanics
 
 
-def _fixed_token_effect_shape_is_closed(
-    effect: Mapping[str, Any],
-) -> bool:
-    expected_fields = {
-        "op",
-        "controller",
-        "name",
-        "quantity",
-        "characteristics",
-    }
-    if "tapped" in effect:
-        expected_fields.add("tapped")
-    if set(effect) != expected_fields:
-        return False
-    if (
-        effect.get("op") != "create_token"
-        or effect.get("controller") != "$controller"
-    ):
-        return False
-    quantity = effect.get("quantity")
-    if type(quantity) is not int or quantity <= 0:
-        return False
-    return "tapped" not in effect or effect.get("tapped") is True
-
-
 def _fixed_token_effect_closure(
     effect: Mapping[str, Any],
 ) -> tuple[tuple[str, ...], set[str]] | None:
-    if not _fixed_token_effect_shape_is_closed(effect):
+    if not fixed_token_effect_shape_is_closed(effect):
         return None
     predefined = _fixed_predefined_effect_is_closed(effect)
     if predefined is not None:
@@ -535,6 +614,103 @@ def _fixed_delayed_token_capabilities(
     )
 
 
+def _distributed_token_creation_closure(
+    effect: Mapping[str, Any],
+) -> tuple[FixedTokenCreatorScope, tuple[str, ...], set[str]]:
+    scope = fixed_token_creator_scope(effect)
+    targeted = scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT
+    if effect["controller"] != "$controller" or targeted and effect["target"] != "$target.0":
+        raise FixedTokenProductionError("Distributed token creation requires bound creators")
+    child = _fixed_token_effect_closure(effect["token"])
+    if child is None:
+        raise FixedTokenProductionError("Distributed token creation requires one closed token definition")
+    child_dependencies, mechanics = child
+    dependencies = tuple(dict.fromkeys((
+        FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID, *child_dependencies,
+        *(("target.revalidate_resolution",) if targeted else ()),
+    )))
+    return scope, dependencies, {*mechanics, FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID}
+
+
+def distributed_token_creation_payload_dependencies(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    return _distributed_token_creation_closure(effect)[1]
+
+
+def _fixed_distributed_token_node_capabilities(
+    effect: Mapping[str, Any],
+    target_schema: Mapping[str, Any] | None,
+    mechanics: set[str],
+) -> tuple[str, ...]:
+    try:
+        scope, dependencies, expected_mechanics = _distributed_token_creation_closure(effect)
+    except (ValueError, TypeError, KeyError):
+        return ()
+    targeted = scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT
+    if target_schema != (fixed_token_player_target_schema("opponent") if targeted else None):
+        return ()
+    if targeted and "cr-115-targets" not in mechanics:
+        return ()
+    return dependencies if _token_specific_mechanics(mechanics) == expected_mechanics else ()
+
+
+def _fixed_token_definition_node_capabilities(
+    effect: Mapping[str, Any],
+    target_schema: Mapping[str, Any] | None,
+    mechanics: set[str],
+) -> tuple[str, ...]:
+    """Validate one ordinary token definition and any selected creator."""
+    fixed_effect = effect
+    if target_schema is not None:
+        if not isinstance(target_schema, Mapping):
+            return ()
+        relation = target_schema.get("player_relation")
+        if (
+            effect.get("target") != "$target.0"
+            or "controller" in effect
+            or "cr-115-targets" not in mechanics
+            or relation not in ("any", "opponent")
+            or type(target_schema.get("count")) is not int
+            or dict(target_schema) != fixed_token_player_target_schema(relation)
+        ):
+            return ()
+        fixed_effect = dict(effect)
+        del fixed_effect["target"]
+        fixed_effect["controller"] = "$controller"
+    if (
+        INVESTIGATE_MECHANIC_ID in mechanics
+        and {
+            _TOKEN_MECHANIC,
+            FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+        }.issubset(mechanics)
+        and _is_fixed_token_action_effect(effect, clue_token_effect)
+    ):
+        return (INVESTIGATE_CAPABILITY_ID,)
+    if (
+        AFTERLIFE_MECHANIC_ID in mechanics
+        and {
+            _TOKEN_MECHANIC,
+            FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+            "cr-603-handling-triggered-abilities",
+        }.issubset(mechanics)
+        and _is_fixed_token_action_effect(effect, afterlife_token_effect)
+    ):
+        return (AFTERLIFE_CAPABILITY_ID,)
+    closure = _fixed_token_effect_closure(fixed_effect)
+    if closure is None:
+        return ()
+    capabilities, expected_mechanics = closure
+    typed_ability = TYPED_TOKEN_ABILITY_CAPABILITY_ID in capabilities
+    if typed_ability != (
+        TYPED_TOKEN_ABILITY_MECHANIC_ID in mechanics
+    ):
+        return ()
+    if _token_specific_mechanics(mechanics) == expected_mechanics:
+        if target_schema is not None:
+            return (*capabilities, "target.revalidate_resolution")
+        return capabilities
+    return ()
+
+
 def fixed_token_creation_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -591,55 +767,13 @@ def fixed_token_creation_node_capabilities(
             and _token_specific_mechanics(mechanics) == {_TOKEN_MECHANIC}
             else ()
         )
-    if target_schema is not None:
-        return ()
     if effect.get("op") == "create_token":
-        quantity = effect.get("quantity")
-        try:
-            expected_investigate = (
-                clue_token_effect(quantity) if type(quantity) is int else None
-            )
-            expected_afterlife = (
-                afterlife_token_effect(quantity) if type(quantity) is int else None
-            )
-        except FixedTokenProductionError:
-            expected_investigate = None
-            expected_afterlife = None
-        if (
-            INVESTIGATE_MECHANIC_ID in mechanics
-            and {
-                _TOKEN_MECHANIC,
-                FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
-            }.issubset(mechanics)
-            and expected_investigate is not None
-            and dict(effect) == expected_investigate
-        ):
-            return (INVESTIGATE_CAPABILITY_ID,)
-        if (
-            AFTERLIFE_MECHANIC_ID in mechanics
-            and {
-                _TOKEN_MECHANIC,
-                FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
-                "cr-603-handling-triggered-abilities",
-            }.issubset(mechanics)
-            and expected_afterlife is not None
-            and dict(effect) == expected_afterlife
-        ):
-            return (AFTERLIFE_CAPABILITY_ID,)
-        closure = _fixed_token_effect_closure(effect)
-        if closure is None:
-            return ()
-        capabilities, expected_mechanics = closure
-        typed_ability = TYPED_TOKEN_ABILITY_CAPABILITY_ID in capabilities
-        if typed_ability != (
-            TYPED_TOKEN_ABILITY_MECHANIC_ID in mechanics
-        ):
-            return ()
-        if _token_specific_mechanics(mechanic_ids) == expected_mechanics:
-            return capabilities
-        return ()
+        return _fixed_token_definition_node_capabilities(effect, target_schema, mechanics)
+    if effect.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
+        return _fixed_distributed_token_node_capabilities(effect, target_schema, mechanics)
     if (
-        set(effect) != {"op", "controller", "tokens"}
+        target_schema is not None
+        or set(effect) != {"op", "controller", "tokens"}
         or effect.get("op") != "create_token_batch"
         or effect.get("controller") != "$controller"
     ):
@@ -702,6 +836,8 @@ def fixed_token_creation_covered_mechanics(
         "combat.declaration.typed_components",
     }.issubset(capability_ids):
         covered.add("fixed-token-declaration-fragment")
+    if FIXED_DISTRIBUTED_TOKEN_CAPABILITY_ID in capability_ids:
+        covered.add(FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID)
     if INVESTIGATE_CAPABILITY_ID in capability_ids:
         covered.update(
             {
@@ -750,8 +886,16 @@ def token_creation_component_mechanics(effects, parent_mechanics):
     mechanics = {'cr-111-tokens', *(str(keyword).casefold() for keyword in keywords if isinstance(keyword, str))}
     if effect.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
         return mechanics | {INVESTIGATE_MECHANIC_ID, FIXED_TOKEN_PRODUCTION_MECHANIC_ID}
+    if effect.get("op") == FIXED_DISTRIBUTED_TOKEN_OPERATION:
+        try:
+            scope, _dependencies, owned = _distributed_token_creation_closure(effect)
+        except (TypeError, ValueError, KeyError):
+            return set()
+        return owned | ({"cr-115-targets"} if scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT else set())
     if len(effects) == 1 and ('copy_spec' in effect or effect.get('op') == 'populate'):
         return parent_mechanics
+    if "target" in effect and "cr-115-targets" in parent_mechanics:
+        mechanics.add("cr-115-targets")
     try:
         if effect.get('op') == 'choose_fixed_attacking_token_destinations':
             from .attacking_token_results import attacking_token_result_closure, ATTACKING_TOKEN_MECHANIC

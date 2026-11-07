@@ -5,8 +5,13 @@ from __future__ import annotations
 from ..compiler.event_player_results import (EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_RESULT_MECHANIC,
     EVENT_PLAYER_DAMAGE_CAPABILITY,EVENT_PLAYER_DAMAGE_MECHANIC)
 from .mill_capability_shapes import fixed_mill_node_capabilities,mill_covered_mechanics
+from .received_damage_events import is_creature_receiving_event
 from ..event_player_result_values import event_result_value_capabilities
 from ..fractional_quantity_model import HALF_LIFE_CAPABILITY,HALF_LIFE_MECHANIC
+from ..target_controller_information import (
+    OCCURRENCE_CONTROLLER_ENTRY_EVENTS, OCCURRENCE_CONTROLLER_GRAVEYARD_EVENTS,
+    TARGET_CONTROLLER_INFORMATION_CAPABILITY, is_occurrence_controller_reference,
+)
 
 
 def fixed_event_player_result_node_capabilities(*,effects,target_schema,mechanic_ids):
@@ -38,20 +43,27 @@ def is_closed_fixed_event_player_result_program(program):
     required=fixed_event_player_result_node_capabilities(effects=program.effects,
         target_schema=program.target_schema,mechanic_ids=program.coverage)
     if not required or not set(required).issubset(program.capability_dependencies):return False
-    return all(_event_player_reference_is_closed(program,effect['target'] if effect.get('op')=='damage' else effect['player']) for effect in program.effects)
+    return all(_event_player_reference_is_closed(program,
+        effect['target'] if effect.get('op') == 'damage' else effect['player'], amount=effect.get('amount'))
+        for effect in program.effects)
 
 
 def fixed_event_player_damage_node_capabilities(*,effects,target_schema,mechanic_ids):
     if not {EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC}<=set(mechanic_ids) or target_schema is not None or len(effects)!=1:return ()
     effect=effects[0]
+    target = effect.get('target')
+    occurrence = is_occurrence_controller_reference(target)
+    extra = event_result_value_capabilities('damage', 'amount', effect.get('amount'),
+        committed_damage=occurrence and type(effect.get('amount')) is not int)
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
-            or effect.get('target') not in {'$context.player','$context.target','$context.defending_player','$context.previous_controller','$context.controller'}
-            or event_result_value_capabilities('damage','amount',effect.get('amount')) is None):return ()
+            or not occurrence and target not in ('$context.player','$context.target','$context.defending_player',
+                                                  '$context.previous_controller','$context.controller')
+            or extra is None):return ()
     from .damage_capability_shapes import fixed_damage_node_capabilities
-    extra=event_result_value_capabilities('damage','amount',effect['amount'])
     amount=effect['amount'] if type(effect['amount']) is int else 2
     damage=fixed_damage_node_capabilities(effects=({**effect,'target':'$controller','amount':amount},),target_schema=None,mechanic_ids={'cr-120-damage'})
-    return tuple(sorted({EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_DAMAGE_CAPABILITY,*damage,*extra})) if damage else ()
+    information = (TARGET_CONTROLLER_INFORMATION_CAPABILITY,) if occurrence else ()
+    return tuple(sorted({EVENT_PLAYER_RESULT_CAPABILITY,EVENT_PLAYER_DAMAGE_CAPABILITY,*damage,*extra,*information})) if damage else ()
 
 
 def event_player_damage_runtime_dependencies(program):
@@ -59,8 +71,10 @@ def event_player_damage_runtime_dependencies(program):
     required=set();has_marker=EVENT_PLAYER_DAMAGE_MECHANIC in program.coverage
     def visit(node):
         if isinstance(node,Mapping):
-            if (node.get('op')=='damage' and node.get('source')=='$source' and event_result_value_capabilities('damage','amount',node.get('amount')) is not None
-                    and _event_player_reference_is_closed(program,node.get('target')) and node.get('target')!='$controller'):
+            if (node.get('op') == 'damage' and node.get('source') == '$source' and node.get('target') != '$controller'
+                    and _event_player_reference_is_closed(program, node.get('target'), amount=node.get('amount'))
+                    and event_result_value_capabilities('damage', 'amount', node.get('amount'), committed_damage=(
+                        is_occurrence_controller_reference(node.get('target')) and type(node.get('amount')) is not int)) is not None):
                 caps=fixed_event_player_damage_node_capabilities(effects=(node,),target_schema=None,
                     mechanic_ids={EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC})
                 if not caps:raise ValueError('Malformed fixed event-player damage instruction')
@@ -73,12 +87,17 @@ def event_player_damage_runtime_dependencies(program):
     return tuple(sorted(required))
 
 
-def _event_player_reference_is_closed(program,player):
+def _event_player_reference_is_closed(program,player,*,amount=None):
     if player=='$controller':return True
     from .event_subscriptions import FixedEventSubscriptionSet
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
     except (TypeError,ValueError):return False
+    if is_occurrence_controller_reference(player):
+        return (subscriptions is None and program.active_zone == 'battlefield' and program.target_schema is None
+                and 'one_or_more_event_batch' not in program.coverage
+                and (program.event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS if type(amount) is int
+                     else is_creature_receiving_event(program.event, program.event_condition)))
     occurrences=((program.event,program.event_condition),) if subscriptions is None else tuple(
         (entry.event,entry.condition) for entry in subscriptions.subscriptions)
     if program.event not in {event for event,_condition in occurrences}:return False
@@ -96,8 +115,9 @@ def _source_combat_player_scope(condition):
 
 
 def _occurrence_player_reference_is_closed(event,condition,coverage,player):
-    if player=='$context.player':return event in {'spell.cast','card.drawn','player.scried','player.surveilled'}
-    if player=='$context.previous_controller':return event in {'card.discarded','creature.dies','creature.dies.self'}
+    from .event_subscriptions import LAND_PLAY_EVENT
+    if player=='$context.player':return event in {LAND_PLAY_EVENT,'spell.cast','card.drawn','player.scried','player.surveilled'}
+    if player=='$context.previous_controller':return event in OCCURRENCE_CONTROLLER_GRAVEYARD_EVENTS | {'card.discarded','creature.dies.self'}
     if player=='$context.controller':return event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}
     from ..compiler.event_player_results import _damage_guarantees_player
     if player=='$context.target':return event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(condition)

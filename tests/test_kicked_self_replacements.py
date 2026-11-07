@@ -41,10 +41,11 @@ class KickedSelfReplacementCompilerTests(unittest.TestCase):
             self.assertIn(cap,node.capability_dependencies)
 
     def test_replacement_residual_owner_retains_exact_unowned_node_contract(self):
+        from high_risk_interaction_support import CONDITIONAL_DRAW_STEP_REPLACEMENT
         from quorune.compiler.ir_model import SourceSpan
         from quorune.compiler.replacement_residual_nodes import unowned_replacement_node
         from quorune.oracle_ir import _reviewed_effect_template
-        for text in ('Skip your next turn.','If you would draw a card, instead rewrite history.',
+        for text in (CONDITIONAL_DRAW_STEP_REPLACEMENT, 'If you would draw a card, instead rewrite history.',
                 'As this creature enters, choose an unrepresented value.'):
             for permanent in (False,True):
                 residuals=[];span=SourceSpan(0,len(text),1)

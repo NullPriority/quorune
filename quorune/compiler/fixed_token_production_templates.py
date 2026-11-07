@@ -9,10 +9,16 @@ from ..ability_fragments import ability_fragment_to_dict
 from ..declaration_restrictions import parse_declaration_restriction_line
 from ..fixed_token_production import (
     FIXED_TOKEN_PRODUCTION_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID,
+    FIXED_DISTRIBUTED_TOKEN_OPERATION,
+    FixedTokenCreatorScope,
     FixedInvestigateSpec,
     FixedTokenCreationTemplate,
+    fixed_token_player_target_schema,
     FixedTokenProductionError,
     INVESTIGATE_MECHANIC_ID,
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
+    fixed_ordinary_token_name,
 )
 from .direct_target import direct_permanent_target_spec
 from .fixed_numbers import fixed_number
@@ -41,13 +47,18 @@ _FIXED_DELAYED_TOKEN = re.compile(
     r"at the beginning of the next end step\.?$",
     re.IGNORECASE,
 )
+_FIXED_TARGETED_CREATOR = re.compile(
+    r"Target (?P<relation>opponent|player) creates (?P<body>.+)",
+    re.IGNORECASE,
+)
 _FIXED_NAMED_TOKEN = re.compile(
     r"^(?P<body>Create .+?) named "
     r"(?P<name>[A-Za-z][A-Za-z' -]*)\.?$", re.IGNORECASE,
 )
 _FIXED_LEGENDARY_NAMED_TOKEN = re.compile(
     r"^Create (?P<name>[A-Za-z][A-Za-z' -]*), a legendary "
-    r"(?P<body>\d+/\d+ .+? creature token)\.?$", re.IGNORECASE,
+    r"(?P<body>\d+/\d+ .+? creature token(?: with [A-Za-z0-9 ,'-]+)?)\.?$",
+    re.IGNORECASE,
 )
 _FIXED_POSTPOSED_COLOR_TOKEN = re.compile(
     r"^Create (?P<count>a|an|one|two|three|four|five|six|seven|eight|nine|ten|"
@@ -235,6 +246,73 @@ def _fixed_declaration_token_template(
     )
 
 
+def _fixed_distributed_creator_template(
+    normalized: str,
+    *,
+    compile_inner: Callable[[str], FixedTokenCreationTemplate | None],
+) -> FixedTokenCreationTemplate | None:
+    match = re.fullmatch(
+        r"(?P<creators>Each player|Each opponent|You and target opponent each) creates? (?P<body>.+)",
+        normalized, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    scope = {
+        "each player": FixedTokenCreatorScope.EACH_PLAYER,
+        "each opponent": FixedTokenCreatorScope.EACH_OPPONENT,
+        "you and target opponent each": FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT,
+    }[match["creators"].casefold()]
+    token = compile_inner(f"Create {match['body']}")
+    if (token is None or token.target_schema is not None or token.effect.get("op") != "create_token"
+            or "copy_of" in token.effect or "copy_spec" in token.effect):
+        return None
+    targeted = scope is FixedTokenCreatorScope.CONTROLLER_AND_TARGET_OPPONENT
+    return FixedTokenCreationTemplate(
+        template_id=f"create-fixed-distributed-token-{scope.value}-v1",
+        effect={
+            "op": FIXED_DISTRIBUTED_TOKEN_OPERATION,
+            "scope": scope.value,
+            "controller": "$controller",
+            "token": dict(token.effect),
+            **({"target": "$target.0"} if targeted else {}),
+        },
+        target_schema=fixed_token_player_target_schema("opponent") if targeted else None,
+        mechanics=tuple(dict.fromkeys((
+            *token.mechanics, FIXED_DISTRIBUTED_TOKEN_MECHANIC_ID,
+            *(("cr-115-targets",) if targeted else ()),
+        ))),
+    )
+
+
+def _fixed_targeted_creator_template(
+    normalized: str,
+    *,
+    compile_inner: Callable[[str], FixedTokenCreationTemplate | None],
+) -> FixedTokenCreationTemplate | None:
+    match = _FIXED_TARGETED_CREATOR.fullmatch(normalized)
+    if match is None:
+        return None
+    definition = compile_inner("Create " + match["body"])
+    if (
+        definition is None
+        or definition.target_schema is not None
+        or definition.effect.get("op") != "create_token"
+        or definition.effect.get("controller") != "$controller"
+        or {"copy_of", "copy_spec"} & definition.effect.keys()
+    ):
+        return None
+    relation = "opponent" if match["relation"].casefold() == "opponent" else "any"
+    effect = dict(definition.effect)
+    del effect["controller"]
+    effect["target"] = "$target.0"
+    return FixedTokenCreationTemplate(
+        template_id=f"create-fixed-token-for-target-{match['relation'].casefold()}-v1",
+        effect=effect,
+        mechanics=(*definition.mechanics, "cr-115-targets"),
+        target_schema=fixed_token_player_target_schema(relation),
+    )
+
+
 def _fixed_named_token_template(
     normalized: str,
     *,
@@ -300,10 +378,11 @@ def _fixed_postposed_color_token_template(
         effect={
             "op": "create_token",
             "controller": "$controller",
-            "name": subtypes,
+            "name": fixed_ordinary_token_name(subtypes),
             "quantity": quantity,
             "characteristics": {
                 "type_line": f"Token Creature — {subtypes}",
+                TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
                 "colors": colors,
                 "power": match.group("power"),
                 "toughness": match.group("toughness"),
@@ -332,6 +411,8 @@ def extended_fixed_token_creation_effect_template(
         _fixed_delayed_token_template,
         _fixed_declaration_token_template,
         _fixed_named_token_template,
+        _fixed_distributed_creator_template,
+        _fixed_targeted_creator_template,
     ):
         compiled = compiler(normalized, compile_inner=compile_inner)
         if compiled is not None:

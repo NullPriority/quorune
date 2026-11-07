@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-from .token_creation_queries import semantic_choice_token_creation_preview, token_creation_choice_facts
+from .token_creation_queries import (
+    attached_token_candidate_refs,
+    semantic_choice_token_creation_preview,
+    token_creation_choice_facts,
+)
 
 from ..target_source import stack_targeting_source
 from ..ring_state import materialized_ring_choice_plans
@@ -13,6 +17,7 @@ from ..rules.hand_inspection import FIXED_HAND_INSPECTION_OPERATION
 from ..counter_state import player_counter_snapshot
 from ..model import StackItem
 from ..connive import connive_discard_characteristic_ids, bind_connive_instruction
+from .endure import bind_endure_instruction
 from ..object_query import object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_runtime.draw_restrictions import current_draw_permission
@@ -58,6 +63,9 @@ class SemanticChoiceCoordinationMixin:
             "battlefield", "graveyard", "exile", "command", "stack"
         }
         choice_effect = effect or {}
+        from ..discover_casting import qualified_scan_library_refs
+        scan_refs = {ref for refs in qualified_scan_library_refs(self, actor=actor, effect=choice_effect).values()
+                     for ref in refs}
         inspected_hand_owner = (
             str(choice_effect.get("target") or "")
             if choice_effect.get("op") == FIXED_HAND_INSPECTION_OPERATION
@@ -77,6 +85,7 @@ class SemanticChoiceCoordinationMixin:
                 and card.owner != actor
                 and not inspected_hidden_card
                 and not known_hand
+                and not (card.zone == 'library' and card.ref in scan_refs)
             ):
                 continue
             effective = self._effective_card_data(card)
@@ -212,7 +221,10 @@ class SemanticChoiceCoordinationMixin:
         effect: Mapping[str, Any],
         source_ref: str | None,
     ) -> tuple[str, ...]:
+        from ..rules.attachment_actions import ATTACH_CREATED_TOKEN
         from ..rules.graveyard_return_choices import OPERATION, graveyard_return_candidates
+        if effect.get("op") == ATTACH_CREATED_TOKEN:
+            return attached_token_candidate_refs(self, effect)
         if effect.get('op') == OPERATION:
             try:return graveyard_return_candidates(self, actor, effect)
             except (ValueError, TypeError, KeyError) as exc:raise SemanticChoiceError(str(exc)) from exc
@@ -445,7 +457,9 @@ class SemanticChoiceCoordinationMixin:
         source_ref: str | None,
         stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
-        if effect.get('op')=='discover_cast_choice':
+        from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
+
+        if effect.get('op') in EXILE_CAST_CHOICE_OPERATIONS:
             from ..discover_casting import discover_cast_options
             return discover_cast_options(self,item=stack_item,actor=actor,effect=effect)
         if effect.get('op') == 'miracle_cast_choice':
@@ -488,8 +502,9 @@ class SemanticChoiceCoordinationMixin:
         source_ref: str | None = None,
         stack_item: StackItem | None = None,
     ) -> SnapshotSemanticChoiceQuery:
-        """Materialize only actor-visible, immutable choice facts."""
+        """Materialize immutable facts under the instruction's visibility scope."""
 
+        from ..discover_casting import qualified_scan_library_refs
         choice_effect = effect or {}
         object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
@@ -539,7 +554,8 @@ class SemanticChoiceCoordinationMixin:
                 actor: [
                     self.state.cards[object_id].ref
                     for object_id in self.state.players[actor].zones["library"]
-                ]
+                ],
+                **qualified_scan_library_refs(self, actor=actor, effect=choice_effect),
             },
             mana_by_seat={
                 actor: dict(self.state.players[actor].mana_pool)
@@ -662,6 +678,7 @@ class SemanticChoiceCoordinationMixin:
         registry = default_semantic_choice_registry()
         try:
             effect = bind_connive_instruction(self, item, effect)
+            effect = bind_endure_instruction(self, item, effect)
             from ..drawing.miracle_casting import bind_miracle_cast_instruction
             effect = bind_miracle_cast_instruction(item, effect)
         except (ValueError, TypeError, KeyError) as exc:

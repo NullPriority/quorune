@@ -11,6 +11,7 @@ from ..card_programs.admission import (
 from ..carddb import CardRecord
 from ..stack_resolution_authority_model import INTRINSIC_EMPTY_SPELL_ADMISSION
 from ..rules.capabilities import CapabilityRegistry
+from ..rules.spell_self_exile import terminal_spell_move
 from ..semantics import SemanticProgram
 from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
 from .intrinsic_counter_nodes import intrinsic_empty_spell_admission
@@ -36,6 +37,15 @@ def _copy_mapping(value: Any) -> dict[str, Any] | None:
     return dict(value) if value is not None else None
 
 
+def _resolution_destination(node, mechanics):
+    terminal_move = terminal_spell_move(mechanics)
+    if terminal_move is not None:
+        return terminal_move.destination
+    if "fixed-permanent-additional-cost-declaration" in node.runtime_coverage:
+        return "battlefield"
+    return "graveyard" if node.kind in {"spell_ability", "spell_variant"} else None
+
+
 def _ordered_unique(values: Iterable[str]) -> list[str]:
     return list(dict.fromkeys(values))
 
@@ -49,14 +59,17 @@ def _fixed_public_single_target_schema(schema: Mapping[str, Any]) -> bool:
     if schema.get('zones') == ['player'] and schema.get('categories') == ['player']:
         return set(schema) <= {'zones','categories','count','player_relation'} and schema.get('player_relation','any') in {'any','you','opponent'}
     if schema.get('zones') == ['stack'] and schema.get('categories') == ['spell']:
-        return set(schema) <= {'zones','categories','count','source_exclusion'} and schema.get('source_exclusion') is True
+        from ..rules.node_capability_shapes import fixed_stack_counter_target_schema_is_closed
+        return fixed_stack_counter_target_schema_is_closed(schema)
     return False
 
 
 def _bounded_public_target_set_schema(schema: Mapping[str, Any]) -> bool:
     if schema.get('zones') != ['battlefield'] or schema.get('categories') != ['permanent'] or schema.get('types_any') != ['creature']:
         return False
-    if set(schema) - {'zones','categories','types_any','up_to','support_source_context','source_exclusion'}:
+    if set(schema) - {'zones','categories','types_any','up_to','support_source_context','source_exclusion','controller_relation'}:
+        return False
+    if schema.get('controller_relation', 'any') not in ('any', 'you', 'opponent'):
         return False
     count = schema.get('up_to')
     if type(count) is not int or not 1 <= count <= 5:
@@ -86,10 +99,15 @@ def _scope_component_target(value: Any, role: int, *, restore: bool = False) -> 
         return {key: _scope_component_target(item, role, restore=restore) for key,item in value.items()}
     if isinstance(value, (list, tuple)):
         return [_scope_component_target(item, role, restore=restore) for item in value]
-    scalar = '$target_group.clause_' + str(role) + '.0'
     group = '$target_group.clause_' + str(role)
+    scalar = group + '.0'
+    controller = group + '.current_controller.0'
     if restore:
+        if value == controller:
+            return '$target.current_controller.0'
         return '$target.0' if value == scalar else '$targets' if value == group else value
+    if value == '$target.current_controller.0':
+        return controller
     return scalar if value == '$target.0' else group if value == '$targets' else value
 
 
@@ -99,7 +117,8 @@ def _component_target_roles_are_exact(value: Any, role: int) -> bool:
     if isinstance(value, (list, tuple)):
         return all(_component_target_roles_are_exact(item, role) for item in value)
     if isinstance(value, str) and (value.startswith('$target.') or value == '$targets' or value.startswith('$target_group.')):
-        return value in {'$target_group.clause_' + str(role), '$target_group.clause_' + str(role) + '.0'}
+        group = '$target_group.clause_' + str(role)
+        return value in {group, group + '.0', group + '.current_controller.0'}
     return True
 
 
@@ -568,9 +587,7 @@ def program_from_generated_node_group(
         ),
         effects=effects,
         handlers=[dict(handler) for node in nodes for handler in node.handlers],
-        destination=("exile" if 'spell-resolution-self-exile' in represented_mechanics
-            else "battlefield" if "fixed-permanent-additional-cost-declaration" in first.runtime_coverage
-            else "graveyard" if first.kind in {"spell_ability", "spell_variant"} else None),
+        destination=_resolution_destination(first, represented_mechanics),
         requires_arbiter=trust_level != "trusted",
         version=1,
         oracle_id=record.oracle_id,

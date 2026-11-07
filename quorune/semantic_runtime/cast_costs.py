@@ -15,7 +15,9 @@ from ..cast_cost_modifiers import (
 from ..continuous_conditions import FixedPublicStateConditionSpec, FixedPublicStateConditionError
 from ..card_program_faces import program_matches_face
 from ..casting_payment_keywords import (
+    ASSIST_CAPABILITY,
     AffinitySpec,
+    AssistSpec,
     CastingPaymentKeywordError,
     DelveSpec,
     ImproviseSpec,
@@ -66,6 +68,7 @@ CONVOKE_COST_EVENT = "cast.cost"
 CONVOKE_HANDLER_ID = "casting.payment.convoke.v1"
 AFFINITY_HANDLER_ID = "casting.payment.affinity-artifacts.v1"
 TYPED_AFFINITY_HANDLER_ID = "casting.payment.affinity.v2"
+ASSIST_HANDLER_ID = "casting.payment.assist.v1"
 DELVE_HANDLER_ID = "casting.payment.delve.v1"
 IMPROVISE_HANDLER_ID = "casting.payment.improvise.v1"
 FIXED_SPELL_COST_REDUCTION_CAPABILITY_ID = (
@@ -340,6 +343,31 @@ class DelveCostHandler:
 
 
 @dataclass(frozen=True, slots=True)
+class AssistCostHandler:
+    handler_id: str = ASSIST_HANDLER_ID
+    schema_version: int = 1
+    family: str = ASSIST_CAPABILITY
+    event: str = CONVOKE_COST_EVENT
+    rule_references: tuple[str, ...] = ("601.2f", "601.2g", "601.2h", "702.132a")
+    capability_dependencies: tuple[str, ...] = (ASSIST_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> AssistSpec:
+        exact_fields(descriptor, {"handler_id", "schema_version", "event", "payment"},
+                     field="Assist cost handler")
+        if (descriptor["handler_id"] != self.handler_id or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != self.schema_version or descriptor["event"] != self.event):
+            raise SemanticNodeError("Assist handler identity, version, or event changed")
+        try:
+            return AssistSpec.from_dict(descriptor["payment"])
+        except (CastingPaymentKeywordError, TypeError) as exc:
+            raise SemanticNodeError(str(exc)) from exc
+
+    def lower(self, descriptor: Mapping[str, Any], context: object) -> tuple[AssistSpec, ...]:
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
 class EvokeCostHandler:
     handler_id: str = EVOKE_HANDLER_ID
     schema_version: int = 1
@@ -570,6 +598,7 @@ def default_cast_cost_component_registry() -> CastCostComponentRegistry:
     registry = CastCostComponentRegistry(
         (
             AffinityCostHandler(),
+            AssistCostHandler(),
             ConvokeCostHandler(),
             DelveCostHandler(),
             EvokeCostHandler(),
@@ -650,6 +679,11 @@ def delve_handler_descriptor() -> dict[str, Any]:
         "event": CONVOKE_COST_EVENT,
         "payment": DelveSpec().to_dict(),
     }
+
+
+def assist_handler_descriptor() -> dict[str, Any]:
+    return {"handler_id": ASSIST_HANDLER_ID, "schema_version": 1,
+            "event": CONVOKE_COST_EVENT, "payment": AssistSpec().to_dict()}
 
 
 def evoke_handler_descriptor(spec: FixedManaEvokeSpec) -> dict[str, Any]:
@@ -892,6 +926,7 @@ __all__ = [
     "CONVOKE_HANDLER_ID",
     "CastCostComponentRegistry",
     "ConvokeCostHandler",
+    "ASSIST_HANDLER_ID",
     "DELVE_HANDLER_ID",
     "DelveCostHandler",
     "DelveSpec",
@@ -912,6 +947,7 @@ __all__ = [
     "TypedAffinityCostHandler",
     "active_fixed_spell_cost_reductions",
     "affinity_handler_descriptor",
+    "assist_handler_descriptor",
     "convoke_handler_descriptor",
     "delve_handler_descriptor",
     "default_cast_cost_component_registry",

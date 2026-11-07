@@ -65,26 +65,36 @@ class PlayerProtectionRuntimeTests(unittest.TestCase):
     resolve=witnesses.BoundEffectProgramRuntimeTests.resolve
     replay=witnesses.BoundEffectProgramRuntimeTests.replay
 
-    def test_original_player_shroud_with_zone_replacement_stays_out_of_whole_runtime(self):
-        from high_risk_interaction_support import _observed_piece_ids
+    def test_original_shroud_and_draw_skip_bind_with_zone_replacement(self):
+        from dataclasses import replace
+        from high_risk_interaction_support import CONDITIONAL_DRAW_STEP_REPLACEMENT, _observed_piece_ids
         from quorune.card_programs import bind_card_program_runtime
         from quorune.card_programs.adapters import compile_best_available_card_program
         from quorune.compiler.unlock_frontier import analyze_card_unlocks
         from quorune.semantics import SemanticRegistry
-        record = self.db.by_oracle_id('d41ab41d-07c8-4f6d-be5e-7aec9f5f6365')
-        ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
-        program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
-            capability_registry=self.registry, capability_profile='commander_review')
-        row = analyze_card_unlocks(ir, program=program, program_error=None,
-            capabilities=self.registry, profile='commander_review')
-        self.assertLessEqual({'capability.target.player.static_hexproof_shroud',
-            'capability.zone.change.destination_replacement'}, _observed_piece_ids(row))
-        self.assertEqual('residual', row['card_program_status'])
-        self.assertIsNone(row['hard_construction_failure'])
-        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
-        self.assertFalse(binding['strict_capability_ready'])
-        self.assertFalse(binding['compatible_ready'])
-        self.assertIn('trust_basis:unresolved', binding['blockers'])
+        original = self.db.lookup('Solitary Confinement')
+        conditional = replace(
+            original, oracle_id='fixture:shroud-conditional-draw-skip',
+            name='Generic Shroud With Conditional Draw Skip',
+            oracle_text=original.oracle_text.replace('Skip your draw step.', CONDITIONAL_DRAW_STEP_REPLACEMENT),
+        )
+        for record, supported, skip_piece in (
+            (original, True, 'capability.turn.step.static_skip'),
+            (conditional, False, 'residual.replacement.replacement-applicability'),
+        ):
+            with self.subTest(card=record.name):
+                ir = compile_oracle_card(record, capability_registry=self.registry, capability_profile='commander_review')
+                program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(),
+                    capability_registry=self.registry, capability_profile='commander_review')
+                row = analyze_card_unlocks(ir, program=program, program_error=None,
+                    capabilities=self.registry, profile='commander_review')
+                self.assertLessEqual({'capability.target.player.static_hexproof_shroud',
+                    'capability.zone.change.destination_replacement', skip_piece}, _observed_piece_ids(row))
+                self.assertIsNone(row['hard_construction_failure'])
+                binding = bind_card_program_runtime(program, capability_registry=self.registry, profile='commander_review')
+                self.assertEqual(supported, binding['strict_capability_ready'], binding['blockers'])
+                self.assertEqual(supported, binding['compatible_ready'], binding['blockers'])
+                self.assertEqual(not supported, bool(ir.material_residuals))
 
     def test_shroud_source_sacrifice_redirects_then_restores_targetability_and_replays(self):
         from high_risk_interaction_support import _observed_piece_ids

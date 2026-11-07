@@ -52,7 +52,7 @@ class CreatedTokenCounterTests(unittest.TestCase):
     def tearDownClass(cls):cls.db.close();cls.temp.cleanup()
 
     def fractals(self,s,count,size):
-        rows=[c for c in self.tokens(s) if c.printed_name=='Fractal'];self.assertEqual(count,len(rows))
+        rows=[c for c in self.tokens(s) if c.printed_name=='Fractal Token'];self.assertEqual(count,len(rows))
         for card in rows:
             data=s.engine._copyable_characteristics(card);self.assertEqual(('0','0'),(str(data['power']),str(data['toughness'])))
             self.assertEqual(size,card.counters.get('+1/+1',0))
@@ -119,18 +119,18 @@ class CreatedTokenCounterTests(unittest.TestCase):
         spell=self.add(s.engine,'Generic Counted Construct Subject',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         for card in (extra,spell):self.assertTrue(self.binding(s,card)['strict_capability_ready'])
         self.prepare(s,mana={'G':1});self.checkpoint(s);self.normal(s,spell,{'G':1});s=self.replay(s,load=True);self.assertIsNone(self.settle(s))
-        tokens={c.printed_name:c for c in self.tokens(s)};self.assertEqual({'Construct','Thopter'},set(tokens))
+        tokens={c.printed_name:c for c in self.tokens(s)};self.assertEqual({'Construct Token','Thopter Token'},set(tokens))
         for card in tokens.values():self.assertEqual(3,card.counters.get('+1/+1'))
-        self.assertEqual(3,s.engine._numeric_stat(tokens['Construct'].object_id,'power'))
-        self.assertEqual(4,s.engine._numeric_stat(tokens['Thopter'].object_id,'power'));self.private_replay(s,private)
+        self.assertEqual(3,s.engine._numeric_stat(tokens['Construct Token'].object_id,'power'))
+        self.assertEqual(4,s.engine._numeric_stat(tokens['Thopter Token'].object_id,'power'));self.private_replay(s,private)
 
     def test_additional_noncreature_token_is_also_a_counter_recipient(self):
         s=self.session(808050);self.add(s.engine,'Generic Token Status Observer');spell=self.add(s.engine,'Generic Fixed Construct Subject',zone='hand')
         private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand');self.assertTrue(self.binding(s,spell)['strict_capability_ready'])
         self.prepare(s,mana={'G':1});self.checkpoint(s);self.normal(s,spell,{'G':1});s=self.replay(s,load=True);self.assertIsNone(self.settle(s))
-        tokens={c.printed_name:c for c in self.tokens(s)};self.assertEqual({'Construct','Map'},set(tokens))
+        tokens={c.printed_name:c for c in self.tokens(s)};self.assertEqual({'Construct Token','Map Token'},set(tokens))
         for card in tokens.values():self.assertEqual(3,card.counters.get('+1/+1'))
-        self.assertNotIn('Creature',s.engine._effective_card_data(tokens['Map'])['type_line']);self.private_replay(s,private)
+        self.assertNotIn('Creature',s.engine._effective_card_data(tokens['Map Token'])['type_line']);self.private_replay(s,private)
 
     def test_token_and_counter_replacement_choices_resume_without_repeated_creation(self):
         s=self.session(808060)

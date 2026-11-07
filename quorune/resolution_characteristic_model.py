@@ -9,6 +9,7 @@ from .continuous_effects import ContinuousOperation, Layer
 from .creature_subtypes import CREATURE_SUBTYPES, canonical_creature_subtype
 from .keyword_abilities import FIXED_CHARACTERISTIC_KEYWORDS
 from .object_predicate import ObjectQuerySpec
+from .source_tap_effect import SOURCE_TAP_MODIFIER_VERSION, split_source_tap_effect
 
 
 PERMANENT_CHARACTERISTIC_MECHANIC = "fixed-source-characteristics-until-end-of-turn"
@@ -16,6 +17,8 @@ PERMANENT_CHARACTERISTIC_CAPABILITY = (
     "continuous.resolution.fixed_source_characteristics_until_end_of_turn"
 )
 CHARACTERISTIC_OPERATION = "apply_source_characteristics_until_end_of_turn"
+SUBTYPE_GRANT_INSTRUCTION_VERSION = 12
+FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS = frozenset({2, SUBTYPE_GRANT_INSTRUCTION_VERSION, SOURCE_TAP_MODIFIER_VERSION})
 # CR 205.3g-k/q, pinned with the repository's 2026-08-07 rules index.
 # Every non-retaining animation in this closed model sets Creature alone.
 # Remove subtypes correlated with the lost types, not retained creature types.
@@ -134,13 +137,87 @@ class FixedResolutionCharacteristicsSpec:
         return tuple(result)
 
 
-def fixed_resolution_characteristic_instruction(value: Mapping[str, Any]) -> tuple[FixedResolutionCharacteristicsSpec, str | ObjectQuerySpec]:
+@dataclass(frozen=True, slots=True)
+class FixedResolutionSubtypeGrantSpec:
+    """A retained creature subtype and optional keyword additions."""
+
+    subtype: str
+    keywords: tuple[str, ...] = ()
+    schema_version: int = 3
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 3:
+            raise ValueError("Fixed subtype grants require version 3")
+        if type(self.subtype) is not str:
+            raise ValueError("Fixed subtype grants require a canonical creature subtype")
+        subtype = canonical_creature_subtype(self.subtype)
+        if subtype is None or self.subtype != subtype.title():
+            raise ValueError("Fixed subtype grants require a canonical creature subtype")
+        if (
+            not isinstance(self.keywords, tuple) or len(self.keywords) > 3
+            or any(type(value) is not str or value not in FIXED_CHARACTERISTIC_KEYWORDS for value in self.keywords)
+            or len(self.keywords) != len(set(self.keywords))
+        ):
+            raise ValueError("Fixed subtype grant keywords are outside the represented vocabulary")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"schema_version": self.schema_version, "subtype": self.subtype, "keywords": list(self.keywords)}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> FixedResolutionSubtypeGrantSpec:
+        if not isinstance(value, Mapping) or set(value) != {"schema_version", "subtype", "keywords"}:
+            raise ValueError("Fixed subtype grant has an invalid shape")
+        if not isinstance(value["keywords"], (list, tuple)):
+            raise ValueError("Fixed subtype grant keywords must be ordered")
+        return cls(value["subtype"], tuple(value["keywords"]), value["schema_version"])
+
+    def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
+        additions = (ContinuousOperation("add_types", (self.subtype,), field="subtypes"),)
+        abilities = tuple(ContinuousOperation("add_ability", keyword) for keyword in self.keywords)
+        result = ((Layer.TYPE, "4", additions),)
+        return (*result, (Layer.ABILITY, "6", abilities)) if abilities else result
+
+
+@dataclass(frozen=True, slots=True)
+class FixedResolutionModifierSpec:
+    power: int
+    toughness: int
+
+    def __post_init__(self) -> None:
+        if type(self.power) is not int or type(self.toughness) is not int or not (self.power or self.toughness):
+            raise ValueError("Fixed modifier requires a nonzero pair of integer deltas")
+
+    def layer_operations(self) -> tuple[tuple[Layer, str, tuple[ContinuousOperation, ...]], ...]:
+        operation = ContinuousOperation("modify_power_toughness", (self.power, self.toughness))
+        return ((Layer.POWER_TOUGHNESS, "7c", (operation,)),)
+
+
+def fixed_resolution_characteristic_instruction(
+    value: Mapping[str, Any],
+) -> tuple[FixedResolutionCharacteristicsSpec | FixedResolutionSubtypeGrantSpec | FixedResolutionModifierSpec, str | ObjectQuerySpec]:
     expected = {"op","schema_version","characteristics"}
-    if not isinstance(value, Mapping) or set(value) not in (expected | {"card"}, expected | {"predicate"}):
+    if not isinstance(value, Mapping):
         raise ValueError("Fixed characteristic instruction fields are malformed")
-    if value["op"] != CHARACTERISTIC_OPERATION or type(value["schema_version"]) is not int or value["schema_version"] != 2:
+    from .next_turn_effect import split_next_turn_effect
+
+    value, source_tapped = split_source_tap_effect(value)
+    value, _ = split_next_turn_effect(value)
+    if set(value) not in (expected | {"card"}, expected | {"predicate"}):
+        raise ValueError("Fixed characteristic instruction fields are malformed")
+    version = value["schema_version"]
+    if value["op"] != CHARACTERISTIC_OPERATION or type(version) is not int or version not in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS:
         raise ValueError("Fixed characteristic instruction identity is malformed")
-    spec = FixedResolutionCharacteristicsSpec.from_dict(value["characteristics"])
+    if version == SOURCE_TAP_MODIFIER_VERSION:
+        raw = value["characteristics"]
+        if not source_tapped or "predicate" not in value or not isinstance(raw, Mapping) or set(raw) != {"power", "toughness"}:
+            raise ValueError("Tapped-source modifiers require a fixed query and exact integer deltas")
+        spec = FixedResolutionModifierSpec(raw["power"], raw["toughness"])
+    elif version == SUBTYPE_GRANT_INSTRUCTION_VERSION:
+        if "card" not in value:
+            raise ValueError("Fixed subtype grants require a single object")
+        spec = FixedResolutionSubtypeGrantSpec.from_dict(value["characteristics"])
+    else:
+        spec = FixedResolutionCharacteristicsSpec.from_dict(value["characteristics"])
     if "card" in value:
         if type(value["card"]) is not str or not value["card"]:
             raise ValueError("Fixed characteristic target reference is malformed")

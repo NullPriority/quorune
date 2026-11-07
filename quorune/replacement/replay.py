@@ -3,11 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..additional_cost_vocabulary import BLIGHT_CAST_PAYMENT_FIELD
 from ..additional_cost_vocabulary import FIXED_ZONE_CHANGE_COST_CONTRACTS
 from ..rules.activation_zone_change_costs import (
     activation_zone_change_cost_reference,
 )
 from ..trigger_batches import PendingTriggerItem, TriggerBatchError
+from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT, TURN_BOUNDARY_SKIP_RESUME, TurnBoundary
 from .immutable import FrozenMap, thaw_value
 from .model import (
     ReplaceableEvent,
@@ -17,6 +19,7 @@ from .model import (
     exact_fields,
     mapping_sequence,
     sequence,
+    string_sequence,
 )
 
 
@@ -98,6 +101,9 @@ _TURN_COUNTER_ACTION_FIELDS = {
     "replacement_selections",
     "replacement_batch",
     "replacement_effects",
+}
+_TURN_BOUNDARY_SKIP_FIELDS = _TURN_COUNTER_ACTION_FIELDS - {
+    "turn_action_kind", "replacement_selections"
 }
 _STATE_BASED_DESTRUCTION_FIELDS = {
     "replacement_resume_kind", "state_based_frame", "replacement_selections",
@@ -205,6 +211,8 @@ class ReplacementContinuation:
             return _decode_turn_counter_action_continuation(
                 cls, value, batch, effects
             )
+        if resume_kind == TURN_BOUNDARY_SKIP_RESUME:
+            return _decode_turn_boundary_skip(cls, value, batch, effects)
         if resume_kind in {"state_based_destruction", "state_based_zone_change"}:
             from ..state_based_replacement_coordination import decode_state_based_replacement
             return decode_state_based_replacement(cls, value, batch, effects)
@@ -316,6 +324,7 @@ def _validate_continuation_shape(value: Mapping[str, Any]) -> str:
             _TURN_COUNTER_ACTION_FIELDS,
             "turn-counter action continuation",
         ),
+        TURN_BOUNDARY_SKIP_RESUME: (_TURN_BOUNDARY_SKIP_FIELDS, "scheduled skip continuation"),
         "state_based_destruction": (_STATE_BASED_DESTRUCTION_FIELDS, "state-based destruction continuation"),
         "state_based_zone_change": (_STATE_BASED_DESTRUCTION_FIELDS | {'state_based_destruction_selections'}, "state-based zone continuation"),
         'conditional_return': (_CONDITIONAL_RETURN_FIELDS,'conditional return continuation'),
@@ -353,6 +362,40 @@ def _decode_batch_and_effects(
             "Replacement continuation requires effects"
         )
     return batch, effects
+
+
+def _decode_turn_boundary_skip(continuation_type, value, batch, effects):
+    actor = value["turn_action_actor"]
+    frame = value["turn_action_frame"]
+    if not isinstance(frame, Mapping) or actor != batch.apnap_order[0]:
+        raise ReplacementEffectError("Scheduled skip continuation identity is malformed")
+    exact_fields(frame, _TURN_ACTION_FRAME_FIELDS, field_name="scheduled skip frame")
+    if (
+        frame["active_player"] != actor
+        or type(frame["phase_index"]) is not int or frame["phase_index"] < 0
+        or type(frame["turn_sequence"]) is not int or frame["turn_sequence"] < 0
+        or any(type(frame[field]) is not str or not frame[field] for field in ("phase", "step"))
+        or frame["priority_player"] is not None and frame["priority_player"] not in batch.apnap_order
+    ):
+        raise ReplacementEffectError("Scheduled skip frame values are malformed")
+    string_sequence(frame["stack_refs"], field_name="scheduled skip stack")
+    if len(batch.events) != 1 or batch.journal:
+        raise ReplacementEffectError("Scheduled skip continuation requires one upcoming boundary")
+    event, = batch.events
+    if (
+        event.kind != TURN_BOUNDARY_SKIP_EVENT or event.affected_player != actor
+        or event.applied_effects or event.children or event.entry_scope is not None
+        or set(event.payload) != {"skipped", "boundary"} or event.payload["skipped"] is not False
+        or type(event.payload["boundary"]) is not str
+        or event.payload["boundary"] not in {kind.value for kind in TurnBoundary if kind is not TurnBoundary.TURN}
+        or len(effects) < 2 or any(effect.event_kind != TURN_BOUNDARY_SKIP_EVENT for effect in effects)
+    ):
+        raise ReplacementEffectError("Scheduled skip replacement event is malformed")
+    return continuation_type(
+        batch=batch, effects=effects, resume_kind=TURN_BOUNDARY_SKIP_RESUME,
+        turn_action_actor=actor, turn_action_frame=FrozenMap(frame),
+        held_triggers=_decode_held_turn_triggers(value),
+    )
 
 
 def _decode_turn_counter_action_continuation(
@@ -427,22 +470,6 @@ def _decode_turn_counter_action_continuation(
             raise ReplacementEffectError(
                 "Turn-counter continuation event is malformed"
             )
-    try:
-        held = tuple(
-            PendingTriggerItem.from_dict(item)
-            for item in mapping_sequence(
-                value["held_triggers"],
-                field_name="turn-counter held triggers",
-            )
-        )
-    except TriggerBatchError as exc:
-        raise ReplacementEffectError(str(exc)) from exc
-    stack_ids = tuple(item.payload["stack_id"] for item in held)
-    refs = tuple(item.ref for item in held)
-    if len(stack_ids) != len(set(stack_ids)) or len(refs) != len(set(refs)):
-        raise ReplacementEffectError(
-            "Turn-counter held triggers must be unique"
-        )
     return continuation_type(
         batch=batch,
         effects=effects,
@@ -451,8 +478,21 @@ def _decode_turn_counter_action_continuation(
         turn_action_kind=action_kind,
         turn_action_actor=actor,
         turn_action_frame=FrozenMap(frame),
-        held_triggers=held,
+        held_triggers=_decode_held_turn_triggers(value),
     )
+
+
+def _decode_held_turn_triggers(value):
+    try:
+        held = tuple(
+            PendingTriggerItem.from_dict(item)
+            for item in mapping_sequence(value["held_triggers"], field_name="turn held triggers")
+        )
+    except TriggerBatchError as exc:
+        raise ReplacementEffectError(str(exc)) from exc
+    if len(held) != len({item.payload["stack_id"] for item in held}) or len(held) != len({item.ref for item in held}):
+        raise ReplacementEffectError("Held turn triggers must be unique")
+    return held
 
 
 def _decode_typed_selection(item: Mapping[str, Any]) -> FrozenMap:
@@ -603,7 +643,7 @@ def _validate_replacement_journal(
     response: Mapping[str, Any],
     *,
     event_ids: set[str],
-    allow_typed_selections: bool,
+    typed_event_ids: set[str],
 ) -> None:
     raw = response.get("_mana_replacement_selections")
     if raw is None:
@@ -625,9 +665,7 @@ def _validate_replacement_journal(
         for selection in selections:
             if type(selection) is str and bool(selection):
                 continue
-            if not allow_typed_selections or not isinstance(
-                selection, Mapping
-            ):
+            if event_id not in typed_event_ids or not isinstance(selection, Mapping):
                 raise ReplacementEffectError(
                     "Priority-action replacement journal is malformed"
                 )
@@ -777,6 +815,7 @@ def _activation_batch_cost_refs(response:Mapping[str,Any]) -> tuple[str,...] | N
 
 def _priority_action_cost_event_ids(
     batch: ReplacementEventBatch,
+    effects: tuple[ReplacementEffect, ...],
     *,
     action: str,
     response: Mapping[str, Any],
@@ -852,7 +891,18 @@ def _priority_action_cost_event_ids(
             common_valid = common_valid and (
                 payload.get("effect_generated") is False
             )
-            action_valid = payload.get("counter_name") == "loyalty"
+            from ..rules.selected_counter_costs import (
+                blight_activation_cost_event_is_valid, is_blight_activation_cost_event,
+            )
+            if is_blight_activation_cost_event(event, response):
+                action_valid = blight_activation_cost_event_is_valid(batch, effects, response, seat=seat)
+            else:
+                action_valid = payload.get("counter_name") == "loyalty"
+        elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
+            from ..rules.casting.blight_costs import blight_cast_cost_event_matches
+
+            common_valid = common_valid and payload.get("effect_generated") is False
+            action_valid = blight_cast_cost_event_matches(batch, effects, response, seat=seat)
         else:
             common_valid = common_valid and (
                 payload.get("effect_generated") is False
@@ -985,6 +1035,7 @@ def _decode_mana_continuation(
     if resume_kind == "priority_action_cost":
         event_ids = _priority_action_cost_event_ids(
             batch,
+            effects,
             action=action,
             response=response,
             seat=seat,
@@ -1025,10 +1076,20 @@ def _decode_mana_continuation(
             raise ReplacementEffectError(
                 "Mana-payment continuation event batch is malformed"
             )
+    prior_mana_event_ids = set()
+    if action == "activate":
+        from ..rules.selected_counter_costs import blight_prior_mana_replacement_event_ids
+
+        prior_mana_event_ids = blight_prior_mana_replacement_event_ids(response)
+    elif action == "cast" and BLIGHT_CAST_PAYMENT_FIELD in response:
+        from ..rules.casting.blight_costs import blight_cast_prior_mana_event_ids
+
+        prior_mana_event_ids = blight_cast_prior_mana_event_ids(response)
+    event_ids.update(prior_mana_event_ids)
     _validate_replacement_journal(
         response,
         event_ids=event_ids,
-        allow_typed_selections=(resume_kind == "mana_payment"),
+        typed_event_ids=event_ids if resume_kind == "mana_payment" else prior_mana_event_ids,
     )
     return continuation_type(
         batch=batch,

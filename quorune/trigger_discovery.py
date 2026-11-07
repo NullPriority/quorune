@@ -36,7 +36,9 @@ from .continuous_conditions import (
     FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
     FixedPublicStateConditionSpec,
 )
-from .rules.event_subscriptions import FixedEventSubscriptionSet, intervening_recheck_condition
+from .rules.event_subscriptions import (
+    FixedEventSubscriptionSet, intervening_recheck_condition, public_state_intervening_actual,
+)
 from .evolve import (
     EVOLVE_EVENT_CONDITION_FIELD,
     EvolveCharacteristics,
@@ -332,58 +334,6 @@ def _keyword_intervening_condition_actual(
     )
 
 
-def _public_state_intervening_actual(
-    host: TriggerDiscoveryHost,
-    condition: Mapping[str, Any],
-    *,
-    source: CardInstance,
-    context: Mapping[str, Any],
-) -> bool:
-    raw_condition = condition.get("condition")
-    if not isinstance(raw_condition, Mapping):
-        raise GameRuleError(
-            "Public-state intervening conditions require a typed descriptor"
-        )
-    try:
-        public_condition = FixedPublicStateConditionSpec.from_dict(raw_condition)
-    except ValueError as exc:
-        raise GameRuleError(str(exc)) from exc
-    controller = context.get("intervening_condition_controller")
-    if controller is not None and (
-        type(controller) is not str or controller not in host.state.players
-    ):
-        raise GameRuleError(
-            "Intervening-condition controller must name an active seat"
-        )
-    public_source = copy.copy(source)
-    if isinstance(controller, str):
-        public_source.controller = controller
-    locked_identity = context.get("source_logical_object_id")
-    if (
-        isinstance(controller, str)
-        and type(locked_identity) is str
-        and locked_identity
-        and public_source.logical_object_id != locked_identity
-    ):
-        public_source.zone = "departed"
-        public_source.attached_to = None
-        public_source.counters = {}
-        identity_prefix = f"{public_source.object_id}@"
-        incarnation = locked_identity.removeprefix(identity_prefix)
-        if (
-            not locked_identity.startswith(identity_prefix)
-            or not incarnation.isdigit()
-        ):
-            raise GameRuleError(
-                "Intervening-condition source identity is malformed"
-            )
-        public_source.zone_change_counter = int(incarnation)
-    return host._fixed_public_state_condition_holds(
-        public_source,
-        public_condition,
-    )
-
-
 def _extended_action_condition_actual(host,condition,*,source,context):
     field=condition.get('field')
     from .attack_batch_model import ATTACK_BATCH_CONDITION
@@ -439,7 +389,7 @@ def _semantic_condition_actual(
         from .source_damage_death import source_damage_death_matches
         return source_damage_death_matches(host, source, context)
     if field == FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD:
-        return _public_state_intervening_actual(
+        return public_state_intervening_actual(
             host,
             condition,
             source=source,
@@ -1120,7 +1070,10 @@ def _semantic_trigger_context(
     stack_context.update(state_trigger_context(source,program))
     from .effect_runtime.temporary_ability_bundle import printed_backup_source_context
     from .rules.event_spell_copy import event_spell_copy_trigger_context
-    try:stack_context.update(event_spell_copy_trigger_context(host,program,event,context))
+    from .target_controller_information import occurrence_controller_context
+    try:
+        stack_context.update(event_spell_copy_trigger_context(host,program,event,context))
+        stack_context.update(occurrence_controller_context(host, program, event, context))
     except (TypeError,ValueError,KeyError) as exc:raise GameRuleError(str(exc)) from exc
     stack_context.update(printed_backup_source_context(source,program))
     from .rules.trigger_limits import event_source_usage_context
@@ -1208,7 +1161,11 @@ def _semantic_trigger_context(
     stack_context.update(scalar_source_context(host, source, program.effects, characteristics=source_characteristics))
     from .target_source import capture_targeting_source, TARGETING_SOURCE_CONTEXT
     from .ability_source_information import complete_ability_source_information
-    if program.target_schema or complete_ability_source_information(host.state):stack_context[TARGETING_SOURCE_CONTEXT]=capture_targeting_source(host,source,characteristics=source_characteristics,zone=active_zone).to_dict()
+    from .rules.endure_model import ENDURE_CAPABILITY
+    if program.target_schema or complete_ability_source_information(host.state) or ENDURE_CAPABILITY in program.capability_dependencies:
+        stack_context[TARGETING_SOURCE_CONTEXT] = capture_targeting_source(
+            host, source, characteristics=source_characteristics, zone=active_zone,
+        ).to_dict()
     from .rules.stack_damage_sources import fixed_damage_source_context
     stack_context.update(fixed_damage_source_context(host, source, (program.effects, program.target_schema), characteristics=source_characteristics))
     from .token_copy_references import copy_source_context

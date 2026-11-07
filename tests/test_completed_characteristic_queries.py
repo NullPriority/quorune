@@ -21,17 +21,20 @@ class CompletedCharacteristicQueryOwnerTests(unittest.TestCase):
     def test_current_and_absent_boundary_round_trip_with_exact_record_provenance(self):
         state=GameState(game_id='completed-characteristic-query',config=GameConfig(),players={},cards={},
             deck_names={},commander_oracle_ids={},turn_order=[],current_turn=None,last_normal_turn_player=None)
-        wire=state.to_dict();self.assertEqual(1,wire['characteristic_query_boundary_version'])
+        wire=state.to_dict();self.assertEqual(2,wire['characteristic_query_boundary_version'])
         self.assertEqual(wire,GameState.from_dict(wire).to_dict())
         current={'format':format_state_versions(state)};validate_state_versions(current,state)
+        prior_wire={**wire,'characteristic_query_boundary_version':1}
+        prior=GameState.from_dict(prior_wire);self.assertEqual(prior_wire,prior.to_dict())
+        prior_manifest={'format':format_state_versions(prior)};validate_state_versions(prior_manifest,prior)
         old={k:v for k,v in wire.items() if k!='characteristic_query_boundary_version'}
         legacy=GameState.from_dict(old);self.assertIsNone(legacy.characteristic_query_boundary_version)
         self.assertEqual(old,legacy.to_dict());historical={'format':format_state_versions(legacy)}
         self.assertNotIn('characteristic_query_boundary_version',historical['format'])
         validate_state_versions(historical,legacy)
-        for manifest,checkpoint in ((current,legacy),(historical,state)):
+        for manifest,checkpoint in ((current,legacy),(historical,state),(current,prior),(prior_manifest,state)):
             with self.assertRaises(ValueError):validate_state_versions(manifest,checkpoint)
-        for bad in (True,False,0,2,'1',{},[]):
+        for bad in (True,False,0,3,'1',{},[]):
             with self.subTest(bad=bad):
                 with self.assertRaises(ValueError):characteristic_query_boundary_version(bad)
                 with self.assertRaises(ValueError):GameState.from_dict({**wire,'characteristic_query_boundary_version':bad})
@@ -84,6 +87,7 @@ class CompletedCharacteristicQueryNativeTests(unittest.TestCase):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'completed-characteristic-queries.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
             ROOT/'tests/fixtures/bound-static-declaration-cards.json',
+            ROOT/'tests/fixtures/static-action-permission-cards.json',
             ROOT/'tests/fixtures/static-characteristic-setting-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Completed characteristic queries',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),
@@ -91,6 +95,47 @@ class CompletedCharacteristicQueryNativeTests(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):cls.db.close();cls.temporary.cleanup()
+
+    def test_original_dryad_counts_the_graveyard_front_and_keeps_historical_view(self):
+        for index, (version, real_land, expected) in enumerate(((2, False, 1), (2, True, 3), (1, False, 3))):
+            with self.subTest(version=version, real_land=real_land):
+                session = self.session(712_008_310 + index)
+                session.state.characteristic_query_boundary_version = version
+                dryad = self.add(session.engine, 'Gnarlwood Dryad', zone='hand')
+                modal = self.add(session.engine, 'Bala Ged Recovery // Bala Ged Sanctuary', zone='graveyard')
+                self.add(session.engine, 'Generic Bound Growth', zone='graveyard')
+                self.add(session.engine, 'Generic Bound Body', zone='graveyard')
+                if real_land:
+                    self.add(session.engine, 'Generic Bound Plains', zone='graveyard', ref='actual-graveyard-land')
+                for card in (dryad, modal):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={'G': 1})
+                self.checkpoint(session)
+                self.cast_for(session, 'A', dryad, [])
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual((expected, expected), self.stats(session, dryad))
+                effective = session.engine._effective_card_data(session.state.cards[modal.object_id])
+                self.assertEqual('Sorcery' if version == 2 else 'Sorcery // Land', effective['type_line'])
+                self.assertEqual(3, effective['mana_value'])
+                self.replay(session, load=True)
+
+    def test_original_crucible_offers_modal_back_land_from_corrected_graveyard_view(self):
+        session = self.session(712_012_310)
+        crucible = self.add(session.engine, 'Crucible of Worlds')
+        modal = self.add(session.engine, 'Bala Ged Recovery // Bala Ged Sanctuary', zone='graveyard')
+        self.assert_closed(session, crucible)
+        self.assert_closed(session, modal)
+        self.prepare(session)
+        self.checkpoint(session)
+        self.assertEqual('Sorcery', session.engine._effective_card_data(modal)['type_line'])
+        actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+        offer = next(row for row in actions if row.get('card') == modal.ref and row.get('action') == 'play_land')
+        result = session.act('pilot:A', {'action_id': offer['id']})
+        self.assertTrue(result.ok, result.summary)
+        current = session.state.cards[modal.object_id]
+        self.assertEqual(('battlefield', 'Bala Ged Sanctuary'), (current.zone, current.active_face))
+        self.assertEqual('Land', session.engine._effective_card_data(current)['type_line'])
+        self.replay(session)
 
     def color_scene(self,*,current):
         session=self.session(613_105_106);engine=session.engine

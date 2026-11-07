@@ -30,6 +30,13 @@ def casting_affordability_host(host,source):
     return host
 
 
+def cast_payment_read_host(host, caster):
+    """Read each payer in the prospective stack view of the actual caster."""
+    if isinstance(host, _CastAffordabilityHost):
+        return prospective_characteristic_read_host(host.original, caster, host.source)
+    return host
+
+
 def prospective_sacrifice_read_host(host, actor, source_object_id):
     """A declared sacrifice price reads the post-placement payment state."""
     if isinstance(host, _CastAffordabilityHost):host = host.original

@@ -9,7 +9,7 @@ from typing import Any, Mapping
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, PERMANENT_CHARACTERISTIC_MECHANIC,
-    FixedResolutionCharacteristicsSpec,
+    SUBTYPE_GRANT_INSTRUCTION_VERSION, FixedResolutionCharacteristicsSpec, FixedResolutionSubtypeGrantSpec,
 )
 from ..rules.source_references import SourceReferenceSpec
 from .direct_target import direct_permanent_target_spec
@@ -62,6 +62,9 @@ def fixed_resolution_characteristics_effect_template(
         if suffix is None:return None
         body=suffix['body']+(suffix['rider'] or '')
     body=body.rstrip('.')
+    subtype = _additive_subtype_result(body)
+    if subtype is not None:
+        return subtype
     retains=False
     if re.search(r"(?:\. (?:It's|They're) still (?:a land|lands|a planeswalker|planeswalkers)| that's still a (?:land|planeswalker))$",body,re.I):
         retains=True
@@ -129,3 +132,41 @@ def fixed_resolution_characteristics_effect_template(
             remove_all_abilities=removes,keywords=keywords,base_power=int(animation['p'] or animation['bp']),base_toughness=int(animation['t'] or animation['bt']))
     mechanics=('cr-611-continuous-effects',PERMANENT_CHARACTERISTIC_MECHANIC,*(keyword.casefold() for keyword in keywords),*(('cr-115-targets',) if schema is not None else ()))
     return ('fixed-resolution-characteristics-v2',({'op':CHARACTERISTIC_OPERATION,'schema_version':2,'characteristics':spec.to_dict(),**selection},),schema,mechanics)
+
+
+_ADDITIVE_SUBTYPE = re.compile(
+    r"(?P<subject>(?:another )?target .+?) (?:gains? (?P<before>.+?) and )?"
+    r"becomes an? (?P<subtype>.+?) in addition to its other types"
+    r"(?: and gains? (?P<after>.+))?",
+    re.IGNORECASE,
+)
+
+
+def _additive_subtype_result(body: str):
+    from ..creature_subtypes import canonical_creature_subtype
+
+    match = _ADDITIVE_SUBTYPE.fullmatch(body)
+    if match is None or (match["before"] is not None and match["after"] is not None):
+        return None
+    target = direct_permanent_target_spec(match["subject"])
+    subtype = canonical_creature_subtype(match["subtype"])
+    if target is None or subtype is None:
+        return None
+    schema = target.to_target_schema()
+    if schema.get("types_any") != ["creature"] and "creature" not in schema.get("types_all", ()):
+        return None
+    raw_keywords = match["before"] or match["after"]
+    keywords = _keyword_list(raw_keywords, extended=True) if raw_keywords is not None else ()
+    if keywords is None:
+        return None
+    try:
+        spec = FixedResolutionSubtypeGrantSpec(subtype.title(), keywords)
+    except ValueError:
+        return None
+    effect = {"op": CHARACTERISTIC_OPERATION, "schema_version": SUBTYPE_GRANT_INSTRUCTION_VERSION, "card": "$target.0",
+              "characteristics": spec.to_dict()}
+    return (
+        "fixed-resolution-subtype-grant-v12", (effect,), schema,
+        (PERMANENT_CHARACTERISTIC_MECHANIC, "cr-611-continuous-effects", "cr-115-targets",
+         *(keyword.casefold() for keyword in keywords)),
+    )

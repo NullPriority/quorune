@@ -172,6 +172,14 @@ canonical checkout's pinned database, select that file with `--db` or
 Keep one substantive branch under certification and at most one independent
 next-batch worktree. Do not mix their changes.
 
+Alternate a consolidated defect-only pull request with a card-support delivery
+that meets the 500-card floor. Keep the reproduced defects, fixes, and evidence
+independently reviewable. Resolve release blockers before merging the affected
+work. Continue developing cards on the private next-batch branch during
+protected generation and CI. Fetch and rebase onto verified `origin/main` when
+it advances and before publication. Preserve the previous private head and
+recheck measured card bindings and affected behavior after rebasing.
+
 Keep the filesystem equally bounded. The normal layout is the canonical
 `C:\Code Projects\Quorune` checkout plus, only while Slot B is active, one
 `C:\Code Projects\Quorune-<batch>` worktree. Before creating that second

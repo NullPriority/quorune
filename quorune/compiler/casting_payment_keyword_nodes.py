@@ -4,6 +4,8 @@ from typing import Any, Callable
 
 from ..casting_payment_keywords import (
     AFFINITY_MECHANIC_ID,
+    ASSIST_CAPABILITY,
+    ASSIST_MECHANIC_ID,
     DELVE_MECHANIC_ID,
     IMPROVISE_MECHANIC_ID,
     compile_affinity,
@@ -16,6 +18,7 @@ from ..evoke import (
 from ..rules.capabilities import CapabilityRegistry
 from ..semantic_runtime.cast_costs import (
     affinity_handler_descriptor,
+    assist_handler_descriptor,
     delve_handler_descriptor,
     evoke_handler_descriptor,
     improvise_handler_descriptor,
@@ -170,6 +173,14 @@ def ordinary_improvise_keyword_node(**values: Any) -> OracleNode | None:
     )
 
 
+def ordinary_assist_keyword_node(**values: Any) -> OracleNode | None:
+    return _literal_payment_keyword_node(
+        mechanic=ASSIST_MECHANIC_ID, capability_id=ASSIST_CAPABILITY,
+        template_id="ordinary-assist-payment-v1", runtime_coverage="typed_assist_payment",
+        descriptor=assist_handler_descriptor, **values,
+    )
+
+
 def ordinary_delve_keyword_node(**values: Any) -> OracleNode | None:
     return _literal_payment_keyword_node(
         mechanic=DELVE_MECHANIC_ID,
@@ -258,6 +269,7 @@ def fixed_mana_evoke_keyword_node(
 
 __all__ = [
     "fixed_mana_evoke_keyword_node",
+    "ordinary_assist_keyword_node",
     "ordinary_delve_keyword_node",
     "ordinary_improvise_keyword_node",
     "typed_affinity_keyword_node",

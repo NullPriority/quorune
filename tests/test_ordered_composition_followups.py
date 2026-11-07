@@ -98,6 +98,7 @@ class OrderedCompositionFollowupTests(actions.InheritedNativeFixture, unittest.T
         tokens = self.tokens(s, 'Powerstone')
         self.assertEqual(1, len(tokens))
         powerstone = tokens[0]
+        self.assertEqual('Powerstone Token', powerstone.printed_name)
         self.assertTrue(powerstone.tapped)
         self.assertFalse(self.offered_ids(s, powerstone))
         self.cast_for(s, 'A', untap, [powerstone.ref], reserve={'G': 1})
@@ -219,6 +220,7 @@ class OrderedCompositionFollowupTests(actions.InheritedNativeFixture, unittest.T
                 self.settle(s)
                 clues = self.tokens(s, 'Clue')
                 self.assertEqual(1, len(clues))
+                self.assertEqual('Clue Token', clues[0].printed_name)
                 clue = clues[0]
                 hand = len(s.state.players['A'].zones['hand'])
                 self.activate(s, clue)

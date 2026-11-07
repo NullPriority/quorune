@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..apnap_object_payment import DECLINED_LIFE_LOSS, apnap_object_payment_dependencies
 from ..compiler.affected_player_sacrifice_templates import (
     FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
     FIXED_AFFECTED_PLAYER_SACRIFICE_MECHANIC,
@@ -32,6 +33,10 @@ def fixed_affected_player_sacrifice_node_capabilities(
     }.issubset(mechanics) or len(effects) != 1:
         return ()
     effect = effects[0]
+    try:
+        payment_dependencies = apnap_object_payment_dependencies(effect)
+    except ValueError:
+        return ()
     targeted = effect.get("players") == ["$target.0"]
     expected_fields = {
         "op",
@@ -42,6 +47,7 @@ def fixed_affected_player_sacrifice_node_capabilities(
         "count",
         "then",
         "prompt",
+        *((DECLINED_LIFE_LOSS,) if payment_dependencies else ()),
         *(("target",) if targeted else ()),
     }
     if (
@@ -63,6 +69,7 @@ def fixed_affected_player_sacrifice_node_capabilities(
     dependencies = {
         FIXED_AFFECTED_PLAYER_SACRIFICE_CAPABILITY,
         "zone.change.destination_replacement",
+        *payment_dependencies,
     }
     if targeted:
         if (

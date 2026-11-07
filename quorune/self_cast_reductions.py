@@ -814,7 +814,10 @@ def cast_reduction_multiplier(
         return sum(other != seat and player.in_game for other, player in host.state.players.items())
     if metric.kind is CastReductionMetricKind.PUBLIC_AGGREGATE:
         from .public_characteristic_aggregates import current_public_characteristic_aggregate
-        return max(0,current_public_characteristic_aggregate(host,seat,metric.aggregate))
+        try:
+            return max(0, current_public_characteristic_aggregate(host, seat, metric.aggregate))
+        except ValueError as exc:
+            raise SelfCastReductionError(str(exc)) from exc
     if metric.kind is CastReductionMetricKind.OBJECT_COUNT:
         return _query_count(host, seat, metric)
     if metric.kind is CastReductionMetricKind.TOTAL_MANA_VALUE:

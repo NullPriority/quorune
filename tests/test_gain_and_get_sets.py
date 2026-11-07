@@ -165,10 +165,17 @@ class GainAndGetSetTests(unittest.TestCase):
             ir=compile_oracle_card(record(first,'Sorcery'),capability_registry=self.registry,capability_profile='commander_review')
             self.assertEqual('exact',ir.status,ir.material_residuals)
             for node in ir.faces[0].nodes:self.assertEqual(node.text,first[node.span.start:node.span.end])
+        next_turn='Creatures you control gain trample and get +2/+2 until your next turn.'
+        self.assertIsNone(lower(next_turn))
+        ir=compile_oracle_card(record(next_turn,'Sorcery'),capability_registry=self.registry,capability_profile='commander_review')
+        self.assertEqual('exact',ir.status,ir.material_residuals)
+        effect, = ir.faces[0].nodes[0].effects
+        self.assertEqual((2,2,['Trample'],True),(effect['power'],effect['toughness'],effect['keywords'],
+            effect['until_controller_next_turn']))
         for body in ('Creatures you control gain NotAKeyword and get +2/+2 until end of turn.',
                 'Creatures you control gain protection from blue and get +2/+2 until end of turn.',
                 'Creatures you control gain "{T}: Draw a card" and get +2/+2 until end of turn.',
-                'Creatures you control gain trample and get +2/+2 until your next turn.',
+                'Creatures you control gain trample and get +2/+2 until the end of your next turn.',
                 'Creatures you control gain trample and get +2/+2 until end of turn and draw a card.',
                 'Creatures you control gain trample and get +X/+X until end of turn, where X is an unowned quantity.'):
             self.assertIsNone(lower(body),body)

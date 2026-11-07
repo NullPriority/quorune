@@ -15,6 +15,50 @@ FIXED_NONMANA_EQUIP_CAPABILITY = "attachment.equip.fixed_nonmana"
 LIVING_WEAPON_CAPABILITY = "trigger.keyword.living_weapon"
 FOR_MIRRODIN_CAPABILITY = "trigger.keyword.for_mirrodin"
 JOB_SELECT_CAPABILITY = "trigger.keyword.job_select"
+CREATE_AND_ATTACH = "create_token_then_attach_source"
+ATTACH_CREATED_TOKEN = "attach_source_to_created_token"
+CREATED_TOKEN_ATTACHMENT_DEPENDENCIES = (
+    "token.creation.fixed_definition",
+    FIXED_SOURCE_ATTACHMENT_CAPABILITY,
+)
+
+
+def validate_created_token_attachment(effect: Mapping[str, Any], *, resolved: bool = False) -> tuple[str, ...]:
+    """Validate creation of one printed definition before the attachment instruction."""
+    from ..created_token_counter_model import validate_single_created_token
+
+    fields = {"op", "schema_version", "controller", "source", "token", "token_mechanics"}
+    if (
+        set(effect) != fields or effect.get("op") != CREATE_AND_ATTACH
+        or type(effect.get("schema_version")) is not int or effect["schema_version"] != 1
+    ):
+        raise ValueError("Attached-token creation has a closed schema")
+    controller, source = effect["controller"], effect["source"]
+    if resolved:
+        if type(controller) is not str or not controller or (
+            source is not None and (type(source) is not str or not source)
+        ):
+            raise ValueError("Attached-token creation controller or source is malformed")
+    elif controller != "$controller" or source != "$source.zone_object":
+        raise ValueError("Attached-token creation must bind its controller and source")
+    token = effect["token"]
+    if not isinstance(token, Mapping):
+        raise ValueError("Attached-token creation requires a fixed creature definition")
+    characteristics = token.get("characteristics")
+    if not isinstance(characteristics, Mapping) or not {"power", "toughness"} <= set(characteristics):
+        raise ValueError("Attached-token creation requires a fixed creature definition")
+    return tuple(dict.fromkeys((*CREATED_TOKEN_ATTACHMENT_DEPENDENCIES, *validate_single_created_token(effect))))
+
+
+def created_token_attachment_payload_dependencies(value: Any) -> tuple[str, ...]:
+    if not isinstance(value, Mapping):
+        return ()
+    operation = value.get("op")
+    if operation == ATTACH_CREATED_TOKEN:
+        raise ValueError("Attachment recipients must come from committed token results")
+    if operation == CREATE_AND_ATTACH:
+        return validate_created_token_attachment(value)
+    return ()
 
 _FIXED_MANA = r"(?:\{(?:\d+|[WUBRGC])\})+"
 _EQUIP = re.compile(

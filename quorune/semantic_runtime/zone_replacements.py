@@ -47,6 +47,7 @@ from ..flashback import flashed_back_subject_replacements
 from ..cast_lifecycles import fixed_cast_lifecycle_subject_replacements
 from ..unearth import unearthed_leave_replacement
 from ..rules.finality_counters import finality_counter_replacement
+from ..rules.damage_death_exile import damage_death_exile_replacements
 from ..zone_trigger_events import ZoneTransitionKind
 from ..madness import MADNESS_REPLACEMENT_HANDLER_ID
 from .component_registry import RuntimeComponentRegistry, exact_fields
@@ -581,7 +582,7 @@ def collect_zone_change_replacement_effects(
         else host._semantic_event_sources(zones={"battlefield"})
     )
     registry = default_zone_change_replacement_registry()
-    effects: list[ReplacementEffect] = []
+    effects = list(damage_death_exile_replacements(host.state))
     for source in candidates:
         active_zone = (
             source_zones.get(source.object_id, source.zone)

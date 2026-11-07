@@ -67,6 +67,8 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
         return PreparedCopyTargets((), FrozenMap(), FrozenMap())
     plan = target_plan(schema, modes, require_modes=bool(schema.get("modes")))
     original = original_copy_groups(host, schema, modes, defaults, original_groups)
+    from ..announced_damage import damage_allocation_spec
+    allocated = damage_allocation_spec(schema) is not None
     slots = [(group.group_id, ref) for group in plan.groups for ref in original[group.group_id]]
     values: list[tuple[str | None, Any]] = []
     if submitted is None:
@@ -96,6 +98,8 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
             index = value["retain"]
             if type(index) is not int or not 0 <= index < len(slots):
                 raise GameRuleError("Copied target retention index is invalid")
+            if allocated and index != position:
+                raise GameRuleError("A retained allocated target must keep its slot")
             retained_group, ref = slots[index]
             if mapped_group is not None and mapped_group != retained_group:
                 raise GameRuleError("Copied target retention changed its group")
@@ -105,7 +109,7 @@ def prepare_copy_targets(host: CopyTargetHost, *, actor: str, schema: Mapping[st
             ref = value["ref"]
         elif type(value) is str:
             ref = value
-            keep = ref in original.get(group_id, ())
+            keep = ref == slots[position][1] if allocated else ref in original.get(group_id, ())
         else:
             raise GameRuleError("Copied target selection is malformed")
         if type(group_id) is not str or group_id not in original or type(ref) is not str or not ref:

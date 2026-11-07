@@ -353,6 +353,17 @@ def _apply_create_token(
     operation: str,
     reason: str,
 ) -> Any:
+    controller = str(effect.get("controller") or actor)
+    if "target" in effect:
+        allowed = {
+            "op", "target", "name", "quantity", "characteristics", "tapped",
+            "_replacement_selections", "_runtime_source", "reason",
+        }
+        if set(effect) - allowed:
+            raise GameRuleError("Targeted token creation requires one fixed definition")
+        controller = effect["target"]
+        if type(controller) is not str or not controller:
+            raise GameRuleError("Targeted token creation requires a player reference")
     if 'token_cleanup' in effect:
         from ..created_token_cleanup import apply_fixed_token_cleanup_creation
         try:return apply_fixed_token_cleanup_creation(host, effect, actor=actor, reason=reason)
@@ -370,7 +381,7 @@ def _apply_create_token(
         else ("" if copy_source else "Token")
     )
     return host.create_token(
-        str(effect.get("controller") or actor),
+        controller,
         name=token_name,
         quantity=int(effect.get("quantity", 1)),
         tapped=bool(effect.get("tapped", False)),

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 """Dispatch versioned temporary characteristics to their coherent owners."""
 
+from ..resolution_characteristic_model import FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS
+
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     version=effect.get('schema_version')
@@ -26,7 +28,7 @@ def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     if version==3:
         from ..rules.defender_permission_effect import apply_temporary_defender_permission
         return True,apply_temporary_defender_permission(host,effect,actor=actor,reason=reason)
-    if version==2:
+    if type(version) is int and version in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS:
         from ..continuous_effect_state import apply_fixed_resolution_characteristics
         return True,apply_fixed_resolution_characteristics(host,effect,actor=actor,reason=reason)
     return False,None

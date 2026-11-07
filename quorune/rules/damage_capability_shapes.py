@@ -4,7 +4,18 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..announced_damage import (
+    ANNOUNCED_DAMAGE_CAPABILITY,
+    ANNOUNCED_DAMAGE_EFFECT_FIELD,
+    DAMAGE_ALLOCATION_FIELD,
+    damage_allocation_spec,
+    validate_announced_damage_effect,
+)
 from ..compiler.direct_target import DirectPermanentTargetSpec
+from ..damage_death_exile_model import (
+    DAMAGE_DEATH_EXILE_CAPABILITY, DAMAGE_DEATH_EXILE_FIELD, DAMAGE_DEATH_EXILE_MECHANIC,
+    DamageDeathExileScope, damage_death_exile_scope,
+)
 from ..fixed_damage_set_model import (
     FixedDamageSetError,
     FixedDamageSetSpec,
@@ -206,6 +217,51 @@ def _fixed_direct_damage_capabilities(
     return tuple(sorted(dependencies))
 
 
+def damage_death_exile_scope_is_closed(effect, target_schema) -> bool:
+    try:
+        scope = damage_death_exile_scope(effect)
+    except ValueError:
+        return False
+    if effect.get('op') == 'damage_fixed_set':
+        return scope is DamageDeathExileScope.DEALT_CREATURES
+    if effect.get('op') != 'damage' or effect.get('target') != '$target.0':
+        return False
+    if scope is DamageDeathExileScope.DEALT_CREATURES:
+        return True
+    if scope is not DamageDeathExileScope.TARGET:
+        return False
+    if target_schema == _FIXED_DAMAGE_TARGET_SCHEMAS['creature']:
+        return True
+    if not direct_permanent_target_schema_is_closed(target_schema):
+        return False
+    direct = DirectPermanentTargetSpec.from_target_schema(target_schema)
+    return 'creature' in direct.types_all or direct.types_any == ('creature',)
+
+
+def _announced_damage_capabilities(effect, target_schema, mechanics) -> tuple[str, ...]:
+    schema = dict(target_schema or {})
+    if set(schema) != {"groups", DAMAGE_ALLOCATION_FIELD}:
+        return ()
+    try:
+        spec = validate_announced_damage_effect(effect)
+        if damage_allocation_spec(schema) != spec:
+            return ()
+        group = dict(schema["groups"][0])
+    except (TypeError, ValueError):
+        return ()
+    minimum, maximum = group.get("min"), group.get("max")
+    if ("count" in group or type(minimum) is not int or type(maximum) is not int
+            or not 0 <= minimum <= maximum <= spec.total or maximum == 0):
+        return ()
+    del group["min"], group["max"]
+    group["count"] = 1
+    direct = {"op": "damage", "source": "$source", "target": "$target.0", "amount": spec.total}
+    base = _fixed_direct_damage_capabilities(direct, group, mechanics)
+    if not base:
+        return ()
+    return tuple(sorted({*base, ANNOUNCED_DAMAGE_CAPABILITY, "damage.batch.fixed_set", "target.revalidate_resolution"}))
+
+
 def fixed_damage_node_capabilities(
     *,
     effects: Sequence[Mapping[str, Any]],
@@ -218,6 +274,14 @@ def fixed_damage_node_capabilities(
     if "cr-120-damage" not in mechanics or len(effects) != 1:
         return ()
     effect = effects[0]
+    if ANNOUNCED_DAMAGE_EFFECT_FIELD in effect:
+        return _announced_damage_capabilities(effect, target_schema, mechanics)
+    if DAMAGE_DEATH_EXILE_FIELD in effect:
+        if DAMAGE_DEATH_EXILE_MECHANIC not in mechanics or not damage_death_exile_scope_is_closed(effect, target_schema):
+            return ()
+        body = {key: value for key, value in effect.items() if key != DAMAGE_DEATH_EXILE_FIELD}
+        base = fixed_damage_node_capabilities(effects=(body,), target_schema=target_schema, mechanic_ids=mechanics)
+        return (*base, DAMAGE_DEATH_EXILE_CAPABILITY) if base else ()
     if (target_schema is None and set(effect) == {'op', 'source', 'target', 'amount'}
             and effect.get('op') == 'damage' and effect.get('source') == '$source'
             and effect.get('target') == '$event.block_counterpart' and _positive_int(effect.get('amount'))):

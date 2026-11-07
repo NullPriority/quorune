@@ -12,6 +12,8 @@ HALF_LIFE_MECHANIC = 'half-current-player-life-loss'
 HALF_LIFE_CAPABILITY = 'life.loss.half_current_player'
 HALF_CHOICE_MECHANIC = 'half-affected-player-domain-choice'
 HALF_CHOICE_CAPABILITY = 'choice.affected_player.half_domain'
+HALF_MILL_MECHANIC = 'half-current-library-mill'
+HALF_MILL_CAPABILITY = 'zone.mill.half_library'
 
 
 @dataclass(frozen=True, slots=True)

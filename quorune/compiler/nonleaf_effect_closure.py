@@ -17,11 +17,11 @@ def effect_program_is_closed(program, *, recognizers, recursive_is_closed, compo
             handlers=[h for h in program.handlers if h.get('handler_id') != CIPHER_HANDLER],
             coverage=[value for value in program.coverage if value != 'cipher_spell_resolution'])
         return bool(body.effects) and recursive_is_closed(body)
-    from ..rules.spell_self_exile import MECHANIC as SELF_EXILE_MECHANIC
-    from .spell_self_exile import closed_spell_self_exile_program
+    from ..rules.spell_self_exile import TERMINAL_SPELL_MOVE_MECHANICS
+    from .spell_self_exile import closed_terminal_spell_move_program
     from .declared_effect_amounts import closed_additional_cost_x_result
-    if SELF_EXILE_MECHANIC in program.coverage:
-        return closed_spell_self_exile_program(program,body_is_closed=recursive_is_closed,
+    if TERMINAL_SPELL_MOVE_MECHANICS.intersection(program.coverage):
+        return closed_terminal_spell_move_program(program,body_is_closed=recursive_is_closed,
             price_is_closed=closed_additional_cost_x_result)
     from .permanent_additional_cost_nodes import is_closed_permanent_additional_cost_program
     if is_closed_permanent_additional_cost_program(program):
@@ -34,8 +34,10 @@ def effect_program_is_closed(program, *, recognizers, recursive_is_closed, compo
 
 
 def nonleaf_effect_program_is_closed(program,*,recognizers=()):
-    from .fixed_sacrifice_result_promotion import closed_fixed_sacrifice_spell_result
-    if closed_fixed_sacrifice_spell_result(program,recognizers=recognizers):return True
+    from .fixed_sacrifice_result_promotion import closed_alternative_damage_death_exile_result, closed_fixed_sacrifice_spell_result
+    if (closed_fixed_sacrifice_spell_result(program, recognizers=recognizers)
+            or closed_alternative_damage_death_exile_result(program, recognizers=recognizers)):
+        return True
     from .nonmana_equip_nodes import is_closed_nonmana_equip_program
     if is_closed_nonmana_equip_program(program):return True
     from ..rules.temporary_cast_restrictions import temporary_cast_node_capabilities

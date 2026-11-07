@@ -212,7 +212,7 @@ class FixedMillCompilerTests(unittest.TestCase):
         variants = (
             "Mill X cards.",
             "Each player mills X cards.",
-            "Target player mills half their library, rounded down.",
+            "Target player mills half their library.",
             "Target player mills two card.",
             "Mill a card, then draw cards equal to its mana value.",
             "Target player mills five cards, then returns one of them to hand.",
@@ -1071,6 +1071,218 @@ class AllPlayerMillRuntimeTests(unittest.TestCase):
             self.assertTrue(engine.state.players[seat].in_game)
             self.assertEqual(["graveyard" if seat == "A" else "exile"] * len(cards),
                              [card.zone for card in cards])
+        self.replay(session)
+
+
+class HalfLibraryMillCompilerTests(unittest.TestCase):
+    def test_half_library_mill_has_closed_rounding_and_independent_payload_trust(self):
+        from types import SimpleNamespace
+        from quorune.card_programs.descriptor_requirements import typed_result_amount_runtime_dependencies
+        from quorune.compiler.mill_templates import fixed_mill_effect_template
+        from quorune.fractional_quantity_model import HALF_MILL_CAPABILITY, HalfQuantitySpec
+        from quorune.rules.mill_capability_shapes import (
+            fixed_mill_node_capabilities, validate_half_mill_program_scope,
+        )
+
+        template = fixed_mill_effect_template("Target opponent mills half their library, rounded up.")
+        expected = {"op": "mill", "player": "$target.0", "count": HalfQuantitySpec("up").to_dict()}
+        self.assertEqual(expected, template.effect)
+        self.assertIn(HALF_MILL_CAPABILITY, fixed_mill_node_capabilities(
+            effects=(expected,), target_schema=template.target_schema, mechanic_ids=template.mechanic_ids))
+        self.assertIn(HALF_MILL_CAPABILITY, typed_result_amount_runtime_dependencies(expected))
+        for text in (
+            "Target opponent mills half your library, rounded up.",
+            "Each opponent mills half their library.",
+            "Target player mills half their library, rounded sideways.",
+            "Target player mills half their library, rounded up, then draws a card.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_mill_effect_template(text))
+        for malformed in (
+            {**expected, "player": "$target.1"},
+            {**expected, "count": {**expected["count"], "divisor": 3}},
+            {**expected, "scope": "all_active_players"},
+        ):
+            with self.subTest(malformed=malformed), self.assertRaises(ValueError):
+                typed_result_amount_runtime_dependencies(malformed)
+        forged = SimpleNamespace(effects=({**expected, "player": "$context.defending_player"},),
+            target_schema=None, event="resolve", event_condition=None, coverage=template.mechanic_ids)
+        with self.assertRaisesRegex(ValueError, "sealed event player"):
+            validate_half_mill_program_scope(forged)
+        registry = load_default_capability_registry()
+        self.assertTrue(registry.closure((HALF_MILL_CAPABILITY,), profile="commander_review").trusted)
+        raw = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        capability = next(row for row in raw["capabilities"] if row["id"] == "zone.mill.fixed")
+        capability["status"] = "blocked"
+        capability["blockers"] = ["Mill owner withdrawal"]
+        self.assertFalse(CapabilityRegistry(raw).closure((HALF_MILL_CAPABILITY,), profile="commander_review").trusted)
+
+    def test_half_mill_producer_omission_is_detected(self):
+        from quorune.compiler.mill_templates import fixed_mill_effect_template
+
+        text = "Target player mills half their library, rounded down."
+        self.assertIsNotNone(fixed_mill_effect_template(text))
+        with patch("quorune.compiler.mill_templates._HALF_MILL") as pattern:
+            pattern.fullmatch.return_value = None
+            self.assertIsNone(fixed_mill_effect_template(text))
+
+
+class HalfLibraryMillRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = AllPlayerMillRuntimeTests.session
+    add = AllPlayerMillRuntimeTests.add
+    ready = AllPlayerMillRuntimeTests.ready
+    checkpoint = AllPlayerMillRuntimeTests.checkpoint
+    resolve = AllPlayerMillRuntimeTests.resolve
+    replay = AllPlayerMillRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "half-library-mill.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/mill-cards.json",
+            ROOT / "tests/fixtures/half-library-mill-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Half-library Mill", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 20),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def _act(self, session, seat, command):
+        result = session.act(f"pilot:{seat}", command)
+        self.assertTrue(result.ok, result.summary)
+
+    def _pass_until(self, session, ready):
+        for _ in range(32):
+            if ready():
+                return
+            self.assertEqual("priority", session.state.pending_decision.kind)
+            actor = session.pending_principals()[0].removeprefix("pilot:")
+            self._act(session, actor, {"action_id": "pass"})
+        self.fail("Mill witness did not reach its expected action")
+
+    def _library(self, session, seat, size):
+        engine = session.engine
+        library = engine.state.players[seat].zones["library"]
+        while len(library) > size:
+            engine.move_card(library[0], "graveyard", reason="Bounded mill fixture", log=False, semantic_events=False)
+        self.assertEqual(size, len(library))
+        return tuple(reversed(library))
+
+    def test_traumatize_uses_current_odd_library_after_response_and_replacement(self):
+        session = self.session(727100)
+        engine = session.engine
+        spell = self.add(engine, "Traumatize", zone="hand")
+        draw = self.add(engine, "Reach Through Mists", seat="B", zone="hand")
+        tops = self._library(session, "B", 6)
+        private_refs = [engine.state.cards[oid].ref for oid in tops]
+        self.add(engine, "Mill Exile Replacement")
+        engine.state.players["B"].mana_pool["U"] = 1
+        engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        action = self.ready(session, spell, {"C": 3, "U": 2})
+        before = authoritative_state_hash(session.state)
+        command = {"action_id": action["id"], "targets": ["B"], "pay": "auto"}
+        self.assertFalse(session.act("pilot:D", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        self.checkpoint(session)
+        self._act(session, "A", command)
+        self._pass_until(session, lambda: session.pending_principals() == ["pilot:B"])
+        self._act(session, "B", {"action_id": f"cast:{draw.ref}", "pay": "auto"})
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(["hand", "exile", "exile", "library", "library", "library"],
+                         [session.state.cards[oid].zone for oid in tops])
+        shown = json.dumps(session.packet("pilot:C", full=True))
+        self.assertTrue(all(ref in shown for ref in private_refs[1:3]))
+        self.assertTrue(all(ref not in shown for ref in [private_refs[0], *private_refs[3:]]))
+        self.replay(session)
+
+    def test_kicked_cacophony_mills_each_current_half_in_one_batch(self):
+        from quorune.zone_transitions import ZoneTransitionOwner
+
+        session = self.session(727110)
+        engine = session.engine
+        spell = self.add(engine, "Maddening Cacophony", zone="hand")
+        a = self._library(session, "A", 4)
+        b = self._library(session, "B", 5)
+        c = self._library(session, "C", 2)
+        self._library(session, "D", 0)
+        engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        action = self.ready(session, spell, {"C": 4, "U": 2})
+        kicker = next(row for row in action["cost_options"] if row["kind"] == "kicker")
+        self.checkpoint(session)
+        self._act(session, "A", {"action_id": action["id"], "cost_option": kicker["id"], "pay": "auto"})
+        self.assertIs(True, session.state.stack[-1].context["kicked"])
+        session = self.replay(session, load=True)
+        commits = []
+        original = ZoneTransitionOwner.move_cards_simultaneously
+
+        def observe(owner, changes, **kwargs):
+            if changes and all(owner.state.cards[oid].zone == "library" for oid, _ in changes):
+                commits.append(tuple(changes))
+            return original(owner, changes, **kwargs)
+
+        with patch("quorune.zone_transitions.ZoneTransitionOwner.move_cards_simultaneously", observe):
+            self.assertIsNone(self.resolve(session))
+        self.assertEqual([tuple((oid, "graveyard") for oid in (*b[:3], c[0]))], commits)
+        self.assertEqual([4, 2, 1, 0], [len(session.state.players[seat].zones["library"]) for seat in "ABCD"])
+        self.assertEqual(["library"] * 4, [session.state.cards[oid].zone for oid in a])
+        self.assertTrue(session.state.players["D"].in_game)
+        self.replay(session)
+
+    def _attack_with_mindbreaker(self, seed):
+        session = self.session(seed)
+        engine = session.engine
+        source = self.add(engine, "Terisian Mindbreaker")
+        source.acquired_control_turn_count = -1
+        tops = self._library(session, "C", 5)
+        engine.state.active_player = "A"
+        engine.state.started = True
+        engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        engine.state.phase, engine.state.step = TURN_STEPS[engine.state.phase_index]
+        engine._grant_priority("A")
+        engine.pump()
+        self.checkpoint(session)
+        self._pass_until(session, lambda: session.state.pending_decision.kind == "combat.attackers")
+        before = {seat: len(player.zones["library"]) for seat, player in session.state.players.items()}
+        self._act(session, "A", {"action_id": "attack", "attackers": {source.ref: "C"}})
+        self.assertTrue(session.state.stack)
+        self.assertEqual("C", session.state.stack[-1].context["defending_player"])
+        self.assertEqual([], session.state.stack[-1].targets)
+        return session, tops, before
+
+    def test_mindbreaker_mills_the_sealed_defender_in_four_seats(self):
+        session, tops, before = self._attack_with_mindbreaker(727120)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(["graveyard"] * 3 + ["library"] * 2,
+                         [session.state.cards[oid].zone for oid in tops])
+        for seat in "ABD":
+            self.assertEqual(before[seat], len(session.state.players[seat].zones["library"]))
+        self.replay(session, load=True)
+
+    def test_departed_mill_defender_skips_the_bound_result_and_replays(self):
+        session, _tops, before = self._attack_with_mindbreaker(727126)
+        self._pass_until(session, lambda: session.pending_principals() == ["pilot:C"])
+        self._act(session, "C", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertFalse(session.state.players["C"].in_game)
+        self.assertEqual("C", session.state.stack[-1].context["defending_player"])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertFalse(session.state.stack)
+        self.assertEqual("A", session.state.active_player)
+        for seat in "ABD":
+            self.assertEqual(before[seat], len(session.state.players[seat].zones["library"]))
         self.replay(session)
 
 

@@ -76,13 +76,15 @@ event shape and remains absent on serialization. Unknown, boolean and
 manifest/checkpoint-mismatched versions reject; existing runtime-trust checks
 retain their separate contract.
 
-Current games pin `characteristic_query_boundary_version: 1` in authoritative
+Current games pin `characteristic_query_boundary_version: 2` in authoritative
 checkpoints and format provenance. Bounded public characteristic reads include
 their completed requested layer, including color changes used by later conditional
-ability grants. Earlier-source participation and layer-six dependencies retain
-their existing owners. Historical absence preserves the former cutoff and remains
-absent on serialization. Unknown or boolean state versions and mismatched format
-provenance reject; declared runtime provenance retains its separate strict check.
+ability grants. Version two also reads the front face of face-up double-faced
+cards in the graveyard, exile, and command zone. Prospective cast and entry
+views keep their selected face. Version one retains its recorded face view,
+and historical absence preserves the former cutoff and remains absent on
+serialization. Unknown or boolean state versions and mismatched format
+provenance reject. Declared runtime provenance retains its separate strict check.
 See [ADR 0160](../adr/0160-versioned-completed-characteristic-queries.md).
 
 Static trigger-participation schema two retains a closed rule and optional
@@ -93,6 +95,14 @@ current or look-back view. Additional instances retain ordinary pending-batch
 target choices, while prohibitions consume no quota. Historical schema-one
 fragments and contexts retain their exact shape; no global checkpoint field is
 introduced. See [ADR 0159](../adr/0159-typed-trigger-source-and-event-participation.md).
+
+The optional `turn_history.committed_occurrence_history_version` is `1`
+when the journal records paid Warp casts and card departures from a
+graveyard. The manifest and initial checkpoint agree on this mode.
+The facts record the actor or graveyard owner and the original object
+incarnation without storing its hidden destination. Rollover clears
+the facts and retains the mode. Older records omit the field and retain
+their previous event hashes.
 
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
@@ -180,6 +190,10 @@ state-based batch before the existing zone owner commits it. The retained turn
 anchor may be departed; only surviving ordering participants receive authority.
 This frame contains no fabricated stack program or semantic instruction cursor;
 see [ADR 0152](../adr/0152-state-based-physical-departure-order.md).
+
+An upkeep hand condition keeps the original scheduled participant. On departure,
+the affected stack items and pending trigger batches retain a typed snapshot of
+that seat and its public hand count. Card identities stay outside the snapshot.
 
 Plain ordering requests retain their schema-one fields and serialized shape.
 Schema-two requests additionally bind the resolved destination and its ordering
@@ -298,6 +312,12 @@ context, collected controller permutations and held triggers survive save/load.
 Only the current authenticated controller receives the ordering form. Completion
 validates delivered metadata and current source state before retrying the existing
 transform owner. No bearer token or executable callback is saved in the frame.
+
+Scheduled skip grants record a fixed boundary, recipient, scope, and any
+bound turn. Checkpoints omit the grant array when it is empty. Competing skips
+use a `replacement.order` continuation pinned to the upcoming boundary, the
+affected seat, and the offered effects. Completion re-derives the live choices
+before consuming a grant or advancing the scheduler.
 
 | File | Contract |
 | --- | --- |
@@ -515,6 +535,26 @@ readable historical data does not bypass it. See
 The independent `face_down_characteristics_version` remains authoritative for
 face-down values and anonymous identity in either general copy-value mode.
 
+Fresh predefined artifact instructions carry the literal derived name beside
+their existing ability profile. GameState and record format provenance also
+pin `predefined_token_name_version: 1` for definitions assembled during
+execution, including the Incubator front face. The historical mode uses the
+absent marker and preserves the previous execution-time definition. Explicit
+names and copiable snapshots supply their own name values.
+
+New compiler-owned fixed creature definitions carry
+`literal_token_name_version: 1` with their fully resolved name. The marker
+travels in the fixed definition and any pending replacement payload. Creation
+consumes it before committing the token's characteristics, so the name alone
+becomes a copiable value. Saved unmarked effects retain their historical name
+and catalog-lookup path. Game Record replay reads the saved semantic registry.
+
+Equipment-token instructions retain the original source incarnation and the
+creatures that actually entered after creation replacements. The current
+Equipment controller chooses among the legal result incarnations before
+normal priority and state-based actions. Historical fixed attachment
+instructions retain their recorded operation and result path.
+
 An Incubate replacement continuation uses semantic intent kind `incubate` and a
 closed version-one identity containing actor, controller, resolved amount,
 source reference and reason. The replacement selection queue remains separate.
@@ -600,6 +640,11 @@ item has no registered program key. Historical absence retains the recorded
 resolution behavior and provenance. Unknown versions, booleans, and manifest
 disagreements reject before replay.
 
+A suspected permanent stores `suspected_at` as its layer-six grant timestamp.
+Its battlefield incarnation retains the designation through control changes,
+phasing, and ability removal. The zone-change owner clears it when the
+permanent leaves. Checkpoints omit the field for objects without the designation.
+
 Current games pin `qualified_attack_facts_version: 1`. Declared-attack
 occurrences carry versioned public attacker characteristics sealed after
 declaration and before discovery. Pending triggers retain those facts across
@@ -659,6 +704,13 @@ original spell is still on the stack. Records without runtime-trust metadata
 retain their earlier fallback-lookup behavior. This does not admit an
 unsupported copy-producing card or alter copied casting decisions.
 
+A spell with fixed divided damage records `announced_damage_allocation` in
+its stack context. The version-one value stores the positive `shares` array
+in target slot order, or an empty array for a legal cast with no targets.
+Spell copies preserve the array. Resolution skips the share for each illegal
+target slot. A pending replacement decision retains the surviving recipients,
+their assigned shares, and the damage event identities for resumption.
+
 An event-bound spell-copy trigger stores an optional `event_spell_copy_source`
 version-one context containing the original stack item, logical incarnation,
 copiable characteristics, target schema and departure flag. Live references
@@ -676,6 +728,13 @@ stores version-one physical identity, zone-change counter and departure
 controller only for a represented target-information reference. Loading keeps
 that original incarnation; re-entry does not replace it. Earlier records omit
 the book, and earlier resolution-condition schemas keep their payloads.
+
+A controller-reading entry trigger retains `card_object_id` with the original
+`card_object_identity`. If that permanent leaves before resolution, the
+canonical departure owner records `occurrence_controller_information_lki`
+for the stacked or queued trigger. A returning permanent has a new identity.
+Graveyard-trigger damage reads the previous controller already recorded in
+the departure occurrence.
 
 Scalar amount schema eight represents a committed cast spell's mana value.
 Its origin and `mana_value` characteristic are closed, and it reads the
@@ -744,6 +803,17 @@ snapshot and resolution-start timestamp. `source_continuity` is omitted from
 card payloads until needed. Version one and absent-marker states retain their
 earlier control path; the new fixed-control capability requires version two.
 
+Tapped-source characteristic changes also use the retained source incarnation
+and continuity snapshot. Their locked effects carry `duration_source` and
+`duration_history` in the same journal as other characteristic changes.
+An ended interval is removed during stabilization. Pending abilities and
+committed effects retain their respective continuity across save and load.
+
+The optional `resolution_source_untap_restraint` journal record retains the
+original source's tap interval and the subject incarnations selected by its
+tap instruction. The untap plan uses those identities and current controllers.
+Each pending untap choice retains the plan from before any selected untaps.
+
 The optional `soulbond_pairs` array retains version-one pair identities,
 both exact object incarnations, their original controller, and control/phase
 continuity snapshots. It is absent until a pair is first committed, preserving
@@ -806,6 +876,11 @@ restriction and requirement payloads, other requirement kinds and malformed
 versions reject. It shares the same until-end-of-turn duration, cleanup,
 rollback and replay owner as the older forms.
 
+Resolved Detain uses `schema_version: 4` and `forbid_activations: true` on a
+locked attack-and-block prohibition. `expires_on_next_turn_of` binds the entry
+to the resolving controller. The decoder requires that scope and duration,
+and the shared journal restores all three restrictions together.
+
 An optional source untap uses a version-one owned continuation inside the
 pending decision. It retains the physical turn and step, immutable participation
 plan, public battlefield incarnations, available subjects, and held trigger
@@ -813,6 +888,15 @@ snapshots. Reload reissues the controller's capability. An empty selection
 declines every optional untap; a stale or malformed continuation fails before
 the step commits. Completing the choice preserves held triggers and commits
 the selected physical untap set once before advancing to upkeep.
+
+Current checkpoints declare `phasing_lifecycle_version` 1. A phased-out
+permanent retains the controller at phase-out, its attachment incarnation or
+player when applicable, and whether it follows a phased-out host. Direct
+returns also retain whether the ordinary turn rotation crossed a departed
+controller's seat. The untap owner commits one simultaneous status batch before
+day and night or untap choices. Reloading a timestamp choice during untap
+resumes after that batch. Historical checkpoints without the version retain
+their previous untap behavior and state encoding.
 
 Fixed selection limits use an `untap_selection` version-one continuation in the
 same decision kind. It retains the scoped plan, effective public battlefield
@@ -924,6 +1008,25 @@ continuation retains event-bound destruction selections separately from their
 destination scope when reconstructing the batch. Damage clearing commits only
 after the movement preflight succeeds. An absent version preserves the
 historical selection and commit order.
+
+Fresh games record the version-one `counter_quantity_provenance_version` field.
+Counter replacement continuations preserve whether a positive quantity
+replacement has changed the placement's origin for effect-only matching.
+Records with the field absent retain the historical matching behavior.
+
+An Endure counter-payment continuation records `effect_generated=false` in
+its intent identity. Resume checks the choosing controller, source
+incarnation and amount against the parent stack ability. Ordinary counter
+placement intents encode effect provenance by omission.
+
+Resolving exile scans record each public incarnation as it arrives in exile.
+The first-nonland scan uses version-two progress with `scan: first_nonland`.
+Discover keeps its version-one progress and printed mana-value limit. The
+current resolving stack item, candidate identity and offered options bind
+the cast and its payment-replacement continuation.
+The instant-or-sorcery scan uses version-three progress to retain its supplying
+library owner independently from the casting controller. Cleanup retains the
+same public exile identities and returns unused cards to that supplier.
 
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public

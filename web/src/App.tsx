@@ -1290,7 +1290,7 @@ function GameView({ gameId, onExit }: { gameId: string; onExit: () => void }) {
         <section className="stack-panel" key={panel} data-testid="stack-panel">
           <header><div className="zone-label">STACK</div><strong>{stack.length}</strong></header>
           <div className="stack-items">
-            {stack.length ? stack.map((item, index) => <CardTile key={String(asRecord(item).id ?? index)} value={item} view={currentView} compact onInspect={setInspectedCard} />) : <em>The stack is empty</em>}
+            {stack.length ? stack.map((item, index) => <CardTile key={String(asRecord(item).id ?? index)} value={item} view={currentView} compact targetLabel={labelFor} onInspect={setInspectedCard} />) : <em>The stack is empty</em>}
           </div>
         </section>
       );

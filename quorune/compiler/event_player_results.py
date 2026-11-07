@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from ..rules.event_subscriptions import FixedEventSubscriptionSet
+from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT
+from ..rules.received_damage_events import is_creature_receiving_event
 from ..event_player_result_values import event_result_value_capabilities
+from ..target_controller_information import (
+    OCCURRENCE_CONTROLLER_ENTRY_EVENTS, OCCURRENCE_CONTROLLER_GRAVEYARD_EVENTS, occurrence_controller_reference,
+)
 from .event_result_value_templates import event_result_instruction
 
 EVENT_PLAYER_RESULT_CAPABILITY='resolution.event_player.fixed_result'
@@ -45,7 +49,7 @@ def _occurrence_player(event,condition,variant,subject):
     elif event=='card.discarded':player='$context.previous_controller'
     elif event in {'land.enter','creature.enter','permanent.enter','artifact.enter','enchantment.enter'}:player='$context.controller'
     elif event=='creature.dies':player='$context.previous_controller'
-    elif event in {'spell.cast','card.drawn','player.scried','player.surveilled'}:
+    elif event in {LAND_PLAY_EVENT,'spell.cast','card.drawn','player.scried','player.surveilled'}:
         player='$context.player'
     elif event in {'damage.dealt','damage.dealt.self'} and _damage_guarantees_player(condition):
         player='$context.target'
@@ -92,15 +96,57 @@ def fixed_event_player_result(binding,body,*,effect_template,card_name):
         tuple(dict.fromkeys((*[mechanic for value in lowered for mechanic in value[1]],EVENT_PLAYER_RESULT_MECHANIC)))),False
 
 
+def _event_guarantees_type(condition, kind):
+    if not isinstance(condition, Mapping):
+        return False
+    values = condition.get('value')
+    if (condition.get('field') == 'types' and condition.get('op') == 'contains_any'
+            and isinstance(values, (list, tuple)) and tuple(values) == (kind,)):
+        return True
+    if isinstance(condition.get('all'), (list, tuple)):
+        return any(_event_guarantees_type(child, kind) for child in condition['all'])
+    choices = condition.get('any')
+    return isinstance(choices, (list, tuple)) and bool(choices) and all(
+        _event_guarantees_type(child, kind) for child in choices
+    )
+
+
+def _zone_damage_controller(binding, kind):
+    from .aggregated_zone_event_bindings import AGGREGATED_ZONE_VARIANT
+
+    event = binding.event.value
+    if (binding.variant == AGGREGATED_ZONE_VARIANT
+            or event not in OCCURRENCE_CONTROLLER_ENTRY_EVENTS | OCCURRENCE_CONTROLLER_GRAVEYARD_EVENTS):
+        return None
+    if kind not in ('permanent', event.split('.', 1)[0]) and not _event_guarantees_type(binding.event_condition, kind):
+        return None
+    return occurrence_controller_reference() if event in OCCURRENCE_CONTROLLER_ENTRY_EVENTS else '$context.previous_controller'
+
+
 def fixed_event_player_damage_result(binding,body,*,effect_template,card_name):
-    match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|defending player|that creature['’]s controller)\.?",body,re.I)
+    match=re.fullmatch(r"(?P<prefix>.+? deals .+? to )(?P<subject>that player|defending player|that "
+                       r"(?P<kind>artifact|creature|enchantment|land|permanent)['’]s controller)\.?",body,re.I)
     if match is None:return None
-    player=_event_player(binding,match['subject'].casefold())
+    received = (match['kind'] is not None and match['kind'].casefold() == 'creature'
+                and is_creature_receiving_event(binding.event.value, binding.event_condition))
+    player = occurrence_controller_reference() if received else (
+        _zone_damage_controller(binding, match['kind'].casefold())
+        if match['kind'] is not None else _event_player(binding, match['subject'].casefold())
+    )
     if player is None:return None
-    compiled=_bound_result_template(binding,match['prefix']+'you.',effect_template=effect_template,card_name=card_name)
+    normalized = match['prefix'] + 'you.'
+    if received:
+        from .scalar_effect_amounts import scalar_effect_amount_template
+        compiled = scalar_effect_amount_template(normalized, source_name=card_name, event=binding.event.value,
+            compile_fixed=lambda value: effect_template(value, card_name=card_name))
+        if compiled is None:
+            return None
+    else:
+        compiled = _bound_result_template(binding, normalized, effect_template=effect_template, card_name=card_name)
     if compiled[0] is None or compiled[2] is not None or len(compiled[1])!=1:return None
     effect=compiled[1][0]
     if (set(effect)!={'op','source','target','amount'} or effect.get('op')!='damage' or effect.get('source')!='$source'
-            or effect.get('target')!='$controller' or event_result_value_capabilities('damage','amount',effect.get('amount')) is None):return None
+            or effect.get('target')!='$controller' or event_result_value_capabilities(
+                'damage', 'amount', effect.get('amount'), committed_damage=received) is None):return None
     return ('fixed-event-player-damage-v1',({**effect,'target':player},),None,
         tuple(dict.fromkeys((*compiled[3],EVENT_PLAYER_RESULT_MECHANIC,EVENT_PLAYER_DAMAGE_MECHANIC)))),False

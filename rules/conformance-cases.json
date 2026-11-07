@@ -31121,7 +31121,7 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "explicit_removal_attacked_object_and_hybrid_type_cases_incomplete",
+        "attacked_object_and_hybrid_type_cases_incomplete",
         "protector_change_removal_for_attacked_battles_not_implemented"
       ],
       "case_id": "cr-506.4",
@@ -31130,13 +31130,16 @@
       "covered_scenarios": [
         "positive",
         "negative",
-        "interaction"
+        "interaction",
+        "multiplayer"
       ],
       "dependency_rule_ids": [
         "506"
       ],
       "effective_date": "2026-08-07",
       "executable_test_ids": [
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_labyrinth_keeps_the_attacker_blocked_and_hollowhenge_removes_the_other_attacker",
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_reconnaissance_removes_then_untaps_after_damage_in_end_of_combat",
         "tests.test_combat_phase_rules.CombatPhaseRuleTests.test_zone_and_control_changes_remove_objects_from_combat",
         "tests.test_combat_phase_rules.CombatPhaseRuleTests.test_phasing_and_type_loss_remove_combatants_during_stabilization",
         "tests.test_regeneration_rules.RegenerationRuntimeTests.test_regeneration_taps_clears_damage_and_removes_from_combat"
@@ -31146,10 +31149,11 @@
         "CommanderEngine._remove_invalid_combat_objects",
         "CommanderEngine.change_control",
         "CommanderEngine._reset_zone_change",
+        "quorune.combat_removal.execute_combat_removal",
         "quorune.destruction.commit_destruction_plan"
       ],
       "notes": [
-        "Zone/control changes, stabilization for phasing or type loss, and regeneration remove represented combatants. The current snapshot additionally removes an attacked Battle when its protector changes; that path, attacked-object state, explicit effect removal, and hybrid type cases remain blocked."
+        "Zone and control changes, stabilization for phasing or type loss, regeneration, and printed creature-removal effects remove represented combatants. Attacked-object removal, Battle protector changes, and hybrid type cases remain incomplete."
       ],
       "required_scenarios": [
         "positive",
@@ -34078,20 +34082,30 @@
     {
       "assertion_kind": "unsupported_fail_closed",
       "blockers": [
-        "becomes_blocked_transition_trigger_not_implemented"
+        "effects_that_make_an_attacker_blocked_without_a_blocker_incomplete"
       ],
       "case_id": "cr-509.3c",
       "case_version": 1,
       "classification": "behavioral",
-      "covered_scenarios": [],
+      "covered_scenarios": [
+        "positive",
+        "negative",
+        "interaction"
+      ],
       "dependency_rule_ids": [
         "509.3"
       ],
       "effective_date": "2026-08-07",
-      "executable_test_ids": [],
-      "implementation_components": [],
+      "executable_test_ids": [
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules",
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_gustcloak_savior_does_not_untap_the_returned_attacker"
+      ],
+      "implementation_components": [
+        "quorune.block_transition_engine_adapter._dispatch_block_relationship_triggers",
+        "quorune.event_counter_reference.event_counter_recipient_context"
+      ],
       "notes": [
-        "The unblocked-to-blocked transition is represented as state, not as the complete trigger event."
+        "Declared blocking produces one transition per newly blocked attacker. The optional untap and removal uses that original incarnation. Effects that directly make an attacker blocked without a blocker remain incomplete."
       ],
       "required_scenarios": [
         "positive",

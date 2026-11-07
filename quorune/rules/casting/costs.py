@@ -15,6 +15,7 @@ from ...casting_payment_keywords import (
 )
 from ...compiled_cast_costs import (
     compiled_affinity_specs,
+    compiled_assist_specs,
     compiled_convoke_specs,
     compiled_delve_specs,
     compiled_evoke_specs,
@@ -52,9 +53,7 @@ from ..casting_additional_costs import (
     legacy_additional_cost_candidates,
 )
 from ..casting_additional_cost_groups import (
-    FixedManaPaymentAdditionalCost,
-    fixed_additional_cost_option_label,
-    fixed_alternative_additional_cost,
+    expand_fixed_alternative_options,
     fixed_life_payment_additional_cost, announced_additional_cost_dependencies,
 )
 from .lifecycle_costs import (
@@ -121,49 +120,12 @@ class CastCostHost(Protocol):
         *,
         exclude_sources: set[str] | None = None,
         spend_context: Any = None,
+        preserve_source_id: str | None = None,
     ) -> bool: ...
 
     def _maximum_affordable_x(self, seat: str, card: Any) -> int: ...
 
     def _current_turn_history(self, kind: str) -> tuple[Any, ...]: ...
-
-
-def _expand_fixed_alternative_options(
-    host: CastCostHost,
-    expanded: list[dict[str, Any]],
-    mandatory: list[dict[str, Any]],
-) -> tuple[list[dict[str, Any]], list[dict[str, Any]]] | None:
-    """Expand one closed binary additional cost into explicit cost options."""
-
-    if len(mandatory) != 1:
-        return expanded, mandatory
-    try:
-        alternative = fixed_alternative_additional_cost(mandatory[0])
-    except AdditionalCostError:
-        return None
-    if alternative is None:
-        return expanded, mandatory
-
-    alternatives: list[dict[str, Any]] = []
-    for base_option in expanded:
-        for index, cost in enumerate(alternative.options, start=1):
-            option = copy.deepcopy(base_option)
-            option["base_cost_option"] = str(base_option["id"])
-            option["id"] = (
-                f"{base_option['id']}+additional-alternative-{index}"
-            )
-            option["kind"] = "additional_alternative"
-            option["label"] = fixed_additional_cost_option_label(cost)
-            if isinstance(cost, FixedManaPaymentAdditionalCost):
-                requirements = host._mana_vector(option["requirements"])
-                for symbol, amount in cost.requirements:
-                    requirements[symbol] += amount
-                option["requirements"] = requirements
-                option["_selected_additional_costs"] = []
-            else:
-                option["_selected_additional_costs"] = [cost.to_descriptor()]
-            alternatives.append(option)
-    return alternatives, []
 
 
 def _compiled_payment_mechanics(
@@ -396,6 +358,9 @@ def _cast_schema_and_mechanics(
     )
     if mechanics is None:
         return None
+    if (not suppress_source_costs and "assist" in {str(keyword).casefold() for keyword in record.keywords}
+            and compiled_assist_specs(host, record.oracle_id, spell_program=program)):
+        schema["compiled_assist"] = True
     return schema, mechanics
 
 
@@ -538,10 +503,8 @@ def _initial_options(
     from .option_expansion import expand_optional_mana_costs
     expanded = expand_optional_mana_costs(host, card, base, schema, response=response, hint=hint)
     mandatory = [dict(value) for value in schema.get("additional_costs", [])]
-    alternative_expansion = _expand_fixed_alternative_options(
-        host,
-        expanded,
-        mandatory,
+    alternative_expansion = expand_fixed_alternative_options(
+        expanded, mandatory, mana_vector=host._mana_vector,
     )
     if alternative_expansion is None:
         return None
@@ -553,6 +516,9 @@ def _initial_options(
     from .option_expansion import expand_optional_resource_costs
     expanded = expand_optional_resource_costs(host, seat, card, expanded, suppress_source_costs=suppress_source_costs, mechanics=mechanics, mandatory=mandatory)
     from .aftermath import with_aftermath_stack_context
+    from .assist_costs import ASSIST_OPTION_FIELD
+    if schema.get("compiled_assist") is True:
+        expanded = [{**option, ASSIST_OPTION_FIELD: 1} for option in expanded]
     return with_aftermath_stack_context(host,card,expanded), mandatory, mechanics, has_x
 
 
@@ -1196,6 +1162,8 @@ def _apply_additional_costs(
     *,
     hint: bool,
     choice_schema: dict[str, Any],
+    spend_context: Any,
+    exclude_sources: set[str],
 ) -> bool:
     selected_nonmana: list[dict[str, Any]] = []
     selected_refs: set[str] = set()
@@ -1215,13 +1183,17 @@ def _apply_additional_costs(
         if counter_cost is not None:
             if len(mandatory_costs) != 1:
                 return False
-            candidates = list(
-                fixed_counter_cost_candidates(
-                    host,
-                    actor=seat,
-                    cost=counter_cost,
-                )
-            )
+            if counter_cost.schema_version == 2:
+                from .blight_costs import payable_blight_cast_candidates
+
+                if option.get("kind") != "additional_alternative":
+                    return False
+                candidates = list(payable_blight_cast_candidates(
+                    host, seat, counter_cost, option["requirements"],
+                    spend_context=spend_context, exclude_sources=exclude_sources,
+                ))
+            else:
+                candidates = list(fixed_counter_cost_candidates(host, actor=seat, cost=counter_cost))
             if not candidates:
                 return False
             choice_schema[counter_cost.choice_field] = {
@@ -1348,6 +1320,9 @@ def _finalize_option(
     )
     if selected_additional_costs is not None:
         mandatory_costs = list(selected_additional_costs)
+        if option.get("fixed_blight_alternative") and not mandatory_costs and not hint:
+            if "counter_cost_card" in response:
+                return None
     option_additional_costs = option.pop("_additional_option_costs", ())
     if option_additional_costs:
         mandatory_costs = [*mandatory_costs, *option_additional_costs]
@@ -1398,11 +1373,14 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
     selected_cards = conspire_payment_cards(host, seat, card, option, selected_cards)
     if selected_cards is None:
         return None
-    if not host._cost_is_affordable(
-        seat,
-        option["requirements"],
-        exclude_sources={card.object_id for card in selected_cards},
-        spend_context=spend_context,
+    from .assist_costs import ASSIST_OPTION_FIELD, select_assist_cost
+    excluded = {payment_card.object_id for payment_card in selected_cards}
+    if option.get(ASSIST_OPTION_FIELD) == 1:
+        if not select_assist_cost(host, seat, option, response, hint=hint, choice_schema=choice_schema,
+                                  spend_context=spend_context, exclude_sources=excluded):
+            return None
+    elif not host._cost_is_affordable(
+        seat, option["requirements"], exclude_sources=excluded, spend_context=spend_context,
     ):
         return None
     if selected_cards:
@@ -1438,6 +1416,8 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
         response,
         hint=hint,
         choice_schema=choice_schema,
+        spend_context=spend_context,
+        exclude_sources={payment_card.object_id for payment_card in selected_cards},
     ):
         return None
     if not finalize_emerge_selection(host, seat, card, option, response, choice_schema, hint=hint):

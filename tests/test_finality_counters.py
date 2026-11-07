@@ -16,6 +16,7 @@ class FinalityCounterOwnerTests(unittest.TestCase):
 
     def effects(self,card):
         host=SimpleNamespace(active_seats=tuple('ABCD'),card_record=lambda source:None,
+            state=SimpleNamespace(continuous_effects=()),
             semantics=SimpleNamespace(runtime_handler_programs_for_oracle=lambda *args,**kwargs:()))
         return collect_zone_change_replacement_effects(host,sources=(card,))
 
@@ -89,10 +90,11 @@ class FinalityCounterCompilerTests(unittest.TestCase):
         ir=compile_oracle_card(record(text,'Sorcery'),capability_registry=registry)
         self.assertEqual('exact',ir.status,ir.material_residuals)
         self.assertEqual(text,ir.faces[0].nodes[0].text)
-        for body in ('Draw a card. (Draw a card instead.)','Draw a card. (You may skip this reminder.)'):
+        for body in ('Draw a card. (Draw a card instead.)','Draw a card. (You may skip this reminder.)',
+                'Draw a card. Skip your next turn.'):
             self.assertEqual('exact',compile_oracle_card(record(body,'Sorcery'),capability_registry=registry).status)
         for body in ('Draw a card. If a card would be drawn, exile it instead.',
-                'Draw a card. Skip your next turn.',
+                'Draw a card. Skip your next X turns, where X is the number of creatures you control.',
                 'Draw a card. (If a card would be drawn, exile it instead.',
                 'Draw a card. ) (Draw a card instead.)'):
             self.assertNotEqual('exact',compile_oracle_card(record(body,'Sorcery'),capability_registry=registry).status)

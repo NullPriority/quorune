@@ -141,6 +141,16 @@ class ClosedEffectProgramCompilerTests(unittest.TestCase):
             capability_profile="commander_review",
         )
 
+    def test_optional_target_with_an_explicit_maximum_retains_the_closed_program(self):
+        ir = self.compile(effect_program_record(
+            "+1: Up to one target creature you control can't be blocked this turn. Draw a card, then discard a card.",
+            type_line="Legendary Planeswalker — Infiltrator",
+        ))
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual("closed-effect-program-v1", node.template_id)
+        self.assertEqual((1, 1), (node.target_schema["count"], node.target_schema["up_to"]))
+
     def test_closed_program_compiles_across_contexts_and_component_shapes(self):
         fixtures = (
             (

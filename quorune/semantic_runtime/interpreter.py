@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping
 
-from .context import ReadOnlyHandlerContext, SemanticSourceContext
+from .context import ReadOnlyHandlerContext, SemanticNodeError, SemanticSourceContext
 from .intents import IntentPlan
 from .registry import SemanticHandlerRegistry
+from ..next_turn_effect import NEXT_TURN_EFFECT_FIELD, split_next_turn_effect
 
 
 class SemanticInterpreter:
@@ -18,6 +19,11 @@ class SemanticInterpreter:
         effect: Mapping[str, Any],
         context: ReadOnlyHandlerContext,
     ) -> IntentPlan | None:
+        if NEXT_TURN_EFFECT_FIELD in effect:
+            try:
+                split_next_turn_effect(effect)
+            except ValueError as exc:
+                raise SemanticNodeError(str(exc)) from exc
         return self.registry.lower(effect, context)
 
     def lower_for_seats(

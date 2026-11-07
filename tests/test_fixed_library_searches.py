@@ -327,6 +327,7 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
             "Search your library for a card, put it into your hand, then shuffle.",
             "Search your library for two creature cards, reveal them, put them into your hand, then shuffle.",
             "Search your library for a card named Lightning Bolt, reveal it, put it into your hand, then shuffle.",
+            "Search your library for up to two basic land cards and/or Gate cards, put them onto the battlefield tapped, then shuffle.",
         ):
             with self.subTest(supported=supported):
                 self.assertIsNotNone(fixed_library_search_effect_template(supported))
@@ -338,7 +339,7 @@ class FixedLibrarySearchCompilerTests(unittest.TestCase):
             "Search your library for an Equipment card, put it onto the battlefield, attach it to a creature you control, then shuffle.",
             "Search your library for a Dinosaur creature card, put it onto the battlefield, then shuffle. It gains indestructible until your next turn.",
             "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. Investigate.",
-            "Search your library for up to two basic land cards and/or Gate cards, put them onto the battlefield tapped, then shuffle.",
+            "Search your library for up to two basic land cards and/or up to two Gate cards, put them onto the battlefield tapped, then shuffle.",
             "Search your library for a card with the same name as that card, put it into your hand, then shuffle.",
             "Search your library for two creature cards, reveal them, put them onto the battlefield, then shuffle.",
             "Search your library for a nonlegendary card, put it into your hand, then shuffle.",

@@ -11,6 +11,12 @@ COUNTER_EVENT_CAPABILITY='trigger.event.normalized_counter_placement'
 COUNTER_EVENT_MECHANIC='trigger-event-normalized-counter-placement'
 
 
+def counter_quantity_provenance_version(value: int | None) -> int | None:
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError("Unsupported counter quantity provenance version")
+    return value
+
+
 @dataclass(frozen=True,slots=True)
 class CounterPlacementOccurrence:
     context: FrozenMap

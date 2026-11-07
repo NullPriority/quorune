@@ -19,6 +19,10 @@ from .random_discard import execute_random_discard
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from .random_graveyard_returns import execute_random_graveyard_return
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..turn_skip_model import ScheduleTurnSkipIntent
+from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
+from ..suspect_model import SuspectIntent
+from ..combat_removal import CombatRemovalIntent, execute_combat_removal, unavailable_optional_combat_removal
 from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
 from ..rules.library_search_rules import apply_library_search_prohibition
@@ -112,6 +116,7 @@ from .intents import (
     ReorderLibraryTopIntent,
     RetargetStackItemIntent,
     RevealLibraryCardsIntent,
+    RevealEachLibraryTopIntent,
     SetCardDesignationIntent,
     SetPermanentTappedIntent,
     ProhibitNextUntapIntent,
@@ -131,6 +136,8 @@ class SemanticIntentSink(
     RegenerationHost,
     Protocol,
 ):
+    turn_steps: Any
+
     def apply_domain_effect_intent(self, intent: DomainEffectIntent) -> Any: ...
 
     def draw(
@@ -203,6 +210,8 @@ class SemanticIntentSink(
         self,
         intent: RevealLibraryCardsIntent,
     ) -> tuple[str, ...]: ...
+
+    def reveal_each_library_top_intent(self, intent: RevealEachLibraryTopIntent) -> object: ...
 
     def inspect_hand_intent(
         self,
@@ -394,6 +403,7 @@ PermanentObjectIntent = (
     | DestroyPermanentTargetsIntent
     | ExilePermanentIntent
     | ExilePublicGraveyardCardIntent
+    | CombatRemovalIntent
     | MovePublicZoneSetIntent
     | ReturnPermanentToOwnerHandIntent
     | ReturnGraveyardCardToOwnerHandIntent
@@ -411,6 +421,7 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     DestroyPermanentTargetsIntent,
     ExilePermanentIntent,
     ExilePublicGraveyardCardIntent,
+    CombatRemovalIntent,
     MovePublicZoneSetIntent,
     ReturnPermanentToOwnerHandIntent,
     ReturnGraveyardCardToOwnerHandIntent,
@@ -421,6 +432,8 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, CombatRemovalIntent):
+        return intent.object_ref, execute_combat_removal(sink, intent)
     if isinstance(intent,SelectMutateMergeIntent):
         from ..rules.mutate_resolution import commit_mutate_merge
         return intent.actor,commit_mutate_merge(sink,intent)
@@ -558,6 +571,7 @@ LibraryIntent = (
     | ShuffleLibraryIntent
     | ReturnCardsToLibraryTopIntent
     | RevealLibraryCardsIntent
+    | RevealEachLibraryTopIntent
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent
     | SurveilLibraryIntent
@@ -569,6 +583,7 @@ LIBRARY_INTENT_TYPES = (
     ShuffleLibraryIntent,
     ReturnCardsToLibraryTopIntent,
     RevealLibraryCardsIntent,
+    RevealEachLibraryTopIntent,
     MoveLibraryCardsToBottomIntent,
     ScryLibraryIntent,
     SurveilLibraryIntent,
@@ -590,6 +605,8 @@ def _execute_library_intent(
         return intent.player, sink.return_cards_to_library_top_intent(intent)
     if isinstance(intent, RevealLibraryCardsIntent):
         return intent.player, sink.reveal_library_cards_intent(intent)
+    if isinstance(intent, RevealEachLibraryTopIntent):
+        return intent.actor, sink.reveal_each_library_top_intent(intent)
     if isinstance(intent, MoveLibraryCardsToBottomIntent):
         return intent.player, sink.move_library_cards_to_bottom_intent(intent)
     if isinstance(intent, ScryLibraryIntent):
@@ -633,8 +650,18 @@ def _execute_counter_placement_intent(
     return "player_counters", sink.place_player_counters_intent(intent)
 
 
-PlayerIntent = BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent
-PLAYER_INTENT_TYPES = (BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent, DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent, TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent)
+PlayerIntent = (
+    BecomeMonarchIntent | MillCardsIntent | ImpulseAccessIntent | DiscardWholeHandsIntent
+    | DiscardWholeHandsResultIntent | RandomDiscardIntent | RandomGraveyardReturnIntent
+    | TemporaryCastRestrictionIntent | ProhibitLibrarySearchIntent | ScheduleTurnSkipIntent
+    | EarthbendIntent | FinishEarthbendIntent | ReturnEarthbentObjectsIntent | SuspectIntent
+)
+PLAYER_INTENT_TYPES = (
+    BecomeMonarchIntent, MillCardsIntent, ImpulseAccessIntent, DiscardWholeHandsIntent,
+    DiscardWholeHandsResultIntent, RandomDiscardIntent, RandomGraveyardReturnIntent,
+    TemporaryCastRestrictionIntent, ProhibitLibrarySearchIntent, ScheduleTurnSkipIntent,
+    EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent, SuspectIntent,
+)
 TapStateIntent = (
     SetPermanentTappedIntent
     | ProhibitNextUntapIntent
@@ -653,6 +680,20 @@ def _execute_player_intent(
     sink: SemanticIntentSink,
     intent: PlayerIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, EarthbendIntent):
+        from ..earthbend import animate_earthbend_land
+        return intent.actor, animate_earthbend_land(sink, intent)
+    if isinstance(intent, SuspectIntent):
+        from ..permanent_designations import apply_suspect_designation
+        return intent.actor, apply_suspect_designation(sink, intent)
+    if isinstance(intent, FinishEarthbendIntent):
+        from ..earthbend import finish_earthbend_land
+        return intent.actor, finish_earthbend_land(sink, intent)
+    if isinstance(intent, ReturnEarthbentObjectsIntent):
+        from ..earthbend import return_earthbent_objects
+        return intent.actor, return_earthbent_objects(sink, intent)
+    if isinstance(intent, ScheduleTurnSkipIntent):
+        return intent.actor, tuple(sink.turn_steps.schedule_skip(seat, intent.spec) for seat in intent.players)
     if isinstance(intent,ProhibitLibrarySearchIntent):return intent.actor,apply_library_search_prohibition(sink,actor=intent.actor,source_id=intent.source_id)
     if isinstance(intent, RandomDiscardIntent):
         return intent.actor, execute_random_discard(sink, intent)
@@ -686,19 +727,19 @@ def _execute_player_intent(
             ),
         )
         return intent.player, result.exiled_refs
-    from ..milling import MillRequest, mill_cards, mill_player_batch
+    from ..milling import mill_cards, mill_player_batch, mill_request
 
     if intent.batch_players:
         results = mill_player_batch(sink, tuple(
-            MillRequest(actor=intent.actor, player=player, count=intent.count, reason=intent.reason)
+            mill_request(sink, actor=intent.actor, player=player, count=intent.count, reason=intent.reason)
             for player in intent.batch_players
         ))
         return intent.actor, tuple(ref for result in results for ref in result.refs)
 
     result = mill_cards(
         sink,
-        MillRequest(
-            actor=intent.actor,
+        mill_request(
+            sink, actor=intent.actor,
             player=intent.player,
             count=intent.count,
             reason=intent.reason,
@@ -722,6 +763,7 @@ def _execute_tap_state_intent(
             tapped=intent.tapped,
             reason=intent.reason,
             logical_object_id=intent.logical_object_id,
+            untap_restraint=intent.untap_restraint,
         )
         return intent.object_ref, result
     if isinstance(intent, SetPublicPermanentsTappedIntent):
@@ -733,6 +775,7 @@ def _execute_tap_state_intent(
                 tapped=intent.tapped,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                untap_restraint=intent.untap_restraint,
             )
         except PublicTapStateSetError as exc:
             raise SemanticNodeError(str(exc)) from exc
@@ -803,6 +846,21 @@ def prepare_stack_resolution_effect(host, item, raw_effect: Mapping[str, Any]) -
         return None
 
     effect = normalize_game_record_v3_effect(host._semantic_value(raw_effect, item))
+    if raw_effect.get('op') == 'offer_optional_effect' and unavailable_optional_combat_removal(host, raw_effect, effect):
+        return None
+    if raw_effect.get("players") == "$targets":
+        if effect.get("players") == []:
+            return None
+        amount_field = {"life": "delta", "choose_cards_apnap": "count"}.get(effect.get("op"))
+        amount = raw_effect.get(amount_field)
+        if isinstance(amount, Mapping) and type(effect.get(amount_field)) is int and effect[amount_field] == 0:
+            from ..query_effect_amount_model import PUBLIC_QUERY_AMOUNT_KIND
+            if amount.get("kind") == PUBLIC_QUERY_AMOUNT_KIND:
+                return None
+    if effect.get("op") == "mill":
+        from ..milling import event_mill_recipient_has_left
+        if event_mill_recipient_has_left(host, raw_effect, effect):
+            return None
     if any(key in effect and effect.get(key) is None for key in ('target', 'stack', 'card', 'object')):
         host._log(
             item.controller, 'effect.target.skipped',

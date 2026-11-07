@@ -186,6 +186,18 @@ def _source_ref(host: SemanticCounterCoordinationHost, item: Any) -> str | None:
     return source.ref if source is not None else None
 
 
+def _with_committed_quantity_followup(completion, intent, index, result):
+    from dataclasses import replace
+    from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+    from ..semantic_runtime.composition_intent import ResumeCompositionOrderIntent
+
+    if not isinstance(result, CommittedQuantityFollowup):
+        return completion
+    if not isinstance(intent, ResumeCompositionOrderIntent) or index != len(completion.intents) - 1:
+        raise SemanticChoiceError("A committed destruction follow-up needs its exact resumed parent")
+    return replace(completion, prepend_effects=(*result.effects, *completion.prepend_effects))
+
+
 def continue_semantic_completion(
     host: SemanticCounterCoordinationHost,
     *,
@@ -242,8 +254,9 @@ def continue_semantic_completion(
         try:
             from ..conditional_exile_return import defer_conditional_cost_returns
             with defer_conditional_cost_returns() as waiting:
-                execute_intent_plan(host,IntentPlan(operation=str(continuation.effect.get('op') or ''),
+                result = execute_intent_plan(host,IntentPlan(operation=str(continuation.effect.get('op') or ''),
                     handler_id=continuation.handler_id,intents=(intent,)))
+            completion = _with_committed_quantity_followup(completion, intent, index, result)
             if waiting:
                 from .completed_choice import encode_remaining_completion,finish_choice_intent_returns
                 saved=encode_remaining_completion(continuation,actor,response,completion,index+1)
@@ -360,6 +373,7 @@ def resume_semantic_counter_completion(
                 response=response,
                 effect=continuation.effect,
                 source_ref=_source_ref(host, item),
+                stack_item=item if expected_intent.get("effect_generated") is False else None,
             ),
         )
         continue_semantic_completion(

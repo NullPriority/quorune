@@ -53,8 +53,6 @@ def whole_hand_discard_public_draw_sequence(text,*,source_name):
     from .declared_effect_amounts import declared_effect_amount_template
     def fixed(body):return fixed_draw_effect_template(body) or (None,(),None,())
     tail=match['draw']+'.'
-    tail=re.sub(r'^draw a card for each card (you(?:\'ve)? discarded this turn)\.$',
-        lambda m:'Draw cards equal to the number of cards '+m[1]+'.',tail,flags=re.I)
     draw=public_query_effect_amount_template(tail,source_name=source_name,compile_fixed=fixed) or scalar_effect_amount_template(
         tail,source_name=source_name,compile_fixed=fixed) or declared_effect_amount_template(tail,source_name=source_name,compile_fixed=fixed)
     if discard is None or draw is None or len(draw[1])!=1 or draw[1][0].get('op')!='draw' or draw[2] is not None:

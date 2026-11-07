@@ -9,6 +9,7 @@ from ..attachment_references import (
     AttachmentReferenceSpec,
 )
 from ..compiler.fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
+from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
@@ -40,7 +41,12 @@ def targeted_tap_state_node_capabilities(
                 *direct_target_predicate_capabilities(target_schema), 'target.revalidate_resolution')
     if "tap-and-untap" not in mechanics or len(effects) != 1:
         return ()
-    effect = effects[0]
+    try:
+        effect, restraint = split_source_tap_untap_restraint(effects[0])
+    except ValueError:
+        return ()
+    if restraint and target_schema is None:
+        return ()
     operation = effect.get("op")
 
     if target_schema is None:
@@ -74,6 +80,7 @@ def targeted_tap_state_node_capabilities(
             capability,
             *target_capabilities,
             "target.revalidate_resolution",
+            *((SOURCE_TAP_UNTAP_CAPABILITY,) if restraint else ()),
         )
 
     if set(effect) != {

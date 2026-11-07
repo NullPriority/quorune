@@ -24,6 +24,7 @@ class UntapInstruction(str, Enum):
 class UntapSubjectRelation(str, Enum):
     SOURCE = "source"
     ATTACHED_OBJECT = "attached_object"
+    LOCKED_OBJECT = "locked_object"
     QUERY = "query"
 
 
@@ -75,8 +76,13 @@ class UntapStepParticipation:
                 )
         elif type(self.subject_object_id) is not str or not self.subject_object_id:
             raise UntapStepError(
-                "Source and attached untap-step subjects require one object"
+                "Identity-based untap-step subjects require one object"
             )
+        if self.subject_relation is UntapSubjectRelation.LOCKED_OBJECT and (
+            self.instruction is not UntapInstruction.PROHIBIT
+            or self.turn_relation is not UntapTurnRelation.SUBJECT_CONTROLLER
+        ):
+            raise UntapStepError("Locked subjects require a prohibition during their controller's step")
         if self.instruction is UntapInstruction.LIMIT:
             if type(self.maximum) is not int or self.maximum < 0:
                 raise UntapStepError(

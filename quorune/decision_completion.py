@@ -16,6 +16,9 @@ def dispatch_completed_decision(host,decision):
         from .opening_hand import complete_opening_hand_action
         complete_opening_hand_action(host,decision)
     elif kind=='priority':host._complete_priority(decision)
+    elif kind=='cast.assist':
+        from .rules.casting.assist_payment import complete_assist_choice
+        complete_assist_choice(host,decision)
     elif kind=='combat.attackers':host._complete_attackers(decision)
     elif kind=='untap.optional_source':
         from .optional_untap import complete_optional_untap_choice

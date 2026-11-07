@@ -109,7 +109,8 @@
         "characteristic_query_boundary_version": {
           "enum": [
             0,
-            1
+            1,
+            2
           ],
           "type": "integer"
         },
@@ -117,6 +118,13 @@
           "enum": [
             1,
             2
+          ],
+          "type": "integer"
+        },
+        "committed_occurrence_history_version": {
+          "enum": [
+            0,
+            1
           ],
           "type": "integer"
         },

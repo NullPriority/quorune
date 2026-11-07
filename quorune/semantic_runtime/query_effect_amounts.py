@@ -79,7 +79,10 @@ def resolve_public_query_amount(
             return spec.coefficient * previous["value"]
     if isinstance(spec.quantity, LiveBattlefieldQuantitySpec):
         quantity, source_ref = _live_quantity_source(host, item, spec.quantity)
-        count = current_live_battlefield_count(host, controller, quantity, source_ref=source_ref)
+        try:
+            count = current_live_battlefield_count(host, controller, quantity, source_ref=source_ref)
+        except ValueError as exc:
+            raise PublicQueryAmountError(str(exc)) from exc
     else:
         count = query_characteristic_count(host, _ResolutionQuantitySource(controller=controller, ref=stack_ref), spec.quantity)
     if type(count) is not int or count < 0:

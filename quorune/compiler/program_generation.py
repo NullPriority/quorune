@@ -4,6 +4,7 @@ from .fixed_instruction_program_closure import is_closed_fixed_instruction_progr
 from ..rules.control_capability_shapes import fixed_control_node_capabilities
 from ..rules.scheduled_player_shapes import is_closed_scheduled_player_program
 from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program
+from ..rules.affected_player_discard_capability_shapes import is_closed_fixed_affected_player_hand_exile_program
 from ..rules.alternative_discard_shapes import is_closed_alternative_discard_program
 from ..rules.public_zone_move_capability_shapes import fixed_owner_zone_move_node_capabilities
 from ..rules.target_characteristic_sets import is_closed_target_characteristic_set_program
@@ -322,6 +323,7 @@ def _generated_static_declaration(node: Any) -> bool:
 
 def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
     """Recognize only the reviewed fixed-damage effect-program family."""
+    from ..damage_death_exile_model import DAMAGE_DEATH_EXILE_MECHANIC
 
     template_id = str(program.provenance.get("template_id") or "")
     if not template_id.startswith("damage-"):
@@ -333,7 +335,7 @@ def _is_closed_fixed_damage_program(program: SemanticProgram) -> bool:
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value.startswith("cr-")
+                if value.startswith("cr-") or value == DAMAGE_DEATH_EXILE_MECHANIC
             ),
         )
     )
@@ -1094,7 +1096,8 @@ def _is_closed_self_regeneration_program(
 def _is_closed_mass_destruction_program(
     program: SemanticProgram,
 ) -> bool:
-    """Recognize only the reviewed fixed affected-set destruction family."""
+    """Recognize fixed-set destruction and its closed committed follow-ups."""
+    from ..rules.destruction_result_model import DESTRUCTION_RESULT_MECHANIC
 
     required = set(
         mass_destruction_node_capabilities(
@@ -1103,7 +1106,10 @@ def _is_closed_mass_destruction_program(
             mechanic_ids=(
                 value
                 for value in program.coverage
-                if value in {"destroy", "destroy-fixed-set", "cr-115-targets", "regeneration-prohibition"}
+                if value in {
+                    "destroy", "destroy-fixed-set", "cr-115-targets", "regeneration-prohibition",
+                    DESTRUCTION_RESULT_MECHANIC,
+                }
             ),
         )
     )
@@ -1182,30 +1188,8 @@ def _is_closed_public_graveyard_card_exile_program(
     )
 
 
-def _is_closed_fixed_public_zone_move_set_program(
-    program: SemanticProgram,
-) -> bool:
-    required = set(
-        fixed_public_zone_move_set_node_capabilities(
-            effects=program.effects,
-            target_schema=program.target_schema,
-            mechanic_ids=(
-                value
-                for value in program.coverage
-                if value
-                in {
-                    "exile",
-                    "return-to-owner-hand",
-                    "fixed-public-zone-move",
-                    "fixed-public-zone-move-set", "fixed-private-hand-entry",
-                    "cr-115-targets",
-                }
-            ),
-        )
-    )
-    return bool(required) and required.issubset(
-        program.capability_dependencies
-    )
+def _is_closed_fixed_public_zone_move_set_program(program: SemanticProgram) -> bool:
+    return _node_capabilities_close_program(program, fixed_public_zone_move_set_node_capabilities)
 
 
 def _is_closed_fixed_control_program(program: SemanticProgram) -> bool:
@@ -1221,6 +1205,7 @@ def _closed_effect_recognizers():
     from ..rules.target_player_sequences import is_closed_target_player_sequence_program
     from ..rules.target_set_result_sequences import is_closed_target_set_result_sequence_program
     from ..rules.reanimation_entry_counters import is_closed_reanimation_entry_counter_program
+    from ..rules.revealed_library_top import is_closed_reveal_top_program
     from ..rules.per_player_target_sets import is_closed_per_player_target_program
     from ..emblem_program_model import is_closed_compiled_emblem_program
     from ..rules.untargeted_untap_shapes import is_closed_fixed_land_untap_choice_program
@@ -1234,6 +1219,7 @@ def _closed_effect_recognizers():
         is_closed_target_player_sequence_program,
         is_closed_target_set_result_sequence_program,
         is_closed_reanimation_entry_counter_program,
+        is_closed_reveal_top_program,
         is_closed_per_player_target_program,
         is_closed_compiled_emblem_program,
         is_closed_fixed_land_untap_choice_program,
@@ -1247,6 +1233,7 @@ def _closed_effect_recognizers():
         _is_closed_fixed_owner_zone_move_program,
         is_closed_fixed_instruction_program,
         is_closed_fixed_bound_discard_program,is_closed_fixed_affected_player_discard_program,
+        is_closed_fixed_affected_player_hand_exile_program,
         is_closed_alternative_discard_program,
         is_closed_reanimation_effect_program,
         is_closed_public_quantity_mana_program, is_closed_whole_hand_discard_program, _is_closed_fixed_control_program, is_closed_scheduled_player_program, is_closed_target_characteristic_set_program,

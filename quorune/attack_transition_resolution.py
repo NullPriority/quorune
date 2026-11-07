@@ -17,6 +17,8 @@ from .continuous_effect_state import (
     ResolutionEffectSource,
     create_resolution_continuous_effect,
 )
+from .created_token_cleanup import schedule_created_token_cleanup
+from .created_token_cleanup_model import CreatedTokenCleanupSpec
 from .model import StackItem
 
 
@@ -80,7 +82,7 @@ def resolve_attack_keyword_trigger(
     *,
     stack_ref: str,
 ) -> tuple[str, ...]:
-    """Resolve one typed attack trigger through the layer 7c effect owner."""
+    """Resolve one typed attack trigger for its recorded incarnations."""
 
     if not isinstance(occurrence, AttackKeywordTriggerOccurrence):
         raise AttackTransitionError(
@@ -105,15 +107,25 @@ def resolve_attack_keyword_trigger(
         ):
             continue
         targets.append(card)
-    if targets and (occurrence.power_delta or occurrence.toughness_delta):
+    source = ResolutionEffectSource(
+        stack_ref=stack_ref,
+        object_id=occurrence.source.object_id,
+        logical_object_id=occurrence.source.logical_object_id,
+        card_ref=occurrence.source.reference,
+    )
+    if occurrence.kind is CombatKeywordTriggerKind.DECAYED:
+        schedule_created_token_cleanup(
+            host,
+            occurrence.controller,
+            targets,
+            CreatedTokenCleanupSpec("sacrifice", "end_of_combat"),
+            label=occurrence.label,
+            source=source,
+        )
+    elif targets and (occurrence.power_delta or occurrence.toughness_delta):
         effect = create_resolution_continuous_effect(
             host,
-            source=ResolutionEffectSource(
-                stack_ref=stack_ref,
-                object_id=occurrence.source.object_id,
-                logical_object_id=occurrence.source.logical_object_id,
-                card_ref=occurrence.source.reference,
-            ),
+            source=source,
             targets=tuple(targets),
             layer=Layer.POWER_TOUGHNESS,
             sublayer="7c",

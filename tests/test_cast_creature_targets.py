@@ -113,8 +113,16 @@ class CastCreatureTargetCompilerTests(unittest.TestCase):
         self.assertIsNone(resolve_semantic_value(host,'$target_group.clause_1.0',item))
         with self.assertRaises(SemanticNodeError):resolve_semantic_value(host,'$target_group.clause_2',item)
         with self.assertRaises(SemanticNodeError):resolve_semantic_value(host,'$target_group.clause_0.0',item)
+        host._target_snapshot = lambda ref: {"controller": "C"} if ref == "TARGET" else {}
+        item.context["target_snapshots"] = {"TARGET": {"controller": "B"}}
+        item.context["target_groups_current"]["clause_1"] = ["TARGET"]
+        self.assertEqual("C", resolve_semantic_value(host, "$target_group.clause_1.current_controller.0", item))
         item.context['target_groups_current']['clause_1']='TARGET'
         with self.assertRaises(SemanticNodeError):resolve_semantic_value(host,'$target_group.clause_1',item)
+        item.context['target_groups_current']['clause_1'] = ['TARGET']
+        item.context['target_groups'] = []
+        with self.assertRaises(SemanticNodeError):
+            resolve_semantic_value(host, '$target_group.clause_1.current_controller.0', item)
         with tempfile.TemporaryDirectory() as directory:
             path=Path(directory)/'groups.sqlite3'
             build_fixture_database([ROOT/'tests/fixtures/cast-creature-targets.json'],path)

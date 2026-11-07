@@ -295,7 +295,7 @@ class ExactMishraClosureTests(unittest.TestCase):
             card
             for card in engine.state.cards.values()
             if card.is_token
-            and card.printed_name == "Construct"
+            and card.printed_name == "Construct Token"
             and card.controller == "A"
             and card.zone == "battlefield"
         ]
@@ -336,7 +336,7 @@ class ExactMishraClosureTests(unittest.TestCase):
         thopter = next(
             engine._resolve_object("A", ref)
             for ref in created
-            if engine._resolve_object("A", ref).printed_name == "Thopter"
+            if engine._resolve_object("A", ref).printed_name == "Thopter Token"
         )
         self.assertEqual(
             2, engine._numeric_stat(thopter.object_id, "power")
@@ -370,7 +370,7 @@ class ExactMishraClosureTests(unittest.TestCase):
         first_map = next(
             engine._resolve_object("A", ref)
             for ref in created
-            if engine._resolve_object("A", ref).printed_name == "Map"
+            if engine._resolve_object("A", ref).printed_name == "Map Token"
         )
 
         helm.acquired_control_turn_count = -1
@@ -391,7 +391,7 @@ class ExactMishraClosureTests(unittest.TestCase):
             card
             for card in engine.state.cards.values()
             if card.is_token
-            and card.printed_name == "Map"
+            and card.printed_name == "Map Token"
             and card.zone == "battlefield"
         ]
         self.assertEqual(2, len(maps))

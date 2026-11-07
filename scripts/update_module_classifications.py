@@ -46,9 +46,19 @@ def _hash(value: Any) -> str:
 
 
 def _layer(relative: str, protected_rules_modules: set[str]) -> str:
-    if relative=='quorune/state_based_legend_model.py':return 'domain'
+    if relative == "quorune/announced_damage.py":
+        return "rules"
+    if relative == "quorune/source_tap_effect.py":
+        return "domain"
+    if relative in {'quorune/legend_rule_model.py', 'quorune/state_based_legend_model.py'}:
+        return 'domain'
     if relative=='quorune/state_based_legend_choices.py':return 'rules'
     if relative=='quorune/created_token_cleanup_model.py':return 'domain'
+    if relative=='quorune/turn_skip_model.py':return 'domain'
+    if relative in {'quorune/earthbend_model.py', 'quorune/suspect_model.py'}:return 'domain'
+    if relative in {'quorune/dungeon_catalog.py', 'quorune/dungeon_progress.py', 'quorune/next_turn_effect.py'}:return 'domain'
+    if relative == 'quorune/apnap_object_payment.py':return 'domain'
+    if relative=='quorune/earthbend.py':return 'rules'
     if relative=='quorune/created_token_cleanup.py':return 'rules'
     if relative=='quorune/battle_cry_resolution_model.py':return 'domain'
     if relative=='quorune/battle_cry_resolution.py':return 'rules'
@@ -60,7 +70,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/delayed_object_model.py':return 'domain'
     if relative=='quorune/block_characteristic_model.py':return 'domain'
     if relative=='quorune/unblocked_attacker_model.py':return 'domain'
-    if relative=='quorune/damage_recipient_model.py':return 'domain'
+    if relative in {'quorune/damage_recipient_model.py', 'quorune/damage_death_exile_model.py'}:
+        return 'domain'
     if relative=='quorune/delayed_object_actions.py':return 'semantics'
     if relative=='quorune/reanimation_entry_counters.py':return 'semantics'
     if relative in {
@@ -84,6 +95,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/composition_zone_replacement_model.py':return 'domain'
     if relative=='quorune/life_total_setting_model.py':return 'domain'
     if relative=='quorune/token_creation_batch_model.py':return 'domain'
+    if relative=='quorune/token_creation_events.py':return 'rules'
     if relative=='quorune/crime_model.py':return 'domain'
     if relative in {'quorune/composition_departure_batch.py','quorune/composition_state_based_order.py'}:return 'rules'
     if relative=='quorune/composition_characteristics.py':return 'rules'
@@ -143,7 +155,9 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/copy_value_types.py",
         "quorune/devour.py",
         "quorune/granted_activation_model.py",
+        "quorune/phasing_model.py",
         "quorune/untap_restraint_model.py",
+        "quorune/source_untap_rule_model.py",
         "quorune/qualified_attack_model.py",
         "quorune/attack_batch_model.py",
         "quorune/public_history_query_model.py",
@@ -354,6 +368,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/activation_usage.py",
         "quorune/boast.py",
         "quorune/activation_condition_model.py",
+        "quorune/activation_cost_choice.py",
         "quorune/activation_restriction_composition.py",
         "quorune/abilities.py",
         "quorune/source_maintenance.py",
@@ -381,6 +396,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/combat_damage_trample.py",
         "quorune/combat_damage_values.py",
         "quorune/combat_relationship_state.py",
+        "quorune/combat_removal.py",
         "quorune/combat_entry_activations.py",
         "quorune/combat_constraints.py",
         "quorune/combat_evasion.py",
@@ -543,6 +559,8 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
         "quorune/turn_counter_coordination.py",
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
+        "quorune/turn_skip_replacements.py",
+        "quorune/phasing.py",
         "quorune/untap_step.py",
         "quorune/untap_step_coordination.py",
         "quorune/unearth.py",
@@ -571,7 +589,10 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
 
 
 def _owner(relative: str, layer: str) -> str:
-    if relative in {'quorune/state_based_legend_model.py','quorune/state_based_legend_choices.py'}:
+    if relative in {'quorune/damage_death_exile_model.py', 'quorune/rules/damage_death_exile.py'}:
+        return 'damage'
+    if relative in {'quorune/legend_rule_model.py', 'quorune/rules/legend_rule.py',
+                    'quorune/state_based_legend_model.py', 'quorune/state_based_legend_choices.py'}:
         return 'state_based_actions'
     if relative in {'quorune/unblocked_attacker_model.py','quorune/rules/unblocked_attackers.py',
             'quorune/compiler/unblocked_attacker_bindings.py'}:return 'trigger_processing'
@@ -597,7 +618,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative=='quorune/composition_commander_replacement_model.py':return 'commander_variant'
     if relative=='quorune/composition_zone_replacement_model.py':return 'zones_and_object_identity'
     if relative=='quorune/life_total_setting_model.py':return 'life_state'
-    if relative=='quorune/token_creation_batch_model.py':return 'token_creation'
+    if relative in {'quorune/token_creation_batch_model.py','quorune/token_creation_events.py'}:return 'token_creation'
     if relative=='quorune/crime_model.py':return 'targeting'
     if relative=='quorune/composition_state_based_order.py':return 'state_based_actions'
     if relative in {'quorune/composition_batch_order_model.py','quorune/composition_departure_batch.py'}:return 'zones_and_object_identity'
@@ -800,6 +821,7 @@ def _owner(relative: str, layer: str) -> str:
         return "ability_fragments"
     if relative in {
         "quorune/activation_condition_model.py",
+        "quorune/activation_cost_choice.py",
         "quorune/activation_restriction_composition.py",
         "quorune/boast.py",
         "quorune/activated_ability_descriptor.py",
@@ -933,6 +955,8 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/event_counter_reference.py",
         "quorune/control_effects.py",
         "quorune/source_continuity.py",
+        "quorune/source_tap_effect.py",
+        "quorune/source_untap_rule_model.py",
         "quorune/leveler_bands.py",
         "quorune/zone_object_keyword_model.py",
         "quorune/zone_object_keyword_grants.py",
@@ -1026,6 +1050,7 @@ def _owner(relative: str, layer: str) -> str:
     if relative == "quorune/regeneration.py":
         return "regeneration"
     if relative in {
+        "quorune/announced_damage.py",
         "quorune/damage.py",
         "quorune/damage_received_events.py",
         "quorune/received_damage_model.py",
@@ -1041,6 +1066,7 @@ def _owner(relative: str, layer: str) -> str:
         return "damage"
     if relative.startswith("quorune/combat_damage_") or relative in {
         "quorune/combat_relationship_state.py",
+        "quorune/combat_removal.py",
     }:
         return "combat_damage"
     if relative in {
@@ -1084,9 +1110,13 @@ def _owner(relative: str, layer: str) -> str:
         "quorune/turn_priority_model.py",
         "quorune/turn_priority_owner.py",
         "quorune/turn_step_owner.py",
+        "quorune/turn_skip_model.py",
+        "quorune/turn_skip_replacements.py",
     }:
         return "turn_priority_and_decisions"
     if relative in {
+        "quorune/phasing.py",
+        "quorune/phasing_model.py",
         "quorune/untap_step.py",
         "quorune/untap_step_coordination.py",
     }:
@@ -1235,6 +1265,7 @@ def build_classifications() -> dict[str, Any]:
                             "commander.py",
                             "combat_damage_",
                             "combat_relationship_state.py",
+                            "combat_removal.py",
                             "combat_entry_activations.py",
                             "damage.py",
                             "damage_modifier_state.py",

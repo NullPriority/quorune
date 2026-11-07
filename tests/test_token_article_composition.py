@@ -182,7 +182,7 @@ class TokenArticleCompositionTests(unittest.TestCase):
         self.activate(s,source,'Servo',{'C':2,'G':1});self.assertIsNone(self.settle(s));self.token(s,1,count=2)
         self.normal(s,growth,{'G':1},targets=[source.ref]);self.assertIsNone(self.settle(s));self.activate(s,source,'Construct',{'C':4,'G':1})
         s=self.replay(s,load=True);self.assertIsNone(self.settle(s))
-        constructs=[c for c in self.tokens(s) if c.printed_name=='Construct'];self.assertEqual(2,len(constructs))
+        constructs=[c for c in self.tokens(s) if c.printed_name=='Construct Token'];self.assertEqual(2,len(constructs))
         for card in constructs:self.assertEqual(('4','4'),tuple(str(s.engine._copyable_characteristics(card)[key]) for key in ('power','toughness')))
         self.assertTrue(s.state.cards[source.object_id].tapped);self.private_replay(s,private)
 

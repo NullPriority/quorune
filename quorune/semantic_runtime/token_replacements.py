@@ -5,6 +5,11 @@ from functools import lru_cache
 from typing import Any, Mapping, Protocol, Sequence
 
 from ..replacement import CreateAdditionalToken, MultiplyTokenCreation
+from ..fixed_token_production import (
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
+    FixedTokenProductionError,
+    literal_token_name_version,
+)
 from ..replacement_effects import (
     ReplaceableEvent,
     ReplacementBatchChoice,
@@ -42,6 +47,7 @@ class TokenDefinition:
     keywords: tuple[str, ...] = ()
     display_text: str = ""
     ability_profile: str | None = None
+    literal_name_version: int | None = None
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "TokenDefinition":
@@ -54,12 +60,17 @@ class TokenDefinition:
             "keywords",
             "display_text",
             "ability_profile",
+            TOKEN_LITERAL_NAME_VERSION_FIELD,
         }
         unknown = sorted(set(value) - allowed)
         if unknown:
             raise SemanticNodeError(
                 "additional token has unknown fields: " + ", ".join(unknown)
             )
+        try:
+            name_version = literal_token_name_version(value)
+        except FixedTokenProductionError as exc:
+            raise SemanticNodeError(str(exc)) from exc
         name = str(value.get("name") or "").strip()
         type_line = str(value.get("type_line") or "").strip()
         if not name or not type_line:
@@ -99,6 +110,7 @@ class TokenDefinition:
             keywords=keywords,
             display_text=display_text,
             ability_profile=ability_profile,
+            literal_name_version=name_version,
         )
 
     def characteristics(self) -> dict[str, Any]:
@@ -114,6 +126,8 @@ class TokenDefinition:
             value["display_text"] = self.display_text
         if self.ability_profile is not None:
             value[TOKEN_ABILITY_PROFILE_FIELD] = self.ability_profile
+        if self.literal_name_version is not None:
+            value[TOKEN_LITERAL_NAME_VERSION_FIELD] = self.literal_name_version
         try:
             return standard_token_characteristics(value)
         except ValueError as exc:
@@ -210,6 +224,27 @@ class TokenCreationReplacementResolution:
         )
 
 
+def token_creation_replacement_event(
+    *,
+    event_id: str,
+    controller: str,
+    tokens: Sequence[Mapping[str, Any]],
+    created_types: Sequence[str],
+    created_subtypes: Sequence[str],
+) -> ReplaceableEvent:
+    return ReplaceableEvent(
+        event_id=event_id,
+        kind="token.create",
+        affected_player=controller,
+        payload={
+            "event_controller": controller,
+            "created_types": sorted(set(created_types)),
+            "created_subtypes": sorted(set(created_subtypes)),
+            "tokens": [dict(token) for token in tokens],
+        },
+    )
+
+
 def resolve_token_creation_replacements(
     *,
     event_id: str,
@@ -222,16 +257,9 @@ def resolve_token_creation_replacements(
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     require_all_selections: bool = True,
 ) -> TokenCreationReplacementResolution:
-    event = ReplaceableEvent(
-        event_id=event_id,
-        kind="token.create",
-        affected_player=controller,
-        payload={
-            "event_controller": controller,
-            "created_types": sorted(set(created_types)),
-            "created_subtypes": sorted(set(created_subtypes)),
-            "tokens": [dict(token) for token in tokens],
-        },
+    event = token_creation_replacement_event(
+        event_id=event_id, controller=controller, tokens=tokens,
+        created_types=created_types, created_subtypes=created_subtypes,
     )
     progress = advance_replacement_batch(
         ReplacementEventBatch(

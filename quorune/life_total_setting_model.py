@@ -11,7 +11,9 @@ class LifeTotalValueSpec:
 
     def __post_init__(self):
         if (type(self.schema_version) is not int or self.schema_version!=1
-                or type(self.kind) is not str or self.kind not in {'fixed','starting','highest','lowest','creatures','permanents','library'}
+                or type(self.kind) is not str or self.kind not in {
+                    'fixed','starting','starting_half_rounded_up','highest','lowest','creatures','permanents','library',
+                }
                 or self.kind=='fixed' and (type(self.total) is not int or self.total<0)
                 or self.kind!='fixed' and self.total is not None):
             raise ValueError('Life-total value requires its closed supported kind and fields')
@@ -54,6 +56,7 @@ def plan_life_total_setting(value,players,life_totals,*,starting_life,counts=Non
     if value.kind in {'creatures','permanents','library'} and (not isinstance(counts,Mapping)
             or set(counts)!=set(players) or any(type(count) is not int or count<0 for count in counts.values())):
         raise ValueError('Count-based life totals require exact known counts for every affected player')
-    fixed={'fixed':value.total,'starting':starting_life,'highest':max(life_totals.values()),'lowest':min(life_totals.values())}
+    fixed={'fixed':value.total,'starting':starting_life,'starting_half_rounded_up':(starting_life + 1) // 2,
+        'highest':max(life_totals.values()),'lowest':min(life_totals.values())}
     return tuple(LifeTotalTransition(player,life_totals[player],
         fixed[value.kind] if value.kind in fixed else counts[player]) for player in players)

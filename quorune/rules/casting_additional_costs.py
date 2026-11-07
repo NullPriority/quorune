@@ -136,10 +136,15 @@ class FixedCounterPlacementAdditionalCost:
                 "Counter additional costs require a counter name"
             )
         normalized = " ".join(self.counter_name.casefold().split())
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2}:
             raise AdditionalCostError(
                 "Counter additional-cost schema version is unsupported"
             )
+        if self.schema_version == 2:
+            from .blight_model import BLIGHT_COUNTER
+
+            if normalized != BLIGHT_COUNTER or self.choice_field != "counter_cost_card":
+                raise AdditionalCostError("A Blight casting cost requires its exact counter and choice field")
         if self.kind != "counter_placement":
             raise AdditionalCostError(
                 "Counter additional-cost kind is unsupported"
@@ -603,6 +608,16 @@ def fixed_zone_change_additional_cost(
     if legacy is None:
         return None
     return FixedZoneChangeAdditionalCost.from_legacy_sacrifice(legacy)
+
+
+def fixed_creature_sacrifice_price(cost_schema: Mapping[str, Any] | None) -> bool:
+    if not isinstance(cost_schema, Mapping) or set(cost_schema) != {'additional_costs'}:
+        return False
+    costs = cost_schema['additional_costs']
+    if not isinstance(costs, (list, tuple)) or len(costs) != 1:
+        return False
+    cost = fixed_sacrifice_additional_cost(costs[0])
+    return cost is not None and cost.predicate.types_any == ('creature',)
 
 
 def fixed_counter_cost_candidates(

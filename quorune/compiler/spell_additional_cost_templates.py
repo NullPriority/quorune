@@ -144,6 +144,7 @@ class FixedCounterAdditionalCostTemplate:
 
     amount: int
     counter_name: str
+    schema_version: int = 1
 
     def __post_init__(self) -> None:
         normalized = " ".join(self.counter_name.casefold().split())
@@ -155,12 +156,14 @@ class FixedCounterAdditionalCostTemplate:
 
     @property
     def template_id(self) -> str:
+        if self.schema_version == 2:
+            return "spell-additional-cost-fixed-blight-v1"
         return "spell-additional-cost-fixed-counter-creature-you-control-v1"
 
     @property
     def descriptor(self) -> Mapping[str, Any]:
         return {
-            "schema_version": 1,
+            "schema_version": self.schema_version,
             "kind": "counter_placement",
             "counter": self.counter_name,
             "amount": self.amount,
@@ -440,6 +443,7 @@ FixedAlternativeLeafTemplate = (
     | FixedManaPaymentAdditionalCostTemplate
     | FixedRevealAdditionalCostTemplate
     | FixedTapAdditionalCostTemplate
+    | FixedCounterAdditionalCostTemplate
 )
 
 
@@ -458,6 +462,10 @@ class FixedAlternativeAdditionalCostTemplate:
             raise ValueError(
                 "Fixed alternative additional-cost options must be distinct"
             )
+        if any(isinstance(option, FixedCounterAdditionalCostTemplate) for option in self.options):
+            from ..rules.casting_additional_cost_groups import FixedAlternativeAdditionalCost
+
+            FixedAlternativeAdditionalCost.from_descriptor(self.descriptor)
 
     @property
     def template_id(self) -> str:
@@ -810,6 +818,11 @@ def _fixed_zone_change_additional_cost_leaf_template(
 def _fixed_alternative_leaf_template(
     text: str,
 ) -> FixedAlternativeLeafTemplate | None:
+    blight = re.fullmatch(r"Blight ([1-9][0-9]*)", text.strip(), re.IGNORECASE)
+    if blight is not None:
+        from ..rules.blight_model import BLIGHT_COUNTER
+
+        return FixedCounterAdditionalCostTemplate(int(blight[1]), BLIGHT_COUNTER, schema_version=2)
     tap=fixed_tap_additional_cost_template('As an additional cost to cast this spell, '+text.strip()+'.')
     if tap is not None:return tap
     reveal=re.fullmatch(r'reveal (?P<article>a|an) (?P<subtype>.+?) card from your hand',text.strip(),re.I)

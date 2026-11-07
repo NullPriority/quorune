@@ -12,6 +12,32 @@ DEPENDENCIES=(CREATED_TOKEN_COUNTER_CAPABILITY,'token.creation.fixed_definition'
     'counter.producer.fixed_effect','counter.placement.quantity_replacement')
 
 
+def validate_single_created_token(effect: Mapping[str, Any]) -> tuple[str, ...]:
+    """Validate the fixed creature definition used by a committed-result follow-up."""
+    from .replacement.immutable import thaw_value
+    from .rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
+
+    token = effect["token"]
+    mechanics = effect["token_mechanics"]
+    if (
+        not isinstance(token, Mapping)
+        or token.get("op") != "create_token"
+        or type(token.get("quantity")) is not int
+        or token["quantity"] != 1
+        or token.get("controller") != effect["controller"]
+        or not isinstance(mechanics, (list, tuple))
+        or any(type(mechanic) is not str for mechanic in mechanics)
+    ):
+        raise ValueError("Creation subject must be one complete ordinary token definition")
+    normalized = {**thaw_value(token), "controller": "$controller"}
+    capabilities = fixed_token_creation_node_capabilities(
+        effects=(normalized,), target_schema=None, mechanic_ids=set(mechanics),
+    )
+    if "token.creation.fixed_definition" not in capabilities:
+        raise ValueError("Creation subject is not a closed fixed definition")
+    return capabilities
+
+
 def validate_created_token_counter(effect:Mapping[str,Any],*,resolved:bool=False):
     if not isinstance(effect,Mapping):raise ValueError('Created-token counter instruction must be an object')
     fields={'op','schema_version','controller','source','amount'}
@@ -33,16 +59,7 @@ def validate_created_token_counter(effect:Mapping[str,Any],*,resolved:bool=False
         if spec.coefficient<0:raise ValueError('Counter amount producer must be nonnegative')
     else:raise ValueError('Counter amount must use a closed numeric producer')
     if effect['op']==CREATE_THEN_COUNTER:
-        from .rules.token_creation_capability_shapes import fixed_token_creation_node_capabilities
-        token=effect['token'];mechanics=effect['token_mechanics']
-        if (not isinstance(token,Mapping) or token.get('op')!='create_token' or type(token.get('quantity')) is not int or token['quantity']!=1
-                or token.get('controller')!=effect['controller'] or not isinstance(mechanics,(list,tuple))
-                or any(type(m) is not str for m in mechanics)):
-            raise ValueError('Creation subject must be one complete ordinary token definition')
-        from .replacement.immutable import thaw_value
-        normalized={**thaw_value(token),'controller':'$controller'}
-        if 'token.creation.fixed_definition' not in fixed_token_creation_node_capabilities(effects=(normalized,),target_schema=None,mechanic_ids=set(mechanics)):
-            raise ValueError('Creation subject is not a closed fixed definition')
+        validate_single_created_token(effect)
     else:
         refs=effect['cards']
         if not isinstance(refs,(list,tuple)) or any(type(ref) is not str or not ref for ref in refs) or len(set(refs))!=len(refs):

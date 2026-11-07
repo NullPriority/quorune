@@ -11,7 +11,9 @@ from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..replacement_effects import ReplacementChoiceRequired
 from ..zone_transitions import ZoneTransitionOwner
-from ..library_search_model import FixedCountedLibrarySearchTemplate, SEARCH_SUBTYPES
+from ..library_search_model import (
+    FixedCountedLibrarySearchTemplate, SEARCH_ALTERNATIVES, SEARCH_SUBTYPES, is_counted_library_search,
+)
 from ..rules.library_search_rules import library_search_constraint,library_search_object_ids
 from .model import (
     SelectionContract,
@@ -61,7 +63,7 @@ class HiddenSearchOwnerMixin:
 
     @staticmethod
     def _validate_counted_search_effect(effect: Mapping[str, Any]) -> None:
-        if effect.get("schema_version") == 2:
+        if is_counted_library_search(effect):
             try:
                 FixedCountedLibrarySearchTemplate.from_effect(effect)
             except (ValueError, TypeError, KeyError) as exc:
@@ -367,11 +369,8 @@ class HiddenSearchOwnerMixin:
             note="Built-in fetchland search resolved",
         )
 
-    def _search_candidate_matches(
-        self,
-        card: CardInstance,
-        selector: Mapping[str, Any],
-    ) -> bool:
+    @staticmethod
+    def _search_characteristic_query(selector: Mapping[str, Any], zone: str) -> ObjectQuerySpec:
         # This codec does not represent type exclusions. Reject a descriptor
         # carrying one rather than silently executing a weaker predicate.
         if "excluded_types" in selector:
@@ -382,16 +381,9 @@ class HiddenSearchOwnerMixin:
             or any(type(value) is not str or value not in SEARCH_SUBTYPES for value in subtypes_any)
         ):
             raise GameRuleError("Semantic search selector subtype is outside the closed vocabulary")
-        record = self.card_record(card)
-        if record is None:
-            return False
-        effective = self._effective_card_data(card)
-        types, subtypes, supertypes = self._type_parts(
-            str(effective.get("type_line") or "")
-        )
         try:
-            query = ObjectQuerySpec(
-                zones=(card.zone,),
+            return ObjectQuerySpec(
+                zones=(zone,),
                 types_all=tuple(selector.get("types") or ()),
                 types_any=tuple(selector.get("types_any") or ()),
                 subtypes_all=tuple(selector.get("subtypes") or ()),
@@ -402,13 +394,9 @@ class HiddenSearchOwnerMixin:
             )
         except (ObjectQueryError, TypeError) as exc:
             raise GameRuleError("Malformed semantic search selector") from exc
-        row = object_query_result(
-            card,
-            effective,
-            type_parts=(types, subtypes, supertypes),
-            known_to_actor=True,
-            attached_to_ref=None,
-        )
+
+    @staticmethod
+    def _search_leaf_matches(row, record, query: ObjectQuerySpec, selector: Mapping[str, Any]) -> bool:
         if not object_matches_query(row, query):
             return False
         names = {
@@ -462,6 +450,19 @@ class HiddenSearchOwnerMixin:
             )
         raise GameRuleError(f"Unsupported search predicate {predicate!r}")
 
+    def _search_candidate_matches(self, card: CardInstance, selector: Mapping[str, Any]) -> bool:
+        leaves = selector.get(SEARCH_ALTERNATIVES, (selector,))
+        queries = tuple((leaf, self._search_characteristic_query(leaf, card.zone)) for leaf in leaves)
+        record = self.card_record(card)
+        if record is None:
+            return False
+        effective = self._effective_card_data(card)
+        row = object_query_result(
+            card, effective, type_parts=self._type_parts(str(effective.get("type_line") or "")),
+            known_to_actor=True, attached_to_ref=None,
+        )
+        return any(self._search_leaf_matches(row, record, query, leaf) for leaf, query in queries)
+
     def _semantic_search_options(
         self,
         seat: str,
@@ -510,6 +511,7 @@ class HiddenSearchOwnerMixin:
                 "mana_value",
                 "mana_value_total",
                 "predicate",
+                SEARCH_ALTERNATIVES,
             )
         )
 
@@ -934,7 +936,7 @@ class HiddenSearchOwnerMixin:
             )
             selected_cards.append(card)
         owner = ZoneTransitionOwner(self)
-        if effect.get("schema_version") == 2:
+        if is_counted_library_search(effect):
             self._validate_counted_search_effect(effect)
             if effect.get("shuffle_before_placement") is True:
                 if destination != "library" or position != "top" or len(selected_cards) > 1:
@@ -1124,7 +1126,7 @@ class HiddenSearchOwnerMixin:
         ):
             raise GameRuleError("Malformed semantic search completion identity")
         selected = list(raw_selected)
-        counted = effect.get("schema_version") == 2 and effect.get("destination") == "hand"
+        counted = is_counted_library_search(effect) and effect.get("destination") == "hand"
         maximum = effect.get("count", {}).get("maximum", 1) if counted else 1
         if type(maximum) is not int or len(selected) != len(set(selected)) or len(selected) > maximum:
             raise GameRuleError(
@@ -1273,7 +1275,7 @@ class HiddenSearchOwnerMixin:
                 position=position,
             )
         except ReplacementChoiceRequired as required:
-            if destination != "hand" or len(values) > 1 and context.effect.get("schema_version") != 2:
+            if destination != "hand" or len(values) > 1 and not is_counted_library_search(context.effect):
                 raise
             from ..replacement_decisions import issue_replacement_order_choice
 

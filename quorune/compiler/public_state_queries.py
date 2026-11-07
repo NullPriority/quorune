@@ -1500,8 +1500,9 @@ def fixed_public_state_condition(
     def compile_atomic(term):
         atomic=_fixed_public_state_condition(term,source_name=source_name)
         if atomic is not None:return atomic
+        from .public_characteristic_aggregates import public_creature_power_threshold
         from .public_history_conditions import fixed_public_history_condition
-        return fixed_public_history_condition(term)
+        return public_creature_power_threshold(term) or fixed_public_history_condition(term)
     atomic=compile_atomic(text)
     return atomic if atomic is not None else compose_public_conditions(text,
         compile_atomic=compile_atomic,

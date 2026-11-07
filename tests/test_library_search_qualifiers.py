@@ -4,6 +4,7 @@ import copy
 import json
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -46,7 +47,7 @@ class LibrarySearchQualifierCompilerTests(unittest.TestCase):
                         self.assertEqual('exact', ir.status, ir.material_residuals)
 
     def test_unknown_and_unrepresented_qualifiers_remain_material_residuals(self):
-        for quality in ('nonland permanent', 'legendary nonland permanent', 'imaginary permanent', 'legendary imaginary permanent', 'snow permanent', 'green Goblin permanent', 'legendary green permanent'):
+        for quality in ('nonland permanent', 'legendary nonland permanent', 'imaginary permanent', 'legendary imaginary permanent', 'green Goblin permanent', 'legendary green permanent'):
             for destination in ('into your hand', 'into your graveyard', 'onto the battlefield'):
                 text = f'Search your library for a {quality} card, put it {destination}, then shuffle.'
                 with self.subTest(text=text):
@@ -68,6 +69,13 @@ class LibrarySearchQualifierCompilerTests(unittest.TestCase):
             article = 'an' if quality == 'artifact' else 'a'
             template = fixed_library_search_effect_template(f'Search your library for {article} {quality} card, put it into your graveyard, then shuffle.')
             self.assertEqual(expected, template.compiled()[1][0]['selector'])
+        for destination in ('into your hand', 'into your graveyard', 'onto the battlefield'):
+            with self.subTest(destination=destination):
+                text = f'Search your library for a snow permanent card, put it {destination}, then shuffle.'
+                template = fixed_library_search_effect_template(text)
+                self.assertIsNotNone(template)
+                self.assertEqual({'types_any': PERMANENT_TYPES, 'supertypes': ['snow']},
+                                 template.compiled()[1][0]['selector'])
 
     def test_codec_shapes_and_matcher_reject_lost_exclusions_and_fake_subtypes(self):
         with self.assertRaisesRegex(ValueError, 'closed selector codec'):
@@ -84,16 +92,18 @@ class LibrarySearchQualifierCompilerTests(unittest.TestCase):
                 effect = copy.deepcopy(legacy.compiled()[1][0])
                 effect['selector'] = {'types_any': PERMANENT_TYPES, **selector}
                 self.assertEqual((), fixed_library_search_node_capabilities(effects=(effect,), target_schema=None, mechanic_ids=legacy.compiled()[3]))
+        search = HiddenSearchOwnerMixin()
+        candidate = SimpleNamespace(zone='library')
         with self.assertRaisesRegex(GameRuleError, 'type exclusions are unsupported'):
-            HiddenSearchOwnerMixin._search_candidate_matches(object(), None, {'excluded_types': ['land']})
+            search._search_candidate_matches(candidate, {'excluded_types': ['land']})
         with self.assertRaisesRegex(GameRuleError, 'type exclusions are unsupported'):
-            HiddenSearchOwnerMixin._semantic_search_options(object(), 'A', {'selector': {'excluded_types': ['land']}})
+            search._semantic_search_options('A', {'selector': {'excluded_types': ['land']}})
         for word in ('green', 'nonland', 'imaginary'):
             with self.assertRaisesRegex(GameRuleError, 'closed vocabulary'):
-                HiddenSearchOwnerMixin._search_candidate_matches(object(), None, {'subtypes_any': [word]})
+                search._search_candidate_matches(candidate, {'subtypes_any': [word]})
         for malformed in ('goblin', None, [[]]):
             with self.assertRaisesRegex(GameRuleError, 'closed vocabulary'):
-                HiddenSearchOwnerMixin._search_candidate_matches(object(), None, {'subtypes_any': malformed})
+                search._search_candidate_matches(candidate, {'subtypes_any': malformed})
 
     def test_color_permanent_codec_mutation_is_detected(self):
         from quorune import library_search_model

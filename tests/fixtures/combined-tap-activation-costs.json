@@ -217,6 +217,55 @@
       "legalities": {
         "commander": "legal"
       }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Cohort"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Akoum Flameseeker",
+      "oracle_id": "efae637f-3232-46f2-9839-f3386e2f447d",
+      "oracle_text": "Cohort \u2014 {T}, Tap an untapped Ally you control: Discard a card. If you do, draw a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2016-01-22",
+      "toughness": "2",
+      "type_line": "Creature \u2014 Human Shaman Ally"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -237,6 +286,18 @@
       "comment": "You can tap any untapped creature you control, including one you haven't controlled continuously since the beginning of your most recent turn, to pay the cost of Selesnya Evangel's activated ability. You must have controlled Selesnya Evangel continuously since the beginning of your most recent turn, however.",
       "oracle_id": "4a2fea39-99d6-4766-9f2c-0a63925349cb",
       "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "To activate a cohort ability, the Ally with that ability must have been under your control continuously since the beginning of your most recent turn. Informally, it can\u2019t have \u201csummoning sickness.\u201d However, the other Ally you tap can be one that just came under your control. (Note that tapping the second Ally doesn\u2019t use {T} [the tap symbol].)",
+      "oracle_id": "efae637f-3232-46f2-9839-f3386e2f447d",
+      "published_at": "2016-01-22",
+      "source": "wotc"
+    },
+    {
+      "comment": "Discarding a card is part of the ability\u2019s effect and isn\u2019t optional. As the cohort ability resolves, if you have a card in your hand, you must discard one, even if the card you may have wanted to discard as you activated the ability is no longer in your hand.",
+      "oracle_id": "efae637f-3232-46f2-9839-f3386e2f447d",
+      "published_at": "2016-01-22",
       "source": "wotc"
     }
   ],

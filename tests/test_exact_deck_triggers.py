@@ -105,7 +105,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.controller == "B"
             and card.is_token
-            and card.printed_name == "Human Soldier"
+            and card.printed_name == "Human Soldier Token"
         )
         data = engine._effective_card_data(soldier)
         self.assertEqual("1", data["power"])
@@ -379,6 +379,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
                 reason="Provisioner landfall scenario",
             )
             self.assertFalse(engine._stabilize())
+            self.assertEqual(f'{provisioner.oracle_id}:trigger:landfall', engine.state.stack[-1].semantic_key)
             self.resolve_top(engine)
             packet = session.packet("pilot:B", full=True)
             self.assertEqual(
@@ -406,6 +407,7 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             and card.zone == "battlefield"
             and card.is_token
         }
+        # The reviewed landfall program stores literal names in its choice branches.
         self.assertTrue({"Food", "Treasure"}.issubset(tokens))
 
     def test_bloodghast_landfall_return_block_restriction_and_conditional_haste(

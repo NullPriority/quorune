@@ -641,10 +641,10 @@ class DefinedTokenNativeTests(unittest.TestCase):
             effect_entry_counters=(EffectEntryCounter('+1/+1',3,'A','incubate-effect','701.53a'),))
         tokens=[next(card for card in engine.state.cards.values() if card.ref==ref) for ref in refs]
         self.assertEqual(2,len(tokens))
-        self.assertEqual({'Incubator','Map'},{card.printed_name for card in tokens})
+        self.assertEqual({'Incubator','Map Token'},{card.printed_name for card in tokens})
         for card in tokens:
             self.assertEqual({'+1/+1':6},card.counters,card.printed_name)
-        additional=next(card for card in tokens if card.printed_name=='Map')
+        additional=next(card for card in tokens if card.printed_name=='Map Token')
         self.assertNotIn(DEFINED_TOKEN_FACES_FIELD,engine._copyable_characteristics(additional))
         self.assertFalse(any(ability.builtin_semantic_key==DEFINED_TOKEN_TRANSFORM_KEY
             for ability in engine._activated_abilities(additional)))
@@ -763,7 +763,9 @@ class DefinedTokenNativeTests(unittest.TestCase):
         self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
         tokens=[card for card in engine.state.cards.values() if card.is_token and card.zone=='battlefield']
         self.assertEqual(1,len(tokens));token=tokens[0]
-        self.assertEqual(('Incubator',{'+1/+1':5}),(token.active_face,token.counters))
+        self.assertEqual(('Incubator Token',{'+1/+1':5}),(token.active_face,token.counters))
+        self.assertEqual("Incubator Token", engine.display_name(token.object_id))
+        self.assertEqual("Incubator Token", engine._copyable_characteristics(token)["name"])
         self.assertNotIn('creature',engine._type_parts(engine._effective_card_data(token)['type_line'])[0])
         before=authoritative_state_hash(engine.state)
         wrong=session.act('pilot:B',{'action_id':self.activation(session,token)['id'],'pay':'auto'})
@@ -776,6 +778,37 @@ class DefinedTokenNativeTests(unittest.TestCase):
         self.assertEqual({'+1/+1':5},current.counters)
         self.assertEqual((5,5),(resumed.engine._numeric_stat(current.object_id,'power'),resumed.engine._numeric_stat(current.object_id,'toughness')))
         self.replay(resumed)
+
+    def test_historical_incubate_name_version_round_trips_with_absent_marker(self):
+        from quorune.model import GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as Actions
+
+        session = self.session(736013)
+        self.assertEqual(1, format_state_versions(session.state)["predefined_token_name_version"])
+        payload = session.state.to_dict()
+        del payload["predefined_token_name_version"]
+        historical = GameState.from_dict(payload)
+        self.assertEqual(payload, historical.to_dict())
+        format_value = format_state_versions(historical)
+        self.assertNotIn("predefined_token_name_version", format_value)
+        validate_state_versions({"format": format_value}, historical)
+        with self.assertRaisesRegex(ValueError, "Predefined token name provenance"):
+            validate_state_versions({"format": {**format_value, "predefined_token_name_version": 1}}, historical)
+        with self.assertRaisesRegex(ValueError, "Unsupported predefined token name version"):
+            GameState.from_dict({**payload, "predefined_token_name_version": True})
+
+        session.state.predefined_token_name_version = None
+        spell = Actions.add(self, session.engine, "Converter Beast", zone="hand")
+        self.assert_original_closed(spell)
+        action = Actions.ready(self, session, spell, {"G": 1, "C": 5})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        token, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        self.assertEqual("Incubator", session.engine._copyable_characteristics(token)["name"])
+        self.assertNotIn("predefined_token_name_version", self.replay(session).state.to_dict())
 
     def test_actual_glistening_dawn_twice_resumes_each_entry_replacement_without_duplicate_creation(self):
         from test_bound_effect_programs import BoundEffectProgramRuntimeTests
@@ -851,7 +884,7 @@ class DefinedTokenNativeTests(unittest.TestCase):
                 self.assertTrue(accepted.ok,accepted.summary);self.resolve(session)
                 self.assertEqual('graveyard',engine.state.cards[source.object_id].zone)
                 tokens=[card for card in engine.state.cards.values() if card.is_token and card.zone=='battlefield']
-                self.assertEqual(1,len(tokens));self.assertEqual('Incubator',tokens[0].active_face)
+                self.assertEqual(1,len(tokens));self.assertEqual('Incubator Token',tokens[0].active_face)
                 self.assertEqual({'+1/+1':expected} if expected else {},tokens[0].counters)
                 self.replay(session)
 

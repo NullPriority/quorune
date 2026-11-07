@@ -9,6 +9,8 @@ from .counter_removal import (
     plan_counter_removals,
 )
 from .control_effects import record_source_transition, synchronize_control_effects
+from .continuous_effect_model import ContinuousObjectIdentity
+from .source_untap_rule_model import PendingSourceUntapRestraint
 
 VIGILANCE_KEYWORD = "vigilance"
 STUN_COUNTER_NAME = "stun"
@@ -261,9 +263,15 @@ def set_permanent_tapped(
     log: bool = True,
     semantic_events: bool = True,
     untap_cost: bool = False,
+    untap_restraint: PendingSourceUntapRestraint | None = None,
 ) -> str:
     """Commit one validated tap-state intent through authoritative state."""
 
+    if untap_restraint is not None and (
+        not isinstance(untap_restraint, PendingSourceUntapRestraint)
+        or tapped is not True or revert or untap_cost
+    ):
+        raise TapStateError("Untap restraint requires a typed resolution tap instruction")
     card = next(
         (
             candidate
@@ -285,6 +293,7 @@ def set_permanent_tapped(
         return card.ref
     if card.zone != "battlefield":
         return card.ref
+    subject = ContinuousObjectIdentity(card.object_id, card.logical_object_id) if untap_restraint is not None else None
     previous_tapped = card.tapped
     if tapped:
         changed = not card.tapped
@@ -318,6 +327,9 @@ def set_permanent_tapped(
             importance=1,
             changed_objects=[card.object_id],
         )
+    if subject is not None:
+        from .rules.untap_permissions import commit_source_untap_restraint
+        commit_source_untap_restraint(host, untap_restraint, (subject,))
     return card.ref
 
 

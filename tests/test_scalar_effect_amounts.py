@@ -934,7 +934,7 @@ class ScalarEffectAmountActionTests(unittest.TestCase):
     def test_unrelated_phased_scalar_does_not_reject_actual_destroy_and_replays(self):
         """Real commands from a constructed checkpoint, not a phasing action.
 
-        Phasing transitions remain unsupported. The pending ability is created
+        The phased status here is fixture setup. The pending ability is created
         through its actual registered activation before the checkpoint setup.
         Only the later, unrelated movement is claimed as supported behavior.
         """

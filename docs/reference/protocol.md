@@ -162,6 +162,19 @@ names. Forms cover scalar, object, ordering, mode, target, grouped, assignment,
 payment, private search, and delegated rules choices. Unknown fields and
 unknown form versions fail closed.
 
+A cast target form may include `schema.damage_allocation` with `schema_version`
+set to `1` and a positive integer `total`. Submit `choices.damage_allocation`
+as an object keyed by the chosen target references. Each target must receive a
+positive integer share and the shares must sum to the stated total. A legal
+empty selection uses an empty allocation. The server validates the allocation
+before paying costs. A spell-copy target form keeps the copied shares and
+offers changes to the target references in their original slots. Public stack
+rows show `damage_shares` in the same order as their `targets` array.
+
+An active Assist transaction projects a public `assist_cast` announcement
+in the view state. Only the principal for the current mana or payment window
+receives the `cast.assist` decision and its legal actions.
+
 Dynamic `mana_modes` fields declare `allowed_colors`, an integral `total`, and
 `single_color` instead of enumerating allocations. Clients accept only objects
 with allowed color keys, nonnegative integral values, that exact total, and at

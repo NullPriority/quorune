@@ -60,7 +60,7 @@ from .life_templates import static_life_handler
 from .token_templates import static_additional_token_replacement_handler
 from .trigger_participation_templates import static_trigger_multiplier_handler
 from .library_search_rule_templates import fixed_library_search_rule_handler
-from .untap_step_templates import static_untap_step_handler
+from .untap_step_templates import static_turn_step_skip_handler, static_untap_step_handler
 from .zone_templates import static_zone_destination_replacement_handler
 
 
@@ -163,6 +163,31 @@ def _global_alternative_template(text):
     return StaticRuntimeTemplate(compiled=compiled,kind='static_ability',event='cast.cost',
         active_zone='battlefield',runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         dependency_reason='Battlefield alternative mana costs require a complete current source and existing cast payment owners')
+
+
+def _step_participation_runtime_template(
+    text: str, *, source_name: str | None,
+) -> StaticRuntimeTemplate | None:
+    if source_name is None:
+        return None
+    from .untap_selection_templates import fixed_untap_selection_limit_handler
+
+    rule = (
+        static_turn_step_skip_handler(text)
+        or fixed_untap_selection_limit_handler(text, source_name=source_name)
+        or static_untap_step_handler(text, source_name=source_name)
+    )
+    if rule is None:
+        return None
+    event = rule[1]["event"]
+    reason = "generic untap-step participation" if event == "untap.step" else "static step skip"
+    return StaticRuntimeTemplate(
+        compiled=rule,
+        kind="static_ability",
+        event=event,
+        dependency_reason=f"{reason} requires its closed typed runtime capability",
+        runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
+    )
 
 
 def _source_permanent_participation_template(
@@ -274,24 +299,8 @@ def _source_permanent_participation_template(
             active_zone='hand' if opening_hand else 'battlefield',
             runtime_coverage=() if opening_hand else (CURRENT_ABILITY_FRAGMENT_COVERAGE,),
         )
-    from .untap_selection_templates import fixed_untap_selection_limit_handler
-    untap_step = (
-        (fixed_untap_selection_limit_handler(text, source_name=source_name)
-         or static_untap_step_handler(text, source_name=source_name))
-        if source_name is not None
-        else None
-    )
-    if untap_step is not None:
-        return StaticRuntimeTemplate(
-            compiled=untap_step,
-            kind="static_ability",
-            event="untap.step",
-            dependency_reason=(
-                "generic untap-step participation requires its closed "
-                "typed runtime capability"
-            ),
-            runtime_coverage=(CURRENT_ABILITY_FRAGMENT_COVERAGE,),
-        )
+    if participation := _step_participation_runtime_template(text, source_name=source_name):
+        return participation
     entry_state = static_entry_state_handler(
         text,
         source_name=source_name or "",

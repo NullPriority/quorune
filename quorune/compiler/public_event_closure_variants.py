@@ -11,6 +11,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         DAMAGE_PERMANENT_VARIANT,
         'source_damage_death_history',
         'public_anywhere_graveyard_card',
+        'public_land_play',
         'singular_qualified_attack',
         'controlled_token_enters',
         "another_controlled_colorless_creature_enters",
@@ -32,6 +33,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "one_or_more_controller_creature_cards_leave_graveyard",
         "source_or_controlled_creature_or_artifact_dies",
         "this_creature_becomes_blocked_by_creature",
+        "a_creature_you_control_becomes_blocked",
         "the end step",
         "each combat",
     }

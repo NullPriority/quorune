@@ -463,8 +463,8 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
             "Kytheon, Hero of Akros // Gideon, Battle-Forged": (
                 "capability.permanent.indestructible.ordinary",
                 "capability.damage.prevention.persistent_amount",
-                "residual.activated_effect.tap-state",
-                "residual.activated_effect.ordered-effect-composition",
+                "residual.reference_binding.linked-result-reference",
+                "residual.mechanic_dependency.tap-and-untap",
             ),
             "indestructible-dynamic-prevention-boundary": (
                 "capability.permanent.indestructible.ordinary",
@@ -478,6 +478,11 @@ class HighRiskInteractionAssuranceTests(unittest.TestCase):
                 program = compile_best_available_card_program(self.db, record, semantic_registry=SemanticRegistry(), capability_registry=registry, capability_profile="commander_review")
                 row = analyze_card_unlocks(ir, program=program, program_error=None, capabilities=registry, profile="commander_review")
                 self.assertLessEqual(set(pieces), _observed_piece_ids(row))
+                if "residual.reference_binding.linked-result-reference" in pieces:
+                    self.assertTrue(any(
+                        residual.kind == 'dependency_contract' and residual.text.endswith('Untap that creature.')
+                        for residual in ir.material_residuals
+                    ))
                 self.assertEqual("residual", row["card_program_status"])
                 self.assertIsNone(row["hard_construction_failure"])
                 binding = bind_card_program_runtime(program, capability_registry=registry, profile="commander_review")

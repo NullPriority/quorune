@@ -983,17 +983,17 @@ class SagaCounterProgressionTests(unittest.TestCase):
 
         advance_active_player_sagas(engine, "A")
 
-        self.assertEqual(3, saga.counters["lore"])
+        # CR 614.16 makes the placement modified by Doc Samson eligible for Doubling Season.
+        self.assertEqual(5, saga.counters["lore"])
         replacements = [
             event
             for event in engine.state.events
             if event.event_id > event_sequence
             and event.code == "replacement.apply"
         ]
-        self.assertEqual(1, len(replacements))
         self.assertEqual(
-            "a-unqualified",
-            replacements[0].details["source"],
+            ["a-unqualified", "a-effect-only"],
+            [event.details["source"] for event in replacements],
         )
 
     def test_saga_turn_replacement_choice_is_private_resumable_and_exact(

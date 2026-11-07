@@ -18,6 +18,9 @@ class ReplacementEffectError(ValueError):
     pass
 
 
+COUNTER_REPLACEMENT_GENERATED_FIELD = "counter_replacement_generated"
+
+
 def _validate_shared_entry_occurrence(effect, operations, decline_operations):
     if effect.occurrence_id is None:
         return
@@ -282,6 +285,13 @@ class ReplaceableEvent:
                 "A replacement effect cannot be journaled twice on one event"
             )
         object.__setattr__(self, "applied_effects", applied)
+        if COUNTER_REPLACEMENT_GENERATED_FIELD in self.payload:
+            generated = self.payload[COUNTER_REPLACEMENT_GENERATED_FIELD]
+            if (
+                self.kind != "counter.place" or self.payload.get("effect_generated") is not False
+                or type(generated) is not bool or (generated and not applied)
+            ):
+                raise ReplacementEffectError("Counter replacement provenance is malformed")
         children = tuple(self.children)
         if any(not isinstance(child, ReplaceableEvent) for child in children):
             raise ReplacementEffectError(

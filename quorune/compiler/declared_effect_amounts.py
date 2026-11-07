@@ -18,6 +18,7 @@ from .live_battlefield_quantities import resolution_quantity
 from ..util import mana_cost_to_vector
 from ..entry_x_amount_model import ENTRY_X_AMOUNT_KIND,EntryXAmountSpec,ENTRY_X_AMOUNT_MECHANIC,ENTRY_X_AMOUNT_CAPABILITY
 from ..fixed_token_production import SEQUENTIAL_INVESTIGATE_OPERATION
+from ..library_search_model import counted_search_bound_dependencies, counted_search_mana_value_slot
 
 
 DECLARED_EFFECT_AMOUNT_MECHANIC = "declared-effect-amount"
@@ -44,7 +45,7 @@ _RESULT_FIELDS = {
     'create_token_then_counters': ('amount',),
     'return_random_graveyard_cards': ('count',),
     SEQUENTIAL_INVESTIGATE_OPERATION: ('count',),
-    "damage": ("amount",), "damage_fixed_set": ("amount",),
+    "damage": ("amount",), "damage_each_opponent": ("amount",), "damage_fixed_set": ("amount",),
     "draw": ("count",), "draw_each_player": ("count",),
     "mill": ("count",), "scry": ("count",),
     "life": ("delta",), "lose_life": ("amount",),
@@ -59,6 +60,8 @@ _RESULT_FIELDS = {
 def _result_slot(operation: str, path: tuple[str, ...]) -> bool:
     return path in tuple((field,) for field in _RESULT_FIELDS.get(operation, ())) or (
         operation == "create_token" and path in {("characteristics", "power"), ("characteristics", "toughness")}
+    ) or (
+        operation == "search" and counted_search_mana_value_slot(path)
     )
 
 
@@ -136,6 +139,8 @@ def declared_effect_amount_template(
             return {key:project(a[key], b[key], operation, (*path, key)) for key in a}
         if not _result_slot(operation, path):
             raise PublicQueryAmountError("X changed something other than a result slot")
+        if operation == "search" and quantity is not None:
+            raise PublicQueryAmountError("Counted search bounds require announced or sealed entry X")
         n, m = _signed_number(a), _signed_number(b)
         if n not in {-6, -4, -2, 2, 4, 6} or m != n * 3 // 2 or type(a) is not type(b):
             raise PublicQueryAmountError("X result did not preserve its bounded signed coefficient")
@@ -210,7 +215,7 @@ def _bargain_declaration_available(record, text):
 
 def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: str,
                                    compile_effect: Callable[..., Any]) -> Callable[..., Any]:
-    """Select X only from an ordinary mana cost or one represented price."""
+    """Compile the effect with the declarations available during casting."""
     _, symbols = mana_cost_to_vector(record.mana_cost)
     available = bool(is_spell and not record.faces and 'X' in symbols
         and all(symbol=='X' or re.fullmatch(r'[WUBRG]/[WUBRG]',symbol) for symbol in symbols))
@@ -221,9 +226,19 @@ def declared_spell_effect_compiler(record: Any, *, is_spell: bool, oracle_text: 
         forbid_public_x=available,
         kicked_self_replacement_available=bool(is_spell and not record.faces),
         bargain_available=bool(is_spell and _bargain_declaration_available(record, oracle_text)))
-    from .spell_self_exile import spell_self_exile_effect_compiler
-    return spell_self_exile_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
+    from .spell_self_exile import terminal_spell_move_effect_compiler
+    terminal = terminal_spell_move_effect_compiler(selected,source_name=record.name,oracle_text=oracle_text,
         ordinary_spell=bool(is_spell and not record.faces))
+    if not is_spell or " damage divided as you choose among " not in oracle_text.casefold():
+        return terminal
+
+    from .announced_damage_templates import fixed_announced_damage_template
+
+    def compile_spell_effect(text: str, **context):
+        allocation = fixed_announced_damage_template(text, card_name=context.get("card_name") or record.name)
+        return allocation or terminal(text, **context)
+
+    return compile_spell_effect
 
 
 def scope_declared_card_faces(faces: Sequence[Any]) -> tuple[Any, ...]:
@@ -263,6 +278,13 @@ def declared_amount_shape_context(
     effects: Sequence[Mapping[str, Any]], mechanics: set[str],
 ) -> tuple[tuple[Mapping[str, Any], ...], set[str]] | None:
     """Validate every symbolic path before asking existing fixed shape owners."""
+    from .public_query_effect_amounts import (
+        PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC,
+        contains_public_query_effect_amount,
+        public_query_amount_shape_context,
+    )
+    from ..rules.closed_effect_program_shapes import CLOSED_EFFECT_PROGRAM_MECHANIC
+
     count = 0
     def project(value: Any, operation: str, path: tuple[str,...]) -> Any:
         nonlocal count
@@ -289,8 +311,25 @@ def declared_amount_shape_context(
                 raise PublicQueryAmountError("Nested effect programs require their own declaration scopes")
             return deepcopy(value)
         return value
+    def project_instruction(effect: Mapping[str, Any]) -> Mapping[str, Any]:
+        if effect.get("op") == "search":
+            counted_search_bound_dependencies(effect)
+        if effect.get("op") == "offer_optional_effect":
+            nested = effect.get("effects")
+            if (isinstance(nested, (list, tuple)) and len(nested) == 1
+                    and isinstance(nested[0], Mapping) and nested[0].get("op") == "search"):
+                return {**effect, "effects": [project_instruction(nested[0])]}
+        if (contains_public_query_effect_amount(effect) and not contains_declared_effect_amount(effect)):
+            if not {CLOSED_EFFECT_PROGRAM_MECHANIC, PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC} <= mechanics:
+                raise PublicQueryAmountError("Independent amounts require a closed ordered instruction")
+            independent = public_query_amount_shape_context((effect,), {PUBLIC_QUERY_EFFECT_AMOUNT_MECHANIC})
+            if independent is None:
+                raise PublicQueryAmountError("Independent instruction amount is malformed")
+            return independent[0][0]
+        return project(effect, str(effect.get("op") or ""), ())
+
     try:
-        fixed = tuple(project(effect,str(effect.get("op") or ""),()) for effect in effects)
-    except PublicQueryAmountError:
+        fixed = tuple(project_instruction(effect) for effect in effects)
+    except (ValueError, TypeError, KeyError):
         return None
     return (fixed, mechanics - {DECLARED_EFFECT_AMOUNT_MECHANIC,"public-query-effect-amount",ENTRY_X_AMOUNT_MECHANIC}) if count else None

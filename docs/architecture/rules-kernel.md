@@ -603,6 +603,17 @@ Historical source-only designation events retain their original payload and
 discovery scope alongside the separate normalized stream, so retained programs
 keep their saved subscription meaning and replay behavior.
 
+`dungeon_catalog.py` pins the four traditional dungeon graphs to their printed
+Oracle source hashes. Room labels are display data and numbered edges define
+the legal destinations. `dungeon_progress.py` prepares immutable Venture
+offers for one owner and one current journey. The offer codec reconstructs the
+legal destinations from the graph and checks the retained choices against it.
+
+Last-room completion uses the outstanding room abilities of the current
+incarnation. A venture from the last room completes that dungeon before the
+next entry choice. Entry allocates a new incarnation even when the player
+chooses the same dungeon again.
+
 Fixed activated mana abilities may add their selected output and then apply one
 typed source result. Damage is dealt to the activation controller through the
 canonical damage transaction, so prevention changes damage while retaining
@@ -750,6 +761,14 @@ complete graph, and a blocker assigns its power once across its recipients.
 Validated pairs sort by attacker and blocker identity before commit. Client
 mapping order therefore cannot change the authoritative blocker list or saved
 command replay.
+
+Printed removal selects a legal attacking or blocking creature through the
+ordinary target owner, or retains the original attacker from a becoming-blocked
+occurrence. Both routes commit through the combat relationship owner. Removing
+the last blocker leaves its attacker blocked. When the instruction also untaps,
+the normal untap owner applies the printed order and any stun replacement.
+Attacking creatures remain available to this effect until they leave combat,
+including during end of combat after damage.
 
 Ordinary Banding declares optional disjoint groups of current attacking
 incarnations through `rules/banding.py`. Every group attacks the same player,
@@ -1078,6 +1097,12 @@ restrictions from current effective static abilities through one read-only
 query, so ability removal affects static restrictions without erasing an
 independent rule that already resolved.
 
+Detain uses one locked declaration-rule entry for attack, block, and activation
+prohibitions. The combat solver, activation proposal, and automatic mana source
+discovery read the same public incarnation and controller-relative deadline.
+The turn scheduler expires the entry at the resolving controller's next turn,
+including the eligible slot for a controller who leaves the game.
+
 All-able-blocker requirements use the same maximum-satisfaction solver as other
 combat requirements. An attached static requirement stays on its Aura or
 Equipment and follows the current attachment. Removing the recipient's
@@ -1143,12 +1168,15 @@ does not perform turn-based actions: in particular, draw-step entry records an
 explicit skipped draw instead of submitting an inactive affected player to the
 strict draw and replacement owners.
 
-The turn owner expires goad at the first eligible turn the departed goader
-would have taken. Queued extra turns retain their relative order for this
-purpose, then ordinary rotation crosses the departed physical seats. These
-expiry boundaries stay internal to the scheduler. Public queues expose turns
-that surviving players can take. The departure marker in Game Record v3 pins
-this behavior so earlier records can replay their original schedule.
+Fixed characteristic results and ordinary declaration prohibitions can expire
+at the resolving controller's next eligible turn. The continuous-effect
+journal records that controller when the result resolves. The turn owner
+uses extra-turn order, physical seat rotation, and whole-turn skips to locate
+the first eligible boundary for both journaled effects and goad. After
+departure, the expiry slots stay internal to the scheduler and the public
+queue shows turns surviving players can take. The departure marker in Game
+Record v3 pins goad expiry at the turn the departed goader would have taken.
+Earlier records retain their original schedule and journal representation.
 
 `CommanderEngine.apnap_order` rotates the physical seat order from the retained
 turn anchor before omitting departed players. During a departed player's
@@ -1383,6 +1411,28 @@ controlled creature can pay without being sacrificed. The paid object is not
 a target, and later state-based death or illegal targets never refund it.
 Other counter kinds, amounts, selectable payment groups and granted forms
 remain residual until their own contracts are represented.
+
+Fixed Blight activation prices choose one currently controlled creature that
+can receive the full fixed number of -1/-1 counters. This is a cost selection
+with no target. The source may pay both its tap and Blight costs, and low
+toughness does not disqualify a payer. Mana affordability and payment keep the
+selected creature available for Blight. The counter placement owner distinguishes
+an absolute prohibition from an applicable replacement of a legal cost.
+Competing replacements suspend the ordinary activation transaction with a
+private, incarnation-bound choice before any payment or stack mutation commits.
+
+A casting price of fixed Blight or fixed generic mana uses the same binary
+additional cost group as other mandatory alternatives. Each branch carries
+the printed mana price and its own legal payment options. A Blight casting
+continuation retains the announced branch, amount, and payer incarnation
+through prior mana replacements and any later counter replacement choice.
+
+Assist locks the casting proposal before inviting one authenticated helper.
+The helper chooses mana activations first, then the caster chooses their own.
+After both windows the helper selects a generic contribution and the caster
+pays the remainder. Stored mana plans replay in order through the same
+casting transaction, so an unpayable remainder commits neither the spell nor
+partial resources. Mana payment history retains the actual payer of each part.
 
 Version-2 source-counter costs represent exactly one or two counters of any
 present kinds. The source-scoped form lists every legal distribution, including
@@ -1689,6 +1739,14 @@ The legend rule groups current names of present legendary permanents under
 one controller. Nameless objects never share a name; display labels do not
 supply a rules name. Phased-out permanents do not participate in the group.
 
+Current legend choices use the ordinary scan to find possible conflicts.
+When one exists, the rules owner reads current abilities and public permanent
+characteristics within the same read frame. Typed global and controlled
+exemptions remove the affected objects before APNAP choice collection. An
+exempt token cannot serve as the keep choice for two matching nontoken legends.
+Removing the last applicable exemption restores the conflict at the next
+state-based check.
+
 Characteristic reads share completed results within one pure synchronous read
 frame. Host, object identity, layer boundary and face/applicability flags
 separate its keys. Returned data is copied, prospective identities stay alive
@@ -1885,6 +1943,13 @@ declaration events: multiple blockers do not multiply its becomes-blocked
 trigger. All defenders finish declaring before APNAP placement. The event pair
 does not substitute the distinct per-blocker occurrence, and one source's block
 cannot satisfy another source's subscription.
+
+The turn owner checks trusted static step-skip components before entering
+untap, upkeep, or draw. It reads current source abilities, controller scope,
+and the empty-hand condition where printed. A skip advances directly to the
+next actual step, carrying waiting triggers to that step's normal placement
+boundary. Ordinary draw replacements and restrictions on untapping individual
+objects keep their own timing.
 
 `turn_history.py` retains current-turn events plus one bounded per-player
 spell-count summary for the immediately previous turn. `day_night.py` consumes

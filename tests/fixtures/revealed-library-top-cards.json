@@ -1,0 +1,392 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Dredge",
+        "Mill"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Life from the Loam",
+      "oracle_id": "ac8fba34-512c-4f24-999a-ab72f1ce4acb",
+      "oracle_text": "Return up to three target land cards from your graveyard to your hand.\nDredge 3 (If you would draw a card, you may mill three cards instead. If you do, return this card from your graveyard to your hand.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Parley"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{G}{W}",
+      "name": "Phabine, Boss's Confidant",
+      "oracle_id": "70697ad7-d4bb-4b63-b895-bbb69e9d04e1",
+      "oracle_text": "Creature tokens you control have haste.\nParley — At the beginning of combat on your turn, each player reveals the top card of their library. For each land card revealed this way, you create a 1/1 green and white Citizen creature token. Then creatures you control get +1/+1 until end of turn for each nonland card revealed this way. Then each player draws a card.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-04-29",
+      "toughness": "6",
+      "type_line": "Legendary Creature — Cat Advisor"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Parley"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}",
+      "name": "Rousing of Souls",
+      "oracle_id": "e5e42293-ce01-4872-be2a-a79ff4312992",
+      "oracle_text": "Parley — Each player reveals the top card of their library. For each nonland card revealed this way, you create a 1/1 white Spirit creature token with flying. Then each player draws a card.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Parley"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{G}",
+      "name": "Selvala's Enforcer",
+      "oracle_id": "8ee2dd43-cda2-4cb7-9e4b-1946d5b7467e",
+      "oracle_text": "Parley — When this creature enters, each player reveals the top card of their library. For each nonland card revealed this way, put a +1/+1 counter on this creature. Then each player draws a card.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": "2",
+      "type_line": "Creature — Elf Warrior"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Parley"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{W}",
+      "name": "Selvala, Explorer Returned",
+      "oracle_id": "b628a39b-c923-473d-900a-1617f47ecb76",
+      "oracle_text": "Parley — {T}: Each player reveals the top card of their library. For each nonland card revealed this way, add {G} and you gain 1 life. Then each player draws a card.",
+      "power": "2",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2024-02-09",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Elf Scout"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Trample",
+        "Parley"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{W}",
+      "name": "Woodvine Elemental",
+      "oracle_id": "b265ac18-3923-46ba-b7b6-4190855815e1",
+      "oracle_text": "Trample\nParley — Whenever this creature attacks, each player reveals the top card of their library. For each nonland card revealed this way, attacking creatures you control get +1/+1 until end of turn. Then each player draws a card.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2014-06-06",
+      "toughness": "4",
+      "type_line": "Creature — Elemental"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Except in some very rare cases, the card each player draws will be the card revealed from the top of their library.",
+      "oracle_id": "8ee2dd43-cda2-4cb7-9e4b-1946d5b7467e",
+      "published_at": "2014-05-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Selvala’s Enforcer leaves the battlefield before its ability resolves, the top card of each library will still be revealed and drawn, although no +1/+1 counters will be placed.",
+      "oracle_id": "8ee2dd43-cda2-4cb7-9e4b-1946d5b7467e",
+      "published_at": "2014-05-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Dredge can replace any card draw, not only the one during your draw step.",
+      "oracle_id": "ac8fba34-512c-4f24-999a-ab72f1ce4acb",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect puts a card into your hand without specifically using the word \"draw,\" you're not drawing a card. Dredge can't replace this event.",
+      "oracle_id": "ac8fba34-512c-4f24-999a-ab72f1ce4acb",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you're drawing multiple cards, each draw is performed one at a time. For example, if you're instructed to draw two cards and you replace the first draw with a dredge ability, another card with a dredge ability (including one that was milled by the first dredge ability) may be used to replace the second draw.",
+      "oracle_id": "ac8fba34-512c-4f24-999a-ab72f1ce4acb",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've announced that you're applying a card's dredge ability to replace a draw, players can't take any actions until you've put that card into your hand and milled cards.",
+      "oracle_id": "ac8fba34-512c-4f24-999a-ab72f1ce4acb",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "One card draw can't be replaced by multiple dredge abilities.",
+      "oracle_id": "ac8fba34-512c-4f24-999a-ab72f1ce4acb",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't attempt to use a dredge ability if you don't have enough cards in your library.",
+      "oracle_id": "ac8fba34-512c-4f24-999a-ab72f1ce4acb",
+      "published_at": "2024-01-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Except in some very rare cases, the card each player draws will be the card revealed from the top of their library.",
+      "oracle_id": "b265ac18-3923-46ba-b7b6-4190855815e1",
+      "published_at": "2014-05-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Except in some very rare cases, the card each player draws will be the card revealed from the top of their library.",
+      "oracle_id": "b628a39b-c923-473d-900a-1617f47ecb76",
+      "published_at": "2014-05-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you activate Selvala's ability while casting a spell, and you discover you can't produce enough mana to pay that spell's costs, the spell is reversed. The spell returns to whatever zone you were casting it from. You may reverse other mana abilities you activated while casting the spell, but Selvala's ability can't be reversed. You'll still have whatever mana that ability produced, and each player will have drawn a card.",
+      "oracle_id": "b628a39b-c923-473d-900a-1617f47ecb76",
+      "published_at": "2014-05-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Selvala's parley ability is a mana ability. It doesn't use the stack and can't be responded to.",
+      "oracle_id": "b628a39b-c923-473d-900a-1617f47ecb76",
+      "published_at": "2014-05-29",
+      "source": "wotc"
+    },
+    {
+      "comment": "Except in some very rare cases, the card each player draws will be the card revealed from the top of their library.",
+      "oracle_id": "e5e42293-ce01-4872-be2a-a79ff4312992",
+      "published_at": "2014-05-29",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall Oracle and rulings for public top-card reveal effects and a draw replacement control."
+}

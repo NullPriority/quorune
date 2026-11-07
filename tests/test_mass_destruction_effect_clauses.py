@@ -257,7 +257,7 @@ class MassDestructionCompilerTests(unittest.TestCase):
             "Destroy all non-Human creatures.",
             "Destroy all creatures that attacked this turn.",
             "Destroy all creatures with counters on them.",
-            "Destroy all creatures. Draw a card for each creature destroyed this way.",
+            "Destroy all creatures. Draw a card for each tapped creature destroyed this way.",
             "Choose a creature type. Destroy all creatures that aren't of that type.",
             "At the beginning of the next end step, destroy all creatures.",
             "Destroy X target creatures.",

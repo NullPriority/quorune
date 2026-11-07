@@ -1,0 +1,508 @@
+{
+  "cards": [
+    {
+      "cmc": 10.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Prowess"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "restricted",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{8}{U}{R}",
+      "name": "Eris, Roar of the Storm",
+      "oracle_id": "918991a6-7321-419d-8f3d-150fe32d02d2",
+      "oracle_text": "This spell costs {2} less to cast for each different mana value among instant and sorcery cards in your graveyard.\nFlying, prowess\nWhenever you cast your second spell each turn, create a 4/4 red Dragon Elemental creature token with flying and prowess.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-04-19",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Elemental Warlock"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}{U}",
+      "name": "Golden Ratio",
+      "oracle_id": "724700ad-1e4e-4cbc-af7f-0b3b87ed4bc8",
+      "oracle_text": "Draw a card for each different power among creatures you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-04-23",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{U}",
+      "name": "Lunar Insight",
+      "oracle_id": "56b4a2f7-2d35-4d05-8d26-4f9f16c5f9f5",
+      "oracle_text": "Draw a card for each different mana value among nonland permanents you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-11-15",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Mouth",
+          "oracle_text": "Create a 3/3 green Hippo creature token.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{3}{G}",
+          "name": "Feed",
+          "oracle_text": "Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDraw a card for each creature you control with power 3 or greater.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        }
+      ],
+      "cmc": 7.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [
+        "Aftermath"
+      ],
+      "layout": "split",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G} // {3}{G}",
+      "name": "Mouth // Feed",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "oracle_text": "Mouth: Create a 3/3 green Hippo creature token.\n//\nFeed: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nDraw a card for each creature you control with power 3 or greater.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Sorcery // Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Vigilance"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{W}",
+      "name": "Selvala, Eager Trailblazer",
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "oracle_text": "Vigilance\nWhenever you cast a creature spell, create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"\n{T}: Choose a color. Add one mana of that color for each different power among creatures you control.",
+      "power": "4",
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2024-04-19",
+      "toughness": "5",
+      "type_line": "Legendary Creature — Elf Scout"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{U}{U}",
+      "name": "Sudden Insight",
+      "oracle_id": "8e0b605f-2095-4189-8c71-9d1ac93db42e",
+      "oracle_text": "Draw a card for each different mana value among nonland cards in your graveyard.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "If a permanent you control has {X} in its mana cost, X is 0 for the purpose of determining its mana value.",
+      "oracle_id": "56b4a2f7-2d35-4d05-8d26-4f9f16c5f9f5",
+      "published_at": "2024-11-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creatures have different power if their powers are not equal. For example, if you have a creature with 2 power, two creatures with 1 power, and a creature with -1 power, you will draw three cards as Golden Ratio resolves.",
+      "oracle_id": "724700ad-1e4e-4cbc-af7f-0b3b87ed4bc8",
+      "published_at": "2021-04-16",
+      "source": "wotc"
+    },
+    {
+      "comment": "Although land cards aren't considered, nonland cards with mana value 0 are. For example if the cards in your graveyard are an artifact card with mana cost {X} and a sorcery card with mana cost {2}{U}, you'll draw two cards.",
+      "oracle_id": "8e0b605f-2095-4189-8c71-9d1ac93db42e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a card in your graveyard has {X} in its mana cost, X is 0 when determining that card's mana value.",
+      "oracle_id": "8e0b605f-2095-4189-8c71-9d1ac93db42e",
+      "published_at": "2021-07-23",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the mana cost of a card in your graveyard includes {X}, X is 0 for the purpose of determining its mana value.",
+      "oracle_id": "918991a6-7321-419d-8f3d-150fe32d02d2",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Spells that were cast before Eris entered the battlefield count. If Eris was the first spell you cast this turn, the next spell you cast this turn is your second spell.",
+      "oracle_id": "918991a6-7321-419d-8f3d-150fe32d02d2",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a double-faced card in your graveyard is always the mana value of the front face.",
+      "oracle_id": "918991a6-7321-419d-8f3d-150fe32d02d2",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a split card in the graveyard is the total mana value of both halves of that card. It does not have two mana values.",
+      "oracle_id": "918991a6-7321-419d-8f3d-150fe32d02d2",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Selvala’s last ability doesn’t care what color or colors the creatures you control are. It cares only about the power of those creatures.",
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Selvala’s last ability is a mana ability. It doesn’t use the stack and can’t be responded to.",
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "Selvala’s last ability looks at the creatures you control as it resolves to determine how much mana of the chosen color to add. For example, if you control Selvala (a 4/5 creature), a 1/1 creature, and a 2/1 creature, there are three different powers among creatures you control.",
+      "oracle_id": "95b20721-1af9-4f3f-a39b-7cd1d4ce0b20",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell with aftermath cast from a graveyard will always be exiled afterward, whether it resolves, it's countered, or it leaves the stack in some other way.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "All split cards have two card faces on a single card, and you put a split card onto the stack with only the half you're casting. The characteristics of the half of the card you didn't cast are ignored while the spell is on the stack. For example, if an effect prevents you from casting green spells, you can cast Destined of Destined // Lead, but not Lead.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card has two names. If an effect instructs you to choose a card name, you may choose one, but not both.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Each split card is a single card. For example, if you discard one, you've discarded one card, not two. If an effect counts the number of instant and sorcery cards in your graveyard, Destined // Lead counts once, not twice.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from a graveyard, you may cast either half. If you cast the half that has aftermath, you'll exile the card if it would leave the stack.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If another effect allows you to cast a split card with aftermath from any zone other than a graveyard, you can't cast the half with aftermath.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you cast the first half of a split card with aftermath during your turn, you'll have priority immediately after it resolves. You can cast the half with aftermath from your graveyard before any player can take any other action if it's legal for you to do so.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Split cards with aftermath have a new frame treatment—the half you can cast from your hand is oriented the same as other cards you'd cast from your hand, while the half you can cast from your graveyard is a traditional split card half. This frame treatment is for your convenience and has no rules significance.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "While not on the stack, the characteristics of a split card are the combination of its two halves. For example, Destined // Lead is a green and black card, it is both an instant card and a sorcery card, and its mana value is 6. This means that if an effect allows you to cast a card with mana value 2 from your hand, you can't cast Destined. This is a change from the previous rules for split cards.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once you've started to cast a spell with aftermath from your graveyard, the card is immediately moved to the stack. Opponents can't try to stop the ability by exiling the card with an effect such as that of Crook of Condemnation.",
+      "oracle_id": "980f6341-3c13-4405-8550-b838b228f788",
+      "published_at": "2017-07-14",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned distinct characteristic value originals and response controls"
+}
