@@ -26,6 +26,11 @@ from .damage_death_exile_model import DAMAGE_DEATH_EXILE_KIND, ResolvedDamageDea
 
 
 RESOLUTION_DECLARATION_RULE_EFFECT_KIND = "resolution_declaration_rule"
+ATTACK_BLOCK_PROHIBITION = DeclarationRestrictionTemplate(
+    template_id="intrinsic-attack-block-prohibition-v1",
+    declarations=("attack", "block"),
+    scope="self",
+)
 
 
 def declaration_group_query_is_closed(query: ObjectQuerySpec, *, resolved: bool = False) -> bool:
@@ -65,6 +70,7 @@ class ResolutionDeclarationRuleEffect:
     )
     live_query: ObjectQuerySpec | None = None
     expires_on_next_turn_of: str | None = None
+    forbid_activations: bool = False
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -109,6 +115,12 @@ class ResolutionDeclarationRuleEffect:
                 "Resolution-created declaration rule duration is unsupported"
             )
         validate_turn_expiry(duration, self.expires_on_next_turn_of)
+        if type(self.forbid_activations) is not bool or self.forbid_activations and (
+            self.restriction != ATTACK_BLOCK_PROHIBITION
+            or self.live_query is not None
+            or duration is not ContinuousEffectDuration.UNTIL_NEXT_TURN
+        ):
+            raise ContinuousEffectError("Detain requires a locked next-turn attack and block prohibition")
         if requirement and self.expires_on_next_turn_of is not None:
             raise ContinuousEffectError("Resolved declaration requirements expire at end of turn")
         object.__setattr__(self, "duration", duration)
@@ -156,6 +168,8 @@ class ResolutionDeclarationRuleEffect:
             value.update(schema_version=2, live_query=self.live_query.to_dict())
         if self.expires_on_next_turn_of is not None:
             value["expires_on_next_turn_of"] = self.expires_on_next_turn_of
+        if self.forbid_activations:
+            value.update(schema_version=4, forbid_activations=True)
         return value
 
     @classmethod
@@ -178,7 +192,8 @@ class ResolutionDeclarationRuleEffect:
         fields = set(value) - {"expires_on_next_turn_of"}
         live = fields == expected | {"schema_version", "live_query"}
         requirement = fields == (expected - {'restriction'}) | {'schema_version', 'requirement'}
-        if fields != expected and not live and not requirement:
+        detain = fields == expected | {"schema_version", "forbid_activations"}
+        if fields != expected and not live and not requirement and not detain:
             raise ContinuousEffectError(
                 "Declaration-rule effect fields are missing or unknown"
             )
@@ -190,6 +205,9 @@ class ResolutionDeclarationRuleEffect:
             raise ContinuousEffectError("Live declaration-rule schema version and query are malformed")
         if requirement and (type(value['schema_version']) is not int or value['schema_version'] != 3):
             raise ContinuousEffectError('Resolved requirement schema version is malformed')
+        if detain and (type(value['schema_version']) is not int or value['schema_version'] != 4
+                       or value['forbid_activations'] is not True):
+            raise ContinuousEffectError('Detain declaration-rule schema version and scope are malformed')
         payload = value['requirement'] if requirement else value['restriction']
         if not isinstance(payload, Mapping) or not isinstance(
             value["locked_objects"], list
@@ -210,6 +228,7 @@ class ResolutionDeclarationRuleEffect:
                 ),
                 live_query=ObjectQuerySpec.from_dict(value["live_query"]) if live else None,
                 expires_on_next_turn_of=turn_expiry,
+                forbid_activations=detain,
             )
         except (TypeError, ValueError) as exc:
             if isinstance(exc, ContinuousEffectError):
@@ -246,6 +265,7 @@ def continuous_journal_effect_from_dict(
 
 
 __all__ = [
+    "ATTACK_BLOCK_PROHIBITION",
     "ContinuousJournalEffect",
     "RESOLUTION_DECLARATION_RULE_EFFECT_KIND",
     "ResolutionDeclarationRuleEffect",

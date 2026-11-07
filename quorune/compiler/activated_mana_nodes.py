@@ -360,6 +360,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "explore",
     "connive",
     "goad",
+    "detain_permanents",
     "grant_keyword_until_end_of_turn",
     "grant_declaration_restriction_until_end_of_turn",
     "offer_draw",

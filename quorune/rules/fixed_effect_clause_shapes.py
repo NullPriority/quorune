@@ -43,6 +43,7 @@ from .incubate_capability_shapes import incubate_node_capabilities
 from .endure_shapes import fixed_endure_node_capabilities
 from .blight_shapes import fixed_blight_node_capabilities
 from .discover_capability_shapes import discover_node_capabilities
+from .detain import detain_node_capabilities
 from .variable_library_selection_shapes import variable_library_selection_node_capabilities
 from .reveal_until_library_selection_shapes import reveal_until_library_selection_node_capabilities
 from .linked_exile_return_shapes import linked_exile_return_node_capabilities
@@ -143,6 +144,7 @@ _COMPONENT_RESOLVERS = (
     fixed_endure_node_capabilities,
     fixed_blight_node_capabilities,
     discover_node_capabilities,
+    detain_node_capabilities,
     variable_library_selection_node_capabilities,
     reveal_until_library_selection_node_capabilities,
     fixed_resolution_mana_choice_capabilities,

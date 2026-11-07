@@ -1197,6 +1197,64 @@ class GroupDeclarationCompilerTests(unittest.TestCase):
                 effects=node.effects, target_schema={**node.target_schema, **changed}, mechanic_ids=node.mechanics))
 
 
+class DetainCompilerTests(unittest.TestCase):
+    def test_detain_grammar_and_authority(self):
+        import re
+        from test_bound_effect_programs import record
+        from quorune.compiler import detain_templates
+        from quorune.rules.capabilities import CapabilityRegistry
+        from quorune.rules.detain import DETAIN_CAPABILITY, DETAIN_OPERATION
+
+        texts = (
+            "Detain target nonland permanent an opponent controls.",
+            "Detain up to two target creatures your opponents control.",
+            "Detain each nonland permanent your opponents control with mana value 4 or less.",
+        )
+        registry = load_default_capability_registry()
+        for text in texts:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(record(text), capability_registry=registry)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual(DETAIN_OPERATION, node.effects[0]["op"])
+                self.assertIn(DETAIN_CAPABILITY, node.capability_dependencies)
+        targetless = compile_oracle_card(record(texts[2]), capability_registry=registry).faces[0].nodes[0]
+        self.assertIsNone(targetless.target_schema)
+        self.assertEqual(4, targetless.effects[0]["maximum_mana_value"])
+        for text in ("Detain target creature you control.", "Detain up to three target creatures your opponents control.",
+                     "Detain each nonland permanent your opponents control with mana value X or less."):
+            self.assertNotEqual("exact", compile_oracle_card(record(text), capability_registry=registry).status)
+        with patch.object(detain_templates, "_DETAIN_TARGET", re.compile(r"(?!)")):
+            self.assertNotEqual("exact", compile_oracle_card(record(texts[0]), capability_registry=registry).status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        row = next(value for value in raw["capabilities"] if value["id"] == DETAIN_CAPABILITY)
+        row.update(status="blocked", blockers=["Withdrawn for Detain authority test"])
+        self.assertNotEqual("exact", compile_oracle_card(record(texts[0]), capability_registry=CapabilityRegistry(raw)).status)
+
+    def test_detain_journal_rejects_mixed_scope_and_preserves_old_wire(self):
+        from quorune.continuous_effect_model import ContinuousEffectDuration, ContinuousObjectIdentity
+        from quorune.declaration_rule_effects import ATTACK_BLOCK_PROHIBITION
+
+        effect = ResolutionDeclarationRuleEffect(
+            "DR1", "S1", 1, ATTACK_BLOCK_PROHIBITION,
+            (ContinuousObjectIdentity("card", "card@1"),),
+            duration=ContinuousEffectDuration.UNTIL_NEXT_TURN, expires_on_next_turn_of="A",
+            forbid_activations=True,
+        )
+        wire = effect.to_dict()
+        self.assertEqual((4, True), (wire["schema_version"], wire["forbid_activations"]))
+        self.assertEqual(effect, ResolutionDeclarationRuleEffect.from_dict(wire))
+        older = replace(effect, forbid_activations=False).to_dict()
+        self.assertNotIn("forbid_activations", older)
+        self.assertNotIn("schema_version", older)
+        self.assertEqual(older, ResolutionDeclarationRuleEffect.from_dict(older).to_dict())
+        for changed in ({**wire, "forbid_activations": False}, {**wire, "schema_version": 2},
+                        {**wire, "restriction": temporary_declaration_restriction("cant_attack").to_dict()},
+                        {**wire, "expires_on_next_turn_of": None}):
+            with self.assertRaises(ValueError):
+                ResolutionDeclarationRuleEffect.from_dict(changed)
+
+
 class GroupDeclarationRuntimeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -1250,8 +1308,116 @@ class GroupDeclarationRuntimeTests(unittest.TestCase):
             self.db, self.db.lookup(name), semantic_registry=SemanticRegistry(),
             capability_registry=self.registry, capability_profile="commander_review",
         )
-        self.assertTrue(bind_card_program_runtime(program, capability_registry=self.registry,
-            profile="commander_review")["strict_capability_ready"])
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding["blockers"])
+
+    def test_original_lyev_detains_mana_and_activations_until_departed_deadline(self):
+        session = self.session(7013501)
+        engine = session.engine
+        session.state.config.semantic_policy = "trusted_only"
+        source = self.add(engine, "Lyev Skyknight", zone="hand", ref="detain-knight")
+        detained = self.add(engine, "Mind Stone", seat="B", ref="detained-stone")
+        twin = self.add(engine, "Mind Stone", seat="B", ref="free-stone")
+        scour = self.add(engine, "Scour from Existence", seat="B", zone="hand", ref="detain-auto-payment")
+        for card in (source, detained, scour):
+            self.assert_whole_admission(card.printed_name)
+        session.state.players["B"].mana_pool["C"] = 5
+        self.assertTrue(engine._cost_is_affordable("B", {"GENERIC": 7}))
+        engine.turn_steps.schedule_extra_turn("A")
+        session.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+        action = self.ready(session, source, {"C": 1, "W": 1, "U": 1})
+        self.checkpoint(session)
+        accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        accepted = session.act("pilot:A", {"action_id": "choose", "targets": [detained.ref]})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIsNone(self.resolve(session))
+        rule, = [effect for effect in session.state.continuous_effects if getattr(effect, "forbid_activations", False)]
+        self.assertEqual(("A", detained.logical_object_id), (rule.expires_on_next_turn_of, rule.locked_objects[0].logical_object_id))
+        self.priority_to(session, "B")
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        healthy = {row["ability"]: row for row in actions if row["id"].startswith(f"activate:{twin.ref}:")}
+        self.assertEqual({"ab1", "ab2"}, set(healthy))
+        self.assertFalse(any(row["id"].startswith(f"activate:{detained.ref}:") for row in actions))
+        self.assertFalse(any(row.get("card") == scour.ref for row in actions))
+        self.assertFalse(engine._cost_is_affordable("B", {"GENERIC": 7}))
+        before = authoritative_state_hash(session.state)
+        for ability in healthy:
+            denied = session.act("pilot:B", {"action_id": f"activate:{detained.ref}:{ability}", "pay": "auto"})
+            self.assertFalse(denied.ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+        accepted = session.act("pilot:B", {"action_id": healthy["ab1"]["id"], "pay": "auto"})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.priority_to(session, "A")
+        accepted = session.act("pilot:A", {"action_id": "concede", "choices": {"confirm_concede": True}})
+        self.assertTrue(accepted.ok, accepted.summary)
+        self.assertIn(rule, session.state.continuous_effects)
+        turn = session.state.turn_sequence
+        for _ in range(60):
+            if session.state.turn_sequence > turn and session.state.active_player == "B":
+                break
+            kind = session.state.pending_decision.kind
+            if kind == "combat.attackers":
+                command = {"action_id": "attack", "attackers": {}}
+            elif kind == "combat.blockers":
+                command = {"action_id": "block", "blocks": {}}
+            else:
+                self.assertEqual("priority", kind)
+                command = {"action_id": "pass"}
+            accepted = session.act(session.pending_principals()[0], command)
+            self.assertTrue(accepted.ok, accepted.summary)
+        else:
+            self.fail("The surviving turn did not open")
+        self.assertNotIn(rule, session.state.continuous_effects)
+        self.priority_to(session, "B")
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        self.assertTrue(any(row["id"].startswith(f"activate:{detained.ref}:ab1") for row in actions))
+        self.replay(session, load=True)
+
+    def test_original_detain_groups_lock_opponents_and_share_combat_legality(self):
+        cases = (("Lavinia of the Tenth", {"C": 3, "W": 1, "U": 1}),
+                 ("Azorius Justiciar", {"C": 2, "W": 2}))
+        for index, (name, mana) in enumerate(cases):
+            with self.subTest(name=name):
+                session = self.session(7013502 + index)
+                engine = session.engine
+                session.state.config.semantic_policy = "trusted_only"
+                source = self.add(engine, name, zone="hand", ref="detain-group-source")
+                attacker = self.add(engine, "Generic Bound Body", ref="detain-unrestricted-attacker")
+                attacker.acquired_control_turn_count = -1
+                first = self.add(engine, "Generic Bound Body", seat="B", ref="detain-first")
+                second = self.add(engine, "Generic Bound Body", seat="C", ref="detain-second")
+                self.add(engine, "Generic Bound Plains", seat="B", ref="detain-excluded-land")
+                self.add(engine, "Gilded Lotus", seat="B", ref="detain-excluded-ceiling")
+                late = self.add(engine, "Generic Group Flash Ground", seat="B", zone="hand", ref="detain-late-entry")
+                session.state.players["B"].mana_pool["U"] = 2
+                session.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+                self.assert_whole_admission(name)
+                action = self.ready(session, source, mana)
+                self.checkpoint(session)
+                accepted = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                pending = self.resolve(session)
+                if name == "Azorius Justiciar":
+                    self.assertEqual("semantic.target", pending.kind)
+                    before = authoritative_state_hash(session.state)
+                    self.assertFalse(session.act("pilot:A", {"action_id": "choose", "targets": [first.ref, first.ref]}).ok)
+                    self.assertEqual(before, authoritative_state_hash(session.state))
+                    accepted = session.act("pilot:A", {"action_id": "choose", "targets": [first.ref, second.ref]})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertIsNone(self.resolve(session))
+                else:
+                    self.assertIsNone(pending)
+                rule, = [effect for effect in session.state.continuous_effects if getattr(effect, "forbid_activations", False)]
+                self.assertCountEqual([first.logical_object_id, second.logical_object_id],
+                                      [identity.logical_object_id for identity in rule.locked_objects])
+                self.priority_to(session, "B")
+                action = self.offered(session, "B", late)
+                accepted = session.act("pilot:B", {"action_id": action["id"], "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertIsNone(self.resolve(session))
+                self.attack_and_check_blocks(session, [attacker], [first], [late])
 
     def attack_and_check_blocks(self, session, attackers, forbidden, allowed):
         self.advance_to(session, "combat.attackers")

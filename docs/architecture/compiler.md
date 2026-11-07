@@ -27,6 +27,12 @@ grammar. The timing field carries a separate capability requirement. Existing
 operation identifiers continue to identify the same result owners across
 historical records.
 
+The closed Detain production lowers an opposing creature or nonland permanent,
+up to two matching targets, and a fixed mana-bounded set of opposing nonland
+permanents. Targeted forms use the ordinary announcement and revalidation
+owners. The untargeted form reads effective public characteristics at
+resolution and locks the matching incarnations to one journal entry.
+
 A closed fixed token definition may identify one target player or opponent as
 the creator. The ordinary public player target schema chooses and revalidates
 that recipient. The token transaction uses the chosen player's creation

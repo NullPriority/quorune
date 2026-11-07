@@ -1089,6 +1089,12 @@ restrictions from current effective static abilities through one read-only
 query, so ability removal affects static restrictions without erasing an
 independent rule that already resolved.
 
+Detain uses one locked declaration-rule entry for attack, block, and activation
+prohibitions. The combat solver, activation proposal, and automatic mana source
+discovery read the same public incarnation and controller-relative deadline.
+The turn scheduler expires the entry at the resolving controller's next turn,
+including the eligible slot for a controller who leaves the game.
+
 All-able-blocker requirements use the same maximum-satisfaction solver as other
 combat requirements. An attached static requirement stays on its Aura or
 Equipment and follows the current attachment. Removing the recipient's

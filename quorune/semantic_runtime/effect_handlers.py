@@ -9,6 +9,7 @@ from ..linked_exile_return_model import LINKED_EXILE_RETURN_CAPABILITY, LINKED_E
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import DomainEffectIntent, IntentPlan
 from ..blocking_requirement_model import BLOCKING_REQUIREMENT_CAPABILITY,BLOCKING_REQUIREMENT_OPERATION
+from ..rules.detain import DETAIN_CAPABILITY, DETAIN_OPERATION, DETAIN_RULES, validate_detain_instruction
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,6 +29,8 @@ class DomainEffectHandler:
 
     @property
     def rule_references(self) -> tuple[str, ...]:
+        if self.operation == DETAIN_OPERATION:
+            return DETAIN_RULES
         if self.operation=='turn_face_up':
             from ..face_up_effect_model import FACE_UP_EFFECT_RULES
             return FACE_UP_EFFECT_RULES
@@ -79,6 +82,11 @@ class DomainEffectHandler:
             from ..goad_instruction import validate_fixed_goad
             try:validate_fixed_goad(effect)
             except (ValueError,TypeError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+        if operation == DETAIN_OPERATION:
+            try:
+                validate_detain_instruction(effect, resolved=True)
+            except (TypeError, ValueError) as exc:
+                raise SemanticNodeError(str(exc)) from exc
         if operation == LINKED_EXILE_RETURN_OPERATION:
             try:
                 validate_linked_instruction(effect)
@@ -101,6 +109,8 @@ class DomainEffectHandler:
 
 
 def _domain_capabilities(operation):
+    if operation == DETAIN_OPERATION:
+        return (DETAIN_CAPABILITY,)
     if operation in {'schedule_fixed_object_action','resolve_fixed_object_action'}:
         from ..delayed_object_model import DELAYED_OBJECT_CAPABILITY
         return (DELAYED_OBJECT_CAPABILITY,)

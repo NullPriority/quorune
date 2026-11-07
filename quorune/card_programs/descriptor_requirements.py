@@ -5,6 +5,10 @@ from ..suspect_model import SUSPECT_OPERATION
 
 def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
     """Validate the closed payloads of independently owned instructions."""
+    if value.get("op") == "detain_permanents":
+        from ..rules.detain import DETAIN_CAPABILITY, validate_detain_instruction
+        validate_detain_instruction(value)
+        return (DETAIN_CAPABILITY,)
     if value.get("op") == "schedule_turn_skip":
         from ..turn_skip_model import TURN_SKIP_CAPABILITY, decode_turn_skip_instruction
         decode_turn_skip_instruction(value)

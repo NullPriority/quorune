@@ -851,6 +851,11 @@ restriction and requirement payloads, other requirement kinds and malformed
 versions reject. It shares the same until-end-of-turn duration, cleanup,
 rollback and replay owner as the older forms.
 
+Resolved Detain uses `schema_version: 4` and `forbid_activations: true` on a
+locked attack-and-block prohibition. `expires_on_next_turn_of` binds the entry
+to the resolving controller. The decoder requires that scope and duration,
+and the shared journal restores all three restrictions together.
+
 An optional source untap uses a version-one owned continuation inside the
 pending decision. It retains the physical turn and step, immutable participation
 plan, public battlefield incarnations, available subjects, and held trigger

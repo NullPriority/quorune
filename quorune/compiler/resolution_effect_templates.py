@@ -16,6 +16,7 @@ from .endure_templates import fixed_endure_effect_template
 from .earthbend_templates import earthbend_effect_template
 from .blight_templates import fixed_blight_effect_template
 from .goad_templates import fixed_goad_effect_template
+from .detain_templates import fixed_detain_effect_template
 from .suspect_templates import suspect_effect_template
 from .block_capacity_templates import temporary_block_capacity_template
 
@@ -148,6 +149,9 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    detain = fixed_detain_effect_template(text)
+    if detain is not None:
+        return detain
     goad = fixed_goad_effect_template(text)
     if goad is not None:return goad
     connive = fixed_connive_effect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)

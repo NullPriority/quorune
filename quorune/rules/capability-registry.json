@@ -29835,6 +29835,94 @@
     {
       "applicability": {
         "exclusions": [
+          "unbounded targeting grammar",
+          "nonpermanent recipients",
+          "live membership after resolution"
+        ],
+        "inputs": [
+          "current resolving controller and stack provenance",
+          "revalidated opposing targets or one public nonland opponent set",
+          "exact battlefield incarnations"
+        ],
+        "outputs": [
+          "one locked journal entry",
+          "shared combat and activation legality",
+          "expiry at the controller-relative turn boundary"
+        ],
+        "summary": "Bind one resolved attack, block, and activation prohibition to each detained permanent until the resolving controller’s next turn."
+      },
+      "blockers": [],
+      "dependencies": [
+        "combat.declaration.typed_components",
+        "continuous.resolution.until_controller_next_turn"
+      ],
+      "dependency_fail_closed_rationale": "Withdrawing Detain authority keeps the exact printed instruction residual.",
+      "dependency_fail_closed_status": "passed",
+      "id": "continuous.resolution.detain",
+      "implementation_components": [
+        "quorune.compiler.detain_templates.fixed_detain_effect_template",
+        "quorune.rules.detain.detain_node_capabilities",
+        "quorune.rules.detain.resolve_detain",
+        "quorune.declaration_rule_effects.ResolutionDeclarationRuleEffect",
+        "quorune.continuous_effect_state.create_resolution_declaration_rule_effect",
+        "quorune.semantic_runtime.activation_restrictions.current_activation_prohibitions"
+      ],
+      "implementation_mutation_rationale": "Removing the fixed Detain target production leaves the complete source instruction residual.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+      ],
+      "multiplayer_tests": [
+        "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+      ],
+      "negative_tests": [
+        "test_detain_grammar_and_authority",
+        "test_detain_journal_rejects_mixed_scope_and_preserves_old_wire",
+        "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+      ],
+      "official_rules": [
+        "506.4a",
+        "508.1c",
+        "509.1b",
+        "602.5",
+        "611.2a",
+        "701.35a",
+        "800.4m"
+      ],
+      "positive_tests": [
+        "test_detain_grammar_and_authority",
+        "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+      ],
+      "privacy_tests": [
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+      ],
+      "replay_tests": [
+        "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "control-changing effects",
           "copy effects",
           "text and color changes",
@@ -81451,7 +81539,7 @@
     "commander_duel",
     "commander_review"
   ],
-  "registry_version": 756,
+  "registry_version": 757,
   "schema_version": 1,
   "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769"
 }

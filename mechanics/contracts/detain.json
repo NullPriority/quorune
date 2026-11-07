@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "mechanic_id": "detain",
+  "official_name": "Detain",
+  "effective_date": "2026-08-07",
+  "source_sha256": "68dab840bfb200a4fca4a061793269c40d57f83364cb1091ea9094b5b8f04769",
+  "rule_references": ["701.35", "701.35a", "506.4a", "602.5", "611.2a", "800.4m"],
+  "glossary_references": ["detain"],
+  "dependencies": ["cr-508-declare-attackers-step", "cr-509-declare-blockers-step", "cr-602-activating-activated-abilities", "cr-605-mana-abilities", "cr-611-continuous-effects"],
+  "coverage_status": "partial",
+  "trust_level": "untrusted",
+  "behavior": {
+    "zones": ["battlefield"],
+    "objects": ["phased-in public permanent incarnations"],
+    "events": ["resolution commits a Detain journal entry", "the controller-relative turn boundary expires the entry"],
+    "state_reads": ["locked legal targets or current public opponent set", "resolved controller and effective mana value", "current object incarnation and turn deadline"],
+    "state_writes": ["one locked declaration and activation prohibition in the continuous-effect journal"],
+    "costs": ["activation proposals and automatic mana planning share the all-ability prohibition"],
+    "timing": ["the resolving controller's next turn expires the effect", "a departed controller's eligible turn slot supplies the expiry boundary"],
+    "targets": ["one opposing creature or nonland permanent", "up to two opposing creatures or nonland permanents", "a fixed mana-bounded opposing nonland set uses public membership at resolution"],
+    "choices": ["the ordinary target owner announces and revalidates target slots"],
+    "hidden_information": ["the affected set and restriction are public battlefield facts"],
+    "apnap": ["opposing targets may belong to distinct players", "the untargeted set locks one simultaneous group"],
+    "layers": ["Detain restricts game actions through the journal"],
+    "replacement_effects": [],
+    "copy": ["copying characteristics leaves the separate journal restriction on its original incarnation"],
+    "control_change": ["the restriction follows the same permanent across a control change"],
+    "zone_change": ["a new incarnation falls outside the locked set"],
+    "source_leaves": ["the resolved rule uses its recorded deadline independently of source presence"]
+  },
+  "variants": ["single target", "up to two targets", "fixed mana-bounded untargeted set", "controller departure expiry", "command replay"],
+  "witness_cards": [
+    {"name": "Lyev Skyknight", "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536"},
+    {"name": "Azorius Justiciar", "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90"},
+    {"name": "Lavinia of the Tenth", "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd"}
+  ],
+  "rulings": [
+    "The pinned Wizards rulings apply the restriction to mana abilities and keep an already declared attacker or blocker in combat.",
+    "Lavinia's pinned rulings fix membership at resolution and keep each restriction on the same object across control changes."
+  ],
+  "test_ids": [
+    "test_detain_grammar_and_authority",
+    "test_detain_journal_rejects_mixed_scope_and_preserves_old_wire",
+    "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
+    "test_original_detain_groups_lock_opponents_and_share_combat_legality"
+  ],
+  "implementation": {"component": "fixed Detain compiler, resolution declaration-rule journal, shared activation and combat legality, and TurnStepOwner", "version": "detain-v1"},
+  "known_blockers": ["additional recipient grammar and the independent Tax Collector tax mode remain outside the fixed slice"],
+  "review_status": "draft"
+}

@@ -450,6 +450,7 @@ def create_resolution_declaration_rule_effect(
     ),
     live_query: ObjectQuerySpec | None = None,
     expires_on_next_turn_of: str | None = None,
+    forbid_activations: bool = False,
 ) -> ResolutionDeclarationRuleEffect | None:
     """Commit a declaration rule with locked recipients or one live query."""
 
@@ -475,6 +476,7 @@ def create_resolution_declaration_rule_effect(
         locked_objects=identities,
         live_query=live_query,
         expires_on_next_turn_of=expires_on_next_turn_of,
+        forbid_activations=forbid_activations,
     )
     committed = commit_continuous_effect(host.state, effect)
     if not isinstance(committed, ResolutionDeclarationRuleEffect):
