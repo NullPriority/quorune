@@ -352,6 +352,8 @@ def _closed_direct_characteristic_fields(
         return {"token": True}
     if phrase == "token creature":
         return {"types_any": ("creature",), "token": True}
+    if phrase == "nontoken artifact":
+        return {"types_any": ("artifact",), "token": False}
     token_type = phrase.removesuffix(" token")
     if token_type != phrase and token_type in _DIRECT_TYPE_ANY_VALUES:
         return {"types_any": (token_type,), "token": True}
@@ -644,8 +646,9 @@ def _validate_direct_color_predicates(
 def _validate_direct_target_flags(
     spec: "DirectPermanentTargetSpec",
 ) -> None:
-    if spec.token is not None and spec.token is not True:
-        raise ValueError("Direct permanent token predicates require positive token status")
+    if not (spec.token is None or spec.token is True
+            or (spec.token is False and spec.types_any == ("artifact",))):
+        raise ValueError("Direct permanent token predicates require a token or nontoken artifact")
     if spec.controller_relation not in {"any", "you", "opponent"}:
         raise ValueError("Direct permanent target controller relation is unsupported")
     if spec.controller_seat is not None and (

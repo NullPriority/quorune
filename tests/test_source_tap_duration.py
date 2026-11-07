@@ -11,6 +11,7 @@ from inherited_composition_fixture import InheritedNativeFixture
 import test_qualified_public_history as history
 from quorune.card_programs.binding import bind_semantic_program_runtime
 from quorune.carddb import CardDatabase
+from quorune.compiler.direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.oracle_ir import _reviewed_effect_template
 from quorune.record import authoritative_state_hash
@@ -39,6 +40,19 @@ class SourceTapCompilerTests(unittest.TestCase):
         ):
             self.assertIsNone(_reviewed_effect_template(text, **context)[0], text)
         self.assertIsNone(_reviewed_effect_template(clause, **{**context, 'source_is_permanent': False})[0])
+
+    def test_nontoken_artifact_target_has_explicit_boolean_and_source_exclusion(self):
+        spec = direct_permanent_target_spec('Another target nontoken artifact you control')
+        self.assertIsNotNone(spec)
+        schema = spec.to_target_schema()
+        self.assertEqual(['artifact'], schema['types_any'])
+        self.assertEqual('you', schema['controller_relation'])
+        self.assertIs(schema['token'], False)
+        self.assertIs(schema['source_exclusion'], True)
+        self.assertEqual(spec, DirectPermanentTargetSpec.from_target_schema(schema))
+        with self.assertRaises(ValueError):
+            DirectPermanentTargetSpec.from_target_schema({**schema, 'token': 0})
+        self.assertIsNone(direct_permanent_target_spec('Target nontoken artifact or creature'))
 
 
 class SourceTapNativeTests(InheritedNativeFixture, unittest.TestCase):
@@ -183,6 +197,35 @@ class SourceTapNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.resolve_top(s)
         self.assertEqual((1, 1), self.stats(s, late))
         self.assertEqual(expected, self.stats(s, present))
+        self.replay(s, load=True)
+
+    def test_actual_blackstaff_animates_another_nontoken_artifact_until_source_untaps(self):
+        s = self.session(61177006)
+        source = self.add(s.engine, 'The Blackstaff of Waterdeep')
+        target = self.add(s.engine, 'Voltaic Key', ref='original-controlled-key')
+        rival = self.add(s.engine, 'Voltaic Key', seat='B', ref='rival-key')
+        token = s.engine.create_token('A', name='Calibration Artifact',
+                                      characteristics={'type_line': 'Token Artifact'})[0]
+        s.state.players['B'].mana_pool['C'] = 1
+        self.assert_closed(s, source)
+        self.prepare(s, mana={'C': 1, 'U': 1})
+        self.checkpoint(s)
+        action = self.activation(s, 'A', source)
+        refs = action['target_schema']['legal_refs']
+        self.assertIn(target.ref, refs)
+        self.assertTrue({source.ref, rival.ref, token}.isdisjoint(refs))
+        before = authoritative_state_hash(s.state)
+        rejected = s.act('pilot:A', {'action_id': action['id'], 'targets': [token], 'pay': 'auto'})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(s.state))
+        self.activate(s, 'A', source, (target,))
+        self.resolve_top(s)
+        self.assertIn('Artifact Creature', s.engine._effective_card_data(s.state.cards[target.object_id])['type_line'])
+        self.assertEqual((4, 4), self.stats(s, target))
+        s = self.replay(s, load=True)
+        self.activate(s, 'B', rival, (source,))
+        self.resolve_top(s)
+        self.assertEqual('Artifact', s.engine._effective_card_data(s.state.cards[target.object_id])['type_line'])
         self.replay(s, load=True)
 
     def test_source_tap_runtime_binding_requires_the_declared_duration(self):

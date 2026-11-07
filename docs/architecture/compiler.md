@@ -3363,6 +3363,8 @@ blocking, or attacking-or-blocking creature predicate from the authoritative
 combat relationships. The final effective-characteristic snapshot owns color cardinality and
 negative subtype evaluation at offer, command, and resolution boundaries, so
 copy and type-changing effects do not require a second grammar-specific query.
+Nontoken artifact targets use the same effective artifact predicate with an
+explicit false token status and the printed controller and source restrictions.
 The mana-value form
 uses the existing current public characteristic snapshot and remains separate
 from power, toughness, variable, total, and public-state-combined numeric

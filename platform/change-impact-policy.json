@@ -4206,6 +4206,7 @@
       "id": "source-tapped-resolution-duration",
       "patterns": [
         "quorune/source_tap_effect.py",
+        "quorune/compiler/direct_target.py",
         "quorune/compiler/source_tap_characteristics.py",
         "quorune/compiler/effect_template_composition.py",
         "quorune/continuous_effect_model.py",
@@ -4219,6 +4220,7 @@
       "test_modules": [
         "test_source_tap_duration",
         "test_fixed_control_effects",
+        "test_fixed_source_characteristic_effects",
         "test_target_characteristic_sets",
         "test_next_turn_duration",
         "test_high_risk_interaction_assurance",
