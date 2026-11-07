@@ -1890,6 +1890,9 @@ branch. The compiler declares the receiver-union capability in addition to the
 existing stat or keyword consumers. Recursive, hidden, numeric and
 ability-qualified unions remain residual.
 
+Public query amounts retain the query dependencies of the original typed
+descriptor during fixed consumer-shape validation.
+
 The public quantity compiler recognizes single-color and two-distinct-color
 devotion through a dedicated versioned reduction. It retains the CR 700.5a
 timing boundary instead of treating devotion as an ordinary color or object
