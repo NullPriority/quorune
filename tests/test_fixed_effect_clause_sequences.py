@@ -800,6 +800,33 @@ class OrderedTokenAbilityNativeTests(InheritedNativeFixture, unittest.TestCase):
         self.assertEqual([], self.battlefield_tokens(session))
         self.replay(session, load=True)
 
+    def test_make_mischief_creates_a_token_with_its_own_targeted_death_trigger(self):
+        session = self.session(60877703)
+        spell = self.add(session.engine, 'Make Mischief', zone='hand')
+        removal = self.add(session.engine, 'Murder', seat='B', zone='hand')
+        self.assert_closed(session, spell)
+        self.prepare(session, mana={'C': 2, 'R': 1})
+        session.state.players['B'].mana_pool.update({'C': 1, 'B': 2})
+        self.checkpoint(session)
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        self.cast_for(session, 'A', spell, ['B'])
+        self.resolve_top(session)
+        self.assertEqual(life['B'] - 1, session.state.players['B'].life)
+        token, = self.battlefield_tokens(session)
+        self.cast_for(session, 'B', removal, [token.ref])
+        self.resolve_top(session)
+        self.assertEqual([], self.battlefield_tokens(session))
+        self.assertEqual('semantic.target', session.state.pending_decision.kind)
+        self.assertIsNone(session.packet('pilot:B', full=True)['decision'])
+        session = self.replay(session, load=True)
+        self.target(session, 'A', ['D'])
+        trigger, = session.state.stack
+        self.assertEqual(token.object_id, trigger.source_object_id)
+        self.resolve_top(session)
+        self.assertEqual({**life, 'B': life['B'] - 1, 'D': life['D'] - 1},
+                         {seat: player.life for seat, player in session.state.players.items()})
+        self.replay(session, load=True)
+
     def test_ordered_token_component_requires_its_typed_ability_mechanic(self):
         from quorune.fixed_token_production import TYPED_TOKEN_ABILITY_CAPABILITY_ID, TYPED_TOKEN_ABILITY_MECHANIC_ID
 
