@@ -1154,22 +1154,15 @@ does not perform turn-based actions: in particular, draw-step entry records an
 explicit skipped draw instead of submitting an inactive affected player to the
 strict draw and replacement owners.
 
-The turn owner expires goad at the first eligible turn the departed goader
-would have taken. Queued extra turns retain their relative order for this
-purpose, then ordinary rotation crosses the departed physical seats. These
-expiry boundaries stay internal to the scheduler. Public queues expose turns
-that surviving players can take. The departure marker in Game Record v3 pins
-this behavior so earlier records can replay their original schedule.
-
 Fixed characteristic results and ordinary declaration prohibitions can expire
 at the resolving controller's next eligible turn. The continuous-effect
-journal records that controller when the result resolves. Turn selection uses
-the existing extra-turn order and whole-turn skip grants to find the boundary.
-After departure, the relevant scheduled slots remain internal to the turn
-owner until the effect expires at the turn that would have begun. Public turn
-offers and the extra-turn queue show only players who can take those turns.
-Effects with the earlier duration vocabulary retain their existing checkpoint
-representation.
+journal records that controller when the result resolves. The turn owner
+uses extra-turn order, physical seat rotation, and whole-turn skips to locate
+the first eligible boundary for both journaled effects and goad. After
+departure, the expiry slots stay internal to the scheduler and the public
+queue shows turns surviving players can take. The departure marker in Game
+Record v3 pins goad expiry at the turn the departed goader would have taken.
+Earlier records retain their original schedule and journal representation.
 
 `CommanderEngine.apnap_order` rotates the physical seat order from the retained
 turn anchor before omitting departed players. During a departed player's
