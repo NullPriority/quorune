@@ -898,7 +898,7 @@
       "type": "object"
     }
   ],
-  "source_fingerprint": "8cb732fea79d3f96019dbca492171b4310f916ce7650c30dd18add67e5d6e021",
+  "source_fingerprint": "02d8eb3f353c6721bb1c154bffcb53480141670fd555b54f5ee0e1b685cc2041",
   "top_blockers": [],
   "websocket_routes": [
     "/api/v1/games/{game_id}/stream"
