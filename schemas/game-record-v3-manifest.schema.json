@@ -127,6 +127,10 @@
           ],
           "type": "integer"
         },
+        "departed_turn_boundary_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "explore_action_version": {
           "const": 1,
           "type": "integer"

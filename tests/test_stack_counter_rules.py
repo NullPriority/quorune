@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from dataclasses import replace
 import json
 from pathlib import Path
 import tempfile
@@ -8,9 +9,10 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+import test_life_gain_prohibitions as native
 from quorune import stack_counter as stack_counter_module
 from quorune.carddb import CardDatabase
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.errors import GameRuleError
 from quorune.model import StackItem
 from quorune.projection import StateProjector
@@ -19,6 +21,8 @@ from quorune.record import (
     checkpoint_envelope,
     replay_record,
 )
+from quorune.record_trust import implicit_semantic_execution_provenance
+from quorune.rules.event_spell_copy import capture_event_spell_copy_source
 from quorune.rules.capabilities import (
     load_default_capability_registry,
 )
@@ -37,6 +41,7 @@ from quorune.stack_counter import (
     INTRINSIC_COUNTER_PROHIBITION_CAPABILITY,
     oracle_has_intrinsic_counter_prohibition,
 )
+from quorune.stack_resolution import trusted_generic_empty_resolution
 from scripts.build_test_database import build_fixture_database
 
 
@@ -446,6 +451,8 @@ class StackCounterRuleTests(unittest.TestCase):
         )
         item = engine.state.stack[-1]
         self.assertTrue(item.context["cant_be_countered"])
+        empty = trusted_generic_empty_resolution(engine, item, engine.semantics.get(item.semantic_key))
+        self.assertEqual("trusted_intrinsic_empty_spell", empty.provenance)
         engine.move_card(counter.object_id, "hand", log=False)
         engine.state.players["A"].mana_pool["U"] = 2
         engine.state.priority_player = "A"
@@ -744,6 +751,178 @@ class StackCounterRuleTests(unittest.TestCase):
             )
 
         self.assertFalse(engine.state.stack[-1].context["cant_be_countered"])
+
+
+class IntrinsicEmptySpellResolutionTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = native.LifeGainProhibitionRuntimeTests.session
+    add = native.LifeGainProhibitionRuntimeTests.add
+    prepare = native.LifeGainProhibitionRuntimeTests.prepare
+    actions = native.LifeGainProhibitionRuntimeTests.actions
+    binding = native.LifeGainProhibitionRuntimeTests.binding
+    checkpoint = native.LifeGainProhibitionRuntimeTests.checkpoint
+    resolve = native.LifeGainProhibitionRuntimeTests.resolve
+    replay = native.LifeGainProhibitionRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        fixtures = ROOT / "tests" / "fixtures"
+        path = Path(cls.temporary.name) / "intrinsic-empty-spell.sqlite3"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "intrinsic-empty-spell-resolution-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition(
+            "Intrinsic empty spell resolution",
+            [DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 30)],
+            ["Generic Bound Commander"],
+        )
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def test_partial_intrinsic_spell_pauses_and_replays_authorized_arbitration(self):
+        session = self.session(128608220)
+        session.state.config = replace(session.state.config, semantic_policy="arbitrate_or_pause")
+        spell = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        hidden = self.add(session.engine, "Void Rend", seat="D", zone="hand")
+        target.tapped = True
+        self.assertFalse(self.binding(session, spell)["strict_capability_ready"])
+        self.prepare(session, mana={"C": 4, "R": 1})
+        self.checkpoint(session)
+        action, = [row for row in self.actions(session) if row["id"] == "cast:" + spell.ref]
+        self.assertFalse(action.get("target_schema"))
+        command = {"action_id": action["id"], "pay": "auto"}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:A", {**command, "targets": [target.ref]}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        cast = session.act("pilot:A", command)
+        self.assertTrue(cast.ok, cast.summary)
+        item = session.state.stack[-1]
+        self.assertTrue(item.context["cant_be_countered"])
+        self.assertIsNone(session.engine.semantics.get(item.semantic_key))
+        self.assertIsNone(implicit_semantic_execution_provenance(session.engine, item.semantic_key, stack_item=item))
+        with self.assertRaisesRegex(ValueError, "no current trusted resolution program"):
+            capture_event_spell_copy_source(session.engine, item)
+
+        decision = self.resolve(session)
+        self.assertEqual("arbiter.resolve", decision.kind)
+        self.assertEqual(["arbiter"], session.pending_principals())
+        self.assertEqual("stack", session.state.cards[spell.object_id].zone)
+        current = session.state.cards[target.object_id]
+        self.assertEqual(("B", True), (current.controller, current.tapped))
+        pilot = session.packet("pilot:A", full=True)
+        self.assertIsNone(pilot["decision"])
+        self.assertNotIn(hidden.ref, json.dumps(pilot))
+        self.assertEqual("arbiter.resolve", session.packet("arbiter", full=True)["decision"]["kind"])
+
+        resumed = self.replay(session, load=True)
+        before = authoritative_state_hash(resumed.state)
+        self.assertFalse(resumed.act("pilot:A", {"action_id": "fizzle"}).ok)
+        self.assertEqual(before, authoritative_state_hash(resumed.state))
+        fizzle = resumed.act("arbiter", {"action_id": "fizzle"})
+        self.assertTrue(fizzle.ok, fizzle.summary)
+        self.assertEqual("graveyard", resumed.state.cards[spell.object_id].zone)
+        self.assertFalse(resumed.state.stack)
+        current = resumed.state.cards[target.object_id]
+        self.assertEqual(("B", True), (current.controller, current.tapped))
+        self.replay(resumed, load=True)
+
+    def test_trusted_only_admits_the_complete_intrinsic_spell_and_keeps_its_target(self):
+        session = self.session(128608221)
+        session.state.config = replace(session.state.config, semantic_policy="trusted_only")
+        partial = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        spell = self.add(session.engine, "Void Rend", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        self.assertTrue(self.binding(session, spell)["strict_capability_ready"])
+        self.prepare(session, mana={"C": 4, "R": 1, "W": 1, "U": 1, "B": 1})
+        self.checkpoint(session)
+        actions = {row["id"]: row for row in self.actions(session)}
+        partial_id = "cast:" + partial.ref
+        self.assertNotIn(partial_id, actions)
+        before = authoritative_state_hash(session.state)
+        rejected = session.act("pilot:A", {"action_id": partial_id, "targets": [target.ref], "pay": "auto"})
+        self.assertFalse(rejected.ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        action = actions["cast:" + spell.ref]
+        self.assertIn(target.ref, action["target_schema"]["legal_refs"])
+        cast = session.act("pilot:A", {"action_id": action["id"], "targets": [target.ref], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        item = session.state.stack[-1]
+        self.assertTrue(item.context["cant_be_countered"])
+        self.assertEqual([target.ref], item.targets)
+        self.assertEqual(item.ref, capture_event_spell_copy_source(session.engine, item).item().ref)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[target.object_id].zone)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_unregistered_arbiter_resolution_replays_after_a_replacement_choice(self):
+        session = self.session(128608222)
+        spell = self.add(session.engine, "Caught Red-Handed", zone="hand")
+        target = self.add(session.engine, "Generic Bound Body")
+        adder = self.add(session.engine, "Generic Bound Counter Adder")
+        self.add(session.engine, "Generic Bound Counter Doubler")
+        self.prepare(session, mana={"C": 4, "R": 1})
+        self.checkpoint(session)
+        action, = [row for row in self.actions(session) if row["id"] == "cast:" + spell.ref]
+        cast = session.act("pilot:A", {"action_id": action["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.assertEqual("arbiter.resolve", self.resolve(session).kind)
+        effect = {"op": "place_counters", "card": target.ref, "counter": "+1/+1", "amount": 1, "source": "$source"}
+        ruling = session.act("arbiter", {"action_id": "resolve", "effects": [effect]})
+        self.assertTrue(ruling.ok, ruling.summary)
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertIsNone(session.state.stack[-1].semantic_key)
+        self.assertFalse(session.state.cards[target.object_id].counters)
+
+        session = self.replay(session, load=True)
+        options = session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+        first = next(option["id"] for option in options if option["source"] == adder.ref)
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": first})
+        self.assertTrue(result.ok, result.summary)
+        self.assertFalse(session.state.stack)
+        self.assertEqual({"+1/+1": 4}, session.state.cards[target.object_id].counters)
+        self.assertEqual("graveyard", session.state.cards[spell.object_id].zone)
+        self.assertEqual([], session.commands[-1]["semantics"]["programs_used"])
+        self.replay(session, load=True)
+
+    def test_stack_resolution_authority_is_bound_to_the_checkpoint(self):
+        from quorune.model import GameConfig, GameState
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        key = "stack_resolution_authority_version"
+        state = GameState(game_id="empty-spell-mode", config=GameConfig(), players={}, cards={},
+                          deck_names={}, commander_oracle_ids={}, turn_order=[], current_turn=None,
+                          last_normal_turn_player=None)
+        wire = state.to_dict()
+        self.assertEqual(1, wire[key])
+        self.assertEqual(wire, GameState.from_dict(wire).to_dict())
+        manifest = {"format": format_state_versions(state)}
+        validate_state_versions(manifest, state)
+
+        historical_wire = {field: value for field, value in wire.items() if field != key}
+        historical = GameState.from_dict(historical_wire)
+        self.assertIsNone(historical.stack_resolution_authority_version)
+        self.assertEqual(historical_wire, historical.to_dict())
+        historical_manifest = {"format": format_state_versions(historical)}
+        self.assertNotIn(key, historical_manifest["format"])
+        validate_state_versions(historical_manifest, historical)
+        for versioned, checkpoint in ((manifest, historical), (historical_manifest, state)):
+            with self.assertRaisesRegex(ValueError, "Stack resolution authority provenance"):
+                validate_state_versions(versioned, checkpoint)
+        for bad in (True, False, 0, 2, "1"):
+            with self.subTest(value=bad):
+                with self.assertRaisesRegex(ValueError, "Unsupported stack resolution authority version"):
+                    GameState.from_dict({**wire, key: bad})
+                with self.assertRaisesRegex(ValueError, "Stack resolution authority provenance"):
+                    validate_state_versions({"format": {**manifest["format"], key: bad}}, state)
 
 
 if __name__ == "__main__":

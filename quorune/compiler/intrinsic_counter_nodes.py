@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..card_programs.admission import CompleteCardProgramAdmission
+from ..stack_resolution_authority_model import INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
 from ..rules.capabilities import CapabilityRegistry
 from .counter_templates import is_intrinsically_uncounterable_spell
 from .dependency_gate import explicit_capability_gate
@@ -51,7 +53,7 @@ def intrinsic_counter_prohibition_node(
         event="continuous",
         lowerable=True,
         exact=not gate.blockers,
-        template_id="intrinsic-spell-counter-prohibition-v1",
+        template_id=INTRINSIC_COUNTER_PROHIBITION_TEMPLATE,
         mechanics=("counter",),
         residual_ids=residual_ids,
         capability_dependencies=gate.capabilities,
@@ -67,4 +69,17 @@ def intrinsic_counter_prohibition_node(
     )
 
 
-__all__ = ["intrinsic_counter_prohibition_node"]
+def intrinsic_empty_spell_admission(record, ir, node):
+    """Certify an empty body from the complete source, including omitted nodes."""
+    if (
+        node.template_id != INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
+        or record.layout != "normal" or record.faces
+        or not (record.is_instant or record.is_sorcery)
+        or len(ir.faces) != 1 or ir.faces[0].nodes != (node,)
+    ):
+        return None
+    admission = CompleteCardProgramAdmission.from_oracle_ir(ir)
+    return admission.to_dict() if admission.admitted else None
+
+
+__all__ = ["intrinsic_counter_prohibition_node", "intrinsic_empty_spell_admission"]

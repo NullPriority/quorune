@@ -16,6 +16,7 @@ import hashlib
 from typing import Any, Iterable, Mapping, TYPE_CHECKING
 
 from ..carddb import CardDatabase, CardRecord
+from ..stack_resolution_authority_model import INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
 from ..keyword_counters import keyword_counter_mechanic
 
 if TYPE_CHECKING:
@@ -311,7 +312,7 @@ def _generated_static_declaration(node: Any) -> bool:
         or (
             node.kind == "static_ability"
             and node.template_id
-            == "intrinsic-spell-counter-prohibition-v1"
+            == INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
             and tuple(node.capability_dependencies)
             == ("stack.counter.prohibition.intrinsic",)
             and not node.effects

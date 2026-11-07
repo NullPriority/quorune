@@ -24,7 +24,9 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
     def setUpClass(cls):
         cls.temporary=tempfile.TemporaryDirectory();path=Path(cls.temporary.name)/'mutate.sqlite3'
         build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',
-            ROOT/'tests/fixtures/mutate-casting-cards.json'],path)
+            ROOT/'tests/fixtures/mutate-casting-cards.json',
+            ROOT/'tests/fixtures/counter-placement-event-cards.json',
+            ROOT/'tests/fixtures/self-public-cost-cards.json'],path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Mutate native',[DeckEntry('Isamaru, Hound of Konda',1,'commander'),
             DeckEntry('Generic Bound Plains',14)],['Isamaru, Hound of Konda'])
@@ -50,6 +52,40 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
                 registry.mark_evidence_verified(validate_capability_evidence_index(index,registry=registry))
                 self.assertNotEqual('exact',compile_oracle_card(record,capability_registry=registry).status)
                 self.assertEqual('exact',compile_oracle_card(unrelated,capability_registry=registry).status)
+
+    def test_actual_composed_departure_ignores_counter_replacement_without_counter_event(self):
+        session = self.session(73030002)
+        body = self.add(session.engine, "Grizzly Bears", ref="departure-body")
+        heron = self.add(session.engine, "Dreamtail Heron", zone="hand")
+        destroy = self.add(session.engine, "Doom Blade", seat="B", zone="hand")
+        replacement = self.add(session.engine, "Branching Evolution")
+        for card in (body, heron, destroy, replacement):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 3, "U": 1})
+        session.state.players["B"].mana_pool.update({"C": 1, "B": 1})
+        self.checkpoint(session)
+        self.mutate(session, heron, body)
+        session = self.choose_merge(session, "bottom")
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, "B", destroy, [body.ref])
+        decision = self.resolve(session)
+        self.assertEqual(("semantic.choice", ["A"]), (decision.kind, decision.actors))
+        offered = session.packet("pilot:A", full=True)["decision"]["ctx"]
+        self.assertEqual("composition_departure_order", offered["operation"])
+        order = [body.ref, heron.ref]
+        self.assertEqual(set(order), {row["id"] for row in offered["objects"]})
+        command = {"action_id": "choose", "cards": order}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        for card in (body, heron):
+            self.assertEqual("graveyard", session.state.cards[card.object_id].zone)
+            self.assertFalse(session.state.cards[card.object_id].counters)
+        self.assertEqual("battlefield", session.state.cards[replacement.object_id].zone)
+        self.replay(session, load=True)
 
     def scene(self,seed,*,source='Dreamtail Heron',actor='A',foreign_exile=False,copier=None):
         s=self.session(seed);engine=s.engine

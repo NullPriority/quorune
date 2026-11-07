@@ -63,7 +63,12 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/damage_recipient_model.py':return 'domain'
     if relative=='quorune/delayed_object_actions.py':return 'semantics'
     if relative=='quorune/reanimation_entry_counters.py':return 'semantics'
-    if relative in {'quorune/library_selection_knowledge_model.py','quorune/characteristic_query_boundary_model.py'}:return 'domain'
+    if relative in {
+        'quorune/library_selection_knowledge_model.py',
+        'quorune/characteristic_query_boundary_model.py',
+        'quorune/stack_resolution_authority_model.py',
+    }:
+        return 'domain'
     if relative in {'quorune/mutate_model.py','quorune/fixed_mana_model.py'}:return 'domain'
     if relative=='quorune/trigger_participation_query_model.py':return 'domain'
     if relative=='quorune/library_selection_knowledge_model.py':return 'domain'

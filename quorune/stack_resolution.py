@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -10,12 +11,17 @@ from .cast_lifecycles import (
     fixed_cast_lifecycle_resolution_destination,
 )
 from .cast_face_offers import omen_resolution_binding
+from .stack_resolution_authority_model import (
+    INTRINSIC_COUNTER_PROHIBITION_TEMPLATE,
+    INTRINSIC_EMPTY_SPELL_ADMISSION,
+    stack_resolution_authority_version,
+)
 from .errors import StateInvariantError
 from .evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from .model import CardInstance, StackItem
 from .rules.casting.face_queries import prospective_cast_record
 from .semantic_runtime.zone_replacements import PreparedZoneChange
-from .stack_counter import oracle_has_intrinsic_counter_prohibition
+from .stack_counter import current_intrinsic_counter_prohibitions, oracle_has_intrinsic_counter_prohibition
 from .combat_entry_activations import cleanup_ninjutsu_reveal
 from .effect_runtime.hand_inspection import cleanup_stack_cost_hand_reveals
 
@@ -44,6 +50,7 @@ def physical_stack_record(host: Any, item: StackItem, *, physical_card: Any = No
 
 
 class GenericStackResolutionQuery(Protocol):
+    state: Any
     semantics: Any
 
     def card_record(self, object_id: str | CardInstance) -> Any: ...
@@ -73,6 +80,64 @@ class EmptyStackResolution:
     provenance: str
 
 
+def _has_intrinsic_empty_admission(program: Any) -> bool:
+    from .card_programs.admission import CompleteCardProgramAdmission
+
+    admission = program.provenance.get(INTRINSIC_EMPTY_SPELL_ADMISSION)
+    if (
+        not isinstance(admission, Mapping)
+        or program.provenance.get("template_id") != INTRINSIC_COUNTER_PROHIBITION_TEMPLATE
+        or program.requires_arbiter or program.effects or program.handlers
+        or any(value is not None for value in (
+            program.target_schema, program.cost_schema, program.event_condition, program.destination,
+        ))
+    ):
+        return False
+    try:
+        return CompleteCardProgramAdmission.from_dict(admission).admitted
+    except (TypeError, ValueError):
+        return False
+
+
+def _intrinsic_empty_spell_provenance(host: GenericStackResolutionQuery, item: StackItem, record: Any) -> str | None:
+    version = stack_resolution_authority_version(getattr(host.state, "stack_resolution_authority_version", None))
+    if version is None:
+        if oracle_has_intrinsic_counter_prohibition(
+            host.semantics, str(record.oracle_id), current_trusted=host.semantic_program_is_current_trusted,
+        ):
+            return "trusted_intrinsic_counter_prohibition_spell"
+        return None
+    if (
+        record.layout != "normal" or record.faces or not (record.is_instant or record.is_sorcery)
+        or item.chosen_face is not None or item.targets
+        or item.semantic_key != f"{record.oracle_id}:spell:front"
+    ):
+        return None
+    declarations = current_intrinsic_counter_prohibitions(
+        host.semantics, str(record.oracle_id), current_trusted=host.semantic_program_is_current_trusted,
+    )
+    if any(_has_intrinsic_empty_admission(program) for program in declarations):
+        return "trusted_intrinsic_empty_spell"
+    return None
+
+
+def arbiter_resolution_program_key(
+    host: GenericStackResolutionQuery, item: StackItem, *, action: str, requested_key: Any,
+) -> str | None:
+    """Identify the registered program, if any, used by a scoped arbiter action."""
+    if action == "register_and_resolve":
+        return str(requested_key or item.semantic_key or "")
+    key = item.semantic_key
+    version = stack_resolution_authority_version(getattr(host.state, "stack_resolution_authority_version", None))
+    if (
+        version is not None and action == "resolve" and key
+        and not key.startswith("builtin:") and host.semantics.get(key) is None
+    ):
+        # The accepted arbiter command and its continuation own these effects.
+        return None
+    return key
+
+
 def trusted_generic_empty_resolution(
     host: GenericStackResolutionQuery,
     item: StackItem,
@@ -98,12 +163,8 @@ def trusted_generic_empty_resolution(
         if record is not None:record=prospective_cast_record(record,face)
         if record and host._trusted_generic_spell(record):
             provenance = "trusted_generic_permanent_spell"
-        elif record and oracle_has_intrinsic_counter_prohibition(
-            host.semantics,
-            str(record.oracle_id),
-            current_trusted=host.semantic_program_is_current_trusted,
-        ):
-            provenance = "trusted_intrinsic_counter_prohibition_spell"
+        elif record:
+            provenance = _intrinsic_empty_spell_provenance(host, item, record)
     elif item.kind == "spell_copy":
         if item.context.get("copy_permanent_spell"):
             provenance = "trusted_generic_permanent_spell_copy"
@@ -233,6 +294,7 @@ def _complete_stack_resolution(
 
 
 __all__ = [
+    "arbiter_resolution_program_key",
     "complete_stack_resolution",
     "EmptyStackResolution",
     "GenericStackResolutionQuery",

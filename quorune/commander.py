@@ -310,6 +310,7 @@ def initial_commander_state(
         turn_order=turn_order,
         current_turn=None,
         last_normal_turn_player=None,
+        departed_turn_boundary_version=1,
         commander_damage_identity_version=(
             COMMANDER_DAMAGE_IDENTITY_VERSION
         ),

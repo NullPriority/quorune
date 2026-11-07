@@ -23363,6 +23363,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/stack_resolution_authority_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/stack_spell_copy_model.py",
       "layer": "domain",
       "owning_subsystem": "search_target_and_choice",
@@ -24713,5 +24725,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "a6c84483c5f83ea863ed1fe6a8d33bd1f7c455bc692a21dc43aea1003897f42f"
+  "fingerprint": "27538b56d1353a9db6c5b5489f43ab9b49b36628aefa8b3a09aae747f85e3db1"
 }

@@ -75,6 +75,8 @@
         "quorune/rules/goad_capability_shapes.py",
         "quorune/compiler/fixed_instruction_program_closure.py",
         "quorune/compiler/bound_effect_programs.py",
+        "quorune/turn_step_owner.py",
+        "quorune/record_state_provenance.py",
         "tests/fixtures/fixed-goad-instruction-cards.json"
       ],
       "test_modules": [
@@ -8647,6 +8649,24 @@
         "test_counter_target_predicates",
         "test_fixed_replicate",
         "test_fixed_alternative_additional_costs",
+        "test_card_program_trust"
+      ]
+    },
+    {
+      "id": "stack-resolution-authority",
+      "patterns": [
+        "quorune/compiler/intrinsic_counter_nodes.py",
+        "quorune/stack_resolution_authority_model.py",
+        "quorune/stack_counter.py",
+        "quorune/stack_resolution.py",
+        "tests/test_stack_counter_rules.py",
+        "tests/fixtures/intrinsic-empty-spell-resolution-cards.json"
+      ],
+      "test_modules": [
+        "test_stack_counter_rules",
+        "test_targeted_counter_effect_clauses",
+        "test_fixed_stack_spell_copy",
+        "test_game_record_v3",
         "test_card_program_trust"
       ]
     },

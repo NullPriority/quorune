@@ -218,7 +218,7 @@ from .stack_counter import (
     stack_item_can_be_countered,
 )
 from .stack_resolution import (
-    complete_stack_resolution,
+    arbiter_resolution_program_key, complete_stack_resolution,
     trusted_generic_empty_resolution,
 )
 from . import spell_copy_engine_adapter as copy_events
@@ -1755,10 +1755,11 @@ class CommanderEngine(
     def _begin_turn(self, entry: TurnEntry) -> None:
         self.turn_steps.begin_turn(entry)
 
-    def _expire_goad_designations(self, player: str) -> None:
-        """Expire CR 701.15 designations at the goading player's turn."""
+    def _expire_goad_designations(self, player: str, *, departed_turn: bool = False) -> None:
+        """Expire CR 701.15 designations at the observed next-turn boundary."""
 
         turns_begun = self.state.players[player].turns_begun
+        expiry_boundary = turns_begun + int(departed_turn)
         changed: list[str] = []
         for card in self.state.cards.values():
             retained = [
@@ -1766,20 +1767,22 @@ class CommanderEngine(
                 for designation in card.goaded_by
                 if not (
                     designation.player == player
-                    and designation.expires_at_turns_begun <= turns_begun
+                    and designation.expires_at_turns_begun <= expiry_boundary
                 )
             ]
             if len(retained) != len(card.goaded_by):
                 card.goaded_by = retained
                 changed.append(card.object_id)
         if changed:
+            boundary = "would have begun" if departed_turn else "began"
             self._log(
                 player,
                 "permanent.goad.expire",
-                f"{len(changed)} goad designation(s) expired as {player}'s turn began.",
+                f"{len(changed)} goad designation(s) expired as {player}'s turn {boundary}.",
                 {
                     "player": player,
                     "turns_begun": turns_begun,
+                    **({"departed_turn": True} if departed_turn else {}),
                     "objects": [
                         self.state.cards[object_id].ref
                         for object_id in changed
@@ -3745,8 +3748,8 @@ class CommanderEngine(
         effects = [dict(effect) for effect in response.get("effects") or []]
         destination = response.get("destination", item.default_destination)
         note = str(response.get("note") or "")
+        key = arbiter_resolution_program_key(self, item, action=action, requested_key=response.get("semantic_key"))
         if action == "register_and_resolve":
-            key = str(response.get("semantic_key") or item.semantic_key or "")
             if not key:
                 raise GameRuleError("A semantic_key is required to register a program")
             self.semantics.put(
@@ -3758,7 +3761,7 @@ class CommanderEngine(
                     notes=note,
                 )
             )
-            item.semantic_key = key
+        item.semantic_key = key
         self._begin_resolve_item(item, effects, destination, note=note)
 
     def _begin_resolve_item(
@@ -6732,7 +6735,7 @@ class CommanderEngine(
                     else:
                         self.move_card(card.object_id, "exile", reason="controller left game", log=False)
             self.state.stack = [item for item in self.state.stack if item.controller != seat or item.card_object_id is not None]
-            self.state.extra_turns = [turn for turn in self.state.extra_turns if turn.player != seat]
+            self.turn_steps.retire_departed_turns(seat)
             self.state.priority_passes = [passed for passed in self.state.priority_passes if passed != seat]
             self._log(seat, "player.eliminated", f"{seat} left the game: {reason}.", {"reason": reason}, importance=3, changed_players=[seat])
 
