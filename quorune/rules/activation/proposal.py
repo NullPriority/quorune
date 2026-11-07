@@ -454,7 +454,7 @@ def _activation_choice_schema(
     hint: Mapping[str, Any],
 ) -> dict[str, Any] | None:
     from ..selected_counter_costs import selected_counter_cost_choice_schema
-    counter_choice = selected_counter_cost_choice_schema(host, seat, source, ability)
+    counter_choice = selected_counter_cost_choice_schema(ability, hint)
     if counter_choice is not None:
         return counter_choice
     from .source_counter_choices import source_counter_cost_choice_schema
@@ -582,7 +582,7 @@ def build_activation_offer(
             {
                 **choice.compact(),
                 "legal_refs": list(
-                    activation_choice_candidates(host, seat, source, choice)
+                    activation_choice_candidates(host, seat, source, choice, ability=selected)
                 ),
             }
             for choice in selected.choices

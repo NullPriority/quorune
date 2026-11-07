@@ -178,6 +178,7 @@ class LifeTotalSettingCompilerTests(unittest.TestCase):
                 ("Target player's life total becomes 20.",'fixed','target'),
                 ("Target opponent's life total becomes 10.",'fixed','target'),
                 ('Your life total becomes equal to your starting life total.','starting','self'),
+                ('Your life total becomes half your starting life total, rounded up.','starting_half_rounded_up','self'),
                 ("Each player's life total becomes the highest life total among all players.",'highest','all'),
                 ("Each player's life total becomes the lowest life total among all players.",'lowest','all'),
                 ("Each player's life total becomes the number of creatures they control.",'creatures','all'),
@@ -198,7 +199,7 @@ class LifeTotalSettingCompilerTests(unittest.TestCase):
     def test_exchange_fraction_ambiguous_antecedents_and_uncovered_riders_stay_unrepresented(self):
         from quorune.compiler.life_total_setting_templates import life_total_setting_template
         for text in ('Exchange your life total with target player.',
-                'Your life total becomes half your starting life total, rounded up.',
+                'Your life total becomes half your starting life total.',
                 'It becomes equal to your starting life total.',
                 'Your life total becomes -1.','Your life total becomes 20. Then you win the game.',
                 'Each opponent\'s life total becomes the number of creatures they control.'):

@@ -6,17 +6,26 @@ from dataclasses import dataclass
 import re
 from typing import Any, Mapping
 
+from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+from ..continuous_conditions import (
+    FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD, FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,
+    FixedPublicStateConditionSpec,
+)
+from ..public_history_query_model import public_history_query_dependencies
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from ..source_maintenance import SourceMaintenanceSpec, SOURCE_MAINTENANCE_MECHANIC
 from ..fixed_effect_payment import FIXED_EFFECT_PAYMENT_MECHANIC
 from .fixed_effect_payment_templates import fixed_effect_payment_spec
 from .dependency_gate import explicit_capabilities_gate
+from .fixed_counter_trigger_nodes import FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY
 from .ir_model import OracleNode, OracleResidual, SourceSpan, append_residual
+from .public_history_conditions import fixed_public_history_condition
 
 
 _STEP = re.compile(r"At the beginning of (?P<step>your upkeep|your end step|each upkeep|the end step), (?P<body>.+)", re.I)
 _ENTRY = re.compile(r"When (?P<subject>.+?) enters, (?P<body>.+)", re.I)
+_CONDITIONAL_BODY = re.compile(r"if (?P<condition>[^,]+), (?P<body>sacrifice .+)", re.I)
 _BODY = re.compile(r"sacrifice (?P<subject>.+?)(?: unless you (?P<payment>.+?))?\.?$", re.I)
 
 
@@ -25,6 +34,7 @@ class SourceMaintenanceTemplate:
     spec: SourceMaintenanceSpec
     event: str
     condition: Mapping[str, Any] | None
+    history_condition: FixedPublicStateConditionSpec | None = None
 
 
 def source_maintenance_template(text: str, *, card_name: str) -> SourceMaintenanceTemplate | None:
@@ -38,11 +48,19 @@ def source_maintenance_template(text: str, *, card_name: str) -> SourceMaintenan
         return source_self_permanent_type(subject) is not None or reference.matches(subject)
     if entry is not None and not is_source(entry["subject"]):
         return None
-    body = _BODY.fullmatch(match["body"])
+    body_text = match["body"]
+    guarded = _CONDITIONAL_BODY.fullmatch(body_text) if step is not None else None
+    history_condition = None
+    if guarded is not None:
+        history_condition = fixed_public_history_condition(guarded["condition"])
+        if history_condition is None:
+            return None
+        body_text = guarded["body"]
+    body = _BODY.fullmatch(body_text)
     if body is None or not (is_source(body["subject"]) or entry is not None and body["subject"].casefold() == "it"):
         return None
     payment = fixed_effect_payment_spec(body["payment"]) if body["payment"] is not None else None
-    if body["payment"] is not None and payment is None:
+    if body["payment"] is not None and (payment is None or history_condition is not None):
         return None
     spec = SourceMaintenanceSpec(payment)
     if entry is not None:
@@ -51,7 +69,12 @@ def source_maintenance_template(text: str, *, card_name: str) -> SourceMaintenan
     conditions = [{"field": "step", "op": "eq", "value": "upkeep" if "upkeep" in variant else "end_step"}]
     if variant.startswith("your"):
         conditions.insert(0, {"field": "player", "op": "eq", "value": "$source.controller"})
-    return SourceMaintenanceTemplate(spec, "step.begin", {"all": conditions})
+    if history_condition is not None:
+        conditions.append({
+            "field": FIXED_PUBLIC_STATE_INTERVENING_CONDITION_FIELD,
+            "op": "truthy", "value": True, "condition": history_condition.to_dict(),
+        })
+    return SourceMaintenanceTemplate(spec, "step.begin", {"all": conditions}, history_condition)
 
 
 def source_maintenance_node(*, node_id: str, line: str, material_line: str,
@@ -60,7 +83,13 @@ def source_maintenance_node(*, node_id: str, line: str, material_line: str,
     template = source_maintenance_template(material_line, card_name=card_name)
     if template is None:
         return None
-    gate = explicit_capabilities_gate(template.spec.capabilities,
+    dependencies = template.spec.capabilities
+    coverage = ()
+    if template.history_condition is not None:
+        dependencies = (*dependencies, FIXED_PUBLIC_STATE_INTERVENING_CAPABILITY,
+                        *public_history_query_dependencies(template.history_condition.to_dict()))
+        coverage = (CURRENT_ABILITY_FRAGMENT_COVERAGE, "intervening_condition", FIXED_PUBLIC_STATE_INTERVENING_COVERAGE)
+    gate = explicit_capabilities_gate(dependencies,
         capability_registry=capability_registry, capability_profile=capability_profile)
     residual_ids = ()
     if gate.blockers:
@@ -70,7 +99,7 @@ def source_maintenance_node(*, node_id: str, line: str, material_line: str,
     return OracleNode(node_id=node_id, kind="triggered_ability", text=line, span=span,
         active_zone="battlefield", event=template.event, event_condition=template.condition,
         lowerable=True, exact=not residual_ids, template_id="fixed-source-maintenance-v1",
-        effects=(template.spec.effect(),), mechanics=(SOURCE_MAINTENANCE_MECHANIC,
+        effects=(template.spec.effect(),), runtime_coverage=coverage, mechanics=(SOURCE_MAINTENANCE_MECHANIC,
             FIXED_EFFECT_PAYMENT_MECHANIC, "cr-603-handling-triggered-abilities"),
         residual_ids=residual_ids, capability_dependencies=gate.capabilities,
         capability_closure=closure.reachable if closure else (),

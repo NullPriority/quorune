@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections import Counter
 from collections.abc import Iterable, Mapping
+from dataclasses import replace
 from typing import Any
 
 from .model import TurnHistory, TurnHistoryEvent, TurnHistoryEventKind
@@ -11,11 +12,17 @@ from .model import TurnHistory, TurnHistoryEvent, TurnHistoryEventKind
 
 def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
     """Start an empty current-turn journal without changing its event mode."""
-    return TurnHistory(turn_sequence=turn_sequence,
-                       departure_history_version=history.departure_history_version,
-        arrival_history_version=history.arrival_history_version,mill_history_version=history.mill_history_version,
-        spell_origin_history_version=history.spell_origin_history_version,graveyard_type_history_version=history.graveyard_type_history_version,
-        spell_mana_history_version=history.spell_mana_history_version,crime_history_version=history.crime_history_version)
+    return TurnHistory(
+        turn_sequence=turn_sequence,
+        departure_history_version=history.departure_history_version,
+        arrival_history_version=history.arrival_history_version,
+        mill_history_version=history.mill_history_version,
+        spell_origin_history_version=history.spell_origin_history_version,
+        graveyard_type_history_version=history.graveyard_type_history_version,
+        spell_mana_history_version=history.spell_mana_history_version,
+        crime_history_version=history.crime_history_version,
+        committed_occurrence_history_version=history.committed_occurrence_history_version,
+    )
 
 
 def roll_turn_history(
@@ -44,29 +51,64 @@ def roll_turn_history(
         or history.turn_sequence != next_turn_sequence - 1
         or history.turn_sequence < 1
     ):
-        return TurnHistory(turn_sequence=next_turn_sequence,
-                           departure_history_version=history.departure_history_version,arrival_history_version=history.arrival_history_version,
-                           mill_history_version=history.mill_history_version,spell_origin_history_version=history.spell_origin_history_version,
-                           graveyard_type_history_version=history.graveyard_type_history_version,
-                           spell_mana_history_version=history.spell_mana_history_version,crime_history_version=history.crime_history_version)
+        return reset_turn_history(history, next_turn_sequence)
     counts = Counter(
         event.actor
         for event in history.events
         if event.kind == "spell_cast" and event.actor is not None
     )
-    return TurnHistory(
-        turn_sequence=next_turn_sequence,
-        departure_history_version=history.departure_history_version,
-        arrival_history_version=history.arrival_history_version,
-        mill_history_version=history.mill_history_version,
-        spell_origin_history_version=history.spell_origin_history_version,
-        graveyard_type_history_version=history.graveyard_type_history_version,
-        spell_mana_history_version=history.spell_mana_history_version,
-        crime_history_version=history.crime_history_version,
+    return replace(
+        reset_turn_history(history, next_turn_sequence),
         previous_turn_sequence=history.turn_sequence,
         previous_active_player=previous_active_player,
         previous_spell_cast_counts=dict(sorted(counts.items())),
     )
+
+
+def _graveyard_departure_fact(history, card, destination: str) -> TurnHistoryEvent | None:
+    if (
+        getattr(history, "committed_occurrence_history_version", None) == 1
+        and card.zone == "graveyard" and destination != "graveyard" and card.is_card_object
+    ):
+        return TurnHistoryEvent(
+            "card_left_graveyard", actor=card.owner, object_incarnation=card.logical_object_id,
+        )
+    return None
+
+
+def record_graveyard_departure(host, card, destination: str) -> None:
+    event = _graveyard_departure_fact(getattr(host.state, "turn_history", None), card, destination)
+    if event is not None:
+        host._record_turn_history(event.kind, actor=event.actor, object_incarnation=event.object_incarnation)
+
+
+def prospective_cast_history(state, source) -> TurnHistory | None:
+    """Project CR 601.2a's graveyard departure before computing the cast cost."""
+    history = getattr(state, "turn_history", None)
+    event = _graveyard_departure_fact(history, source, "stack")
+    if event is None:
+        return history
+    if history.turn_sequence != state.turn_sequence:
+        history = reset_turn_history(history, state.turn_sequence)
+    return replace(history, events=[*history.events, event])
+
+
+def record_warped_spell(host, *, actor: str, object_incarnation: str) -> None:
+    history = getattr(host.state, "turn_history", None)
+    if getattr(history, "committed_occurrence_history_version", None) == 1:
+        host._record_turn_history("spell_warped", actor=actor, object_incarnation=object_incarnation)
+
+
+def committed_token_count(state, seat: str) -> int | None:
+    """Read the token owner's already committed count, without inventing occurrences."""
+    player = state.players.get(seat)
+    if player is None:
+        return None
+    tracker = player.stats.get("tokens_created_by_turn", {})
+    if not isinstance(tracker, Mapping):
+        return None
+    count = tracker.get(str(state.turn_sequence), 0)
+    return count if type(count) is int and count >= 0 else None
 
 
 def previous_turn_spell_cast_counts(

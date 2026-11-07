@@ -5,6 +5,7 @@ import json
 import unittest
 from public_state_action_support import PublicStateActionFixture
 from public_state_condition_support import CAPABILITY_ID
+from inherited_composition_fixture import InheritedNativeFixture
 from unittest import mock
 from common import ROOT
 from quorune.card_programs import bind_card_program_runtime, compile_card_program
@@ -87,6 +88,121 @@ class AdditionalConditionalModifierCompilerTests(unittest.TestCase):
         self.assertNotEqual("exact", compile_oracle_card(
             query_record(text), capability_registry=CapabilityRegistry(blocked),
         ).status)
+
+    def test_starting_life_comparisons_keep_each_threshold_and_the_antecedent(self):
+        from test_qualified_zone_event_queries import query_record
+        from quorune.compiler.public_state_queries import fixed_public_state_condition
+        from quorune.continuous_conditions import FixedPublicStateConditionSpec
+
+        expected = (
+            ("greater than", "controller_life_above_starting", 1),
+            ("greater than or equal to", "controller_at_or_above_starting_life", 1),
+            ("less than", "controller_below_starting_life", 1),
+            ("at least 10 greater than", "controller_life_above_starting", 10),
+        )
+        for comparison, fact, threshold in expected:
+            with self.subTest(comparison=comparison):
+                condition = fixed_public_state_condition(
+                    f"your life total is {comparison} your starting life total",
+                    source_name="Threshold Fixture",
+                )
+                self.assertEqual((fact, threshold), (condition.fact.value, condition.amount))
+                self.assertEqual(condition, FixedPublicStateConditionSpec.from_dict(condition.to_dict()))
+
+        registry = load_default_capability_registry()
+        text = ("When this creature enters, if your life total is less than your starting life total, "
+                "it becomes equal to your starting life total.")
+        ir = compile_oracle_card(query_record(text), capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(text, node.text)
+        self.assertEqual({
+            "op": "set_life_total", "schema_version": 1, "player": "$controller",
+            "value": {"schema_version": 1, "kind": "starting"},
+        }, node.effects[0])
+        unsupported = text.replace("your life total is less than your starting life total", "you gained life this turn")
+        self.assertTrue(compile_oracle_card(query_record(unsupported), capability_registry=registry).material_residuals)
+
+    def test_paired_bonuses_require_two_closed_clauses_over_the_same_recipient(self):
+        from test_qualified_zone_event_queries import query_record
+
+        text = ("As long as your life total is greater than your starting life total, this creature gets +1/+1 and has menace. "
+                "This creature gets an additional +5/+5 as long as your life total is at least 10 greater than your starting life total.")
+        registry = load_default_capability_registry()
+        ir = compile_oracle_card(query_record(text), capability_registry=registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(text, node.text)
+        self.assertEqual([1, 5], [handler["modifier"]["power"] for handler in node.handlers])
+        self.assertEqual([1, 10], [handler["source_condition"]["amount"] for handler in node.handlers])
+        for unsupported in (
+            text.replace("This creature gets an additional", "Creatures you control get an additional"),
+            text.replace("your life total is at least 10 greater than your starting life total", "you control a stickered permanent"),
+        ):
+            self.assertTrue(compile_oracle_card(query_record(unsupported), capability_registry=registry).material_residuals)
+
+
+class StartingLifeNativeTests(PublicStateActionFixture, InheritedNativeFixture, unittest.TestCase):
+    def test_actual_resolute_archangel_checks_at_entry_and_again_after_a_response(self):
+        for response in (False, True):
+            with self.subTest(response=response):
+                session = self.session(715001)
+                session.state.config.semantic_policy = "trusted_only"
+                session.state.config.starting_life = 41
+                for seat in "BCD":
+                    session.state.players[seat].life = 41
+                session.state.players["A"].life = 40
+                source = self.add(session.engine, "Resolute Archangel", zone="hand")
+                gain = self.add(session.engine, "Revitalize", zone="hand")
+                for card in (source, gain):
+                    self.assert_closed(session, card)
+                self.prepare(session, mana={"C": 6, "W": 3})
+                self.checkpoint(session)
+
+                self.cast(session, "A", source)
+                self.resolve_top(session)
+                trigger, = session.state.stack
+                self.assertEqual(("A", source.object_id), (trigger.controller, trigger.source_object_id))
+                self.assertEqual(40, session.state.players["A"].life)
+                session = self.replay(session, load=True)
+                if response:
+                    self.cast(session, "A", gain)
+                    self.resolve_top(session)
+                    self.assertEqual(43, session.state.players["A"].life)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(43 if response else 41, session.state.players["A"].life)
+                self.assertEqual([41, 41, 41], [session.state.players[seat].life for seat in "BCD"])
+                self.replay(session, load=True)
+
+    def test_actual_elenda_applies_both_bonuses_at_ten_above_start_and_loses_one_after_damage(self):
+        session = self.session(715002)
+        session.state.config.semantic_policy = "trusted_only"
+        session.state.config.starting_life = 37
+        for seat in "BCD":
+            session.state.players[seat].life = 37
+        session.state.players["A"].life = 44
+        source = self.add(session.engine, "Elenda, Saint of Dusk")
+        gain = self.add(session.engine, "Revitalize", zone="hand")
+        damage = self.add(session.engine, "Lightning Bolt", seat="B", zone="hand")
+        for card in (source, gain, damage):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 1, "W": 1})
+        session.state.players["B"].mana_pool["R"] = 1
+        self.checkpoint(session)
+
+        self.assertEqual(5, session.engine._numeric_stat(source.object_id, "power"))
+        self.assertIn("Menace", session.engine._effective_card_data(source)["keywords"])
+        self.cast(session, "A", gain)
+        self.resolve_top(session)
+        self.assertEqual(47, session.state.players["A"].life)
+        self.assertEqual(10, session.engine._numeric_stat(source.object_id, "power"))
+        session = self.replay(session, load=True)
+        self.cast(session, "B", damage, ["A"])
+        self.resolve_top(session)
+        self.assertEqual(44, session.state.players["A"].life)
+        self.assertEqual(5, session.engine._numeric_stat(source.object_id, "power"))
+        self.replay(session, load=True)
+
 
 class AdditionalConditionalModifierRuntimeTests(PublicStateActionFixture, unittest.TestCase):
     def test_fixture_addition_registers_complete_card_once_per_isolated_session(self):

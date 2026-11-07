@@ -4,10 +4,14 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..compiler.closed_effect_programs import has_one_closed_target_slot
 from .fixed_effect_clause_shapes import (
     closed_effect_component_capabilities,
 )
-from .bound_effect_program_shapes import bound_effect_program_node_capabilities
+from ..fractional_quantity_model import HALF_QUANTITY_KIND
+from .bound_effect_program_shapes import (
+    bound_effect_program_node_capabilities, has_target_controller_recipient,
+)
 
 
 CLOSED_EFFECT_PROGRAM_MECHANIC = "closed-effect-program"
@@ -42,6 +46,7 @@ def closed_effect_program_node_capabilities(
     if (
         CLOSED_EFFECT_PROGRAM_MECHANIC not in mechanics
         or not 2 <= len(effects) <= 8
+        or any(has_target_controller_recipient(effect) for effect in effects)
     ):
         return ()
     target_effects = tuple(
@@ -50,7 +55,7 @@ def closed_effect_program_node_capabilities(
     if target_schema is None:
         if target_effects:
             return ()
-    elif not target_effects or target_schema.get("count") != 1:
+    elif not target_effects or not has_one_closed_target_slot(target_schema):
         return ()
 
     component_mechanics = mechanics - {CLOSED_EFFECT_PROGRAM_MECHANIC}
@@ -104,6 +109,13 @@ def closed_effect_program_runtime_dependencies(program):
             required.update(owned)
         if CLOSED_EFFECT_PROGRAM_CAPABILITY not in required:raise ValueError('Modal ordered-program annotation has no owning branch')
         return tuple(sorted({*required,*modal_owned}))
+    if any(has_target_controller_recipient(effect) for effect in program.effects):
+        owned = closed_effect_program_node_capabilities(
+            effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
+        )
+        if not owned:
+            raise ValueError("Target controller damage requires its preceding closed target instruction")
+        return owned
     if CLOSED_EFFECT_PROGRAM_MECHANIC not in program.coverage:
         return ()
     if (len(program.effects) == 1
@@ -117,6 +129,14 @@ def closed_effect_program_runtime_dependencies(program):
         return owned
     if not 2 <= len(program.effects) <= 8:
         raise ValueError('Closed ordered programs require two to eight effects')
+    if any(isinstance(value, Mapping) and value.get("kind") == HALF_QUANTITY_KIND
+           for effect in program.effects for value in (effect.get("amount"), effect.get("count"))):
+        owned = closed_effect_program_node_capabilities(
+            effects=program.effects, target_schema=schema, mechanic_ids=program.coverage,
+        )
+        if not owned:
+            raise ValueError("Ordered fractional effects require all closed result owners")
+        return owned
     return (CLOSED_EFFECT_PROGRAM_CAPABILITY,)
 
 

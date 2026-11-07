@@ -6,6 +6,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from test_qualified_zone_event_queries import query_record
 import test_qualified_spell_ordinals as native
 from quorune.carddb import CardDatabase
@@ -17,10 +18,46 @@ from quorune.rules.event_player_result_shapes import fixed_event_player_result_n
 from quorune.oracle_ir import compile_oracle_card
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.target_controller_information import (
+    TARGET_CONTROLLER_INFORMATION_CAPABILITY, occurrence_controller_reference,
+)
 from scripts.build_test_database import build_fixture_database
 
 
 class EventPlayerFixedDamageCompilerTests(unittest.TestCase):
+    def test_zone_damage_preserves_the_kind_of_controller_read(self):
+        registry = load_default_capability_registry()
+        cases = (
+            ('Whenever a land enters, this artifact deals 2 damage to that land\'s controller.',
+             'land.enter', occurrence_controller_reference()),
+            ('Whenever another creature enters, this artifact deals 1 damage to that creature\'s controller.',
+             'creature.enter', occurrence_controller_reference()),
+            ('Whenever a land is put into a graveyard from the battlefield, this artifact deals 2 damage to that land\'s controller.',
+             'permanent.graveyard', '$context.previous_controller'),
+        )
+        for text, event, recipient in cases:
+            with self.subTest(text=text):
+                ir = compile_oracle_card(replace(query_record(text), type_line='Artifact'), capability_registry=registry)
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(event, node.event)
+                self.assertIsNone(node.target_schema)
+                self.assertEqual(recipient, node.effects[0]['target'])
+                if isinstance(recipient, dict):
+                    self.assertIn(TARGET_CONTROLLER_INFORMATION_CAPABILITY, node.capability_dependencies)
+                    for malformed in ({**recipient, 'schema_version': True}, {**recipient, 'extra': 'land'}):
+                        self.assertEqual((), fixed_event_player_result_node_capabilities(
+                            effects=({**node.effects[0], 'target': malformed},), target_schema=None,
+                            mechanic_ids={'fixed-event-player-result', 'fixed-event-player-damage'},
+                        ))
+        wrong = (
+            'Whenever a land enters, this artifact deals 2 damage to that creature\'s controller.',
+            'Whenever an artifact is put into a graveyard from the battlefield, this artifact deals 2 damage to that land\'s controller.',
+        )
+        for text in wrong:
+            ir = compile_oracle_card(replace(query_record(text), type_line='Artifact'), capability_registry=registry)
+            self.assertNotEqual('exact', ir.status, text)
+
     def lower(self):
         binding=fixed_counter_trigger_binding('Whenever an opponent draws a card, this enchantment deals 1 damage to that player.',card_name='Generic Observer')
         self.assertIsNotNone(binding)
@@ -89,6 +126,7 @@ class EventPlayerFixedDamageNativeTests(unittest.TestCase):
     replay=native.QualifiedSpellOrdinalNativeTests.replay
     assert_closed=native.QualifiedSpellOrdinalNativeTests.assert_closed
     until=native.QualifiedSpellOrdinalNativeTests.until
+    resolve_top=InheritedNativeFixture.resolve_top
 
     @classmethod
     def setUpClass(cls):
@@ -111,6 +149,141 @@ class EventPlayerFixedDamageNativeTests(unittest.TestCase):
             result=bind_semantic_program_runtime(changed,capability_registry=self.registry,profile='commander_review')
             self.assertFalse(result['strict']);self.assertIn('capability:undeclared_runtime_dependency:'+CAPABILITY,result['blockers'])
         self.assertGreater(checked,0)
+
+    def test_entry_controller_damage_requires_its_runtime_authority(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+
+        s = self.session(60877301)
+        source = self.add(s.engine, 'Ankh of Mishra')
+        program = next(p for p in s.engine.semantics.programs_for_oracle(source.oracle_id)
+                       if CAPABILITY in p.capability_dependencies)
+        self.assertEqual('trusted', program.trust_level)
+        for removed in (CAPABILITY, TARGET_CONTROLLER_INFORMATION_CAPABILITY):
+            dependencies = tuple(cap for cap in program.capability_dependencies if cap != removed)
+            altered = replace(program, capability_dependencies=dependencies,
+                              coverage=tuple(value for value in program.coverage if value != 'fixed-event-player-damage'),
+                              capability_closure=self.registry.closure(dependencies, profile='commander_review').to_dict())
+            binding = bind_semantic_program_runtime(altered, capability_registry=self.registry, profile='commander_review')
+            self.assertFalse(binding['strict'])
+            self.assertIn(f'capability:undeclared_runtime_dependency:{removed}', binding['blockers'])
+        wrong_event = replace(program, event='spell.cast')
+        binding = bind_semantic_program_runtime(wrong_event, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict'])
+
+    def _ankh_after_control_change(self, seed):
+        s = self.session(seed)
+        source = self.add(s.engine, 'Ankh of Mishra', seat='B')
+        land = self.add(s.engine, 'Darksteel Citadel', zone='hand')
+        self.add(s.engine, 'Vedalken Orrery', seat='C')
+        annex = self.add(s.engine, 'Annex', seat='C', zone='hand')
+        blink = self.add(s.engine, 'Planar Incision', seat='B', zone='hand')
+        self.assert_closed(s, source)
+        self.assert_closed(s, annex)
+        self.prepare(s, mana={})
+        s.state.players['B'].mana_pool.update({'C': 1, 'U': 1})
+        s.state.players['C'].mana_pool.update({'C': 2, 'U': 2})
+        self.checkpoint(s)
+        command = {'action_id': 'play-land:' + land.ref}
+        before = authoritative_state_hash(s.state)
+        self.assertFalse(s.act('pilot:D', command).ok)
+        self.assertEqual(before, authoritative_state_hash(s.state))
+        result = s.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(1, len(s.state.stack))
+        original = s.state.stack[-1]
+        self.assertEqual(source.object_id, original.source_object_id)
+        self.assertFalse(original.targets)
+        self.assertEqual(land.object_id, original.context['card_object_id'])
+        self.cast_for(s, 'C', annex, [land.ref])
+        self.resolve_top(s)
+        self.assertEqual('C', s.state.cards[land.object_id].controller)
+        self.assertEqual([original.ref], [item.ref for item in s.state.stack])
+        return s, land, blink, original.ref
+
+    def test_actual_ankh_reads_current_land_controller_after_native_flash_control(self):
+        s, _, blink, _ = self._ankh_after_control_change(60877302)
+        s = self.replay(s, load=True)
+        life = {seat: player.life for seat, player in s.state.players.items()}
+        for viewer in 'ACD':
+            self.assertNotIn(blink.ref, json.dumps(s.packet('pilot:' + viewer, full=True)))
+        self.resolve_top(s)
+        self.assertEqual({**life, 'C': life['C'] - 2}, {seat: player.life for seat, player in s.state.players.items()})
+        self.replay(s, load=True)
+
+    def test_actual_ankh_keeps_last_controller_after_land_returns(self):
+        s, land, blink, original_ref = self._ankh_after_control_change(60877303)
+        life = {seat: player.life for seat, player in s.state.players.items()}
+        original_identity = land.logical_object_id
+        self.cast_for(s, 'B', blink, [land.ref])
+        self.resolve_top(s)
+        returned = s.state.cards[land.object_id]
+        self.assertEqual('A', returned.controller)
+        self.assertNotEqual(original_identity, returned.logical_object_id)
+        self.assertEqual(2, len(s.state.stack))
+        earlier = next(item for item in s.state.stack if item.ref == original_ref)
+        lki = earlier.context['occurrence_controller_information_lki']
+        self.assertEqual(original_identity, lki['logical_object_id'])
+        self.assertEqual('C', lki['information']['controller'])
+        s = self.replay(s, load=True)
+        self.resolve_top(s)
+        self.assertEqual(life['A'] - 2, s.state.players['A'].life)
+        self.assertEqual(life['C'], s.state.players['C'].life)
+        self.resolve_top(s)
+        self.assertEqual({**life, 'A': life['A'] - 2, 'C': life['C'] - 2},
+                         {seat: player.life for seat, player in s.state.players.items()})
+        self.replay(s, load=True)
+
+    def test_actual_dingus_egg_uses_the_departing_land_controller(self):
+        s = self.session(60877304)
+        source = self.add(s.engine, 'Dingus Egg', seat='B')
+        land = self.add(s.engine, 'Generic Bound Plains', seat='D')
+        annex = self.add(s.engine, 'Annex', zone='hand')
+        rain = self.add(s.engine, 'Stone Rain', zone='hand')
+        self.assert_closed(s, source)
+        self.prepare(s, mana={'C': 5, 'R': 3, 'U': 2})
+        self.checkpoint(s)
+        life = {seat: player.life for seat, player in s.state.players.items()}
+        self.cast_for(s, 'A', annex, [land.ref])
+        self.resolve_top(s)
+        self.assertEqual('A', s.state.cards[land.object_id].controller)
+        self.cast_for(s, 'A', rain, [land.ref])
+        self.resolve_top(s)
+        self.assertEqual('graveyard', s.state.cards[land.object_id].zone)
+        self.assertEqual('D', s.state.cards[land.object_id].owner)
+        self.assertEqual(1, len(s.state.stack))
+        self.resolve_top(s)
+        self.assertEqual({**life, 'A': life['A'] - 2}, {seat: player.life for seat, player in s.state.players.items()})
+        self.replay(s, load=True)
+
+    def test_actual_magnetic_mine_sees_another_artifact_die_with_it(self):
+        s = self.session(60877305)
+        source = self.add(s.engine, 'Magnetic Mine', seat='B')
+        key = self.add(s.engine, 'Voltaic Key', seat='D')
+        theft = self.add(s.engine, 'Steal Artifact', zone='hand')
+        storm = self.add(s.engine, 'Shatterstorm', zone='hand')
+        self.assert_closed(s, source)
+        self.prepare(s, mana={'C': 6, 'R': 4, 'U': 3})
+        self.checkpoint(s)
+        life = {seat: player.life for seat, player in s.state.players.items()}
+        self.cast_for(s, 'A', theft, [key.ref])
+        self.resolve_top(s)
+        self.assertEqual('A', s.state.cards[key.object_id].controller)
+        self.cast_for(s, 'A', storm)
+        self.resolve_top(s)
+        self.assertEqual('graveyard', s.state.cards[source.object_id].zone)
+        self.assertEqual('graveyard', s.state.cards[key.object_id].zone)
+        self.assertEqual([source.object_id], [item.source_object_id for item in s.state.stack])
+        s = self.replay(s, load=True)
+        self.resolve_top(s)
+        self.assertEqual({**life, 'A': life['A'] - 2}, {seat: player.life for seat, player in s.state.players.items()})
+        self.replay(s, load=True)
+
+    def test_using_the_entering_controller_instead_of_current_controller_is_detected(self):
+        witness = type(self)('test_actual_ankh_reads_current_land_controller_after_native_flash_control')
+        with patch('quorune.target_controller_information.resolve_occurrence_controller_information',
+                   side_effect=lambda host, value, item: item.context['controller']):
+            with self.assertRaises(AssertionError):
+                witness.test_actual_ankh_reads_current_land_controller_after_native_flash_control()
 
     def test_station_monitor_nested_declaration_runtime_dependency_cannot_be_omitted(self):
         from quorune.card_programs.binding import bind_semantic_program_runtime

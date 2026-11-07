@@ -19,11 +19,16 @@ from .context import SemanticNodeError
 from .explore import explore_source_controller
 from .query_effect_amounts import resolve_public_query_amount, resolve_cast_x_amount
 from ..scalar_effect_amount_model import SCALAR_AMOUNT_KIND
+from ..rules.revealed_library_top import REVEAL_TOP_OPERATION
 from ..scalar_effect_amounts import resolve_scalar_effect_amount
 from .direct_target_fields import bound_mutation_target_overrides
 
 
 _INDEX_GROUP = "index"
+_TARGET_GROUP_REFERENCE = re.compile(
+    r"\$target_group\.(?P<group>clause_[0-3]|target_[0-9]+)"
+    r"(?P<scalar>\.0|(?P<current_controller>\.current_controller\.0))?"
+)
 
 
 class SemanticValueHost(Protocol):
@@ -36,6 +41,30 @@ class SemanticValueHost(Protocol):
     def _type_parts(
         self, type_line: str
     ) -> tuple[set[str], set[str], set[str]]: ...
+
+
+def _resolve_target_group_reference(host: SemanticValueHost, match: re.Match[str], item: Any) -> Any:
+    name = match['group']
+    original_groups = item.context.get('target_groups')
+    groups = item.context.get('target_groups_current')
+    if groups is None:
+        groups = original_groups
+    if not isinstance(groups, Mapping) or name not in groups:
+        raise SemanticNodeError('Scoped target group is unavailable')
+    refs = groups[name]
+    if not isinstance(refs, (list, tuple)) or any(
+        ref is not None and (type(ref) is not str or not ref) for ref in refs
+    ):
+        raise SemanticNodeError('Scoped target group is malformed')
+    if not match['scalar']:
+        return [ref for ref in refs if ref is not None]
+    original = original_groups.get(name) if isinstance(original_groups, Mapping) else None
+    if not isinstance(original, (list, tuple)) or len(original) != 1 or len(refs) > 1:
+        raise SemanticNodeError('Scoped scalar target requires its one fixed role')
+    ref = refs[0] if refs else None
+    if ref is not None and match['current_controller']:
+        return host._target_snapshot(ref).get('controller')
+    return ref
 
 
 def _resolve_attachment_reference(
@@ -118,6 +147,9 @@ def _resolve_effect_mapping(host, value, item):
         from ..delayed_object_actions import bind_delayed_object_instruction
         try:return bind_delayed_object_instruction(host,value,item)
         except (TypeError,ValueError,KeyError) as exc:raise SemanticNodeError(str(exc)) from exc
+    if "followup" in value and value.get("op") in ("destroy_all", "move_public_zone_set", REVEAL_TOP_OPERATION):
+        preceding_action = {key: child for key, child in value.items() if key != "followup"}
+        return {**_resolve_effect_mapping(host, preceding_action, item), "followup": value["followup"]}
     if value.get('op')=='create_token_then_counters':
         from ..created_token_counter_model import validate_created_token_counter
         try:validate_created_token_counter(value)
@@ -131,8 +163,11 @@ def _resolve_effect_mapping(host, value, item):
         return {**value,'player':resolve_semantic_value(host,value['player'],item),
             'cast_fact':resolve_semantic_value(host,value['cast_fact'],item)}
     from ..rules.stack_damage_sources import bound_stack_damage_source
+    from ..announced_damage import ANNOUNCED_DAMAGE_EFFECT_FIELD, bind_announced_damage_recipients
     from .direct_target_fields import bound_graveyard_return_target_snapshot
     try:
+        if value.get(ANNOUNCED_DAMAGE_EFFECT_FIELD) is True:
+            value = {**value, ANNOUNCED_DAMAGE_EFFECT_FIELD: bind_announced_damage_recipients(host, value, item)}
         missing = bound_mutation_target_overrides(host, value, item,
             lambda reference: resolve_semantic_value(host, reference, item))
         if missing:
@@ -240,23 +275,9 @@ def resolve_semantic_value(
             raise SemanticNodeError(str(exc)) from exc
     if value.startswith("$context."):
         return item.context.get(value.removeprefix("$context."))
-    target_group_match = re.fullmatch(r"\$target_group\.(?P<group>clause_[0-3]|target_[0-9]+)(?P<scalar>\.0)?", value)
+    target_group_match = _TARGET_GROUP_REFERENCE.fullmatch(value)
     if target_group_match:
-        groups = item.context.get('target_groups_current')
-        if groups is None:
-            groups = item.context.get('target_groups')
-        if not isinstance(groups, Mapping) or target_group_match['group'] not in groups:
-            raise SemanticNodeError('Scoped target group is unavailable')
-        refs = groups[target_group_match['group']]
-        if not isinstance(refs, (list, tuple)) or any(ref is not None and (type(ref) is not str or not ref) for ref in refs):
-            raise SemanticNodeError('Scoped target group is malformed')
-        current = [ref for ref in refs if ref is not None]
-        if target_group_match['scalar']:
-            original = item.context.get('target_groups', {}).get(target_group_match['group'])
-            if not isinstance(original, (list, tuple)) or len(original) != 1 or len(refs) > 1:
-                raise SemanticNodeError('Scoped scalar target requires its one fixed role')
-            return refs[0] if refs else None
-        return current
+        return _resolve_target_group_reference(host, target_group_match, item)
     if value == "$targets":
         return [target for target in item.targets if target is not None]
     current_controller_match = re.fullmatch(

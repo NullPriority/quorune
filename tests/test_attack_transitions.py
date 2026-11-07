@@ -83,6 +83,25 @@ class _Query:
 
 
 class AttackTransitionModelTests(unittest.TestCase):
+    def test_decayed_uses_only_declared_attackers_and_preserves_instances(self):
+        query = _Query()
+        decayed = _spec(CombatKeywordTriggerKind.DECAYED)
+        query.participants["attacker-a"] = _participant("attacker-a", "A01", decayed, decayed)
+        query.participants["other"] = _participant("other", "A02", decayed)
+        query.sources = ("attacker-a", "other")
+
+        occurrences = derive_attack_keyword_trigger_occurrences(
+            build_attack_transition(query)
+        )
+        self.assertEqual(2, len(occurrences))
+        self.assertEqual({0, 1}, {item.instance_index for item in occurrences})
+        for item in occurrences:
+            self.assertEqual(CombatKeywordTriggerKind.DECAYED, item.kind)
+            self.assertEqual("attacker-a", item.source.object_id)
+            self.assertEqual((item.source,), item.affected)
+            self.assertEqual((0, 0), (item.power_delta, item.toughness_delta))
+            self.assertEqual(item, AttackKeywordTriggerOccurrence.from_dict(item.to_dict()))
+
     def test_attack_relationship_batch_rejects_before_mutation(self):
         combat = CombatState()
         attacker = SimpleNamespace(

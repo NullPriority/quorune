@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import json
 from pathlib import Path
 import random
@@ -22,7 +23,7 @@ from quorune.counter_placement import (
 )
 from quorune.deck import DeckLoader
 from quorune.errors import GameRuleError
-from quorune.model import CardInstance, StackItem
+from quorune.model import CardInstance, GameConfig, GameState, StackItem
 from quorune.oracle_ir import register_generated_programs
 from quorune.projection import StateProjector
 from quorune.record import (
@@ -30,7 +31,13 @@ from quorune.record import (
     checkpoint_envelope,
     replay_record,
 )
-from quorune.replacement_effects import ReplacementChoiceRequired
+from quorune.replacement_effects import (
+    ReplaceableEvent, ReplacementChoiceRequired, ReplacementClass, ReplacementEffect, ReplacementEffectError,
+)
+from quorune.replacement.applicability import replacement_choice
+from quorune.replacement.application import apply_replacement
+from quorune.replacement.model import COUNTER_REPLACEMENT_GENERATED_FIELD
+from quorune.replacement.operations import MultiplyAmount, SetField
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime import (
     CounterPlacementEventSpec,
@@ -72,6 +79,85 @@ def counter_descriptor(
             "additional": additional,
         },
     }
+
+
+class CounterQuantityProvenanceTests(unittest.TestCase):
+    def setUp(self):
+        self.original = CounterPlacementEventSpec(
+            event_id="cost", subject_kind="permanent", subject_id="creature",
+            placing_player="A", counter_name="-1/-1", amount=1,
+            source_ref="spell", effect_generated=False, owner="A",
+            controller="A", target_zone="battlefield",
+        ).event()
+        self.current = replace(self.original, payload={
+            **self.original.payload, COUNTER_REPLACEMENT_GENERATED_FIELD: False,
+        })
+        self.any_placement = ReplacementEffect(
+            "any", "all-placements", "counter.place", ReplacementClass.OTHER,
+            operations=(MultiplyAmount("amount", 2),),
+        )
+        self.effect_only = ReplacementEffect(
+            "effect", "effect-only", "counter.place", ReplacementClass.OTHER,
+            conditions={"effect_generated": {"eq": True}, "amount": {"gt": 0}},
+            operations=(MultiplyAmount("amount", 2),),
+        )
+
+    def test_effect_only_doubler_reconsiders_the_transformed_cost(self):
+        effects = (self.any_placement, self.effect_only)
+        for event, expected in ((self.current, 4), (self.original, 2)):
+            with self.subTest(expected=expected):
+                first = replacement_choice(event, effects)
+                self.assertEqual(("any",), first.options)
+                changed = apply_replacement(first, effects, "any")
+                self.assertIs(changed.payload["effect_generated"], False)
+                second = replacement_choice(changed, effects)
+                if second is not None:
+                    self.assertEqual(("effect",), second.options)
+                    changed = apply_replacement(second, effects, "effect")
+                self.assertEqual(expected, changed.payload["amount"])
+                self.assertIsNone(replacement_choice(changed, effects))
+
+    def test_omitted_replacement_provenance_mutant_is_killed(self):
+        effects = (self.any_placement, self.effect_only)
+        first = replacement_choice(self.current, effects)
+        with patch("quorune.replacement.application._record_replacement_generated_counters", return_value=None):
+            changed = apply_replacement(first, effects, "any")
+            with self.assertRaises(AssertionError):
+                self.assertIsNotNone(replacement_choice(changed, effects))
+
+    def test_decline_and_zero_placement_preserve_effect_only_ineligibility(self):
+        declined = replace(self.any_placement, optional=True)
+        zero = replace(self.any_placement, operations=(SetField("amount", 0),))
+        for effect, selection in ((declined, "decline:any"), (zero, "any")):
+            with self.subTest(selection=selection):
+                effects = (effect, self.effect_only)
+                first = replacement_choice(self.current, effects)
+                result = apply_replacement(first, effects, selection)
+                self.assertIs(result.payload[COUNTER_REPLACEMENT_GENERATED_FIELD], False)
+                self.assertIsNone(replacement_choice(result, effects))
+
+    def test_forged_counter_replacement_provenance_rejects(self):
+        for changed in (
+            {COUNTER_REPLACEMENT_GENERATED_FIELD: True},
+            {COUNTER_REPLACEMENT_GENERATED_FIELD: 1},
+            {"effect_generated": True},
+        ):
+            with self.subTest(changed=changed), self.assertRaisesRegex(ReplacementEffectError, "provenance"):
+                data = self.current.to_dict()
+                data["payload"].update(changed)
+                ReplaceableEvent.from_dict(data)
+
+    def test_counter_quantity_provenance_version_preserves_absent_record_field(self):
+        state = GameState("counter-version", GameConfig(), {}, {}, {}, {}, [], None, None)
+        current = state.to_dict()
+        field = "counter_quantity_provenance_version"
+        self.assertEqual(1, current[field])
+        self.assertEqual(current, GameState.from_dict(current).to_dict())
+        historical = {key: value for key, value in current.items() if key != field}
+        self.assertEqual(historical, GameState.from_dict(historical).to_dict())
+        for invalid in (True, 0, 2, "1"):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "provenance version"):
+                GameState.from_dict({**current, field: invalid})
 
 
 class CounterPlacementReplacementTests(unittest.TestCase):

@@ -13,6 +13,7 @@ from .creature_power_damage_templates import (
 from .damage_templates import source_pronoun_damage_effect_template
 from .explore_templates import single_explore_effect_template
 from .connive_templates import fixed_connive_effect_template
+from .endure_templates import source_endure_trigger_result
 from .declared_effect_amounts import declared_effect_amount_template
 
 
@@ -23,6 +24,9 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     condition=None
     guard=re.fullmatch(r'if you cast it(?P<origin> from your hand)?, (?P<body>.+)',body.strip(),re.I) if event_phrase=='enters' else None
     if guard is not None:body=guard['body'];condition=source_entry_cast_condition(origin='hand' if guard['origin'] else None)
+    if event_phrase == 'enters':
+        from .suspect_templates import normalize_entering_source_suspect
+        body = normalize_entering_source_suspect(body)
     compiled=source_scalar_effect_amount_template(body,source_name=card_name,
         event={'enters':'permanent.enter','dies':'creature.dies','leaves the battlefield':'permanent.leave'}[event_phrase],
         compile_fixed=lambda text:effect_template(text,card_name=card_name)) or source_self_contextual_effect_template(
@@ -92,6 +96,12 @@ def source_self_contextual_effect_template(
     connive = fixed_connive_effect_template(text, source_name=card_name, source_is_permanent=True,
                                            allow_source_pronoun=True)
     if connive is not None:return connive
+
+    endure = source_endure_trigger_result(
+        text, source_name=card_name, allow_source_pronoun=True, effect_template=compile_effect,
+    )
+    if endure is not None:
+        return endure
 
     normalized=normalized_source_result_body(text)
     if normalized is not None and compile_effect is not None:

@@ -87,10 +87,22 @@ def coordinate_untap_step(
     step: str,
     active_player: str,
     held_triggers: Sequence[StackItem] = (),
+    phasing_complete: bool = False,
 ) -> None:
     """Plan and commit one no-priority untap step through typed owners."""
 
-    phasing_source = unsupported_phasing_source(host, active_player)
+    from .phasing import commit_untap_phasing, plan_untap_phasing
+    from .phasing_model import phasing_lifecycle_version
+
+    if phasing_lifecycle_version(getattr(host.state, "phasing_lifecycle_version", None)) is None:
+        phasing_source = unsupported_phasing_source(host, active_player)
+    elif phasing_complete:
+        phasing_source = None
+    else:
+        phasing = plan_untap_phasing(host, active_player)
+        phasing_source = host.state.cards[phasing.unsupported] if phasing.unsupported is not None else None
+        if phasing_source is None:
+            commit_untap_phasing(host, phasing)
     if phasing_source is not None:
         host._pause_for_unsupported_semantic(
             event="untap.phasing",

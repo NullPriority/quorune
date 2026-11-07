@@ -25,6 +25,7 @@ export function CardTile({
   value,
   view,
   compact = false,
+  targetLabel,
   table = false,
   actions = [],
   onIntent,
@@ -38,6 +39,7 @@ export function CardTile({
   value: JsonValue;
   view: ProjectedView;
   compact?: boolean;
+  targetLabel?: (ref: string) => string;
   table?: boolean;
   actions?: LegalAction[];
   onIntent?: (actions: LegalAction[], card: JsonValue) => void;
@@ -49,6 +51,12 @@ export function CardTile({
   explainUnavailable?: boolean;
 }) {
   const card = asRecord(value);
+  const targetRefs = asList(card.targets);
+  const damageDetail = asList(card.damage_shares).map((share, slot) => {
+    const ref = targetRefs[slot];
+    const label = typeof ref === "string" ? targetLabel?.(ref) ?? ref : "an illegal target";
+    return `${share} to ${label}`;
+  }).join(" · ");
   const cid = typeof card.cid === "string" ? card.cid : "";
   const definition = cid ? view.definitions[cid] : undefined;
   const [showImage, setShowImage] = useState(Boolean(cid));
@@ -130,6 +138,7 @@ export function CardTile({
       <div className="card-copy">
         <small>{String(card.m ?? definition?.m ?? card.id ?? "")}</small>
         <strong>{cardName(value)}</strong>
+        {damageDetail && <span>{damageDetail}</span>}
         {!compact && (card.t ?? definition?.t) && <span>{String(card.t ?? definition?.t)}</span>}
         {card.ctr && <span>{Object.entries(asRecord(card.ctr)).map(([key, amount]) => `${key} ${amount}`).join(" · ")}</span>}
         {Boolean(card.prepared) && <span>PREPARED</span>}

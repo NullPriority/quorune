@@ -307,12 +307,15 @@
       "status": "blocked",
       "assertion_kind": "unsupported_fail_closed",
       "reviewed": true,
-      "implementation_components": [],
-      "executable_test_ids": [],
+      "implementation_components": ["quorune.block_transition_engine_adapter._dispatch_block_relationship_triggers", "quorune.event_counter_reference.event_counter_recipient_context"],
+      "executable_test_ids": [
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_gustcloak_runner_decline_and_stun_replacement_preserve_combat_rules",
+        "tests.test_combat_phase_rules.PrintedCombatRemovalTests.test_actual_gustcloak_savior_does_not_untap_the_returned_attacker"
+      ],
       "required_scenarios": ["positive", "negative", "interaction"],
-      "covered_scenarios": [],
-      "blockers": ["becomes_blocked_transition_trigger_not_implemented"],
-      "notes": ["The unblocked-to-blocked transition is represented as state, not as the complete trigger event."]
+      "covered_scenarios": ["positive", "negative", "interaction"],
+      "blockers": ["effects_that_make_an_attacker_blocked_without_a_blocker_incomplete"],
+      "notes": ["Declared blocking produces one transition per newly blocked attacker. The optional untap and removal uses that original incarnation. Effects that directly make an attacker blocked without a blocker remain incomplete."]
     },
     {
       "rule_id": "509.3d",

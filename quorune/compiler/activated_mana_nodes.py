@@ -8,6 +8,7 @@ from typing import Any, Callable, Mapping, Sequence
 
 from ..activation_usage import ActivationLimit
 from ..activation_condition_model import activation_restriction_spec
+from ..combat_removal import COMBAT_REMOVAL_OPERATION
 from ..abilities import (
     ActivatedAbility,
     parse_activated_abilities,
@@ -310,8 +311,11 @@ def _activated_effect_residuals(
 
 
 _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
+    COMBAT_REMOVAL_OPERATION,
     "life_loss_then_gain_actual",
     'discover',
+    'exile_until_nonland_then_cast',
+    'exile_until_instant_or_sorcery',
     'reveal_until_library_selection',
     'choose_untap_lands',
     'order_library_top','shuffle_controller_library',
@@ -344,6 +348,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "drain_opponent",
     "draw",
     "draw_each_player",
+    "reveal_each_library_top",
     "draw_with_actions",
     "destroy",
     "destroy_all",
@@ -357,6 +362,8 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "explore",
     "connive",
     "goad",
+    "detain_permanents",
+    "restrict_permanent_actions_until_next_turn",
     "grant_keyword_until_end_of_turn",
     "grant_declaration_restriction_until_end_of_turn",
     "offer_draw",
@@ -631,11 +638,13 @@ def _intrinsic_basic_land_mana_reminder_node(
 
 def _fixed_activated_costs(ability: ActivatedAbility) -> ActivatedAbility:
     from .activation_x_costs import announced_x_activation_cost
-    from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation
+    from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation, fixed_blight_activation
     ability = announced_x_activation_cost(ability)
     ability = fixed_any_source_counter_activation(ability)
     ability = fixed_complex_activation_mana_cost(fixed_power_up_ability(ability))
-    return fixed_selected_counter_activation(fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability)))
+    return fixed_blight_activation(fixed_selected_counter_activation(
+        fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability))
+    ))
 
 
 def _compiled_activated_effect(

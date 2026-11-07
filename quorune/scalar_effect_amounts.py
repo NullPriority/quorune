@@ -8,6 +8,7 @@ from typing import Any, Protocol
 from .object_query import exact_numeric_characteristic
 from .query_effect_amount_model import PublicQueryAmountError
 from .scalar_effect_amount_model import (
+    PAID_SACRIFICE_STAT_CONTEXT, PaidCreatureStatSnapshot,
     SCALAR_REFERENCE_CONTEXT, ScalarAmountOrigin, ScalarEffectAmountSpec, scalar_amount_specs,
 )
 from .turn_history import current_turn_history_events
@@ -202,6 +203,20 @@ def _current_target_hand_count(host,seat):
     return len(player.zones['hand'])
 
 
+def _paid_creature_stat_amount(item, characteristic):
+    snapshot = PaidCreatureStatSnapshot.from_dict(item.context.get(PAID_SACRIFICE_STAT_CONTEXT))
+    if item.kind not in {'spell', 'spell_copy'}:
+        raise PublicQueryAmountError('Paid creature stats require their resolving spell or copy')
+    if item.kind == 'spell':
+        objects = item.context.get('fixed_cast_lifecycle_cost_objects')
+        if not isinstance(objects, (list, tuple)) or sum(
+            isinstance(row, Mapping) and row.get('logical_object_id') == snapshot.logical_object_id
+            for row in objects
+        ) != 1:
+            raise PublicQueryAmountError('Paid creature stats changed their cost incarnation')
+    return getattr(snapshot, characteristic)
+
+
 def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any], item) -> int:
     spec = ScalarEffectAmountSpec.from_dict(value)
     from .cast_event_amounts import committed_cast_mana_value_facts
@@ -219,7 +234,9 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
             if not isinstance(previous, Mapping) or set(previous) != {"identity", "value"} or previous["identity"] != identity or type(previous["value"]) is not int or previous["value"] < 0:
                 raise PublicQueryAmountError("Scalar declaration changed identity or value")
             return spec.coefficient * previous["value"]
-    if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:
+    if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE:
+        amount = _paid_creature_stat_amount(item, spec.characteristic)
+    elif spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE:
         amount=cast_facts['mana_value']
     elif spec.origin is ScalarAmountOrigin.CAST_MANA_COLOR_COUNT:
         from .mana_spent_amounts import resolve_spent_mana_color_amount
@@ -234,7 +251,10 @@ def resolve_scalar_effect_amount(host: ScalarAmountHost, value: Mapping[str, Any
         amount = context.get("amount") if isinstance(context, Mapping) else None
     elif spec.origin is ScalarAmountOrigin.PUBLIC_AGGREGATE:
         from .public_characteristic_aggregates import current_public_characteristic_aggregate
-        amount=current_public_characteristic_aggregate(host,item.controller,spec.aggregate)
+        try:
+            amount = current_public_characteristic_aggregate(host, item.controller, spec.aggregate)
+        except ValueError as exc:
+            raise PublicQueryAmountError(str(exc)) from exc
     elif spec.origin is ScalarAmountOrigin.HISTORY:
         amount = _history_amount(host, item, spec.history_fact)
     else:

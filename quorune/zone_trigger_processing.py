@@ -131,6 +131,7 @@ def dispatch_zone_change_occurrence(
     ],
     trigger_batch: list[StackItem] | None = None,
     history_pre_recorded: bool = False,
+    composition_departures: Sequence[ZoneChangeOccurrence] = (),
 ) -> None:
     """Detect represented events from immutable facts, then use CR 603.3."""
 
@@ -156,6 +157,10 @@ def dispatch_zone_change_occurrence(
                 context,
                 trigger_batch=pending,
             )
+    if occurrence.origin == "battlefield" and occurrence.destination in {"graveyard", "exile"}:
+        from .earthbend import collect_earthbend_departure
+
+        collect_earthbend_departure(host, occurrence, composition_departures, pending)
     if any(
         event.kind == "permanent.enter"
         and "saga" in event.context.get("subtypes", ())

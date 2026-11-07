@@ -133,7 +133,7 @@ class ActivatedDrawCompilerTests(unittest.TestCase):
             ),
         )
         self.assertEqual(
-            (DRAW_ACTION_CAPABILITY,),
+            (DRAW_CAPABILITY, DRAW_ACTION_CAPABILITY),
             fixed_draw_node_capabilities(
                 effects=drawn_card_actions,
                 target_schema=None,
@@ -252,7 +252,7 @@ class ActivatedDrawCompilerTests(unittest.TestCase):
             "draw-reveal-discard-unless-land-controller-v1",
             node.template_id,
         )
-        self.assertEqual((DRAW_ACTION_CAPABILITY,), node.capability_dependencies)
+        self.assertEqual((DRAW_CAPABILITY, DRAW_ACTION_CAPABILITY), node.capability_dependencies)
         self.assertEqual(
             expected_text,
             expected_text[node.span.start : node.span.end],

@@ -221,7 +221,7 @@ class OrderedClauseNativeTests(unittest.TestCase):
         for card in (spell,scales,borrowed,foreign):self.assert_closed(session,card)
         self.start(session);self.cast(session,spell);self.resolve(session)
         tokens=[card for card in session.state.cards.values() if card.zone=='battlefield' and card.controller=='A'
-            and card.is_token and card.printed_name=='Hero']
+            and card.is_token and card.printed_name=='Hero Token']
         self.assertEqual(4,len(tokens))
         for token in tokens:
             self.assertEqual(2,token.counters.get('+1/+1',0))

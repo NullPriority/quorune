@@ -556,6 +556,10 @@ class FixedPlayerCounterPlacementHandler:
             "_replacement_selections",
         }
         allowed = base_fields | ({"target"} if subject == "target" else set())
+        if 'zero_is_noop' in effect:
+            if effect['zero_is_noop'] is not True or subject != 'controller' or effect.get('counter') != 'energy':
+                raise SemanticNodeError('Only counted controller energy permits a zero result')
+            allowed.add('zero_is_noop')
         unknown = sorted(set(effect) - allowed)
         if unknown:
             raise SemanticNodeError(
@@ -577,7 +581,7 @@ class FixedPlayerCounterPlacementHandler:
                 "Player counter placement requires one nonempty counter name"
             )
         amount = effect.get("amount")
-        if type(amount) is not int or amount <= 0:
+        if type(amount) is not int or amount < 0 or (amount == 0 and 'zero_is_noop' not in effect):
             raise SemanticNodeError(
                 "Player counter amount must be a positive exact integer"
             )
@@ -615,6 +619,10 @@ class FixedPlayerCounterPlacementHandler:
                 for player in context.query.apnap_order
                 if player != context.actor
             )
+        if amount == 0:
+            if raw_selections:
+                raise SemanticNodeError('Zero energy placement cannot select a replacement')
+            return IntentPlan(operation=self.operation, handler_id=self.handler_id, intents=(), result_shape='by_player')
         try:
             intent = PlacePlayerCountersIntent(
                 actor=context.actor,

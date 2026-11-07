@@ -193,7 +193,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
         )
 
         self.assertEqual(
-            {"Treasure", "Thopter"},
+            {"Treasure", "Thopter Token"},
             {engine._resolve_object("A", ref).printed_name for ref in created},
         )
         event = next(
@@ -232,7 +232,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertEqual(2, len(created))
         self.assertEqual(
-            ["Map", "Treasure"],
+            ["Map Token", "Treasure"],
             sorted(
                 engine._resolve_object("A", ref).printed_name
                 for ref in created
@@ -262,7 +262,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
         map_card = next(
             engine._resolve_object("A", ref)
             for ref in created
-            if engine._resolve_object("A", ref).printed_name == "Map"
+            if engine._resolve_object("A", ref).printed_name == "Map Token"
         )
         stored = map_card.annotations["token_characteristics"]
         self.assertIn("display_text", stored)
@@ -439,10 +439,10 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertEqual(4, len(cards))
         self.assertEqual(
-            {"Treasure": 2, "Thopter": 1, "Map": 1},
+            {"Treasure": 2, "Thopter Token": 1, "Map Token": 1},
             {
                 name: sum(card.printed_name == name for card in cards)
-                for name in ("Treasure", "Thopter", "Map")
+                for name in ("Treasure", "Thopter Token", "Map Token")
             },
         )
         self.assertEqual(1, len({card.zone_timestamp for card in cards}))
@@ -506,7 +506,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertIsNone(resolution.pending)
         self.assertEqual(
-            ["Cat", "Food", "Map"],
+            ["Cat", "Food Token", "Map Token"],
             [token["name"] for token in resolution.tokens],
         )
         self.assertEqual(2, len(resolution.journal))
@@ -538,9 +538,9 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertTrue(cards["Treasure"].tapped)
         self.assertIn("Haste", cards["Treasure"].temporary_keywords)
-        self.assertTrue(cards["Map"].tapped)
-        self.assertIn("Haste", cards["Map"].temporary_keywords)
-        self.assertEqual('Token Artifact — Map',engine._copyable_characteristics(cards['Map'])['type_line'])
+        self.assertTrue(cards["Map Token"].tapped)
+        self.assertIn("Haste", cards["Map Token"].temporary_keywords)
+        self.assertEqual('Token Artifact — Map',engine._copyable_characteristics(cards['Map Token'])['type_line'])
         self.assertEqual('Token Artifact — Treasure',engine._copyable_characteristics(cards['Treasure'])['type_line'])
 
     def test_source_created_by_event_does_not_replace_its_own_creation(self):
@@ -558,13 +558,13 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertEqual(2, len(created))
         self.assertEqual(
-            {"Stridehangar Automaton": 1, "Thopter": 1},
+            {"Stridehangar Automaton": 1, "Thopter Token": 1},
             {
                 name: sum(
                     engine._resolve_object("A", ref).printed_name == name
                     for ref in created
                 )
-                for name in ("Stridehangar Automaton", "Thopter")
+                for name in ("Stridehangar Automaton", "Thopter Token")
             },
         )
 
@@ -666,7 +666,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
 
         self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Treasure", "Thopter", "Map"},
+            {"Treasure", "Thopter Token", "Map Token"},
             {
                 card.printed_name
                 for card in engine.state.cards.values()
@@ -784,7 +784,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
         )
         self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Treasure", "Thopter", "Map"},
+            {"Treasure", "Thopter Token", "Map Token"},
             {
                 card.printed_name
                 for card in engine.state.cards.values()
@@ -843,7 +843,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
             result = session.act(principal, {"action_id": "pass"})
             self.assertTrue(result.ok, result.summary)
         self.assertEqual(
-            {"Map": 1, "Treasure": 1},
+            {"Map Token": 1, "Treasure": 1},
             {
                 name: sum(
                     card.is_token
@@ -851,7 +851,7 @@ class TokenCreationReplacementTests(unittest.TestCase):
                     and card.printed_name == name
                     for card in engine.state.cards.values()
                 )
-                for name in ("Map", "Treasure")
+                for name in ("Map Token", "Treasure")
             },
         )
 

@@ -768,7 +768,8 @@ class FixedActivatedZoneChangeCostRuntimeTests(unittest.TestCase):
         self.pass_until(session, lambda: not engine.state.stack)
         self.assertTrue(
             any(
-                card.printed_name == "Saproling"
+                card.is_token
+                and card.printed_name == "Saproling Token"
                 and card.controller == "A"
                 and card.zone == "battlefield"
                 for card in engine.state.cards.values()

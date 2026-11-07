@@ -171,7 +171,8 @@ class NumericCountSelfCostTests(unittest.TestCase):
                 row['query']['numeric_characteristic']['characteristic'] = change
             else: row['query']['numeric_characteristic']['future'] = True
             candidate = SimpleNamespace(provenance={}, handlers=(modified,), effects=(), target_schema=None,
-                coverage=(), cost_schema=None, event_condition=None, event='cast.cost.modify', active_zone='all')
+                coverage=(), capability_dependencies=(), cost_schema=None, event_condition=None,
+                event='cast.cost.modify', active_zone='all')
             _, blockers = program_dynamic_runtime_requirements(candidate)
             self.assertTrue(any('runtime_self_cost_numeric_count:invalid' in b for b in blockers), (change, blockers))
         for phrase in ('power X or greater', 'power -1 or greater', 'power 4 or greater that attacked this turn',

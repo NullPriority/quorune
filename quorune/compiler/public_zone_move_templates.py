@@ -230,18 +230,23 @@ def _graveyard_set_template(text: str) -> PublicZoneMoveSetTemplate | None:
     normalized = " ".join(text.strip().split()).casefold().rstrip(".")
     relation = None
     target_schema = None
+    query = ObjectQuerySpec(zones=("graveyard",))
     if normalized in {"exile all graveyards", "exile all cards from all graveyards"}:
         relation = PublicZoneSeatRelation.ANY
     elif normalized == "exile each opponent's graveyard":
         relation = PublicZoneSeatRelation.OPPONENTS
-    elif normalized == "exile target player's graveyard":
+    elif normalized in ("exile target player's graveyard", "exile target opponent's graveyard"):
+        relation = PublicZoneSeatRelation.TARGET_PLAYER
+        target_schema = _player_target_schema(opponent=normalized == "exile target opponent's graveyard")
+    elif normalized == "exile all creature cards from target player's graveyard":
         relation = PublicZoneSeatRelation.TARGET_PLAYER
         target_schema = _player_target_schema()
+        query = ObjectQuerySpec(zones=("graveyard",), types_all=("creature",), token=False)
     if relation is None:
         return None
     return PublicZoneMoveSetTemplate(
         spec=PublicZoneMoveSetSpec(
-            query=ObjectQuerySpec(zones=("graveyard",)),
+            query=query,
             origin=PublicZoneOrigin.GRAVEYARD,
             destination=PublicZoneDestination.EXILE,
             relation_axis=PublicZoneRelationAxis.OWNER,

@@ -2,9 +2,12 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..turn_skip_model import TURN_BOUNDARY_SKIP_EVENT
+
 from .applicability import canonical_effects, replacement_choice
 from .immutable import thaw_value
 from .model import (
+    COUNTER_REPLACEMENT_GENERATED_FIELD,
     AffectedObject,
     EntryReplacementScope,
     ReplaceableEvent,
@@ -54,6 +57,7 @@ _SET_FIELDS = {
     "draw.instruction": {"count"},
     "damage.results": {"life_loss_amount", "life_after_without_replacement"},
     "effect": {"resolved"},
+    TURN_BOUNDARY_SKIP_EVENT: {"skipped"},
 }
 _NUMERIC_FIELDS = {
     "damage": {"amount", "prevented"},
@@ -568,6 +572,8 @@ def _apply_operation(
 ) -> EntryReplacementScope | None:
     if isinstance(operation, SetField):
         _require_field(event, operation.field, _SET_FIELDS, operation="set")
+        if event.kind == TURN_BOUNDARY_SKIP_EVENT and operation.value is not True:
+            raise ReplacementEffectError("A skipped boundary cannot be restored by a skip replacement")
         if operation.field=='destination' and 'commander_components' in payload and payload.get('destination')!=operation.value:
             from ..composition_commander_replacement_model import payload_commander_components,EPOCH_FIELD
             try:payload_commander_components(payload)
@@ -817,6 +823,8 @@ def _apply_effect_operations(
             payload["prevention_applied"] = by_effect
     from .devour import combine_devour_entry_counters
     combine_devour_entry_counters(event,payload,children)
+    if COUNTER_REPLACEMENT_GENERATED_FIELD in payload:
+        _record_replacement_generated_counters(payload, operations)
     if event.kind == 'zone.change' and '_counter_permissions' in payload:
         from dataclasses import replace
         from ..counter_permission_events import refresh_entry_counter_permissions
@@ -838,6 +846,15 @@ def _apply_effect_operations(
         children=tuple(children),
         entry_scope=entry_scope,
     )
+
+
+def _record_replacement_generated_counters(payload: dict[str, Any], operations: Sequence[Any]) -> None:
+    amount = payload.get("amount")
+    if type(amount) is int and amount > 0 and any(
+        isinstance(operation, (AddAmount, MultiplyAmount, SetField)) and operation.field == "amount"
+        for operation in operations
+    ):
+        payload[COUNTER_REPLACEMENT_GENERATED_FIELD] = True
 
 
 def apply_replacement(

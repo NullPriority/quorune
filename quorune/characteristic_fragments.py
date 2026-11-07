@@ -786,13 +786,34 @@ def characteristic_quantity_capabilities(value: Any) -> tuple[str, ...]:
             if value['scope'] in {'controller_life_total','opponent_poison_counters'}:
                 own=(*own,'quantity_expression.current_player_value')
             if value['scope']=='attached_object':own=(*own,'quantity_expression.attached_object_value')
-        if value.get('kind')=='live_battlefield_quantity':own=(*own,'quantity_expression.live_battlefield_count')
+        if value.get('kind') == 'live_battlefield_quantity':
+            from .live_battlefield_quantity_model import (
+                LIVE_BATTLEFIELD_QUANTITY_CAPABILITY, LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY,
+                LiveBattlefieldQuantitySpec,
+            )
+            from .object_predicate import object_query_capabilities
+
+            live = LiveBattlefieldQuantitySpec.from_dict(value)
+            own = (*own, LIVE_BATTLEFIELD_QUANTITY_CAPABILITY)
+            if live.schema_version == 2:
+                own = (*own, LIVE_QUALIFIED_CREATURE_COUNT_CAPABILITY, *object_query_capabilities(live.query))
         if value.get('kind')=='controller_is_monarch':own=(*own,'variant.monarch.designate')
         if (value.get('kind')=='controller_has_citys_blessing'
                 and {'schema_version','amount','counter_name'}<=set(value)):
             own=(*own,'player.designation.citys_blessing')
         if value.get('kind')=='controller_max_speed':own=(*own,'variant.speed.player')
-        if value.get('origin')=='public_characteristic_aggregate' or (value.get('kind')=='public_characteristic_aggregate' and 'aggregate' in value):own=(*own,'quantity_expression.public_characteristic_aggregate')
+        if value.get("kind") == "public_power_aggregate_at_least":
+            from .continuous_conditions import FixedPublicStateConditionSpec
+            from .public_characteristic_aggregate_model import PUBLIC_POWER_THRESHOLD_CAPABILITY
+
+            condition = FixedPublicStateConditionSpec.from_dict(value)
+            own = (*own, PUBLIC_POWER_THRESHOLD_CAPABILITY, *condition.aggregate.capability_dependencies)
+        if (value.get('origin') == 'public_characteristic_aggregate'
+                or value.get('kind') == 'public_characteristic_aggregate' and 'aggregate' in value):
+            from .public_characteristic_aggregate_model import PublicCharacteristicAggregateSpec
+
+            aggregate = PublicCharacteristicAggregateSpec.from_dict(value.get('aggregate'))
+            own = (*own, *aggregate.capability_dependencies)
         return tuple(sorted({*own, *(cap for child in value.values() for cap in characteristic_quantity_capabilities(child))}))
     if isinstance(value, (list, tuple)):
         return tuple(sorted({cap for child in value for cap in characteristic_quantity_capabilities(child)}))

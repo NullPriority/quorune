@@ -409,20 +409,30 @@ class ActivationRestrictionHost(Protocol):
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
 
 
+def _resolved_activation_prohibitions(state, source, candidate_name) -> list[ActivationProhibition]:
+    from ..continuous_effect_state import active_resolution_declaration_rule_effects
+
+    if not getattr(state, "continuous_effects", None):
+        return []
+    return [ActivationProhibition(effect.source_id, str(candidate_name),
+                                  "resolution.declaration-rule.activation-prohibition.v4", "resolved_activation_prohibition")
+            for effect in active_resolution_declaration_rule_effects(state, source) if effect.forbid_activations]
+
+
 def current_activation_prohibitions(
     host: ActivationRestrictionHost,
     source: Any,
     ability: ActivatedAbility,
     *, actor: str | None = None,
 ) -> tuple[ActivationProhibition, ...]:
-    """Collect trusted current-face prohibitions for one candidate ability."""
+    """Collect trusted current-face and resolved prohibitions for one ability."""
 
     registry = default_activation_restriction_registry()
     candidate_name = (
         host._effective_card_data(source).get("name")
         or source.printed_name
     )
-    prohibitions: list[ActivationProhibition] = []
+    prohibitions = _resolved_activation_prohibitions(host.state, source, candidate_name)
     for specification in activation_prohibition_specs(
         host._effective_ability_fragments(source, error_type=RuntimeError)
     ):

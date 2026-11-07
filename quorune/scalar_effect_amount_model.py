@@ -18,9 +18,13 @@ SCALAR_AMOUNT_MECHANIC = "scalar-effect-amount"
 SCALAR_REFERENCE_CONTEXT = "scalar_reference_snapshots"
 TARGET_HAND_COUNT_MECHANIC='target-player-hand-count-amount'
 TARGET_HAND_COUNT_CAPABILITY='quantity_expression.target_player_hand_count'
+PAID_SACRIFICE_STAT_MECHANIC = 'paid-sacrifice-creature-stat'
+PAID_SACRIFICE_STAT_CAPABILITY = 'quantity_expression.paid_sacrifice_creature_stat'
+PAID_SACRIFICE_STAT_CONTEXT = 'paid_sacrifice_creature_stats'
 
 
 class ScalarAmountOrigin(StrEnum):
+    PAID_SACRIFICE_CREATURE = 'paid_sacrifice_creature_stat'
     CAST_SPELL_MANA_VALUE = 'committed_cast_spell_mana_value'
     CAST_MANA_COLOR_COUNT = 'cast_mana_color_count'
     MULTIKICKER_COUNT = 'multikicker_count'
@@ -55,8 +59,12 @@ class ScalarEffectAmountSpec:
     target_group: str | None = None
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6,7,8}:
+        if type(self.schema_version) is not int or self.schema_version not in {1,2,3,4,5,6,7,8,9}:
             raise PublicQueryAmountError("Unsupported scalar effect amount version")
+        if (self.schema_version == 9) != (self.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE):
+            raise PublicQueryAmountError('Paid sacrifice stats require their explicit scalar version')
+        if self.schema_version == 9 and (self.characteristic not in ('power', 'toughness') or self.binding_id is not None):
+            raise PublicQueryAmountError('Paid sacrifice amounts read a sealed power or toughness')
         if (self.schema_version==8)!=(self.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE):
             raise PublicQueryAmountError('Cast spell mana value requires its explicit scalar version')
         if self.schema_version==8 and self.characteristic!='mana_value':
@@ -100,7 +108,7 @@ class ScalarEffectAmountSpec:
             raise PublicQueryAmountError("Scalar declaration identity must be nonempty")
         characteristic_origin = self.origin in {
             ScalarAmountOrigin.SOURCE, ScalarAmountOrigin.TARGET, ScalarAmountOrigin.EVENT_OBJECT,
-            ScalarAmountOrigin.CAST_SPELL_MANA_VALUE,
+            ScalarAmountOrigin.CAST_SPELL_MANA_VALUE, ScalarAmountOrigin.PAID_SACRIFICE_CREATURE,
         }
         if not counter_origin and characteristic_origin != (type(self.characteristic) is str and self.characteristic in CHARACTERISTICS):
             raise PublicQueryAmountError("Scalar characteristic does not match its origin")
@@ -159,6 +167,30 @@ def scalar_amount_specs(value: Any) -> tuple[ScalarEffectAmountSpec, ...]:
     if isinstance(value, (list, tuple)):
         return tuple(spec for child in value for spec in scalar_amount_specs(child))
     return ()
+
+
+@dataclass(frozen=True, slots=True)
+class PaidCreatureStatSnapshot:
+    logical_object_id: str
+    power: int
+    toughness: int
+    schema_version: int = 1
+
+    def __post_init__(self):
+        if (type(self.logical_object_id) is not str or not self.logical_object_id
+                or type(self.power) is not int or type(self.toughness) is not int
+                or type(self.schema_version) is not int or self.schema_version != 1):
+            raise PublicQueryAmountError('Paid sacrifice requires a creature incarnation and exact signed stats')
+
+    def to_dict(self):
+        return {'schema_version': self.schema_version, 'logical_object_id': self.logical_object_id,
+                'power': self.power, 'toughness': self.toughness}
+
+    @classmethod
+    def from_dict(cls, value):
+        if not isinstance(value, Mapping) or set(value) != {'schema_version', 'logical_object_id', 'power', 'toughness'}:
+            raise PublicQueryAmountError('Paid sacrifice stats are unavailable or malformed')
+        return cls(**value)
 
 
 def direct_player_amount_target_is_closed(schema):

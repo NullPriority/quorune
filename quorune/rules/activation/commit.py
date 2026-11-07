@@ -34,6 +34,7 @@ from ...mana_undo import clear_mana_undo_stack
 from ...model import StackItem, YieldPolicy
 from ...control_effects import capture_control_duration
 from ...replacement.immutable import thaw_value
+from ...replacement.ordering import ReplacementChoiceRequired
 from ...zone_trigger_events import ZoneTransitionKind
 from ...station import (
     STATION_CONTEXT_KEY,
@@ -404,7 +405,19 @@ def _pay_object_and_mana_costs(
     if ability.waterbend is not None:
         from ..waterbend_payments import pay_activation_waterbend
         return pay_activation_waterbend(host,proposal,source,ability,response)
-    if host._crew_threshold(ability) is not None:
+    from ..selected_counter_costs import (
+        blight_activation_choice, pay_blight_activation_cost, select_counter_cost_creature,
+    )
+
+    blight = blight_activation_choice(ability)
+    if blight is not None:
+        try:
+            payer = select_counter_cost_creature(host, proposal.seat, ability, response)
+        except ValueError as exc:
+            raise ActivationProposalError(str(exc), reason="blight_cost_unpayable") from exc
+        payer_identity = (payer.object_id, payer.ref, payer.logical_object_id)
+        paid_objects, special_cost_context = [], None
+    elif host._crew_threshold(ability) is not None:
         paid_objects, crew_context = host._pay_crew_cost(
             proposal.seat, source, ability, response
         )
@@ -475,16 +488,36 @@ def _pay_object_and_mana_costs(
     )
     spent: dict[str, int] = {}
     activations: list[dict[str, Any]] = []
+    mana_response = response
+    mana_journal = None
+    if blight is not None and isinstance(response.get("_mana_replacement_selections"), Mapping):
+        from ...cost_payments import ExactManaReplacementReplay
+
+        mana_journal = ExactManaReplacementReplay(
+            response["_mana_replacement_selections"], response.get("_mana_payment_id"),
+        )
+        mana_response = {**response, "_mana_replacement_selections": mana_journal}
+    payer_protection = {"preserve_source_id": payer_identity[0]} if blight is not None else {}
     if sum(requirements.values()) or snow_required:
         spent, activations = host._pay_for_cost(
             proposal.seat,
             requirements,
-            response,
+            mana_response,
             spend_context=ability_mana_spend_context(
                 str(host._effective_card_data(source).get("type_line") or "")
             ),
             snow_required=snow_required,
+            **payer_protection,
         )
+    if mana_journal is not None:
+        mana_journal.validate()
+    if blight is not None:
+        try:
+            paid_objects = pay_blight_activation_cost(host, proposal, blight, payer_identity, response)
+        except ReplacementChoiceRequired:
+            raise
+        except ValueError as exc:
+            raise ActivationProposalError(str(exc), reason="blight_cost_unpayable") from exc
     return paid_objects, activations, spent, special_cost_context
 
 

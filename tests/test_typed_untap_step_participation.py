@@ -15,6 +15,7 @@ from quorune.compiler.untap_step_templates import (
 )
 from quorune.engine import TURN_STEPS
 from quorune.object_query import ObjectQueryResult
+from quorune.phasing_model import PHASING_CAPABILITY, PHASING_HANDLER_ID
 from quorune.record import checkpoint_envelope, replay_record
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantic_runtime import (
@@ -24,7 +25,11 @@ from quorune.semantic_runtime import (
     UntapStepSourceContext,
 )
 from quorune.semantic_runtime.context import SemanticNodeError
-from quorune.semantic_runtime.untap_steps import OPTIONAL_UNTAP_HANDLER_ID
+from quorune.semantic_runtime.untap_steps import (
+    OPTIONAL_UNTAP_HANDLER_ID,
+    STATIC_STEP_SKIP_CAPABILITY,
+    STATIC_STEP_SKIP_HANDLER_ID,
+)
 from quorune.untap_step import plan_untap_step
 
 
@@ -248,6 +253,8 @@ class UntapStepCompilerTests(unittest.TestCase):
         self.assertEqual(
             {UNTAP_STEP_HANDLER_ID: ["untap.step.static_participation"],
              OPTIONAL_UNTAP_HANDLER_ID: ["untap.step.optional_source"],
+             STATIC_STEP_SKIP_HANDLER_ID: [STATIC_STEP_SKIP_CAPABILITY],
+             PHASING_HANDLER_ID: [PHASING_CAPABILITY],
              'participation.untap-step.fixed-selection-limit.v1':['untap.step.fixed_selection_limit']},
             {row["handler_id"]: row["capability_dependencies"] for row in inventory},
         )

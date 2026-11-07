@@ -520,7 +520,10 @@ def fixed_target_characteristics_effect_template(
 ) -> FixedTargetCharacteristicsTemplate | None:
     """Parse one fixed target or target-pronoun characteristic instruction."""
 
-    match = _TARGET_CHARACTERISTICS.fullmatch(text.strip())
+    normalized = text.strip()
+    if leading := re.fullmatch(r"Until end of turn, (?P<body>.+?)\.?", normalized, re.IGNORECASE):
+        normalized = leading["body"] + " until end of turn."
+    match = _TARGET_CHARACTERISTICS.fullmatch(normalized)
     if match is None:
         return None
     subject = match.group("subject").casefold()

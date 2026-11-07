@@ -2399,15 +2399,6 @@
       ]
     },
     {
-      "oracle_id": "ac5258c1-5b46-4892-a445-bfd56875f039",
-      "name": "Plasma Bolt",
-      "piece_ids": [
-        "capability.damage.source.stack_current_or_lki",
-        "residual.replacement.replacement-applicability",
-        "residual.replacement.self-replacement-and-prevention-ordering"
-      ]
-    },
-    {
       "oracle_id": "ae198ce9-097b-4204-b599-12bdb36f5195",
       "name": "Summary Judgment",
       "piece_ids": [

@@ -74,14 +74,17 @@ def execute_shortcut(
         # Soultrader's life payment and Zulaport's gain cancel for the
         # controller. Intermediate Treasure tokens pay later iterations; one
         # Treasure remains after the final sacrifice.
+        from ..fixed_token_production import predefined_token_identity
+        from ..token_copy_value_model import predefined_token_name_mode
+        name, characteristics = predefined_token_identity("Treasure", {
+            "type_line": "Token Artifact — Treasure",
+            "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+            "activated_ability_profile": "tap_sac_any_color_mana_v1",
+        }, legacy_name=predefined_token_name_mode(engine) is None)
         treasure = engine.create_token(
             seat,
-            name="Treasure",
-            characteristics={
-                "type_line": "Token Artifact — Treasure",
-                "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
-                "activated_ability_profile": "tap_sac_any_color_mana_v1",
-            },
+            name=name,
+            characteristics=characteristics,
             reason="validated deterministic shortcut",
         )[0]
         aggregate = {

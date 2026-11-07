@@ -400,6 +400,56 @@
       }
     },
     {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "name": "Verix Bladewing",
+      "mana_cost": "{2}{R}{R}",
+      "cmc": 4.0,
+      "type_line": "Legendary Creature — Dragon",
+      "oracle_text": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nFlying\nWhen Verix Bladewing enters, if it was kicked, create Karox Bladewing, a legendary 4/4 red Dragon creature token with flying.",
+      "power": "4",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Kicker",
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2025-04-11",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
       "oracle_id": "c41172c6-5133-48ed-bde0-3168b5371c18",
       "name": "Vineshaper Prodigy",
       "mana_cost": "{1}{G}",
@@ -654,6 +704,48 @@
       "published_at": "2024-11-08",
       "source": "wotc",
       "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+    },
+    {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "published_at": "2018-04-27",
+      "source": "wotc",
+      "comment": "Verix Bladewing features a new template for creating legendary tokens. It's functionally identical to the text \"create a legendary 4/4 red Dragon creature token with flying named Karox Bladewing.\""
+    },
+    {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a card or token enters as a copy of a permanent, the new permanent isn't kicked, even if the original was."
+    },
+    {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If a spell's kicker cost was paid, the spell is \"kicked.\""
+    },
+    {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you copy a kicked spell on the stack, the copy is also kicked. If the copied spell is a permanent spell, the token the copy of that spell becomes when it enters is also kicked."
+    },
+    {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you put a permanent with a kicker ability onto the battlefield without casting it, you can't kick it."
+    },
+    {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "The kicker ability doesn't let you pay a kicker cost more than once."
+    },
+    {
+      "oracle_id": "d7315b3b-6e5d-4d28-a503-bfae1daf6c43",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "To determine a spell's total cost, start with the mana cost (or an alternative cost if another card's effect allows you to pay one instead), add any cost increases (such as kicker), then apply any cost reductions. The spell's mana value remains unchanged, no matter what the total cost to cast it was."
     },
     {
       "oracle_id": "eb44b65d-6b56-4f20-a4fb-c5dd147a54c4",

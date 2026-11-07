@@ -148,6 +148,7 @@ from .trigger_processing import (
     collect_ward_occurrences,
     complete_trigger_order_decision,
     enqueue_trigger_batch,
+    pin_upkeep_hand_at_departure,
     TriggerProcessingHostMixin,
 )
 from .trigger_discovery import (
@@ -279,6 +280,7 @@ from .rules.activation import (
     is_builtin_activation_semantic,
 )
 from .rules.action_catalog import build_priority_action_catalog
+from .rules.event_subscriptions import LAND_PLAY_EVENT
 from .rules.land_play_permissions import (
     consume_land_play_permission,
     selected_land_play_permission,
@@ -2302,6 +2304,7 @@ class CommanderEngine(
         spend_context: str | None = None,
         payment_id: str | None = None,
         replacement_selections_by_event: Mapping[str, Any] | None = None,
+        preserve_source_id: str | None = None,
     ) -> None:
         complete_mana_plan_activations(
             self,
@@ -2310,6 +2313,7 @@ class CommanderEngine(
             spend_context=spend_context,
             payment_id=payment_id,
             replacement_selections_by_event=replacement_selections_by_event,
+            preserve_source_id=preserve_source_id,
         )
 
     def _pay_for_cost(
@@ -2321,9 +2325,12 @@ class CommanderEngine(
         exclude_sources: set[str] | None = None,
         spend_context: str | None = None,
         snow_required: int = 0,
+        preserve_source_id: str | None = None,
     ) -> tuple[dict[str, int], list[dict[str, Any]]]:
         from .cost_payments import pay_for_cost
-        return pay_for_cost(self,seat,requirements,response,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
+
+        return pay_for_cost(self, seat, requirements, response, exclude_sources=exclude_sources,
+            spend_context=spend_context, snow_required=snow_required, preserve_source_id=preserve_source_id)
 
     def _check_priority(self, seat: str) -> None:
         if self.state.priority_player != seat:
@@ -2461,6 +2468,7 @@ class CommanderEngine(
                     "This land play does not authorize an entry life payment"
                 )
         life_before = player.life
+        origin = card.zone
         card.annotations.pop("temporary_play_permission", None)
         self.move_card(
             card.object_id,
@@ -2492,6 +2500,7 @@ class CommanderEngine(
             changed_objects=[card.object_id],
             changed_players=[seat],
         )
+        dispatch_semantic_event(self, LAND_PLAY_EVENT, {"player": seat, "from": origin})
         # CR 117.5 and 704.3 require state-based actions and waiting triggers
         # to be handled before the active player receives priority after this
         # special action.  Without this boundary, an enters trigger created by
@@ -2772,7 +2781,7 @@ class CommanderEngine(
         slots: list[list[str]] = []
         for choice in ability.choices:
             candidates = list(
-                activation_choice_candidates(self, seat, source, choice)
+                activation_choice_candidates(self, seat, source, choice, ability=ability)
             )
             for _ in range(choice.count):
                 slots.append(candidates)
@@ -2881,9 +2890,12 @@ class CommanderEngine(
         exclude_sources: set[str] | None = None,
         spend_context: str | None = None,
         snow_required: int = 0,
+        preserve_source_id: str | None = None,
     ) -> bool:
         from .cost_payments import cost_is_affordable
-        return cost_is_affordable(self,seat,requirements,exclude_sources=exclude_sources,spend_context=spend_context,snow_required=snow_required)
+
+        return cost_is_affordable(self, seat, requirements, exclude_sources=exclude_sources,
+            spend_context=spend_context, snow_required=snow_required, preserve_source_id=preserve_source_id)
 
 
     @staticmethod
@@ -6675,6 +6687,7 @@ class CommanderEngine(
         unique = [seat for seat in unique_preserving_order(seats) if seat in self.active_seats]
         if not unique:
             return
+        pin_upkeep_hand_at_departure(self, unique)
         departing_monarch = self.state.monarch in unique
         monarch_before_departure = self.state.monarch
         active_before_departure = self.state.active_player
@@ -6726,6 +6739,8 @@ class CommanderEngine(
                 key=lambda value: (value.ref, value.object_id),
             ):
                 if card.zone == "battlefield" and card.controller == seat and card.owner != seat:
+                    if card.phasing_record is not None:
+                        continue
                     if self.state.control_history_version == control_history.CONTROL_HISTORY_VERSION:
                         self.move_card(card.object_id, "exile", reason="controller left game", log=False)
                         continue

@@ -1,15 +1,64 @@
 from __future__ import annotations
 
-"""Closed target-selected source attachment effects."""
+"""Closed source attachment effects."""
 
 from dataclasses import dataclass, replace
 import re
 from typing import Any, Mapping
 
-from ..rules.attachment_actions import FIXED_SOURCE_ATTACHMENT_CAPABILITY
+from ..rules.attachment_actions import CREATE_AND_ATTACH, validate_created_token_attachment
 from ..attachment_references import AttachmentReferenceKind
 from .creature_subtypes import canonical_creature_subtype
 from .direct_target import DirectPermanentTargetSpec, direct_permanent_target_spec
+from .token_templates import fixed_token_creation_effect_template
+
+
+_CREATE_AND_ATTACH_TEXT = re.compile(
+    r"(?P<creation>Create .+?)(?:, then | and )attach this Equipment to it\.?",
+    re.IGNORECASE,
+)
+
+
+def created_token_attachment_effect(token_text: str) -> dict[str, Any] | None:
+    """Build the same closed token and source binding for printed and keyword effects."""
+    token = fixed_token_creation_effect_template(token_text)
+    if token is None:
+        return None
+    effect = {
+        "op": CREATE_AND_ATTACH,
+        "schema_version": 1,
+        "controller": "$controller",
+        "source": "$source.zone_object",
+        "token": dict(token.effect),
+        "token_mechanics": list(token.mechanics),
+    }
+    try:
+        validate_created_token_attachment(effect)
+    except ValueError:
+        return None
+    return effect
+
+
+def created_token_attachment_effect_template(
+    text: str,
+    *,
+    source_attachment_relation: AttachmentReferenceKind | None,
+) -> tuple[str, tuple[Mapping[str, Any], ...], None, tuple[str, ...]] | None:
+    """Lower one printed creation followed by attachment of its source Equipment."""
+    if source_attachment_relation is not AttachmentReferenceKind.EQUIPPED:
+        return None
+    match = _CREATE_AND_ATTACH_TEXT.fullmatch(text.strip())
+    if match is None:
+        return None
+    effect = created_token_attachment_effect(match["creation"])
+    if effect is None:
+        return None
+    return (
+        "create-token-then-attach-source-v1",
+        (effect,),
+        None,
+        ("cr-701-3-attach", *effect["token_mechanics"]),
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,5 +173,7 @@ def fixed_source_attachment_effect_template(
 
 __all__ = [
     "FixedSourceAttachmentTemplate",
+    "created_token_attachment_effect",
+    "created_token_attachment_effect_template",
     "fixed_source_attachment_effect_template",
 ]

@@ -245,36 +245,32 @@ class HistoryEntrySealingOwnerTests(unittest.TestCase):
             if kind == "creature.enter":
                 occurrences.append(deepcopy(context))
         host._dispatch_semantic_event = dispatch
-        dispatch_creation(host,"A",("first","second"),name="Generic",base_quantity=2,
-                          replacement_components=(),replacement_journal=(),reason="owner model")
+        from quorune.token_creation_events import CommittedTokenCreation
+
+        creation = CommittedTokenCreation("A", ("first", "second"), "Generic", 2, (), ())
+        dispatch_creation(host, (creation,), reason="owner model")
         self.assertEqual([3,3],[row["power"] for row in occurrences])
         self.assertTrue(all("flying" in row["keywords"] for row in occurrences))
         self.assertEqual(2,len(rows))
 
     def test_history_precedes_final_power_and_keyword_sealing(self):
-        from quorune.token_creation import _record_and_dispatch_token_creation
-        self.sealing_contract(_record_and_dispatch_token_creation)
+        from quorune.token_creation_events import publish_token_creations
+
+        self.sealing_contract(publish_token_creations)
 
     def test_pre_history_characteristic_sealing_mutant_is_killed(self):
         import inspect
-        from quorune import token_creation as owner
-        source = inspect.getsource(owner._record_and_dispatch_token_creation)
-        history = '''    for identity, types in entry_occurrences:
-        host._record_turn_history(
-            "permanent_entered",
-            actor=controller,
-            object_incarnation=identity,
-            types=types,
-        )
-'''
-        anchor = "    # One committed creation instruction is simultaneous."
-        self.assertEqual(1,source.count(history))
-        self.assertEqual(1,source.count(anchor))
-        mutant = source.replace(history, "").replace(anchor, history + anchor)
+        from quorune import token_creation_events as owner
+
+        source = inspect.getsource(owner.publish_token_creations)
+        before = "    previous_quantities = tuple(_record_creation(host, creation, reason) for creation in creations)\n"
+        seal = "    contexts = tuple(_entry_contexts(host, creation, reason) for creation in creations)\n"
+        self.assertEqual(1, source.count(before + seal))
+        mutant = source.replace(before + seal, seal + before)
         namespace = dict(vars(owner))
-        exec(compile(mutant,"<stale-token-entry-characteristics>","exec"),namespace)
+        exec(compile("from __future__ import annotations\n" + mutant, "<stale-token-entry-characteristics>", "exec"), namespace)
         with self.assertRaises(AssertionError):
-            self.sealing_contract(namespace["_record_and_dispatch_token_creation"])
+            self.sealing_contract(namespace["publish_token_creations"])
 
 if __name__ == "__main__":
     unittest.main()

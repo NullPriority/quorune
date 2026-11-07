@@ -1259,7 +1259,7 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
 
     def test_partial_card_does_not_receive_a_morph_cast_offer(self):
         session = self.session(70237007, players=2)
-        card = self.add_card(session, name="Brine Elemental", ref="MORPH-PARTIAL")
+        card = self.add_card(session, name="Kheru Spellsnatcher", ref="MORPH-PARTIAL")
         session.engine.state.players["B"].mana_pool["C"] = 3
         self.prepare_priority(session)
 
@@ -1287,6 +1287,42 @@ class FixedManaMorphRuntimeTests(unittest.TestCase):
             },
             program.provenance["card_program_admission"],
         )
+
+    def test_actual_brine_elemental_schedules_each_opponents_next_untap_on_turn_up(self):
+        session = self.session(70237011)
+        engine = session.engine
+        card = self.add_card(session, name="Brine Elemental", ref="BRINE")
+        engine.state.players["B"].mana_pool.update({"C": 8, "U": 2})
+        self.prepare_priority(session)
+        session.initial_checkpoint = checkpoint_envelope(session.state)
+        before = authoritative_state_hash(session.state)
+        offer = next(
+            row for row in session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+            if row["id"] == f"cast-morph:{card.ref}"
+        )
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        cast = session.act("pilot:B", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(cast.ok, cast.summary)
+        self.resolve_spell_with_passes(session, card)
+        self.assertTrue(card.face_down)
+        self.assertNotIn(card.printed_name, json.dumps(session.packet("pilot:A", full=True)))
+        self.assertFalse(session.state.scheduled_turn_skips)
+        offer = next(
+            row for row in session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+            if row["id"] == f"turn-face-up:{card.ref}"
+        )
+        turned = session.act("pilot:B", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(turned.ok, turned.summary)
+        self.pass_until(session, lambda: bool(session.state.scheduled_turn_skips))
+        self.assertEqual({"A", "C", "D"}, {grant.player for grant in session.state.scheduled_turn_skips})
+        self.assertEqual(3, len(session.state.scheduled_turn_skips))
+        self.assertTrue(all(grant.spec.boundary.value == "untap" for grant in session.state.scheduled_turn_skips))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "brine-replay"
+            session.save(path)
+            replay = replay_record(path, self.db, verify=True)
+        self.assertTrue(replay["ok"], replay)
+        self.assertEqual(authoritative_state_hash(session.state), replay["final_state_hash"])
 
 
     def test_actual_hybrid_disguise_cast_and_green_turn_up_preserve_privacy_and_replay(self):

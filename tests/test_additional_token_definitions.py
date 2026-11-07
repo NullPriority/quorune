@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
@@ -37,7 +38,13 @@ class AdditionalTokenDefinitionTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'additional-definitions.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/additional-token-status-cards.json',ROOT/'tests/fixtures/additional-token-definition-cards.json'],path)
+        fixtures = ROOT / "tests" / "fixtures"
+        build_fixture_database([
+            fixtures / "bound-effect-program-cards.json",
+            fixtures / "additional-token-status-cards.json",
+            fixtures / "additional-token-definition-cards.json",
+            fixtures / "prevention-composition-cards.json",
+        ], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Additional token definitions',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
 
@@ -67,13 +74,68 @@ class AdditionalTokenDefinitionTests(unittest.TestCase):
             result=s.act(seat,{'action_id':'choose','replacement':row['id']});self.assertTrue(result.ok,result.summary)
         self.fail('Replacement order did not complete')
 
+    def test_actual_fixed_definitions_use_default_and_copied_names_with_predefined_profile(self):
+        from quorune.fixed_token_production import TOKEN_LITERAL_NAME_VERSION_FIELD
+
+        session = self.session(712021)
+        session.state.config.semantic_policy = "trusted_only"
+        engine = session.engine
+        automaton = self.add(engine, "Stridehangar Automaton")
+        evidence = self.add(engine, "Hard Evidence", zone="hand")
+        alarm = self.add(engine, "Raise the Alarm", zone="hand")
+        counterpart = self.add(engine, "Cackling Counterpart", zone="hand")
+        enforcer = self.add(engine, "Orzhov Enforcer")
+        shock = self.add(engine, "Shock", zone="hand")
+        for card in (automaton, evidence, alarm, counterpart, enforcer, shock):
+            bound = self.binding(session, card)
+            self.assertTrue(bound["strict_capability_ready"], (card.printed_name, bound["blockers"]))
+
+        self.prepare(session, mana={"C": 2, "U": 3, "W": 1, "R": 1})
+        self.checkpoint(session)
+        self.cast(session, evidence, payment={"U": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(1, len(self.tokens(session, "Crab Token")))
+        clues = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"
+                 and engine._copyable_characteristics(card)["type_line"] == "Token Artifact — Clue"]
+        clue, = clues
+        self.assertEqual("Clue Token", engine.display_name(clue.object_id))
+        self.assertEqual("Clue Token", engine._copyable_characteristics(clue)["name"])
+        self.assertTrue(any(ability.sacrifice_source for ability in engine._activated_abilities(clue)))
+        thopters = self.tokens(session, "Thopter Token")
+        self.assertEqual(1, len(thopters))
+        self.assertEqual("Token Artifact Creature — Thopter", engine._copyable_characteristics(thopters[0])["type_line"])
+
+        self.cast(session, alarm, payment={"C": 1, "W": 1})
+        self.assertIsNone(self.resolve(session))
+        soldiers = self.tokens(session, "Soldier Token")
+        self.assertEqual(2, len(soldiers))
+        self.cast(session, counterpart, [soldiers[0].ref], payment={"C": 1, "U": 2})
+        self.assertIsNone(self.resolve(session))
+        self.cast(session, shock, [enforcer.ref], payment={"R": 1})
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("graveyard", session.state.cards[enforcer.object_id].zone)
+
+        tokens = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        ordinary = [card for card in tokens if card.object_id != clue.object_id]
+        expected = {"Crab Token": 1, "Thopter Token": 1, "Soldier Token": 3, "Spirit Token": 1}
+        self.assertEqual(Counter(expected), Counter(engine.display_name(card.object_id) for card in ordinary))
+        self.assertEqual(Counter(expected), Counter(engine._copyable_characteristics(card)["name"] for card in ordinary))
+        for card in tokens:
+            self.assertEqual(("A", "A"), (card.owner, card.controller))
+            self.assertNotIn(TOKEN_LITERAL_NAME_VERSION_FIELD, engine._copyable_characteristics(card))
+        self.replay(session, load=True)
+
     def test_complete_definition_producer_preserves_old_payloads_and_rejects_riders(self):
         from quorune.compiler.token_templates import static_additional_token_replacement_handler as lower,_TOKEN_DEFINITIONS
         from quorune.semantic_runtime.token_replacements import GenericAdditionalTokenReplacementHandler
-        for definition in ('Treasure token','Food token','Map token','1/1 colorless Thopter artifact creature token with flying'):
+        for definition in ('Treasure token', 'Food token', 'Map token'):
             text='If one or more artifact tokens would be created under your control, those tokens plus an additional '+definition+' are created instead.'
-            result=lower(text);self.assertIsNotNone(result);self.assertEqual(_TOKEN_DEFINITIONS[definition.casefold()],result[1]['token'])
-        for definition,name in (('Mutagen token','Mutagen'),('1/1 green Frog creature token','Frog'),('1/1 white Soldier creature token','Soldier')):
+            result=lower(text);self.assertIsNotNone(result)
+            original = _TOKEN_DEFINITIONS[definition.casefold()]
+            self.assertEqual({**original, "name": definition.title(), "literal_token_name_version": 1}, result[1]["token"])
+            legacy = GenericAdditionalTokenReplacementHandler().validate({**result[1], "token": original})
+            self.assertEqual(original["name"], legacy.token.name)
+        for definition,name in (('Mutagen token','Mutagen Token'),('1/1 green Frog creature token','Frog Token'),('1/1 white Soldier creature token','Soldier Token')):
             result=lower('If one or more creature tokens would be created under your control, those tokens plus a '+definition+' are created instead.')
             self.assertIsNotNone(result);node=GenericAdditionalTokenReplacementHandler().validate(result[1]);self.assertEqual(name,node.token.name);self.assertEqual(('creature',),node.created_types_all);self.assertEqual(1,node.quantity)
         for text in ('If one or more tokens would be created under your control, those tokens plus that many Food tokens are created instead.','If one or more tokens would be created under your control, you may create a Food token instead.','If one or more tokens would be created under your control, those tokens plus a tapped Food token are created instead.','If one or more tokens would be created under your control, those tokens plus a Mystery token are created instead.','If one or more tokens would be created under your control, those tokens plus a 1/1 green Frog creature token, then draw a card are created instead.'):
@@ -113,50 +175,50 @@ class AdditionalTokenDefinitionTests(unittest.TestCase):
             options=s.packet(s.pending_principals()[0],full=True)['decision']['ctx']['options']
             row=next(r for r in options if ('mutagen' in r['label'].casefold())==add_first)
             result=s.act('pilot:A',{'action_id':'choose','replacement':row['id']});self.assertTrue(result.ok,result.summary);self.finish_replacements(s)
-            squirrels=self.tokens(s,'Squirrel');mutagens=self.tokens(s,'Mutagen')
+            squirrels=self.tokens(s,'Squirrel Token');mutagens=self.tokens(s,'Mutagen Token')
             self.assertEqual(2,len(squirrels));self.assertEqual(2 if add_first else 1,len(mutagens))
             self.assertEqual({'G'},set(s.engine._effective_card_data(squirrels[0])['colors']));self.assertFalse(s.engine._effective_card_data(mutagens[0])['colors'])
             self.activation(s,mutagens[0],targets=[source.ref],payment={'C':1});self.assertIsNone(self.resolve(s));self.assertEqual(1,s.state.cards[source.object_id].counters.get('+1/+1',0))
-            remaining=len(self.tokens(s,'Mutagen'));self.cast(s,bounce,[source.ref],payment={'U':1});self.assertIsNone(self.resolve(s));self.assertEqual('hand',s.state.cards[source.object_id].zone)
+            remaining=len(self.tokens(s,'Mutagen Token'));self.cast(s,bounce,[source.ref],payment={'U':1});self.assertIsNone(self.resolve(s));self.assertEqual('hand',s.state.cards[source.object_id].zone)
             self.cast(s,spell,payment={'C':1,'G':1});self.finish_replacements(s)
-            self.assertEqual(remaining,len(self.tokens(s,'Mutagen')));self.assertEqual(4,len(self.tokens(s,'Squirrel')));self.private_replay(s,private)
+            self.assertEqual(remaining,len(self.tokens(s,'Mutagen Token')));self.assertEqual(4,len(self.tokens(s,'Squirrel Token')));self.private_replay(s,private)
 
     def test_real_quina_adds_one_frog_per_event_and_pays_its_frog_price(self):
         s=self.session(821030);source=self.add(s.engine,NAMES[1],zone='hand');spell=self.add(s.engine,'Raise the Alarm',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         self.prepare(s,mana={'C':5,'G':1,'W':1});self.checkpoint(s);self.cast(s,source,payment={'C':2,'G':1});self.assertIsNone(self.resolve(s))
         self.cast(s,spell,payment={'C':1,'W':1});self.finish_replacements(s)
-        self.assertEqual(2,len(self.tokens(s,'Soldier')));frogs=self.tokens(s,'Frog');self.assertEqual(1,len(frogs));self.assertEqual(1,s.engine._numeric_stat(frogs[0].object_id,'power'))
-        self.activation(s,source,costs=[self.tokens(s,'Soldier')[0]],payment={'C':2},valid=False)
+        self.assertEqual(2,len(self.tokens(s,'Soldier Token')));frogs=self.tokens(s,'Frog Token');self.assertEqual(1,len(frogs));self.assertEqual(1,s.engine._numeric_stat(frogs[0].object_id,'power'))
+        self.activation(s,source,costs=[self.tokens(s,'Soldier Token')[0]],payment={'C':2},valid=False)
         self.activation(s,source,costs=[frogs[0]],payment={'C':2});self.assertNotEqual('battlefield',s.state.cards[frogs[0].object_id].zone)
         s=self.replay(s,load=True);self.assertIsNone(self.resolve(s));self.assertEqual(1,s.state.cards[source.object_id].counters.get('+1/+1',0));self.private_replay(s,private)
 
     def test_real_queen_filters_creature_tokens_and_updates_its_live_definition(self):
         s=self.session(821040);source=self.add(s.engine,NAMES[2],zone='hand');spell=self.add(s.engine,'Raise the Alarm',zone='hand');inspector=self.add(s.engine,'Thraben Inspector',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         self.prepare(s,mana={'C':1,'G':1,'W':4});self.checkpoint(s);self.cast(s,source,payment={'G':1,'W':2});self.assertIsNone(self.resolve(s));self.assertEqual(1,s.engine._numeric_stat(source.object_id,'power'))
-        self.cast(s,spell,payment={'C':1,'W':1});self.finish_replacements(s);self.assertEqual(3,len(self.tokens(s,'Soldier')));self.assertEqual(4,s.engine._numeric_stat(source.object_id,'power'))
-        self.cast(s,inspector,payment={'W':1});self.finish_replacements(s);self.assertEqual(1,len(self.tokens(s,'Clue')));self.assertEqual(3,len(self.tokens(s,'Soldier')));self.assertEqual(5,s.engine._numeric_stat(source.object_id,'power'));self.private_replay(s,private)
+        self.cast(s,spell,payment={'C':1,'W':1});self.finish_replacements(s);self.assertEqual(3,len(self.tokens(s,'Soldier Token')));self.assertEqual(4,s.engine._numeric_stat(source.object_id,'power'))
+        self.cast(s,inspector,payment={'W':1});self.finish_replacements(s);self.assertEqual(1,len(self.tokens(s,'Clue Token')));self.assertEqual(3,len(self.tokens(s,'Soldier Token')));self.assertEqual(5,s.engine._numeric_stat(source.object_id,'power'));self.private_replay(s,private)
 
     def test_real_stridehangar_uses_generated_authority_and_anthem_without_double_replacement(self):
         s=self.session(821050);source=self.add(s.engine,NAMES[3],zone='hand');inspector=self.add(s.engine,'Thraben Inspector',zone='hand');spell=self.add(s.engine,'Raise the Alarm',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         self.assertTrue(self.binding(s,source)['strict_capability_ready']);self.prepare(s,mana={'C':6,'W':2});self.checkpoint(s)
         self.cast(s,source,payment={'C':3});self.assertIsNone(self.resolve(s));self.cast(s,inspector,payment={'W':1});self.finish_replacements(s)
-        self.assertEqual(1,len(self.tokens(s,'Clue')));thopters=self.tokens(s,'Thopter');self.assertEqual(1,len(thopters));self.assertEqual(2,s.engine._numeric_stat(thopters[0].object_id,'power'));self.assertIn('flying',s.engine._combat_keywords(thopters[0]))
+        self.assertEqual(1,len(self.tokens(s,'Clue Token')));thopters=self.tokens(s,'Thopter Token');self.assertEqual(1,len(thopters));self.assertEqual(2,s.engine._numeric_stat(thopters[0].object_id,'power'));self.assertIn('flying',s.engine._combat_keywords(thopters[0]))
         self.assertEqual(1,s.engine._numeric_stat(source.object_id,'power'));self.cast(s,spell,payment={'C':1,'W':1});self.finish_replacements(s)
-        self.assertEqual(1,len(self.tokens(s,'Thopter')));self.assertEqual(2,len(self.tokens(s,'Soldier')));self.assertEqual(1,s.engine._numeric_stat(self.tokens(s,'Soldier')[0].object_id,'power'))
-        before=len(s.state.players['A'].zones['hand']);self.activation(s,self.tokens(s,'Clue')[0],payment={'C':2});self.assertIsNone(self.resolve(s));self.assertEqual(before+1,len(s.state.players['A'].zones['hand']));self.private_replay(s,private)
+        self.assertEqual(1,len(self.tokens(s,'Thopter Token')));self.assertEqual(2,len(self.tokens(s,'Soldier Token')));self.assertEqual(1,s.engine._numeric_stat(self.tokens(s,'Soldier Token')[0].object_id,'power'))
+        before=len(s.state.players['A'].zones['hand']);self.activation(s,self.tokens(s,'Clue Token')[0],payment={'C':2});self.assertIsNone(self.resolve(s));self.assertEqual(before+1,len(s.state.players['A'].zones['hand']));self.private_replay(s,private)
 
     def test_real_control_change_uses_controller_instead_of_owner(self):
         s=self.session(821060);source=self.add(s.engine,NAMES[0]);spell=self.add(s.engine,'Chatter of the Squirrel',seat='B',zone='hand');steal=self.add(s.engine,'Control Magic',seat='B',zone='hand');own=self.add(s.engine,'Raise the Alarm',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         s.state.players['A'].mana_pool.update({'C':1,'W':1});self.prepare(s,actor='B',active='B',mana={'C':3,'U':2,'G':2});self.checkpoint(s)
-        self.cast(s,spell,seat='B',payment={'G':1});self.finish_replacements(s);self.assertEqual(1,len(self.tokens(s,'Squirrel','B')));self.assertFalse(self.tokens(s,'Mutagen','B'))
+        self.cast(s,spell,seat='B',payment={'G':1});self.finish_replacements(s);self.assertEqual(1,len(self.tokens(s,'Squirrel Token','B')));self.assertFalse(self.tokens(s,'Mutagen Token','B'))
         self.cast(s,steal,[source.ref],seat='B',payment={'C':2,'U':2});self.assertIsNone(self.resolve(s));self.assertEqual(('A','B'),(s.state.cards[source.object_id].owner,s.state.cards[source.object_id].controller))
-        self.cast(s,own,payment={'C':1,'W':1});self.finish_replacements(s);self.assertEqual(2,len(self.tokens(s,'Soldier')));self.assertFalse(self.tokens(s,'Mutagen'))
-        self.cast(s,spell,seat='B',payment={'C':1,'G':1});self.finish_replacements(s);self.assertEqual(2,len(self.tokens(s,'Squirrel','B')));self.assertEqual(1,len(self.tokens(s,'Mutagen','B')));self.private_replay(s,private)
+        self.cast(s,own,payment={'C':1,'W':1});self.finish_replacements(s);self.assertEqual(2,len(self.tokens(s,'Soldier Token')));self.assertFalse(self.tokens(s,'Mutagen Token'))
+        self.cast(s,spell,seat='B',payment={'C':1,'G':1});self.finish_replacements(s);self.assertEqual(2,len(self.tokens(s,'Squirrel Token','B')));self.assertEqual(1,len(self.tokens(s,'Mutagen Token','B')));self.private_replay(s,private)
 
     def test_added_mutagen_inherits_creation_tap_and_cannot_pay_tap_while_tapped(self):
         s=self.session(821070);source=self.add(s.engine,NAMES[0]);spell=self.add(s.engine,'Generic Tapped Creature Subject',zone='hand');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')
         self.prepare(s,mana={'C':1,'G':1});self.checkpoint(s);self.cast(s,spell,payment={'G':1});self.finish_replacements(s)
-        tokens=self.tokens(s,'Mutagen');self.assertEqual(1,len(tokens));self.assertTrue(tokens[0].tapped);self.assertTrue(self.tokens(s,'Soldier')[0].tapped)
+        tokens=self.tokens(s,'Mutagen Token');self.assertEqual(1,len(tokens));self.assertTrue(tokens[0].tapped);self.assertTrue(self.tokens(s,'Soldier Token')[0].tapped)
         self.priority(s,'A');self.assertFalse(any(r['id'].startswith('activate:'+tokens[0].ref+':') for r in self.actions(s)));self.private_replay(s,private)
 
     def test_verified_withdrawal_and_fresh_runtime_or_retirement_omissions_fail_closed(self):

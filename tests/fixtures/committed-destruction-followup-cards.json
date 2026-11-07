@@ -1,0 +1,285 @@
+{
+  "cards": [
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{G}{G}",
+      "name": "Bane of Progress",
+      "oracle_id": "51f9a6cc-8eb2-44ed-a2d9-913ac514ad67",
+      "oracle_text": "When this creature enters, destroy all artifacts and enchantments. Put a +1/+1 counter on this creature for each permanent destroyed this way.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-01-23",
+      "toughness": "2",
+      "type_line": "Creature — Elemental"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{W}",
+      "name": "Ceaseless Conflict",
+      "oracle_id": "2f109125-b743-4ecf-84da-690d8e8ddf9c",
+      "oracle_text": "Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nontoken creature you controlled that was destroyed this way.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "B",
+        "G",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{B}{G}{U}",
+      "name": "Death Begets Life",
+      "oracle_id": "53e86135-3b24-4618-bcc0-af4d81e672dd",
+      "oracle_text": "Destroy all creatures and enchantments. Draw a card for each permanent destroyed this way.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Cycling"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{B}{B}",
+      "name": "Decree of Pain",
+      "oracle_id": "932668fa-d6e3-41c0-ad0c-8e0a00e68d11",
+      "oracle_text": "Destroy all creatures. They can't be regenerated. Draw a card for each creature destroyed this way.\nCycling {3}{B}{B} ({3}{B}{B}, Discard this card: Draw a card.)\nWhen you cycle this card, all creatures get -2/-2 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-09-27",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{B}{B}",
+      "name": "Rain of Daggers",
+      "oracle_id": "e2048201-6dc9-4cf5-916f-1d867ae8dbdd",
+      "oracle_text": "Destroy all creatures target opponent controls. You lose 2 life for each creature destroyed this way.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-01-10",
+      "toughness": null,
+      "type_line": "Sorcery"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Bane of Progress's ability destroys all artifacts and enchantments, including those you control.",
+      "oracle_id": "51f9a6cc-8eb2-44ed-a2d9-913ac514ad67",
+      "published_at": "2013-10-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an artifact or enchantment isn't destroyed (perhaps because it has indestructible or it regenerated), it won't count toward the number of +1/+1 counters put on Bane of Progress. However, if an artifact or enchantment is destroyed but doesn't go to its owner's graveyard due to a replacement effect (like the one Rest in Peace creates), it will count.",
+      "oracle_id": "51f9a6cc-8eb2-44ed-a2d9-913ac514ad67",
+      "published_at": "2013-10-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent destroyed this way goes to a zone other than a graveyard (for example, if it has a finality counter on it), it still counts as being destroyed and you’ll still draw a card.",
+      "oracle_id": "53e86135-3b24-4618-bcc0-af4d81e672dd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Permanents with indestructible aren’t destroyed this way.",
+      "oracle_id": "53e86135-3b24-4618-bcc0-af4d81e672dd",
+      "published_at": "2025-04-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "When you cycle this card, first the cycling ability goes on the stack, then the triggered ability goes on the stack on top of it. The triggered ability will resolve before you draw a card from the cycling ability.",
+      "oracle_id": "932668fa-d6e3-41c0-ad0c-8e0a00e68d11",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The cycling ability and the triggered ability are separate. If the triggered ability doesn't resolve (because, for example, it has been countered, or all of its targets have become illegal), the cycling ability will still resolve, and you'll draw a card.",
+      "oracle_id": "932668fa-d6e3-41c0-ad0c-8e0a00e68d11",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned Scryfall destruction result follow-ups"
+}

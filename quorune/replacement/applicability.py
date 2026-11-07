@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping
 
 from .model import (
+    COUNTER_REPLACEMENT_GENERATED_FIELD,
     ReplaceableEvent,
     ReplacementChoice,
     ReplacementEffect,
@@ -39,6 +40,9 @@ def event_field(event: ReplaceableEvent, field_name: str) -> Any:
         return event.affected_player
     if field_name == "chooser":
         return event.chooser
+    if field_name == "effect_generated" and event.payload.get(COUNTER_REPLACEMENT_GENERATED_FIELD) is True:
+        amount = event.payload.get("amount")
+        return type(amount) is int and amount > 0
     return event.payload.get(field_name)
 
 

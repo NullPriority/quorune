@@ -157,7 +157,7 @@ class ExactTargetingTests(unittest.TestCase):
             for card in engine.state.cards.values()
             if card.controller == "B"
             and card.zone == "battlefield"
-            and card.printed_name == "Treasure"
+            and card.printed_name == "Treasure Token"
         ]
         self.assertEqual(2, len(treasures))
         with tempfile.TemporaryDirectory() as temporary:

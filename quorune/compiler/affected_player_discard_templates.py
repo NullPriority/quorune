@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed affected-player choices for fixed card discards."""
+"""Closed affected-player choices for fixed hand-card instructions."""
 
 from copy import deepcopy
 from dataclasses import dataclass
@@ -19,11 +19,18 @@ FIXED_CONTROLLER_DISCARD_MECHANIC = "fixed-controller-card-discard"
 FIXED_CONTROLLER_DISCARD_CAPABILITY = "choice.affected_player.fixed_controller_discard"
 FIXED_CONTEXT_PLAYER_DISCARD_MECHANIC = "fixed-context-player-discard"
 FIXED_CONTEXT_PLAYER_DISCARD_CAPABILITY = "trigger.result.fixed_context_player_discard"
+FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC = "fixed-affected-player-hand-exile"
+FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY = "choice.affected_player.fixed_hand_exile"
 _HAND_MECHANIC = "cr-402-hand"
 _TARGETS_MECHANIC = "cr-115-targets"
 _INSTRUCTION = re.compile(
     r"^(?P<subject>target player|target opponent|each player|each opponent) "
     r"discards (?:(?P<one>a|one) card|(?P<many>two|three) cards)\.?$",
+    re.IGNORECASE,
+)
+_HAND_EXILE_INSTRUCTION = re.compile(
+    r"^(?P<subject>target player|target opponent|each player|each opponent) "
+    r"exiles (?:(?P<one>a|one) card|(?P<many>two|three) cards) from (?:their|his or her) hand\.?$",
     re.IGNORECASE,
 )
 _COUNTS = {"a": 1, "one": 1, "two": 2, "three": 3}
@@ -71,6 +78,41 @@ def fixed_affected_player_discard_predicate_is_closed(
     return stable_json(predicate.to_dict()) == _CLOSED_PREDICATE
 
 
+def _affected_player_hand_choice(
+    subject: AffectedPlayerDiscardSubject, count: int, *, action: str, prompt: str,
+) -> dict[str, Any]:
+    players: str | list[str] = {
+        AffectedPlayerDiscardSubject.CONTROLLER: ["$controller"],
+        AffectedPlayerDiscardSubject.EACH_PLAYER: "all",
+        AffectedPlayerDiscardSubject.EACH_OPPONENT: "opponents",
+    }.get(subject, ["$target.0"])
+    effect = {
+        "op": "choose_cards_apnap",
+        "actor": "$controller",
+        "players": players,
+        "zone": "hand",
+        "predicate": _HAND_PREDICATE.to_dict(),
+        "count": count,
+        "then": action,
+        "hidden": True,
+        "prompt": prompt,
+    }
+    if subject.targeted:
+        effect["target"] = "$target.0"
+    return effect
+
+
+def _affected_player_hand_target(subject: AffectedPlayerDiscardSubject) -> Mapping[str, Any] | None:
+    if not subject.targeted:
+        return None
+    return {
+        "zones": ["player"],
+        "categories": ["player"],
+        "player_relation": "opponent" if subject.opponent_only else "any",
+        "count": 1,
+    }
+
+
 @dataclass(frozen=True, slots=True)
 class FixedAffectedPlayerDiscardTemplate:
     subject: AffectedPlayerDiscardSubject
@@ -96,38 +138,14 @@ class FixedAffectedPlayerDiscardTemplate:
 
     @property
     def effects(self) -> tuple[Mapping[str, Any], ...]:
-        players: str | list[str] = {
-            AffectedPlayerDiscardSubject.CONTROLLER: ["$controller"],
-            AffectedPlayerDiscardSubject.EACH_PLAYER: "all",
-            AffectedPlayerDiscardSubject.EACH_OPPONENT: "opponents",
-        }.get(self.subject, ["$target.0"])
-        effect: dict[str, Any] = {
-            "op": "choose_cards_apnap",
-            "actor": "$controller",
-            "players": players,
-            "zone": "hand",
-            "predicate": _HAND_PREDICATE.to_dict(),
-            "count": self.count,
-            "then": "discard",
-            "hidden": True,
-            "prompt": "Choose the required card(s) to discard.",
-        }
-        if self.subject.targeted:
-            effect["target"] = "$target.0"
+        effect = _affected_player_hand_choice(
+            self.subject, self.count, action="discard", prompt="Choose the required card(s) to discard.",
+        )
         return (deepcopy(effect),)
 
     @property
     def target_schema(self) -> Mapping[str, Any] | None:
-        if not self.subject.targeted:
-            return None
-        return {
-            "zones": ["player"],
-            "categories": ["player"],
-            "player_relation": (
-                "opponent" if self.subject.opponent_only else "any"
-            ),
-            "count": 1,
-        }
+        return _affected_player_hand_target(self.subject)
 
     @property
     def mechanics(self) -> tuple[str, ...]:
@@ -166,6 +184,25 @@ def fixed_affected_player_discard_effect_template(
     return FixedAffectedPlayerDiscardTemplate(
         subject=_SUBJECTS[match.group("subject").casefold()],
         count=_COUNTS[count_word],
+    )
+
+
+def fixed_affected_player_hand_exile_effect_template(text: str):
+    """Lower a fixed face-up exile from each affected player's own hand."""
+    match = _HAND_EXILE_INSTRUCTION.fullmatch(" ".join(text.strip().split()))
+    if match is None:
+        return None
+    subject = _SUBJECTS[match["subject"].casefold()]
+    count = _COUNTS[(match["one"] or match["many"]).casefold()]
+    effect = _affected_player_hand_choice(
+        subject, count, action="exile", prompt="Choose the required card(s) to exile.",
+    )
+    return (
+        f"fixed-affected-player-hand-exile-{subject.value}-{count}-v1",
+        (effect,),
+        _affected_player_hand_target(subject),
+        (FIXED_AFFECTED_PLAYER_HAND_EXILE_MECHANIC, _HAND_MECHANIC,
+         *((_TARGETS_MECHANIC,) if subject.targeted else ())),
     )
 
 

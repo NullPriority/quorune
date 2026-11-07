@@ -10,8 +10,14 @@ from .control_capability_shapes import fixed_control_node_capabilities
 from .city_blessing_shapes import ascend_spell_node_capabilities
 from .public_event_counter_set_shapes import public_event_counter_set_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
+from .combat_removal_shapes import combat_removal_node_capabilities
 from .whole_hand_discard_shapes import unchosen_hand_discard_node_capabilities
 from .connive_capability_shapes import fixed_connive_node_capabilities
+from .endure_shapes import fixed_endure_node_capabilities
+from .earthbend_shapes import earthbend_node_capabilities
+from .suspect_shapes import suspect_node_capabilities
+from .blight_shapes import fixed_blight_node_capabilities
 from .goad_capability_shapes import fixed_goad_node_capabilities
 from .exploit_capability_shapes import exploit_instruction_node_capabilities
 from .source_keyword_choice_shapes import source_keyword_choice_capabilities
@@ -31,6 +37,7 @@ from .reanimation_capability_shapes import fixed_target_reanimation_node_capabil
 from .counter_removal_capabilities import all_counter_removal_node_capabilities, fixed_counter_removal_node_capabilities
 from .affected_player_sacrifice_capability_shapes import fixed_affected_player_sacrifice_node_capabilities
 from .affected_player_discard_capability_shapes import fixed_affected_player_discard_node_capabilities, fixed_controller_discard_node_capabilities, fixed_context_player_discard_node_capabilities
+from .affected_player_discard_capability_shapes import fixed_affected_player_hand_exile_node_capabilities
 from .alternative_discard_shapes import alternative_discard_node_capabilities
 from .entry_return_capability_shapes import fixed_entry_return_node_capabilities
 from .node_capability_shapes import fixed_counter_placement_batch_node_capabilities, fixed_counter_placement_node_capabilities, fixed_counter_placement_set_node_capabilities, fixed_counter_placement_target_set_node_capabilities, fixed_target_effect_sequence_node_capabilities, fixed_source_effect_sequence_node_capabilities, fixed_source_characteristics_node_capabilities, fixed_target_characteristics_node_capabilities, temporary_declaration_restriction_node_capabilities, fixed_player_counter_placement_node_capabilities, fixed_damage_node_capabilities, mass_destruction_node_capabilities, fixed_draw_node_capabilities, fixed_scry_node_capabilities, single_explore_node_capabilities, single_proliferate_node_capabilities, self_regeneration_node_capabilities, fixed_self_counter_keyword_action_node_capabilities, fixed_bolster_node_capabilities, fixed_amass_node_capabilities, targeted_counter_node_capabilities, targeted_destruction_node_capabilities, targeted_exile_node_capabilities, targeted_return_to_hand_node_capabilities, targeted_tap_state_node_capabilities
@@ -62,6 +69,7 @@ from .fixed_resolution_mana_shapes import fixed_resolution_mana_capabilities
 from .created_token_counter_shapes import created_token_counter_node_capabilities
 from .incubate_capability_shapes import incubate_node_capabilities
 from .discover_capability_shapes import discover_node_capabilities
+from .detain import detain_node_capabilities, direct_action_prohibition_node_capabilities
 from .variable_library_selection_shapes import variable_library_selection_node_capabilities
 from .reveal_until_library_selection_shapes import reveal_until_library_selection_node_capabilities
 from .fixed_controller_effect_shapes import fixed_counter_controller_effect_sequence_node_capabilities, fixed_controller_effect_sequence_node_capabilities, fixed_life_node_capabilities
@@ -77,6 +85,7 @@ def effect_node_capabilities(
     mechanics: set[str],
 ) -> set[str]:
     from .reanimation_entry_counters import reanimation_entry_counter_node_capabilities
+    from .revealed_library_top import reveal_top_node_capabilities
     from .actual_life_transfer import actual_life_transfer_capabilities
     from .per_player_target_sets import per_player_target_node_capabilities
     from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
@@ -93,6 +102,7 @@ def effect_node_capabilities(
         return set()
     for resolver in (
         reanimation_entry_counter_node_capabilities,
+        reveal_top_node_capabilities,
         actual_life_transfer_capabilities,
         per_player_target_node_capabilities,
         block_counterpart_zone_capabilities,
@@ -103,6 +113,8 @@ def effect_node_capabilities(
         created_token_counter_node_capabilities,
         incubate_node_capabilities,
         discover_node_capabilities,
+        detain_node_capabilities,
+        direct_action_prohibition_node_capabilities,
         variable_library_selection_node_capabilities,
         reveal_until_library_selection_node_capabilities,
         temporary_library_search_node_capabilities,
@@ -113,10 +125,16 @@ def effect_node_capabilities(
         graveyard_return_choice_node_capabilities,
         fixed_stack_spell_copy_node_capabilities,
         fixed_extra_turn_node_capabilities,
+        scheduled_turn_skip_node_capabilities,
+        combat_removal_node_capabilities,
         ascend_spell_node_capabilities,
         public_event_counter_set_node_capabilities,
         unchosen_hand_discard_node_capabilities,
         fixed_connive_node_capabilities, fixed_goad_node_capabilities, exploit_instruction_node_capabilities,
+        fixed_endure_node_capabilities,
+        earthbend_node_capabilities,
+        suspect_node_capabilities,
+        fixed_blight_node_capabilities,
         fixed_control_node_capabilities,
         fixed_attachment_action_node_capabilities,
         all_counter_removal_node_capabilities,
@@ -147,6 +165,7 @@ def effect_node_capabilities(
         fixed_draw_node_capabilities,
         alternative_discard_node_capabilities,
         fixed_affected_player_discard_node_capabilities,
+        fixed_affected_player_hand_exile_node_capabilities,
         fixed_controller_discard_node_capabilities,
         fixed_context_player_discard_node_capabilities,
         fixed_affected_player_sacrifice_node_capabilities,

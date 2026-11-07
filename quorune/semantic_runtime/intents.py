@@ -1,12 +1,18 @@
 from __future__ import annotations
+
+from ..fractional_quantity_model import HalfQuantitySpec
 from ..city_blessing_model import AscendIntent
 from ..cipher_model import EncodeCipherIntent
 from .soulbond_intent import PairSoulbondIntent
+from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
+from ..suspect_model import SuspectIntent
+from ..combat_removal import CombatRemovalIntent
 from ..whole_hand_discard_model import DiscardWholeHandsIntent
 from ..discard_result_model import DiscardWholeHandsResultIntent
 from ..random_discard import RandomDiscardIntent
 from ..rules.random_graveyard_returns import RandomGraveyardReturnIntent
 from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
+from ..turn_skip_model import ScheduleTurnSkipIntent
 from ..library_search_model import ProhibitLibrarySearchIntent
 from .control_intents import ControlIntent
 from .domain_intent import DomainEffectIntent
@@ -18,14 +24,20 @@ from .creation_intents import CreateCompiledEmblemIntent, CreateRegenerationShie
 from .champion_intent import ChampionExileIntent, ReturnLinkedAbilityExileIntent
 from .energy_payment import PayEnergyIntent
 from ..reflexive_trigger_model import QueueReflexiveTriggerIntent
+from ..source_untap_rule_model import PendingSourceUntapRestraint
 
 from dataclasses import dataclass, field
 from typing import Any, Literal, Mapping, TypeAlias
 
 from ..affected_permanents import AffectedPermanentSetSpec
+from ..rules.destruction_result_model import DestructionFollowup
+from ..rules.public_exile_result_model import PublicExileFollowup
+from ..rules.revealed_library_top import RevealedLibraryTopSpec
 from ..public_zone_moves import PublicZoneMoveSetSpec,PublicBattlefieldController
 from ..drawing.model import DiscardDrawnCardUnlessType, DrawnCardAction, RevealDrawnCard
+from ..announced_damage import AllocatedDamageRecipient
 from ..fixed_damage_set_model import FixedDamageSetSpec
+from ..damage_death_exile_model import DamageDeathExileScope
 from ..impulse_access_model import ImpulseAccessDuration
 from ..creature_subtypes import canonical_creature_subtype
 from ..replacement.immutable import FrozenMap, thaw_value
@@ -74,7 +86,7 @@ class DrawCardsIntent:
 class MillCardsIntent:
     actor: str
     player: str
-    count: int
+    count: int | HalfQuantitySpec
     reason: str
     batch_players: tuple[str, ...] = ()
 
@@ -86,8 +98,8 @@ class MillCardsIntent:
             raise ValueError(
                 "Mill intents require an actor, player, and reason"
             )
-        if type(self.count) is not int or self.count < 0:
-            raise ValueError("Mill intents require a nonnegative fixed count")
+        if not isinstance(self.count, HalfQuantitySpec) and (type(self.count) is not int or self.count < 0):
+            raise ValueError("Mill intents require a nonnegative fixed count or a closed half quantity")
         if not isinstance(self.batch_players, (list, tuple)):
             raise ValueError("Mill batch recipients require a typed sequence")
         players = tuple(self.batch_players)
@@ -139,6 +151,7 @@ class SetPermanentTappedIntent:
     tapped: bool
     reason: str
     logical_object_id: str | None = None
+    untap_restraint: PendingSourceUntapRestraint | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -217,8 +230,11 @@ class DestroyPermanentSetIntent:
     source_ref: str | None = None
     regeneration_prohibited: bool = False
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    followup: DestructionFollowup | None = None
 
     def __post_init__(self) -> None:
+        if self.followup is not None and not isinstance(self.followup, DestructionFollowup):
+            raise ValueError("Destruction-set follow-up must be typed")
         if any(type(value) is not str or not value for value in (self.actor, self.reason)):
             raise ValueError(
                 "Destruction-set intents require actor and reason"
@@ -388,8 +404,13 @@ class MovePublicZoneSetIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    followup: PublicExileFollowup | None = None
 
     def __post_init__(self) -> None:
+        if self.followup is not None:
+            if not isinstance(self.followup, PublicExileFollowup):
+                raise ValueError("Public exile follow-up must be typed")
+            self.followup.validate_move(self.spec)
         if any(
             type(value) is not str or not value
             for value in (self.actor, self.reason)
@@ -426,11 +447,13 @@ class DealFixedDamageSetIntent:
     actor: str
     source_ref: str
     amount: int
-    spec: FixedDamageSetSpec
+    spec: FixedDamageSetSpec | None
     reason: str
     replacement_selections: tuple[str | FrozenMap, ...] = ()
     replacement_event_ids: tuple[str, ...] = ()
     source_snapshot: FrozenMap | None = None
+    death_exile_scope: DamageDeathExileScope | None = None
+    allocated_recipients: tuple[AllocatedDamageRecipient, ...] | None = None
 
     def __post_init__(self) -> None:
         if any(
@@ -444,10 +467,19 @@ class DealFixedDamageSetIntent:
             raise ValueError(
                 "Fixed damage-set intent amount must be a nonnegative integer"
             )
-        if not isinstance(self.spec, FixedDamageSetSpec):
-            raise ValueError(
-                "Fixed damage-set intents require a typed recipient set"
-            )
+        if self.allocated_recipients is None:
+            if not isinstance(self.spec, FixedDamageSetSpec):
+                raise ValueError("Fixed damage-set intents require a typed recipient set")
+        else:
+            recipients = self.allocated_recipients
+            if (self.spec is not None or self.death_exile_scope is not None
+                    or not isinstance(recipients, tuple) or self.amount < 1
+                    or any(not isinstance(recipient, AllocatedDamageRecipient) for recipient in recipients)
+                    or len({recipient.ref for recipient in recipients}) != len(recipients)
+                    or sum(recipient.amount for recipient in recipients) > self.amount):
+                raise ValueError("Announced damage intents require distinct recipients and bounded shares")
+        if self.death_exile_scope is not None and self.death_exile_scope is not DamageDeathExileScope.DEALT_CREATURES:
+            raise ValueError('Fixed damage-set death exile follows actual damaged creatures')
         object.__setattr__(
             self,
             "replacement_selections",
@@ -796,6 +828,13 @@ class RevealLibraryCardsIntent:
 
 
 @dataclass(frozen=True, slots=True)
+class RevealEachLibraryTopIntent:
+    actor: str
+    reason: str
+    followup: RevealedLibraryTopSpec
+
+
+@dataclass(frozen=True, slots=True)
 class MoveLibraryCardsToBottomIntent:
     actor: str
     player: str
@@ -939,8 +978,11 @@ class PlaceCountersIntent:
     reason: str
     source_ref: str | None = None
     replacement_selections: tuple[str | FrozenMap, ...] = ()
+    effect_generated: bool = True
 
     def __post_init__(self) -> None:
+        if type(self.effect_generated) is not bool:
+            raise ValueError("Counter placement provenance must be boolean")
         object.__setattr__(
             self,
             "replacement_selections",
@@ -1297,7 +1339,7 @@ class RetargetStackItemIntent:
             )
 
 
-from .token_creation_intent import CreateTokenIntent
+from .token_creation_intent import CreateTokenIntent, DistributedTokenCreationIntent
 
 
 @dataclass(frozen=True, slots=True)
@@ -1524,6 +1566,7 @@ SemanticIntent: TypeAlias = (
     | PayLifeIntent
     | PayEnergyIntent
     | RevealLibraryCardsIntent
+    | RevealEachLibraryTopIntent
     | InspectHandIntent
     | MoveLibraryCardsToBottomIntent
     | ScryLibraryIntent
@@ -1544,6 +1587,7 @@ SemanticIntent: TypeAlias = (
     | CopyStackItemIntent
     | RetargetStackItemIntent
     | CreateTokenIntent
+    | DistributedTokenCreationIntent
     | CopyControlledTokensIntent
     | AddSubtypeIntent
     | GrantZoneObjectKeywordIntent
@@ -1554,6 +1598,12 @@ SemanticIntent: TypeAlias = (
     | RandomDiscardIntent
     | RandomGraveyardReturnIntent
     | TemporaryCastRestrictionIntent
+    | ScheduleTurnSkipIntent
+    | EarthbendIntent
+    | FinishEarthbendIntent
+    | ReturnEarthbentObjectsIntent
+    | SuspectIntent
+    | CombatRemovalIntent
     | ProhibitLibrarySearchIntent
     | AscendIntent
 )

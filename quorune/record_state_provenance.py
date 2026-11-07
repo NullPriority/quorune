@@ -36,10 +36,13 @@ def format_state_versions(state: Any) -> dict[str, int]:
             getattr(getattr(state, "turn_history", None), "departure_history_version", None) or 0
         ),
         **({"arrival_history_version":1} if getattr(getattr(state,"turn_history",None),"arrival_history_version",None)==1 else {}),
-        **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','crime_history_version')
+        **{key:1 for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
+            'crime_history_version','committed_occurrence_history_version')
             if getattr(getattr(state,'turn_history',None),key,None)==1},
         **({"tap_state_event_version": state.tap_state_event_version} if state.tap_state_event_version is not None else {}),
         **({'cast_source_placement_version':state.cast_source_placement_version} if getattr(state,'cast_source_placement_version',None) is not None else {}),
+        **({"phasing_lifecycle_version": state.phasing_lifecycle_version}
+           if getattr(state, "phasing_lifecycle_version", None) is not None else {}),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
@@ -47,11 +50,26 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **({'library_selection_knowledge_version':state.library_selection_knowledge_version} if getattr(state,'library_selection_knowledge_version',None) is not None else {}),
         **({'characteristic_query_boundary_version':state.characteristic_query_boundary_version} if getattr(state,'characteristic_query_boundary_version',None) is not None else {}),
         **({'token_copy_value_version':state.token_copy_value_version} if getattr(state,'token_copy_value_version',None) is not None else {}),
+        **({"predefined_token_name_version": state.predefined_token_name_version}
+           if getattr(state, "predefined_token_name_version", None) is not None else {}),
         **({'block_characteristics_version':state.block_characteristics_version} if getattr(state,'block_characteristics_version',None) is not None else {}),
         **({'unblocked_attacker_event_version':state.unblocked_attacker_event_version} if getattr(state,'unblocked_attacker_event_version',None) is not None else {}),
         **({'permanent_event_state_version':state.permanent_event_state_version} if getattr(state,'permanent_event_state_version',None) is not None else {}),
         **({'battle_cry_resolution_version':state.battle_cry_resolution_version} if getattr(state,'battle_cry_resolution_version',None) is not None else {}),
     }
+
+
+def _validate_token_state_versions(format_value: Mapping[str, Any], state: Any) -> None:
+    from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
+
+    for field, validate, label in (
+        ("token_copy_value_version", token_copy_value_version, "Token copy value"),
+        ("predefined_token_name_version", predefined_token_name_version, "Predefined token name"),
+    ):
+        declared = format_value.get(field, 0)
+        actual = validate(getattr(state, field, None)) or 0
+        if type(declared) is not int or declared not in {0, 1} or declared != actual:
+            raise ValueError(f"{label} provenance does not match the initial checkpoint")
 
 
 def validate_state_versions(
@@ -87,7 +105,8 @@ def validate_state_versions(
     arrival=format_value.get('arrival_history_version',0)
     actual_arrival=getattr(getattr(state,'turn_history',None),'arrival_history_version',None) or 0
     if type(arrival) is not int or arrival not in {0,1} or arrival!=actual_arrival:raise ValueError('Arrival-history provenance does not match the initial checkpoint')
-    for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version','crime_history_version'):
+    for key in ('spell_origin_history_version','graveyard_type_history_version','spell_mana_history_version',
+                'crime_history_version','committed_occurrence_history_version'):
         declared=format_value.get(key,0);actual=getattr(getattr(state,'turn_history',None),key,None) or 0
         if type(declared) is not int or declared not in {0,1} or declared!=actual:raise ValueError('Qualified history provenance does not match the initial checkpoint')
     tap_version = format_value.get("tap_state_event_version", 0)
@@ -95,10 +114,13 @@ def validate_state_versions(
         raise ValueError("Tap-state event provenance does not match the initial checkpoint")
     from .cast_source_placement_model import cast_source_placement_version
     from .explore_action_model import explore_action_version
-    from .token_copy_value_model import token_copy_value_version
-    copy_values=format_value.get('token_copy_value_version',0)
-    if type(copy_values) is not int or copy_values not in {0,1} or copy_values!=(token_copy_value_version(getattr(state,'token_copy_value_version',None)) or 0):
-        raise ValueError('Token copy value provenance does not match the initial checkpoint')
+    from .phasing_model import phasing_lifecycle_version
+
+    phasing = format_value.get("phasing_lifecycle_version", 0)
+    if (type(phasing) is not int or phasing not in {0, 1}
+            or phasing != (phasing_lifecycle_version(getattr(state, "phasing_lifecycle_version", None)) or 0)):
+        raise ValueError("Phasing lifecycle provenance does not match the initial checkpoint")
+    _validate_token_state_versions(format_value, state)
     explore = format_value.get('explore_action_version', 0)
     if type(explore) is not int or explore not in {0, 1} or explore != (explore_action_version(getattr(state, 'explore_action_version', None)) or 0):
         raise ValueError('Explore action provenance does not match the initial checkpoint')
@@ -147,7 +169,7 @@ def validate_state_versions(
             or blocks!=(block_characteristics_version(getattr(state,'block_characteristics_version',None)) or 0)):
         raise ValueError('Block characteristic facts provenance does not match the initial checkpoint')
     boundary=format_value.get('characteristic_query_boundary_version',0)
-    if (type(boundary) is not int or boundary not in {0,1}
+    if (type(boundary) is not int or boundary not in {0,1,2}
             or boundary!=(characteristic_query_boundary_version(getattr(state,'characteristic_query_boundary_version',None)) or 0)):
         raise ValueError('Characteristic query boundary provenance does not match the initial checkpoint')
     from .state_based_legend_model import legend_rule_choice_version

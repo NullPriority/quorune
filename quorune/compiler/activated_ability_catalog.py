@@ -50,7 +50,7 @@ from ..semantic_runtime.mana_abilities import (
 from ..semantics import SemanticProgram
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
-from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation
+from .activated_counter_costs import fixed_selected_counter_activation, fixed_any_source_counter_activation, fixed_blight_activation
 from .activation_mana_costs import fixed_complex_activation_mana_cost
 from .power_up_templates import fixed_power_up_ability
 
@@ -108,7 +108,9 @@ def _specialize_compiled_ability(
     ability = announced_x_activation_cost(fixed_power_up_ability(ability))
     ability = fixed_any_source_counter_activation(ability)
     ability = fixed_complex_activation_mana_cost(ability)
-    ability = fixed_selected_counter_activation(fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability)))
+    ability = fixed_blight_activation(fixed_selected_counter_activation(
+        fixed_activated_tap_cost(fixed_activated_zone_change_cost(ability))
+    ))
     candidates = tuple(
         spec.to_activated_ability()
         for spec in (

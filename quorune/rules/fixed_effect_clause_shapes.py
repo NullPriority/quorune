@@ -4,6 +4,11 @@ from .graveyard_return_choices import graveyard_return_choice_node_capabilities
 from .all_kind_counter_shapes import all_kind_counter_component_capabilities
 from .temporary_cast_restrictions import temporary_cast_node_capabilities
 from .extra_turn_shapes import fixed_extra_turn_node_capabilities
+from .scheduled_turn_skip_shapes import scheduled_turn_skip_node_capabilities
+from .combat_removal_shapes import combat_removal_node_capabilities
+from .earthbend_shapes import earthbend_node_capabilities
+from .suspect_shapes import suspect_node_capabilities
+from .resolution_characteristic_shapes import fixed_resolution_characteristic_capabilities
 
 """Capability closure for generic two-clause effect sequences."""
 
@@ -18,6 +23,7 @@ from .whole_hand_discard_shapes import whole_hand_discard_node_capabilities
 from ..random_discard import random_discard_node_capabilities
 from .affected_player_discard_capability_shapes import (
     fixed_affected_player_discard_node_capabilities,
+    fixed_affected_player_hand_exile_node_capabilities,
     fixed_controller_discard_node_capabilities,
 )
 from .counter_capability_shapes import (
@@ -35,7 +41,10 @@ from .fixed_resolution_mana_shapes import fixed_resolution_mana_choice_capabilit
 from .stack_spell_copy_shapes import fixed_stack_spell_copy_node_capabilities
 from .created_token_counter_shapes import created_token_counter_node_capabilities
 from .incubate_capability_shapes import incubate_node_capabilities
+from .endure_shapes import fixed_endure_node_capabilities
+from .blight_shapes import fixed_blight_node_capabilities
 from .discover_capability_shapes import discover_node_capabilities
+from .detain import detain_node_capabilities, direct_action_prohibition_node_capabilities
 from .variable_library_selection_shapes import variable_library_selection_node_capabilities
 from .reveal_until_library_selection_shapes import reveal_until_library_selection_node_capabilities
 from .linked_exile_return_shapes import linked_exile_return_node_capabilities
@@ -80,6 +89,7 @@ from .library_search_capability_shapes import (
     fixed_type_to_hand_search_node_capabilities,
 )
 from .mill_capability_shapes import fixed_mill_node_capabilities
+from .fractional_player_result_shapes import half_choice_node_capabilities, half_life_node_capabilities
 from .public_zone_move_capability_shapes import (
     fixed_public_zone_move_set_node_capabilities,
     public_graveyard_card_exile_node_capabilities,
@@ -132,7 +142,11 @@ _COMPONENT_RESOLVERS = (
     fixed_stack_spell_copy_node_capabilities,
     created_token_counter_node_capabilities,
     incubate_node_capabilities,
+    fixed_endure_node_capabilities,
+    fixed_blight_node_capabilities,
     discover_node_capabilities,
+    detain_node_capabilities,
+    direct_action_prohibition_node_capabilities,
     variable_library_selection_node_capabilities,
     reveal_until_library_selection_node_capabilities,
     fixed_resolution_mana_choice_capabilities,
@@ -142,6 +156,11 @@ _COMPONENT_RESOLVERS = (
     fixed_goad_node_capabilities,
     fixed_prevention_component_capabilities,
     fixed_extra_turn_node_capabilities,
+    scheduled_turn_skip_node_capabilities,
+    combat_removal_node_capabilities,
+    earthbend_node_capabilities,
+    suspect_node_capabilities,
+    fixed_resolution_characteristic_capabilities,
     whole_hand_discard_node_capabilities,
     random_discard_node_capabilities,
     fixed_control_node_capabilities,
@@ -164,7 +183,10 @@ _COMPONENT_RESOLVERS = (
     all_counter_removal_node_capabilities,
     fixed_controller_discard_node_capabilities,
     fixed_affected_player_discard_node_capabilities,
+    fixed_affected_player_hand_exile_node_capabilities,
     fixed_affected_player_sacrifice_node_capabilities,
+    half_choice_node_capabilities,
+    half_life_node_capabilities,
     fixed_counter_placement_batch_node_capabilities,
     fixed_counter_placement_group_node_capabilities,
     fixed_counter_placement_node_capabilities,

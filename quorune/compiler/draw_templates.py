@@ -188,7 +188,7 @@ def fixed_draw_effect_template(text: str) -> DrawEffectTemplate | None:
             ("cr-121-drawing-a-card", "cr-115-targets"),
         )
     match = re.fullmatch(
-        rf"each player draws (?P<count>{FIXED_COUNT_PATTERN}) cards?\.?",
+        rf"each player draws (?P<count>{FIXED_COUNT_PATTERN}|twenty) cards?\.?",
         normalized,
         re.IGNORECASE,
     )

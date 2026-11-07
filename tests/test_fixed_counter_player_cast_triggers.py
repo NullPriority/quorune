@@ -2441,7 +2441,7 @@ class FixedCounterPlayerCastTriggerRuntimeTests(unittest.TestCase):
             and card.object_id not in before_tokens
         ]
         self.assertEqual(1, len(created))
-        self.assertEqual("Spirit", created[0].printed_name)
+        self.assertEqual("Spirit Token", created[0].printed_name)
 
     def test_attack_batch_trigger_is_once_per_declaration_and_replays(self):
         session = self.session(121081, players=4)

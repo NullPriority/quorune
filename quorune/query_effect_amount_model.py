@@ -5,6 +5,7 @@ from typing import Any, Mapping
 
 from .characteristic_fragments import (
     CharacteristicFragmentError,
+    CharacteristicQuantityReduction,
     CharacteristicQuantityScope,
     CharacteristicQuantitySpec,
 )
@@ -145,6 +146,14 @@ class PublicQueryAmountSpec:
             schema_version=value["schema_version"],
             binding_id=value.get("binding_id"),
         )
+
+
+CONTROLLER_MAXIMUM_PERMANENT_MANA_AMOUNT = PublicQueryAmountSpec(CharacteristicQuantitySpec(
+    scope=CharacteristicQuantityScope.CONTROLLER_ZONE,
+    query=ObjectQuerySpec(zones=("battlefield",)),
+    schema_version=2,
+    reduction=CharacteristicQuantityReduction.MAXIMUM_MANA_VALUE,
+))
 
 
 @dataclass(frozen=True, slots=True)

@@ -497,6 +497,9 @@ class FixedPlayerCounterPlacementRuntimeTests(unittest.TestCase):
             {**valid, "subjects": "that-player"},
             {**valid, "amount": True},
             {**valid, "amount": 0},
+            {**valid, "amount": 0, "zero_is_noop": False},
+            {**valid, "amount": 0, "zero_is_noop": True, "counter": "poison"},
+            {**valid, "amount": 0, "zero_is_noop": True, "_replacement_selections": ["forged"]},
             {**valid, "counter": ""},
             {**valid, "source": None},
             {**valid, "unknown": 1},
@@ -519,6 +522,9 @@ class FixedPlayerCounterPlacementRuntimeTests(unittest.TestCase):
                 amount=1,
                 reason="malformed",
             )
+        empty = FixedPlayerCounterPlacementHandler().lower(
+            {**valid, "amount": 0, "zero_is_noop": True}, self.context())
+        self.assertEqual((), empty.intents)
 
     def test_inactive_player_counter_target_rolls_back_without_mutation(self):
         session = self.session(12270803)

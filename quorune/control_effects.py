@@ -15,6 +15,8 @@ from .continuous_effect_state import (
 from .continuous_effects import order_continuous_effects
 from .object_predicate import ObjectQuerySpec
 from .source_continuity import SourceContinuityHistory, SourceContinuitySnapshot
+from .source_tap_effect import SOURCE_TAP_EFFECT_FIELD
+from .source_untap_rule_model import ResolvedSourceUntapRestraint
 from .model import CONTROL_HISTORY_VERSION
 from . import control_history
 from .errors import GameRuleError
@@ -94,6 +96,8 @@ def source_continuity_snapshot(card: Any) -> SourceContinuitySnapshot:
 
 def _contains_source_duration(value: Any) -> bool:
     if isinstance(value, Mapping):
+        if value.get(SOURCE_TAP_EFFECT_FIELD) is True:
+            return True
         if value.get("op") == "gain_control":
             try:
                 if ContinuousEffectDuration(value.get("duration")).source_bound:
@@ -166,8 +170,8 @@ def record_source_transition(
         end_pairs_containing(host, (card.object_id,), reason='paired object changed control or phased out')
 
 
-def _source_is_current(host: ControlEffectHost, source: ResolutionEffectSource) -> Any | None:
-    card = host.state.cards.get(source.object_id)
+def _current_duration_source(state: Any, source: ResolutionEffectSource | ContinuousObjectIdentity) -> Any | None:
+    card = state.cards.get(source.object_id)
     if (card is None or card.logical_object_id != source.logical_object_id
             or card.zone != "battlefield" or card.phased_out):
         return None
@@ -200,6 +204,32 @@ def _duration_condition(
     if duration.requires_tapped_source:
         beginnings.append(history.last_tap_timestamp)
     return resolution_timestamp is not None and max(beginnings) > resolution_timestamp
+
+
+def prepare_tapped_source_duration(
+    state: Any, source: ResolutionEffectSource | ContinuousObjectIdentity, snapshot: SourceContinuitySnapshot | None,
+    resolution_timestamp: int,
+) -> SourceContinuitySnapshot | None:
+    card = _current_duration_source(state, source)
+    if card is None:
+        return None
+    if snapshot is None:
+        raise ControlEffectError("Tapped-source duration requires its retained continuity")
+    if not _duration_condition(
+        card, ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS, card.controller,
+        snapshot, resolution_timestamp=resolution_timestamp,
+    ):
+        return None
+    return card.source_continuity.snapshot()
+
+
+def tapped_source_duration_is_current(
+    state: Any, source: ContinuousObjectIdentity, snapshot: SourceContinuitySnapshot,
+) -> bool:
+    card = _current_duration_source(state, source)
+    return card is not None and _duration_condition(
+        card, ContinuousEffectDuration.UNTIL_SOURCE_LEAVES_OR_UNTAPS, card.controller, snapshot,
+    )
 
 
 def has_control_origin(state: Any, card: Any) -> bool:
@@ -264,7 +294,7 @@ def gain_control_of_refs(
         return ()
     source_card = None
     if duration.source_bound:
-        source_card = _source_is_current(host, source)
+        source_card = _current_duration_source(host.state, source)
         if source_card is None:
             return ()
         if not isinstance(history_snapshot, SourceContinuitySnapshot):
@@ -363,6 +393,14 @@ def _next_source_expiration(host: ControlEffectHost, ending: Sequence[Continuous
     return next(effect for effect in ending if effect.effect_id == ordered[0].effect_id)
 
 
+def _expired_tapped_duration(state, effect) -> bool:
+    return (
+        isinstance(effect, ResolvedSourceUntapRestraint)
+        or isinstance(effect, ContinuousEffect) and effect.layer is not Layer.CONTROL
+        and effect.duration_source is not None
+    ) and not tapped_source_duration_is_current(state, effect.duration_source, effect.duration_history)
+
+
 def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool:
     """Compute monotonic source expiration before committing resulting custody."""
     if host.state.control_history_version != CONTROL_HISTORY_VERSION:
@@ -371,14 +409,15 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
     _establish_static_control_origins(host,static)
     journal = host.state.continuous_effects
     if not journal:
-        return False
-    retained = list(journal)
+        return _exile_phased_permanents_without_live_custody(host, (), static)
+    retained = [effect for effect in journal if not _expired_tapped_duration(host.state, effect)]
+    expired_tapped_durations = len(retained) != len(journal)
     expired = []
     # Each changing pass removes at least one source-bound effect. Expired
     # durations never reappear, so source cycles terminate without guessing.
     for _ in range(len(journal) + 1):
         controllers = _controller_map(host, retained, static)
-        ending = [effect for effect in retained if isinstance(effect, ContinuousEffect)
+        ending = [effect for effect in retained if isinstance(effect, ContinuousEffect) and effect.layer is Layer.CONTROL
                   and effect.duration.source_bound
                   and _expired_source_duration(host, effect, controllers)]
         if not ending:
@@ -420,9 +459,31 @@ def synchronize_control_effects(host: ControlEffectHost, *, reason: str) -> bool
             host.move_card(object_id, "exile", reason="control returned to a player who left", log=True)
         else:
             _commit_control_change(host, object_id, controller, reason=reason)
+    phased_exiled = _exile_phased_permanents_without_live_custody(host, journal, static)
     from .rules.city_blessing import synchronize_citys_blessing
     city_changed=synchronize_citys_blessing(host,reason='control changes committed')
-    return bool(changes or expired or city_changed)
+    return bool(changes or expired or expired_tapped_durations or phased_exiled or city_changed)
+
+
+def _exile_phased_permanents_without_live_custody(host, journal, static):
+    """Resolve CR 800.4a/c even when an object is absent from ordinary layer reads."""
+    if not host.state.eliminated_players:
+        return False
+    phased = {card.object_id: card for card in host.state.cards.values() if card.phasing_record is not None}
+    if not phased:
+        return False
+    controllers = layer_two_controller_map(host, journal, static, phased_targets=phased)
+    departed_custody = [
+        card for oid, card in phased.items()
+        if controllers.get(oid, card.controller) not in host.active_seats
+    ]
+    from .zone_transitions import ZoneTransitionOwner
+
+    owner = ZoneTransitionOwner(host)
+    for card in sorted(departed_custody, key=lambda value: (value.ref, value.object_id)):
+        owner.move_card(card.object_id, "exile", reason="control returned to a player who left",
+                        log=False, defer_control_sync=True)
+    return bool(departed_custody)
 
 
 def end_player_control_effects(state: Any, seat: str) -> int:

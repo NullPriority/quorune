@@ -191,9 +191,12 @@ logical-object validation and counter-state commit as an ordinary placement.
 The generic compiler lowers exact ordinary "an effect would put," "you would
 put," and passive "would be put" quantity-replacement sentences. It rejects
 fractional, halving, dynamic, optional, team, opponent, "another," and
-Class-level-gated variants as material residuals. Doubling Season's
-effect-only wording therefore does not change a positive loyalty-symbol cost,
-while represented all-placement wording such as Doc Samson's does.
+Class-level-gated variants as material residuals. Effect-only replacements
+ignore a placement made directly by a cost or turn action. When a replacement
+changes that event into a positive counter placement, subsequent effect-only
+replacements can apply under CR 614.16. The event retains its original
+provenance for cost validation and records the new provenance for replacement
+matching.
 
 Zone-destination replacements use the closed
 `CreateAffectedObjectCounter` operation to derive a typed child from the

@@ -238,7 +238,8 @@ class TurnCountSelfCostTests(unittest.TestCase):
             metric = modified['reduction']['terms'][0]['metric']
             metric.update(change)
             candidate = SimpleNamespace(provenance={}, handlers=(modified,), effects=(), target_schema=None,
-                coverage=(), cost_schema=None, event_condition=None, event='cast.cost.modify', active_zone='all')
+                coverage=(), capability_dependencies=(), cost_schema=None, event_condition=None,
+                event='cast.cost.modify', active_zone='all')
             with self.subTest(change=change):
                 _, blockers = program_dynamic_runtime_requirements(candidate)
                 self.assertTrue(any('self_cost_turn_count' in blocker for blocker in blockers), blockers)

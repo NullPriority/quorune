@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from .created_token_cleanup import CreatedTokenCleanupPlan, capture_created_token_cleanup, schedule_created_token_cleanup
 from .entry_copy import copiable_oracle_id
+from .token_creation_events import (
+    CommittedTokenCreation, DistributedTokenChoiceRequired, public_replacement_labels, publish_token_creations,
+)
 
 import copy
 from dataclasses import dataclass, replace
@@ -42,10 +45,8 @@ from .semantic_runtime import (
     default_token_creation_replacement_registry,
     resolve_token_creation_replacements,
 )
-from .trigger_processing import enqueue_trigger_batch
 from .standard_token_abilities import standard_token_characteristics
 from .defined_token_faces import DEFINED_TOKEN_ACTIVE_FACE_FIELD
-from .zone_trigger_events import sealed_public_characteristic_facts
 from .semantic_runtime.zone_replacements import (
     capture_zone_change_replacement_snapshot,
     prepare_zone_change_replacement_snapshot,
@@ -709,9 +710,10 @@ def _prepare_token_objects(
     token_specs: Sequence[Mapping[str, Any]],
     *,
     creation_timestamp: int,
+    reference_offset: int = 0,
 ) -> tuple[PreparedTokenObject, ...]:
     plans: list[PreparedTokenObject] = []
-    next_token_number = int(host.state.ref_counters.get("T", 0)) + 1
+    next_token_number = int(host.state.ref_counters.get("T", 0)) + 1 + reference_offset
     for token_spec in token_specs:
         spec = dict(token_spec)
         spec_quantity = int(spec.get("quantity", 1))
@@ -799,6 +801,8 @@ def _prepare_token_entry_counters(
     controller: str,
     plans: Sequence[PreparedTokenObject],
     selections: Sequence[str | None | Mapping[str, Any]],
+    *,
+    controllers: Mapping[str, str] | None = None,
 ) -> tuple[
     tuple[PreparedTokenObject, ...],
     PreparedCounterPlacements,
@@ -809,8 +813,9 @@ def _prepare_token_entry_counters(
         return (), PreparedCounterPlacements((), (), ()), {}
     objects: dict[str, CardInstance] = {}
     characteristics: dict[str, Mapping[str, Any]] = {}
+    entry_controllers = controllers if controllers is not None else {plan.object_id: controller for plan in plans}
     for plan in plans:
-        card = _card_from_token_plan(host, controller, plan)
+        card = _card_from_token_plan(host, entry_controllers[plan.object_id], plan)
         characteristics[card.object_id] = host._effective_card_data(
             card, printed_entry_characteristics=True,
         )
@@ -819,7 +824,7 @@ def _prepare_token_entry_counters(
     snapshot = capture_zone_change_replacement_snapshot(
         host,
         tuple((key, "battlefield") for key in objects),
-        destination_controllers={key: controller for key in objects},
+        destination_controllers=entry_controllers,
         entry_characteristics=characteristics,
         prospective_objects=objects,
         requested_tapped={plan.object_id: plan.tapped for plan in plans},
@@ -851,6 +856,16 @@ def _prepare_token_entry_counters(
     return entry_plans, PreparedCounterPlacements(events, snapshot.effects, journal), prepared
 
 
+def _committed_replacement_components(plans: Sequence[PreparedTokenObject]) -> list[dict[str, Any]]:
+    components: list[dict[str, Any]] = []
+    for plan in plans:
+        if plan.replacement_component is not None:
+            component = thaw_value(plan.replacement_component)
+            if component not in components:
+                components.append(component)
+    return components
+
+
 def _commit_token_specs(
     host: TokenCreationHost,
     controller: str,
@@ -860,6 +875,7 @@ def _commit_token_specs(
     prepared_counters: PreparedCounterPlacements,
     prepared_entries: Mapping[str, PreparedZoneChange] | None = None,
     ordered_role_timestamps: bool = False,
+    controllers: Mapping[str, str] | None = None,
 ) -> tuple[list[str], list[dict[str, Any]]]:
     if plans:
         allocated_timestamp = host._next_zone_timestamp()
@@ -872,9 +888,9 @@ def _commit_token_specs(
                 if host._next_zone_timestamp() != expected:
                     raise TokenCreationError('Ordered Role timestamps changed before commit')
     created: list[str] = []
-    applied_components: list[dict[str, Any]] = []
     for plan in plans:
-        object_id = _commit_token_object(host, controller, plan)
+        token_controller = controllers[plan.object_id] if controllers is not None else controller
+        object_id = _commit_token_object(host, token_controller, plan)
         created.append(object_id)
         if prepared_entries is not None:
             from .entry_results import commit_entry_designations
@@ -882,10 +898,6 @@ def _commit_token_specs(
             from .entry_results import commit_prepared_copy_values
             commit_prepared_copy_values(entry,host.state.cards[object_id],error_type=TokenCreationError)
             commit_entry_designations(host, host.state.cards[object_id], color=entry.entry_chosen_color, creature_type=entry.entry_chosen_creature_type)
-        if plan.replacement_component is not None:
-            component = thaw_value(plan.replacement_component)
-            if component not in applied_components:
-                applied_components.append(component)
         if plan.aura_target_ref is not None:
             token = host.state.cards[object_id]
             data = host._effective_card_data(token)
@@ -900,7 +912,7 @@ def _commit_token_specs(
                     host,
                     token,
                     spec=enchant_spec,
-                    controller=controller,
+                    controller=token_controller,
                     target_ref=plan.aura_target_ref,
                     resolving_as_spell=False,
                 )
@@ -938,115 +950,7 @@ def _commit_token_specs(
             )
     except (CounterPlacementError, EntryCounterError) as exc:
         raise TokenCreationError(str(exc)) from exc
-    return created, applied_components
-
-
-def _record_and_dispatch_token_creation(
-    host: TokenCreationHost,
-    controller: str,
-    created: Sequence[str],
-    *,
-    name: str,
-    base_quantity: int,
-    replacement_components: Sequence[Mapping[str, Any]],
-    replacement_journal: Sequence[Any],
-    reason: str,
-    prepared_counters: PreparedCounterPlacements | None = None,
-) -> None:
-    tracker = host.state.players[controller].stats.setdefault(
-        "tokens_created_by_turn", {}
-    )
-    turn_key = str(host.state.turn_sequence)
-    previous_quantity=int(tracker.get(turn_key, 0))
-    tracker[turn_key] = previous_quantity + len(created)
-    host._log(
-        controller,
-        "token.create",
-        f"{controller} created {len(created)} token(s).",
-        {
-            "objects": [
-                host.state.cards[object_id].ref for object_id in created
-            ],
-            "base_name": name,
-            "base_quantity": base_quantity,
-            "replacement_count": len(created) - base_quantity,
-            "replacement_components": [
-                dict(value) for value in replacement_components
-            ],
-            "replacement_order": [
-                selection.effect_id for selection in replacement_journal
-            ],
-            _REASON_FIELD: reason,
-        },
-        importance=1,
-        changed_objects=created,
-        changed_players=[controller],
-    )
-    # History needs committed identities and entry types, not a pre-history
-    # power/keyword snapshot. Final trigger facts are sealed only afterward.
-    entry_occurrences: list[tuple[str, tuple[str, ...]]] = []
-    for object_id in created:
-        card = host.state.cards[object_id]
-        data = host._effective_card_data(card)
-        types, _subtypes, _supertypes = host._type_parts(
-            str(data.get("type_line") or "")
-        )
-        entry_occurrences.append((card.logical_object_id, tuple(sorted(types))))
-    for identity, types in entry_occurrences:
-        host._record_turn_history(
-            "permanent_entered",
-            actor=controller,
-            object_incarnation=identity,
-            types=types,
-        )
-    entry_contexts: list[dict[str, Any]] = []
-    for object_id in created:
-        card = host.state.cards[object_id]
-        data = host._effective_card_data(card)
-        characteristic_facts = sealed_public_characteristic_facts(data)
-        context = {
-            "card": card.ref,
-            "card_object_identity": card.logical_object_id,
-            "card_zone_change_counter": card.zone_change_counter,
-            "copiable_snapshot": token_copy_snapshot(host, card),
-            "controller": controller,
-            "owner": controller,
-            "from": "outside",
-            "to": "battlefield",
-            **characteristic_facts,
-            "mana_value": float(data.get("mana_value", 0) or 0),
-            "token": True,
-            "tapped": card.tapped,
-            _REASON_FIELD: reason,
-        }
-        entry_contexts.append(context)
-    # One committed creation instruction is simultaneous. Every occurrence
-    # observes complete history and its resulting entry characteristics,
-    # before any separately instructed post-entry grant.
-    trigger_batch: list[Any] = []
-    if prepared_counters is not None:
-        from .counter_placement_events import dispatch_prepared_counter_events
-        dispatch_prepared_counter_events(host, prepared_counters, reason=reason, trigger_batch=trigger_batch)
-    for context in entry_contexts:
-        host._dispatch_semantic_event(
-            "token.created", context, trigger_batch=trigger_batch
-        )
-        host._dispatch_semantic_event(
-            "permanent.enter", context, trigger_batch=trigger_batch
-        )
-        for card_type in ("artifact", "creature", "land", "enchantment"):
-            if card_type in context["types"]:
-                host._dispatch_semantic_event(
-                    f"{card_type}.enter",
-                    context,
-                    trigger_batch=trigger_batch,
-                )
-    if created:
-        from .token_creation_batch_model import TokenCreationBatchFact,TOKEN_CREATION_BATCH_EVENT
-        fact=TokenCreationBatchFact(controller,len(created),
-            sum('creature' in context['types'] for context in entry_contexts),previous_quantity)
-        host._dispatch_semantic_event(TOKEN_CREATION_BATCH_EVENT,fact.to_context(),trigger_batch=trigger_batch)
-    enqueue_trigger_batch(host, trigger_batch)
+    return created, _committed_replacement_components(plans)
 
 
 def _create_token_specs(
@@ -1091,6 +995,36 @@ def _create_token_specs(
     )
 
 
+def _commit_prepared_token_entries(
+    host: TokenCreationHost,
+    controller: str,
+    plans: Sequence[PreparedTokenObject],
+    *,
+    creation_timestamp: int,
+    prepared_counters: PreparedCounterPlacements,
+    prepared_entries: Mapping[str, PreparedZoneChange],
+    reason: str,
+    ordered_role_timestamps: bool = False,
+    controllers: Mapping[str, str] | None = None,
+) -> tuple[list[str], list[dict[str, Any]]]:
+    from .zone_devour import (
+        commit_token_devour_sacrifices, prepare_token_devour_sacrifices, publish_token_devour_sacrifices,
+    )
+
+    devour = prepare_token_devour_sacrifices(host, prepared_entries, reason=reason)
+    sacrifices = commit_token_devour_sacrifices(devour, timestamp=creation_timestamp, reason=reason)
+    result = _commit_token_specs(
+        host, controller, plans,
+        creation_timestamp=creation_timestamp,
+        prepared_counters=prepared_counters,
+        prepared_entries=prepared_entries,
+        ordered_role_timestamps=ordered_role_timestamps,
+        controllers=controllers,
+    )
+    publish_token_devour_sacrifices(sacrifices, reason=reason)
+    return result
+
+
 def _commit_resolved_token_specs(
     host: TokenCreationHost,
     controller: str,
@@ -1124,28 +1058,20 @@ def _commit_resolved_token_specs(
         )
     except CounterPlacementError as exc:
         raise TokenCreationError(str(exc)) from exc
-    from .zone_devour import prepare_token_devour_sacrifices,commit_token_devour_sacrifices,publish_token_devour_sacrifices
-    devour=prepare_token_devour_sacrifices(host,prepared_entries,reason=reason)
-    sacrifices=commit_token_devour_sacrifices(devour,timestamp=creation_timestamp,reason=reason)
-    created, applied_components = _commit_token_specs(
-        host,
-        controller,
-        plans,
+    created, applied_components = _commit_prepared_token_entries(
+        host, controller, plans,
         creation_timestamp=creation_timestamp,
         prepared_counters=prepared_counters,
         prepared_entries=prepared_entries,
         ordered_role_timestamps=role_timestamp_order is not None,
+        reason=reason,
     )
     from .token_copy_runtime import finish_copy_aftercare
-    publish_token_devour_sacrifices(sacrifices,reason=reason)
-    _record_and_dispatch_token_creation(
+    publish_token_creations(
         host,
-        controller,
-        created,
-        name=base_name,
-        base_quantity=base_quantity,
-        replacement_components=applied_components,
-        replacement_journal=resolved.journal,
+        (CommittedTokenCreation(
+            controller, tuple(created), base_name, base_quantity, tuple(applied_components), resolved.journal,
+        ),),
         reason=reason,
         prepared_counters=prepared_counters,
     )
@@ -1358,6 +1284,92 @@ def create_grouped_tokens(
             if group is not None
         ),
     )
+
+
+def create_distributed_tokens(
+    host: TokenCreationHost,
+    creators: Sequence[str],
+    *,
+    token: Mapping[str, Any],
+    stack_ref: str,
+    reason: str,
+    replacement_selections: Sequence[str | None | Mapping[str, Any]] = (),
+) -> list[str]:
+    """Prepare all creators' replacements and commit one simultaneous entry."""
+    from .replacement_effects import ReplacementEventBatch, advance_replacement_batch
+    from .semantic_runtime.token_replacements import token_creation_replacement_event
+    from .token_copy_runtime import finish_copy_aftercare
+
+    if not creators:
+        return []
+    apnap = tuple(host.apnap_order())
+    if tuple(creators) != tuple(seat for seat in apnap if seat in creators):
+        raise TokenCreationError("Token creators must be distinct and in current APNAP order")
+    name, quantity = token["name"], token["quantity"]
+    events = []
+    effects = {}
+    for creator in creators:
+        host._require_seat(creator, in_game=True)
+        specs, types, subtypes, sources = _token_specification_inputs(
+            host, creator, name=name, quantity=quantity, tapped=token.get("tapped", False),
+            characteristics=token["characteristics"], attacking=None, attacking_groups=(),
+            battle_protector=None, copy_of=None, copy_source_zone="battlefield",
+            copy_snapshot=None, temporary_keywords=(), aura_target_ref=None,
+        )
+        events.append(token_creation_replacement_event(
+            event_id=f"token.create:distributed:{stack_ref}:{creator}",
+            controller=creator, tokens=specs, created_types=types, created_subtypes=subtypes,
+        ))
+        for effect in _token_replacement_effects(host, creator, types, subtypes, sources):
+            if effects.setdefault(effect.effect_id, effect) != effect:
+                raise TokenCreationError("Distributed token replacement authority disagrees")
+    available_effects = tuple(effects.values())
+    progress = advance_replacement_batch(
+        ReplacementEventBatch(f"replacement:token.create:distributed:{stack_ref}", tuple(events), apnap),
+        available_effects, selections=tuple(replacement_selections), require_all_selections=False,
+    )
+    if progress.pending is not None:
+        raise DistributedTokenChoiceRequired(batch=progress.batch, effects=available_effects, pending=progress.pending)
+
+    creation_timestamp = host.state.timestamp_sequence + 1
+    plans: list[PreparedTokenObject] = []
+    controllers: dict[str, str] = {}
+    creations: list[CommittedTokenCreation] = []
+    for event in progress.batch.events:
+        creator = event.affected_player
+        resolved = _preflight_aura_token_specs(host, creator, event.payload["tokens"])
+        group = _prepare_token_objects(
+            host, creator, resolved,
+            creation_timestamp=creation_timestamp, reference_offset=len(plans),
+        )
+        objects = tuple(plan.object_id for plan in group)
+        plans.extend(group)
+        controllers.update({object_id: creator for object_id in objects})
+        creations.append(CommittedTokenCreation(
+            creator, objects, name, quantity, tuple(_committed_replacement_components(group)),
+            tuple(selection for selection in progress.batch.journal if selection.event_id == event.event_id),
+        ))
+    remaining = replacement_selections[progress.consumed_selections:]
+    try:
+        entry_plans, prepared_counters, prepared_entries = _prepare_token_entry_counters(
+            host, creators[0], plans, remaining, controllers=controllers,
+        )
+    except ReplacementChoiceRequired as required:
+        raise DistributedTokenChoiceRequired(
+            batch=required.batch, effects=required.effects, pending=required.pending,
+            earlier=public_replacement_labels(progress.batch, available_effects),
+        ) from required
+    except CounterPlacementError as exc:
+        raise TokenCreationError(str(exc)) from exc
+    created, _components = _commit_prepared_token_entries(
+        host, creators[0], entry_plans, creation_timestamp=creation_timestamp,
+        prepared_counters=prepared_counters, prepared_entries=prepared_entries,
+        reason=reason, controllers=controllers,
+    )
+    publish_token_creations(host, creations, reason=reason, prepared_counters=prepared_counters)
+    for creation in creations:
+        finish_copy_aftercare(host, creation.controller, creation.objects)
+    return [host.state.cards[object_id].ref for object_id in created]
 
 
 def create_token_batch(

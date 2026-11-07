@@ -121,6 +121,99 @@ class ReceivedDamageNativeTests(actions.InheritedNativeFixture, unittest.TestCas
             self.assertNotIn('private-received-hand', str(session.packet('pilot:' + seat, full=True)))
         self.replay(session, load=True)
 
+    def test_binding_agony_uses_only_committed_damage_and_keeps_the_dead_creatures_controller(self):
+        session = self.session(60877401)
+        aura = self.add(session.engine, 'Binding Agony', zone='hand')
+        creature = self.add(session.engine, 'Grizzly Bears', seat='B')
+        salve = self.add(session.engine, 'Healing Salve', zone='hand')
+        shock = self.add(session.engine, 'Shock', zone='hand')
+        bolt = self.add(session.engine, 'Lightning Bolt', zone='hand')
+        self.assert_closed(session, aura)
+        self.prepare(session, mana={'C': 1, 'B': 1, 'W': 1, 'R': 3})
+        self.checkpoint(session)
+        self.cast(session, 'A', aura, [creature.ref])
+        self.resolve_top(session)
+        offered = self.action(session, 'A', salve)
+        result = session.act('pilot:A', {
+            'action_id': offered['id'], 'modes': ['mode_2'], 'targets': [creature.ref], 'pay': 'auto',
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        self.cast(session, 'A', shock, [creature.ref])
+        self.resolve_top(session)
+        self.assertEqual([], self.receiving_items(session, aura))
+        self.assertEqual(0, session.state.cards[creature.object_id].marked_damage)
+
+        identity = session.state.cards[creature.object_id].logical_object_id
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        self.cast(session, 'A', bolt, [creature.ref])
+        self.resolve_top(session)
+        item, = self.receiving_items(session, aura)
+        self.assertEqual([], item.targets)
+        self.assertEqual(2, item.context['amount'])
+        self.assertEqual(identity, item.context['occurrence_controller_information_lki']['logical_object_id'])
+        for card in (creature, aura):
+            self.assertEqual('graveyard', session.state.cards[card.object_id].zone)
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual({**life, 'B': life['B'] - 2}, {s: p.life for s, p in session.state.players.items()})
+        self.replay(session, load=True)
+
+    def test_repercussion_uses_the_damaged_creatures_current_controller_after_flash_control(self):
+        session = self.session(60877402)
+        enchantment = self.add(session.engine, 'Repercussion', seat='D')
+        creature = self.add(session.engine, 'Air Elemental', seat='B')
+        bolt = self.add(session.engine, 'Lightning Bolt', zone='hand')
+        theft = self.add(session.engine, 'Turn Against', seat='C', zone='hand')
+        self.assert_closed(session, enchantment)
+        self.prepare(session, mana={'R': 1})
+        session.state.players['C'].mana_pool.update({'C': 4, 'R': 1})
+        self.checkpoint(session)
+        self.cast(session, 'A', bolt, [creature.ref])
+        self.resolve_top(session)
+        item, = self.receiving_items(session, enchantment)
+        self.assertEqual(('B', 3, creature.object_id), (
+            item.context['target_controller'], item.context['amount'], item.context['card_object_id'],
+        ))
+        self.cast_for(session, 'C', theft, [creature.ref])
+        self.resolve_top(session)
+        self.assertEqual('C', session.state.cards[creature.object_id].controller)
+        life = {seat: player.life for seat, player in session.state.players.items()}
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertEqual({**life, 'C': life['C'] - 3}, {s: p.life for s, p in session.state.players.items()})
+        self.replay(session, load=True)
+
+    def test_receiving_damage_controller_program_requires_its_amount_event_and_runtime_dependencies(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.oracle_ir import register_generated_programs
+        from quorune.received_damage_model import RECEIVED_DAMAGE_CAPABILITY
+        from quorune.scalar_effect_amount_model import SCALAR_AMOUNT_CAPABILITY
+        from quorune.semantics import SemanticRegistry
+        from quorune.target_controller_information import TARGET_CONTROLLER_INFORMATION_CAPABILITY
+
+        source = self.db.lookup('Repercussion', fuzzy=False)
+        semantics = SemanticRegistry()
+        profile = 'commander_review'
+        register_generated_programs(self.db, semantics, (source,), capability_registry=self.registry,
+            capability_profile=profile, promote_exact_trigger_programs=True)
+        program, = semantics.programs_for_oracle(source.oracle_id)
+        self.assertEqual('trusted', program.trust_level)
+
+        def bind(value):
+            return bind_semantic_program_runtime(value, capability_registry=self.registry, profile=profile)
+
+        self.assertTrue(bind(program)['strict'])
+        for removed in (RECEIVED_DAMAGE_CAPABILITY, SCALAR_AMOUNT_CAPABILITY, TARGET_CONTROLLER_INFORMATION_CAPABILITY):
+            dependencies = tuple(cap for cap in program.capability_dependencies if cap != removed)
+            altered = replace(program, capability_dependencies=dependencies, coverage=(),
+                capability_closure=self.registry.closure(dependencies, profile=profile).to_dict())
+            self.assertIn(f'capability:undeclared_runtime_dependency:{removed}', bind(altered)['blockers'])
+        effect, = program.effects
+        malformed = replace(program, effects=[{**effect, 'amount': {**effect['amount'], 'coefficient': 2}}])
+        for altered in (malformed, replace(program, event='damage.dealt'), replace(program, event_condition=None)):
+            self.assertFalse(bind(altered)['strict'])
+
     def test_actual_receiving_groups_keep_apnap_and_lethal_recipient_identity(self):
         session = self.session(613654020)
         source = self.add(session.engine, 'Ripjaw Raptor')

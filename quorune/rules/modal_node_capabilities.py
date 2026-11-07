@@ -50,6 +50,7 @@ def fixed_modal_capability_dependencies(
     target_schema: Mapping[str, Any] | None,
     mechanics: Iterable[str],
 ) -> tuple[str, ...]:
+    from .bound_effect_program_shapes import has_target_controller_recipient
     from .capabilities import capability_dependencies_for_node, capability_covered_mechanics, MECHANIC_CAPABILITY_DEPENDENCIES
 
     mechanic_values = tuple(str(value).casefold() for value in mechanics)
@@ -67,7 +68,11 @@ def fixed_modal_capability_dependencies(
             mechanic_ids=mechanic_values,
         )
     )
-    if branches is None:
+    # Target indices are mode-local here. Departure capture currently owns
+    # the announced target index of a single, nonmodal instruction sequence.
+    if branches is None or any(
+        has_target_controller_recipient(effect) for branch in branches for effect in branch.effects
+    ):
         return ()
     modal_mechanic = (
         FIXED_NONREPEATING_MODAL_MECHANIC

@@ -1,0 +1,454 @@
+{
+  "cards": [
+    {
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "name": "Clone",
+      "mana_cost": "{3}{U}",
+      "type_line": "Creature — Shapeshifter",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield.",
+      "power": "0",
+      "toughness": "0",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2013-07-19",
+      "faces": [],
+      "cmc": 4.0,
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "name": "Disenchant",
+      "mana_cost": "{1}{W}",
+      "type_line": "Instant",
+      "oracle_text": "Destroy target artifact or enchantment.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "faces": [],
+      "cmc": 2.0
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{U}",
+      "name": "Dress Down",
+      "oracle_id": "c1cbbda0-e02b-4b9c-8669-ea87ca629520",
+      "oracle_text": "Flash\nWhen this enchantment enters, draw a card.\nCreatures lose all abilities.\nAt the beginning of the end step, sacrifice this enchantment.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}",
+      "name": "Isamaru, Hound of Konda",
+      "oracle_id": "cfb756dd-6fe1-430a-8f04-8b10cac62a86",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": "2",
+      "type_line": "Legendary Creature — Dog"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}",
+      "name": "Mirror Gallery",
+      "oracle_id": "7c9c3060-ca9d-4868-84c6-2a95b0fa8885",
+      "oracle_text": "The \"legend rule\" doesn't apply.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2005-02-04",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Token Legend Exemption",
+      "oracle_id": "00000000-0000-4000-8000-000000006871",
+      "oracle_text": "The \"legend rule\" doesn't apply to tokens you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-08-07",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Generic Spider Legend Exemption",
+      "oracle_id": "00000000-0000-4000-8000-000000006872",
+      "oracle_text": "The \"legend rule\" doesn't apply to Spiders you control.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2026-08-07",
+      "toughness": "2",
+      "type_line": "Creature — Human"
+    },
+    {
+      "oracle_id": "cd0d7141-46d2-4aa3-bc77-6b3b4513803e",
+      "name": "Control Magic",
+      "mana_cost": "{2}{U}{U}",
+      "cmc": 4.0,
+      "type_line": "Enchantment — Aura",
+      "oracle_text": "Enchant creature\nYou control enchanted creature.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2017-06-09",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Any enters abilities of the copied creature will trigger when Clone enters. Any \"as [this creature] enters\" or \"[this creature] enters with\" abilities of the chosen creature will also work.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone copies exactly what was printed on the original creature and nothing else (unless that creature is copying something else or is a token; see below). It doesn't copy whether that creature is tapped or untapped, whether it has any counters on it or Auras and Equipment attached to it, or any non-copy effects that have changed its power, toughness, types, color, or so on.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Clone's ability doesn't target the chosen creature.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Clone somehow enters at the same time as another creature, Clone can't become a copy of that creature. You may choose only a creature that's already on the battlefield.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature has {X} in its mana cost, X is considered to be 0.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is a token, Clone copies the original characteristics of that token as stated by the effect that created the token.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the copied creature is copying something else (for example, if the copied creature is an Evil Twin), then Clone enters as whatever that creature copied.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can choose not to copy anything. In that case, Clone enters as a 0/0 Shapeshifter creature, and is probably put into the graveyard immediately.",
+      "oracle_id": "42226b87-0746-4ebf-9fd0-108d508462af",
+      "published_at": "2025-10-02",
+      "source": "wotc"
+    },
+    {
+      "comment": "Mirror Gallery removes the “Legend rule” while it’s on the battlefield. If all Mirror Galleries leave the battlefield, the “Legend rule” will apply the next time state-based actions are performed.",
+      "oracle_id": "7c9c3060-ca9d-4868-84c6-2a95b0fa8885",
+      "published_at": "2005-02-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "This is not modal. If the target changes from an artifact to an enchantment or vice versa, this still destroys it.",
+      "oracle_id": "a7e97fa9-4b72-4548-b854-5be5f18a6f1a",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect causes Dress Down to become a creature, it will lose its own abilities along with all other creatures. This includes the triggered ability that causes it to be sacrificed at the beginning of the end step.",
+      "oracle_id": "c1cbbda0-e02b-4b9c-8669-ea87ca629520",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect grants a creature an ability after Dress Down has entered the battlefield, it won't lose that ability. For example, if a land becomes a creature while Dress Down is on the battlefield, it will still gain any abilities given to it by the effect that animated it. It will, however, lose any abilities it already had.",
+      "oracle_id": "c1cbbda0-e02b-4b9c-8669-ea87ca629520",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned original controls plus explicitly constructed complete token/subtype exemption carriers; constructed records are not Oracle gains."
+}

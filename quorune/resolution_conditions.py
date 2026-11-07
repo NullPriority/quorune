@@ -18,6 +18,7 @@ from .declared_cost_conditions import DeclaredCastCostCondition
 RESOLUTION_CONDITION_OPERATION = "apply_if_public_condition"
 RESOLUTION_CONDITION_MECHANIC = "fixed-resolution-public-condition"
 RESOLUTION_CONDITION_CAPABILITY = "resolution.effect.public_condition"
+RESOLUTION_ALTERNATIVE_SCHEMA_VERSION = 13
 PUBLIC_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_public_self_replacement'
 SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.fixed_same_target_self_replacement'
 PUBLIC_SAME_TARGET_SELF_REPLACEMENT_CAPABILITY='resolution.effect.public_same_target_self_replacement'
@@ -79,7 +80,9 @@ def public_source_replacement_result_is_fixed(effects,mechanic_ids,*,source_bind
     return cast_fact_result_is_fixed(values,mechanic_ids,allow_fixed_damage_source=True)
 
 
-def _self_replacement_result_is_fixed(effects,mechanic_ids,version,source_binding='$source'):
+def _conditional_branch_result_is_fixed(effects,mechanic_ids,version,source_binding='$source'):
+    if version == RESOLUTION_ALTERNATIVE_SCHEMA_VERSION:
+        return len(effects) == 1 and resolution_result_is_fixed(effects, mechanic_ids)
     if version==8:return public_replacement_result_is_fixed(effects,mechanic_ids)
     if version==9:return public_source_replacement_result_is_fixed(effects,mechanic_ids,source_binding=source_binding)
     return cast_fact_result_is_fixed(effects,mechanic_ids,
@@ -164,12 +167,13 @@ def validate_resolution_condition_instruction(
         "mechanic_ids", "prefix_mechanic_ids",
     }
     cast_fact = effect.get('schema_version') in {2,4,5}
-    replacing=effect.get('schema_version') in {3,4,5,8,9}
+    ordinary_alternative = effect.get('schema_version') == RESOLUTION_ALTERNATIVE_SCHEMA_VERSION
+    has_otherwise = effect.get('schema_version') in {3, 4, 5, 8, 9, RESOLUTION_ALTERNATIVE_SCHEMA_VERSION}
     if effect.get('schema_version')==8:expected_fields|={'target_binding'}
     if effect.get('schema_version')==9:expected_fields|={'source_binding'}
     if cast_fact:
         expected_fields |= {'schema_version', 'cast_fact'}
-    if replacing:expected_fields|={'schema_version','otherwise_effects','otherwise_mechanic_ids'}
+    if has_otherwise:expected_fields|={'schema_version','otherwise_effects','otherwise_mechanic_ids'}
     if (
         not isinstance(effect, Mapping)
         or set(effect) != expected_fields
@@ -186,7 +190,7 @@ def validate_resolution_condition_instruction(
             raise ValueError('Public source result requires its current bound spell source')
     if type(effect.get("player")) is not str or not effect["player"]:
         raise ValueError("Resolution conditions require a controller binding")
-    for name in ("mechanic_ids", "prefix_mechanic_ids", *(('otherwise_mechanic_ids',) if replacing else ())):
+    for name in ("mechanic_ids", "prefix_mechanic_ids", *(('otherwise_mechanic_ids',) if has_otherwise else ())):
         values = effect[name]
         if (
             not isinstance(values, (list, tuple))
@@ -195,7 +199,7 @@ def validate_resolution_condition_instruction(
             or RESOLUTION_CONDITION_MECHANIC in values
         ):
             raise ValueError("Resolution condition component mechanics are malformed")
-    if not effect["mechanic_ids"] or replacing and not effect['otherwise_mechanic_ids']:
+    if not effect["mechanic_ids"] or has_otherwise and not effect['otherwise_mechanic_ids']:
         raise ValueError("Resolution condition result mechanics must be present")
     if "fixed-next-turn-upkeep-draw" in (*effect["mechanic_ids"], *effect["prefix_mechanic_ids"]):
         raise ValueError("Delayed draw remains outside conditional programs")
@@ -209,18 +213,20 @@ def validate_resolution_condition_instruction(
         condition = FixedPublicStateConditionSpec.from_dict(effect["condition"])
     if not cast_fact and not resolution_condition_is_closed(condition):
         raise ValueError("Object-relative resolution conditions are unsupported")
+    if ordinary_alternative and not all(resolution_condition_is_closed(leaf) for leaf in condition.leaf_conditions()):
+        raise ValueError("Each branch condition leaf must bind only the resolving controller")
     nested = effect["effects"]
     if not isinstance(nested, (list, tuple)) or not 1 <= len(nested) <= 8 or any(
         not isinstance(value, Mapping) or value.get("op") == RESOLUTION_CONDITION_OPERATION
         for value in nested
     ):
         raise ValueError("Resolution conditions require a bounded nonnested effect program")
-    fixed=(_self_replacement_result_is_fixed(nested,effect['mechanic_ids'],effect.get('schema_version'),effect.get('source_binding','$source'))
-        if cast_fact or replacing else resolution_result_is_fixed(nested,effect['mechanic_ids']))
+    fixed=(_conditional_branch_result_is_fixed(nested,effect['mechanic_ids'],effect.get('schema_version'),effect.get('source_binding','$source'))
+        if cast_fact or has_otherwise else resolution_result_is_fixed(nested,effect['mechanic_ids']))
     if not fixed:
         raise ValueError("Derived or source-relative results require a separate binding and timing boundary")
-    if replacing:
-        if type(effect['schema_version']) is not int:raise ValueError('Self-replacement version must be an exact integer')
+    if has_otherwise:
+        if type(effect['schema_version']) is not int:raise ValueError('Conditional branch version must be an exact integer')
         _validate_otherwise_program(effect)
     return condition, tuple(nested)
 
@@ -229,6 +235,6 @@ def _validate_otherwise_program(effect):
     values=effect['otherwise_effects']
     if (not isinstance(values,(list,tuple)) or not 1<=len(values)<=8
             or any(not isinstance(child,Mapping) or child.get('op')==RESOLUTION_CONDITION_OPERATION for child in values)
-            or not _self_replacement_result_is_fixed(values,effect['otherwise_mechanic_ids'],effect.get('schema_version'),effect.get('source_binding','$source'))
+            or not _conditional_branch_result_is_fixed(values,effect['otherwise_mechanic_ids'],effect.get('schema_version'),effect.get('source_binding','$source'))
             or 'fixed-next-turn-upkeep-draw' in effect['otherwise_mechanic_ids']):
         raise ValueError('Self-replacement default program is malformed or unrepresented')

@@ -62,6 +62,9 @@ from ..permanent_designations import (
     become_monstrous,
     become_renowned,
 )
+from ..carddb_characteristics import library_reveal_printed_identity
+from ..rules.committed_quantity_followups import CommittedQuantityFollowup
+from ..semantic_runtime.intents import RevealEachLibraryTopIntent
 from ..rules.library_scry import ScryError, commit_scry_arrangement
 from ..rules.library_selection import (
     LibrarySelectionError,
@@ -225,6 +228,8 @@ class SemanticChoiceIntentHostMixin:
                 ),
                 replacement_event_ids=intent.replacement_event_ids,
                 source_override=(thaw_value(intent.source_snapshot) if intent.source_snapshot is not None else None),
+                death_exile_scope=intent.death_exile_scope,
+                allocated_recipients=intent.allocated_recipients,
             )
         except FixedDamageSetError as exc:
             raise GameRuleError(str(exc)) from exc
@@ -237,6 +242,7 @@ class SemanticChoiceIntentHostMixin:
             return resolve_destruction_set(
                 self,
                 actor=intent.actor,
+                followup=intent.followup,
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
@@ -257,6 +263,7 @@ class SemanticChoiceIntentHostMixin:
             return resolve_public_zone_move_set(
                 self,
                 actor=intent.actor,
+                followup=intent.followup,
                 spec=intent.spec,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
@@ -671,7 +678,11 @@ class SemanticChoiceIntentHostMixin:
     def reveal_library_cards_intent(
         self,
         intent: RevealLibraryCardsIntent,
+        *,
+        public_top_name: str | None = None,
     ) -> tuple[str, ...]:
+        if public_top_name is not None and (not intent.public or len(intent.refs_top_first) != 1):
+            raise GameRuleError("A public top-card announcement requires one public reveal")
         self._require_seat(intent.player, in_game=True)
         self._require_seat(intent.viewer, in_game=True)
         library = self.state.players[intent.player].zones["library"]
@@ -692,11 +703,17 @@ class SemanticChoiceIntentHostMixin:
             )
             viewers = set(self.seats) if intent.public else {intent.viewer}
             card.known_to = sorted(set(card.known_to).union(viewers))
-            if intent.public:
+            if intent.public and public_top_name is None:
                 card.revealed_to = sorted(
                     set(card.revealed_to).union(viewers)
                 )
             object_ids.append(card.object_id)
+        if public_top_name is not None:
+            self._log(
+                intent.actor, "library.top.reveal", f"{intent.player} revealed {public_top_name}.",
+                {"player": intent.player, "card": public_top_name}, changed_objects=object_ids,
+            )
+            return refs
         self._log(
             intent.actor,
             "library.look",
@@ -714,6 +731,29 @@ class SemanticChoiceIntentHostMixin:
             changed_objects=object_ids,
         )
         return refs
+
+    def reveal_each_library_top_intent(
+        self, intent: RevealEachLibraryTopIntent,
+    ) -> CommittedQuantityFollowup:
+        self._require_seat(intent.actor, in_game=True)
+        reveals = []
+        land_count = 0
+        for seat in self.apnap_order():
+            library = self.state.players[seat].zones["library"]
+            if not library:
+                continue
+            card = self.state.cards[library[-1]]
+            record = self.card_db.by_oracle_id(card.oracle_id)
+            name, type_line = library_reveal_printed_identity(record)
+            land_count += "land" in self._type_parts(type_line)[0]
+            reveals.append((seat, card.ref, name))
+
+        for seat, ref, name in reveals:
+            self.reveal_library_cards_intent(
+                RevealLibraryCardsIntent(intent.actor, seat, seat, (ref,), intent.reason, public=True),
+                public_top_name=name,
+            )
+        return intent.followup.from_revealed_counts(lands=land_count, nonlands=len(reveals) - land_count)
 
     def inspect_hand_intent(
         self,
@@ -908,6 +948,7 @@ class SemanticChoiceIntentHostMixin:
                 selections=intent.replacement_selections,
                 reason=intent.reason,
                 source_ref=intent.source_ref,
+                effect_generated=intent.effect_generated,
             )
         except CounterPlacementError as exc:
             raise GameRuleError(str(exc)) from exc

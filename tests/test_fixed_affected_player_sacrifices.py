@@ -92,6 +92,42 @@ def synthetic_record(
 
 
 class FixedAffectedPlayerSacrificeCompilerTests(unittest.TestCase):
+    def test_fixed_optional_payment_lowers_printed_room_bodies_and_rejects_open_prices(self):
+        import re
+        from unittest.mock import patch
+        from quorune.apnap_object_payment import APNAP_OBJECT_PAYMENT_CAPABILITY
+        from quorune.compiler import apnap_object_payment_templates
+
+        cases = (
+            ('Each player loses 2 life unless they discard a card.', 'discard', []),
+            ('Each player loses 2 life unless they sacrifice a creature, artifact, or land of their choice.',
+             'sacrifice', ['artifact', 'creature', 'land']),
+        )
+        for index, (text, operation, types) in enumerate(cases):
+            source = synthetic_record(text, name='Optional payment witness', type_line='Sorcery',
+                                      oracle_id_suffix=701_021_910 + index)
+            ir = self.compile(source)
+            self.assertEqual('exact', ir.status, ir.material_residuals)
+            node, = ir.faces[0].nodes
+            effect, = node.effects
+            self.assertEqual(('all', operation, 1, 2),
+                             (effect['players'], effect['then'], effect['count'], effect['declined_life_loss']))
+            self.assertEqual(types, effect['predicate']['types_any'])
+            self.assertIn(APNAP_OBJECT_PAYMENT_CAPABILITY, node.capability_dependencies)
+            for invalid in (True, 0, '2'):
+                altered = {**effect, 'declined_life_loss': invalid}
+                self.assertNotIn(APNAP_OBJECT_PAYMENT_CAPABILITY, capability_dependencies_for_node(
+                    effects=(altered,), target_schema=None, mechanic_ids=node.mechanics))
+            with patch.object(apnap_object_payment_templates, '_INSTRUCTION', re.compile(r'(?!)')):
+                self.assertNotEqual('exact', self.compile(source).status)
+        open_price = synthetic_record('Each player loses 2 life unless they discard a card or sacrifice a creature.',
+                                      name='Unrepresented payment choice', type_line='Sorcery',
+                                      oracle_id_suffix=701_021_912)
+        self.assertNotEqual('exact', self.compile(open_price).status)
+        value = json.loads(REGISTRY_PATH.read_text(encoding='utf-8'))
+        owner = next(row for row in value['capabilities'] if row['id'] == APNAP_OBJECT_PAYMENT_CAPABILITY)
+        owner.update(status='blocked', blockers=['Withdrawn for focused mutation'])
+        self.assertNotEqual('exact', self.compile(source, registry=CapabilityRegistry(value)).status)
     @classmethod
     def setUpClass(cls):
         cls.temporary = tempfile.TemporaryDirectory()
@@ -420,6 +456,86 @@ class FixedAffectedPlayerSacrificeRuntimeTests(unittest.TestCase):
             replay = replay_record(record_dir, self.db, verify=True)
         self.assertTrue(replay["ok"], replay)
         self.assertEqual(expected_hash, replay["final_state_hash"])
+
+    def test_actual_bellowing_mauler_batches_payments_then_declined_life_loss(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests as H
+        from test_qualified_public_history import QualifiedPublicHistoryNativeTests as History
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.turn_step_owner import TURN_STEPS
+
+        session = self.session(70102191)
+        engine = session.engine
+        engine.state.config.auto_pass_empty_priority = False
+        engine.state.config.semantic_policy = 'trusted_only'
+        mauler = self.permanent(engine, seat='A', name='Bellowing Mauler', ref='MAULER', token=False)
+        b = self.permanent(engine, seat='B', name='Birds of Paradise', ref='B_PAYMENT', token=False)
+        c = self.permanent(engine, seat='C', name='Birds of Paradise', ref='C_PAYMENT', token=False)
+        d = self.permanent(engine, seat='D', name='Ineligible token', ref='D_TOKEN')
+        registry = load_default_capability_registry()
+        record = self.db.lookup('Bellowing Mauler')
+        register_generated_programs(self.db, engine.semantics, (record,), trust_level='provisional',
+                                    capability_registry=registry, capability_profile='commander_review',
+                                    promote_exact_trigger_programs=True, promote_exact_effect_programs=True,
+                                    promote_exact_runtime_handlers=True, promote_exact_capability_declarations=True)
+        program = compile_best_available_card_program(self.db, record, semantic_registry=engine.semantics,
+                                                      capability_registry=registry, capability_profile='commander_review')
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile='commander_review')
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        engine.state.phase_index = TURN_STEPS.index(('postcombat_main', 'main'))
+        engine._enter_step()
+        engine.pump()
+        self.assertEqual('priority', session.state.pending_decision.kind)
+        H.checkpoint(self, session)
+        History.until(self, session, lambda game: game.state.pending_decision.kind == 'choice.apnap')
+        self.assertEqual(['pilot:A'], session.pending_principals())
+        before = authoritative_state_hash(session.state)
+        command = {'action_id': 'choose', 'cards': [mauler.ref]}
+        self.assertFalse(session.act('pilot:B', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual('battlefield', session.state.cards[mauler.object_id].zone)
+        session = H.replay(self, session, load=True)
+
+        self.assertEqual(['pilot:B'], session.pending_principals())
+        packet = session.packet('pilot:B', full=True)['decision']['ctx']
+        self.assertEqual({'A': True}, packet['prior_payment_choices'])
+        self.assertEqual(4, packet['declined_life_loss'])
+        result = session.act('pilot:B', {'action_id': 'choose', 'cards': []})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(['pilot:C'], session.pending_principals())
+        self.assertEqual([40] * 4, [session.state.players[seat].life for seat in 'ABCD'])
+        result = self.choose(session, 'C', c.ref)
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(['graveyard', 'battlefield', 'graveyard', 'battlefield'],
+                         [session.state.cards[card.object_id].zone for card in (mauler, b, c, d)])
+        self.assertEqual([40, 36, 40, 36], [session.state.players[seat].life for seat in 'ABCD'])
+        losses, = (event for event in session.state.events if event.code == 'effect.life'
+                   and event.details.get('players') == ['B', 'D'])
+        choices, = (event for event in session.state.events if event.code == 'choice.sacrifice')
+        self.assertLess(choices.event_id, losses.event_id)
+        self.assert_replays(session, 'bellowing-mauler-optional-payment')
+
+    def test_optional_apnap_discard_projects_payment_decision_without_the_card(self):
+        from quorune.compiler.apnap_object_payment_templates import apnap_object_payment_template
+
+        session = self.session(70102192)
+        engine = session.engine
+        source = StackItem(stack_id='optional-discard-privacy', ref='S-OPTIONAL', kind='triggered_ability',
+                           controller='A', label='Optional discard payment fixture', visibility=list(engine.seats))
+        engine.state.stack.append(source)
+        template = apnap_object_payment_template('Each player loses 2 life unless they discard a card.')
+        engine._begin_resolve_item(source, template[1], None, note='Optional discard payment fixture')
+        first = session.packet('pilot:A', full=True)['decision']['ctx']
+        chosen = first['options'][0]
+        result = self.choose(session, 'A', chosen)
+        self.assertTrue(result.ok, result.summary)
+        next_choice = session.packet('pilot:B', full=True)['decision']['ctx']
+        self.assertEqual({'A': True}, next_choice['prior_payment_choices'])
+        self.assertEqual({}, next_choice['prior_public_choices'])
+        self.assertNotIn(chosen, json.dumps(next_choice))
+        self.assertIn(chosen, [engine.state.cards[oid].ref for oid in engine.state.players['A'].zones['hand']])
 
     def test_each_player_sacrifices_in_apnap_order_and_commits_simultaneously(
         self,

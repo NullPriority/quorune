@@ -16,6 +16,7 @@ from .continuous_effect_model import ContinuousEffectError
 from .model import CardInstance
 from .morph import MORPH_FACE_DOWN_ANNOTATION
 from .keyword_counters import keyword_counter_abilities
+from .declaration_fragments import DeclarationRestrictionTemplate
 from .util import unique_preserving_order
 from .ability_fragments import (
     ability_fragment_to_dict,
@@ -306,6 +307,21 @@ def _copy_layer_effects(card,overrides):
         if effect is not None]
 
 
+def _suspect_ability_effect(card: CardInstance) -> ContinuousEffect:
+    prohibition = DeclarationRestrictionTemplate(
+        template_id="intrinsic-block-prohibition-v1", declarations=("block",), scope="self",
+    )
+    return ContinuousEffect(
+        effect_id=f"{card.object_id}:suspected-abilities", source_id=card.object_id,
+        layer=Layer.ABILITY, sublayer="6", timestamp=card.suspected_at,
+        operations=(
+            ContinuousOperation("add_ability", "Menace"),
+            ContinuousOperation("add_ability_fragment", ability_fragment_to_dict(prohibition)),
+        ),
+        duration=ContinuousEffectDuration.ZONE_OBJECT,
+    )
+
+
 def _object_continuous_effects(
     card: CardInstance,
     overrides: Mapping[str, Any],
@@ -449,6 +465,8 @@ def _object_continuous_effects(
                 duration=ContinuousEffectDuration.ZONE_OBJECT,
             )
         )
+    if card.suspected_at is not None:
+        effects.append(_suspect_ability_effect(card))
     return effects
 
 

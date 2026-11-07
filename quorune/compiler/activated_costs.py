@@ -33,9 +33,12 @@ def activated_ability_cost_capabilities(
         from ..rules.attachment_actions import FIXED_NONMANA_EQUIP_CAPABILITY
         additional.append(FIXED_NONMANA_EQUIP_CAPABILITY)
     if ability.boast or any(c.kind is ActivationConditionKind.SOURCE_ATTACKED_THIS_TURN for c in ability.activation_conditions):additional.append(BOAST_CAPABILITY)
-    from ..rules.selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND, SELECTED_COUNTER_COST_CAPABILITY
-    if any(choice.kind == SELECTED_PLUS_COUNTER_COST_KIND for choice in ability.choices):
-        additional.append(SELECTED_COUNTER_COST_CAPABILITY)
+    from ..rules.selected_counter_costs import SELECTED_COUNTER_COST_CAPABILITIES
+    additional.extend(
+        SELECTED_COUNTER_COST_CAPABILITIES[choice.kind]
+        for choice in ability.choices
+        if choice.kind in SELECTED_COUNTER_COST_CAPABILITIES
+    )
     if ability.announced_x_symbols is not None:
         from ..activation_x import ANNOUNCED_ACTIVATION_X_CAPABILITY
         additional.append(ANNOUNCED_ACTIVATION_X_CAPABILITY)

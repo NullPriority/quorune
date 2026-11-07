@@ -5,6 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import replace
 import hashlib,json
+from ..fixed_token_production import historical_unnamed_token_view
 from ..targets import target_plan
 from .trigger_result_equivalence import fixed_trigger_results_equal, fixed_graveyard_exile_views_equal
 
@@ -35,7 +36,13 @@ def _effects(program):
     for effect in effects:
         if effect.get('op')=='destroy' and isinstance(effect.get('reason'),str):effect.pop('reason')
         if effect.get('op')=='create_token' and isinstance(effect.get('characteristics'),dict):
-            chars=effect['characteristics'];line=chars.get('type_line')
+            chars = effect['characteristics']
+            if 'copy_of' not in effect and 'copy_spec' not in effect:
+                former = historical_unnamed_token_view(effect.get('name'), chars)
+                if former is not None:
+                    effect['name'], chars = former
+                    effect['characteristics'] = chars
+            line = chars.get('type_line')
             if isinstance(line,str) and line.startswith('Token '):
                 from ..characteristic_evaluation import type_parts
                 stripped=line.removeprefix('Token ')

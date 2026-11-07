@@ -5,9 +5,11 @@ import {
   choicesWithDefaults,
   copyTargetGroups,
   copyTargetSlots,
+  DAMAGE_ALLOCATION_FIELD,
   list,
   orderedPartitionNames,
   record,
+  selectedDamageAllocation,
   targetGroups,
   selectedTargetCostLabel,
   updateModalTargetSelection,
@@ -321,6 +323,7 @@ function TargetControl({
   const modes = list(values.modes).map(String);
   const targets = record(values[name]);
   const legalModes = list(schema.legal_modes).map(String);
+  const allocation = selectedDamageAllocation(field, values);
   function toggleMode(mode: string, checked: boolean) {
     const next = updateModalTargetSelection(
       schema,
@@ -339,7 +342,9 @@ function TargetControl({
     if (next.length > maximum) {
       next = maximum === 1 ? [ref] : [...next.slice(-(maximum - 1)), ref];
     }
-    onChange({ ...values, [name]: { ...targets, [id]: next } });
+    const updated = { ...values, [name]: { ...targets, [id]: next } };
+    if (allocation) delete updated[DAMAGE_ALLOCATION_FIELD];
+    onChange(updated);
   }
   return (
     <fieldset className="choice-field target-control">
@@ -384,6 +389,29 @@ function TargetControl({
           </div>
         );
       })}
+      {allocation && allocation.refs.length > 0 && (
+        <fieldset className="choice-field">
+          <legend>Divide {allocation.total} damage</legend>
+          {allocation.refs.map((ref) => (
+            <label key={ref} className="choice-option">
+              <span>{labelFor(ref)}</span>
+              <input
+                type="number"
+                min={1}
+                max={allocation.total}
+                value={text(allocation.shares[ref])}
+                onChange={(event) => onChange({
+                  ...values,
+                  [DAMAGE_ALLOCATION_FIELD]: {
+                    ...allocation.shares,
+                    [ref]: event.target.value === "" ? "" : Number(event.target.value),
+                  },
+                })}
+              />
+            </label>
+          ))}
+        </fieldset>
+      )}
     </fieldset>
   );
 }

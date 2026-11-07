@@ -1034,6 +1034,15 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
     operation: str,
     reason: str,
 ) -> Any:
+    from ..next_turn_effect import split_next_turn_effect
+
+    try:
+        effect, next_turn = split_next_turn_effect(effect)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    if next_turn and host.state.continuous_effects is None:
+        raise GameRuleError("Next-turn expiry requires the resolution effect journal")
+    expiry_player = actor if next_turn else None
     op = operation
     keywords = _fixed_characteristic_keywords(effect)
     raw_predicate = effect.get("predicate")
@@ -1085,6 +1094,7 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
                             [power_delta, toughness_delta],
                         ),
                     ),
+                    expires_on_next_turn_of=expiry_player,
                 )
             if keywords:
                 create_resolution_continuous_effect(
@@ -1097,6 +1107,7 @@ def _apply_modify_all_matching_permanents_until_end_of_turn(
                         ContinuousOperation("add_ability", keyword)
                         for keyword in keywords
                     ),
+                    expires_on_next_turn_of=expiry_player,
                 )
         except ContinuousEffectStateError as exc:
             raise GameRuleError(str(exc)) from exc

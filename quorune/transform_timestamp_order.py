@@ -90,7 +90,7 @@ def _resume(host,frame,*,selected):
         if frame.resume_kind=='untap':
             from .untap_step_coordination import coordinate_untap_step
             coordinate_untap_step(host,phase=frame.context['phase'],step=frame.context['step'],
-                active_player=frame.context['active_player'],held_triggers=triggers)
+                active_player=frame.context['active_player'],held_triggers=triggers,phasing_complete=True)
         elif not host._stabilize():
             host._grant_priority(frame.priority_player or host.state.active_player)
     if selected:

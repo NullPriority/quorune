@@ -6,7 +6,11 @@ from dataclasses import replace
 import re
 
 from ..abilities import CostChoice
-from ..rules.selected_counter_costs import SELECTED_PLUS_COUNTER_COST_KIND
+from ..rules.selected_counter_costs import (
+    BLIGHT_ACTIVATION_COST_KIND,
+    SELECTED_PLUS_COUNTER_COST_KIND,
+    blight_activation_cost_is_closed,
+)
 from ..rules.activation_counter_cost import SourceCounterRemovalCost
 
 
@@ -23,6 +27,19 @@ def fixed_selected_counter_activation(ability):
         return ability
     choice = CostChoice(kind=SELECTED_PLUS_COUNTER_COST_KIND, count=1,
         zone='battlefield', card_type='creature')
+    return replace(ability, choices=(choice,), uncompiled_costs=())
+
+
+def fixed_blight_activation(ability):
+    if ability.choices or len(ability.uncompiled_costs) != 1 or not blight_activation_cost_is_closed(ability):
+        return ability
+    clause = " ".join(ability.uncompiled_costs[0].strip(" .").split())
+    match = re.fullmatch(r"Blight ([1-9][0-9]*)", clause, re.IGNORECASE)
+    if match is None:
+        return ability
+    choice = CostChoice(
+        kind=BLIGHT_ACTIVATION_COST_KIND, card_type="creature", counter_amount=int(match[1]),
+    )
     return replace(ability, choices=(choice,), uncompiled_costs=())
 
 

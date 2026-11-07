@@ -61,7 +61,7 @@ _PUBLIC_ATTACK_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _PUBLIC_BLOCK_TRIGGER = re.compile(
-    r"^(?:When|Whenever) (?P<subject>this creature|a creature you control with defender) "
+    r"^(?:When|Whenever) (?P<subject>this creature|a creature you control(?: with defender)?) "
     r"(?P<event>blocks|becomes blocked)"
     r"(?P<blocked> a creature with flying| by a creature)?, (?P<body>.+)$",
     re.IGNORECASE,
@@ -968,6 +968,8 @@ def _public_block_spec(material_line: str) -> FixedPublicEventBindingSpec | None
     subject = " ".join(match.group("subject").casefold().split())
     event = match.group("event").casefold()
     blocked_text = str(match.group("blocked") or "").casefold()
+    if subject == "a creature you control" and (event != "becomes blocked" or blocked_text):
+        return None
     blocked_flying = blocked_text == " a creature with flying"
     blocked_by_creature = blocked_text == " by a creature"
     if blocked_flying and (subject != "this creature" or event != "blocks"):

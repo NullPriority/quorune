@@ -252,6 +252,42 @@ def _source_block_pair_spec(material_line):
     return qualified_block_pair_spec(material_line)
 
 
+def _opponent_cast_or_source_death_spec(
+    material_line: str, *, card_name: str | None,
+) -> FixedPublicEventBindingSpec | None:
+    match = re.fullmatch(
+        r"Whenever (?P<cast>an opponent casts a spell during your turn) "
+        r"(?:and|or) when (?P<source>this creature|[^,]+?) dies, (?P<body>.+)",
+        material_line, re.IGNORECASE,
+    )
+    if match is None:
+        return None
+    source = match["source"]
+    if source.casefold() != "this creature" and not (
+        card_name and SourceReferenceSpec(card_name).matches(source)
+    ):
+        return None
+    body = match["body"]
+    if re.search(r"\b(?:it|its|they|them|their|that player|that creature|that card|"
+                 r"that spell|this way|that much)\b", body, re.IGNORECASE):
+        return None
+    from .spell_cast_predicates import fixed_spell_cast_binding_spec
+
+    cast = fixed_spell_cast_binding_spec(f"Whenever {match['cast']}, {body}")
+    if cast is None:
+        return None
+    subscriptions = (
+        FixedEventSubscription("spell.cast", cast.subject.event_condition),
+        FixedEventSubscription("creature.dies", _source_condition()),
+    )
+    return _spec(
+        "spell.cast", "opponent_cast_or_source_death", body,
+        "fixed-cast-or-source-death-trigger-v1", "trigger-event-normalized-zone-change",
+        condition=fixed_event_subscription_condition(subscriptions),
+        capabilities=("trigger.subscription.fixed_multi_event", "trigger.event.normalized_spell_cast"),
+    )
+
+
 def fixed_public_multi_event_binding_spec(
     material_line: str,
     *,
@@ -261,6 +297,10 @@ def fixed_public_multi_event_binding_spec(
 
     paired = _source_block_pair_spec(material_line)
     if paired is not None:return paired
+
+    cast_or_death = _opponent_cast_or_source_death_spec(material_line, card_name=card_name)
+    if cast_or_death is not None:
+        return cast_or_death
 
     scheduled = _scheduled_pair_spec(material_line, card_name=card_name)
     if scheduled is not None:

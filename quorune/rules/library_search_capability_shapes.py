@@ -10,6 +10,8 @@ from ..compiler.library_search_templates import (
 from ..library_search_model import (
     FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,
     FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID,
+    DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID,
+    DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID,
     FixedCountedLibrarySearchTemplate,
     counted_search_selector_is_closed,
 )
@@ -55,6 +57,8 @@ def fixed_library_search_covered_mechanics(
         covered.add(FIXED_LIBRARY_SEARCH_TO_HAND_MECHANIC_ID)
     if FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
         covered.add(FIXED_COUNTED_LIBRARY_SEARCH_MECHANIC_ID)
+    if DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID in capabilities:
+        covered.add(DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID)
     return covered
 
 
@@ -69,9 +73,13 @@ def fixed_counted_library_search_node_capabilities(
     ):
         return ()
     try:
-        FixedCountedLibrarySearchTemplate.from_effect(effects[0])
+        template = FixedCountedLibrarySearchTemplate.from_effect(effects[0])
     except (ValueError, TypeError, KeyError):
         return ()
+    if template.disjunctive:
+        if DISJUNCTIVE_LIBRARY_SEARCH_MECHANIC_ID not in mechanic_ids:
+            return ()
+        return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID, DISJUNCTIVE_LIBRARY_SEARCH_CAPABILITY_ID)
     return (FIXED_COUNTED_LIBRARY_SEARCH_CAPABILITY_ID,)
 
 

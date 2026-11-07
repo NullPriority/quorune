@@ -14,10 +14,13 @@ from ..creature_power_damage import (
 from ..damage import (
     DamageError,
     damage_proposal,
+    recipient_snapshot,
     resolve_damage_batch,
     source_snapshot,
 )
 from ..damage_source import DamageSourceSnapshot
+from ..damage_death_exile_model import DamageDeathExileScope, damage_death_exile_scope
+from ..rules.damage_death_exile import commit_damage_death_exile
 from ..destruction import destroy_permanent_refs
 from ..errors import GameRuleError
 from ..effect_contracts import effect_family_contract
@@ -85,12 +88,18 @@ def _apply_damage(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
     target = str(effect["target"])
     amount = int(effect.get("amount", 0))
     if amount < 0:
         raise GameRuleError("Damage cannot be negative")
+    try:
+        scope = damage_death_exile_scope(effect)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
     if amount == 0:
+        if scope is DamageDeathExileScope.TARGET:
+            commit_damage_death_exile(host, scope=scope, source_ref=effect['source'], events=(),
+                                     original_target=recipient_snapshot(host, target, actor=actor))
         return 0
     try:
         pinned_source = _source_snapshot_override(host, effect)
@@ -137,6 +146,9 @@ def _apply_damage(
         )
     except DamageError as exc:
         raise GameRuleError(str(exc)) from exc
+    if scope is not None:
+        commit_damage_death_exile(host, scope=scope, source_ref=proposal.source.ref,
+                                 events=result.events, original_target=proposal.recipient)
     event = result.events[0]
     host._log(
         actor,
@@ -312,15 +324,18 @@ def _apply_create_treasure(
     operation: str,
     reason: str,
 ) -> Any:
-    op = operation
+    from ..fixed_token_production import predefined_token_identity
+    from ..token_copy_value_model import predefined_token_name_mode
+
+    name, characteristics = predefined_token_identity("Treasure", {
+        "type_line": "Token Artifact — Treasure",
+        "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
+        "activated_ability_profile": "tap_sac_any_color_mana_v1",
+    }, legacy_name=predefined_token_name_mode(host) is None)
     return host.create_token(
         str(effect.get("controller") or actor),
-        name="Treasure",
-        characteristics={
-            "type_line": "Token Artifact — Treasure",
-            "oracle_text": "{T}, Sacrifice this token: Add one mana of any color.",
-            "activated_ability_profile": "tap_sac_any_color_mana_v1",
-        },
+        name=name,
+        characteristics=characteristics,
         reason=reason,
     )
 

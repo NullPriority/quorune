@@ -13,8 +13,10 @@ from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.affected_player_discard_templates import (
     FIXED_AFFECTED_PLAYER_DISCARD_CAPABILITY,
     FIXED_AFFECTED_PLAYER_DISCARD_MECHANIC,
+    FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY,
     FixedAffectedPlayerDiscardTemplate,
     fixed_affected_player_discard_effect_template,
+    fixed_affected_player_hand_exile_effect_template,
 )
 from quorune.compiler.program_generation import register_generated_programs
 from quorune.deck import DeckLoader
@@ -90,6 +92,51 @@ class FixedAffectedPlayerDiscardCompilerTests(unittest.TestCase):
             capability_registry=registry or self.capabilities,
             capability_profile="commander_review",
         )
+
+    def test_fixed_hand_exile_compiles_targeted_batch_and_shared_player_sequence(self):
+        fixtures = (
+            ("Target opponent exiles a card from their hand.", "Sorcery", 1, ["$target.0"]),
+            ("Each player exiles two cards from their hand.", "Sorcery", 2, "all"),
+            ("Target opponent exiles two cards from their hand and loses 2 life.", "Sorcery", 2, ["$target.0"]),
+            ("When this creature enters, each opponent exiles a card from their hand.", "Creature — Test", 1, "opponents"),
+        )
+        for text, type_line, count, players in fixtures:
+            with self.subTest(text=text):
+                ir = self.compile(text, type_line=type_line)
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node, = [node for face in ir.faces for node in face.nodes if node.effects]
+                self.assertIn(FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY, node.capability_dependencies)
+                choice = node.effects[0]
+                self.assertEqual((choice["players"], choice["count"], choice["then"]), (players, count, "exile"))
+                self.assertIs(choice["hidden"], True)
+
+    def test_fixed_hand_exile_rejects_unrepresented_and_malformed_shapes(self):
+        from quorune.rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies
+
+        for text in (
+            "Target opponent exiles a nonland card from their hand.",
+            "Each player exiles two cards from their hand face down.",
+            "Target opponent exiles a card from their hand or a permanent they control.",
+            "Each opponent exiles a card from their hand until this creature leaves the battlefield.",
+        ):
+            with self.subTest(text=text):
+                self.assertIsNone(fixed_affected_player_hand_exile_effect_template(text))
+        _, (effect,), _, _ = fixed_affected_player_hand_exile_effect_template(
+            "Target opponent exiles a card from their hand."
+        )
+        self.assertIn(FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY, fixed_hand_exile_payload_dependencies(effect))
+        for mutation in ({"hidden": False}, {"count": True}, {"target": "$target.1"}, {"exclude_ref": "$source"}):
+            with self.subTest(mutation=mutation), self.assertRaisesRegex(ValueError, "closed affected-player"):
+                fixed_hand_exile_payload_dependencies({**effect, **mutation})
+
+    def test_fixed_hand_exile_compiler_mutant_is_killed(self):
+        text = "Each player exiles two cards from their hand."
+        self.assertEqual("exact", self.compile(text).status)
+        with patch(
+            "quorune.compiler.resolution_effect_templates.fixed_affected_player_hand_exile_effect_template",
+            return_value=None,
+        ):
+            self.assertNotEqual("exact", self.compile(text).status)
 
     def test_fixed_affected_player_discards_compile_across_contexts_and_modes(
         self,
@@ -714,6 +761,184 @@ class FixedAffectedPlayerDiscardRuntimeTests(unittest.TestCase):
                 },
             )
         self.assertEqual(before, authoritative_state_hash(engine.state))
+
+
+class FixedAffectedPlayerHandExileRuntimeTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    import test_bound_effect_programs as _witnesses
+    session = _witnesses.BoundEffectProgramRuntimeTests.session
+    add = _witnesses.BoundEffectProgramRuntimeTests.add
+    ready = _witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint = _witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = _witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = _witnesses.BoundEffectProgramRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        from quorune.deck import DeckDefinition, DeckEntry
+
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "affected-player-hand-exile.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/affected-player-hand-exile-cards.json",
+        ], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Hand-exile witnesses", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def assert_whole_admission(self, session, card):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        program = compile_best_available_card_program(
+            self.db, self.db.by_oracle_id(card.oracle_id), semantic_registry=session.engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["strict_capability_ready"], binding)
+
+    def set_hand_size(self, session, seat, count):
+        engine = session.engine
+        for object_id in tuple(session.state.players[seat].zones["hand"]):
+            engine.move_card(object_id, "library", log=False)
+        return [
+            self.add(engine, "Generic Bound Plains", seat=seat, zone="hand", ref=f"exile-hand:{seat}:{index}")
+            for index in range(count)
+        ]
+
+    def test_mind_swords_collects_private_apnap_choices_and_exiles_simultaneously(self):
+        session = self.session(724101)
+        session.state.config.semantic_policy = "trusted_only"
+        hands = {
+            seat: self.set_hand_size(session, seat, count)
+            for seat, count in (("A", 3), ("B", 1), ("C", 0), ("D", 3))
+        }
+        source = self.add(session.engine, "Mind Swords", zone="hand")
+        megrim = self.add(session.engine, "Megrim")
+        for card in (source, megrim):
+            self.assert_whole_admission(session, card)
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+
+        program = next(
+            candidate for candidate in session.engine.semantics.programs_for_oracle(source.oracle_id)
+            if FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY in candidate.capability_dependencies
+        )
+        dependencies = tuple(
+            dependency for dependency in program.capability_dependencies
+            if dependency != FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY
+        )
+        undeclared = replace(
+            program, capability_dependencies=dependencies,
+            capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict(),
+        )
+        binding = bind_semantic_program_runtime(
+            undeclared, capability_registry=self.registry, profile="commander_review",
+        )
+        self.assertIn(f"capability:undeclared_runtime_dependency:{FIXED_AFFECTED_PLAYER_HAND_EXILE_CAPABILITY}",
+                      binding["blockers"])
+        offer = self.ready(session, source, {"B": 1, "C": 1})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        selected = {seat: hands[seat][:2] for seat in ("A", "B", "D")}
+        for index, seat in enumerate(("A", "B", "D")):
+            principal = f"pilot:{seat}"
+            self.assertEqual([principal], list(session.pending_principals()))
+            packet = session.packet(principal, full=True)["decision"]
+            serialized = json.dumps(packet, sort_keys=True)
+            for other in set(hands) - {seat}:
+                self.assertIsNone(session.packet(f"pilot:{other}", full=True)["decision"])
+                for card in hands[other]:
+                    self.assertNotIn(card.ref, serialized)
+            if seat == "B":
+                session = self.replay(session, load=True)
+                before = authoritative_state_hash(session.state)
+                denied = session.act(principal, {"action_id": "choose", "cards": [hands["D"][0].ref]})
+                self.assertFalse(denied.ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+            result = session.act(principal, {"action_id": "choose", "cards": [card.ref for card in selected[seat]]})
+            self.assertTrue(result.ok, result.summary)
+            if index < 2:
+                self.assertTrue(all(session.state.cards[card.object_id].zone == "hand"
+                                    for cards in hands.values() for card in cards))
+
+        self.assertIsNone(self.resolve(session))
+        public = json.dumps(session.packet("pilot:C", full=True), sort_keys=True)
+        for cards in selected.values():
+            for card in cards:
+                current = session.state.cards[card.object_id]
+                self.assertEqual("exile", current.zone)
+                self.assertIn(current.ref, public)
+        for card in (hands["A"][-1], hands["D"][-1]):
+            self.assertEqual("hand", session.state.cards[card.object_id].zone)
+            self.assertNotIn(card.ref, public)
+        self.assertEqual([40] * 4, [session.state.players[seat].life for seat in "ABCD"])
+        self.replay(session, load=True)
+
+    def test_witness_the_end_finishes_the_targeted_sequence_with_a_short_or_empty_hand(self):
+        for count in (1, 0):
+            with self.subTest(hand_size=count):
+                session = self.session(724110 + count)
+                session.state.config.semantic_policy = "trusted_only"
+                hand = self.set_hand_size(session, "B", count)
+                source = self.add(session.engine, "Witness the End", zone="hand")
+                self.assert_whole_admission(session, source)
+                offer = self.ready(session, source, {"B": 1, "C": 3})
+                self.checkpoint(session)
+                result = session.act("pilot:A", {"action_id": offer["id"], "targets": ["B"], "pay": "auto"})
+                self.assertTrue(result.ok, result.summary)
+                pending = self.resolve(session)
+                if count:
+                    self.assertEqual("choice.apnap", pending.kind)
+                    self.assertEqual(["pilot:B"], list(session.pending_principals()))
+                    self.assertEqual(40, session.state.players["B"].life)
+                    self.assertIsNone(session.packet("pilot:A", full=True)["decision"])
+                    result = session.act("pilot:B", {"action_id": "choose", "cards": [hand[0].ref]})
+                    self.assertTrue(result.ok, result.summary)
+                    self.assertEqual("exile", session.state.cards[hand[0].object_id].zone)
+                    self.assertIsNone(self.resolve(session))
+                else:
+                    self.assertIsNone(pending)
+                self.assertEqual(38, session.state.players["B"].life)
+                self.assertEqual(40, session.state.players["A"].life)
+                self.replay(session, load=True)
+
+    def test_perfect_intimidation_resumes_the_second_mode_after_private_exile(self):
+        session = self.session(724120)
+        session.state.config.semantic_policy = "trusted_only"
+        hand = self.set_hand_size(session, "B", 2)
+        creature = self.add(session.engine, "Generic Bound Body", seat="C")
+        creature.counters.update({"+1/+1": 1, "charge": 2})
+        source = self.add(session.engine, "Perfect Intimidation", zone="hand")
+        self.assert_whole_admission(session, source)
+        offer = self.ready(session, source, {"B": 1, "C": 3})
+        self.checkpoint(session)
+        result = session.act("pilot:A", {
+            "action_id": offer["id"], "modes": ["mode_1", "mode_2"],
+            "targets": ["B", creature.ref], "pay": "auto",
+        })
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("choice.apnap", self.resolve(session).kind)
+        self.assertEqual(["pilot:B"], list(session.pending_principals()))
+        self.assertEqual({"+1/+1": 1, "charge": 2}, session.state.cards[creature.object_id].counters)
+        self.assertIsNone(session.packet("pilot:C", full=True)["decision"])
+        session = self.replay(session, load=True)
+        result = session.act("pilot:B", {"action_id": "choose", "cards": [card.ref for card in hand]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({}, session.state.cards[creature.object_id].counters)
+        self.assertTrue(all(session.state.cards[card.object_id].zone == "exile" for card in hand))
+        self.replay(session, load=True)
 
 
 class ContextDiscardRuntimeTests(unittest.TestCase):

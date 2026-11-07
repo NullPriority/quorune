@@ -70,9 +70,11 @@ class ReanimationEntryCounterCompilerTests(unittest.TestCase):
         intent=reanimation_entry_counter_intent(materialized,actor='A',reason='Return with counters')
         self.assertEqual(3,intent.expected_zone_change_counter);self.assertEqual('B',intent.new_controller)
         self.assertEqual(('B','STACK',2),tuple(getattr(intent.effect_entry_counters[0],k) for k in ('placing_player','source_ref','amount')))
+        decayed = {**effects[0], 'entry_counter': {'counter_name': 'decayed', 'amount': 1}}
+        self.assertIn('counter.characteristic.keyword', reanimation_entry_counter_runtime_dependencies(
+            SimpleNamespace(**{**vars(program), 'effects': (decayed,)})))
         for change in ({'schema_version':True},{'schema_version':1},{'source':'CARD'},
                 {'entry_counter':{'counter_name':'shield','amount':1}},
-                {'entry_counter':{'counter_name':'decayed','amount':1}},
                 {'entry_counter':{'counter_name':'+1/+1','amount':True}}):
             with self.subTest(change=change),self.assertRaises(ValueError):
                 reanimation_entry_counter_runtime_dependencies(SimpleNamespace(**{**vars(program),'effects':({**effects[0],**change},)}))

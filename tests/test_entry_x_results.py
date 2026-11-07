@@ -164,7 +164,7 @@ class EntryXResultNativeTests(InheritedNativeFixture,unittest.TestCase):
         tree=self.add(s.engine,'Arboreal Alliance',zone='hand')
         self.assert_closed(s,tree);self.prepare(s,mana={'G':2,'C':3});self.checkpoint(s)
         self.cast_x(s,tree,3);s=self.replay(s,load=True);self.assertIsNone(self.resolve(s))
-        tokens=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield' and c.printed_name=='Treefolk']
+        tokens=[c for c in s.state.cards.values() if c.is_token and c.zone=='battlefield' and c.printed_name=='Treefolk Token']
         self.assertEqual(1,len(tokens));self.assertEqual((3,3),tuple(s.engine._numeric_stat(tokens[0].object_id,stat) for stat in ('power','toughness')))
         self.replay(s,load=True)
         s=self.session(107300204)

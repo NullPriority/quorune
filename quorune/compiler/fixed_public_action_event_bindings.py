@@ -5,6 +5,9 @@ from __future__ import annotations
 import re
 from typing import Any, Mapping
 
+from ..rules.event_subscriptions import (
+    FixedEventSubscription, LAND_PLAY_EVENT, fixed_event_subscription_condition,
+)
 from .fixed_public_event_trigger_bindings import (
     FixedPublicEventBindingSpec,
     _all_conditions,
@@ -19,6 +22,13 @@ _PUBLIC_ATTACK_BATCH_TRIGGER = re.compile(
 )
 _PUBLIC_CONTROLLER_CYCLE_TRIGGER = re.compile(
     r"^Whenever you cycle a card, (?P<body>.+)$",
+    re.IGNORECASE,
+)
+_PUBLIC_LAND_PLAY_TRIGGER = re.compile(
+    r"Whenever (?P<actor>you|a player|an opponent) (?P<play>play|plays) a land"
+    r"(?P<land_origin> from exile)?"
+    r"(?: or (?P<cast>cast|casts) a spell(?P<spell_origin> from exile|"
+    r"(?P<shared_nonhand> from anywhere other than your hand))?)?, (?P<body>.+)",
     re.IGNORECASE,
 )
 _PUBLIC_SACRIFICE_TRIGGER = re.compile(
@@ -136,6 +146,52 @@ def _actor_condition(
     if relation == "a player":
         return None
     raise ValueError("Public action actors require a closed controller relation")
+
+
+def _public_land_play_spec(material_line: str) -> FixedPublicEventBindingSpec | None:
+    match = _PUBLIC_LAND_PLAY_TRIGGER.fullmatch(material_line)
+    if match is None:
+        return None
+    actor = match["actor"].casefold()
+    controller = actor == "you"
+    if controller != (match["play"].casefold() == "play"):
+        return None
+    if match["shared_nonhand"] is not None:
+        if not controller or match["land_origin"] is not None:
+            return None
+        land_origin = {"field": "from", "op": "ne", "value": "hand"}
+    elif match["land_origin"] is not None:
+        land_origin = {"field": "from", "op": "eq", "value": "exile"}
+    else:
+        land_origin = None
+    condition = _all_conditions(
+        _actor_condition(actor, field="player"),
+        land_origin,
+    )
+    if match["cast"] is None:
+        return _spec(
+            LAND_PLAY_EVENT, "public_land_play", match["body"], "fixed-land-play-trigger-v1",
+            "trigger-event-normalized-public-action", condition=condition,
+        )
+    if controller != (match["cast"].casefold() == "cast"):
+        return None
+    from .spell_cast_predicates import fixed_spell_cast_binding_spec
+
+    origin = match["spell_origin"] or ""
+    cast = fixed_spell_cast_binding_spec(
+        f"Whenever {actor} {match['cast']} a spell{origin}, {match['body']}",
+    )
+    if cast is None:
+        return None
+    return _spec(
+        LAND_PLAY_EVENT, "independent_dual_event", match["body"], "fixed-land-play-or-cast-trigger-v1",
+        "trigger-event-normalized-public-action",
+        condition=fixed_event_subscription_condition((
+            FixedEventSubscription(LAND_PLAY_EVENT, condition),
+            FixedEventSubscription("spell.cast", cast.subject.event_condition),
+        )),
+        capabilities=("trigger.event.normalized_spell_cast", "trigger.subscription.fixed_multi_event"),
+    )
 
 
 def _public_sacrifice_spec(
@@ -749,6 +805,7 @@ def fixed_public_action_event_binding_spec(
     del card_name
     return (
         _public_attack_spec(material_line)
+        or _public_land_play_spec(material_line)
         or _public_expend_spec(material_line)
         or _public_ring_spec(material_line)
         or _public_waterbend_spec(material_line)

@@ -520,6 +520,13 @@ Each player's selected cards stay hidden from other principals and remain in
 hand until the existing simultaneous discard commit. Ordinary fixed and
 fractional choice payloads retain their previous form and validation.
 
+Fixed hand exile uses the same APNAP choice owner. The targeted player or
+each affected player chooses the required available cards privately from
+their own hand. The transaction waits for the final choice and commits one
+simultaneous face-up exile batch through the existing destination owner.
+The movement has the ordinary zone-change cause. Later instructions resume
+through the existing stack continuation.
+
 The separate `discard_random_cards` instruction samples a fixed one-to-four
 card subset of each represented current hand without a client selection choice.
 Each player's complete hand is validated before sampling; empty and short hands

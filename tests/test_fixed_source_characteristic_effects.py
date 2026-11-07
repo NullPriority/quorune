@@ -135,7 +135,7 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
             "Target land becomes a 2/2 creature until your next turn. It's still a land.",
             "Target creature becomes a copy of another creature until end of turn.",
             "Target land becomes a 2/2 creature with bands with other green creatures until end of turn. It's still a land.",
-            "Target land becomes a 2/2 creature until end of turn. It can't be blocked until your next turn.",
+            "Target land becomes a 2/2 creature until end of turn. It can't be blocked until the end of your next turn.",
             "Target creature has base power and toughness 2/2 until end of turn, then draw the chosen number of cards.",
             "Target creature becomes a blue Robot with base power and toughness 2/2 in addition to its other colors and types until end of turn.",
             "Target land becomes a 2/2 mystery creature until end of turn. It's still a land.",
@@ -147,15 +147,22 @@ class FixedSourceCharacteristicCompilerTests(unittest.TestCase):
                 self.assertTrue(compiled.material_residuals)
 
     def test_fixed_land_animation_and_unblockable_rider_share_bound_target(self):
-        text="Target land becomes a 2/2 creature until end of turn. It can't be blocked this turn."
-        ir=self.compile(text,type_line="Instant")
-        self.assertEqual("exact",ir.status,ir.material_residuals)
-        node=ir.faces[0].nodes[0]
-        self.assertEqual(["$target.0","$target.0"],[effect["card"] for effect in node.effects])
-        self.assertEqual("apply_source_characteristics_until_end_of_turn",node.effects[0]["op"])
-        self.assertEqual("unblockable",node.effects[1]["restriction"])
-        self.assertEqual(["land"],node.target_schema["types_any"])
-        self.assertIn("continuous.resolution.declaration_rules_until_end_of_turn",node.capability_dependencies)
+        from quorune.next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, NEXT_TURN_EFFECT_FIELD
+
+        for deadline, next_turn in (("this turn", False), ("until your next turn", True)):
+            with self.subTest(deadline=deadline):
+                text = f"Target land becomes a 2/2 creature until end of turn. It can't be blocked {deadline}."
+                ir = self.compile(text, type_line="Instant")
+                self.assertEqual("exact", ir.status, ir.material_residuals)
+                node = ir.faces[0].nodes[0]
+                self.assertEqual(["$target.0", "$target.0"], [effect["card"] for effect in node.effects])
+                self.assertEqual("apply_source_characteristics_until_end_of_turn", node.effects[0]["op"])
+                self.assertEqual("unblockable", node.effects[1]["restriction"])
+                self.assertEqual(["land"], node.target_schema["types_any"])
+                self.assertIn("continuous.resolution.declaration_rules_until_end_of_turn", node.capability_dependencies)
+                self.assertNotIn(NEXT_TURN_EFFECT_FIELD, node.effects[0])
+                self.assertEqual(next_turn, node.effects[1].get(NEXT_TURN_EFFECT_FIELD, False))
+                self.assertEqual(next_turn, NEXT_TURN_EFFECT_CAPABILITY in node.capability_dependencies)
 
     def test_base_setting_draw_composition_is_a_positive_integration_witness(self):
         text = "Target creature has base power and toughness 2/2 until end of turn, then draw a card."

@@ -37,6 +37,7 @@ from .entry_counter_coordination import (
     resume_resolving_entry_replacement,
 )
 from .turn_counter_coordination import resume_turn_counter_replacement
+from .turn_skip_model import TURN_BOUNDARY_SKIP_RESUME
 
 
 _PILOT_ROLE = "pilot"
@@ -105,6 +106,15 @@ def issue_replacement_order_choice(
     pending = required.pending
     seat = pending.choice.chooser
     context = replacement_choice_payload(pending, required.effects)
+    from .token_creation_events import DistributedTokenChoiceRequired
+
+    if isinstance(required, DistributedTokenChoiceRequired):
+        history = " ".join(
+            f"Earlier replacement for {creator} was {label}."
+            for creator, label in required.public_history if creator != seat
+        )
+        if history:
+            context["prompt"] = f"{history} {context['prompt']}"
     sealed_effect = copy.deepcopy(dict(effect))
     from .whole_hand_discard import whole_hand_input_snapshot
     hand_inputs=whole_hand_input_snapshot(host,effect,actor=item.controller)
@@ -236,6 +246,32 @@ def _validate_mana_payment_frame(
         )
 
 
+def _quantity_followup_plan(plan: IntentPlan) -> bool:
+    from .semantic_runtime.earthbend_intents import EarthbendIntent
+    from .semantic_runtime.intents import DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent
+
+    return any(
+        isinstance(intent, EarthbendIntent)
+        or (
+            isinstance(intent, (DestroyPermanentSetIntent, MovePublicZoneSetIntent, RevealEachLibraryTopIntent))
+            and intent.followup is not None
+        )
+        for intent in plan.intents
+    )
+
+
+def _execute_quantity_followup(host, plan, remaining):
+    from .conditional_exile_return import defer_conditional_cost_returns
+    from .rules.committed_quantity_followups import CommittedQuantityFollowup
+
+    with defer_conditional_cost_returns() as waiting:
+        result = execute_intent_plan(host, plan)
+    if not isinstance(result, CommittedQuantityFollowup):
+        raise ReplacementEffectError("Counted action did not produce its committed result")
+    effects = tuple(thaw_value(effect) for effect in result.effects)
+    return (*effects, *remaining), waiting
+
+
 def apply_effect_with_replacement_choice(
     host: ReplacementDecisionHost,
     item: Any,
@@ -255,10 +291,17 @@ def apply_effect_with_replacement_choice(
         copied_aura_token_selections(item, instruction_pointer=instruction_pointer)
     from .composition_order_model import CompositionOrderChoiceRequired
     from .composition_ordering import composition_resolution_actor,issue_composition_order_choice
+    committed_followup = False
     try:
         with composition_resolution_actor(item.controller):
             if plan is None:
                 host.apply_effect(effect, actor=item.controller, as_cost=False)
+            elif _quantity_followup_plan(plan):
+                from .conditional_exile_return import return_deferred_source_departures
+
+                remaining, waiting = _execute_quantity_followup(host, plan, remaining)
+                committed_followup = True
+                return_deferred_source_departures(host, waiting)
             else:
                 execute_intent_plan(host, plan)
     except CompositionOrderChoiceRequired as required:
@@ -302,10 +345,13 @@ def apply_effect_with_replacement_choice(
             required=required,
         )
         return False
-    return (
-        item in host.state.stack
-        and host._semantic_pause_annotation() is None
-    )
+    can_continue = item in host.state.stack and host._semantic_pause_annotation() is None
+    if committed_followup and can_continue:
+        host._continue_resolution(
+            stack_ref=item.ref, effects=list(remaining), destination=destination,
+            note=note, instruction_pointer=instruction_pointer + 1,
+        )
+    return can_continue and not committed_followup
 
 
 def _replacement_selection(
@@ -658,6 +704,10 @@ def complete_replacement_order_choice(
             selection,
             error_type=error_type,
         )
+        return
+    if restored.resume_kind == TURN_BOUNDARY_SKIP_RESUME:
+        from .turn_skip_replacements import resume_turn_boundary_skip
+        resume_turn_boundary_skip(host, restored, selection, error_type=error_type)
         return
     _resume_semantic_replacement(
         host, restored, selection, error_type=error_type

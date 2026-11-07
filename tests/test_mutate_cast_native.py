@@ -270,7 +270,7 @@ class MutateCastNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertEqual(('U','G'),item.mana_colors_spent)
         s=self.choose_merge(s,'bottom');self.assertIsNone(self.resolve(s))
         beasts=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token
-            and card.controller=='C' and s.engine._effective_card_data(card)['name']=='Beast']
+            and card.controller=='C' and s.engine._effective_card_data(card)['name']=='Beast Token']
         self.assertEqual(1,len(beasts));self.assertEqual(life_d+1,s.state.players['D'].life)
         self.assertEqual(1,s.state.cards[root.object_id].permanent_composition.topology.mutation_count)
         self.replay(s,load=True)

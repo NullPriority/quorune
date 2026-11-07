@@ -243,13 +243,13 @@ class ManaDiscardPaymentTests(unittest.TestCase):
 
     def test_combined_payer_and_qualification_shapes_reject_unknown_ownership(self):
         from quorune.compiler.fixed_effect_payment_templates import fixed_effect_payment_spec
-        from quorune.fixed_effect_payment import compound_payment_payload_dependencies
+        from quorune.fixed_effect_payment import fixed_payment_payload_dependencies
         from quorune.compiler.turn_cast_grants import turn_cast_grant_handler
         spec=fixed_effect_payment_spec('pay {1} and discard a card');self.assertIsNotNone(spec)
         effect={'op':'offer_optional_mana_payment','player':'$controller','payment':spec.to_dict()}
-        self.assertIn(PAYMENT,compound_payment_payload_dependencies(effect))
+        self.assertIn(PAYMENT,fixed_payment_payload_dependencies(effect))
         foreign=replace(spec,predicate=replace(spec.predicate,owner='B'))
-        with self.assertRaises(ValueError):compound_payment_payload_dependencies({**effect,'payment':foreign.to_dict()})
+        with self.assertRaises(ValueError):fixed_payment_payload_dependencies({**effect,'payment':foreign.to_dict()})
         text=self.db.lookup(NAMES[0]).oracle_text.splitlines()[0]
         self.assertIsNotNone(turn_cast_grant_handler(text))
         for bad in (text.replace('this turn','this game'),text.replace('other than the battlefield','other than the library'),text+' You gain 2 life.'):

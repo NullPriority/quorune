@@ -199,7 +199,7 @@ class ExternalEntryTappedRuntimeTests(unittest.TestCase):
         creature=session.state.cards[creature.object_id]
         self.assertEqual('battlefield',creature.zone);self.assertTrue(creature.tapped)
         self.assertEqual({'+1/+1':2},creature.counters)
-        goats=[card for card in session.state.cards.values() if card.is_token and card.printed_name=='Goat' and card.zone=='battlefield']
+        goats=[card for card in session.state.cards.values() if card.is_token and card.printed_name=='Goat Token' and card.zone=='battlefield']
         self.assertEqual(1,len(goats));self.assertTrue(goats[0].tapped)
         self.replay(session,load=True)
 

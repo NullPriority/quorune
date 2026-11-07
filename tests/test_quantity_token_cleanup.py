@@ -126,7 +126,7 @@ class QuantityTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
                     result=s.act('pilot:A',{'action_id':'choose','attacking':{refs[0]:'C'}})
                     self.assertTrue(result.ok,result.summary)
                 self.assertIsNone(self.resolve(s))
-                tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Robot']
+                tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Robot Token']
                 self.assertEqual(1 if pay else 0,len(tokens))
                 self.assertEqual(1 if pay else 0,len([item for item in s.state.delayed_triggers if item.active]))
                 self.cast(s,'A',fog,[]);self.resolve_top(s)
@@ -148,7 +148,7 @@ class QuantityTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
         refs=decision.payload_by_actor['A']['legal_actions'][0]['choice_schema']['legal_refs'];self.assertEqual(1,len(refs))
         result=s.act('pilot:A',{'action_id':'choose','attacking':{refs[0]:'C'}})
         self.assertTrue(result.ok,result.summary);self.settle(s)
-        token=next(card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Astartes Warrior')
+        token=next(card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Astartes Warrior Token')
         self.assertFalse(token.tapped);self.assertEqual('C',token.attacking)
         for card in (s.state.cards[grantee.object_id],token):
             self.assertIn('menace',{keyword.casefold() for keyword in s.engine._combat_keywords(card)})
@@ -172,7 +172,7 @@ class QuantityTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.prepare(s);self.checkpoint(s)
         self.until(s,lambda game:game.state.phase=='combat' and game.state.step=='beginning_combat')
         self.assertIsNone(self.resolve(s))
-        tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Phyrexian Horror']
+        tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Phyrexian Horror Token']
         self.assertEqual(2,s.state.cards[forge.object_id].counters['oil'])
         self.assertEqual(2,len(tokens))
         for card in tokens:
@@ -207,7 +207,7 @@ class QuantityTokenCleanupNativeTests(InheritedNativeFixture,unittest.TestCase):
                 self.assertTrue(s.act('pilot:A',{'action_id':mana['id'],'pay':'auto'}).ok)
                 self.cast(s,'A',response,[grantee.ref]);self.resolve_top(s)
                 self.assertIsNone(self.resolve(s))
-                tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Elemental']
+                tokens=[card for card in s.state.cards.values() if card.zone=='battlefield' and card.is_token and card.printed_name=='Elemental Token']
                 self.assertEqual(amount,len(tokens))
                 self.assertEqual(1,len([item for item in s.state.delayed_triggers if item.active]))
                 cleanup=next(item for item in s.state.delayed_triggers if item.active)

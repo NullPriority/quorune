@@ -479,6 +479,105 @@
         "tlr": "not_legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "0728b195-2dfe-4d73-91ae-e658a97b0b9a",
+      "name": "Hard Evidence",
+      "mana_cost": "{U}",
+      "cmc": 1.0,
+      "type_line": "Sorcery",
+      "oracle_text": "Create a 0/3 blue Crab creature token.\nInvestigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Investigate"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2021-06-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f60b879e-82b4-442d-a544-2349429fe4c9",
+      "name": "Orzhov Enforcer",
+      "mana_cost": "{1}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Human Rogue",
+      "oracle_text": "Deathtouch\nAfterlife 1 (When this creature dies, create a 1/1 white and black Spirit creature token with flying.)",
+      "power": "1",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Afterlife",
+        "Deathtouch"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-01-12",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
     }
   ],
   "rulings": [
@@ -679,6 +778,12 @@
       "published_at": "2016-06-08",
       "source": "wotc",
       "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it."
+    },
+    {
+      "oracle_id": "f60b879e-82b4-442d-a544-2349429fe4c9",
+      "published_at": "2019-01-25",
+      "source": "wotc",
+      "comment": "Because blockers are chosen all at once, you can’t block with a creature with afterlife, wait for it to die, then block with the resulting Spirit tokens."
     }
   ]
 }

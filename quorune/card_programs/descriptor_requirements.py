@@ -1,26 +1,119 @@
 from __future__ import annotations
 
 from typing import Any, Mapping
+from ..suspect_model import SUSPECT_OPERATION
+
+def _owned_operation_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    """Validate the closed payloads of independently owned instructions."""
+    if value.get("op") == "detain_permanents":
+        from ..rules.detain import DETAIN_CAPABILITY, validate_detain_instruction
+        validate_detain_instruction(value)
+        return (DETAIN_CAPABILITY,)
+    if value.get("op") == "restrict_permanent_actions_until_next_turn":
+        from ..rules.detain import DIRECT_PROHIBITION_CAPABILITY, validate_direct_action_prohibition
+        validate_direct_action_prohibition(value)
+        return (DIRECT_PROHIBITION_CAPABILITY,)
+    if value.get("op") == "schedule_turn_skip":
+        from ..turn_skip_model import TURN_SKIP_CAPABILITY, decode_turn_skip_instruction
+        decode_turn_skip_instruction(value)
+        return (TURN_SKIP_CAPABILITY,)
+    if value.get("op") in ("earthbend_land", "finish_earthbend_land", "return_earthbent_objects"):
+        from ..rules.earthbend_shapes import earthbend_descriptor_dependencies
+        return earthbend_descriptor_dependencies(value)
+    if value.get("op") == SUSPECT_OPERATION:
+        from ..rules.suspect_shapes import suspect_descriptor_dependencies
+        return suspect_descriptor_dependencies(value)
+    from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
+    destruction = qualified_destruction_payload_dependencies(value)
+    if value.get("op") == "destroy_all" and "followup" in value:
+        from ..rules.destruction_result_model import DestructionFollowup
+
+        return (*destruction, *DestructionFollowup.from_dict(value["followup"]).capability_dependencies)
+    if destruction:
+        return destruction
+    if value.get("op") == "move_public_zone_set" and "followup" in value:
+        from ..public_zone_moves import PublicZoneMoveSetSpec
+        from ..rules.public_exile_result_model import PublicExileFollowup
+
+        followup = PublicExileFollowup.from_dict(value["followup"])
+        followup.validate_move(PublicZoneMoveSetSpec.from_dict(value["set"]))
+        return followup.capability_dependencies
+    from ..rules.revealed_library_top import REVEAL_TOP_OPERATION, RevealedLibraryTopSpec
+    if value.get("op") == REVEAL_TOP_OPERATION:
+        return RevealedLibraryTopSpec.from_effect(value).capability_dependencies
+    return ()
+
+
+def _damage_payload_dependencies(value, mechanics):
+    from ..announced_damage import ANNOUNCED_DAMAGE_CAPABILITY, ANNOUNCED_DAMAGE_EFFECT_FIELD, validate_announced_damage_effect
+    from ..damage_death_exile_model import damage_death_exile_payload_dependencies
+    from ..damage_prevention_permission import unpreventability_payload_dependencies
+
+    if ANNOUNCED_DAMAGE_EFFECT_FIELD in value:
+        validate_announced_damage_effect(value)
+        return (ANNOUNCED_DAMAGE_CAPABILITY,)
+    return (*unpreventability_payload_dependencies(value, coverage=mechanics),
+            *damage_death_exile_payload_dependencies(value, coverage=mechanics))
+
+
+def _zone_choice_payload_dependencies(value):
+    from ..apnap_object_payment import apnap_object_payment_dependencies
+    from ..library_search_model import counted_search_bound_dependencies
+    from ..reveal_until_library_selection_model import reveal_until_selection_payload_dependencies
+    from ..variable_library_selection_model import variable_library_selection_payload_dependencies
+
+    return (*apnap_object_payment_dependencies(value),
+            *counted_search_bound_dependencies(value),
+            *variable_library_selection_payload_dependencies(value),
+            *reveal_until_selection_payload_dependencies(value))
+
+
+def _affected_quantity_payload_dependencies(
+    value: Mapping[str, Any], *, mechanics: tuple[str, ...],
+) -> tuple[str, ...] | None:
+    from ..fixed_token_production import (
+        INVESTIGATE_CAPABILITY_ID, SEQUENTIAL_INVESTIGATE_OPERATION, sequential_investigate_count,
+    )
+    if value.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
+        count = sequential_investigate_count(value)
+        return (INVESTIGATE_CAPABILITY_ID, *typed_result_amount_runtime_dependencies(count, mechanics=mechanics))
+    from ..rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_OPERATION, fixed_blight_amount
+    if value.get("op") == BLIGHT_OPERATION:
+        fixed_blight_amount(value)
+        return (BLIGHT_CAPABILITY,)
+    from ..rules.endure_model import ENDURE_CAPABILITY, ENDURE_OPERATION, fixed_endure_amount
+    if value.get("op") == ENDURE_OPERATION:
+        fixed_endure_amount(value)
+        return (ENDURE_CAPABILITY,)
+    if value.get("players") == "$targets":
+        from ..rules.any_number_target_shapes import selected_player_payload_dependencies
+        return selected_player_payload_dependencies(value)
+    if (value.get("op") == "choose_cards_apnap" and value.get("zone") == "hand"
+            and value.get("then") == "exile" and value.get("predicate") is not None):
+        from ..rules.affected_player_discard_capability_shapes import fixed_hand_exile_payload_dependencies
+        return fixed_hand_exile_payload_dependencies(value)
+    if value.get("op") == "mill" and isinstance(value.get("count"), Mapping):
+        from ..rules.mill_capability_shapes import half_mill_payload_dependencies
+        return half_mill_payload_dependencies(value) or None
+    return None
+
 
 def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str, ...] = ()) -> tuple[str, ...]:
     """Decode persisted public/scalar amounts without trusting annotations."""
     from ..query_effect_amount_model import (PUBLIC_QUERY_AMOUNT_KIND, PUBLIC_QUERY_AMOUNT_CAPABILITY,
         DECLARED_AMOUNT_CAPABILITY, PublicQueryAmountSpec)
     if isinstance(value, Mapping):
-        from ..fixed_token_production import (
-            INVESTIGATE_CAPABILITY_ID, SEQUENTIAL_INVESTIGATE_OPERATION, sequential_investigate_count,
-        )
-        if value.get("op") == SEQUENTIAL_INVESTIGATE_OPERATION:
-            count = sequential_investigate_count(value)
-            return (INVESTIGATE_CAPABILITY_ID, *typed_result_amount_runtime_dependencies(count, mechanics=mechanics))
+        affected_quantity = _affected_quantity_payload_dependencies(value, mechanics=mechanics)
+        if affected_quantity is not None:
+            return affected_quantity
         from ..entry_x_amount_model import entry_x_amount_dependencies
         if value.get('kind')=='source_entry_x_amount':return entry_x_amount_dependencies(value)
         from ..rules.graveyard_self_return import graveyard_self_return_dependencies
         returned=graveyard_self_return_dependencies(value)
         if returned:return returned
-        from ..rules.qualified_destruction import qualified_destruction_payload_dependencies
-        destruction=qualified_destruction_payload_dependencies(value)
-        if destruction:return destruction
+        action_result = _owned_operation_payload_dependencies(value)
+        if action_result:
+            return action_result
         from ..alternative_discard_model import alternative_discard_runtime_dependencies
         alternative=alternative_discard_runtime_dependencies(value)
         if alternative:return tuple(sorted({*alternative,*(cap for child in value.values()
@@ -47,7 +140,11 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         if library_order:return library_order
         from ..public_history_query_model import public_history_query_dependencies
         from ..spell_history_ordinal_model import qualified_spell_ordinal_dependencies,QUALIFIED_SPELL_ORDINAL_FIELD
-        history=public_history_query_dependencies(value) if 'history_query' in value or value.get('kind') in {'history_count_at_least','history_count_at_most'} else ()
+        from ..public_history_query_model import TOKEN_CREATION_FACT
+        history = public_history_query_dependencies(value) if (
+            'history_query' in value or value.get('kind') in {'history_count_at_least', 'history_count_at_most'}
+            or value.get('fact') == TOKEN_CREATION_FACT
+        ) else ()
         if value.get('field')==QUALIFIED_SPELL_ORDINAL_FIELD:history=(*history,*qualified_spell_ordinal_dependencies(value))
         if history:
             return tuple(sorted({*history,*(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))
@@ -77,24 +174,25 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
         own = (*own,*life_gain_prohibition_payload_dependencies(value,coverage=mechanics))
         from ..counter_permission import counter_prohibition_payload_dependencies
         own = (*own,*counter_prohibition_payload_dependencies(value,coverage=mechanics))
-        from ..damage_prevention_permission import unpreventability_payload_dependencies
-        own = (*own,*unpreventability_payload_dependencies(value,coverage=mechanics))
+        own = (*own, *_damage_payload_dependencies(value, mechanics))
+        if value.get('kind') == 'legend_rule_exemption':
+            from ..legend_rule_model import legend_rule_payload_dependencies
+            own = (*own, *legend_rule_payload_dependencies(value))
         from ..rules.casting_additional_cost_groups import selected_zone_cost_payload_dependencies
         own = (*own, *selected_zone_cost_payload_dependencies(value))
-        from ..fixed_effect_payment import compound_payment_payload_dependencies
-        own = (*own, *compound_payment_payload_dependencies(value))
+        from ..fixed_effect_payment import fixed_payment_payload_dependencies
+        own = (*own, *fixed_payment_payload_dependencies(value))
         from ..resolution_mana_model import resolution_mana_choice_dependencies
         own = (*own, *resolution_mana_choice_dependencies(value))
         from ..created_token_counter_model import created_token_counter_payload_dependencies
         own = (*own, *created_token_counter_payload_dependencies(value))
+        from ..rules.attachment_actions import created_token_attachment_payload_dependencies
+        own = (*own, *created_token_attachment_payload_dependencies(value))
         from ..incubate_model import incubate_payload_dependencies
         own = (*own,*incubate_payload_dependencies(value))
         from ..discover_model import discover_payload_dependencies
         own = (*own,*discover_payload_dependencies(value))
-        from ..variable_library_selection_model import variable_library_selection_payload_dependencies
-        own = (*own,*variable_library_selection_payload_dependencies(value))
-        from ..reveal_until_library_selection_model import reveal_until_selection_payload_dependencies
-        own = (*own,*reveal_until_selection_payload_dependencies(value))
+        own = (*own, *_zone_choice_payload_dependencies(value))
         from ..library_battlefield_model import library_battlefield_payload_dependencies
         own = (*own,*library_battlefield_payload_dependencies(value))
         from ..public_zone_quantity_model import public_zone_quantity_dependencies
@@ -137,11 +235,12 @@ def typed_result_amount_runtime_dependencies(value: Any, *, mechanics: tuple[str
             return tuple(sorted({*own,PUBLIC_QUERY_AMOUNT_CAPABILITY,
                                  *((DECLARED_AMOUNT_CAPABILITY,) if spec.schema_version == 2 else ())}))
         if value.get('kind') == 'scalar_effect_amount':
-            from ..scalar_effect_amount_model import ScalarEffectAmountSpec, SCALAR_AMOUNT_CAPABILITY
+            from ..scalar_effect_amount_model import PAID_SACRIFICE_STAT_CAPABILITY, ScalarEffectAmountSpec, SCALAR_AMOUNT_CAPABILITY
             spec = ScalarEffectAmountSpec.from_dict(value)
             from ..scalar_effect_amount_model import ScalarAmountOrigin
             from ..cast_event_amounts import CAST_MANA_VALUE_CAPABILITY
             return tuple(sorted({SCALAR_AMOUNT_CAPABILITY,
+                                 *((PAID_SACRIFICE_STAT_CAPABILITY,) if spec.origin is ScalarAmountOrigin.PAID_SACRIFICE_CREATURE else ()),
                                  *((CAST_MANA_VALUE_CAPABILITY,) if spec.origin is ScalarAmountOrigin.CAST_SPELL_MANA_VALUE else ()),
                                  *((DECLARED_AMOUNT_CAPABILITY,) if spec.binding_id is not None else ())}))
         return tuple(sorted({*own, *(cap for child in value.values() for cap in typed_result_amount_runtime_dependencies(child,mechanics=mechanics))}))

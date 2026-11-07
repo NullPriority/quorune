@@ -232,6 +232,27 @@ observers remain material. Original-card admission and focused native witnesses
 bound the implemented claim; a recognized action does not establish that every
 source containing it is closed.
 
+## Counted searches with an X bound
+
+A counted library search can bind its mana value limit to the announced X on
+the stack or the X retained at its source's entry. The compiler validates the
+rest of the selector against the existing counted search shape. Resolution
+seals the limit before it offers private choices, and resumption validates the
+selection against the same limit. A stated quality still permits the player to
+search and find nothing.
+
+## Counted searches with alternative qualities
+
+Different qualifications can share one counted search. Each alternative
+retains its own predicate, and the search owner lists each eligible library
+object once even when it matches several branches. A shared type or color
+list retains its common qualifiers. The player makes one private selection
+within the printed count. Tapped land results move as one batch and the
+search shuffles once.
+
+The version-three selector carries the separate branches. The original
+version-two form retains its single predicate.
+
 ## Library search restrictions
 
 `LibrarySearchRuleSpec` represents current source prohibitions and fixed

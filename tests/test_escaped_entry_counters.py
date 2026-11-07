@@ -232,9 +232,9 @@ class EscapedEntryCounterRuntimeTests(unittest.TestCase):
         self.assertEqual(6 if 'hardened' in first.casefold() else 5,source.counters.get('+1/+1'))
         # Counters have committed while the Goat-producing enter trigger waits.
         self.assertTrue(any(item.kind=='triggered_ability' for item in session.state.stack))
-        self.assertFalse(any(card.is_token and card.printed_name=='Goat' for card in session.state.cards.values()))
+        self.assertFalse(any(card.is_token and card.printed_name=='Goat Token' for card in session.state.cards.values()))
         self.resolve(session)
-        self.assertEqual(1,sum(card.is_token and card.printed_name=='Goat' and card.zone=='battlefield' for card in session.state.cards.values()))
+        self.assertEqual(1,sum(card.is_token and card.printed_name=='Goat Token' and card.zone=='battlefield' for card in session.state.cards.values()))
         self.replay(session,load=True)
 
         self.prepare(session,mana={'C':3,'U':1})

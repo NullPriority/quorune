@@ -12,6 +12,7 @@ from ..continuous_effect_model import ContinuousEffectError
 from ..continuous_effect_state import resolution_effect_source
 from ..effect_contracts import effect_family_contract
 from ..errors import GameRuleError
+from ..rules.detain import DETAIN_OPERATION, DIRECT_PROHIBITION_OPERATION, resolve_detain, resolve_direct_action_prohibition
 from ..rules.temporary_declaration_restrictions import (
     commit_temporary_declaration_restriction,
     TemporaryDeclarationRestrictionError,
@@ -28,6 +29,14 @@ def _apply_require_blocking_this_combat(host,effect,*,actor,operation,reason):
     except (TypeError,ValueError) as exc:raise GameRuleError(str(exc)) from exc
 
 
+def _apply_locked_action_prohibition(host, effect, *, actor, operation, reason):
+    resolve = resolve_detain if operation == DETAIN_OPERATION else resolve_direct_action_prohibition
+    try:
+        return resolve(host, effect, actor=actor, reason=reason)
+    except (TypeError, ValueError) as exc:
+        raise GameRuleError(str(exc)) from exc
+
+
 def _apply_grant_declaration_restriction_until_end_of_turn(
     host: Any,
     effect: Mapping[str, Any],
@@ -37,6 +46,13 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
     reason: str,
 ) -> str | list[str]:
     del operation
+    from ..next_turn_effect import split_next_turn_effect
+
+    try:
+        effect, next_turn = split_next_turn_effect(effect)
+    except ValueError as exc:
+        raise GameRuleError(str(exc)) from exc
+    expiry_player = actor if next_turn else None
     allowed = {"op", "card", "cards", "set", "restriction", "reason", "_runtime_source"}
     unknown = set(effect) - allowed
     if unknown:
@@ -87,6 +103,7 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
             rule = create_resolution_declaration_rule_effect(
                 host, source=resolution_effect_source(host, effect, fallback_card=cards[0] if cards else None),
                 targets=cards, restriction=temporary_declaration_restriction(str(effect.get("restriction") or "")), live_query=query,
+                expires_on_next_turn_of=expiry_player,
             )
         except (TypeError, ValueError, ContinuousEffectError, ContinuousEffectStateError) as exc:
             raise GameRuleError(str(exc)) from exc
@@ -111,13 +128,15 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
                 fallback_card=card,
             ),
             kind=effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
+            expires_on_next_turn_of=expiry_player,
         )
     except TemporaryDeclarationRestrictionError as exc:
         raise GameRuleError(str(exc)) from exc
+    duration_label = "your next turn" if next_turn else "end of turn"
     host._log(
         actor,
         "combat.declaration_restriction",
-        f"{card.ref} is subject to a combat declaration restriction until end of turn.",
+        f"{card.ref} is subject to a combat declaration restriction until {duration_label}.",
         {
             "object": card.ref,
             "restriction": effect['restriction'] if isinstance(effect.get('restriction'), Mapping) else str(effect.get("restriction") or ""),
@@ -131,6 +150,8 @@ def _apply_grant_declaration_restriction_until_end_of_turn(
 
 
 HANDLERS = {
+    DETAIN_OPERATION: _apply_locked_action_prohibition,
+    DIRECT_PROHIBITION_OPERATION: _apply_locked_action_prohibition,
     'require_blocking_this_combat':_apply_require_blocking_this_combat,
     "grant_declaration_restriction_until_end_of_turn": (
         _apply_grant_declaration_restriction_until_end_of_turn

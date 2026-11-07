@@ -2,13 +2,17 @@ from __future__ import annotations
 
 from functools import lru_cache
 
+from ..discover_model import (NONLAND_SCAN_CAPABILITY, NONLAND_SCAN_OPERATION,
+                              NONLAND_SCAN_STEP_OPERATION, NONLAND_SCAN_CAST_OPERATION)
 from .registry import SemanticChoiceRegistry
 from .composition_order import CompositionOrderHandler
 from .mutate import MutateMergeChoiceHandler
-from .created_token_counters import CREATED_TOKEN_COUNTER_HANDLERS
+from .created_token_counters import CREATED_TOKEN_ATTACHMENT_HANDLERS, CREATED_TOKEN_COUNTER_HANDLERS
 from .incubate import INCUBATE_HANDLERS
 from .investigate import SequentialInvestigateHandler
-from .discover import DiscoverScanHandler
+from .endure import SourceEndureChoiceHandler
+from .blight import FixedBlightChoiceHandler
+from .discover import DiscoverScanHandler, QUALIFIED_SCAN_HANDLERS
 from .discover_cast import DiscoverCastChoiceHandler
 from .variable_library_selection import VariableLibrarySelectionHandler
 from .reveal_until_library_selection import RevealUntilLibrarySelectionHandler
@@ -76,12 +80,35 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
             DiscardResultDrawHandler(),
             GraveyardReturnChoiceHandler(),
             *CREATED_TOKEN_COUNTER_HANDLERS,
+            *CREATED_TOKEN_ATTACHMENT_HANDLERS,
             *INCUBATE_HANDLERS,
             SequentialInvestigateHandler(),
+            SourceEndureChoiceHandler(),
+            FixedBlightChoiceHandler(),
             DiscoverScanHandler(),
             DiscoverScanHandler('discover_step','choice.library.discover-step.v1'),
             DiscoverCastChoiceHandler(),
             DiscoverCastChoiceHandler('discover_finish','choice.library.discover-finish.v1'),
+            DiscoverScanHandler(
+                NONLAND_SCAN_OPERATION, 'choice.library.exile-until-nonland.v1',
+                rule_references=('400.7j', '608.2c', '701.13a'),
+                capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
+                replay_fixture='first-nonland-exile-and-optional-cast',
+            ),
+            DiscoverScanHandler(
+                NONLAND_SCAN_STEP_OPERATION, 'choice.library.exile-until-nonland-step.v1',
+                rule_references=('400.7j', '608.2c', '701.13a'),
+                capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
+                replay_fixture='first-nonland-exile-and-optional-cast',
+            ),
+            DiscoverCastChoiceHandler(
+                NONLAND_SCAN_CAST_OPERATION, 'choice.library.exile-until-nonland-cast.v1',
+                rule_references=('400.7j', '608.2d', '608.2g'),
+                capability_dependencies=(NONLAND_SCAN_CAPABILITY,),
+                mutation_path=('DiscoverCastIntent',),
+                replay_fixture='first-nonland-exile-and-optional-cast',
+            ),
+            *QUALIFIED_SCAN_HANDLERS,
             VariableLibrarySelectionHandler(),
             RevealUntilLibrarySelectionHandler(),
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,

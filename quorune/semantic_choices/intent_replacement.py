@@ -208,6 +208,7 @@ def counter_intent_identity(intent: PlaceCountersIntent) -> dict[str, Any]:
         "amount": intent.amount,
         _REASON_FIELD: intent.reason,
         "source_ref": intent.source_ref,
+        **({"effect_generated": False} if not intent.effect_generated else {}),
     }
 
 
@@ -215,7 +216,8 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
     if not isinstance(value, Mapping):
         raise SemanticChoiceError("Counter intent identity must be an object")
     actual = set(value)
-    if actual != _COUNTER_INTENT_FIELDS:
+    cost = actual == _COUNTER_INTENT_FIELDS | {"effect_generated"} and value["effect_generated"] is False
+    if actual != _COUNTER_INTENT_FIELDS and not cost:
         missing = sorted(_COUNTER_INTENT_FIELDS - actual)
         unknown = sorted(actual - _COUNTER_INTENT_FIELDS)
         details = [
@@ -252,6 +254,7 @@ def validate_counter_intent_identity(value: Mapping[str, Any]) -> dict[str, Any]
         "amount": amount,
         _REASON_FIELD: reason,
         "source_ref": source,
+        **({"effect_generated": False} if cost else {}),
     }
 
 

@@ -1,0 +1,173 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [
+        "Madness"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}",
+      "name": "Asylum Visitor",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "oracle_text": "At the beginning of each player's upkeep, if that player has no cards in hand, you draw a card and you lose 1 life.\nMadness {1}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2025-01-24",
+      "toughness": "1",
+      "type_line": "Creature — Vampire Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Ebony Owl Netsuke",
+      "oracle_id": "dcacb717-4ca4-47c0-9b23-26e4eb4ffdc8",
+      "oracle_text": "At the beginning of each opponent's upkeep, if that player has seven or more cards in hand, this artifact deals 4 damage to that player.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2005-06-03",
+      "toughness": null,
+      "type_line": "Artifact"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Asylum Visitor's triggered ability checks the active player's hand as the upkeep begins and as the trigger resolves. If that player has a card in hand as it resolves, you won't draw a card or lose 1 life. Notably, if you control multiple Asylum Visitors during your upkeep, whichever one's first ability resolves first will stop the other's first ability from having any effect unless you have a way to get the card you drew out of your hand before it resolves.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "On an opponent's turn, triggered abilities you control will resolve before any triggered abilities of permanents that opponent controls if they trigger at the same time. This means that if you and your opponent each control an Asylum Visitor during your opponent's upkeep, and they have no cards in hand, you'll always draw a card before your opponent has a card in their hand.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The upkeep step is before the draw step, after the untap step. Asylum Visitor's first ability will trigger and resolve before the active player draws a card in their draw step if that player has no cards in hand.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2016-04-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A card with madness that's discarded counts as having been discarded even though it's put into exile rather than a graveyard. If it was discarded to pay a cost, that cost is still paid. Abilities that trigger when a card is discarded will still trigger.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "A spell cast for its madness cost is put onto the stack like any other spell. It can be countered, copied, and so on. As it resolves, it's put onto the battlefield if it's a permanent card or into its owner's graveyard if it's an instant or sorcery card.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Cards are discarded in a Magic game only from a player's hand. Effects that put cards into a player's graveyard from anywhere else do not cause those cards to be discarded.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Casting a spell with madness ignores the timing rules based on the card's card type. For example, you can cast a sorcery with madness if you discard it during an opponent's turn.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose not to cast a card with madness when the madness triggered ability resolves, it's put into your graveyard. Madness doesn't give you another chance to cast it later.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you discard a card with madness to pay the cost of a spell or activated ability, that card's madness triggered ability (and the spell that card becomes, if you choose to cast it) will resolve before the spell or ability the discard paid for.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you discard a card with madness while a spell or ability is resolving, it moves immediately to exile. Continue resolving that spell or ability, noting that the card you discarded is not in your graveyard at this time. Its madness triggered ability will be placed onto the stack once that spell or ability has completely resolved.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Madness works independently of why you're discarding the card. You could discard it to pay a cost, because a spell or ability tells you to, or because you have too many cards in your hand during your cleanup step. You can't discard a card with madness just because you want to, though.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine the total cost of a spell, start with the mana cost or alternative cost (such as a madness cost) you're paying, add any cost increases, then apply any cost reductions. The mana value of the spell is determined by only its mana cost, no matter what the total cost to cast that spell was.",
+      "oracle_id": "870deab4-8570-40e9-aeda-ac3726cebb84",
+      "published_at": "2022-12-08",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned upkeep participant hand-count originals"
+}

@@ -220,7 +220,7 @@ def _ability_hint(
             {
                 **choice.compact(),
                 "legal_refs": list(
-                    activation_choice_candidates(host, seat, card, choice)
+                    activation_choice_candidates(host, seat, card, choice, ability=ability)
                 ),
             }
             for choice in ability.choices

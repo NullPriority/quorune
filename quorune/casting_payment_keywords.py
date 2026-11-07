@@ -13,6 +13,8 @@ from .object_predicate import ObjectQueryError, ObjectQuerySpec
 AFFINITY_MECHANIC_ID = "affinity"
 DELVE_MECHANIC_ID = "delve"
 IMPROVISE_MECHANIC_ID = "improvise"
+ASSIST_MECHANIC_ID = "assist"
+ASSIST_CAPABILITY = "casting.payment.assist"
 
 
 class CastingPaymentKeywordError(ValueError):
@@ -244,6 +246,26 @@ class DelveSpec:
 
 
 @dataclass(frozen=True, slots=True)
+class AssistSpec:
+    schema_version: int = 1
+
+    def __post_init__(self) -> None:
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise CastingPaymentKeywordError("Unsupported Assist schema version")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"schema_version": self.schema_version, "kind": ASSIST_MECHANIC_ID}
+
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Any]) -> "AssistSpec":
+        if not isinstance(value, Mapping) or set(value) != {"schema_version", "kind"}:
+            raise CastingPaymentKeywordError("Assist descriptors have a closed schema")
+        if value["kind"] != ASSIST_MECHANIC_ID:
+            raise CastingPaymentKeywordError("Assist kind changed")
+        return cls(schema_version=value["schema_version"])
+
+
+@dataclass(frozen=True, slots=True)
 class DelveCandidate:
     ref: str
     object_id: str
@@ -362,7 +384,10 @@ class DelvePaymentPlan:
 
 __all__ = [
     "AFFINITY_MECHANIC_ID",
+    "ASSIST_CAPABILITY",
+    "ASSIST_MECHANIC_ID",
     "AffinitySpec",
+    "AssistSpec",
     "CastingPaymentKeywordError",
     "DELVE_MECHANIC_ID",
     "DelveCandidate",

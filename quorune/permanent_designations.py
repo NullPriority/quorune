@@ -3,7 +3,7 @@ from __future__ import annotations
 """Typed ownership for public noncopiable permanent designations.
 
 CR 701.37b's monstrous value, CR 702.112b's renowned marker, and CR 716.2b's
-Class level are stored on the current logical object, survive control changes
+Class level and CR 701.60's suspected designation are stored on the current logical object, survive control changes
 and phasing, and are cleared only by the canonical zone-change owner.
 """
 
@@ -170,6 +170,36 @@ def permanent_numeric_designations(card: Any) -> dict[str, int]:
     """Expose typed public numeric designations to shared applicability."""
 
     return {"class_level": current_class_level(card)}
+
+
+def apply_suspect_designation(host: Any, request):
+    """Apply CR 701.60 to the referenced permanent or the fixed creature set."""
+    from .continuous_effect_state import matching_battlefield_objects
+    from .errors import GameRuleError
+    from .object_predicate import ObjectQuerySpec
+
+    if request.clear_creatures:
+        cards = matching_battlefield_objects(host, ObjectQuerySpec(zones=("battlefield",), types_all=("creature",)))
+    elif request.card_ref is None:
+        return ()
+    else:
+        try:
+            cards = (host._resolve_object(request.actor, request.card_ref, zones={"battlefield"}),)
+        except GameRuleError:
+            return ()
+    suspected = not request.clear_creatures
+    changed = []
+    for card in cards:
+        if (card.suspected_at is not None) == suspected:
+            continue
+        card.suspected_at = host._next_zone_timestamp() if suspected else None
+        changed.append(card.ref)
+        host._log(
+            request.actor, "permanent.suspect_designation",
+            f"{card.ref} became suspected." if suspected else f"{card.ref} is no longer suspected.",
+            {"object": card.ref, "suspected": suspected}, importance=1, changed_objects=[card.object_id],
+        )
+    return tuple(changed)
 
 
 def advance_class_level(

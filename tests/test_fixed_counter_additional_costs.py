@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from common import ROOT, keep_all, make_session
+import test_bound_effect_programs as bound_witnesses
 from scripts.build_test_database import build_fixture_database
 from quorune.carddb import CardDatabase
 from quorune.rules.casting_additional_costs import (
@@ -19,7 +20,7 @@ from quorune.compiler.spell_additional_cost_templates import (
     FixedCounterAdditionalCostTemplate,
     fixed_counter_additional_cost_template,
 )
-from quorune.deck import DeckLoader
+from quorune.deck import DeckDefinition, DeckEntry, DeckLoader
 from quorune.errors import GameRuleError
 from quorune.model import CardInstance
 from quorune.oracle_ir import (
@@ -34,8 +35,9 @@ from quorune.record import (
     replay_record,
 )
 from quorune.replacement.replay import ReplacementContinuation
+from quorune.replacement.model import COUNTER_REPLACEMENT_GENERATED_FIELD
 from quorune.replacement_effects import ReplacementEffectError
-from quorune.rules.capabilities import CapabilityRegistry
+from quorune.rules.capabilities import CapabilityRegistry, load_default_capability_registry
 from quorune.session import CommanderSession
 
 
@@ -256,6 +258,119 @@ class FixedCounterAdditionalCostCompilerTests(unittest.TestCase):
             self.assertIsNotNone(first)
             assert first is not None
             self.assertEqual(amount, first.amount)
+
+
+class CounterCostReplacementChainTests(unittest.TestCase):
+    register_fixture_cards_on_add = True
+    session = bound_witnesses.BoundEffectProgramRuntimeTests.session
+    add = bound_witnesses.BoundEffectProgramRuntimeTests.add
+    ready = bound_witnesses.BoundEffectProgramRuntimeTests.ready
+    checkpoint = bound_witnesses.BoundEffectProgramRuntimeTests.checkpoint
+    resolve = bound_witnesses.BoundEffectProgramRuntimeTests.resolve
+    replay = bound_witnesses.BoundEffectProgramRuntimeTests.replay
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        database = Path(cls.temporary.name) / "counter-replacement-chain.sqlite3"
+        build_fixture_database([
+            ROOT / "tests/fixtures/bound-effect-program-cards.json",
+            ROOT / "tests/fixtures/counter-prohibition-cards.json",
+            ROOT / "tests/fixtures/counter-replacement-cards.json",
+        ], database)
+        cls.db = CardDatabase(database)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Counter replacement chain", [
+            DeckEntry("Generic Bound Commander", 1, "commander"),
+            DeckEntry("Generic Bound Plains", 30),
+        ], ["Generic Bound Commander"])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.db.close()
+        cls.temporary.cleanup()
+
+    def assert_normal_admission(self, session, card):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        program = compile_best_available_card_program(
+            self.db, self.db.by_oracle_id(card.oracle_id), semantic_registry=session.engine.semantics,
+            capability_registry=self.registry, capability_profile="commander_review",
+        )
+        binding = bind_card_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(binding["compatible_ready"], binding)
+        reviewed = {"Doubling Season", "Doc Samson, Super Psychiatrist"}
+        expected = "mixed" if card.printed_name in reviewed else "capability_closed"
+        self.assertEqual(expected, binding["trust_basis"], card.printed_name)
+
+    def assert_unpaid(self, session, spell, payer, target):
+        self.assertEqual("hand", session.state.cards[spell.object_id].zone)
+        self.assertEqual({}, session.state.cards[payer.object_id].counters)
+        self.assertEqual("battlefield", session.state.cards[target.object_id].zone)
+        self.assertEqual(3, sum(session.state.players["A"].mana_pool.values()))
+        self.assertFalse(session.state.stack)
+
+    def replacement_options(self, session):
+        self.assertEqual("replacement.order", session.state.pending_decision.kind)
+        self.assertEqual(["pilot:A"], list(session.pending_principals()))
+        return session.packet("pilot:A", full=True)["decision"]["ctx"]["options"]
+
+    def test_actual_lethal_sting_reconsiders_doubling_after_loading_zone_and_replays(self):
+        session = self.session(6141604)
+        session.state.config.semantic_policy = "trusted_only"
+        spell = self.add(session.engine, "Lethal Sting", zone="hand")
+        payer = self.add(session.engine, "Ancient Brontodon")
+        target = self.add(session.engine, "Generic Bound Body", seat="B")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand", ref="counter-private")
+        loading = self.add(session.engine, "Loading Zone", ref="counter-loading")
+        doc = self.add(session.engine, "Doc Samson, Super Psychiatrist", ref="counter-doc")
+        season = self.add(session.engine, "Doubling Season", ref="counter-season")
+        for card in (spell, payer, loading, doc, season):
+            self.assert_normal_admission(session, card)
+        offered = self.ready(session, spell, {"B": 1, "C": 2})
+        price = next(option for option in offered["cost_options"] if "counter_cost_card" in option["choice_schema"])
+        self.assertIn(payer.ref, price["choice_schema"]["counter_cost_card"]["legal_refs"])
+        self.checkpoint(session)
+        command = {"action_id": offered["id"], "cost_option": price["id"], "targets": [target.ref],
+                   "counter_cost_card": payer.ref, "pay": "auto"}
+        result = session.act("pilot:A", command)
+        self.assertTrue(result.ok, result.summary)
+        self.assert_unpaid(session, spell, payer, target)
+        first = self.replacement_options(session)
+        self.assertEqual(2, len(first))
+        self.assertFalse(any(season.ref in option["id"] for option in first))
+        loading_choice = next(option["id"] for option in first if loading.ref in option["id"])
+        result = session.act("pilot:A", {"action_id": "choose", "replacement": loading_choice})
+        self.assertTrue(result.ok, result.summary)
+        self.assert_unpaid(session, spell, payer, target)
+
+        second = self.replacement_options(session)
+        self.assertEqual(2, len(second))
+        pending = ReplacementContinuation.from_dict(session.state.pending_decision.continuation)
+        event = pending.batch.events[0]
+        self.assertIs(event.payload["effect_generated"], False)
+        self.assertIs(event.payload[COUNTER_REPLACEMENT_GENERATED_FIELD], True)
+        doc_choice = next(option["id"] for option in second if doc.ref in option["id"])
+        season_choice = next(option["id"] for option in second if season.ref in option["id"])
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act("pilot:B", {"action_id": "choose", "replacement": doc_choice}).ok)
+        self.assertFalse(session.act("pilot:A", {"action_id": "choose", "replacement": loading_choice}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        for seat in "BD":
+            packet = session.packet(f"pilot:{seat}", full=True)
+            self.assertIsNone(packet["decision"])
+            self.assertNotIn(private.ref, json.dumps(packet))
+        reloaded = self.replay(session, load=True)
+        for current, replacement, expected in ((reloaded, doc_choice, 6), (session, season_choice, 5)):
+            result = current.act("pilot:A", {"action_id": "choose", "replacement": replacement})
+            self.assertTrue(result.ok, result.summary)
+            self.assertEqual(expected, current.state.cards[payer.object_id].counters["-1/-1"])
+            self.assertEqual("stack", current.state.cards[spell.object_id].zone)
+            self.assertEqual(0, sum(current.state.players["A"].mana_pool.values()))
+            self.assertIsNone(self.resolve(current))
+            self.assertEqual("graveyard", current.state.cards[target.object_id].zone)
+            self.replay(current, load=True)
 
 
 class FixedCounterAdditionalCostRuntimeTests(unittest.TestCase):
@@ -482,6 +597,9 @@ class FixedCounterAdditionalCostRuntimeTests(unittest.TestCase):
         tampered["replacement_batch"]["events"][0]["payload"][
             "effect_generated"
         ] = True
+        with self.assertRaisesRegex(ReplacementEffectError, "Counter replacement provenance"):
+            ReplacementContinuation.from_dict(tampered)
+        tampered["replacement_batch"]["events"][0]["payload"].pop(COUNTER_REPLACEMENT_GENERATED_FIELD)
         with self.assertRaisesRegex(ReplacementEffectError, "continuation event"):
             ReplacementContinuation.from_dict(tampered)
 

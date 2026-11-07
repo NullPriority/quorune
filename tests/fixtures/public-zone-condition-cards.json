@@ -1119,6 +1119,100 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "64ca54ee-1502-4fae-b919-7e4457e641c0",
+      "name": "Swimmer in Nightmares",
+      "mana_cost": "{2}{U}",
+      "type_line": "Creature — Nightmare Merfolk",
+      "oracle_text": "This creature gets +3/+0 as long as there are ten or more cards in a single graveyard.\nThis creature can't be blocked as long as you control an Ashiok planeswalker.",
+      "power": "1",
+      "toughness": "4",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-01-24",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 3.0
+    },
+    {
+      "oracle_id": "c68964df-51ae-43b0-abea-74735016c13f",
+      "name": "Visions of Beyond",
+      "mana_cost": "{U}",
+      "type_line": "Instant",
+      "oracle_text": "Draw a card. If a graveyard has twenty or more cards in it, draw three cards instead.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2018-12-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 1.0
     }
   ],
   "rulings": [
@@ -1241,6 +1335,24 @@
       "published_at": "2009-10-01",
       "source": "wotc",
       "comment": "If there are fewer than five cards in the targeted player’s library, that player puts all the cards from their library into their graveyard."
+    },
+    {
+      "oracle_id": "64ca54ee-1502-4fae-b919-7e4457e641c0",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The first ability of Swimmer in Nightmares gives it just +3/+0, no matter how many graveyards beyond the first have ten cards."
+    },
+    {
+      "oracle_id": "64ca54ee-1502-4fae-b919-7e4457e641c0",
+      "published_at": "2020-01-24",
+      "source": "wotc",
+      "comment": "The ability that modifies the power of Swimmer in Nightmares applies only while it's on the battlefield."
+    },
+    {
+      "oracle_id": "c68964df-51ae-43b0-abea-74735016c13f",
+      "published_at": "2018-12-07",
+      "source": "wotc",
+      "comment": "You determine whether you'll draw one or three cards as Visions of Beyond begins to resolve. This means that if you have nineteen cards in your graveyard and use a dredge ability to replace the one card draw, you won't draw two more cards after that even though your graveyard now has twenty cards in it."
     }
   ]
 }

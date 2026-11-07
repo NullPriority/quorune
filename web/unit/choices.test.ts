@@ -16,6 +16,28 @@ function form(fields: ChoiceForm["fields"]): ChoiceForm {
   return { v: 1, fields, submit_label: "Submit" };
 }
 
+test("Announced damage is editable and only submitted for its active target form", () => {
+  const choices = form([{ name: "targets", control: "targets", schema: {
+    groups: [{ id: "target", min: 0, max: 3, legal_refs: ["B", "D"] }],
+    damage_allocation: { schema_version: 1, total: 3 },
+  } }]);
+  const targets = { target: ["B", "D"] };
+  assert.deepEqual(validateChoices(choices, { targets }), []);
+  assert.deepEqual(executableChoices(choices, { targets }), {
+    targets, damage_allocation: { B: 2, D: 1 },
+  });
+  const edited = { targets, damage_allocation: { B: 1, D: 2 } };
+  assert.deepEqual(validateChoices(choices, edited), []);
+  assert.deepEqual(executableChoices(choices, edited), edited);
+  for (const damage_allocation of [{ B: 1, D: 1 }, { B: 0, D: 3 }, { B: 3 }, { B: 1, D: 2, C: 1 }]) {
+    assert.match(validateChoices(choices, { targets, damage_allocation }).join(), /exactly 3 damage/);
+  }
+  assert.deepEqual(validateChoices(choices, { targets: { target: [] } }), []);
+  assert.deepEqual(executableChoices(choices, { targets: { target: [] } }).damage_allocation, {});
+  assert.equal(choicesWithDefaults(choices, edited).damage_allocation, undefined);
+  assert.deepEqual(executableChoices(form([]), edited), {});
+});
+
 test("declining a resolving cast ignores its targets and additional payments", () => {
   const cast: ChoiceForm = {
     v: 1, submit_label: "Choose",

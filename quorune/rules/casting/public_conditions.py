@@ -16,6 +16,11 @@ class _HostView:
     def __getattr__(self,name):return getattr(self.original,name)
 
 
+@dataclass(frozen=True, slots=True)
+class _CastConditionStateView(_StateView):
+    turn_history: object
+
+
 def prospective_cost_condition_view(host,seat,source):
     """Read the candidate as a spell after601.2a, without mutating the game."""
     from ...self_cast_reductions import SelfCastReductionError
@@ -32,7 +37,13 @@ def prospective_cost_condition_view(host,seat,source):
         zones={zone:[oid for oid in ids if oid!=source.object_id] for zone,ids in player.zones.items()}
         if player_seat==actual.owner and 'stack' in zones:zones['stack'].append(source.object_id)
         players[player_seat]=replace(player,zones=zones)
-    state=_StateView(host.state,ChainMap(MappingProxyType({source.object_id:spell}),host.state.cards),MappingProxyType(players))
+    from ...turn_history import prospective_cast_history
+    state = _CastConditionStateView(
+        host.state,
+        ChainMap(MappingProxyType({source.object_id: spell}), host.state.cards),
+        MappingProxyType(players),
+        prospective_cast_history(host.state, actual),
+    )
     return _HostView(host,state),spell
 
 

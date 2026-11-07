@@ -4,6 +4,7 @@ from .counter_resolution_effect_templates import counter_resolution_effect_templ
 from .public_quantity_mana_effects import public_quantity_mana_effect_template
 from .fixed_resolution_mana import fixed_resolution_mana_effect_template
 from .extra_turn_templates import fixed_extra_turn_effect_template
+from .scheduled_turn_skip_templates import scheduled_turn_skip_effect_template
 from .whole_hand_discard_templates import whole_hand_discard_effect_template, whole_hand_discard_draw_sequence_template, whole_hand_discard_public_draw_sequence
 from .discard_result_templates import discard_result_draw_template
 from .hand_entry_templates import fixed_draw_then_hand_entry_template
@@ -11,7 +12,12 @@ from .defender_permission_templates import temporary_defender_permission_templat
 from .as_unblocked_templates import temporary_as_unblocked_template
 from .toughness_assignment_templates import temporary_toughness_assignment_template
 from .connive_templates import fixed_connive_effect_template
+from .endure_templates import fixed_endure_effect_template
+from .earthbend_templates import earthbend_effect_template
+from .blight_templates import fixed_blight_effect_template
 from .goad_templates import fixed_goad_effect_template
+from .detain_templates import fixed_detain_effect_template, fixed_direct_action_prohibition_template
+from .suspect_templates import suspect_effect_template
 from .block_capacity_templates import temporary_block_capacity_template
 
 from typing import Any, Mapping, Sequence
@@ -19,12 +25,16 @@ from typing import Any, Mapping, Sequence
 from ..attachment_references import AttachmentReferenceKind
 from .affected_player_discard_templates import (
     fixed_affected_player_discard_effect_template,
+    fixed_affected_player_hand_exile_effect_template,
 )
 from . import affected_player_discard_templates as _discard
 from .affected_player_sacrifice_templates import (
     fixed_affected_player_sacrifice_effect_template,
 )
-from .fixed_attachment_templates import fixed_source_attachment_effect_template
+from .fixed_attachment_templates import (
+    created_token_attachment_effect_template,
+    fixed_source_attachment_effect_template,
+)
 from .fixed_control_templates import fixed_control_effect_template, fixed_control_set_effect_template
 from .linked_exile_return_templates import linked_exile_return_effect_template
 from .conditional_exile_templates import conditional_source_exile_template
@@ -96,22 +106,31 @@ def _attachment_or_owner_zone_move(
     card_name: str,
     source_is_permanent: bool | None,
     source_attachment_relation: AttachmentReferenceKind | None,
-):
+) -> CompiledEffectTemplate | None:
     from .attached_destruction import attached_destruction_template
     from .exile_templates import attached_exile_effect_template
-    return attached_exile_effect_template(text,source_attachment_relation=source_attachment_relation) or attached_destruction_template(text,source_attachment_relation=source_attachment_relation) or fixed_source_attachment_effect_template(
-        text,
-        source_attachment_relation=source_attachment_relation,
-    ) or fixed_owner_zone_move_effect_template(
-        text,
-        card_name=card_name,
-        source_is_permanent=source_is_permanent,
-        source_attachment_relation=source_attachment_relation,
-    ) or fixed_creature_power_damage_effect_template(
-        text,
-        card_name=card_name,
-        source_attachment_relation=source_attachment_relation,
+    created_attachment = created_token_attachment_effect_template(
+        text, source_attachment_relation=source_attachment_relation,
     )
+    if created_attachment is not None:
+        return created_attachment
+    template = (
+        attached_exile_effect_template(text, source_attachment_relation=source_attachment_relation)
+        or attached_destruction_template(text, source_attachment_relation=source_attachment_relation)
+        or fixed_source_attachment_effect_template(text, source_attachment_relation=source_attachment_relation)
+        or fixed_owner_zone_move_effect_template(
+            text,
+            card_name=card_name,
+            source_is_permanent=source_is_permanent,
+            source_attachment_relation=source_attachment_relation,
+        )
+        or fixed_creature_power_damage_effect_template(
+            text,
+            card_name=card_name,
+            source_attachment_relation=source_attachment_relation,
+        )
+    )
+    return template.compiled() if template is not None else None
 
 
 _DIRECT_RESOLUTION_EFFECT_COMPILERS = (
@@ -130,12 +149,31 @@ def _source_context_resolution_template(
     text: str, *, card_name: str, source_is_permanent: bool | None,
     source_card_types: Sequence[str],
 ) -> CompiledEffectTemplate | None:
+    detain = fixed_detain_effect_template(text)
+    if detain is not None:
+        return detain
+    action_prohibition = fixed_direct_action_prohibition_template(text)
+    if action_prohibition is not None:
+        return action_prohibition
     goad = fixed_goad_effect_template(text)
     if goad is not None:return goad
     connive = fixed_connive_effect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
     if connive is not None:return connive
+    endure = fixed_endure_effect_template(text, source_name=card_name, source_is_permanent=source_is_permanent)
+    if endure is not None:
+        return endure
+    if "earthbend" in text.casefold():
+        earthbend = earthbend_effect_template(text, source_name=card_name)
+        if earthbend is not None:
+            return earthbend
+    blight = fixed_blight_effect_template(text)
+    if blight is not None:
+        return blight
     extra_turn = fixed_extra_turn_effect_template(text)
     if extra_turn is not None:return extra_turn
+    scheduled_skip = scheduled_turn_skip_effect_template(text)
+    if scheduled_skip is not None:
+        return scheduled_skip
     capacity = temporary_block_capacity_template(text, source_name=card_name,
         source_is_permanent=source_is_permanent, source_card_types=source_card_types)
     if capacity is not None:return capacity
@@ -185,6 +223,25 @@ def _source_independent_resolution_template(text: str) -> CompiledEffectTemplate
     return None
 
 
+def _affected_player_object_effect_template(text: str) -> CompiledEffectTemplate | None:
+    if 'life unless' in text.casefold():
+        from .apnap_object_payment_templates import apnap_object_payment_template
+
+        payment = apnap_object_payment_template(text)
+        if payment is not None:
+            return payment
+    sacrifice = fixed_affected_player_sacrifice_effect_template(text)
+    if sacrifice is not None:
+        return sacrifice.compiled()
+    controller_discard = _discard.standalone_controller_discard_effect_template(text)
+    if controller_discard is not None:
+        return controller_discard
+    discard = fixed_affected_player_discard_effect_template(text)
+    if discard is not None:
+        return discard.compiled()
+    return fixed_affected_player_hand_exile_effect_template(text)
+
+
 def typed_resolution_effect_template(
     text: str,
     *,
@@ -194,9 +251,16 @@ def typed_resolution_effect_template(
     source_attachment_relation: AttachmentReferenceKind | None = None,
 ) -> CompiledEffectTemplate | None:
     """Lower closed typed resolution-effect families."""
+    suspect = suspect_effect_template(text, source_is_permanent=source_is_permanent, source_attachment_relation=source_attachment_relation)
+    if suspect is not None:
+        return suspect
     from .graveyard_return_choice_templates import graveyard_return_choice_template
     returned = graveyard_return_choice_template(text)
     if returned is not None:return returned
+    from .combat_removal_templates import combat_removal_effect_template
+    combat_removal = combat_removal_effect_template(text)
+    if combat_removal is not None:
+        return combat_removal
     independent = _source_independent_resolution_template(text)
     if independent is not None:
         return independent
@@ -217,7 +281,7 @@ def typed_resolution_effect_template(
         text, card_name, source_is_permanent, source_attachment_relation
     )
     if attachment is not None:
-        return attachment.compiled()
+        return attachment
     fixed_damage = fixed_damage_effect_template(text, card_name=card_name)
     if fixed_damage is not None:
         return fixed_damage.compiled()
@@ -245,18 +309,8 @@ def typed_resolution_effect_template(
     )
     if fixed_player_counter_placement is not None:
         return fixed_player_counter_placement.compiled()
-    affected_player_sacrifice = (
-        fixed_affected_player_sacrifice_effect_template(text)
-    )
-    if affected_player_sacrifice is not None:
-        return affected_player_sacrifice.compiled()
-    if (controller_discard := _discard.standalone_controller_discard_effect_template(text)) is not None:
-        return controller_discard
-    affected_player_discard = fixed_affected_player_discard_effect_template(
-        text
-    )
-    if affected_player_discard is not None:
-        return affected_player_discard.compiled()
+    if (affected_object := _affected_player_object_effect_template(text)) is not None:
+        return affected_object
     from .per_player_target_sets import per_player_target_set_template
     per_player=per_player_target_set_template(text)
     if per_player is not None:return per_player

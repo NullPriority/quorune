@@ -2,7 +2,7 @@ from __future__ import annotations
 
 """Resolution ownership for one immutable public tap-state set."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
 
 from .affected_permanents import (
@@ -11,6 +11,8 @@ from .affected_permanents import (
     select_affected_permanents,
 )
 from .object_query import ObjectQueryResult
+from .continuous_effect_model import ContinuousObjectIdentity
+from .source_untap_rule_model import PendingSourceUntapRestraint
 from .tap_state import dispatch_tap_state_occurrence, set_permanent_tapped
 from .trigger_processing import enqueue_trigger_batch
 
@@ -26,6 +28,7 @@ class SetPublicPermanentsTappedIntent:
     tapped: bool
     reason: str
     source_ref: str | None = None
+    untap_restraint: PendingSourceUntapRestraint | None = None
 
     def __post_init__(self) -> None:
         if (
@@ -39,7 +42,10 @@ class SetPublicPermanentsTappedIntent:
                 self.source_ref is not None
                 and (type(self.source_ref) is not str or not self.source_ref)
             )
-            or (self.spec.exclude_source and self.source_ref is None)
+            or (self.spec.exclude_source and self.source_ref is None and self.untap_restraint is None)
+            or self.untap_restraint is not None and (
+                not self.tapped or not isinstance(self.untap_restraint, PendingSourceUntapRestraint)
+            )
         ):
             raise ValueError("Public-set tap-state intent is malformed")
 
@@ -84,6 +90,7 @@ def resolve_public_tap_state_set(
     tapped: bool,
     reason: str,
     source_ref: str | None = None,
+    untap_restraint: PendingSourceUntapRestraint | None = None,
 ) -> tuple[str, ...]:
     if type(actor) is not str or not actor or type(reason) is not str or not reason:
         raise PublicTapStateSetError(
@@ -91,9 +98,19 @@ def resolve_public_tap_state_set(
         )
     if type(tapped) is not bool:
         raise PublicTapStateSetError("Public tap-state result must be boolean")
+    if untap_restraint is not None and (not tapped or not isinstance(untap_restraint, PendingSourceUntapRestraint)):
+        raise PublicTapStateSetError("Public untap restraint requires a typed tap instruction")
+    rows = host.affected_permanent_object_rows(actor)
+    if untap_restraint is not None and spec.exclude_source:
+        original = untap_restraint.source
+        if original is not None:
+            rows = tuple(row for row in rows if (row.object_id, row.logical_object_id) != (
+                original.object_id, original.logical_object_id,
+            ))
+        spec = replace(spec, exclude_source=False)
     try:
         selected = select_affected_permanents(
-            host.affected_permanent_object_rows(actor),
+            rows,
             spec,
             actor=actor,
             active_seats=host.affected_permanent_active_seats(),
@@ -146,6 +163,11 @@ def resolve_public_tap_state_set(
             )
     if pending:
         enqueue_trigger_batch(host, pending)
+    if untap_restraint is not None:
+        from .rules.untap_permissions import commit_source_untap_restraint
+        commit_source_untap_restraint(host, untap_restraint, tuple(
+            ContinuousObjectIdentity(value.object_id, value.logical_object_id) for value in snapshot
+        ))
     host._log(
         actor,
         "effect.permanent.tap_state_set",

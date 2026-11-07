@@ -1136,6 +1136,12 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertEqual("exact", chosen.status)
         self.assertIn({'field':'source_annotation.chosen_color','op':'in','value':'$context.colors'},
                       chosen.faces[0].nodes[0].event_condition['all'])
+        joined = self.compile("Whenever you play a land or cast a spell, draw a card.")
+        self.assertEqual("exact", joined.status)
+        self.assertEqual(
+            {"land.played", "spell.cast"},
+            {row["event"] for row in joined.faces[0].nodes[0].event_condition["event_subscriptions"]},
+        )
         variants = (
             "Whenever you cast a spell with mana value 3, draw a card.",
             "Whenever you cast a spell that targets only a creature, draw a card.",
@@ -1145,7 +1151,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             "Whenever you cast a spell of a color chosen by an opponent, draw a card.",
             "Whenever you cast a spell with mana value greater than the "
             "number of counters on this artifact, draw a card.",
-            "Whenever you play a land or cast a spell, draw a card.",
+            "Whenever you put a land onto the battlefield or cast a spell, draw a card.",
         )
         for text in variants:
             with self.subTest(text=text):
@@ -1365,7 +1371,7 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
             },
         )
         with patch(
-            "quorune.compiler.fixed_counter_trigger_nodes."
+            "quorune.compiler.public_trigger_conditions."
             "fixed_public_state_condition",
             return_value=None,
         ):
@@ -3553,7 +3559,8 @@ class FixedCounterEventTriggerCompilerTests(unittest.TestCase):
         self.assertEqual("$controller", optional["player"])
         token = optional["effects"][0]
         self.assertEqual("create_token", token["op"])
-        self.assertEqual("Squirrel", token["name"])
+        self.assertEqual("Squirrel Token", token["name"])
+        self.assertEqual(1, token["characteristics"]["literal_token_name_version"])
         self.assertEqual(1, token["quantity"])
         self.assertEqual("$controller", token["controller"])
         self.assertEqual(["G"], token["characteristics"]["colors"])

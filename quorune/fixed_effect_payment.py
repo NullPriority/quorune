@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""Closed resolution-time costs for the existing optional-payment owner."""
+"""Closed resolution-time costs for the existing payment owner."""
 
 from dataclasses import dataclass
 from typing import Any, Mapping
@@ -9,6 +9,7 @@ from .object_predicate import ObjectQuerySpec
 from .creature_subtypes import canonical_creature_subtype
 from .counter_names import normalized_counter_name
 from .replacement.immutable import FrozenMap, thaw_value
+from .rules.blight_model import BLIGHT_CAPABILITY, BLIGHT_PAYMENT_VERSION, blight_creature_predicate
 
 
 FIXED_EFFECT_PAYMENT_MECHANIC = "fixed-optional-mana-payment"
@@ -16,6 +17,8 @@ FIXED_EFFECT_PAYMENT_CAPABILITY = "effect.choice.optional_fixed_mana_payment"
 MANA_DISCARD_PAYMENT_CAPABILITY = 'effect.choice.optional_mana_discard_payment'
 ANOTHER_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.another_fixed_resolution'
 SOURCE_SACRIFICE_PAYMENT_CAPABILITY = 'cost.sacrifice.fixed_source_resolution'
+MANDATORY_DISCARD_PAYMENT_CAPABILITY = "cost.discard.mandatory_fixed_resolution"
+MANDATORY_DISCARD_PAYMENT_VERSION = 8
 _MANA_KEYS = frozenset({"GENERIC", "W", "U", "B", "R", "G", "C"})
 
 
@@ -46,7 +49,17 @@ class FixedEffectPaymentSpec:
     counter_name: str | None = None
     source_ref: str | None = None
 
+    @property
+    def mandatory(self) -> bool:
+        return type(self.schema_version) is int and self.schema_version == MANDATORY_DISCARD_PAYMENT_VERSION
+
     def __post_init__(self) -> None:
+        if self.kind == "blight":
+            self._validate_blight()
+            return
+        if self.mandatory:
+            self._validate_mandatory_discard()
+            return
         another=self.kind=='sacrifice' and type(self.schema_version) is int and self.schema_version==6
         version=7 if self.kind=='source_sacrifice' else 6 if another else 5 if self.kind=='mana_discard' else 4 if self.kind=='remove_source_counter' else 3 if self.kind in {'exile','tap'} else 2
         if type(self.schema_version) is not int or self.schema_version != version:
@@ -113,6 +126,30 @@ class FixedEffectPaymentSpec:
         elif self.predicate is not None:
             raise ValueError("Resource payments cannot carry object predicates")
 
+    def _validate_blight(self) -> None:
+        predicate = self.predicate
+        if (
+            type(self.schema_version) is not int or self.schema_version != BLIGHT_PAYMENT_VERSION
+            or type(self.amount) is not int or self.amount <= 0
+            or any(value is not None for value in (self.requirements, self.counter_name, self.source_ref))
+            or not isinstance(predicate, ObjectQuerySpec)
+            or type(predicate.controller) is not str or not predicate.controller
+            or predicate != blight_creature_predicate(predicate.controller)
+        ):
+            raise ValueError("A Blight payment requires one controlled creature and a fixed counter amount")
+
+    def _validate_mandatory_discard(self) -> None:
+        if (
+            self.kind != "discard" or type(self.amount) is not int or self.amount != 1
+            or any(value is not None for value in (self.requirements, self.counter_name, self.source_ref))
+            or not isinstance(self.predicate, ObjectQuerySpec)
+            or type(self.predicate.owner) is not str or not self.predicate.owner
+            or self.predicate != ObjectQuerySpec(
+                zones=("hand",), owner=self.predicate.owner, known_to_actor=True,
+            )
+        ):
+            raise ValueError("Mandatory discard payment requires one unqualified owned hand card")
+
     def to_dict(self) -> dict[str, Any]:
         return {"schema_version":self.schema_version, "kind":self.kind, "amount":self.amount,
                 "requirements":thaw_value(self.requirements) if self.requirements is not None else None,
@@ -121,12 +158,16 @@ class FixedEffectPaymentSpec:
                 **({'source_ref':self.source_ref} if self.kind=='source_sacrifice' else {})}
 
     @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "FixedEffectPaymentSpec":
+    def from_dict(
+        cls, value: Mapping[str, Any], *, allow_mandatory: bool = False,
+    ) -> "FixedEffectPaymentSpec":
         fields={"schema_version", "kind", "amount", "requirements", "predicate"}
         if isinstance(value,Mapping) and value.get('kind')=='remove_source_counter':fields|={'counter_name','source_ref'}
         if isinstance(value,Mapping) and value.get('kind')=='source_sacrifice':fields|={'source_ref'}
         if not isinstance(value, Mapping) or set(value) != fields:
             raise ValueError("Fixed effect payment fields are malformed")
+        if value["schema_version"] == MANDATORY_DISCARD_PAYMENT_VERSION and not allow_mandatory:
+            raise ValueError("Mandatory discard is outside this payment's resolution scope")
         return cls(kind=value["kind"], amount=value["amount"], schema_version=value["schema_version"],
             counter_name=value.get('counter_name'),source_ref=value.get('source_ref'),
             requirements=FrozenMap(value["requirements"]) if isinstance(value["requirements"],Mapping) else value["requirements"],
@@ -143,15 +184,31 @@ class FixedEffectPaymentSpec:
                  'remove_source_counter':('cost.counter.source_fixed_resolution',)}
         costs['source_sacrifice']=(SOURCE_SACRIFICE_PAYMENT_CAPABILITY,'choice.affected_player.fixed_sacrifice','zone.change.destination_replacement')
         costs['mana_discard']=(MANA_DISCARD_PAYMENT_CAPABILITY,'choice.affected_player.fixed_discard','zone.change.destination_replacement')
+        costs["blight"] = (BLIGHT_CAPABILITY,)
         return (FIXED_EFFECT_PAYMENT_CAPABILITY, *costs[self.kind],
+            *((MANDATORY_DISCARD_PAYMENT_CAPABILITY,) if self.mandatory else ()),
             *((ANOTHER_SACRIFICE_PAYMENT_CAPABILITY,) if self.kind=='sacrifice' and self.schema_version==6 else ()))
 
 
-def compound_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
-    if (not isinstance(value,Mapping) or value.get('op')!='offer_optional_mana_payment'
-            or not isinstance(value.get('payment'),Mapping) or value['payment'].get('kind')!='mana_discard'):
+def fixed_payment_payload_dependencies(value: Mapping[str, Any]) -> tuple[str, ...]:
+    if not isinstance(value, Mapping) or value.get("op") != "offer_optional_mana_payment":
         return ()
-    payment=FixedEffectPaymentSpec.from_dict(value['payment'])
-    if payment.predicate.owner != value.get('player'):
-        raise ValueError('Combined payment requires its own payer hand')
+    descriptor = value.get("payment")
+    if not isinstance(descriptor, Mapping):
+        return ()
+    if descriptor.get("kind") == "blight":
+        payment = FixedEffectPaymentSpec.from_dict(descriptor)
+        if (type(value.get("schema_version")) is not int or value["schema_version"] not in {2, 4}
+                or value.get("player") != "$controller" or payment.predicate.controller != "$controller"):
+            raise ValueError("Blight payment requires its closed controller resolution scope")
+        return payment.capabilities
+    mandatory = descriptor.get("schema_version") == MANDATORY_DISCARD_PAYMENT_VERSION
+    if not mandatory and descriptor.get("kind") != "mana_discard":
+        return ()
+    if mandatory and (type(value.get("schema_version")) is not int or value["schema_version"] != 2):
+        raise ValueError("Mandatory discard requires a fixed resolution payment")
+    payment = FixedEffectPaymentSpec.from_dict(descriptor, allow_mandatory=mandatory)
+    if payment.predicate.owner != value.get("player"):
+        label = "Mandatory discard" if mandatory else "Combined payment"
+        raise ValueError(f"{label} requires its own payer hand")
     return payment.capabilities

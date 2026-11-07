@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Mapping
 
 from ..replacement.immutable import FrozenMap, ImmutableValueError, freeze_value
+from ..combat_removal import COMBAT_REMOVAL_OPERATION
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from ..selection.target_query import target_identity_matches_snapshot
 
@@ -18,6 +19,7 @@ _MUTATING_TARGET_FIELDS = {
         'destroy', 'bounce', 'exile_permanent', 'tap', 'untap', 'place_counters',
         'remove_counters', 'remove_all_counters', 'gain_control', 'regenerate',
         'sacrifice', 'apply_source_characteristics_until_end_of_turn',
+        COMBAT_REMOVAL_OPERATION,
     )},
     'damage': 'target',
 }

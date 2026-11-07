@@ -20,6 +20,7 @@ ATTACK_TRIGGER_KINDS = frozenset(
         CombatKeywordTriggerKind.MENTOR,
         CombatKeywordTriggerKind.DETHRONE,
         CombatKeywordTriggerKind.TRAINING,
+        CombatKeywordTriggerKind.DECAYED,
     }
 )
 
@@ -28,6 +29,7 @@ UNTARGETED_ATTACK_TRIGGER_KINDS = frozenset(
         CombatKeywordTriggerKind.EXALTED,
         CombatKeywordTriggerKind.BATTLE_CRY,
         CombatKeywordTriggerKind.MELEE,
+        CombatKeywordTriggerKind.DECAYED,
     }
 )
 
@@ -713,7 +715,7 @@ class AttackKeywordTriggerOccurrence:
         _integer(self.instance_index, field="Attack trigger instance index")
         if self.kind is not CombatKeywordTriggerKind.MELEE and self.amount != 1:
             raise AttackTransitionError(
-                "Exalted and Battle Cry occurrences have amount 1"
+                f"Each {self.kind.value} occurrence has amount 1"
             )
         if (
             self.kind is CombatKeywordTriggerKind.EXALTED
@@ -723,11 +725,14 @@ class AttackKeywordTriggerOccurrence:
                 "Exalted modifies the one creature that attacked alone"
             )
         if (
-            self.kind is CombatKeywordTriggerKind.MELEE
+            self.kind in {
+                CombatKeywordTriggerKind.MELEE,
+                CombatKeywordTriggerKind.DECAYED,
+            }
             and affected != (self.source,)
         ):
             raise AttackTransitionError(
-                "Melee modifies its declared attacking source"
+                f"{self.kind.value} affects its declared attacking source"
             )
         if (
             self.kind is CombatKeywordTriggerKind.BATTLE_CRY
@@ -752,11 +757,16 @@ class AttackKeywordTriggerOccurrence:
 
     @property
     def power_delta(self) -> int:
-        return self.amount
+        return 0 if self.kind is CombatKeywordTriggerKind.DECAYED else self.amount
 
     @property
     def toughness_delta(self) -> int:
-        return 0 if self.kind is CombatKeywordTriggerKind.BATTLE_CRY else self.amount
+        if self.kind in {
+            CombatKeywordTriggerKind.BATTLE_CRY,
+            CombatKeywordTriggerKind.DECAYED,
+        }:
+            return 0
+        return self.amount
 
     @property
     def label(self) -> str:
@@ -764,6 +774,7 @@ class AttackKeywordTriggerOccurrence:
             CombatKeywordTriggerKind.EXALTED: "Exalted",
             CombatKeywordTriggerKind.BATTLE_CRY: "Battle Cry",
             CombatKeywordTriggerKind.MELEE: "Melee",
+            CombatKeywordTriggerKind.DECAYED: "Decayed",
         }
         return f"{self.source.reference} — {names[self.kind]}"
 
@@ -860,7 +871,7 @@ class AttackKeywordTriggerOccurrence:
 def derive_attack_keyword_trigger_occurrences(
     event: AttackTransitionEvent,
 ) -> tuple[AttackKeywordTriggerOccurrence, ...]:
-    """Derive Exalted, Battle Cry, and Melee from one sealed declaration."""
+    """Derive untargeted keyword triggers from one sealed declaration."""
 
     if not isinstance(event, AttackTransitionEvent):
         raise AttackTransitionError(
@@ -906,6 +917,7 @@ def derive_attack_keyword_trigger_occurrences(
         for kind in (
             CombatKeywordTriggerKind.BATTLE_CRY,
             CombatKeywordTriggerKind.MELEE,
+            CombatKeywordTriggerKind.DECAYED,
         ):
             for index, spec in enumerate(
                 value for value in source.trigger_specs if value.kind is kind

@@ -1,0 +1,636 @@
+{
+  "cards": [
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Fling",
+      "oracle_id": "24227761-b50e-4b9e-93a2-e82d053b3e3d",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nFling deals damage equal to the sacrificed creature's power to any target.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{G}",
+      "name": "Grizzly Bears",
+      "oracle_id": "14c8f55d-d177-4c25-a931-ebeb9e6062a0",
+      "oracle_text": "",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "2",
+      "type_line": "Creature — Bear"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Hydrosurge",
+      "oracle_id": "4c2059d5-9a2e-4b89-a617-9125eb0cd570",
+      "oracle_text": "Target creature gets -5/-0 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2014-07-18",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Island",
+      "oracle_id": "b2c6aa39-2d2a-459c-a555-fb48ba993373",
+      "oracle_text": "({T}: Add {U}.)",
+      "power": null,
+      "produced_mana": [
+        "U"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Island"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G}{G}",
+      "name": "Momentous Fall",
+      "oracle_id": "6a5ce1b0-ac78-4a74-9eb7-4064e1687bf1",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nYou draw cards equal to the sacrificed creature's power, then you gain life equal to its toughness.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-07-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Defender"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Wall of Omens",
+      "oracle_id": "5f601f48-d24b-4883-9fde-b3f620e7c9ea",
+      "oracle_text": "Defender\nWhen this creature enters, draw a card.",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "4",
+      "type_line": "Creature — Wall"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Giant Growth",
+      "oracle_id": "5748ebf1-24e3-499d-ab7c-c2cebd462a24",
+      "oracle_text": "Target creature gets +3/+3 until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}{U}",
+      "name": "Twincast",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "oracle_text": "Copy target instant or sorcery spell. You may choose new targets for the copy.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2009-07-17",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{B}{B}",
+      "name": "Carrion",
+      "oracle_id": "84ca8d74-95ec-4a9c-8793-7a195ad28be9",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nCreate X 0/1 black Insect creature tokens, where X is the sacrificed creature's power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "1996-10-08",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{B}{B}",
+      "name": "Ichor Explosion",
+      "oracle_id": "d33aa11b-011b-4d12-85a9-4f956153fb1d",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a creature.\nAll creatures get -X/-X until end of turn, where X is the sacrificed creature's power.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2011-05-13",
+      "toughness": null,
+      "type_line": "Sorcery"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "faces": [],
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}",
+      "name": "Hill Giant",
+      "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3",
+      "oracle_text": "",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2007-07-13",
+      "toughness": "3",
+      "type_line": "Creature — Giant"
+    }
+  ],
+  "rulings": [
+    {
+      "comment": "Players can only respond once this spell has been cast and all its costs have been paid. No one can try to interfere with the creature you sacrificed to prevent you from casting this spell.",
+      "oracle_id": "24227761-b50e-4b9e-93a2-e82d053b3e3d",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you can't cast it without sacrificing a creature, and you can't sacrifice additional creatures.",
+      "oracle_id": "24227761-b50e-4b9e-93a2-e82d053b3e3d",
+      "published_at": "2019-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "Use the sacrificed creature's power as it last existed on the battlefield to determine how much damage Fling deals.",
+      "oracle_id": "24227761-b50e-4b9e-93a2-e82d053b3e3d",
+      "published_at": "2024-04-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "The sacrificed creature’s last known existence on the battlefield is checked to determine its power and its toughness.",
+      "oracle_id": "6a5ce1b0-ac78-4a74-9eb7-4064e1687bf1",
+      "published_at": "2010-06-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you cannot cast it without sacrificing a creature, and you cannot sacrifice additional creatures.",
+      "oracle_id": "6a5ce1b0-ac78-4a74-9eb7-4064e1687bf1",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can only respond once this spell has been cast and all its costs have been paid. No one can try to destroy the creature you sacrificed to prevent you from casting this spell.",
+      "oracle_id": "6a5ce1b0-ac78-4a74-9eb7-4064e1687bf1",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Twincast can copy any instant or sorcery spell, not just one with targets.",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell has damage divided as it was cast, the division can't be changed, although the targets receiving that damage still can. The same is true of spells that distribute counters.",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy will have the same targets as the spell it's copying unless you choose new ones. You may change any number of the targets, including all of them or none of them. If, for one of the targets, you can't choose a new legal target, then it remains unchanged (even if the current target is illegal).",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell that's copied is modal (that is, it says \"Choose one —\" or the like), the copy will have the same mode. A different mode can't be chosen.",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the spell that's copied has an X whose value was determined as it was cast, the copy will have the same value of X.",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "The copy is created on the stack, so it's not \"cast.\" Abilities that trigger when a player casts a spell won't trigger. The copy will resolve before the original spell does.",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You can't choose to pay any alternative or additional costs for the copy. However, effects based on any alternative or additional costs that were paid for the original spell are copied as though those same costs were paid for the copy.",
+      "oracle_id": "8f878efc-850f-43d2-a6fe-5ea8d1dd5afb",
+      "published_at": "2021-03-19",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you cannot cast it without sacrificing a creature, and you cannot sacrifice additional creatures.",
+      "oracle_id": "84ca8d74-95ec-4a9c-8793-7a195ad28be9",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can only respond once this spell has been cast and all its costs have been paid. No one can try to destroy the creature you sacrificed to prevent you from casting this spell.",
+      "oracle_id": "84ca8d74-95ec-4a9c-8793-7a195ad28be9",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "X is the power of the sacrificed creature as it last existed on the battlefield.",
+      "oracle_id": "d33aa11b-011b-4d12-85a9-4f956153fb1d",
+      "published_at": "2011-06-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "You must sacrifice exactly one creature to cast this spell; you cannot cast it without sacrificing a creature, and you cannot sacrifice additional creatures.",
+      "oracle_id": "d33aa11b-011b-4d12-85a9-4f956153fb1d",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Players can only respond once this spell has been cast and all its costs have been paid. No one can try to destroy the creature you sacrificed to prevent you from casting this spell.",
+      "oracle_id": "d33aa11b-011b-4d12-85a9-4f956153fb1d",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned paid creature-stat originals and native controls"
+}

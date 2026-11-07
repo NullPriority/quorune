@@ -1,0 +1,362 @@
+{
+  "cards": [
+    {
+      "cmc": 0.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{0}",
+      "name": "Ornithopter",
+      "oracle_id": "a3a98bc9-caa0-49b7-951c-fe4e4f54e4ba",
+      "oracle_text": "Flying",
+      "power": "0",
+      "produced_mana": [],
+      "released_at": "2023-01-13",
+      "toughness": "2",
+      "type_line": "Artifact Creature — Thopter"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{U}",
+      "name": "Robobrain War Mind",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "oracle_text": "Robobrain War Mind's power is equal to the number of cards in your hand.\nWhen this creature enters, you get an amount of {E} (energy counters) equal to the number of artifact creatures you control.\nWhenever this creature attacks, you may pay {E}{E}{E}. If you do, draw a card.",
+      "power": "*",
+      "produced_mana": [],
+      "released_at": "2024-03-08",
+      "toughness": "5",
+      "type_line": "Artifact Creature — Robot"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}{W}",
+      "name": "Scurry of Gremlins",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "oracle_text": "When this enchantment enters, create two 1/1 red Gremlin creature tokens. Then you get an amount of {E} (energy counters) equal to the number of creatures you control.\nPay {E}{E}{E}{E}: Creatures you control get +1/+0 and gain haste until end of turn.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": null,
+      "type_line": "Enchantment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "banned",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "banned",
+        "modern": "not_legal",
+        "oathbreaker": "banned",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "banned",
+        "vintage": "restricted"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Sol Ring",
+      "oracle_id": "6ad8011d-3471-4369-9d68-b264cc027487",
+      "oracle_text": "{T}: Add {C}{C}.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{U}",
+      "name": "Unsummon",
+      "oracle_id": "837182db-1bf3-4a2c-bd01-1af9d9873561",
+      "oracle_text": "Return target creature to its owner's hand.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-04-24",
+      "toughness": null,
+      "type_line": "Instant"
+    }
+  ],
+  "fixture_kind": "public_exact-list_card_data",
+  "rulings": [
+    {
+      "comment": "Energy counters are a kind of counter that a player may have. They're not associated with any specific permanents.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Energy counters aren't mana. They don't go away as steps, phases, and turns end, and effects that add mana \"of any type\" can't give you energy counters.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability with one or more targets states that you \"may pay\" some amount of {E}, and each permanent that it targets has become an illegal target, the spell or ability won't resolve. You can't pay any {E} even if you want to.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says you get one or more {E}, you get that many energy counters. To pay one or more {E}, you lose that many energy counters. You can't pay more energy counters than you have. Any effects that interact with counters a player gets, has, or loses can interact with energy counters.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Keep track of how many energy counters each player has. Potential ways to track this include writing them down on paper or using dice, but any method that is clear and mutually agreeable is fine. (At higher levels of tournament play, dice may not be allowed for tracking counters that players have.)",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some spells and abilities that give you {E} may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't get any {E}.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some triggered abilities state that you \"may pay\" a certain amount of {E}. You can't pay that amount multiple times to multiply the effect. You simply choose whether or not to pay that amount of {E} as the ability resolves.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some triggered abilities that state that you \"may pay\" a certain amount of {E} describe an effect that happens \"If you do.\" In that case, no player may take actions to try to stop the ability's effect after you make your choice. If the payment is followed by the phrase \"When you do,\" then you'll choose any targets for that reflexive triggered ability and put it on the stack before players can take actions.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "The ability that defines Robobrain War Mind's power functions in all zones, not just the battlefield.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Use the number of artifact creatures you control when Robobrain War Mind's second ability resolves, including Robobrain War Mind itself if it's still on the battlefield, to determine the number of energy counters you get.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "{E} is the energy symbol. It represents one energy counter.",
+      "oracle_id": "6f9390ec-08b5-4761-8cb1-5d60190b9661",
+      "published_at": "2024-03-08",
+      "source": "wotc"
+    },
+    {
+      "comment": "Energy counters are a kind of counter that a player may have. They're not associated with any specific permanents.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Energy counters aren't mana. They don't go away as steps, phases, and turns end, and effects that add mana \"of any type\" can't give you energy counters.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a spell or ability with one or more targets states that you \"may pay\" some amount of {E}, and each permanent that it targets has become an illegal target, the spell or ability won't resolve. You can't pay any {E} even if you want to.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect says you get one or more {E}, you get that many energy counters. To pay one or more {E}, you lose that many energy counters. You can't pay more energy counters than you have. Any effects that interact with counters a player gets, has, or loses can interact with energy counters.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Keep track of how many energy counters each player has. Potential ways to track this include writing theme down on paper or using dice, but any method that is clear and mutually agreeable is fine. (At higher levels of tournament play, dice may not be allowed for tracking counters that players have.)",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some spells and abilities that give you {E} may require targets. If each target chosen is an illegal target as that spell or ability tries to resolve, it won't resolve. You won't get any {E}.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some triggered abilities state that you \"may pay\" a certain amount of {E}. You can't pay that amount multiple times to multiply the effect. You simply choose whether or not to pay that amount of {E} as the ability resolves.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Some triggered abilities that state that you \"may pay\" a certain amount of {E} describe an effect that happens \"If you do.\" In that case, no player may take actions to try to stop the ability's effect after you make your choice. If the payment is followed by the phrase \"When you do,\" then you'll choose any targets for that reflexive triggered ability and put it on the stack before players can take actions.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "{E} is the energy symbol. It represents one energy counter.",
+      "oracle_id": "ff24d18d-9c5d-4ffe-846f-a8d568b32724",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    }
+  ],
+  "schema_version": 1,
+  "source": "Pinned original cards for resolution-time player energy counts"
+}

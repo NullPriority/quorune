@@ -1,5 +1,5 @@
 {
-  "contract_count": 150,
+  "contract_count": 151,
   "contracts": [
     {
       "mechanic_id": "cr-602-activating-activated-abilities",
@@ -252,6 +252,12 @@
       "path": "mechanics/contracts/destroy.json",
       "sha256": "0339add8cf52e466c9da9f92523e255af1f70fdb585c9b8b5fe260461dfb24cc",
       "version": 5
+    },
+    {
+      "mechanic_id": "detain",
+      "path": "mechanics/contracts/detain.json",
+      "sha256": "21ce84200bb7a1e45ea04166fa8711b6b18fc5f7e968a0ba7806a96770b28b0c",
+      "version": 1
     },
     {
       "mechanic_id": "dethrone",
@@ -6514,19 +6520,31 @@
     },
     {
       "category": "additional_rules",
-      "contract_path": null,
-      "coverage_status": "unclassified",
+      "contract_path": "mechanics/contracts/detain.json",
+      "contract_sha256": "21ce84200bb7a1e45ea04166fa8711b6b18fc5f7e968a0ba7806a96770b28b0c",
+      "contract_version": 1,
+      "coverage_status": "partial",
       "dependencies": [
         "701"
       ],
-      "implementation_component": null,
+      "implementation_component": "fixed Detain compiler, resolution declaration-rule journal, shared activation and combat legality, and TurnStepOwner",
+      "implementation_version": "detain-v1",
       "kind": "keyword_action",
+      "known_blockers": [
+        "additional recipient grammar and the independent Tax Collector tax mode remain outside the fixed slice"
+      ],
       "mechanic_id": "detain",
       "official_name": "Detain",
       "rule_references": [
         "701.35"
       ],
-      "test_ids": [],
+      "test_ids": [
+        "test_detain_grammar_and_authority",
+        "test_detain_journal_rejects_mixed_scope_and_preserves_old_wire",
+        "test_original_lyev_detains_mana_and_activations_until_departed_deadline",
+        "test_original_detain_groups_lock_opponents_and_share_combat_legality",
+        "test_original_guildmage_offers_and_resolves_detain"
+      ],
       "trust_level": "untrusted"
     },
     {

@@ -11,9 +11,13 @@ from ..ability_fragments import (
     SpellCastKeywordTriggerSpec,
     ToxicSpec,
     ability_fragment_to_dict,
+    decayed_ability_fragments,
 )
 from ..fixed_token_production import (
+    TOKEN_LITERAL_NAME_VERSION_FIELD,
     FixedTokenCreationTemplate,
+    fixed_ordinary_token_name,
+    predefined_token_identity,
 )
 from .fixed_numbers import FIXED_COUNT_PATTERN, fixed_number
 from .fixed_token_production_templates import (
@@ -38,7 +42,6 @@ _TOKEN_TREASURE = "Treasure"
 _TOKEN_FOOD = "Food"
 _TOKEN_MAP = "Map"
 _TOKEN_CLUE = "Clue"
-_TOKEN_THOPTER = "Thopter"
 
 FIXED_TOKEN_DEFINITION_BATCH_MECHANIC = "fixed-token-definition-batch"
 
@@ -53,6 +56,7 @@ _COLOR_ORDER = "WUBRG"
 _CREATURE_TOKEN_KEYWORDS = frozenset(
     {
         "deathtouch",
+        "decayed",
         "defender",
         "double strike",
         "first strike",
@@ -170,14 +174,6 @@ _TOKEN_DEFINITIONS: dict[str, Mapping[str, Any]] = {
         "keywords": ["Indestructible"],
         "ability_profile": "tap_colorless_restricted_v1",
     },
-    "1/1 colorless thopter artifact creature token with flying": {
-        "name": _TOKEN_THOPTER,
-        "type_line": "Token Artifact Creature — Thopter",
-        "colors": [],
-        "power": "1",
-        "toughness": "1",
-        "keywords": ["Flying"],
-    },
 }
 
 _PREDEFINED_CREATION_DEFINITIONS: dict[str, Mapping[str, Any]] = {
@@ -291,23 +287,22 @@ def _single_fixed_token_creation_effect_template(
         definition = _PREDEFINED_CREATION_DEFINITIONS.get(f"{name} token")
         if definition is None:
             return None
+        token_name, characteristics = predefined_token_identity(
+            str(definition["name"]), {field: value for field, value in definition.items() if field != "name"},
+        )
         return FixedTokenCreationTemplate(
             template_id=f"create-fixed-{name}-token-v1",
             effect={
                 "op": "create_token",
                 "controller": "$controller",
-                "name": str(definition["name"]),
+                "name": token_name,
                 "quantity": quantity,
                 **(
                     {"tapped": True}
                     if predefined.group("tapped")
                     else {}
                 ),
-                "characteristics": {
-                    field: value
-                    for field, value in definition.items()
-                    if field != "name"
-                },
+                "characteristics": characteristics,
             },
             mechanics=(
                 "cr-111-tokens",
@@ -339,6 +334,7 @@ def _single_fixed_token_creation_effect_template(
     )
     characteristics: dict[str, Any] = {
         "type_line": f"Token {' '.join(ordered_types)} — {subtypes}",
+        TOKEN_LITERAL_NAME_VERSION_FIELD: 1,
         "colors": colors,
         "power": creature.group("power"),
         "toughness": creature.group("toughness"),
@@ -356,6 +352,11 @@ def _single_fixed_token_creation_effect_template(
     if 'prowess' in keywords:
         characteristics.setdefault('ability_fragments', []).append(ability_fragment_to_dict(
             SpellCastKeywordTriggerSpec(kind=SpellCastKeywordTriggerKind.PROWESS)))
+    if "decayed" in keywords:
+        characteristics.setdefault("ability_fragments", []).extend(
+            ability_fragment_to_dict(fragment)
+            for fragment in decayed_ability_fragments()
+        )
     for keyword in keywords:
         toxic = re.fullmatch(r"toxic (?P<value>[1-9]\d*)", keyword)
         if toxic is not None:
@@ -367,7 +368,7 @@ def _single_fixed_token_creation_effect_template(
         effect={
             "op": "create_token",
             "controller": "$controller",
-            "name": subtypes,
+            "name": fixed_ordinary_token_name(subtypes),
             "quantity": quantity,
             **({"tapped": True} if creature.group("tapped") else {}),
             "characteristics": characteristics,
@@ -417,7 +418,7 @@ def _fixed_token_batch_creation_effect_template(
     text: str,
 ) -> FixedTokenCreationTemplate | None:
     normalized = " ".join(text.split()).rstrip(".")
-    if not normalized.startswith("Create "):
+    if not normalized.casefold().startswith("create "):
         return None
     boundaries = _batch_boundaries(normalized)
     candidates: dict[
@@ -489,6 +490,10 @@ def fixed_token_creation_effect_template(
 
     from .attacking_token_results import fixed_attacking_token_template
     from .created_token_cleanup_templates import created_token_cleanup_template
+
+    explicit_creator = re.match(r"^You\s+create\s+", text.lstrip(), re.IGNORECASE)
+    if explicit_creator is not None:
+        text = "Create " + text.lstrip()[explicit_creator.end():]
     cleanup = created_token_cleanup_template(text, compile_inner=fixed_token_creation_effect_template)
     attacking = fixed_attacking_token_template(text, compile_fixed=_single_fixed_token_creation_effect_template)
     return cleanup or attacking or _single_fixed_token_creation_effect_template(
@@ -509,7 +514,12 @@ def static_token_quantity_replacement_handler(text: str):
 def _fixed_additional_token_definition(text: str) -> Mapping[str, Any] | None:
     """Reuse the complete fixed producer; reject unrepresented creation riders."""
     normalized=" ".join(text.casefold().split())
-    if normalized in _TOKEN_DEFINITIONS:return _TOKEN_DEFINITIONS[normalized]
+    if normalized in _PREDEFINED_CREATION_DEFINITIONS:
+        definition = _TOKEN_DEFINITIONS[normalized]
+        name, characteristics = predefined_token_identity(
+            str(definition["name"]), {field: value for field, value in definition.items() if field != "name"},
+        )
+        return {"name": name, **characteristics}
     template=_single_fixed_token_creation_effect_template('Create a '+text+'.')
     if template is None:return None
     effect=template.effect

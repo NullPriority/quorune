@@ -63,7 +63,8 @@ class DamageSourceIdentityOwnerTests(unittest.TestCase):
         host=SimpleNamespace(state=SimpleNamespace(active_player='A'))
         source=SimpleNamespace(ref='source',object_id='source-id',logical_object_id='source@2',controller='A',owner='A',zone='battlefield')
         binding=fixed_counter_trigger_binding('Whenever this creature deals combat damage to a player, draw a card.',card_name='Generic Source')
-        program=SimpleNamespace(event_condition=binding.event_condition,coverage=(FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,),active_zone='battlefield')
+        program=SimpleNamespace(event_condition=binding.event_condition,coverage=(FIXED_PUBLIC_STATE_INTERVENING_COVERAGE,),
+            capability_dependencies=(),active_zone='battlefield')
         context={'source':'source','source_logical_object_id':'source@0','target_kind':'player','target':'B','combat':True,
             'intervening_condition_controller':'A'}
         self.assertTrue(semantic_intervening_condition_matches(host,program,source=source,context=context))

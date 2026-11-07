@@ -8,7 +8,7 @@
       "name": "Entry Harness Fixture",
       "mana_cost": "{2}",
       "cmc": 2.0,
-      "type_line": "Artifact \u2014 Equipment",
+      "type_line": "Artifact — Equipment",
       "oracle_text": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +1/+1.\nEquip {2}",
       "power": null,
       "toughness": null,
@@ -16,18 +16,22 @@
       "defense": null,
       "colors": [],
       "color_identity": [],
-      "keywords": ["Equip"],
+      "keywords": [
+        "Equip"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070260001",
       "name": "Restricted Harness Fixture",
       "mana_cost": "{2}",
       "cmc": 2.0,
-      "type_line": "Artifact \u2014 Equipment",
+      "type_line": "Artifact — Equipment",
       "oracle_text": "Equipped creature gets +1/+1.\nEquip Human {1}\nEquip commander {2}",
       "power": null,
       "toughness": null,
@@ -35,113 +39,157 @@
       "defense": null,
       "colors": [],
       "color_identity": [],
-      "keywords": ["Equip"],
+      "keywords": [
+        "Equip"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070260002",
       "name": "Moving Cell Fixture",
       "mana_cost": "{1}{U}",
       "cmc": 2.0,
-      "type_line": "Enchantment \u2014 Aura",
+      "type_line": "Enchantment — Aura",
       "oracle_text": "Enchant creature\nEnchanted creature doesn't untap during its controller's untap step.\n{3}{U}: Attach this Aura to target creature.",
       "power": null,
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
-      "keywords": ["Enchant"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070260004",
       "name": "Exclusive Moving Aura Fixture",
       "mana_cost": "{1}{U}",
       "cmc": 2.0,
-      "type_line": "Enchantment \u2014 Aura",
+      "type_line": "Enchantment — Aura",
       "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\n{2}{U}: Attach this Aura to target creature other than enchanted creature.",
       "power": null,
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
-      "keywords": ["Enchant"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070260005",
       "name": "Controlled Moving Aura Fixture",
       "mana_cost": "{1}{U}",
       "cmc": 2.0,
-      "type_line": "Enchantment \u2014 Aura",
+      "type_line": "Enchantment — Aura",
       "oracle_text": "Enchant creature you control\nEnchanted creature gets +1/+1.\n{1}{U}: Attach this Aura to target creature.",
       "power": null,
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["U"],
-      "color_identity": ["U"],
-      "keywords": ["Enchant"],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Enchant"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070130002",
       "name": "Stateful Entry Harness Fixture",
       "mana_cost": "{1}{R}",
       "cmc": 2.0,
-      "type_line": "Artifact \u2014 Equipment",
+      "type_line": "Artifact — Equipment",
       "oracle_text": "When this Equipment enters, attach it to target creature you control.\nDuring your turn, equipped creature gets +2/+0 and has first strike.\nEquip {4}",
       "power": null,
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["R"],
-      "color_identity": ["R"],
-      "keywords": ["Equip"],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Equip"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070130003",
       "name": "Drawing Entry Harness Fixture",
       "mana_cost": "{2}{R}",
       "cmc": 3.0,
-      "type_line": "Artifact \u2014 Equipment",
+      "type_line": "Artifact — Equipment",
       "oracle_text": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +3/+0 and has trample and \"Whenever this creature deals combat damage to a player, draw a card.\"\nEquip {3}",
       "power": null,
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["R"],
-      "color_identity": ["R"],
-      "keywords": ["Equip"],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Equip"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070292001",
       "name": "Living Harness Fixture",
       "mana_cost": "{2}",
       "cmc": 2.0,
-      "type_line": "Artifact \u2014 Equipment",
+      "type_line": "Artifact — Equipment",
       "oracle_text": "Living weapon\nEquipped creature gets +1/+1.\nEquip {2}",
       "power": null,
       "toughness": null,
@@ -149,37 +197,51 @@
       "defense": null,
       "colors": [],
       "color_identity": [],
-      "keywords": ["Equip", "Living weapon"],
+      "keywords": [
+        "Equip",
+        "Living weapon"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070216301",
       "name": "Mirrodin Harness Fixture",
       "mana_cost": "{2}{R}",
       "cmc": 3.0,
-      "type_line": "Artifact \u2014 Equipment",
+      "type_line": "Artifact — Equipment",
       "oracle_text": "For Mirrodin!\nEquipped creature gets +1/+1.\nEquip {2}{R}",
       "power": null,
       "toughness": null,
       "loyalty": null,
       "defense": null,
-      "colors": ["R"],
-      "color_identity": ["R"],
-      "keywords": ["Equip", "For Mirrodin!"],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "keywords": [
+        "Equip",
+        "For Mirrodin!"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070260003",
       "name": "Limited Harness Fixture",
       "mana_cost": "{1}",
       "cmc": 1.0,
-      "type_line": "Artifact \u2014 Equipment",
+      "type_line": "Artifact — Equipment",
       "oracle_text": "Equipped creature gets +0/+1.\nEquip {0}. Activate only once each turn.",
       "power": null,
       "toughness": null,
@@ -187,11 +249,15 @@
       "defense": null,
       "colors": [],
       "color_identity": [],
-      "keywords": ["Equip"],
+      "keywords": [
+        "Equip"
+      ],
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000061416001",
@@ -210,7 +276,9 @@
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-01-01",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
     },
     {
       "oracle_id": "00000000-0000-4000-8000-000070230001",
@@ -229,8 +297,381 @@
       "produced_mana": [],
       "layout": "normal",
       "released_at": "2026-09-19",
-      "legalities": {"commander": "legal"}
+      "legalities": {
+        "commander": "legal"
+      }
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{W}",
+      "name": "Auxiliary Boosters",
+      "oracle_id": "ffa3b20b-d77b-43d5-86ac-6a591df1877f",
+      "oracle_text": "When this Equipment enters, create a 2/2 colorless Robot artifact creature token and attach this Equipment to it.\nEquipped creature gets +1/+2 and has flying.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2025-08-01",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Barbed Spike",
+      "oracle_id": "28b22709-3e69-4eb7-8a3d-b75b6e65f30e",
+      "oracle_text": "When this Equipment enters, create a 1/1 colorless Thopter artifact creature token with flying, then attach this Equipment to it.\nEquipped creature gets +1/+0.\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-06-18",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Dwarven Hammer",
+      "oracle_id": "a6365f98-f652-492b-81de-5f8cd6fe0a1c",
+      "oracle_text": "When this Equipment enters, you may pay {2}. If you do, create a 2/1 red Dwarf Berserker creature token, then attach this Equipment to it.\nEquipped creature gets +3/+0 and has trample.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-08-04",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Equip",
+        "Living weapon"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Flayer Husk",
+      "oracle_id": "5cfdfcac-57fb-4507-a97a-cccbac2d1327",
+      "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +1/+1.\nEquip {2}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2020-08-07",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "For Mirrodin!",
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{R}",
+      "name": "Hexgold Halberd",
+      "oracle_id": "c43b176a-9001-4fe4-bd9b-809880134067",
+      "oracle_text": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)\nDuring your turn, equipped creature has first strike and trample.\nEquip {2}{R}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2023-02-10",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Equip"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}",
+      "name": "Valkyrie's Sword",
+      "oracle_id": "236c4ff1-8c3f-4763-8df9-925021e65726",
+      "oracle_text": "When this Equipment enters, you may pay {4}{W}. If you do, create a 4/4 white Angel Warrior creature token with flying and vigilance, then attach this Equipment to it.\nEquipped creature gets +2/+1.\nEquip {3}",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2021-02-05",
+      "toughness": null,
+      "type_line": "Artifact — Equipment"
     }
   ],
-  "rulings": []
+  "rulings": [
+    {
+      "comment": "The Angel Warrior creature token enters the battlefield as a 4/4 creature. Any abilities that trigger when a creature with a certain power or toughness enters the battlefield will see the token enter as a 4/4 creature.",
+      "oracle_id": "236c4ff1-8c3f-4763-8df9-925021e65726",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "You decide whether to pay {4}{W} as the enters-the-battlefield ability resolves. If you do, you immediately create the Angel Warrior creature token and attach Valkyrie's Sword to it. No players may respond to your decision to pay or not, and no player may take actions during this process.",
+      "oracle_id": "236c4ff1-8c3f-4763-8df9-925021e65726",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "Creating the Thopter token and attaching Barbed Spike to it happen as part of the resolution of the same ability. There is no time for an opponent to react after the token is created but before the Equipment is attached.",
+      "oracle_id": "28b22709-3e69-4eb7-8a3d-b75b6e65f30e",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "The token will still be created even if Barbed Spike is not able to be attached to it (perhaps because it was destroyed in response to the ability).",
+      "oracle_id": "28b22709-3e69-4eb7-8a3d-b75b6e65f30e",
+      "published_at": "2021-06-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Germ token is destroyed, the Equipment remains on the battlefield as with any other Equipment.",
+      "oracle_id": "5cfdfcac-57fb-4507-a97a-cccbac2d1327",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the living weapon trigger causes two Germs to be created (due to an effect such as that of Doubling Season), the Equipment becomes attached to one of them. The other will be put into your graveyard and subsequently cease to exist, unless another effect raises its toughness above 0.",
+      "oracle_id": "5cfdfcac-57fb-4507-a97a-cccbac2d1327",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "Like other Equipment, each Equipment with living weapon has an equip cost. You can pay this cost to attach an Equipment to another creature you control. Once the Germ token is no longer equipped, it will be put into your graveyard and subsequently cease to exist, unless another effect raises its toughness above 0.",
+      "oracle_id": "5cfdfcac-57fb-4507-a97a-cccbac2d1327",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Germ token enters the battlefield as a 0/0 creature and the Equipment becomes attached to it before state-based actions would cause the token to die. Abilities that trigger as the token enters the battlefield see that a 0/0 creature entered the battlefield.",
+      "oracle_id": "5cfdfcac-57fb-4507-a97a-cccbac2d1327",
+      "published_at": "2020-08-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Dwarf Berserker creature token enters the battlefield as a 2/1 creature. Any abilities that trigger when a creature with a certain power enters the battlefield will see the token enter as a 2/1 creature.",
+      "oracle_id": "a6365f98-f652-492b-81de-5f8cd6fe0a1c",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "You decide whether to pay {2} as the enters-the-battlefield ability resolves. If you do, you immediately create the Dwarf Berserker creature token and attach Dwarven Hammer to it. No players may respond to your decision to pay or not, and no player may take actions during this process.",
+      "oracle_id": "a6365f98-f652-492b-81de-5f8cd6fe0a1c",
+      "published_at": "2021-02-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the Rebel is destroyed, the Equipment stays on the battlefield. Similarly, you may pay its equip cost to move it from the Rebel token to another creature you control.",
+      "oracle_id": "c43b176a-9001-4fe4-bd9b-809880134067",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "If the ability causes two Rebel tokens to be created (due to an effect such as that of Mondrak, Glory Dominus), the Equipment becomes attached to only one of them.",
+      "oracle_id": "c43b176a-9001-4fe4-bd9b-809880134067",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "The Rebel enters the battlefield as a 2/2 creature, then the Equipment becomes attached to it. Abilities that trigger when a creature enters the battlefield see that a 2/2 creature entered the battlefield.",
+      "oracle_id": "c43b176a-9001-4fe4-bd9b-809880134067",
+      "published_at": "2023-02-04",
+      "source": "wotc"
+    }
+  ]
 }

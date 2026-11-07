@@ -230,6 +230,18 @@ def _fixed_scalar_fact(
             FixedPublicStateFact.CONTROLLER_HAND_ADVANTAGE,
             1,
         ),
+        "your life total is greater than your starting life total": (
+            FixedPublicStateFact.CONTROLLER_LIFE_ABOVE_STARTING,
+            1,
+        ),
+        "your life total is greater than or equal to your starting life total": (
+            FixedPublicStateFact.CONTROLLER_AT_OR_ABOVE_STARTING_LIFE,
+            1,
+        ),
+        "your life total is less than your starting life total": (
+            FixedPublicStateFact.CONTROLLER_BELOW_STARTING_LIFE,
+            1,
+        ),
         "your life total is less than or equal to half your starting life total": (
             FixedPublicStateFact.CONTROLLER_AT_OR_BELOW_HALF_STARTING_LIFE,
             1,
@@ -329,15 +341,19 @@ def fixed_public_fact_condition(
     if history is not None:
         return history
     above_start = re.fullmatch(
-        r"you have at least (?P<amount>[0-9]+) life more than your starting "
-        r"life total",
+        r"(?:you have at least (?P<life_more>[0-9]+) life more"
+        r"|your life total is at least (?P<greater>[0-9]+) greater)"
+        r" than your starting life total",
         normalized,
         re.IGNORECASE,
     )
     if above_start is not None:
+        minimum = int(above_start["life_more"] or above_start["greater"])
+        if minimum == 0:
+            return _condition(FixedPublicStateFact.CONTROLLER_AT_OR_ABOVE_STARTING_LIFE)
         return _condition(
             FixedPublicStateFact.CONTROLLER_LIFE_ABOVE_STARTING,
-            amount=int(above_start.group("amount")),
+            amount=minimum,
         )
     source = SourceReferenceSpec(source_name).regex_pattern
     attacked = re.fullmatch(

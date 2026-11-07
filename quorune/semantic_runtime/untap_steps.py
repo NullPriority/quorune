@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ..entry_copy import copiable_oracle_id
 
-"""CardProgram runtime components for CR 502 participation."""
+"""CardProgram runtime components for turn-step participation."""
 
 from dataclasses import dataclass, replace
 from functools import lru_cache
@@ -9,6 +9,7 @@ from typing import Any, Mapping, Protocol, Sequence
 
 from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_query_result
+from ..phasing_model import PHASING_CAPABILITY, PHASING_EVENT, PHASING_HANDLER_ID
 from ..rules.capabilities import load_default_capability_registry
 from ..untap_step import (
     FixedUntapSelectionLimit,
@@ -26,11 +27,17 @@ from .activation_restrictions import attached_activation_untap_participations
 
 UNTAP_STEP_HANDLER_ID = "participation.untap-step.static.v1"
 OPTIONAL_UNTAP_HANDLER_ID = "participation.untap-step.optional-source.v1"
+STATIC_STEP_SKIP_HANDLER_ID = "participation.turn-step.skip.v1"
+STATIC_STEP_SKIP_EVENT = "turn.step.skip"
+STATIC_STEP_SKIP_CAPABILITY = "turn.step.static_skip"
+_SKIPPABLE_STEPS = frozenset({"untap", "upkeep", "draw"})
 _SOURCE_STATES = {"any", "untapped"}
 _CONTROLLER_RELATIONS = {"any", "source_controller"}
 
 
 class UntapStepSemantics(Protocol):
+    def programs_for_event(self, event: str) -> Sequence[Any]: ...
+
     def runtime_handler_programs_for_oracle(
         self,
         oracle_id: str,
@@ -56,6 +63,8 @@ class UntapStepHost(Protocol):
     ) -> tuple[set[str], set[str], set[str]]: ...
 
     def semantic_program_is_current_trusted(self, program: Any) -> bool: ...
+
+    def _effective_static_component_keys(self, card: Any) -> set[str]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -238,6 +247,8 @@ class StaticUntapStepParticipationHandler:
         return node
 
     def _validate_instruction(self, node: UntapStepNode) -> None:
+        if node.subject_relation is UntapSubjectRelation.LOCKED_OBJECT:
+            raise SemanticNodeError("Locked untap-step subjects require a resolution-created rule")
         if node.instruction is UntapInstruction.OPTIONAL:
             raise SemanticNodeError("Static untap handler cannot represent optional untaps")
         if node.subject_relation is not UntapSubjectRelation.QUERY and node.controller_relation != "any":
@@ -322,10 +333,77 @@ class OptionalSourceUntapStepHandler(StaticUntapStepParticipationHandler):
             raise SemanticNodeError("Optional untap requires exactly its controller's source")
 
 
+@dataclass(frozen=True, slots=True)
+class TurnStepSkip:
+    step: str
+    scope: str
+    requires_empty_hand: bool
+
+
+@dataclass(frozen=True, slots=True)
+class StaticTurnStepSkipHandler:
+    handler_id: str = STATIC_STEP_SKIP_HANDLER_ID
+    schema_version: int = 1
+    family: str = "participation.turn_step.skip"
+    event: str = STATIC_STEP_SKIP_EVENT
+    rule_references: tuple[str, ...] = ("500.11", "611.3b", "614.10")
+    capability_dependencies: tuple[str, ...] = (STATIC_STEP_SKIP_CAPABILITY,)
+
+    def validate(self, descriptor: Mapping[str, Any]) -> TurnStepSkip:
+        exact_fields(
+            descriptor, {"handler_id", "schema_version", "event", "step", "scope", "requires_empty_hand"},
+            field="Static step skip",
+        )
+        if (
+            descriptor["handler_id"] != self.handler_id
+            or type(descriptor["schema_version"]) is not int
+            or descriptor["schema_version"] != self.schema_version
+            or descriptor["event"] != self.event
+        ):
+            raise SemanticNodeError("Static step skips require their exact handler identity")
+        step, scope, empty = (descriptor[key] for key in ("step", "scope", "requires_empty_hand"))
+        if (
+            type(step) is not str or step not in _SKIPPABLE_STEPS
+            or type(scope) is not str or scope not in {"source_controller", "all_players"}
+            or type(empty) is not bool
+            or empty and (step, scope) != ("upkeep", "source_controller")
+        ):
+            raise SemanticNodeError("Static step skip requires a closed step, player scope and condition")
+        return TurnStepSkip(step, scope, empty)
+
+    def lower(self, descriptor, context) -> tuple[TurnStepSkip, ...]:
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class PrintedPhasing:
+    """One current literal Phasing instruction."""
+
+
+@dataclass(frozen=True, slots=True)
+class PrintedPhasingHandler:
+    handler_id: str = PHASING_HANDLER_ID
+    schema_version: int = 1
+    family: str = PHASING_CAPABILITY
+    event: str = PHASING_EVENT
+    rule_references: tuple[str, ...] = ("502.1", "702.26a", "702.26g", "702.26n")
+    capability_dependencies: tuple[str, ...] = (PHASING_CAPABILITY,)
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {"handler_id", "schema_version", "event"}, field="printed Phasing")
+        if (descriptor["handler_id"] != self.handler_id or type(descriptor["schema_version"]) is not int
+                or descriptor["schema_version"] != self.schema_version or descriptor["event"] != self.event):
+            raise SemanticNodeError("Printed Phasing handler identity changed")
+        return PrintedPhasing()
+
+    def lower(self, descriptor, context):
+        return (self.validate(descriptor),)
+
+
 class UntapStepComponentRegistry(
     RuntimeComponentRegistry[
         UntapStepSourceContext,
-        UntapStepParticipation,
+        UntapStepParticipation | TurnStepSkip | PrintedPhasing,
     ]
 ):
     pass
@@ -354,7 +432,8 @@ class FixedUntapSelectionLimitHandler(StaticUntapStepParticipationHandler):
 @lru_cache(maxsize=1)
 def default_untap_step_component_registry() -> UntapStepComponentRegistry:
     registry = UntapStepComponentRegistry(
-        (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler(), FixedUntapSelectionLimitHandler())
+        (StaticUntapStepParticipationHandler(), OptionalSourceUntapStepHandler(),
+         FixedUntapSelectionLimitHandler(), StaticTurnStepSkipHandler(), PrintedPhasingHandler())
     )
     registry.require_registered_capabilities(
         load_default_capability_registry()
@@ -362,11 +441,9 @@ def default_untap_step_component_registry() -> UntapStepComponentRegistry:
     return registry.freeze()
 
 
-def collect_untap_step_participations(
-    host: UntapStepHost,
-) -> tuple[UntapStepParticipation, ...]:
-    registry = default_untap_step_component_registry()
-    participations: list[UntapStepParticipation] = []
+def _active_step_programs(host: UntapStepHost, event: str):
+    from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
+
     for source in host._semantic_event_sources(zones={"battlefield"}):
         if (
             source.zone != "battlefield"
@@ -377,36 +454,73 @@ def collect_untap_step_participations(
         programs = host.semantics.runtime_handler_programs_for_oracle(
             copiable_oracle_id(source),
             active_zone="battlefield",
-            event="untap.step",
+            event=event,
         )
         for program in programs:
             if not host.semantic_program_is_current_trusted(program):
                 continue
-            from ..ability_fragments import CURRENT_ABILITY_FRAGMENT_COVERAGE
             if (CURRENT_ABILITY_FRAGMENT_COVERAGE in program.coverage
                     and program.key not in host._effective_static_component_keys(source)):
                 continue
-            for descriptor_index, descriptor in enumerate(program.handlers):
-                participations.extend(
-                    registry.lower(
-                        descriptor,
-                        UntapStepSourceContext(
-                            source_object_id=source.object_id,
-                            source_ref=source.ref,
-                            source_controller=source.controller,
-                            source_tapped=bool(source.tapped),
-                            component_id=f"{program.key}:{descriptor_index}",
-                            attached_object_id=(
-                                source.attached_to
-                                if source.attached_to in host.state.cards
-                                else None
-                            ),
+            yield source, program
+
+
+def current_printed_phasing_object_ids(host: UntapStepHost) -> frozenset[str]:
+    handler = PrintedPhasingHandler()
+    return frozenset(source.object_id for source, program in _active_step_programs(host, PHASING_EVENT)
+                     if any(handler.validate(descriptor) for descriptor in program.handlers))
+
+
+def active_step_skip_sources(host: UntapStepHost, active: str, step: str):
+    if (
+        step not in _SKIPPABLE_STEPS
+        or active not in host.active_seats
+        or not host.semantics.programs_for_event(STATIC_STEP_SKIP_EVENT)
+    ):
+        return
+    handler = StaticTurnStepSkipHandler()
+    for source, program in _active_step_programs(host, STATIC_STEP_SKIP_EVENT):
+        for index, descriptor in enumerate(program.handlers):
+            skip = handler.validate(descriptor)
+            if skip.step != step or skip.scope == "source_controller" and source.controller != active:
+                continue
+            if skip.requires_empty_hand and host.state.players[active].zones["hand"]:
+                continue
+            yield source, program.key, index
+
+
+def current_step_is_skipped(host: UntapStepHost, active: str, step: str) -> bool:
+    return next(active_step_skip_sources(host, active, step), None) is not None
+
+
+def collect_untap_step_participations(
+    host: UntapStepHost,
+) -> tuple[UntapStepParticipation, ...]:
+    registry = default_untap_step_component_registry()
+    participations: list[UntapStepParticipation] = []
+    for source, program in _active_step_programs(host, "untap.step"):
+        for descriptor_index, descriptor in enumerate(program.handlers):
+            participations.extend(
+                registry.lower(
+                    descriptor,
+                    UntapStepSourceContext(
+                        source_object_id=source.object_id,
+                        source_ref=source.ref,
+                        source_controller=source.controller,
+                        source_tapped=bool(source.tapped),
+                        component_id=f"{program.key}:{descriptor_index}",
+                        attached_object_id=(
+                            source.attached_to
+                            if source.attached_to in host.state.cards
+                            else None
                         ),
-                    )
+                    ),
                 )
+            )
     participations.extend(attached_activation_untap_participations(host))
-    from ..rules.untap_permissions import attached_restraint_step_participations
+    from ..rules.untap_permissions import attached_restraint_step_participations, resolved_restraint_step_participations
     participations.extend(attached_restraint_step_participations(host))
+    participations.extend(resolved_restraint_step_participations(host))
     return tuple(
         sorted(
             participations,

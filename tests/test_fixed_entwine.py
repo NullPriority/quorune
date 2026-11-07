@@ -238,7 +238,8 @@ class FixedEntwineRuntimeTests(unittest.TestCase):
 
     def test_entwine_originals_require_complete_modes_and_normal_registration(self):
         expected={"Rain of Rust","Mirage Mockery","Abuna's Chant","Dream's Grip","Flourishing Strike",
-            "Roar of the Kha","One Dozen Eyes","Unbounded Potential","Reap and Sow","Barbed Lightning","Goblin War Party"}
+            "Roar of the Kha","One Dozen Eyes","Unbounded Potential","Reap and Sow","Barbed Lightning","Goblin War Party",
+            "Gravedig"}
         for raw in json.loads(FIXTURE.read_text(encoding='utf-8'))['cards']:
             if 'Entwine' not in raw.get('keywords',[]):continue
             with self.subTest(name=raw['name']):

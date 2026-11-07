@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Protocol, Sequence
 
+from .counter_placement_event_model import counter_quantity_provenance_version
 from .counter_state import (
     apply_counter_changes,
     CounterChange,
@@ -18,6 +19,7 @@ from .replacement_effects import (
     ReplacementEffect,
     ReplacementSelection,
 )
+from .replacement.model import COUNTER_REPLACEMENT_GENERATED_FIELD
 from .semantic_runtime.counter_replacements import (
     CounterPlacementEventSpec,
     collect_counter_placement_replacement_effects,
@@ -365,6 +367,13 @@ def prepare_counter_placements(
     )
 
 
+def _placement_event(spec: CounterPlacementEventSpec, *, track_provenance: bool) -> ReplaceableEvent:
+    event = spec.event()
+    if track_provenance and spec.effect_generated is False:
+        return replace(event, payload={**event.payload, COUNTER_REPLACEMENT_GENERATED_FIELD: False})
+    return event
+
+
 def prepare_counter_placement_specs(
     host: CounterPlacementHost,
     specs: Sequence[CounterPlacementEventSpec],
@@ -396,7 +405,9 @@ def prepare_counter_placement_specs(
         raise CounterPlacementError(
             "Counter-placement specs must be typed"
         )
-    events = tuple(spec.event() for spec in specs)
+    version = getattr(getattr(host, "state", None), "counter_quantity_provenance_version", None)
+    track_provenance = counter_quantity_provenance_version(version) is not None
+    events = tuple(_placement_event(spec, track_provenance=track_provenance) for spec in specs)
     event_ids = tuple(event.event_id for event in events)
     if len(event_ids) != len(set(event_ids)):
         raise CounterPlacementError(
@@ -806,8 +817,9 @@ def place_counters_on_refs(
     selections: Sequence[str | None | Mapping[str, Any]] = (),
     reason: str,
     source_ref: str | None = None,
+    effect_generated: bool = True,
 ) -> tuple[CounterPlacementResult, ...]:
-    """Resolve battlefield refs and route one effect placement batch."""
+    """Resolve battlefield refs and route one placement batch."""
 
     cards = tuple(
         host._resolve_object(actor, ref, zones={"battlefield"})
@@ -823,6 +835,7 @@ def place_counters_on_refs(
                 amount=amount,
                 placing_player=actor,
                 source_ref=source_ref,
+                effect_generated=effect_generated,
             )
             for card in cards
         ),

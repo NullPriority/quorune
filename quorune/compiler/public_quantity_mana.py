@@ -77,19 +77,22 @@ def public_quantity_mana_template(text: str, *, source_name: str) -> PublicQuant
             return None
         body += "."
     fixed = re.fullmatch(r"Add \{(?P<color>[WUBRGC])\} for each (?P<amount>.+?)\.", body, re.I)
+    chosen_count = re.fullmatch(r'Choose a color\. Add one mana of that color for each (?P<amount>.+?)\.', body, re.I)
     equal = re.fullmatch(r"Add an amount of \{(?P<color>[WUBRGC])\} equal to (?P<amount>.+?)\.", body, re.I)
     variable = re.fullmatch(
         r"Add X mana (?P<selection>of any one color|in any combination of colors|"
         r"in any combination of (?P<colors>(?:\{[WUBRG]\})(?: and/or \{[WUBRG]\})?)), "
         r"where X is (?P<amount>.+?)\.", body, re.I,
     )
-    match = fixed or equal or variable
+    match = fixed or chosen_count or equal or variable
     if match is None:
         return None
-    amount = _amount(match["amount"], source_name=source_name, count=fixed is not None)
+    amount = _amount(match["amount"], source_name=source_name, count=fixed is not None or chosen_count is not None)
     if amount is None:
         return None
-    if variable is None:
+    if chosen_count is not None:
+        selection, colors = 'choose_one', tuple(sorted('WUBRG'))
+    elif variable is None:
         selection = "fixed"
         colors = (match["color"].upper(),)
     else:

@@ -5,6 +5,7 @@ import json
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable, Mapping
 
+from .announced_damage import ANNOUNCED_DAMAGE_CONTEXT
 from .carddb import CardDatabase
 from .characteristic_evaluation import evaluate_card_characteristics
 from .choice_forms import build_action_form
@@ -410,6 +411,8 @@ class StateProjector:
             )
         if card.monstrous_value is not None:
             obj["monstrous"] = card.monstrous_value
+        if card.suspected_at is not None:
+            obj["suspected"] = True
         if card.renowned:
             obj["renowned"] = True
         if card.zone == 'battlefield' and not card.phased_out and getattr(self.state, 'soulbond_pairs', None):
@@ -524,6 +527,12 @@ class StateProjector:
                 "label": "Face-down spell" if hidden_face_down else item.label,
                 **({"targets": item.targets} if item.targets else {}),
             }
+            allocation = item.context.get(ANNOUNCED_DAMAGE_CONTEXT)
+            if isinstance(allocation, Mapping) and not hidden_face_down:
+                shares = allocation.get("shares")
+                if (isinstance(shares, (list, tuple)) and len(shares) == len(item.targets)
+                        and all(type(share) is int and share > 0 for share in shares)):
+                    row["damage_shares"] = list(shares)
             if card is not None:
                 row.update(
                     {
@@ -704,6 +713,11 @@ class StateProjector:
             "stack": stack,
             "combat": combat,
         }
+        pending = self.state.pending_decision
+        if pending is not None and pending.kind == "cast.assist" and len(pending.actors) == 1:
+            announcement = pending.payload_by_actor.get(pending.actors[0], {}).get("assist_public")
+            if isinstance(announcement, Mapping):
+                snapshot["assist_cast"] = copy.deepcopy(dict(announcement))
         own_seat = self.seat_for(principal)
         if (
             own_seat in view_seats

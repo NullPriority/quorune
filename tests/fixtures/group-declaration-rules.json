@@ -139,7 +139,7 @@
       "produced_mana": [],
       "released_at": "2016-08-26",
       "toughness": "4",
-      "type_line": "Creature \u2014 Human Rogue Mutant"
+      "type_line": "Creature — Human Rogue Mutant"
     },
     {
       "cmc": 6.0,
@@ -188,7 +188,7 @@
       "produced_mana": [],
       "released_at": "2012-02-03",
       "toughness": "4",
-      "type_line": "Creature \u2014 Vampire Warrior"
+      "type_line": "Creature — Vampire Warrior"
     },
     {
       "cmc": 2.0,
@@ -282,7 +282,7 @@
       "produced_mana": [],
       "released_at": "2004-10-01",
       "toughness": null,
-      "type_line": "Sorcery \u2014 Arcane"
+      "type_line": "Sorcery — Arcane"
     },
     {
       "cmc": 1.0,
@@ -332,55 +332,510 @@
       "type_line": "Instant"
     },
     {
-      "oracle_id": "fixture-group-flash-ground",
-      "id": "fixture-group-flash-ground",
-      "name": "Generic Group Flash Ground",
-      "mana_cost": "{U}",
       "cmc": 1,
-      "type_line": "Creature \u2014 Human",
-      "oracle_text": "Flash",
-      "power": "2",
-      "toughness": "6",
-      "colors": [
-        "U"
-      ],
       "color_identity": [
         "U"
       ],
+      "colors": [
+        "U"
+      ],
+      "id": "fixture-group-flash-ground",
       "keywords": [
         "Flash"
       ],
       "layout": "normal",
-      "released_at": "2026-01-01",
       "legalities": {
         "commander": "legal"
-      }
+      },
+      "mana_cost": "{U}",
+      "name": "Generic Group Flash Ground",
+      "oracle_id": "fixture-group-flash-ground",
+      "oracle_text": "Flash",
+      "power": "2",
+      "released_at": "2026-01-01",
+      "toughness": "6",
+      "type_line": "Creature — Human"
     },
     {
-      "oracle_id": "fixture-group-flash-flyer",
-      "id": "fixture-group-flash-flyer",
-      "name": "Generic Group Flash Flyer",
-      "mana_cost": "{U}",
       "cmc": 1,
-      "type_line": "Creature \u2014 Human",
-      "oracle_text": "Flash\nFlying",
-      "power": "1",
-      "toughness": "1",
-      "colors": [
-        "U"
-      ],
       "color_identity": [
         "U"
       ],
+      "colors": [
+        "U"
+      ],
+      "id": "fixture-group-flash-flyer",
       "keywords": [
         "Flash",
         "Flying"
       ],
       "layout": "normal",
-      "released_at": "2026-01-01",
       "legalities": {
         "commander": "legal"
-      }
+      },
+      "mana_cost": "{U}",
+      "name": "Generic Group Flash Flyer",
+      "oracle_id": "fixture-group-flash-flyer",
+      "oracle_text": "Flash\nFlying",
+      "power": "1",
+      "released_at": "2026-01-01",
+      "toughness": "1",
+      "type_line": "Creature — Human"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Detain"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}{W}{U}",
+      "name": "Lyev Skyknight",
+      "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536",
+      "oracle_text": "Flying\nWhen this creature enters, detain target nonland permanent an opponent controls. (Until your next turn, that permanent can't attack or block and its activated abilities can't be activated.)",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2022-07-08",
+      "toughness": "1",
+      "type_line": "Creature — Human Knight"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Protection",
+        "Detain"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{W}{U}",
+      "name": "Lavinia of the Tenth",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "oracle_text": "Protection from red\nWhen Lavinia enters, detain each nonland permanent your opponents control with mana value 4 or less. (Until your next turn, those permanents can't attack or block and their activated abilities can't be activated.)",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": "4",
+      "type_line": "Legendary Creature — Human Soldier"
+    },
+    {
+      "cmc": 4.0,
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Detain"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W}{W}",
+      "name": "Azorius Justiciar",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "oracle_text": "When this creature enters, detain up to two target creatures your opponents control. (Until your next turn, those creatures can't attack or block and their activated abilities can't be activated.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2024-02-23",
+      "toughness": "2",
+      "type_line": "Creature — Human Wizard"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "commander": "legal",
+        "duel": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}",
+      "name": "Mind Stone",
+      "oracle_id": "c97361b5-af16-4a7b-af85-a429dbaf4ad2",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}, Sacrifice this artifact: Draw a card.",
+      "power": null,
+      "produced_mana": [
+        "C"
+      ],
+      "released_at": "2026-11-09",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{7}",
+      "name": "Scour from Existence",
+      "oracle_id": "241a50c5-f65f-4847-89c7-5c0ef6025dc1",
+      "oracle_text": "Exile target permanent.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2015-10-02",
+      "toughness": null,
+      "type_line": "Instant"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}",
+      "name": "Gilded Lotus",
+      "oracle_id": "9a02a9a7-39d9-4763-85d3-747a0540b60b",
+      "oracle_text": "{T}: Add three mana of any one color.",
+      "power": null,
+      "produced_mana": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}",
+      "name": "Edifice of Authority",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "oracle_text": "{1}, {T}: Target creature can't attack this turn. Put a brick counter on this artifact.\n{1}, {T}: Until your next turn, target creature can't attack or block and its activated abilities can't be activated. Activate only if there are three or more brick counters on this artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2017-04-28",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{G}",
+      "name": "Llanowar Elves",
+      "oracle_id": "68954295-54e3-4303-a6bc-fc4547a4e3a3",
+      "oracle_text": "{T}: Add {G}.",
+      "power": "1",
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2024-11-15",
+      "toughness": "1",
+      "type_line": "Creature — Elf Druid"
+    },
+    {
+      "cmc": 1.0,
+      "color_identity": [],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{1}",
+      "name": "Voltaic Key",
+      "oracle_id": "09aeea91-b1dc-443f-a509-4758f052c0a7",
+      "oracle_text": "{1}, {T}: Untap target artifact.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2010-07-16",
+      "toughness": null,
+      "type_line": "Artifact"
+    },
+    {
+      "cmc": 2.0,
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "defense": null,
+      "keywords": [
+        "Detain"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{W}{U}",
+      "name": "New Prahv Guildmage",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "oracle_text": "{W}{U}: Target creature gains flying until end of turn.\n{3}{W}{U}: Detain target nonland permanent an opponent controls. (Until your next turn, that permanent can't attack or block and its activated abilities can't be activated.)",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2012-10-05",
+      "toughness": "2",
+      "type_line": "Creature — Human Wizard"
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -434,13 +889,13 @@
       "source": "wotc"
     },
     {
-      "comment": "Effects that modify a creature\u2019s power and/or toughness, such as the effect of Titanic Growth, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness.",
+      "comment": "Effects that modify a creature’s power and/or toughness, such as the effect of Titanic Growth, will apply to the creature no matter when they started to take effect. The same is true for any counters that change its power and/or toughness and effects that switch its power and toughness.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "If one of the Theros block Gods is affected by Turn to Frog, it will be a legendary 1/1 blue Frog enchantment creature with no abilities. If it stops being a creature, perhaps because your devotion to its color(s) decreased, it will be a legendary blue enchantment with no abilities. The way continuous effects work, the God\u2019s type-changing ability is applied before the effect that removes that ability is applied.",
+      "comment": "If one of the Theros block Gods is affected by Turn to Frog, it will be a legendary 1/1 blue Frog enchantment creature with no abilities. If it stops being a creature, perhaps because your devotion to its color(s) decreased, it will be a legendary blue enchantment with no abilities. The way continuous effects work, the God’s type-changing ability is applied before the effect that removes that ability is applied.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
@@ -458,21 +913,201 @@
       "source": "wotc"
     },
     {
-      "comment": "Turn to Frog doesn\u2019t counter abilities that have already triggered or been activated. In particular, there is no way to cast this spell to stop a creature\u2019s ability that says \u201cAt the beginning of your upkeep,\u201d \u201cWhen this creature enters the battlefield,\u201d or similar from triggering.",
+      "comment": "Turn to Frog doesn’t counter abilities that have already triggered or been activated. In particular, there is no way to cast this spell to stop a creature’s ability that says “At the beginning of your upkeep,” “When this creature enters the battlefield,” or similar from triggering.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "Turn to Frog overwrites all previous effects that set the creature\u2019s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Turn to Frog resolves will overwrite this effect.",
+      "comment": "Turn to Frog overwrites all previous effects that set the creature’s base power and toughness to specific values. Any power- or toughness-setting effects that start to apply after Turn to Frog resolves will overwrite this effect.",
       "oracle_id": "74c4c1e2-c50d-4c8f-889a-0d5674dc6d67",
       "published_at": "2014-07-18",
       "source": "wotc"
     },
     {
-      "comment": "To work as an evasion ability, an attacking creature must already have flying when the declare blockers step begins. Once a creature has become blocked, giving it flying won\u2019t change that.",
+      "comment": "To work as an evasion ability, an attacking creature must already have flying when the declare blockers step begins. Once a creature has become blocked, giving it flying won’t change that.",
       "oracle_id": "f7518456-45ed-41d4-bd3c-5aacea28eb35",
       "published_at": "2009-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "The static abilities of a detained permanent still apply. The triggered abilities of a detained permanent can still trigger.",
+      "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature is already attacking or blocking when it's detained, it won't be removed from combat. It will continue to attack or block.",
+      "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a noncreature permanent is detained and later turns into a creature, it won't be able to attack or block.",
+      "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player leaves a multiplayer game, any continuous effects with durations that last until that player's next turn or until a specific point in that turn will last until that turn would have begun. They neither expire immediately nor last indefinitely.",
+      "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent's activated ability is on the stack when that permanent is detained, the ability will be unaffected.",
+      "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities include a colon and are written in the form \"[cost]: [effect].\" No one can activate any activated abilities, including mana abilities, of a detained permanent.",
+      "oracle_id": "191ec087-7817-4c56-b2d5-66de5c663536",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature is already attacking or blocking when it's detained, it won't be removed from combat. It will continue to attack or block.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player leaves a multiplayer game, any continuous effects with durations that last until that player's next turn or until a specific point in that turn will last until that turn would have begun. They neither expire immediately nor last indefinitely.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a noncreature permanent is detained and later turns into a creature, it won't be able to attack or block.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities include a colon and are written in the form \"[cost]: [effect].\" No one can activate any activated abilities, including mana abilities, of a detained permanent.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The static abilities of a detained permanent still apply. The triggered abilities of a detained permanent can still trigger.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a creature token is 0 unless that token is a copy of another creature, in which case it copies that creature's mana cost.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Lavinia's ability doesn't affect permanents an opponent gains control of after its enters-the-battlefield ability has resolved. Similarly, if you gain control of a detained permanent after that ability resolves, it will continue to be detained until your next turn.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent's activated ability is on the stack when that permanent is detained, the ability will be unaffected.",
+      "oracle_id": "55df6fa3-3d24-46d5-b325-099336c3f0fd",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The two creatures can be controlled by the same opponent or by different opponents.",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2012-10-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities include a colon and are written in the form “[cost]: [effect].” No one can activate any activated abilities, including mana abilities, of a detained permanent.",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent’s activated ability is on the stack when that permanent is detained, the ability will be unaffected.",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player leaves a multiplayer game, any continuous effects with durations that last until that player’s next turn or until a specific point in that turn will last until that turn would have begun. They neither expire immediately nor last indefinitely.",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature is already attacking or blocking when it’s detained, it won’t be removed from combat. It will continue to attack or block.",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The static abilities of a detained permanent still apply. The triggered abilities of a detained permanent can still trigger.",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a noncreature permanent is detained and later turns into a creature, it won’t be able to attack or block.",
+      "oracle_id": "cba0eae3-73ea-4ea9-87bf-1015e490da90",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Edifice of Authority can’t be used to undo an attack or block once it has been declared. Its abilities must be activated no later than the beginning of combat step to stop a creature from attacking, and no later than the declare attackers step to stop a creature from blocking.",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once a player has announced that they are activating the ability of a creature, Edifice of Authority can’t be used to undo it. Its last ability must be activated before the player activates that creature’s ability. The player may respond to Edifice of Authority’s ability with the target creature’s ability if able.",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities contain a colon. They’re generally written “[Cost]: [Effect].” Some keyword abilities are activated abilities and will have colons in their reminder text. Triggered abilities (starting with “when,” “whenever,” or “at”) are unaffected by the last ability of Edifice of Authority. Notably, exerting a creature isn’t an activated ability.",
+      "oracle_id": "7c16707e-24da-4a7e-9d24-d3731987f675",
+      "published_at": "2017-04-18",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature is already attacking or blocking when it’s detained, it won’t be removed from combat. It will continue to attack or block.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "When a player leaves a multiplayer game, any continuous effects with durations that last until that player’s next turn or until a specific point in that turn will last until that turn would have begun. They neither expire immediately nor last indefinitely.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a noncreature permanent is detained and later turns into a creature, it won’t be able to attack or block.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "The static abilities of a detained permanent still apply. The triggered abilities of a detained permanent can still trigger.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "Activated abilities include a colon and are written in the form “[cost]: [effect].” No one can activate any activated abilities, including mana abilities, of a detained permanent.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a permanent’s activated ability is on the stack when that permanent is detained, the ability will be unaffected.",
+      "oracle_id": "5912d4b7-d18d-4619-a96b-d2615200971f",
+      "published_at": "2013-04-15",
       "source": "wotc"
     }
   ],

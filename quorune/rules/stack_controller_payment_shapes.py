@@ -35,3 +35,15 @@ def is_closed_stack_controller_payment_program(program: Any) -> bool:
         mechanic_ids=program.coverage,
     ))
     return bool(dependencies) and dependencies <= set(program.capability_dependencies)
+
+
+def stack_controller_payment_scope_dependencies(program: Any) -> tuple[str, ...]:
+    """Revalidate the independent target roles of a composed payment clause."""
+    if STACK_CONTROLLER_PAYMENT_MECHANIC not in program.coverage:
+        return ()
+    from ..compiler.program_composition import composed_spell_family_runtime_dependencies
+
+    return composed_spell_family_runtime_dependencies(
+        program, capability=STACK_CONTROLLER_PAYMENT_CAPABILITY,
+        mechanic=STACK_CONTROLLER_PAYMENT_MECHANIC,
+    ) or ()

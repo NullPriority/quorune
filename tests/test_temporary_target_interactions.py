@@ -201,7 +201,7 @@ class TemporaryTargetInteractionCompilerTests(unittest.TestCase):
             "Target creature gains your choice of flying or bands with other green creatures until end of turn.",
             "Target creature gets +2/+2 until end of turn. If you attacked this turn, it also gains trample until end of turn.",
             "Target creature gets +2/+2 until end of turn and must be blocked this turn if able.",
-            "Target creature gains forestwalk until your next turn.",
+            "Target creature gains forestwalk until the end of your next turn.",
             "Target creature gains forestwalk until end of turn. Sacrifice it.",
             "Target creature gains flying,, trample until end of turn.",
             "Target creature gets +X/+X until end of turn.",

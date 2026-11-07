@@ -617,7 +617,7 @@ class QueryPowerToughnessDefinitionRuntimeTests(unittest.TestCase):
         self.token(engine, "A", type_line="Token Creature", name="Second Witness")
         current = engine._effective_card_data(source)
         self.assertEqual(("5", "5"), (current["power"], current["toughness"]))
-        self.assertEqual(2,sum(card.is_token and card.controller=='A' and card.printed_name=='Soldier'
+        self.assertEqual(2,sum(card.is_token and card.controller=='A' and card.printed_name=='Soldier Token'
             for card in engine.state.cards.values()))
 
     def test_query_definition_hand_count_projects_without_hidden_identity(self):

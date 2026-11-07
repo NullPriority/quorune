@@ -271,7 +271,7 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         self.assertTrue(s.act('pilot:A', {'action_id': 'order', 'triggers': order}).ok)
         self.until(s, lambda game: game.state.pending_decision is not None
             and game.state.pending_decision.kind == 'semantic.choice')
-        self.assertFalse(any(c.zone == 'battlefield' and c.printed_name == 'Soldier' for c in s.state.cards.values()))
+        self.assertFalse(any(c.zone == 'battlefield' and c.printed_name == 'Soldier Token' for c in s.state.cards.values()))
         self.choose_destinations(s, ('B', 'C'))
         decision = s.state.pending_decision
         self.assertNotEqual('semantic.choice', decision.kind, repr(decision.payload_by_actor.get('A'))[:1400])
@@ -281,7 +281,7 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         result = s.act('pilot:A', {'action_id': 'choose', 'choice': 'put'})
         self.assertTrue(result.ok, result.summary)
         self.settle(s)
-        soldiers = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Soldier']
+        soldiers = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Soldier Token']
         self.assertEqual(2, len(soldiers)); self.assertTrue(all(c.tapped for c in soldiers))
         self.assertEqual({'B', 'C'}, {c.attacking for c in soldiers})
         self.assertTrue(all(str(s.engine._effective_card_data(c)['power']) == '2' for c in soldiers))
@@ -291,6 +291,45 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         self.until(s, lambda game: game.state.phase == 'postcombat_main')
         self.assertEqual([35, 38, 40], [s.state.players[seat].life for seat in 'BCD'])
         self.replay(s, load=True)
+
+    def test_actual_path_of_bravery_counts_creatures_put_into_combat_before_resolution(self):
+        session = self.session(715003)
+        session.state.config.semantic_policy = "trusted_only"
+        session.state.config.starting_life = 37
+        for seat in "BCD":
+            session.state.players[seat].life = 37
+        session.state.players["A"].life = 34
+        hero = self.add(session.engine, "Hero of Bladehold")
+        path = self.add(session.engine, "Path of Bravery")
+        self.assert_closed(session, hero)
+        self.assert_closed(session, path)
+        self.prepare(session)
+        self.checkpoint(session)
+
+        self.assertEqual(3, session.engine._numeric_stat(hero.object_id, "power"))
+        self.until(session, lambda game: game.state.pending_decision is not None
+            and game.state.pending_decision.kind == "combat.attackers")
+        result = session.act("pilot:A", {"action_id": "attack", "attackers": {hero.ref: "B"}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("trigger.order", session.state.pending_decision.kind)
+        items = [item for batch in session.state.pending_trigger_batches for item in batch.items]
+        life_trigger, = [item for item in items if item.get("source_object_id") == path.object_id]
+        token_trigger, = [
+            item for item in items if item.get("source_object_id") == hero.object_id
+            and item.get("context", {}).get("event") == "creature.attacks"
+        ]
+        battle_cry, = [item for item in items if item not in (life_trigger, token_trigger)]
+        order = [life_trigger.ref, battle_cry.ref, token_trigger.ref]
+        result = session.act("pilot:A", {"action_id": "order", "triggers": order})
+        self.assertTrue(result.ok, result.summary)
+        self.choose_destinations(session, ("B", "C"))
+        self.assertEqual(34, session.state.players["A"].life)
+        self.assertEqual(3, len([card for card in session.state.cards.values() if card.attacking]))
+        session = self.replay(session, load=True)
+        self.settle(session)
+        self.assertEqual(37, session.state.players["A"].life)
+        self.assertEqual(4, session.engine._numeric_stat(hero.object_id, "power"))
+        self.replay(session, load=True)
 
     def test_actual_parhelion_crew_creates_untapped_attacking_angels_that_survive_end_step(self):
         s = self.session(508400302); self.trim_opening_hand(s)
@@ -304,7 +343,7 @@ class AttackingTokenResultNativeTests(InheritedNativeFixture, unittest.TestCase)
         self.until(s, lambda game: game.state.pending_decision is not None
             and game.state.pending_decision.kind == 'semantic.choice')
         s = self.replay(s, load=True); self.choose_destinations(s, ('C', 'D')); self.settle(s)
-        angels = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.printed_name == 'Angel']
+        angels = [c for c in s.state.cards.values() if c.zone == 'battlefield' and c.is_token and c.printed_name == 'Angel Token']
         self.assertEqual(2, len(angels)); self.assertTrue(all(not c.tapped for c in angels))
         self.assertEqual({'C', 'D'}, {c.attacking for c in angels})
         self.assertFalse(s.state.delayed_triggers)

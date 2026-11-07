@@ -8,7 +8,7 @@ from typing import Any, Mapping, Sequence
 from ..compiler.optional_effect_templates import OPTIONAL_EFFECT_OPERATION
 from ..replacement.immutable import FrozenMap, freeze_value
 from ..linked_exile_return_model import validate_linked_instruction
-from ..library_search_model import FixedCountedLibrarySearchTemplate
+from ..library_search_model import FixedCountedLibrarySearchTemplate, is_counted_library_search
 from ..semantic_runtime import SemanticNodeError, default_semantic_interpreter
 from .context import SemanticChoiceContext, SemanticChoiceQuery
 from .model import (
@@ -74,7 +74,7 @@ def _represented_effect(
         if effect.get('actor')!=actor or not isinstance(effect.get('players'),(list,tuple)) or list(effect['players'])!=[actor] or not fixed_affected_player_discard_node_capabilities(effects=(restored,),target_schema=None,mechanic_ids=('fixed-affected-player-discard','cr-402-hand'),allow_controller=True):
             raise SemanticChoiceError("Optional controller discard instruction is malformed")
         return
-    if operation == "search" and effect.get("schema_version") == 2:
+    if operation == "search" and is_counted_library_search(effect):
         try:
             FixedCountedLibrarySearchTemplate.from_effect(effect)
         except (ValueError, TypeError, KeyError) as exc:

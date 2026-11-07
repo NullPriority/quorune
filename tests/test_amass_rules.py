@@ -640,7 +640,7 @@ class AmassRuntimeTests(unittest.TestCase):
         self.choose_replacement(session, "A")
         self.assertEqual(6, army.counters["+1/+1"])
         self.assertEqual(
-            ["Food", "Food", "Orc Army"],
+            ["Food Token", "Food Token", "Orc Army"],
             sorted(
                 card.printed_name
                 for card in engine.state.cards.values()

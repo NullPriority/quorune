@@ -1,54 +1,78 @@
 from __future__ import annotations
 
-"""Consume a terminal source-self instruction without changing body ownership."""
+"""Consume a terminal spell move without changing body ownership."""
 
 from dataclasses import replace
 import re
 
 from ..rules.source_references import SourceReferenceSpec
-from ..rules.spell_self_exile import CAPABILITY,MECHANIC,TEMPLATE
+from ..rules.spell_self_exile import SELF_EXILE, SELF_SHUFFLE, terminal_spell_move
 from .closed_effect_programs import _top_level_positions
 
 
-def terminal_self_exile_body(text, *, source_name):
-    positions = _top_level_positions(text.strip(), '. ')
+_SELF_EXILE = re.compile(r'Exile (?P<source>.+?)\.', re.I)
+_SELF_SHUFFLE = re.compile(r"Shuffle (?P<source>.+?) into its owner['’]s library\.", re.I)
+
+
+def _terminal_body(text, *, source_name, instruction_pattern, allow_spell_reference=False):
+    material = text.strip()
+    positions = _top_level_positions(material, '. ')
     if not positions:
         return None
-    material = text.strip();boundary = positions[-1]
-    instruction = material[boundary+2:]
-    match = re.fullmatch(r'Exile (?P<source>.+?)\.',instruction,re.I)
-    if match is None or not SourceReferenceSpec(source_name).matches(match['source']):
+    boundary = positions[-1]
+    match = instruction_pattern.fullmatch(material[boundary + 2:])
+    if match is None:
         return None
-    body = material[:boundary+1]
-    return body if body else None
+    subject = match['source']
+    named_spell = allow_spell_reference and subject.casefold() == 'this spell'
+    if not named_spell and not SourceReferenceSpec(source_name).matches(subject):
+        return None
+    return material[:boundary + 1]
 
 
-def spell_self_exile_effect_compiler(compile_effect, *, source_name, oracle_text, ordinary_spell):
-    if not ordinary_spell or terminal_self_exile_body(oracle_text,source_name=source_name) is None:
+def terminal_self_exile_body(text, *, source_name):
+    return _terminal_body(text, source_name=source_name, instruction_pattern=_SELF_EXILE)
+
+
+def terminal_self_shuffle_body(text, *, source_name):
+    return _terminal_body(
+        text, source_name=source_name, instruction_pattern=_SELF_SHUFFLE, allow_spell_reference=True,
+    )
+
+
+def terminal_spell_move_effect_compiler(compile_effect, *, source_name, oracle_text, ordinary_spell):
+    if not ordinary_spell:
         return compile_effect
+    for parser, move in ((terminal_self_exile_body, SELF_EXILE), (terminal_self_shuffle_body, SELF_SHUFFLE)):
+        if parser(oracle_text, source_name=source_name) is not None:
+            break
+    else:
+        return compile_effect
+
     def compile_spell(text, **kwargs):
         existing = compile_effect(text,**kwargs)
         if existing[0] is not None:
             return existing
-        body = terminal_self_exile_body(text,source_name=source_name)
+        body = parser(text, source_name=source_name)
         if body is None:
             return existing
         compiled = compile_effect(body,**kwargs)
         if compiled[0] is None or not compiled[1] or not compiled[3]:
             return existing
-        return (TEMPLATE+'+'+compiled[0],compiled[1],compiled[2],
-                tuple(dict.fromkeys((*compiled[3],MECHANIC))))
+        return (move.template+'+'+compiled[0],compiled[1],compiled[2],
+                tuple(dict.fromkeys((*compiled[3],move.mechanic))))
     return compile_spell
 
 
-def closed_spell_self_exile_program(program, *, body_is_closed, price_is_closed):
-    if MECHANIC not in program.coverage or CAPABILITY not in program.capability_dependencies:
+def closed_terminal_spell_move_program(program, *, body_is_closed, price_is_closed):
+    move = terminal_spell_move(program.coverage)
+    if move is None or move.capability not in program.capability_dependencies:
         return False
     if (getattr(program,'event',None)!='resolve' or getattr(program,'active_zone',None)!='stack'
-            or not str(getattr(program,'ability_id','')).startswith('spell:') or program.destination!='exile'):
+            or not str(getattr(program,'ability_id','')).startswith('spell:') or program.destination!=move.destination):
         return False
     template = str(program.provenance.get('template_id') or '')
-    prefix = TEMPLATE+'+'
+    prefix = move.template+'+'
     if not template.startswith(prefix):
         # The existing price owner checks its exact descriptor and prefix first.
         return price_is_closed(program,recognizers=(body_is_closed,))
@@ -56,5 +80,5 @@ def closed_spell_self_exile_program(program, *, body_is_closed, price_is_closed)
         return False
     body = replace(program,destination='graveyard',
         provenance={**program.provenance,'template_id':template[len(prefix):]},
-        coverage=[value for value in program.coverage if value!=MECHANIC])
+        coverage=[value for value in program.coverage if value!=move.mechanic])
     return body_is_closed(body)

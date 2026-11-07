@@ -19,7 +19,9 @@ from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.semantics import SemanticRegistry
 from scripts.build_test_database import build_fixture_database
-from high_risk_interaction_support import _observed_piece_ids, _record as boundary_witness_record
+from high_risk_interaction_support import (
+    CONDITIONAL_DRAW_STEP_REPLACEMENT, _observed_piece_ids, _record as boundary_witness_record,
+)
 import test_paid_entry_copy as paid_actions
 
 
@@ -224,7 +226,7 @@ class BatchInteractionRecoveryTests(unittest.TestCase):
             oracle_id='fixture:stack-source-damage-replacement',
             name='Generic Stack Source Damage Replacement Boundary',faces=(),layout='normal',
             type_line='Creature — Elemental',power='2',toughness='2',
-            oracle_text='When this creature enters, it deals 1 damage to any target.\nSkip your draw step.')
+            oracle_text=f'When this creature enters, it deals 1 damage to any target.\n{CONDITIONAL_DRAW_STEP_REPLACEMENT}')
         ir=compile_oracle_card(card,capability_registry=self.registry,capability_profile='commander_review')
         program=compile_best_available_card_program(self.db,card,semantic_registry=SemanticRegistry(),
             capability_registry=self.registry,capability_profile='commander_review')

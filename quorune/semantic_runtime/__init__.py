@@ -399,10 +399,22 @@ from .zone_replacements import (
 
 @lru_cache(maxsize=1)
 def default_semantic_handler_registry() -> SemanticHandlerRegistry:
+    from .distributed_token_creation import DistributedTokenCreationHandler
+    from .earthbend_handlers import EARTHBEND_HANDLERS
     from .emblem_creation import CreateCompiledEmblemHandler
+    from .revealed_library_top import RevealEachLibraryTopHandler
+    from .scheduled_turn_skip import ScheduledTurnSkipHandler
+    from .suspect_handler import SuspectHandler
+    from .combat_removal_handler import CombatRemovalHandler
     registry = SemanticHandlerRegistry(
         (
             CreateCompiledEmblemHandler(),
+            DistributedTokenCreationHandler(),
+            RevealEachLibraryTopHandler(),
+            ScheduledTurnSkipHandler(),
+            SuspectHandler(),
+            CombatRemovalHandler(),
+            *EARTHBEND_HANDLERS,
             *GENERIC_HANDLERS,
             FixedLibraryShuffleHandler(),
             AscendSpellHandler(),

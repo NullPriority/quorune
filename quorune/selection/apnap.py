@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from ..apnap_object_payment import DECLINED_LIFE_LOSS
+
 from dataclasses import replace
 from typing import Any, Mapping, Protocol, Sequence
 
@@ -8,7 +10,7 @@ from ..object_predicate import ObjectQueryError, ObjectQuerySpec
 from ..object_query import object_matches_query, object_query_result
 from ..replacement.immutable import FrozenMap, thaw_value
 from ..semantic_choices.apnap_commit import APNAP_OBJECT_COMMIT_OPERATION
-from .apnap_contract import validate_apnap_choice_effect
+from .apnap_contract import is_typed_hand_exile, validate_apnap_choice_effect
 from .fractional_counts import seal_fractional_counts, apnap_required_count
 from .alternative_discard import alternative_discard_options,validate_alternative_discard_choice
 from ..alternative_discard_model import alternative_discard_count
@@ -213,6 +215,9 @@ class ApnapChoiceOwnerMixin:
                     "count": count,
                     "options": options,
                     "prior_public_choices": dict(state["selected"]) if not effect.get("hidden") else {},
+                    **({DECLINED_LIFE_LOSS: effect[DECLINED_LIFE_LOSS],
+                        "prior_payment_choices": {player: bool(refs) for player, refs in state["selected"].items()}}
+                       if DECLINED_LIFE_LOSS in effect else {}),
                     **({'discard_options': alternative} if (alternative:=alternative_discard_options(self,effect,seat,options)) is not None else {}),
                 }
             },
@@ -279,6 +284,8 @@ class ApnapChoiceOwnerMixin:
         if not queue or queue[0] != seat:
             raise GameRuleError("APNAP choice queue actor changed")
         resume = dict(state.get("resume") or {})
+        if is_typed_hand_exile(effect) or DECLINED_LIFE_LOSS in effect:
+            validate_apnap_choice_effect(self, effect, resume)
         if str(resume.get("stack_ref") or "") != str(
             selection.stack_ref or ""
         ):
@@ -305,7 +312,8 @@ class ApnapChoiceOwnerMixin:
         if "selection" in raw_continuation and tuple(options) != issued_options:
             raise GameRuleError("APNAP choice candidates changed")
         required = apnap_required_count(state, seat, options)
-        if not alternative_discard_count(effect.get('count')) and len(values) != required:
+        allowed_counts = (0, required) if DECLINED_LIFE_LOSS in effect else (required,)
+        if not alternative_discard_count(effect.get('count')) and len(values) not in allowed_counts:
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         refs: list[str] = []
         for value in values:
@@ -317,7 +325,8 @@ class ApnapChoiceOwnerMixin:
             if card.ref not in options or card.ref in refs:
                 raise GameRuleError("Invalid or duplicate APNAP choice")
             refs.append(card.ref)
-        if not validate_alternative_discard_choice(self,effect,seat,options,refs,response.get('discard_mode')) and len(refs)!=required:
+        if (not validate_alternative_discard_choice(self,effect,seat,options,refs,response.get('discard_mode'))
+                and len(refs) not in allowed_counts):
             raise GameRuleError(f"{seat} must choose exactly {required} option(s)")
         selected = dict(state["selected"])
         selected[seat] = refs
@@ -325,6 +334,22 @@ class ApnapChoiceOwnerMixin:
         state["selected"] = selected
         state["queue"] = queue
         self._issue_next_apnap_choice(state)
+
+    def _declined_object_payments(self, state, player_order, actor):
+        effect = state['effect']
+        expected = [seat for seat in self.apnap_order() if effect['players'] == 'all' or seat != actor]
+        if player_order != expected or set(state['selected']) != set(expected):
+            raise GameRuleError('APNAP optional payment seats changed')
+        declining = []
+        for seat in expected:
+            refs = state['selected'][seat]
+            if not isinstance(refs, (list, tuple)) or len(refs) > 1:
+                raise GameRuleError('APNAP optional payment requires at most one object')
+            if not refs:
+                declining.append(seat)
+            elif refs[0] not in self._choice_options(seat, effect):
+                raise GameRuleError('An APNAP payment object is no longer eligible')
+        return declining
 
     def _apply_apnap_choices(self, state: dict[str, Any]) -> None:
         effect = state["effect"]
@@ -362,6 +387,10 @@ class ApnapChoiceOwnerMixin:
         )
         if not actor:
             raise GameRuleError("APNAP choice commit has no controller")
+        declining = []
+        if DECLINED_LIFE_LOSS in effect:
+            validate_apnap_choice_effect(self, effect, resume)
+            declining = self._declined_object_payments(state, player_order, actor)
         semantic_frame = dict(resume.get("semantic_frame") or {})
         instruction_pointer = int(
             semantic_frame.get("instruction_pointer", 0)
@@ -389,6 +418,8 @@ class ApnapChoiceOwnerMixin:
                     ),
                     "event_code": f"choice.{then}",
                     "message": f"Applied simultaneous {then} choices.",
+                    **({DECLINED_LIFE_LOSS: effect[DECLINED_LIFE_LOSS], 'declining_players': declining}
+                       if declining else {}),
                 }
             ]
         self._continue_resolution(

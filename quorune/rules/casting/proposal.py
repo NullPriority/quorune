@@ -786,6 +786,10 @@ def build_cast_proposal(
         selected,
         aura_target_schema,
     )
+    from ...announced_damage import cast_allocation_details
+    allocation = cast_allocation_details(
+        target_schema if target_schema is not None else getattr(program, "target_schema", None), targets, response,
+    )
     requirements = host._mana_vector(selected_dict["requirements"])
     if selected_dict.get("cast_type_line"):
         type_line = str(selected_dict["cast_type_line"])
@@ -806,6 +810,7 @@ def build_cast_proposal(
         details=freeze_json(
             {
                 **_classic_flash_proposal_details(host,request,card,face),
+                **allocation,
                 "selected_cost_option": selected_dict,
                 "selected_modes": selected_modes,
                 "target_schema_override": target_schema,

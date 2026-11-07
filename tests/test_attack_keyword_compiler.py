@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+from copy import deepcopy
+import json
 import unittest
+from unittest.mock import patch
 
-from common import DB_PATH
+from common import DB_PATH, ROOT
 from quorune.ability_fragments import (
     CombatKeywordTriggerKind,
     ability_fragment_from_dict,
@@ -12,10 +15,13 @@ from quorune.carddb import CardDatabase, CardRecord
 from quorune.compiler.ability_keyword_fragments import (
     lower_ability_keyword_fragments,
 )
+from quorune.compiler import token_templates
 from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import (
+    CapabilityRegistry,
     load_default_capability_registry,
 )
+from quorune.rules.token_creation_capability_shapes import token_definition_payload_dependencies
 
 
 def _keyword_card(keyword: str, oracle_text: str, suffix: int) -> CardRecord:
@@ -52,6 +58,34 @@ class AttackKeywordCompilerTests(unittest.TestCase):
     def tearDownClass(cls):
         cls.db.close()
 
+    def test_decayed_fixed_definition_requires_both_abilities(self):
+        production = token_templates.fixed_token_creation_effect_template(
+            "Create a 2/2 black Zombie creature token with decayed."
+        )
+        self.assertIsNotNone(production)
+        effect = production.effect
+        capability = "combat.trigger.decayed"
+        self.assertIn(capability, token_definition_payload_dependencies(effect))
+        for omitted in range(2):
+            incomplete = deepcopy(effect)
+            del incomplete["characteristics"]["ability_fragments"][omitted]
+            with self.subTest(omitted=omitted), self.assertRaisesRegex(ValueError, "Token Decayed"):
+                token_definition_payload_dependencies(incomplete)
+
+        falcon = self.db.lookup("Falcon Abomination")
+        self.assertEqual("exact", compile_oracle_card(falcon, capability_registry=self.capabilities).status)
+        raw = json.loads((ROOT / "quorune/rules/capability-registry.json").read_text(encoding="utf-8"))
+        row = next(row for row in raw["capabilities"] if row["id"] == capability)
+        row.update(status="blocked", blockers=["withdrawn for the dependency test"])
+        withdrawn = compile_oracle_card(falcon, capability_registry=CapabilityRegistry(raw))
+        self.assertNotEqual("exact", withdrawn.status)
+        with patch.object(
+            token_templates, "_CREATURE_TOKEN_KEYWORDS",
+            token_templates._CREATURE_TOKEN_KEYWORDS - {"decayed"},
+        ):
+            mutant = compile_oracle_card(falcon, capability_registry=self.capabilities)
+        self.assertNotEqual("exact", mutant.status)
+
     def test_closed_keyword_lowering_preserves_every_printed_instance(self):
         lowering = lower_ability_keyword_fragments(
             "Exalted, exalted, Battle cry, Melee",
@@ -77,6 +111,7 @@ class AttackKeywordCompilerTests(unittest.TestCase):
             ("Exalted", "combat.trigger.exalted", 702_083_001),
             ("Battle cry", "combat.trigger.battle_cry", 702_091_001),
             ("Melee", "combat.trigger.melee", 702_121_001),
+            ("Decayed", "combat.trigger.decayed", 702_147_001),
         )
         for keyword, capability, suffix in cases:
             with self.subTest(keyword=keyword):

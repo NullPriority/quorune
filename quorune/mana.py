@@ -55,6 +55,12 @@ class ManaMode:
         return payload
 
 
+def mana_modes_preserving_source(modes: tuple[ManaMode, ...]) -> tuple[ManaMode, ...]:
+    return tuple(mode for mode in modes if all(
+        effect.get("op") != "sacrifice_source" for effect in mode.side_effects
+    ))
+
+
 @dataclass(frozen=True, slots=True)
 class ManaSource:
     object_id: str
