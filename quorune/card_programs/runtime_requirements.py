@@ -104,6 +104,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.target_player_sequences import target_player_sequence_runtime_dependencies
     from ..rules.stack_controller_payment_shapes import stack_controller_payment_scope_dependencies
     from ..rules.fixed_effect_payment_shapes import fixed_payment_event_player_runtime_dependencies
+    from ..rules.reflexive_payment_shapes import reflexive_payment_runtime_dependencies
     from ..cast_event_amounts import cast_mana_value_runtime_dependencies
     from ..rules.event_spell_copy import event_spell_copy_runtime_dependencies
     from ..rules.casting.spell_mana_payments import expend_runtime_dependencies
@@ -191,6 +192,7 @@ def _event_query_runtime_requirements(program):
         (target_player_sequence_runtime_dependencies,program,'target_player_sequence'),
         (stack_controller_payment_scope_dependencies,program,'stack_controller_payment_scope'),
         (fixed_payment_event_player_runtime_dependencies,program,'payment_event_player'),
+        (reflexive_payment_runtime_dependencies,program,'reflexive_payment'),
         (cast_mana_value_runtime_dependencies,program,'cast_spell_mana_value'),
         (event_spell_copy_runtime_dependencies,program,'event_spell_copy'),
         (expend_runtime_dependencies,program,'expend'),
