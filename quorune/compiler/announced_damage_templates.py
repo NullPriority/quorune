@@ -7,7 +7,11 @@ from ..announced_damage import (
     DAMAGE_ALLOCATION_FIELD,
     DamageAllocationSpec,
 )
-from .damage_templates import FixedDamageEffectTemplate, fixed_damage_effect_template
+from .damage_templates import (
+    FixedDamageEffectTemplate,
+    fixed_damage_effect_template,
+    source_pronoun_damage_effect_template,
+)
 
 
 _DIVIDED_DAMAGE = re.compile(
@@ -19,12 +23,14 @@ _DIRECT_RECIPIENTS = {
     "targets": "any target",
     "target creatures": "target creature",
     "target creatures with flying": "target creature with flying",
+    "target creatures and/or planeswalkers": "target creature or planeswalker",
+    "target creatures and/or planeswalkers your opponents control": "target creature or planeswalker an opponent controls",
     "target white and/or blue creatures": "target white or blue creature",
     "target attacking or blocking creatures": "target attacking or blocking creature",
 }
 
 
-def fixed_announced_damage_template(text: str, *, card_name: str):
+def fixed_announced_damage_template(text: str, *, card_name: str, allow_source_pronoun: bool = False):
     match = _DIVIDED_DAMAGE.fullmatch(text.strip())
     if match is None:
         return None
@@ -32,9 +38,10 @@ def fixed_announced_damage_template(text: str, *, card_name: str):
     if recipient is None:
         return None
     amount = int(match["amount"])
-    direct = fixed_damage_effect_template(
-        f"{match['source']} deals {amount} damage to {recipient}.", card_name=card_name,
-    )
+    direct_body = f"{match['source']} deals {amount} damage to {recipient}."
+    direct = fixed_damage_effect_template(direct_body, card_name=card_name)
+    if direct is None and allow_source_pronoun:
+        direct = source_pronoun_damage_effect_template(direct_body)
     if not isinstance(direct, FixedDamageEffectTemplate) or direct.target_schema is None:
         return None
     count = match["count"].casefold()

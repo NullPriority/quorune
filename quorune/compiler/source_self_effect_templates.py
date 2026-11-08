@@ -7,6 +7,7 @@ from typing import Any
 import re
 from ..rules.source_references import SourceReferenceSpec, CYCLED_SOURCE_DAMAGE_COVERAGE
 
+from .announced_damage_templates import fixed_announced_damage_template
 from .creature_power_damage_templates import (
     fixed_creature_power_damage_effect_template,
 )
@@ -27,7 +28,8 @@ def compile_source_self_zone_effect(body,*,card_name,event_phrase,effect_templat
     if event_phrase == 'enters':
         from .suspect_templates import normalize_entering_source_suspect
         body = normalize_entering_source_suspect(body)
-    compiled=source_scalar_effect_amount_template(body,source_name=card_name,
+    compiled = fixed_announced_damage_template(body, card_name=card_name, allow_source_pronoun=True)
+    compiled=compiled or source_scalar_effect_amount_template(body,source_name=card_name,
         event={'enters':'permanent.enter','dies':'creature.dies','leaves the battlefield':'permanent.leave'}[event_phrase],
         compile_fixed=lambda text:effect_template(text,card_name=card_name)) or source_self_contextual_effect_template(
             body,card_name=card_name,event_phrase=event_phrase,compile_effect=effect_template)

@@ -19,6 +19,7 @@ from ..continuous_conditions import (
 from ..rules.capabilities import CapabilityRegistry
 from ..rules.event_subscriptions import FixedEventSubscriptionSet
 from ..rules.scheduled_player_shapes import SCHEDULED_PLAYER_DEPARTURE_COVERAGE, SCHEDULED_PLAYER_MECHANIC
+from .announced_damage_templates import fixed_announced_damage_template
 from .dependency_gate import dependency_gate
 from .modal_templates import FIXED_NONREPEATING_MODAL_MECHANIC
 from .trigger_result_templates import binding_effect_template
@@ -1383,12 +1384,20 @@ def fixed_typed_event_effect_trigger_node(
     binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
-    compiled, requires_current_ability = _binding_effect_template(
-        binding,
+    allocation = fixed_announced_damage_template(
         binding.body,
         card_name=card_name,
-        effect_template=effect_template,
+        allow_source_pronoun=binding.variant in {"source_attacks", "source_enters_or_attacks"},
     )
+    if allocation is not None:
+        compiled, requires_current_ability = allocation, False
+    else:
+        compiled, requires_current_ability = _binding_effect_template(
+            binding,
+            binding.body,
+            card_name=card_name,
+            effect_template=effect_template,
+        )
     template, effects, target_schema, body_mechanics = compiled
     if (
         template is None

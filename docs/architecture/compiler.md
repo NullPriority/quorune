@@ -2366,12 +2366,14 @@ residual. Whole-program integration may admit these bounded combinations while
 the original unbound leaf composition correctly continues to reject them.
 
 `compiler/announced_damage_templates.py` lowers one fixed-total divided-damage
-spell clause to an allocation and a single bounded target group. The ordinary
-target predicates cover damageable targets and the represented creature
-restrictions. Casting seals the submitted division in target slot order.
-Resolution passes the surviving shares to the simultaneous damage owner.
-Derived totals, X target counts, activated or triggered assignments, and
-linked riders require their own closed compiler shapes.
+clause to an allocation and a single bounded group of distinct targets.
+The same target predicates serve spells, activated abilities, and supported
+triggered abilities. A source pronoun is bound only in an activation or a
+source-bound event. The proposal seals the split in target slot order before
+spell or activation payment. The trigger controller chooses targets and seals
+their shares while placing the ability on the stack. Resolution passes the
+surviving shares to the simultaneous damage owner. Derived totals, X target
+counts, and linked riders require their own closed compiler shapes.
 
 `compiler/optional_effect_templates.py` owns one leading `You may` around one
 independently exact atomic effect. It preserves the nested effect's target

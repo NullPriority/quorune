@@ -7,6 +7,7 @@ from ..continuous_effect_state import fixed_target_color_effects
 import copy
 from typing import Any, Mapping, Protocol, Sequence
 
+from ..announced_damage import announced_allocation_details
 from ..errors import GameRuleError
 from ..model import CardInstance, StackItem
 from ..object_query import exact_numeric_characteristic
@@ -994,9 +995,13 @@ class TargetSelectionOwnerMixin:
             acting_source=stack_targeting_source(self,item),
             target_schema=target_schema,
         )
-        item.targets = validated
         if target_schema is None:
             raise GameRuleError("Semantic target schema is no longer available")
+        try:
+            allocation = announced_allocation_details(target_schema, validated, response)
+        except ValueError as exc:
+            raise GameRuleError(str(exc)) from exc
+        item.targets = validated
         item.modes = list(
             canonical_modes(
                 target_schema,
@@ -1009,6 +1014,7 @@ class TargetSelectionOwnerMixin:
             ref: self._target_snapshot(ref) for ref in validated
         }
         item.context["targets_revalidated"] = False
+        item.context.update(allocation)
         if continuation_payload.get("trigger_creation"):
             from ..rules.target_announcements import dispatch_target_announcements
             dispatch_target_announcements(self, item)

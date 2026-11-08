@@ -45,6 +45,7 @@ from .activated_costs import (
 from .activated_zone_change_costs import fixed_activated_zone_change_cost
 from .activated_tap_costs import fixed_activated_tap_cost
 from .activation_mana_costs import fixed_complex_activation_mana_cost
+from .announced_damage_templates import fixed_announced_damage_template
 from .power_up_templates import fixed_power_up_ability
 from .dependency_gate import (
     DependencyGate,
@@ -658,6 +659,9 @@ def _compiled_activated_effect(
     card_name: str,
     effect_template: Callable[..., tuple[Any, ...]],
 ) -> tuple[Any, ...]:
+    allocation = fixed_announced_damage_template(text, card_name=card_name, allow_source_pronoun=True)
+    if allocation is not None:
+        return allocation
     transform=fixed_self_transform_effect_template(text,card_name=card_name)
     if transform is not None:return transform
     creature_power = fixed_creature_power_damage_effect_template(

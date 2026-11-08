@@ -39882,14 +39882,17 @@
       "id": "damage.batch.announced_allocation",
       "implementation_components": [
         "quorune.announced_damage.DamageAllocationSpec",
+        "quorune.announced_damage.announced_allocation_details",
         "quorune.announced_damage.cast_allocation_details",
         "quorune.announced_damage.bind_announced_damage_recipients",
         "quorune.compiler.announced_damage_templates.fixed_announced_damage_template",
+        "quorune.rules.activation.proposal.build_activation_proposal",
         "quorune.rules.damage_capability_shapes.fixed_damage_node_capabilities",
         "quorune.fixed_damage_set.resolve_fixed_damage_set",
-        "quorune.selection.copy_targets.prepare_copy_targets"
+        "quorune.selection.copy_targets.prepare_copy_targets",
+        "quorune.selection.targeting.TargetSelectionOwnerMixin._complete_semantic_target"
       ],
-      "implementation_mutation_rationale": "Removing allocation validation at the cast proposal allows an unallocated native Arc Lightning cast and fails the atomic rejection witness.",
+      "implementation_mutation_rationale": "Removing allocation validation admits an unallocated Arc Lightning cast, Arc Mage activation, or Inferno Titan trigger and fails the corresponding atomic rejection witness.",
       "implementation_mutation_status": "killed",
       "interaction_tests": [
         "test_actual_cascade_offers_and_requires_the_same_split_before_free_cast",
@@ -39906,10 +39909,15 @@
       ],
       "official_rules": [
         "107.1c",
+        "113.7a",
+        "115.3",
         "115.7",
         "120.4",
         "601.2d",
+        "602.2b",
+        "603.3d",
         "608.2b",
+        "608.2h",
         "616.1",
         "707.10"
       ],

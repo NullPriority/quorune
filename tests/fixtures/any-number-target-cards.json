@@ -1784,6 +1784,395 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "not_legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{R}",
+      "name": "Arc Mage",
+      "oracle_id": "011bb6cc-f1a1-4790-befc-373acabf63b8",
+      "oracle_text": "{2}{R}, {T}, Discard a card: This creature deals 2 damage divided as you choose among one or two targets.",
+      "power": "2",
+      "produced_mana": [],
+      "released_at": "2000-02-14",
+      "toughness": "2",
+      "type_line": "Creature — Human Spellshaper"
+    },
+    {
+      "cmc": 8.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Flash"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{6}{R}{R}",
+      "name": "Bogardan Hellkite",
+      "oracle_id": "699bc130-2f1f-4bc8-a25f-9329e40efbb1",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, it deals 5 damage divided as you choose among any number of targets.",
+      "power": "5",
+      "produced_mana": [],
+      "released_at": "2021-07-23",
+      "toughness": "5",
+      "type_line": "Creature — Dragon"
+    },
+    {
+      "cmc": 7.0,
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Trample"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}{G}",
+      "name": "Dragonlord Atarka",
+      "oracle_id": "daff70a4-a990-47c9-b6ef-2c379272c8a3",
+      "oracle_text": "Flying, trample\nWhen Dragonlord Atarka enters, it deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control.",
+      "power": "8",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "8",
+      "type_line": "Legendary Creature — Elder Dragon"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{5}{R}",
+      "name": "Gang of Devils",
+      "oracle_id": "62110234-690b-4498-8076-26ba910f9f92",
+      "oracle_text": "When this creature dies, it deals 3 damage divided as you choose among one, two, or three targets.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2016-08-26",
+      "toughness": "3",
+      "type_line": "Creature — Devil"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{4}{R}{R}",
+      "name": "Inferno Titan",
+      "oracle_id": "0ce47c8b-1e1f-463f-94f0-35ca00be89e6",
+      "oracle_text": "{R}: This creature gets +1/+0 until end of turn.\nWhenever this creature enters or attacks, it deals 3 damage divided as you choose among one, two, or three targets.",
+      "power": "6",
+      "produced_mana": [],
+      "released_at": "2026-08-14",
+      "toughness": "6",
+      "type_line": "Creature — Giant"
+    },
+    {
+      "cmc": 3.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{R}{R}{R}",
+      "name": "Mogg Mob",
+      "oracle_id": "fb7171f8-60a0-4309-93ff-113e1f62113c",
+      "oracle_text": "Sacrifice this creature: It deals 3 damage divided as you choose among one, two, or three targets.",
+      "power": "3",
+      "produced_mana": [],
+      "released_at": "2024-06-14",
+      "toughness": "3",
+      "type_line": "Creature — Goblin"
+    },
+    {
+      "cmc": 6.0,
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": "4",
+      "mana_cost": "{4}{U}{R}",
+      "name": "Ral, Caller of Storms",
+      "oracle_id": "d7b10518-b6dc-4a39-881a-edd346034f28",
+      "oracle_text": "+1: Draw a card.\n−2: Ral deals 3 damage divided as you choose among one, two, or three targets.\n−7: Draw seven cards. Ral deals 7 damage to each creature your opponents control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2018-10-05",
+      "toughness": null,
+      "type_line": "Legendary Planeswalker — Ral"
+    },
+    {
+      "cmc": 5.0,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Riot"
+      ],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{3}{R}{R}",
+      "name": "Skarrgan Hellkite",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "oracle_text": "Riot (This creature enters with your choice of a +1/+1 counter or haste.)\nFlying\n{3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.",
+      "power": "4",
+      "produced_mana": [],
+      "released_at": "2025-04-11",
+      "toughness": "4",
+      "type_line": "Creature — Dragon"
     }
   ],
   "rulings": [
@@ -2740,6 +3129,102 @@
       "published_at": "2017-11-17",
       "source": "wotc",
       "comment": "If Electrolyze targets two creatures and one becomes an illegal target, the remaining target is dealt 1 damage, not 2. You'll still draw a card."
+    },
+    {
+      "comment": "You can't choose zero targets. You must choose between 1 and 2 targets.",
+      "oracle_id": "011bb6cc-f1a1-4790-befc-373acabf63b8",
+      "published_at": "2004-10-04",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you put Inferno Titan's triggered ability on the stack, not as it resolves. Each target must be assigned at least 1 damage. (In other words, as you put the ability on the stack, you choose whether to have it deal 3 damage to a single target, 2 damage to one target and 1 damage to another target, or 1 damage to each of three targets.)",
+      "oracle_id": "0ce47c8b-1e1f-463f-94f0-35ca00be89e6",
+      "published_at": "2010-08-15",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you put Gang of Devils’s triggered ability on the stack, not as it resolves. Each target must be assigned at least 1 damage. (In other words, as you put the ability on the stack, you choose whether to have it deal 3 damage to a single target, 2 damage to one target and 1 damage to another target, or 1 damage to each of three targets.)",
+      "oracle_id": "62110234-690b-4498-8076-26ba910f9f92",
+      "published_at": "2012-05-01",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the creatures or players are illegal targets as Bogardan Hellkite's triggered ability tries to resolve, the original division of damage still applies and the damage that would have been dealt to the illegal targets is lost. It won't be dealt instead to a legal target.",
+      "oracle_id": "699bc130-2f1f-4bc8-a25f-9329e40efbb1",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many targets Bogardan Hellkite's triggered ability has and how the damage is divided as you put the ability onto the stack. Each target must receive at least 1 damage.",
+      "oracle_id": "699bc130-2f1f-4bc8-a25f-9329e40efbb1",
+      "published_at": "2017-11-17",
+      "source": "wotc"
+    },
+    {
+      "comment": "If Skarrgan Hellkite's ability has two targets and one becomes illegal, the remaining target is dealt 1 damage, not 2.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If a creature entering the battlefield has riot but can't have a +1/+1 counter put onto it, it gains haste.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If you choose for the creature to gain haste, it gains haste indefinitely. It won't lose it as the turn ends or as another player gains control of it.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Once Skarrgan Hellkite's ability has been activated, it resolves even if all +1/+1 counters are removed from it or if Skarrgan Hellkite leaves the battlefield.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "Riot is a replacement effect. Players can't respond to your choice of +1/+1 counter or haste, and they can't take actions while the creature is on the battlefield without one or the other.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You divide the damage as you activate Skarrgan Hellkite's ability, not as it resolves. Each target must be assigned at least 1 damage. In other words, as you activate the ability, you choose whether to have Skarrgan Hellkite deal 2 damage to a single target, or deal 1 damage to each of two targets.",
+      "oracle_id": "bfbe28a2-b656-4575-8b7e-9dbc22f8d4bc",
+      "published_at": "2019-01-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets become illegal for Ral's second ability, the original division of damage still applies, and the damage that would have been dealt to illegal targets isn't dealt at all.",
+      "oracle_id": "d7b10518-b6dc-4a39-881a-edd346034f28",
+      "published_at": "2018-10-05",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets are illegal targets as the ability tries to resolve, the original division of damage still applies but no damage is dealt to the illegal targets. If all targets are illegal, the ability doesn’t resolve.",
+      "oracle_id": "daff70a4-a990-47c9-b6ef-2c379272c8a3",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many targets the ability has and how the damage is divided as you put the ability on the stack. Each target must receive at least 1 damage.",
+      "oracle_id": "daff70a4-a990-47c9-b6ef-2c379272c8a3",
+      "published_at": "2015-02-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If some of the targets are illegal as Mogg Mob's activated ability tries to resolve, the original division of damage still applies and the damage that would have been dealt to the illegal targets is lost. It won't be dealt instead to a legal target.",
+      "oracle_id": "fb7171f8-60a0-4309-93ff-113e1f62113c",
+      "published_at": "2024-06-07",
+      "source": "wotc"
+    },
+    {
+      "comment": "You choose how many targets Mogg Mob's ability has and how the damage is divided as you activate the ability. Each target must receive at least 1 damage.",
+      "oracle_id": "fb7171f8-60a0-4309-93ff-113e1f62113c",
+      "published_at": "2024-06-07",
+      "source": "wotc"
     }
   ]
 }

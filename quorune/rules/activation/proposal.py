@@ -4,9 +4,10 @@ from ...target_source import ability_targeting_source
 
 from collections.abc import Mapping
 from dataclasses import replace
-from typing import Any, Protocol
+from typing import Any, Protocol, Sequence
 
 from ...abilities import ActivatedAbility, choose_ability
+from ...announced_damage import announced_allocation_details
 from ...crew import activation_power_tap_hint
 from .pricing import (
     payable_activation_mana_options,
@@ -261,13 +262,20 @@ def _validate_activation_timing_costs(
             raise ActivationProposalError('An absolute rule prohibits this untap cost',status='unpayable',reason='untap_cost_prohibited')
 
 
-def _creature_power_damage_context(
+def _activation_effect_context(
     host: ActivationProposalHost,
     source: Any,
     program: Any,
+    target_schema: Mapping[str, Any] | None,
+    targets: Sequence[str],
+    response: Mapping[str, Any],
 ) -> dict[str, Any]:
+    try:
+        allocation = announced_allocation_details(target_schema, targets, response)
+    except ValueError as exc:
+        raise ActivationProposalError(str(exc), reason="invalid_damage_allocation") from exc
     if program is None:
-        return {}
+        return allocation
     source_lki = capture_creature_power_damage_source_lki(
         host,
         source,
@@ -282,10 +290,12 @@ def _creature_power_damage_context(
     from ...scalar_effect_amounts import scalar_source_context
     from ...token_copy_references import copy_source_context
     from ..stack_damage_sources import fixed_damage_source_context
-    return scalar_source_context(host, source, program.effects) | copy_source_context(host, source, program.effects) | fixed_damage_source_context(host, source, (program.effects, program.target_schema)) | (
-        {CREATURE_POWER_DAMAGE_LKI_CONTEXT: source_lki}
-        if source_lki is not None
-        else {}
+    return (
+        allocation
+        | scalar_source_context(host, source, program.effects)
+        | copy_source_context(host, source, program.effects)
+        | fixed_damage_source_context(host, source, (program.effects, program.target_schema))
+        | ({CREATURE_POWER_DAMAGE_LKI_CONTEXT: source_lki} if source_lki is not None else {})
     )
 
 
@@ -371,7 +381,7 @@ def build_activation_proposal(
     )
     snapshots = {ref: host._target_snapshot(ref) for ref in targets}
     context = host._fetch_context(request.actor, ability, response)
-    context.update(_creature_power_damage_context(host, source, program))
+    context.update(_activation_effect_context(host, source, program, effective_target_schema, targets, response))
     mana_option = None
     if ability.mana_cost_options:
         try:

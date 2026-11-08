@@ -6792,6 +6792,8 @@
       "patterns": [
         "quorune/announced_damage.py",
         "quorune/compiler/announced_damage_templates.py",
+        "quorune/rules/activation/proposal.py",
+        "quorune/selection/targeting.py",
         "quorune/compiler/damage_templates.py",
         "quorune/fixed_damage_set.py",
         "quorune/fixed_damage_set_model.py",

@@ -63,6 +63,18 @@ def damage_allocation_spec(schema: Mapping[str, Any] | None) -> DamageAllocation
     return spec
 
 
+def announced_allocation_details(
+    schema: Mapping[str, Any] | None,
+    targets: Sequence[str],
+    response: Mapping[str, Any],
+) -> dict[str, Any]:
+    spec = damage_allocation_spec(schema)
+    if spec is None:
+        return {}
+    submitted = response.get(DAMAGE_ALLOCATION_FIELD, None if targets else {})
+    return {ANNOUNCED_DAMAGE_CONTEXT: spec.announce(targets, submitted)}
+
+
 def cast_allocation_details(
     schema: Mapping[str, Any] | None,
     targets: Sequence[str],
@@ -71,13 +83,9 @@ def cast_allocation_details(
     from .rules.casting.model import CastProposalError
 
     try:
-        spec = damage_allocation_spec(schema)
-        if spec is None:
-            if DAMAGE_ALLOCATION_FIELD in response:
-                raise ValueError("This spell has no announced damage allocation")
-            return {}
-        submitted = response.get(DAMAGE_ALLOCATION_FIELD, None if targets else {})
-        return {ANNOUNCED_DAMAGE_CONTEXT: spec.announce(targets, submitted)}
+        if DAMAGE_ALLOCATION_FIELD in response and (schema is None or DAMAGE_ALLOCATION_FIELD not in schema):
+            raise ValueError("This spell has no announced damage allocation")
+        return announced_allocation_details(schema, targets, response)
     except ValueError as exc:
         raise CastProposalError(str(exc), reason="invalid_damage_allocation") from exc
 
