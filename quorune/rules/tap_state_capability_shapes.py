@@ -10,6 +10,7 @@ from ..attachment_references import (
 )
 from ..compiler.fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
 from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
+from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
 from .permanent_predicate_capability_shapes import (
     direct_permanent_target_schema_is_closed,
     direct_target_predicate_capabilities,
@@ -22,6 +23,18 @@ def _operation_capability(value: object) -> str | None:
         "untap": "permanent.untap.effect",
         "prohibit_next_untap": "untap.step.prohibit_next_controller",
     }.get(value)
+
+
+def target_set_next_untap_dependencies(values: object) -> tuple[str, ...]:
+    if isinstance(values, Mapping):
+        if TAP_TARGET_SET_UNTAP_FIELD in values:
+            if values.get("op") != "tap_targets" or values[TAP_TARGET_SET_UNTAP_FIELD] is not True:
+                raise ValueError("A next-untap instruction requires a tap target set")
+            return ("untap.step.prohibit_next_controller",)
+        values = tuple(values.values())
+    if isinstance(values, (list, tuple)):
+        return tuple(dict.fromkeys(cap for value in values for cap in target_set_next_untap_dependencies(value)))
+    return ()
 
 
 def targeted_tap_state_node_capabilities(
@@ -131,4 +144,4 @@ def targeted_tap_state_node_capabilities(
     )
 
 
-__all__ = ["targeted_tap_state_node_capabilities"]
+__all__ = ["targeted_tap_state_node_capabilities", "target_set_next_untap_dependencies"]

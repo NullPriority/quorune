@@ -16,6 +16,7 @@ VIGILANCE_KEYWORD = "vigilance"
 STUN_COUNTER_NAME = "stun"
 REASON_FIELD = "reason"
 NEXT_UNTAP_PROHIBITION_ANNOTATION = "does_not_untap_next"
+TAP_TARGET_SET_UNTAP_FIELD = "prohibit_next_untap"
 
 
 def _exert_players(card: Any) -> list[str]:

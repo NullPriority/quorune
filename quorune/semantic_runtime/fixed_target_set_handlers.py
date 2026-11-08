@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping
 
+from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
 from .context import ReadOnlyHandlerContext, SemanticNodeError
 from .intents import (
     DestroyPermanentTargetsIntent,
@@ -233,7 +234,11 @@ class SetFixedTargetSetTappedHandler:
             context,
             operation=self.operation,
             replacements=False,
+            additional_fields=(TAP_TARGET_SET_UNTAP_FIELD,) if self.tapped else (),
         )
+        prohibit = TAP_TARGET_SET_UNTAP_FIELD in effect
+        if prohibit and effect[TAP_TARGET_SET_UNTAP_FIELD] is not True:
+            raise SemanticNodeError("The next-untap instruction must be true")
         return _target_set_plan(
             self.operation, self.handler_id, cards,
             SetPermanentsTappedIntent(
@@ -241,6 +246,7 @@ class SetFixedTargetSetTappedHandler:
                 actor=context.actor,
                 tapped=self.tapped,
                 reason=reason,
+                prohibit_next_untap=prohibit,
             ),
         )
 

@@ -1358,6 +1358,13 @@ characteristic result must close against the identical target schema; no new
 target occurrence or public-set query is synthesized. The flattened program
 uses the existing simultaneous target-set handlers in printed order and may
 end with independently closed Draw, Scry or Investigate instructions.
+The next-untap follow-up binds the same revalidated targets. It taps them
+together, then marks each original permanent to skip its next controller
+untap, including permanents that were already tapped. The marker follows
+control of the permanent and expires in that untap step. This form can also
+retain an independent typed token result with its own compiled abilities.
+The runtime binder infers the untap capability directly from the compiled tap
+instruction.
 `resolution.target_set.ordered_results` is inferred from the actual multiple
 target-set leaves independently of sequence annotations. Every leaf retains
 its own exact structural validator and capabilities. Initial zero targets

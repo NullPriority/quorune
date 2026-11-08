@@ -168,6 +168,7 @@ class SetPermanentsTappedIntent:
     actor: str
     tapped: bool
     reason: str
+    prohibit_next_untap: bool = False
 
     def __post_init__(self) -> None:
         if (
@@ -180,6 +181,8 @@ class SetPermanentsTappedIntent:
             or type(self.actor) is not str
             or not self.actor
             or type(self.tapped) is not bool
+            or type(self.prohibit_next_untap) is not bool
+            or (self.prohibit_next_untap and not self.tapped)
             or type(self.reason) is not str
             or not self.reason
         ):

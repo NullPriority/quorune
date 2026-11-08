@@ -573,12 +573,12 @@ _WITNESSES = {
         "{2}{B}",
         ("Madness",),
     ),
-    "snow-day": _Witness(
-        "Snow Day",
-        "Instant",
-        "Tap up to two target creatures. Those creatures don't untap during "
-        "their controller's next untap step.\n"
-        "Draw two cards, then discard a card.",
+    "whirlwind-technique": _Witness(
+        "Whirlwind Technique",
+        "Instant — Lesson",
+        "Target player draws two cards, then discards a card.\n"
+        "Airbend up to two target creatures. (To airbend a creature, exile it. "
+        "While it's exiled, its owner may cast it for {2} rather than its mana cost.)",
         "{4}{U}{U}",
     ),
     "bazaar-of-wonders": _Witness(
@@ -1631,7 +1631,7 @@ _bind("madblind-mountain", ZONE_AND_CHOICE_PAIRS[6])
 _bind("bretagard-stronghold", ZONE_AND_CHOICE_PAIRS[7])
 _bind("ebony-fly", ZONE_AND_CHOICE_PAIRS[8])
 _bind("heartless-pillage", ZONE_AND_CHOICE_PAIRS[9])
-_bind("snow-day", ZONE_AND_CHOICE_PAIRS[10])
+_bind("whirlwind-technique", ZONE_AND_CHOICE_PAIRS[10])
 _bind("madness-conditional-choice", MADNESS_AND_CHOICE_PAIRS[1])
 _bind(
     "madness-divided-choice",

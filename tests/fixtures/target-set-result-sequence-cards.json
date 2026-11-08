@@ -563,6 +563,296 @@
       "released_at": "2023-09-08",
       "toughness": null,
       "type_line": "Instant"
+    },
+    {
+      "oracle_id": "382097b3-f753-493c-bde4-101c0538feb4",
+      "name": "Frost Breath",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Instant",
+      "oracle_text": "Tap up to two target creatures. Those creatures don't untap during their controller's next untap step.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-07-03",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "name": "Sudden Storm",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Tap up to two target creatures. Those creatures don't untap during their controllers' next untap steps. Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Scry"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2014-02-07",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "057729d0-f7ed-465b-91aa-fb2c6d6612b2",
+      "name": "Snow Day",
+      "mana_cost": "{4}{U}{U}",
+      "cmc": 6.0,
+      "type_line": "Instant",
+      "oracle_text": "Tap up to two target creatures. Those creatures don't untap during their controller's next untap step.\nDraw two cards, then discard a card.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-02-23",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d5cdfa86-a234-4ddd-bfa0-4a3bc51eebce",
+      "name": "Saiba Trespassers",
+      "mana_cost": "{4}{U}",
+      "cmc": 5.0,
+      "type_line": "Artifact Creature — Moonfolk Rogue",
+      "oracle_text": "Channel — {3}{U}, Discard this card: Tap up to two target creatures you don't control. Those creatures don't untap during their controller's next untap step.",
+      "power": "3",
+      "toughness": "5",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Channel"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2022-02-18",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "713eba2e-d19d-4056-b224-f93857dbdafe",
+      "name": "Mana Skimmer",
+      "mana_cost": "{3}{B}",
+      "cmc": 4.0,
+      "type_line": "Creature — Leech",
+      "oracle_text": "Flying\nWhenever this creature deals damage to a player, tap target land that player controls. That land doesn't untap during its controller's next untap step.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "keywords": [
+        "Flying"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2006-10-06",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "name": "Adverse Conditions",
+      "mana_cost": "{3}{U}",
+      "cmc": 4.0,
+      "type_line": "Instant",
+      "oracle_text": "Devoid (This card has no color.)\nTap up to two target creatures. Those creatures don't untap during their controller's next untap step. Create a 1/1 colorless Eldrazi Scion creature token. It has \"Sacrifice this token: Add {C}.\"",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Devoid"
+      ],
+      "produced_mana": [
+        "C"
+      ],
+      "layout": "normal",
+      "released_at": "2015-10-02",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
     }
   ],
   "fixture_kind": "public_exact-list_card_data",
@@ -752,6 +1042,150 @@
       "oracle_id": "bad84deb-3f2c-46fd-9dcb-4e3ba9732769",
       "published_at": "2025-11-17",
       "source": "wotc"
+    },
+    {
+      "oracle_id": "382097b3-f753-493c-bde4-101c0538feb4",
+      "published_at": "2020-06-23",
+      "source": "wotc",
+      "comment": "Frost Breath can target tapped creatures. If a targeted creature is already tapped when the spell resolves, that creature just remains tapped and doesn't untap during its controller's next untap step."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "You choose how to order cards returned to your library after scrying no matter where you put them."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "Scry appears on some spells and abilities with one or more targets. If all of the spell or ability’s targets are illegal when it tries to resolve, it won’t resolve and none of its effects will happen. You won’t scry."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "You perform the actions stated on a card in sequence. For some spells and abilities, that means you’ll scry last. For others, that means you’ll scry and then perform other actions."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2013-09-15",
+      "source": "wotc",
+      "comment": "When you scry, you may put all the cards you look at back on top of your library, you may put all of those cards on the bottom of your library, or you may put some of those cards on top and the rest of them on the bottom."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If a creature affected by Sudden Storm changes controllers before its old controller’s next untap step, Sudden Storm will prevent it from becoming untapped during its new controller’s next untap step."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you chose two targets and one is an illegal target when Sudden Storm resolves, that creature won’t become tapped and it won’t be stopped from untapping during its controller’s next untap step. It won’t be affected by Sudden Storm in any way."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "This spell can target tapped creatures. If a targeted creature is already tapped when the spell resolves, that creature remains tapped and doesn’t untap during its controller’s next untap step."
+    },
+    {
+      "oracle_id": "32e915fb-3836-4bed-93b1-61c9c3951ad1",
+      "published_at": "2014-02-01",
+      "source": "wotc",
+      "comment": "If you choose zero targets, you’ll just scry 1 when the ability resolves. However, if you choose at least one target and all of Sudden Storm’s targets are illegal as it tries to resolve, the spell won’t resolve and none of its effects will happen. You won’t scry in that case."
+    },
+    {
+      "oracle_id": "057729d0-f7ed-465b-91aa-fb2c6d6612b2",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "If you chose targets for Snow Day as you cast it, and none of those targets are legal as it tries to resolve, it will be removed from the stack and do nothing. You will not draw or discard."
+    },
+    {
+      "oracle_id": "057729d0-f7ed-465b-91aa-fb2c6d6612b2",
+      "published_at": "2021-04-16",
+      "source": "wotc",
+      "comment": "You may choose tapped creatures as targets. Those creatures won’t untap during their controller’s next untap step."
+    },
+    {
+      "oracle_id": "d5cdfa86-a234-4ddd-bfa0-4a3bc51eebce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "If a channel ability requires a target, you may not activate it without a target just to discard the card."
+    },
+    {
+      "oracle_id": "d5cdfa86-a234-4ddd-bfa0-4a3bc51eebce",
+      "published_at": "2022-02-18",
+      "source": "wotc",
+      "comment": "Discarding the card is part of the cost to activate a channel ability."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Sacrificing an Eldrazi Scion creature token to add {C} is a mana ability. It doesn't use the stack and can't be responded to."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "A card with devoid is just colorless. It's not colorless and the colors of mana in its mana cost."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Adverse Conditions tracks the creatures, but not their controller. If either of the creatures changes controllers before its first controller's next untap step has come around, then it won't untap during its new controller's next untap step."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "You can cast Adverse Conditions with no targets. When it resolves, you'll get an Eldrazi Scion. However, if you cast Adverse Conditions with any targets and all of those targets are illegal as it tries to resolve, it won't resolve and none of its effects will happen. You won't get the Eldrazi Scion in that case."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Eldrazi Scions are similar to Eldrazi Spawn, seen in the Zendikar block. Note that Eldrazi Scions are 1/1, not 0/1."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Eldrazi and Scion are each separate creature types. Anything that affects Eldrazi will affect these tokens, for example."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Some instants and sorceries that create Eldrazi Scions require targets. If all targets for such a spell have become illegal by the time that spell tries to resolve, the spell won't resolve and none of its effects will happen. You won't get any Eldrazi Scions."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Devoid works in all zones, not just on the battlefield."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "If a card loses devoid, it will still be colorless. This is because effects that change an object's color (like the one created by devoid) are considered before the object loses devoid."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Other cards and abilities can give a card with devoid color. If that happens, it's just the new color, not that color and colorless."
+    },
+    {
+      "oracle_id": "7a5a81f7-1597-4972-8565-fd2a5667df99",
+      "published_at": "2015-08-25",
+      "source": "wotc",
+      "comment": "Cards with devoid use frames that are variations of the transparent frame traditionally used for Eldrazi. The top part of the card features some color over a background based on the texture of the hedrons that once imprisoned the Eldrazi. This coloration is intended to aid deckbuilding and game play."
     }
   ],
   "schema_version": 1,

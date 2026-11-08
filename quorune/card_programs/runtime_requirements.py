@@ -258,8 +258,10 @@ def _value_runtime_requirements(program):
     except ValueError as exc:
         blockers.add(f"runtime_next_turn_duration:invalid:{exc}")
     from ..source_tap_effect import source_tap_effect_dependencies
+    from ..rules.tap_state_capability_shapes import target_set_next_untap_dependencies
     try:
         required.update(source_tap_effect_dependencies(program.effects))
+        required.update(target_set_next_untap_dependencies(program.effects))
     except ValueError as exc:
         blockers.add(f"runtime_source_tap_duration:invalid:{exc}")
     try:

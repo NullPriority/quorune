@@ -289,10 +289,13 @@ def targeted_tap_state_effect_template(
 
     normalized = " ".join(text.strip().split())
     delayed = re.fullmatch(
-        r"Tap (?P<subject>(?:another )?target [^.]+)\. (?:It|That (?:creature|permanent)) doesn['’]t untap during its controller['’]s next untap step\.?",
+        r"Tap (?P<subject>(?:another )?target [^.]+)\. (?P<reference>It|That (?:creature|permanent|land)) doesn['’]t untap during its controller['’]s next untap step\.?",
         normalized, re.IGNORECASE)
     if delayed is not None:
         target_spec = direct_permanent_target_spec(delayed['subject'])
+        if (target_spec is not None and delayed["reference"].casefold() == "that land"
+                and tuple(target_spec.to_target_schema().get("types_any", ())) != ("land",)):
+            return None
         return TapThenProhibitNextUntapTemplate(target_spec) if target_spec is not None else None
     next_untap = re.fullmatch(
         r"(?P<subject>(?:another )?target [^.]+) doesn['’]t untap during its controller['’]s next untap step\.?",

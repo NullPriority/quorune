@@ -800,6 +800,10 @@ def _execute_tap_state_intent(
         sink, (card for card in cards if card.tapped != prior_states[card.object_id]),
         tapped=intent.tapped, reason=intent.reason,
     )
+    if intent.prohibit_next_untap:
+        for card in cards:
+            tap_state.prohibit_next_untap(sink, card.ref, actor=intent.actor, reason=intent.reason,
+                                         logical_object_id=card.logical_object_id)
     return intent.actor, result
 
 
