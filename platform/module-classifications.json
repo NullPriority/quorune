@@ -7812,6 +7812,21 @@
       "replay_participation": "none"
     },
     {
+      "file": "quorune/compiler/room_bindings.py",
+      "layer": "semantics",
+      "owning_subsystem": "oracle_compiler",
+      "allowed_dependency_layers": [
+        "adapter",
+        "domain",
+        "rules",
+        "semantics"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/compiler/runtime_templates.py",
       "layer": "semantics",
       "owning_subsystem": "oracle_compiler",
@@ -26161,5 +26176,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "f75fa1239203f9a894288f8277059af33e2b4dc575dfb7e08c8a4fef8a0dd2b4"
+  "fingerprint": "3d4a3081cbe155d028140a1e299de3562747f5529371becacc193eba1d7e3494"
 }

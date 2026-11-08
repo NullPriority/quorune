@@ -5084,9 +5084,17 @@ the committed occurrence, applies the shared current layer-6 ability query,
 and places the ordinary APNAP trigger. The closed grammar covers source or
 exact printed-name entry, attack, death, leave, graveyard, face-up, combat-
 damage, monstrous, block, and sacrifice pairs plus the exact current enchanted
-creature attack/block relation. Cross-zone Cycling/death pairs, commander and
-Room subjects, linked Haunt, chosen or another-object predicates, unavailable
-event producers, and more than two events remain residual.
+creature attack/block relation. Eerie binds the controlled enchantment entry
+and full-unlock branches separately. A represented graveyard self-return uses
+the source owner for both predicates. Cross-zone Cycling/death pairs, other
+commander or Room subjects, linked Haunt, chosen or another-object predicates,
+unavailable event producers, and more than two events remain residual.
+
+A printed shared-type split permanent contributes a source-spanned type-line
+form to the CardProgram. An own-door trigger binds its exact printed face,
+source incarnation and acting controller to a committed unlock. Its result
+uses the existing typed effect and target owners. The current ability check
+reads only active door fragments, including copiable Room forms.
 Runtime binding infers the multi-subscription capability directly from this
 descriptor, together with represented cast and entry producer requirements.
 Removing an inventory marker cannot remove those requirements.

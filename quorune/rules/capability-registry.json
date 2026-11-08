@@ -53229,6 +53229,79 @@
     {
       "applicability": {
         "exclusions": [
+          "Unrepresented unlock prices",
+          "Printed lock or unlock instructions with unowned results"
+        ],
+        "inputs": [
+          "Pinned shared type line, ordered printed faces, current incarnation and paid cost"
+        ],
+        "outputs": [
+          "Typed entry and unlock designations",
+          "Visible current characteristics and independent copiable faces"
+        ],
+        "summary": "A shared-type split permanent retains distinct door designations. Cast entry and paid unlock use the same physical identities and canonical ownership. Copy values retain both doors independently."
+      },
+      "blockers": [],
+      "dependencies": [],
+      "dependency_fail_closed_rationale": "This intrinsic form delegates directly to established zone, payment and characteristic owners.",
+      "dependency_fail_closed_status": "not_applicable",
+      "id": "permanent.shared_type_doors.lifecycle",
+      "implementation_components": [
+        "quorune.shared_type_doors.SharedTypeDoors",
+        "quorune.shared_type_doors.shared_type_entry_doors",
+        "quorune.rules.room_unlock.build_room_unlock_offers",
+        "quorune.rules.room_unlock.commit_room_unlock",
+        "quorune.compiler.card_form_rules.SharedTypeDoorRuleNode",
+        "quorune.rules.room_copy_values.room_copy_characteristics"
+      ],
+      "implementation_mutation_rationale": "Removing the printed shared type line recognition fails the ordered, source-pinned form witness.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_copy_enchantment_copies_both_door_definitions_without_the_unlock_designations"
+      ],
+      "multiplayer_tests": [
+        "test_room_paid_unlock_replays_and_a_blinked_room_reenters_with_both_doors_locked"
+      ],
+      "negative_tests": [
+        "test_room_form_and_event_payloads_require_their_declared_authority"
+      ],
+      "official_rules": [
+        "202.2",
+        "202.3",
+        "709.5",
+        "709.5b",
+        "709.5c",
+        "709.5d",
+        "709.5e"
+      ],
+      "positive_tests": [
+        "test_room_paid_unlock_replays_and_a_blinked_room_reenters_with_both_doors_locked"
+      ],
+      "privacy_tests": [
+        "test_room_paid_unlock_replays_and_a_blinked_room_reenters_with_both_doors_locked"
+      ],
+      "replay_tests": [
+        "test_room_paid_unlock_replays_and_a_blinked_room_reenters_with_both_doors_locked"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "aggregate, quantified, linked, or compound tap clauses and target sets outside the separately capability-closed fixed homogeneous target-set owner",
           "optional choice shapes other than the separately typed tap-or-untap owner",
           "tap-symbol costs",
@@ -72794,6 +72867,81 @@
         "commander_review"
       ],
       "version": 2
+    },
+    {
+      "applicability": {
+        "exclusions": [
+          "Foreign controller subscriptions",
+          "An unchanged unlocked set",
+          "Unrepresented triggered effect bodies"
+        ],
+        "inputs": [
+          "Committed ordered door designation transition and acting controller"
+        ],
+        "outputs": [
+          "One own-door occurrence for each newly unlocked door",
+          "One full-unlock occurrence only when the set becomes complete"
+        ],
+        "summary": "Own-door and full-unlock events bind committed public Room designations. The typed enchantment entry branch stays separate and follows the existing entry multiplier and APNAP rules."
+      },
+      "blockers": [],
+      "dependencies": [
+        "permanent.shared_type_doors.lifecycle",
+        "trigger.event.normalized_public_action"
+      ],
+      "dependency_fail_closed_rationale": "An actual unlock subscriber loses strict admission when its event capability is removed.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.room_unlock",
+      "implementation_components": [
+        "quorune.rules.room_unlock.collect_room_unlock_events",
+        "quorune.rules.room_unlock.room_runtime_dependencies",
+        "quorune.compiler.room_bindings.own_door_binding_spec",
+        "quorune.compiler.room_bindings.eerie_binding_spec"
+      ],
+      "implementation_mutation_rationale": "Suppressing the normalized publication fails the first-door and full-unlock occurrence assertions.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_native_room_entry_doubles_only_the_eerie_entry_branch"
+      ],
+      "multiplayer_tests": [
+        "test_native_opponent_room_unlock_leaves_the_other_watchers_inactive"
+      ],
+      "negative_tests": [
+        "test_native_opponent_room_unlock_leaves_the_other_watchers_inactive",
+        "test_room_form_and_event_payloads_require_their_declared_authority"
+      ],
+      "official_rules": [
+        "603.2",
+        "603.2c",
+        "603.3",
+        "603.6a",
+        "709.5h",
+        "709.5i"
+      ],
+      "positive_tests": [
+        "test_native_room_entry_doubles_only_the_eerie_entry_branch"
+      ],
+      "privacy_tests": [
+        "test_native_room_entry_doubles_only_the_eerie_entry_branch"
+      ],
+      "replay_tests": [
+        "test_native_room_entry_doubles_only_the_eerie_entry_branch"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
     },
     {
       "applicability": {

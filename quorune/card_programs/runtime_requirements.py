@@ -129,6 +129,7 @@ def _event_query_runtime_requirements(program):
     from ..rules.state_triggers import state_trigger_runtime_dependencies
     from ..rules.received_damage_events import received_damage_runtime_dependencies
     from ..rules.designation_events import designation_event_runtime_dependencies
+    from ..rules.room_unlock import room_runtime_dependencies
     from ..source_entry_cast_information import source_entry_cast_program_dependencies
     from ..rules.graveyard_return_choices import graveyard_return_choice_runtime_dependencies
     from ..rules.scheduled_player_shapes import scheduled_player_departure_runtime_dependencies
@@ -231,6 +232,7 @@ def _event_query_runtime_requirements(program):
         (state_trigger_runtime_dependencies,program,'state_trigger'),
         (received_damage_runtime_dependencies,program,'received_damage'),
         (designation_event_runtime_dependencies,program,'designation_event'),
+        (room_runtime_dependencies,program,'room'),
         (source_entry_cast_program_dependencies,program,'source_entry_cast'),
         (graveyard_return_choice_runtime_dependencies,program,'graveyard_return_choice'),
         (scheduled_player_departure_runtime_dependencies,program,'scheduled_player_departure'),

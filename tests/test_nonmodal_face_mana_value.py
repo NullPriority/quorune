@@ -150,6 +150,52 @@ class SharedTypeDoorStateTests(unittest.TestCase):
                 SharedTypeDoors.from_dict(invalid)
 
 
+
+    def test_room_form_and_unlock_mutations_fail_their_contracts(self):
+        from types import SimpleNamespace
+        from quorune.compiler.card_form_rules import compile_card_form_rules
+        from quorune.rules.room_unlock import collect_room_unlock_events
+        from quorune.shared_type_doors import SharedTypeDoors
+
+        faces = (
+            {"name": "Left", "type_line": "Enchantment — Room", "mana_cost": "{U}"},
+            {"name": "Right", "type_line": "Enchantment — Room", "mana_cost": "{4}{U}"},
+        )
+        record = face_record(layout="split", type_line="Enchantment — Room", faces=faces)
+
+        def form_contract():
+            form, = compile_card_form_rules(record, compiled_face_ids=("Left", "Right")).nodes
+            self.assertEqual(("Left", "Right"), form.faces)
+            self.assertEqual("shared_type_split_permanent", form.descriptor()["kind"])
+
+        def event_contract():
+            published = []
+            host = SimpleNamespace(
+                _log=lambda *args, **kwargs: None,
+                _dispatch_semantic_event=lambda event, context, **kwargs: published.append((event, context)),
+            )
+            card = SimpleNamespace(ref="room", object_id="physical", logical_object_id="physical@1", controller="B")
+            locked = SharedTypeDoors(("Left", "Right"))
+            first = locked.unlock("Right")
+            collect_room_unlock_events(host, card, locked, first, actor="B", trigger_batch=[])
+            self.assertEqual(["room.door_unlocked"], [event for event, _ in published])
+            collect_room_unlock_events(host, card, first, first.unlock("Left"), actor="B", trigger_batch=[])
+            self.assertEqual(
+                ["room.door_unlocked", "room.door_unlocked", "room.fully_unlocked"],
+                [event for event, _ in published],
+            )
+            self.assertTrue(all(context["actor"] == "B" for _, context in published))
+
+        form_contract()
+        event_contract()
+        with mock.patch("quorune.compiler.room_bindings.printed_shared_type_faces", return_value=()):
+            with self.assertRaises(ValueError):
+                form_contract()
+        with mock.patch("quorune.rules.room_unlock._publish_unlock", return_value=None):
+            with self.assertRaises(AssertionError):
+                event_contract()
+
+
 class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
     register_fixture_cards_on_add = True
     session = actions.SpreeModeCostRuntimeTests.session
@@ -217,7 +263,7 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
                 cast = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
                 self.assertTrue(cast.ok, cast.summary)
                 self.assertEqual(value, session.engine._effective_card_data(session.state.cards[source.object_id])["mana_value"])
-                self.assertIsNone(self.resolve(session))
+                self.resolve_room_abilities(session, "pilot:A")
                 current = session.state.cards[source.object_id]
                 self.assertEqual("battlefield", current.zone)
                 data = session.engine._effective_card_data(current)
@@ -251,7 +297,7 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
         offer = next(row for row in actions if row.get("card") == card.ref and row.get("face") == door)
         result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto", **payment})
         self.assertTrue(result.ok, result.summary)
-        self.assertIsNone(self.resolve(session))
+        self.resolve_room_abilities(session, "pilot:A")
 
     def room_unlock_offer(self, session, card, door):
         actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
@@ -334,6 +380,7 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
         offer = self.room_unlock_offer(session, clone, "Bottomless Pool")
         result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
         self.assertTrue(result.ok, result.summary)
+        self.resolve_room_abilities(session, "pilot:A")
         self.assertEqual(("Bottomless Pool",), session.state.cards[clone.object_id].shared_type_doors.unlocked)
         self.assertEqual(("Bottomless Pool", "Locker Room"), session.state.cards[room.object_id].shared_type_doors.unlocked)
         self.replay(session, load=True)
@@ -351,7 +398,8 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
         self.checkpoint(session)
 
         def offers():
-            return session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+            decision = session.packet("pilot:A", full=True)["decision"]
+            return decision["ctx"]["legal"]["actions"] if decision is not None and decision["kind"] == "priority" else []
 
         cast = next(row for row in offers() if row.get("card") == room.ref and row.get("face") == "Bottomless Pool")
         result = session.act("pilot:A", {"action_id": cast["id"], "pay": "auto", "reserve": {"C": 8, "U": 1}})
@@ -370,7 +418,7 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
         self.assertEqual(("Bottomless Pool",), token.shared_type_doors.unlocked)
         self.assertFalse(any(row.get("action") == "unlock_room" for row in offers()))
 
-        self.resolve_top(session)
+        self.resolve_room_abilities(session, "pilot:A")
         unlock = self.room_unlock_offer(session, token, "Locker Room")
         result = session.act("pilot:A", {"action_id": unlock["id"], "pay": "auto"})
         self.assertTrue(result.ok, result.summary)
@@ -404,6 +452,166 @@ class NonmodalFaceManaValueRuntimeTests(unittest.TestCase):
                 self.assertEqual(38, session.state.players["B"].life)
                 self.assertEqual(library_size - int(unlocked), len(session.state.players["A"].zones["library"]))
                 self.replay(session, load=True)
+
+
+    def resolve_room_abilities(self, session, principal, target=None, optional_choice=None):
+        for _ in range(8):
+            pending = self.resolve(session)
+            if pending is None:
+                return
+            self.assertEqual((principal,), tuple(session.pending_principals()))
+            if pending.kind == "trigger.order":
+                context = session.packet(principal, full=True)["decision"]["ctx"]
+                payload = {"action_id": "order", "triggers": [row["id"] for row in context["triggers"]]}
+            elif pending.kind == "semantic.choice":
+                self.assertIn(optional_choice, {"apply", "decline"})
+                payload = {"action_id": "choose", "choice": optional_choice}
+            else:
+                self.assertEqual("semantic.target", pending.kind)
+                payload = {"action_id": "choose", "targets": [target.ref] if target is not None else []}
+            result = session.act(principal, payload)
+            self.assertTrue(result.ok, result.summary)
+        self.fail("Room triggers did not finish")
+
+    def test_native_room_entry_doubles_only_the_eerie_entry_branch(self):
+        session = self.session(20203701)
+        room = self.add(session.engine, "Bottomless Pool // Locker Room", zone="hand")
+        watcher = self.add(session.engine, "Entity Tracker")
+        doubler = self.add(session.engine, "Yarok, the Desecrated")
+        bear = self.add(session.engine, "Grizzly Bears", seat="B")
+        private = self.add(session.engine, "Generic Bound Growth", seat="C", zone="hand")
+        for card in (room, watcher, doubler):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 4, "U": 2})
+        self.checkpoint(session)
+        before = len(session.state.players["A"].zones["library"])
+
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        cast = next(row for row in actions if row.get("card") == room.ref and row.get("face") == "Bottomless Pool")
+        result = session.act("pilot:A", {"action_id": cast["id"], "pay": "auto", "reserve": {"C": 4, "U": 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(session)
+        batch_items = [item for batch in session.state.pending_trigger_batches for item in batch.items]
+        queued = batch_items + [item for item in session.state.stack if item.kind == "triggered_ability"]
+        events = [(item.source_object_id, item.to_dict()["context"]["event"]) for item in queued]
+        self.assertCountEqual([
+            (watcher.object_id, "permanent.enter"), (watcher.object_id, "permanent.enter"),
+            (room.object_id, "room.door_unlocked"),
+        ], events)
+        session = self.replay(session, load=True)
+        self.resolve_room_abilities(session, "pilot:A", target=bear)
+        self.assertEqual("hand", session.state.cards[bear.object_id].zone)
+        self.assertEqual(before - 2, len(session.state.players["A"].zones["library"]))
+
+        unlock = self.room_unlock_offer(session, room, "Locker Room")
+        self.reject(session, unlock["id"], "C", pay="auto")
+        result = session.act("pilot:A", {"action_id": unlock["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_room_abilities(session, "pilot:A")
+        self.assertEqual(before - 3, len(session.state.players["A"].zones["library"]))
+        self.assertNotIn(private.ref, json.dumps(session.packet("pilot:D", full=True)))
+        self.replay(session, load=True)
+
+    def test_native_opponent_room_unlock_leaves_the_other_watchers_inactive(self):
+        session = self.session(20203702)
+        room = self.add(session.engine, "Bottomless Pool // Locker Room", seat="B", zone="hand")
+        watcher = self.add(session.engine, "Entity Tracker")
+        for card in (room, watcher):
+            self.assert_closed(session, card)
+        self.prepare(session, actor="B", active="B", mana={"C": 4, "U": 2})
+        self.checkpoint(session)
+        before = len(session.state.players["A"].zones["library"])
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        cast = next(row for row in actions if row.get("card") == room.ref and row.get("face") == "Locker Room")
+        result = session.act("pilot:B", {"action_id": cast["id"], "pay": "auto", "reserve": {"U": 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        actions = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+        unlock = next(row for row in actions if row.get("card") == room.ref and row.get("action") == "unlock_room")
+        result = session.act("pilot:B", {"action_id": unlock["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_room_abilities(session, "pilot:B")
+        self.assertEqual(before, len(session.state.players["A"].zones["library"]))
+        self.assertEqual(1, sum(event.code == "room.fully_unlocked" for event in session.state.events))
+        self.replay(session, load=True)
+
+
+    def test_native_graveyard_eerie_returns_to_the_room_owners_hand(self):
+        session = self.session(20203704)
+        room = self.add(session.engine, "Bottomless Pool // Locker Room", zone="hand")
+        fear = self.add(session.engine, "Fear of Infinity", zone="graveyard")
+        self.assert_closed(session, room)
+        self.assert_closed(session, fear)
+        self.prepare(session, mana={"C": 4, "U": 2})
+        self.checkpoint(session)
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        cast = next(row for row in actions if row.get("card") == room.ref and row.get("face") == "Locker Room")
+        result = session.act("pilot:A", {"action_id": cast["id"], "pay": "auto", "reserve": {"U": 1}})
+        self.assertTrue(result.ok, result.summary)
+        pending = self.resolve(session)
+        self.assertEqual("semantic.choice", pending.kind)
+        self.reject(session, "choose", "B", choice="apply")
+        self.resolve_room_abilities(session, "pilot:A", optional_choice="decline")
+        self.assertEqual("graveyard", session.state.cards[fear.object_id].zone)
+
+        offer = self.room_unlock_offer(session, room, "Bottomless Pool")
+        result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_room_abilities(session, "pilot:A", optional_choice="apply")
+        self.assertEqual("hand", session.state.cards[fear.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_native_room_unlock_applies_the_existing_two_target_counter_set(self):
+        session = self.session(20203705)
+        room = self.add(session.engine, "Grand Entryway // Elegant Rotunda", zone="hand")
+        targets = [self.add(session.engine, "Grizzly Bears", seat=seat, ref=f"rotunda-{seat}") for seat in "BCD"]
+        self.assert_closed(session, room)
+        self.prepare(session, mana={"C": 8, "W": 2})
+        self.checkpoint(session)
+        self.cast_room_half(session, room, "Grand Entryway")
+        self.assertTrue(any(card.is_token and card.controller == "A" and card.zone == "battlefield"
+                            for card in session.state.cards.values()))
+
+        offer = self.room_unlock_offer(session, room, "Elegant Rotunda")
+        result = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual("semantic.target", self.resolve(session).kind)
+        self.reject(session, "choose", "A", targets=[target.ref for target in targets])
+        self.reject(session, "choose", "B", targets=[targets[0].ref])
+        result = session.act("pilot:A", {"action_id": "choose", "targets": [target.ref for target in targets[:2]]})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual([1, 1, 0], [session.state.cards[target.object_id].counters.get("+1/+1", 0)
+                                      for target in targets])
+        self.replay(session, load=True)
+
+    def test_room_form_and_event_payloads_require_their_declared_authority(self):
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.shared_type_doors import ROOM_UNLOCK_EVENT_CAPABILITY, SHARED_TYPE_FORM_CAPABILITY
+
+        session = self.session(20203703)
+        for name, marker in (("Bottomless Pool // Locker Room", SHARED_TYPE_FORM_CAPABILITY),
+                             ("Entity Tracker", ROOM_UNLOCK_EVENT_CAPABILITY)):
+            with self.subTest(name=name):
+                card = self.add(session.engine, name, zone="hand")
+                full = compile_best_available_card_program(
+                    self.db, self.db.by_oracle_id(card.oracle_id), semantic_registry=session.engine.semantics,
+                    capability_registry=self.registry, capability_profile="commander_review",
+                )
+                programs = [ability for ability in full.abilities if marker in ability.capability_dependencies]
+                program = next(p for p in programs if name == "Entity Tracker" or p.event == "intrinsic_ability")
+                original = bind_semantic_program_runtime(program, capability_registry=self.registry, profile="commander_review")
+                self.assertTrue(original["strict"], original["blockers"])
+                dependencies = tuple(value for value in program.capability_dependencies if value != marker)
+                modified = replace(program, coverage=[], capability_dependencies=dependencies,
+                    capability_closure=(
+                        self.registry.closure(dependencies, profile="commander_review").to_dict()
+                        if dependencies else None
+                    ))
+                binding = bind_semantic_program_runtime(modified, capability_registry=self.registry, profile="commander_review")
+                self.assertFalse(binding["strict"])
+                self.assertIn(f"capability:undeclared_runtime_dependency:{marker}", binding["blockers"])
 
     def test_actual_kessig_transform_keeps_one_mana_value(self):
         session = self.session(20203002)

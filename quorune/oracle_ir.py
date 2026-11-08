@@ -90,6 +90,7 @@ from .compiler.library_search_templates import (
     fixed_library_search_effect_template,
 )
 from .compiler import cipher_nodes as cipher_context_owner
+from .compiler import station_context_nodes as station_context_owner
 from .compiler.bargain_nodes import printed_bargain_spec
 from .compiler.leveler_context_nodes import (
     leveler_compilation_rows as _leveler_compilation_rows,
@@ -177,7 +178,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v836"
+ORACLE_COMPILER_VERSION = "oracle-ir-v837"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1043,6 +1044,7 @@ def _activated_or_fixed_event_trigger_node(
     trigger_effect_template: Any | None = None,
     activation_parse_line: str | None = None,
     bargain_spec: Any = None,
+    room_door_face: str | None = None,
 ) -> OracleNode | None:
     from .compiler.trigger_limit_nodes import limited_trigger_node
     from .compiler.state_trigger_nodes import public_state_trigger_node
@@ -1093,12 +1095,14 @@ def _activated_or_fixed_event_trigger_node(
     )
     if history_transform is not None:
         return history_transform
+    from .compiler.room_bindings import own_door_binding
     return fixed_typed_event_effect_trigger_node(
         node_id=node_id, line=line, material_line=trigger_ability_word_material_line(material_line), span=span,
         card_name=card_name, trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,
         capability_profile=capability_profile, residuals=residuals,
         effect_template=trigger_effect_template or effect_template,
+        binding=own_door_binding(material_line, room_door_face),
     )
 
 
@@ -1166,6 +1170,22 @@ def _face_trigger_compiler(record, material_rows, effect_template, face_name, pe
         card_name=face_name or record.name, match_source=_source_self_zone_trigger_match, permanent=permanent)
 
 
+def _prepare_face_source(record, face_id, type_line, oracle_text):
+    """Prepare source rows and the per-face ability parser before node lowering."""
+    from .compiler.room_bindings import ROOM_REMINDER, printed_room_form, room_source_material
+
+    rows, leveler_context = _leveler_source_context(
+        record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1],
+    )
+    compile_inner = _activated_or_fixed_event_trigger_node
+    if printed_room_form(record) is not None:
+        rows = tuple((line, room_source_material(material), span)
+                     for line, material, span in rows if line != ROOM_REMINDER)
+        compile_inner = partial(compile_inner, room_door_face=face_id)
+    rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, rows)
+    return rows, leveler_context, station_context, cipher_context, compile_inner
+
+
 def _compile_face(
     record: CardRecord,
     *,
@@ -1184,9 +1204,9 @@ def _compile_face(
      source_attachment_relation) = _face_type_context(type_line)
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation, record=record, face_name=face_name)
-    material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
-    from .compiler import station_context_nodes as station_context_owner
-    material_rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, material_rows)
+    material_rows, leveler_context, station_context, cipher_context, compile_inner = _prepare_face_source(
+        record, face_id, type_line, oracle_text,
+    )
     from .compiler.bestow_nodes import face_has_fixed_bestow
     bestow_grant_context=source_attachment_relation is None and face_has_fixed_bestow(material_rows)
     class_context = _class_context.parse_class_context(layout=record.layout, type_line=type_line, material_rows=material_rows)
@@ -1231,13 +1251,13 @@ def _compile_face(
                 and material_line.casefold().startswith('enchanted creature ') and '"' in material_line
                 else source_attachment_relation), trusted_mechanics=trusted_mechanics,
             capability_registry=capability_registry,
-            capability_profile=capability_profile, residuals=residuals, keyword_node_compiler=_keyword_nodes, compile_inner=_activated_or_fixed_event_trigger_node, trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates, material_line_for=_without_parenthetical_reminder,
+            capability_profile=capability_profile, residuals=residuals, keyword_node_compiler=_keyword_nodes, compile_inner=compile_inner, trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates, material_line_for=_without_parenthetical_reminder,
         )
         if early_nodes is not None:
             nodes.extend(early_nodes)
             continue
 
-        ability_node = _activated_or_fixed_event_trigger_node(
+        ability_node = compile_inner(
             node_id=node_id, line=line, material_line=material_line, span=span,
             activation_parse_line=material_line if station_context is not None
                 and any(span.line in symbol.member_lines for symbol in station_context.symbols) else None,

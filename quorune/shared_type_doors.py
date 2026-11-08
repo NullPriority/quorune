@@ -11,6 +11,9 @@ DOOR_UNLOCKED_EVENT = "room.door_unlocked"
 FULLY_UNLOCKED_EVENT = "room.fully_unlocked"
 SHARED_TYPE_COPY_FIELD = "shared_type_copy_faces"
 SHARED_TYPE_COPY_EXCEPTIONS = "shared_type_copy_exceptions"
+SHARED_TYPE_FORM = "shared_type_split_permanent"
+SHARED_TYPE_FORM_CAPABILITY = "permanent.shared_type_doors.lifecycle"
+ROOM_UNLOCK_EVENT_CAPABILITY = "trigger.event.room_unlock"
 
 
 @dataclass(frozen=True, slots=True)

@@ -3,6 +3,7 @@ from enum import Enum
 
 from ..rules.event_subscriptions import LAND_PLAY_EVENT
 from ..life_change import FIRST_LIFE_GAIN_EVENT
+from ..shared_type_doors import DOOR_UNLOCKED_EVENT
 
 
 from ..transform_timestamp_model import TRANSFORM_EVENT
@@ -28,6 +29,7 @@ class FixedCounterTriggerEvent(str, Enum):
     CONTROLLER_CARD_DRAW = "card.drawn"
     CONTROLLER_SECOND_DRAW = "card.second_draw"
     PERMANENT_ENTER = "permanent.enter"
+    ROOM_DOOR_UNLOCKED = DOOR_UNLOCKED_EVENT
     PERMANENT_TRANSFORMS = TRANSFORM_EVENT
     ARTIFACT_ENTER = "artifact.enter"
     CREATURE_ENTER = "creature.enter"

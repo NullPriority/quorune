@@ -10,6 +10,9 @@ from ..mana_undo import clear_mana_undo_stack
 from ..shared_type_doors import (
     DOOR_UNLOCKED_EVENT,
     FULLY_UNLOCKED_EVENT,
+    ROOM_UNLOCK_EVENT_CAPABILITY,
+    SHARED_TYPE_FORM,
+    SHARED_TYPE_FORM_CAPABILITY,
     SharedTypeDoors,
     printed_shared_type_faces,
     shared_type_doors_enabled,
@@ -132,3 +135,56 @@ def _publish_unlock(host: Any, event: str, context: Mapping[str, Any], trigger_b
     host._log(actor, event, f"{actor} unlocked {context.get('door') or context['card']}.",
               context, changed_objects=[context["card_object_id"]])
     host._dispatch_semantic_event(event, context, trigger_batch=trigger_batch)
+
+
+def room_runtime_dependencies(program: Any) -> tuple[str, ...]:
+    from .event_subscriptions import FixedEventSubscriptionSet
+
+    condition = program.event_condition
+    if isinstance(condition, Mapping) and "card_form_rule" in condition:
+        descriptor = condition["card_form_rule"]
+        if isinstance(descriptor, Mapping) and descriptor.get("kind") == SHARED_TYPE_FORM:
+            _validate_shared_type_form(program, descriptor)
+            return (SHARED_TYPE_FORM_CAPABILITY,)
+    subscriptions = FixedEventSubscriptionSet.from_condition(condition)
+    if program.event == DOOR_UNLOCKED_EVENT:
+        face = program.provenance.get("face_id")
+        expected = {"all": [
+            {"field": "card", "op": "eq", "value": "$source.ref"},
+            {"field": "actor", "op": "eq", "value": "$source.controller"},
+            {"field": "door", "op": "eq", "value": face},
+        ]}
+        if type(face) is not str or not face or condition != expected or program.active_zone != "battlefield":
+            raise ValueError("An own-door subscription requires its source, controller and printed face")
+        return (ROOM_UNLOCK_EVENT_CAPABILITY,)
+    if subscriptions is not None:
+        full_unlock = subscriptions.subscription_for(FULLY_UNLOCKED_EVENT)
+        if full_unlock is not None:
+            return _validate_full_unlock_subscription(program, subscriptions, full_unlock)
+    if program.event.removesuffix(".self") in {DOOR_UNLOCKED_EVENT, FULLY_UNLOCKED_EVENT}:
+        raise ValueError("Room event requires its represented subscription")
+    return ()
+
+
+def _validate_full_unlock_subscription(program, subscriptions, full_unlock):
+    seat = "$source.owner" if program.active_zone == "graveyard" else "$source.controller"
+    actor = {"field": "actor", "op": "eq", "value": seat}
+    if (program.event != "permanent.enter" or program.active_zone not in {"battlefield", "graveyard"}
+            or len(subscriptions.subscriptions) != 2
+            or subscriptions.subscription_for("permanent.enter") is None
+            or full_unlock.to_dict()["condition"] != actor):
+        raise ValueError("Full-unlock subscription requires independent entry and controller predicates")
+    return (ROOM_UNLOCK_EVENT_CAPABILITY,)
+
+
+def _validate_shared_type_form(program: Any, descriptor: Mapping[str, Any]) -> None:
+    if (set(descriptor) != {"kind", "schema_version", "faces"}
+            or type(descriptor["schema_version"]) is not int or descriptor["schema_version"] != 1
+            or not isinstance(descriptor["faces"], (list, tuple))):
+        raise ValueError("Shared type line form fields are malformed")
+    doors = SharedTypeDoors(tuple(descriptor["faces"]))
+    if (program.provenance.get("face_id") != doors.faces[0]
+            or program.provenance.get("source_kind") != "type_line"
+            or program.event != "intrinsic_ability" or program.active_zone != "all"
+            or program.effects or program.handlers):
+        raise ValueError("Shared type line form must be pinned to its first printed face")

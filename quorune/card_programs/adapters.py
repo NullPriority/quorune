@@ -18,6 +18,7 @@ from ..compiler.activated_ability_catalog import (
 from ..compiler.card_form_rules import (
     CardFormNode,
     IntrinsicBasicLandManaRuleNode,
+    SharedTypeDoorRuleNode,
     compile_card_form_rules,
 )
 from ..oracle_ir import ORACLE_COMPILER_VERSION, compile_oracle_card
@@ -140,14 +141,9 @@ def _card_form_rule_programs(
             profile=capability_profile,
         )
         if trust_level == "trusted" and not closure.trusted:
-            family = (
-                "intrinsic basic-land mana"
-                if isinstance(node, IntrinsicBasicLandManaRuleNode)
-                else "intrinsic entry-counter"
-            )
             raise ValueError(
                 f"{record.name} cannot be promoted to trusted generated "
-                f"semantics: {family} capability is blocked"
+                f"semantics: {node.descriptor()['kind']} capability is blocked"
             )
         descriptor = node.descriptor()
         intrinsic_mana = isinstance(node, IntrinsicBasicLandManaRuleNode)
@@ -164,6 +160,13 @@ def _card_form_rule_programs(
                 "generated_card_form_rule",
                 "intrinsic_basic_land_mana",
             ]
+        elif isinstance(node, SharedTypeDoorRuleNode):
+            ability_id = f"static:{node.face_id}:shared-type-doors"
+            label = f"{record.name} shared type line"
+            event = "intrinsic_ability"
+            template_id = descriptor["kind"]
+            test_id = "card_form_rule:shared_type_split_permanent"
+            coverage = ["generated_card_form_rule", template_id]
         else:
             subject = descriptor["counter_name"]
             ability_id = f"static:{node.face_id}:intrinsic-entry-{subject}"

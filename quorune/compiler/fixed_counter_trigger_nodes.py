@@ -103,6 +103,7 @@ FIXED_COUNTER_EVENT_TRIGGER_TEMPLATE_IDS = frozenset(
         "fixed-counter-public-face-up-trigger-v1",
         "fixed-counter-public-designation-trigger-v1",
         "fixed-counter-public-multi-event-trigger-v1",
+        "fixed-counter-public-room-door-trigger-v1",
         "fixed-counter-opponent-card-draw-trigger-v1",
         "fixed-counter-public-second-draw-trigger-v1",
         "fixed-counter-entry-return-public-zone-trigger-v1",
@@ -143,6 +144,7 @@ _ABILITY_WORD_PUBLIC_EVENT_VARIANTS = frozenset(
         "magecraft_instant_or_sorcery",
         "constellation_controlled_enchantment",
         "constellation_source_or_controlled_enchantment",
+        "controlled_enchantment_entry_or_room_unlock",
         "battalion_source_and_two_others_attack",
     }
 )
@@ -222,6 +224,8 @@ PUBLIC_ACTION_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
 MULTI_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         'source_block_pair_counterpart',
+        "source_room_door_unlock",
+        "controlled_enchantment_entry_or_room_unlock",
         "enchanted_creature_tap_or_received_damage",
         "independent_dual_event",
         "qualified_zone_event_pair",
@@ -1177,10 +1181,18 @@ def _binding_effect_template(binding, body, *, card_name, effect_template):
     if CYCLE_OR_DISCARD_CAPABILITY in binding.public_capabilities:
         from .source_self_effect_templates import pin_source_result_incarnation
         compiled = pin_source_result_incarnation(compiled)
-    return compiled, current
+    from .room_bindings import EERIE_VARIANT, OWN_DOOR_VARIANT
+    return compiled, current or binding.variant in {EERIE_VARIANT, OWN_DOOR_VARIANT}
 
 
-def _counter_binding_accepts_result(binding,body_mechanics):
+def _counter_binding_accepts_result(binding, body_mechanics, *, effects, target_schema):
+    from .room_bindings import OWN_DOOR_VARIANT
+    if binding.variant == OWN_DOOR_VARIANT:
+        from ..rules.node_capability_shapes import fixed_counter_placement_target_set_node_capabilities
+        if fixed_counter_placement_target_set_node_capabilities(
+            effects=effects, target_schema=target_schema, mechanic_ids=body_mechanics,
+        ):
+            return True
     return (bool({'fixed-entry-event-object-counter', 'fixed-public-event-source-counter', 'fixed-public-event-target-counter','fixed-public-event-set-counter'}.intersection(body_mechanics))
         or binding.variant not in _NONCOUNTER_PUBLIC_EVENT_VARIANTS
         or binding.event in {FixedCounterTriggerEvent.PERMANENT_SACRIFICED,FixedCounterTriggerEvent.CARD_DISCARDED}
@@ -1204,13 +1216,11 @@ def fixed_counter_event_trigger_node(
         Mapping[str, Any] | None,
         tuple[str, ...],
     ]],
+    binding: FixedCounterTriggerBinding | None = None,
 ) -> OracleNode | None:
     """Lower one exact fixed counter effect over a normalized event."""
 
-    binding = fixed_counter_trigger_binding(
-        material_line,
-        card_name=card_name,
-    )
+    binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
     optional_match = re.fullmatch(
@@ -1238,7 +1248,9 @@ def fixed_counter_event_trigger_node(
     nested_counter_operations = _COUNTER_PLACEMENT_OPERATIONS.intersection(
         _nested_operations(effects)
     )
-    if template is None or not nested_counter_operations or not _counter_binding_accepts_result(binding,body_mechanics):
+    if template is None or not nested_counter_operations or not _counter_binding_accepts_result(
+        binding, body_mechanics, effects=effects, target_schema=target_schema,
+    ):
         return None
     if optional_match is not None:
         if (
@@ -1348,6 +1360,7 @@ def fixed_typed_event_effect_trigger_node(
         Mapping[str, Any] | None,
         tuple[str, ...],
     ]],
+    binding: FixedCounterTriggerBinding | None = None,
 ) -> OracleNode | None:
     """Compose one closed event binding with one reviewed typed effect body."""
 
@@ -1362,14 +1375,12 @@ def fixed_typed_event_effect_trigger_node(
         capability_profile=capability_profile,
         residuals=residuals,
         effect_template=effect_template,
+        binding=binding,
     )
     if counter_node is not None:
         return counter_node
 
-    binding = fixed_counter_trigger_binding(
-        material_line,
-        card_name=card_name,
-    )
+    binding = binding or fixed_counter_trigger_binding(material_line, card_name=card_name)
     if binding is None:
         return None
     compiled, requires_current_ability = _binding_effect_template(
