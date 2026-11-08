@@ -11,6 +11,7 @@ from ..target_controller_information import (
     OCCURRENCE_CONTROLLER_ENTRY_EVENTS, OCCURRENCE_CONTROLLER_GRAVEYARD_EVENTS, occurrence_controller_reference,
 )
 from .event_result_value_templates import event_result_instruction
+from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
 EVENT_PLAYER_RESULT_CAPABILITY='resolution.event_player.fixed_result'
 EVENT_PLAYER_RESULT_MECHANIC='fixed-event-player-result'
@@ -42,7 +43,10 @@ def _occurrence_player(event,condition,variant,subject):
             return occurrence_controller_reference()
         return '$context.previous_controller' if event=='creature.dies' else None
     if subject=='defending player':
-        if event=='creature.attacks' and (variant=='source_attacks' or variant.startswith('public_attack_')):player='$context.defending_player'
+        if event == 'creature.attacks' and (
+            variant == 'source_attacks' or variant.startswith('public_attack_') or variant in ATTACHED_CREATURE_ATTACK_VARIANTS
+        ):
+            player = '$context.defending_player'
         elif event=='creature.becomes_blocked' and variant in {'this_creature_becomes_blocked','this_creature_becomes_blocked_by_creature'}:player='$context.defending_player'
         elif event=='creature.unblocked' and variant=='source_attacks_unblocked':player='$context.defending_player'
         else:return None

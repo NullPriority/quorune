@@ -2223,6 +2223,12 @@ independently of coverage annotations. A public intervening condition retains
 its descriptor owner and is checked at both discovery and resolution. Scheduled
 opponent upkeep, enchanted-creature death and source-attack wrappers use these
 same existing result and event owners.
+Aura and Equipment attack triggers bind the attachment at declaration and use
+the sealed attacker for untargeted counters and temporary characteristics.
+The sole-attacker predicate reads the completed declaration. A defending-player
+target uses the seat identified by the attack assignment, and the source's
+controller makes the trigger's choices. Counter doubling and devotion read
+current amounts at resolution while preserving the original attacker identity.
 Direct source entry/death Manifest leaves retain their existing normalized
 self subscription and APNAP owners; they do not acquire a generic event-result
 wrapper merely through runtime validation.

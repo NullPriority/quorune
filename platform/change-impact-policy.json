@@ -12169,7 +12169,12 @@
       "id": "combat-defending-player-fixed-results",
       "patterns": [
         "quorune/rules/combat_defending_players.py",
+        "quorune/compiler/attack_event_results.py",
+        "quorune/compiler/damage_templates.py",
+        "quorune/compiler/event_counter_results.py",
         "quorune/compiler/event_player_results.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/public_event_closure_variants.py",
         "quorune/compiler/mill_templates.py",
         "quorune/compiler/affected_player_discard_templates.py",
         "quorune/rules/event_player_result_shapes.py",

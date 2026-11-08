@@ -5,6 +5,8 @@ from ..damage_recipient_model import DAMAGE_PERMANENT_VARIANT
 
 """Finite public event variants admitted by the shared result composer."""
 
+ATTACHED_CREATURE_ATTACK_VARIANTS = frozenset({"enchanted_creature_attacks", "equipped_creature_attacks"})
+
 PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
     {
         'source_attacks_unblocked',
@@ -25,7 +27,7 @@ PUBLIC_EVENT_BINDING_CLOSURE_VARIANTS = frozenset(
         "enchanted_creature_damage_an_opponent",
         "enchanted_creature_dies",
         "enchanted_permanent_graveyard",
-        "equipped_creature_attacks",
+        *ATTACHED_CREATURE_ATTACK_VARIANTS,
         "equipped_creature_combat_damage_a_player",
         *{
             f"{relation}_creature_{combat}damage{recipient}"

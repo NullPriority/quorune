@@ -137,7 +137,8 @@ _CLASS_LEVEL_TRIGGER = re.compile(
     re.IGNORECASE,
 )
 _ATTACHMENT_ATTACK_TRIGGER = re.compile(
-    r"^Whenever equipped creature attacks, (?P<body>.+)$",
+    r"^(?:When|Whenever) (?P<relation>enchanted|equipped) creature attacks"
+    r"(?P<alone> alone)?, (?P<body>.+)$",
     re.IGNORECASE,
 )
 _ATTACHMENT_DAMAGE_TRIGGER = re.compile(
@@ -643,15 +644,14 @@ def _attachment_attack_or_damage_spec(
     if attack is not None:
         return _spec(
             "creature.attacks",
-            "equipped_creature_attacks",
+            f"{attack['relation'].casefold()}_creature_attacks",
             attack.group("body"),
             "fixed-counter-public-attack-trigger-v1",
             "trigger-event-normalized-public-action",
-            condition={
-                "field": "source_attachment_target_ref",
-                "op": "eq",
-                "value": "$context.card",
-            },
+            condition=_all_conditions(
+                {"field": "source_attachment_target_ref", "op": "eq", "value": "$context.card"},
+                {"field": "attacking_alone", "op": "truthy", "value": True} if attack["alone"] else None,
+            ),
             capabilities=("attachment.reference.current_or_lki",),
         )
     damage = _ATTACHMENT_DAMAGE_TRIGGER.fullmatch(material_line)

@@ -3,11 +3,15 @@
 import re
 
 from ..qualified_attack_model import QUALIFIED_ATTACK_VARIANT
+from .public_event_closure_variants import ATTACHED_CREATURE_ATTACK_VARIANTS
 
 
 def qualified_attack_characteristic_result(binding,body,*,effect_template,card_name):
-    if binding.variant!=QUALIFIED_ATTACK_VARIANT and not (
-            binding.event.value=='creature.attacks' and binding.variant.startswith('public_attack_')):return None
+    if binding.event.value != 'creature.attacks' or not (
+        binding.variant in {QUALIFIED_ATTACK_VARIANT, *ATTACHED_CREATURE_ATTACK_VARIANTS}
+        or binding.variant.startswith('public_attack_')
+    ):
+        return None
     match=re.fullmatch(r'(?:it|that creature|that permanent) (?P<body>.+)',body,re.I)
     if match is None:return None
     compiled=effect_template('This permanent '+match['body'],card_name=card_name)

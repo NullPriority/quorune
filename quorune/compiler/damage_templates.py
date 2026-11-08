@@ -89,6 +89,7 @@ _FIXED_DAMAGE_SOURCE_KINDS = (
     "battle",
     "creature",
     "enchantment",
+    "equipment",
     "land",
     "permanent",
     "planeswalker",
