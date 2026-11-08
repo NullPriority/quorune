@@ -275,6 +275,12 @@ timestamp clock while retaining the logical object. Historical absence retains
 the previous timestamp behavior and remains absent on serialization. Unknown,
 boolean and mismatched versions reject before replay. See
 [ADR 0149](../adr/0149-versioned-transform-timestamps.md).
+Physical modal double-faced transformation independently pins
+`modal_dfc_transform_version: 1` in the checkpoint and manifest. It admits
+a transform when the other face is a permanent. Archived checkpoints without
+the marker retain the previous physical modal eligibility and their recorded
+hashes. The marker uses the same strict manifest and checkpoint agreement.
+
 Current ordinary turn-up actions independently pin
 `face_status_timestamp_version: 1`. The zone owner assigns a fresh timestamp
 before face-up observers run. Absence retains the prior ordinary timestamp even

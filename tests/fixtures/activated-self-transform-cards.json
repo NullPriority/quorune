@@ -55,6 +55,79 @@
           ],
           "defense": null,
           "loyalty": null,
+          "mana_cost": "{2}{G}",
+          "name": "Bala Ged Recovery",
+          "oracle_text": "Return target card from your graveyard to your hand.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Sorcery"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "",
+          "name": "Bala Ged Sanctuary",
+          "oracle_text": "This land enters tapped.\n{T}: Add {G}.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Land"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{G} // ",
+      "name": "Bala Ged Recovery // Bala Ged Sanctuary",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "oracle_text": "Bala Ged Recovery: Return target card from your graveyard to your hand.\n//\nBala Ged Sanctuary: This land enters tapped.\n{T}: Add {G}.",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2020-09-25",
+      "toughness": null,
+      "type_line": "Sorcery // Land"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "G"
+          ],
+          "defense": null,
+          "loyalty": null,
           "mana_cost": "{4}{G}",
           "name": "Bonded Herdbeast",
           "oracle_text": "{4}{R/P}: Transform this creature. Activate only as a sorcery. ({R/P} can be paid with either {R} or 2 life.)",
@@ -321,6 +394,86 @@
       "released_at": "2016-07-22",
       "toughness": null,
       "type_line": "Creature \u2014 Werewolf Horror // Creature \u2014 Eldrazi Werewolf"
+    },
+    {
+      "card_faces": [
+        {
+          "colors": [
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{W}",
+          "name": "Monica Rambeau",
+          "oracle_text": "Flying, prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\n{2}{R}{W}{W}: Transform Monica Rambeau. Activate only as a sorcery.",
+          "power": "3",
+          "toughness": "3",
+          "type_line": "Legendary Creature \u2014 Human Hero"
+        },
+        {
+          "colors": [
+            "R",
+            "W"
+          ],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{2}{R}{W}{W}",
+          "name": "Photon, Living Light",
+          "oracle_text": "Flying, hexproof, prowess\nWhenever you cast a noncreature spell, put a +1/+1 counter on each other creature you control.",
+          "power": "4",
+          "toughness": "4",
+          "type_line": "Legendary Creature \u2014 Elemental Hero"
+        }
+      ],
+      "cmc": 3.0,
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [
+        "Flying",
+        "Prowess",
+        "Transform",
+        "Hexproof"
+      ],
+      "layout": "modal_dfc",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "{2}{W} // {2}{R}{W}{W}",
+      "name": "Monica Rambeau // Photon, Living Light",
+      "oracle_id": "8dd929cb-0fe1-4cb3-bc8d-96ca37f194f3",
+      "oracle_text": "Monica Rambeau: Flying, prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\n{2}{R}{W}{W}: Transform Monica Rambeau. Activate only as a sorcery.\n//\nPhoton, Living Light: Flying, hexproof, prowess\nWhenever you cast a noncreature spell, put a +1/+1 counter on each other creature you control.",
+      "power": null,
+      "produced_mana": [],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Legendary Creature \u2014 Human Hero // Legendary Creature \u2014 Elemental Hero"
     },
     {
       "card_faces": [
@@ -868,6 +1021,60 @@
       "comment": "Gaining control of a creature doesn't cause you to gain control of any Auras or Equipment attached to it.",
       "oracle_id": "9d08af23-9f4a-4097-9abc-3b17475ab744",
       "published_at": "2019-07-12",
+      "source": "wotc"
+    },
+    {
+      "comment": "A modal double-faced card can\u2019t be transformed or be put onto the battlefield transformed. Ignore any instruction to transform a modal double-faced card or to put one onto the battlefield transformed.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect allows you to play a land or cast a spell from among a group of cards, you may play or cast a modal double-faced card with any face that fits the criteria of that effect.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect allows you to play a specific modal double-faced card, you may cast it as a spell or play it as a land, as determined by which face you choose to play. If an effect allows you to cast (rather than \u201cplay\u201d) a specific modal double-faced card, you can\u2019t play it as a land.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect instructs a player to choose a card name, the name of either face may be chosen. If that effect or a linked ability refers to a spell with the chosen name being cast and/or a land with the chosen name being played, it considers only the chosen name, not the other face\u2019s name.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "If an effect puts a double-faced card onto the battlefield, it enters with its front face up. If that front face can\u2019t be put onto the battlefield, it doesn\u2019t enter the battlefield.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "In the Commander variant, a double-faced card\u2019s color identity is determined by the mana costs and mana symbols in the rules text of both faces combined. If either face has a color indicator or basic land type, those are also considered.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "The mana value of a modal double-faced card is based on the characteristics of the face that\u2019s being considered. On the stack and battlefield, consider whichever face is up. In all other zones, consider only the front face. This is different than how the mana value of a transforming double-faced card is determined.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "There is a single triangle icon in the top left corner of the front face. There is a double triangle icon in the top left corner of the back face.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
+      "source": "wotc"
+    },
+    {
+      "comment": "To determine whether it is legal to play a modal double-faced card, consider only the characteristics of the face you\u2019re playing and ignore the other face\u2019s characteristics.",
+      "oracle_id": "d2075f58-b0e9-4e85-b7e6-0523a27a1d5b",
+      "published_at": "2020-09-25",
       "source": "wotc"
     },
     {

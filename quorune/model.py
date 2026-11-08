@@ -36,7 +36,7 @@ from .printed_mana_cost_model import (
     read_printed_mana_cost_version,
 )
 from .explore_action_model import explore_action_version
-from .transform_timestamp_model import transform_timestamp_version
+from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version
 from .face_status_timestamp_model import face_status_timestamp_version
 from .face_down_characteristics_model import face_down_characteristics_version
 from .library_selection_knowledge_model import library_selection_knowledge_version
@@ -1103,6 +1103,7 @@ class GameState:
     printed_mana_cost_version: int | None = CURRENT_PRINTED_MANA_COST_VERSION
     explore_action_version: int | None = 1
     transform_timestamp_version: int | None = 1
+    modal_dfc_transform_version: int | None = 1
     face_status_timestamp_version: int | None = 1
     face_down_characteristics_version: int | None = 1
     library_selection_knowledge_version: int | None = 1
@@ -1164,6 +1165,7 @@ class GameState:
         phasing_version = phasing_lifecycle_version(self.phasing_lifecycle_version)
         explore_action_version(self.explore_action_version)
         transform_timestamp_version(self.transform_timestamp_version)
+        modal_dfc_transform_version(self.modal_dfc_transform_version)
         face_status_timestamp_version(self.face_status_timestamp_version)
         face_down_characteristics_version(self.face_down_characteristics_version)
         library_selection_knowledge_version(self.library_selection_knowledge_version)
@@ -1230,6 +1232,8 @@ class GameState:
             **printed_mana_cost_format_fields(self.printed_mana_cost_version),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
             **({'transform_timestamp_version':self.transform_timestamp_version} if self.transform_timestamp_version is not None else {}),
+            **({"modal_dfc_transform_version": self.modal_dfc_transform_version}
+               if self.modal_dfc_transform_version is not None else {}),
             **({'face_status_timestamp_version':self.face_status_timestamp_version} if self.face_status_timestamp_version is not None else {}),
             **({'face_down_characteristics_version':self.face_down_characteristics_version} if self.face_down_characteristics_version is not None else {}),
             **({'library_selection_knowledge_version':self.library_selection_knowledge_version} if self.library_selection_knowledge_version is not None else {}),
@@ -1311,6 +1315,7 @@ class GameState:
             printed_mana_cost_version=read_printed_mana_cost_version(data),
             explore_action_version=explore_action_version(data.get('explore_action_version')),
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),
+            modal_dfc_transform_version=modal_dfc_transform_version(data.get("modal_dfc_transform_version")),
             face_status_timestamp_version=face_status_timestamp_version(data.get('face_status_timestamp_version')),
             face_down_characteristics_version=face_down_characteristics_version(data.get('face_down_characteristics_version')),
             library_selection_knowledge_version=library_selection_knowledge_version(data.get('library_selection_knowledge_version')),

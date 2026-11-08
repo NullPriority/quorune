@@ -698,7 +698,10 @@ Server and browser forms share subset bounds and mandatory completion metadata.
 Self-transform activations pin the original source incarnation and its
 transform count when placed on the stack. The existing transform owner keeps
 the same permanent, counters, damage, attachments and acquisition history.
-For current games, a successful double-faced transform receives a fresh
+In current games, a physical modal double-faced permanent can transform to its
+other permanent face. The eligibility mode is independent of transform
+timestamps and the existing nonmodal daybound and nightbound procedures.
+A successful double-faced transform receives a fresh
 timestamp from the canonical zone clock under CR 613.7g. The explicit
 `transform_timestamp_version` checkpoint marker preserves historical absent-mode
 timestamps and replay. Failed or stale transform instructions consume no new

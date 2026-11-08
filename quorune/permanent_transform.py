@@ -13,7 +13,7 @@ from .day_night_model import (
 )
 from .model import CardInstance, StackItem
 from .trigger_processing import enqueue_trigger_batch
-from .transform_timestamp_model import transform_timestamp_version,ordered_transform_cards
+from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version, ordered_transform_cards
 from .defined_token_faces import defined_token_definition
 from .rules.composition_faces import PreparedCompositionTransform
 
@@ -188,7 +188,9 @@ def trusted_daybound_entry_face(
     return str(faces[1].get("name") or "") if len(daybound) == 1 else prospective_face
 
 
-def _other_face(host: PermanentTransformHost, card: CardInstance) -> tuple[str, str] | None:
+def _other_face(
+    host: PermanentTransformHost, card: CardInstance, *, day_night_instruction: bool,
+) -> tuple[str, str] | None:
     definition = defined_token_definition(card)
     if definition is not None:
         if definition.schema_version==2 and any({'instant','sorcery'}.intersection(host._type_parts(face.type_line)[0])
@@ -197,10 +199,12 @@ def _other_face(host: PermanentTransformHost, card: CardInstance) -> tuple[str, 
         return current.name, definition.other_face(current.name).name
     record = host.card_record(card)
     faces = tuple(getattr(record, "faces", ())) if record is not None else ()
-    if (
-        record is None
-        or getattr(record, "layout", None) != "transform"
-        or len(faces) != 2
+    layout = getattr(record, "layout", None)
+    if layout not in {"transform", "modal_dfc"} or len(faces) != 2:
+        return None
+    if layout == "modal_dfc" and (
+        day_night_instruction
+        or modal_dfc_transform_version(getattr(host.state, "modal_dfc_transform_version", None)) != 1
     ):
         return None
     names = tuple(str(face.get("name") or "") for face in faces)
@@ -265,7 +269,7 @@ def _prepared_transform_faces(
         )
     ):
         return None
-    return _other_face(host,card)
+    return _other_face(host, card, day_night_instruction=day_night_instruction)
 
 
 def _commit_transform_faces(host,card,faces):

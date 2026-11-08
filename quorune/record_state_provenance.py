@@ -51,6 +51,8 @@ def format_state_versions(state: Any) -> dict[str, int]:
         **printed_mana_cost_format_fields(getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None)),
         **({'explore_action_version':state.explore_action_version} if getattr(state,'explore_action_version',None) is not None else {}),
         **({'transform_timestamp_version':state.transform_timestamp_version} if getattr(state,'transform_timestamp_version',None) is not None else {}),
+        **({"modal_dfc_transform_version": state.modal_dfc_transform_version}
+           if getattr(state, "modal_dfc_transform_version", None) is not None else {}),
         **({'face_status_timestamp_version':state.face_status_timestamp_version} if getattr(state,'face_status_timestamp_version',None) is not None else {}),
         **({'face_down_characteristics_version':state.face_down_characteristics_version} if getattr(state,'face_down_characteristics_version',None) is not None else {}),
         **({'library_selection_knowledge_version':state.library_selection_knowledge_version} if getattr(state,'library_selection_knowledge_version',None) is not None else {}),
@@ -136,11 +138,15 @@ def validate_state_versions(
         raise ValueError('Casting source placement provenance does not match the initial checkpoint')
     if read_printed_mana_cost_version(format_value) != getattr(state, PRINTED_MANA_COST_VERSION_FIELD, None):
         raise ValueError("Printed mana cost authority provenance does not match the initial checkpoint")
-    from .transform_timestamp_model import transform_timestamp_version
+    from .transform_timestamp_model import modal_dfc_transform_version, transform_timestamp_version
     timestamp=format_value.get('transform_timestamp_version',0)
     if (type(timestamp) is not int or timestamp not in {0,1}
             or timestamp!=(transform_timestamp_version(getattr(state,'transform_timestamp_version',None)) or 0)):
         raise ValueError('Transform timestamp provenance does not match the initial checkpoint')
+    modal_transform = format_value.get("modal_dfc_transform_version", 0)
+    actual_modal_transform = modal_dfc_transform_version(getattr(state, "modal_dfc_transform_version", None)) or 0
+    if type(modal_transform) is not int or modal_transform not in {0, 1} or modal_transform != actual_modal_transform:
+        raise ValueError("Modal double-faced transform provenance does not match the initial checkpoint")
     from .face_status_timestamp_model import face_status_timestamp_version
     face_status=format_value.get('face_status_timestamp_version',0)
     if (type(face_status) is not int or face_status not in {0,1}

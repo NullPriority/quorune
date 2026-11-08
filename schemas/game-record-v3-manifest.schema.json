@@ -175,6 +175,13 @@
           ],
           "type": "integer"
         },
+        "modal_dfc_transform_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
         "name": {
           "const": "commander"
         },
