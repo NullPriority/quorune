@@ -154,6 +154,52 @@ class BandingRuntimeTests(unittest.TestCase):
         self.attack(s,{hero.ref:'B',other.ref:'B'},{hero.ref:hero.ref,other.ref:hero.ref})
         self.assertEqual(1,len(s.state.combat.attack_bands));self.replay(s,load=True)
 
+    def test_ninjutsu_preserves_the_unrelated_band_in_current_games_and_replays_both_modes(self):
+        from quorune.record_state_provenance import format_state_versions, validate_state_versions
+
+        for legacy in (False, True):
+            with self.subTest(legacy=legacy):
+                session = self.session(702221 + legacy)
+                engine = session.engine
+                hero = self.add(engine, 'Benalish Hero')
+                partner = self.add(engine, 'Generic Bound Body', ref='ninjutsu-band-partner')
+                solo = self.add(engine, 'Generic Bound Body', ref='ninjutsu-solo-cost')
+                ninja = self.add(engine, 'Ninja of the Deep Hours', zone='hand')
+                self.add(engine, 'Generic Bound Body', seat='B', ref='ninjutsu-possible-blocker')
+                self.add(engine, 'Island')
+                self.add(engine, 'Plains')
+                for card in (hero, partner, solo):
+                    card.acquired_control_turn_count = -1
+                if legacy:
+                    session.state.ninjutsu_band_retention_version = None
+                marker = 'ninjutsu_band_retention_version'
+                self.assertEqual(not legacy, marker in session.state.to_dict())
+                provenance = format_state_versions(session.state)
+                validate_state_versions({'format': provenance}, session.state)
+                with self.assertRaisesRegex(ValueError, 'Ninjutsu band retention provenance'):
+                    validate_state_versions({'format': {**provenance, marker: 1 if legacy else 0}}, session.state)
+                self.prepare(session)
+                self.checkpoint(session)
+                self.attack(session, {card.ref: 'B' for card in (hero, partner, solo)}, [[hero.ref, partner.ref]])
+                band, = session.state.combat.attack_bands
+                self.blockers(session)
+                self.block(session, {})
+                self.advance(session, lambda game: game.state.pending_decision.kind == 'priority'
+                    and game.state.priority_player == 'A' and game.state.step == 'declare_blockers')
+                actions = session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                action = next(row for row in actions if row['id'].startswith(f'activate:{ninja.ref}:'))
+                result = session.act('pilot:A', {'action_id': action['id'], 'cost_objects': [solo.ref], 'pay': 'auto'})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual('hand', session.state.cards[solo.object_id].zone)
+                self.assertEqual((band,), session.state.combat.attack_bands)
+                self.assertIsNone(self.resolve(session))
+                self.assertEqual(() if legacy else (band,), session.state.combat.attack_bands)
+                self.assertEqual('B', session.state.combat.attackers[ninja.object_id])
+                self.assertTrue(session.state.cards[ninja.object_id].tapped)
+                self.assertEqual('B', session.state.combat.attackers[hero.object_id])
+                self.assertEqual('B', session.state.combat.attackers[partner.object_id])
+                self.replay(session, load=True)
+
     def band_combat(self, seed, *, partner='Generic Band Menace', blocker='Generic Bound Body'):
         s=self.session(seed);hero=self.add(s.engine,'Benalish Hero');other=self.add(s.engine,partner)
         defender=self.add(s.engine,blocker,seat='B',ref='band-defender');private=self.add(s.engine,'Generic Bound Growth',seat='C',zone='hand')

@@ -30,6 +30,11 @@ from .unblocked_attacker_model import unblocked_attacker_event_version
 from .cast_face_offers import CURRENT_CAST_FACE_OFFERS_VERSION, cast_face_offers_version, omen_resolution_binding
 from .cast_source_placement_model import cast_source_placement_version
 from .phasing_model import PhasingRecord, phasing_lifecycle_version
+from .printed_mana_cost_model import (
+    CURRENT_PRINTED_MANA_COST_VERSION,
+    printed_mana_cost_format_fields,
+    read_printed_mana_cost_version,
+)
 from .explore_action_model import explore_action_version
 from .transform_timestamp_model import transform_timestamp_version
 from .face_status_timestamp_model import face_status_timestamp_version
@@ -40,7 +45,7 @@ from .stack_resolution_authority_model import stack_resolution_authority_version
 from .state_based_legend_model import legend_rule_choice_version
 from .token_copy_value_model import predefined_token_name_version, token_copy_value_version
 from .blocking_requirement_model import ResolvedBlockingRequirement,normalize_blocking_requirements
-from .banding_model import normalize_attack_bands
+from .banding_model import ninjutsu_band_retention_version, normalize_attack_bands
 from .counter_placement_event_model import counter_quantity_provenance_version
 
 CONTROL_HISTORY_VERSION = 2
@@ -1088,6 +1093,7 @@ class GameState:
     cast_face_offers_version: int | None = CURRENT_CAST_FACE_OFFERS_VERSION
     cast_source_placement_version: int | None = 1
     phasing_lifecycle_version: int | None = 1
+    printed_mana_cost_version: int | None = CURRENT_PRINTED_MANA_COST_VERSION
     explore_action_version: int | None = 1
     transform_timestamp_version: int | None = 1
     face_status_timestamp_version: int | None = 1
@@ -1100,6 +1106,7 @@ class GameState:
     qualified_attack_facts_version: int | None = 1
     permanent_event_state_version: int | None = 1
     battle_cry_resolution_version: int | None = 1
+    ninjutsu_band_retention_version: int | None = 1
     block_characteristics_version: int | None = 1
     unblocked_attacker_event_version: int | None = 1
     legend_rule_choice_version: int | None = 1
@@ -1160,6 +1167,7 @@ class GameState:
         qualified_attack_facts_version(self.qualified_attack_facts_version)
         permanent_event_state_version(self.permanent_event_state_version)
         battle_cry_resolution_version(self.battle_cry_resolution_version)
+        ninjutsu_bands = ninjutsu_band_retention_version(self.ninjutsu_band_retention_version)
         block_characteristics_version(self.block_characteristics_version)
         unblocked_attacker_event_version(self.unblocked_attacker_event_version)
         if self.tap_state_event_version is not None and (
@@ -1197,6 +1205,7 @@ class GameState:
             **({'qualified_attack_facts_version':self.qualified_attack_facts_version} if self.qualified_attack_facts_version is not None else {}),
             **({'permanent_event_state_version':self.permanent_event_state_version} if self.permanent_event_state_version is not None else {}),
             **({'battle_cry_resolution_version':self.battle_cry_resolution_version} if self.battle_cry_resolution_version is not None else {}),
+            **({'ninjutsu_band_retention_version':ninjutsu_bands} if ninjutsu_bands is not None else {}),
             **({'block_characteristics_version':self.block_characteristics_version} if self.block_characteristics_version is not None else {}),
             **({'unblocked_attacker_event_version':self.unblocked_attacker_event_version} if self.unblocked_attacker_event_version is not None else {}),
             **({'legend_rule_choice_version': self.legend_rule_choice_version} if self.legend_rule_choice_version is not None else {}),
@@ -1211,6 +1220,7 @@ class GameState:
             **({'cast_face_offers_version':self.cast_face_offers_version} if self.cast_face_offers_version is not None else {}),
             **({'cast_source_placement_version':self.cast_source_placement_version} if self.cast_source_placement_version is not None else {}),
             **({"phasing_lifecycle_version": phasing_version} if phasing_version is not None else {}),
+            **printed_mana_cost_format_fields(self.printed_mana_cost_version),
             **({'explore_action_version':self.explore_action_version} if self.explore_action_version is not None else {}),
             **({'transform_timestamp_version':self.transform_timestamp_version} if self.transform_timestamp_version is not None else {}),
             **({'face_status_timestamp_version':self.face_status_timestamp_version} if self.face_status_timestamp_version is not None else {}),
@@ -1291,6 +1301,7 @@ class GameState:
             ),
             cast_source_placement_version=cast_source_placement_version(data.get('cast_source_placement_version')),
             phasing_lifecycle_version=phasing_lifecycle_version(data.get("phasing_lifecycle_version")),
+            printed_mana_cost_version=read_printed_mana_cost_version(data),
             explore_action_version=explore_action_version(data.get('explore_action_version')),
             transform_timestamp_version=transform_timestamp_version(data.get('transform_timestamp_version')),
             face_status_timestamp_version=face_status_timestamp_version(data.get('face_status_timestamp_version')),
@@ -1318,6 +1329,7 @@ class GameState:
             qualified_attack_facts_version=qualified_attack_facts_version(data.get('qualified_attack_facts_version')),
             permanent_event_state_version=permanent_event_state_version(data.get('permanent_event_state_version')),
             battle_cry_resolution_version=battle_cry_resolution_version(data.get('battle_cry_resolution_version')),
+            ninjutsu_band_retention_version=ninjutsu_band_retention_version(data.get('ninjutsu_band_retention_version')),
             block_characteristics_version=block_characteristics_version(data.get('block_characteristics_version')),
             unblocked_attacker_event_version=unblocked_attacker_event_version(data.get('unblocked_attacker_event_version')),
             counter_quantity_provenance_version=counter_quantity_provenance_version(

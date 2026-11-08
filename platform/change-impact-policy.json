@@ -512,6 +512,7 @@
       "id": "semantic-transition-pr-evidence-contract",
       "patterns": [
         "platform/rules-subsystems.json",
+        "quorune/work_selection_evidence.py",
         "scripts/harvest_outcome_history.py",
         "scripts/pr_evidence.py",
         "scripts/validate_pr_body.py"
@@ -1003,6 +1004,35 @@
       ]
     },
     {
+      "id": "ninjutsu-attack-band-retention",
+      "patterns": [
+        "quorune/banding_model.py",
+        "quorune/combat_entry_activations.py",
+        "quorune/combat_relationship_state.py",
+        "quorune/record_state_provenance.py",
+        "tests/fixtures/banding-cards.json",
+        "tests/test_banding.py"
+      ],
+      "test_modules": [
+        "test_banding",
+        "test_fixed_combat_entry_keyword_lifecycles",
+        "test_game_record_v3"
+      ]
+    },
+    {
+      "id": "reviewed-predefined-token-choice-names",
+      "patterns": [
+        "quorune/semantic_packs/v081-predefined-token-name-corrections.json",
+        "tests/test_exact_deck_triggers.py"
+      ],
+      "test_modules": [
+        "test_exact_deck_triggers",
+        "test_fixed_token_creation_effects",
+        "test_card_program_trust",
+        "test_game_record_v3"
+      ]
+    },
+    {
       "id": "fixed-single-object-reanimation-contract",
       "patterns": [
         "quorune/compiler/reanimation_templates.py",
@@ -1399,6 +1429,20 @@
         "test_token_creation_replacements",
         "test_trigger_batches",
         "test_zone_trigger_events"
+      ]
+    },
+    {
+      "id": "printed-mana-cost-authority",
+      "patterns": [
+        "quorune/printed_mana_cost_model.py",
+        "quorune/model.py",
+        "quorune/record_state_provenance.py",
+        "tests/fixtures/suspend-cards.json",
+        "tests/test_suspend_rules.py"
+      ],
+      "test_modules": [
+        "test_casting_spells_rules",
+        "test_suspend_rules"
       ]
     },
     {

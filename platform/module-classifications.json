@@ -13293,6 +13293,18 @@
       "replay_participation": "authoritative"
     },
     {
+      "file": "quorune/printed_mana_cost_model.py",
+      "layer": "domain",
+      "owning_subsystem": "legacy_domain",
+      "allowed_dependency_layers": [
+        "domain"
+      ],
+      "game_state_access": "none",
+      "card_specificity_policy": "generic_no_growth",
+      "visibility_sensitivity": "authoritative_internal",
+      "replay_participation": "none"
+    },
+    {
       "file": "quorune/profiles.py",
       "layer": "adapter",
       "owning_subsystem": "legacy_adapter",
@@ -25667,5 +25679,5 @@
       "replay_participation": "none"
     }
   ],
-  "fingerprint": "41b56dacbb43daaa7f2f63786855f103bd4095bd3413fe478e8e574b50db6188"
+  "fingerprint": "646818122285051b1b25a2db727014aa0f968c6ed335f4af0f288810b6d7e113"
 }

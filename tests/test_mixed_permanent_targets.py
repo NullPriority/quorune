@@ -209,6 +209,36 @@ class MixedPermanentTargetRuntimeTests(unittest.TestCase):
         self.assertEqual('graveyard',s.state.cards[source.object_id].zone)
         self.private_replay(s,private)
 
+    def test_road_rage_declares_union_authority_and_counts_at_resolution(self):
+        s, rage, private = self.fixture(595190, "Road Rage")
+        mount = self.add(s.engine, "Generic Bound Body", ref="road-rage-mount")
+        mount.annotations["copy_overrides"] = {"type_line": "Creature — Mount"}
+        opposing = self.add(s.engine, "Generic Bound Body", seat="B", ref="opposing-mount")
+        opposing.annotations["copy_overrides"] = {"type_line": "Creature — Mount"}
+        vehicle = self.add(s.engine, "Cultivator's Caravan")
+        dual = self.add(s.engine, "Cultivator's Caravan", ref="road-rage-dual-subtype")
+        dual.annotations["copy_overrides"] = {"type_line": "Artifact Creature — Mount Vehicle"}
+        self.add(s.engine, "Sol Ring")
+        target = self.add(s.engine, "Generic Bound Body", seat="B", ref="road-rage-target")
+        target.counters["+1/+1"] = 6
+        bounce = self.add(s.engine, "Unsummon", seat="B", zone="hand")
+        bound = self.binding(s, rage)
+        self.assertTrue(bound["strict_capability_ready"], bound["blockers"])
+        ability, = bound["ability_bindings"]
+        self.assertIn("state_query.permanent.receiver_union", ability["declared_capabilities"])
+
+        self.prepare(s, mana={"R": 1})
+        s.state.players["B"].mana_pool["U"] = 1
+        self.checkpoint(s)
+        self.reject(s, {"action_id": f"cast:{rage.ref}", "targets": [vehicle.ref],
+            "pay": "manual", "payment": {"R": 1}})
+        self.pay_cast(s, rage, [target.ref], payment={"R": 1})
+        self.pay_cast(s, bounce, [mount.ref], payment={"U": 1}, seat="B")
+        self.assertIsNone(self.settle(s))
+        self.assertEqual("hand", s.state.cards[mount.object_id].zone)
+        self.assertEqual(4, s.state.cards[target.object_id].marked_damage)
+        self.private_replay(s, private)
+
     def test_roadside_uses_actual_target_discount_and_keeps_private_draw(self):
         for i,cheap in enumerate((False,True)):
             with self.subTest(cheap=cheap):

@@ -1795,6 +1795,25 @@
         "test_repository_history.RepositoryHistoryTests.test_uncommitted_oversized_tracked_source_still_fails"
       ],
       "resolution": "Resolve the exact checked HEAD once and use that immutable revision for both history scans. Keep the existing forbidden paths, secret patterns and10MiB limits. Actual temporary Git repositories prove unrelated branches do not affect certification while oversized tracked files and deleted forbidden/oversized ancestry still fail. Run the full repository validator after canonical finalization before republishing."
+    },
+    {
+      "id": "ci-20261108-pr556-admission-recovery-policy",
+      "run_id": 42427426053,
+      "head_sha": "2f9b6ee5738a429e79d4eac6effebdc474af7ff2",
+      "category": "source_correctness",
+      "deterministic": true,
+      "impact_edge_status": "added",
+      "summary": "Rules scheduler generation rejected a defect batch whose pinned receipts showed fourteen existing exact programs regain strict admission with unchanged ability carriers, residuals and failures. Replaying the same receipts also reproduced the PR delivery-floor rejection locally.",
+      "failed_surfaces": [
+        "Generated cloud / Rules scheduler"
+      ],
+      "regressions": [
+        "test_rules_scheduler.AdmissionRecoveryHistoryTests.test_existing_exact_program_recovery_binds_to_both_receipts",
+        "test_rules_scheduler.AdmissionRecoveryHistoryTests.test_admission_recovery_rejects_other_changes_and_malformed_scope",
+        "test_pr_body_policy.PullRequestBodyPolicyTests.test_support_floor_requires_exact_proof_for_admission_recovery",
+        "test_pr_body_policy.PullRequestBodyPolicyTests.test_support_delivery_requires_500_actual_net_whole_cards"
+      ],
+      "resolution": "Verify the declared recovery IDs against the exact pinned base and head in both gates. Require unchanged ability carriers and no additional card-state, residual or failure changes. Preserve conservative history and the five-hundred-card floor for feature delivery. A recovery row requires a fresh cohort frontier."
     }
   ],
   "recent_pull_requests": [

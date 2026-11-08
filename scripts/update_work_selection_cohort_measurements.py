@@ -29,6 +29,7 @@ from quorune.work_selection_bundles import (
 from quorune.work_selection_common import transition_measurement_matches_policy
 from quorune.work_selection_common import stable_hash
 from quorune.work_selection_evidence import (
+    ADMISSION_RECOVERY_IDS,
     validate_harvest_history,
     validate_work_selection_cohort_measurements,
 )
@@ -240,6 +241,8 @@ def _measurement_frontier_before_non_harvest_updates(
             if head.get('git_blob_oid') != object_id:
                 continue
             validated = _validate_non_harvest_content_entry(entry)
+            if ADMISSION_RECOVERY_IDS in validated:
+                return None
             base = validated['base_receipt']['blobs'][path]
             if base['git_blob_oid'] != object_id:
                 predecessors[base['git_blob_oid']] = base

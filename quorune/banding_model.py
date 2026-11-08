@@ -7,6 +7,12 @@ from collections.abc import Mapping
 BANDING_CAPABILITY = 'combat.banding'
 
 
+def ninjutsu_band_retention_version(value: int | None) -> int | None:
+    if value is not None and (type(value) is not int or value != 1):
+        raise ValueError('Unsupported Ninjutsu band retention version')
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class AttackBand:
     """One declared CR702.22c band of current physical incarnations."""

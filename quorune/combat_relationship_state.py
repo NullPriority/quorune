@@ -105,6 +105,7 @@ def commit_attack_declaration(
     controller: str,
     assignments: Sequence[AttackDeclarationAssignment],
     bands: tuple = (),
+    preserve_bands: bool = False,
 ) -> tuple[AttackDeclarationAssignment, ...]:
     """Commit already-validated attackers that survived declaration costs."""
 
@@ -116,6 +117,8 @@ def commit_attack_declaration(
         raise CombatRelationshipStateError(
             "Attack declaration controller must be a nonempty string"
         )
+    if type(preserve_bands) is not bool or preserve_bands and bands:
+        raise CombatRelationshipStateError("An entering attacker cannot declare new attack bands")
     values = tuple(assignments)
     if any(not isinstance(value, AttackDeclarationAssignment) for value in values):
         raise CombatRelationshipStateError(
@@ -168,8 +171,9 @@ def commit_attack_declaration(
             assignment.target_context
         )
     committed_ids = {value.attacker_object_id for value in committed}
-    combat.attack_bands = tuple(AttackBand(tuple(value for value in band.members if value[0] in committed_ids))
-        for band in bands if any(value[0] in committed_ids for value in band.members))
+    if not preserve_bands:
+        combat.attack_bands = tuple(AttackBand(tuple(value for value in band.members if value[0] in committed_ids))
+            for band in bands if any(value[0] in committed_ids for value in band.members))
     return tuple(committed)
 
 

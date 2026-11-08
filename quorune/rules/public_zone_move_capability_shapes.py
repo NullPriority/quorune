@@ -16,7 +16,7 @@ from ..attachment_references import (
     AttachmentReferenceKind,
     AttachmentReferenceSpec,
 )
-from ..object_predicate import ObjectQueryError, ObjectQuerySpec
+from ..object_predicate import ObjectQueryError, ObjectQuerySpec, object_query_capabilities
 from ..public_zone_moves import (
     FIXED_OWNER_ZONE_MOVE_CAPABILITY,
     FIXED_OWNER_ZONE_MOVE_MECHANIC,
@@ -374,6 +374,7 @@ def fixed_public_zone_move_set_node_capabilities(
             result_caps = followup.capability_dependencies
     except (KeyError, TypeError, ValueError):
         return ()
+    dependencies = ("zone.move.fixed_public_set", *object_query_capabilities(spec.query), *result_caps)
     targeted = spec.seat_relation is PublicZoneSeatRelation.TARGET_PLAYER
     if targeted:
         if (
@@ -382,14 +383,10 @@ def fixed_public_zone_move_set_node_capabilities(
             or spec.target_seat != "$target.0"
         ):
             return ()
-        return (
-            "zone.move.fixed_public_set",
-            *result_caps,
-            "target.revalidate_resolution",
-        )
+        return (*dependencies, "target.revalidate_resolution")
     if target_schema is not None or "cr-115-targets" in mechanics:
         return ()
-    return ("zone.move.fixed_public_set",)
+    return dependencies
 
 
 def fixed_private_hand_entry_node_capabilities(
@@ -442,7 +439,6 @@ def fixed_public_tap_state_set_node_capabilities(
         effect, restraint = split_source_tap_untap_restraint(effects[0])
     except ValueError:
         return ()
-    dependencies = ("permanent.tap_state.fixed_set", *((SOURCE_TAP_UNTAP_CAPABILITY,) if restraint else ()))
     if (
         set(effect) != {"op", "source", "set", "tapped"}
         or effect.get("op") != "set_public_tap_state"
@@ -454,6 +450,11 @@ def fixed_public_tap_state_set_node_capabilities(
         spec = AffectedPermanentSetSpec.from_dict(effect["set"])
     except (KeyError, TypeError, AffectedPermanentSetError):
         return ()
+    dependencies = (
+        "permanent.tap_state.fixed_set",
+        *object_query_capabilities(spec.query),
+        *((SOURCE_TAP_UNTAP_CAPABILITY,) if restraint else ()),
+    )
     targeted = (
         spec.controller_relation is PermanentControllerRelation.TARGET_PLAYER
     )

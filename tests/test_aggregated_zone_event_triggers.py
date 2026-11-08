@@ -420,7 +420,7 @@ class AggregatedZoneTriggerRuntimeTests(unittest.TestCase):
         source=self.add(engine,'Vengeful Townsfolk')
         for i in range(2):self.add(engine,'Generic Aggregate Victim',ref='victim-'+str(i))
         spell=self.add(engine,'Generic Aggregate Small Sweeper',zone='hand')
-        self.ready(session,spell,{});self.checkpoint(session)
+        self.ready(session,spell,{'G':1});self.checkpoint(session)
         self.cast(session,spell)
         self.assertEqual(1,session.state.cards[source.object_id].counters['+1/+1'])
         self.assertEqual(2,sum(c.zone=='graveyard' and c.ref.startswith('victim-') for c in session.state.cards.values()))

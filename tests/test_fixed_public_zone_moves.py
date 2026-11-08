@@ -468,6 +468,22 @@ class FixedPublicZoneMoveCompilerTests(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertNotEqual("exact", self.compile(text).status)
 
+    def test_fixed_public_negative_color_sets_require_the_query_capability(self):
+        from quorune.object_predicate import NEGATIVE_COLOR_QUERY_CAPABILITY
+
+        value = copy.deepcopy(self.registry_value)
+        capability = next(row for row in value['capabilities'] if row['id'] == NEGATIVE_COLOR_QUERY_CAPABILITY)
+        capability.update(status='blocked', blockers=['Negative color query withdrawn'])
+        blocked = CapabilityRegistry(value)
+        blocked.mark_evidence_verified('0' * 64)
+        for text in ('Tap all nonwhite creatures.', "Return all nonblue creatures to their owners' hands."):
+            with self.subTest(text=text):
+                ir = self.compile(text)
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                self.assertIn(NEGATIVE_COLOR_QUERY_CAPABILITY, ir.faces[0].nodes[0].capability_dependencies)
+                self.assertNotEqual('exact', self.compile(text, capabilities=blocked).status)
+        self.assertEqual('exact', self.compile('Tap all creatures.', capabilities=blocked).status)
+
     def test_type_qualified_public_graveyard_targets_compile_exact(self):
         for kind in PublicGraveyardCardTargetKind:
             text = f"Exile target {kind.value} from a graveyard."
@@ -1046,6 +1062,69 @@ class _RuntimeBase(unittest.TestCase):
 
 
 class FixedPublicZoneMoveRuntimeTests(_RuntimeBase):
+    def test_original_blinding_light_registers_its_exact_tap_set(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.semantics import SemanticRegistry
+
+        card = self.db.lookup('Blinding Light')
+        semantics = SemanticRegistry()
+        registry = load_default_capability_registry()
+        profile = 'commander_review'
+        register_generated_programs(
+            self.db, semantics, (card,), capability_registry=registry, capability_profile=profile,
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        registered, = semantics.programs_for_oracle(card.oracle_id)
+        self.assertEqual('trusted', registered.trust_level)
+        program = compile_best_available_card_program(
+            self.db, card, semantic_registry=semantics,
+            capability_registry=registry, capability_profile=profile,
+        )
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile=profile)
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+
+    def test_actual_inundate_keeps_multicolored_blue_and_returns_borrowed_nonblue(self):
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+
+        session = self.session(7294172, spell='Inundate')
+        engine = session.engine
+        registry = load_default_capability_registry()
+        profile = engine.state.config.review_profile
+        card = self.db.lookup('Inundate')
+        register_generated_programs(
+            self.db, engine.semantics, (card,), capability_registry=registry, capability_profile=profile,
+            promote_exact_runtime_handlers=True, promote_exact_trigger_programs=True,
+            promote_exact_effect_programs=True, promote_exact_capability_declarations=True,
+        )
+        program = compile_best_available_card_program(
+            self.db, card, semantic_registry=engine.semantics,
+            capability_registry=registry, capability_profile=profile,
+        )
+        binding = bind_card_program_runtime(program, capability_registry=registry, profile=profile)
+        self.assertTrue(binding['strict_capability_ready'], binding['blockers'])
+        blue = self.commander(engine, 'A')
+        borrowed = self.card(engine, 'A', name='Goblin Welder')
+        noncreature = self.card(engine, 'B', name='Sol Ring')
+        engine.move_card(blue.object_id, 'battlefield', log=False)
+        engine.move_card(borrowed.object_id, 'battlefield', controller='B', log=False)
+        engine.move_card(noncreature.object_id, 'battlefield', log=False)
+        self.assertEqual({'U', 'B', 'R'}, set(engine._effective_card_data(blue)['colors']))
+        self.assertEqual('B', borrowed.controller)
+        _, action = self.ready_spell(session, card.name, {'C': 3, 'U': 3})
+        session.initial_checkpoint = checkpoint_envelope(engine.state)
+        session.commands.clear()
+        session.decisions.clear()
+        result = session.act('pilot:A', {'action_id': action['id'], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_all(session)
+        self.assertEqual('battlefield', session.state.cards[blue.object_id].zone)
+        self.assertEqual('battlefield', session.state.cards[noncreature.object_id].zone)
+        self.assertIn(borrowed.object_id, session.state.players['A'].zones['hand'])
+        self.assert_replays(session, 'inundate-nonblue-set')
+
     def test_public_tap_state_set_uses_current_query_stun_and_replays(self):
         session = self.session(7294171, spell="Fixed Public Tap Set Fixture")
         engine = session.engine

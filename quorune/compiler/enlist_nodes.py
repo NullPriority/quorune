@@ -6,6 +6,7 @@ from .static_runtime_nodes import runtime_handler_node
 from .ir_model import OracleNode
 from .dependency_gate import explicit_capabilities_gate
 from ..scalar_effect_amount_model import ScalarEffectAmountSpec,ScalarAmountOrigin
+from ..rules.enlist_shapes import ENLIST_REFLEXIVE_CAPABILITIES
 
 
 def enlist_keyword_node(**values):
@@ -17,7 +18,7 @@ def enlist_keyword_node(**values):
 
 
 def enlist_reflexive_node(**values):
-    gate=explicit_capabilities_gate((ENLIST_CAPABILITY,),capability_registry=values['capability_registry'],capability_profile=values['capability_profile'])
+    gate=explicit_capabilities_gate(ENLIST_REFLEXIVE_CAPABILITIES,capability_registry=values['capability_registry'],capability_profile=values['capability_profile'])
     amount=ScalarEffectAmountSpec(ScalarAmountOrigin.EVENT_OBJECT,characteristic='power').to_dict()
     return OracleNode(node_id=values['node_id']+':enlist-trigger',kind='triggered_ability',text=values['line'],span=values['span'],active_zone='battlefield',event='combat.enlist.reflexive',lowerable=True,exact=not gate.blockers,
         template_id='printed-enlist-reflexive-growth-v1',effects=({'op':'modify_stats_until_end_of_turn','card':'$source.zone_object','power':amount,'toughness':0},),

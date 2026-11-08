@@ -1,0 +1,88 @@
+{
+  "schema_version": 3,
+  "name": "reviewed-predefined-token-name-corrections",
+  "programs": [
+    {
+      "key": "ab8d5f5c-1976-4f77-8ed2-8d28ee666741:trigger:landfall",
+      "label": "Tireless Provisioner landfall",
+      "oracle_id": "ab8d5f5c-1976-4f77-8ed2-8d28ee666741",
+      "ability_id": "trigger:landfall",
+      "active_zone": "battlefield",
+      "event": "land.enter",
+      "event_condition": {
+        "field": "controller",
+        "op": "eq",
+        "value": "$source.controller"
+      },
+      "effects": [
+        {
+          "op": "choose_option",
+          "player": "$controller",
+          "prompt": "Choose a Food token or a Treasure token.",
+          "options": [
+            {
+              "id": "food",
+              "label": "Food"
+            },
+            {
+              "id": "treasure",
+              "label": "Treasure"
+            }
+          ],
+          "then_by_choice": {
+            "food": [
+              {
+                "op": "create_token",
+                "controller": "$controller",
+                "name": "Food Token",
+                "quantity": 1,
+                "characteristics": {
+                  "type_line": "Token Artifact — Food",
+                  "display_text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+                  "activated_ability_profile": "two_tap_sac_gain_three_life_v1",
+                  "literal_token_name_version": 1
+                },
+                "reason": "Tireless Provisioner"
+              }
+            ],
+            "treasure": [
+              {
+                "op": "create_token",
+                "controller": "$controller",
+                "name": "Treasure Token",
+                "quantity": 1,
+                "characteristics": {
+                  "type_line": "Token Artifact — Treasure",
+                  "display_text": "{T}, Sacrifice this token: Add one mana of any color.",
+                  "activated_ability_profile": "tap_sac_any_color_mana_v1",
+                  "literal_token_name_version": 1
+                },
+                "reason": "Tireless Provisioner"
+              }
+            ]
+          }
+        }
+      ],
+      "trust_level": "trusted",
+      "coverage": [
+        "triggered_ability",
+        "landfall",
+        "player_choice",
+        "token_creation",
+        "food",
+        "treasure"
+      ],
+      "tests": [
+        "test_tireless_provisioner_landfall_chooses_food_or_treasure",
+        "test_provisioner_native_choice_retains_current_and_pinned_names"
+      ],
+      "provenance": {
+        "source_oracle_hash": "009a80f59ebd7f1ee981c6642b7810973bf62e3159e027248a20490af978bca5",
+        "source_rulings_hash": "f9e081e75e4ae7e1d69994b7c50207d1a9f386895d0089fb9a2713d1ade15fd0",
+        "authored_by": "reviewed-predefined-token-name-correction",
+        "review_status": "reviewed"
+      },
+      "version": 2
+    }
+  ]
+}

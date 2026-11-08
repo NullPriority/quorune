@@ -2,7 +2,7 @@
 title: "CI escape report"
 status: "generated"
 authoritative_source: "platform/ci-escape-source.json"
-verified: "294ed6fa93c66eef5e93bdacfcba6d6b258d436f1f30f587dba1a5e019e9e453"
+verified: "8e2317befc6cfa769d0be9e0839284c220cb058fc07b878e9329945e76451842"
 audience: "maintainers and contributors"
 maintenance: "generated"
 ---
@@ -15,8 +15,8 @@ This report classifies observed deterministic failures that escaped the local qu
 
 - Observation window: 2026-08-25T03:52:06Z through 2026-08-25T20:56:41Z
 - Observed population: tracked recent pull requests (n=4)
-- Escapes: 108
-- Deterministic escapes: 99
+- Escapes: 109
+- Deterministic escapes: 100
 - Current missing impact edges: 0
 - Known flaky tests: 0
 - Average pushes per merged PR: null
@@ -137,6 +137,7 @@ This report classifies observed deterministic failures that escaped the local qu
 | `ci-20261025-pr536-prepush-contract` | [40146602116](https://github.com/NullPriority/quorune/actions/runs/40146602116) | `missing_affected_test` | `not_applicable` | Keep the clean-tracked-tree check before the checkpoint pre-corpus sentinel, locating that phase explicitly instead of the first shared script name. Also assert that the always-on encoding sentinel precedes shard validation and receipt acceptance. Run this exact owned hook contract and the existing encoding-plan control before republishing; retain all other assertions and avoid rerunning the superseded matrix. |
 | `ci-20261025-pr536-private-reference-token-collision` | [40149579140](https://github.com/NullPriority/quorune/actions/runs/40149579140) | `flaky_test` | `not_applicable` | Assign the three private fixture references a colon-delimited value before the initial checkpoint. The separator is absent from base64url capabilities; retain every original full-decision privacy, principal, ordering, zone-replacement and replay assertion. The exact native method passes. |
 | `ci-20261025-pr536-unrelated-history-certification-scope` | [40149579140](https://github.com/NullPriority/quorune/actions/runs/40149579140) | `source_correctness` | `not_applicable` | Resolve the exact checked HEAD once and use that immutable revision for both history scans. Keep the existing forbidden paths, secret patterns and10MiB limits. Actual temporary Git repositories prove unrelated branches do not affect certification while oversized tracked files and deleted forbidden/oversized ancestry still fail. Run the full repository validator after canonical finalization before republishing. |
+| `ci-20261108-pr556-admission-recovery-policy` | [42427426053](https://github.com/NullPriority/quorune/actions/runs/42427426053) | `source_correctness` | `added` | Verify the declared recovery IDs against the exact pinned base and head in both gates. Require unchanged ability carriers and no additional card-state, residual or failure changes. Preserve conservative history and the five-hundred-card floor for feature delivery. A recovery row requires a fresh cohort frontier. |
 
 ## Measurement limitations
 

@@ -247,6 +247,12 @@ absence retains the earlier transition order and remains absent on serialization
 Manifest/checkpoint disagreement and unknown or boolean versions are rejected.
 See [ADR 0130](../adr/0130-casting-source-placement-before-costs.md).
 
+New checkpoints carry `printed_mana_cost_version: 1`, mirrored in manifest
+format provenance. The ordinary cost owner rejects an absent printed price.
+A printed zero and separately authorized alternative prices use their existing
+owners. Historical absence retains the earlier price behavior for exact replay
+and stays absent on serialization. A malformed or mismatched version rejects.
+
 New checkpoints also carry `explore_action_version: 1` in matching format
 provenance. Empty-library Explore attempts a counter on the retained current
 explorer before completion through the ordinary replacement owner. Historical
@@ -542,6 +548,10 @@ execution, including the Incubator front face. The historical mode uses the
 absent marker and preserves the previous execution-time definition. Explicit
 names and copiable snapshots supply their own name values.
 
+The bundled reviewed Food and Treasure choice uses the same literal name
+authority. New sessions load the corrected program version. Saved sessions
+retain the exact choice program and token definitions in their pinned registry.
+
 New compiler-owned fixed creature definitions carry
 `literal_token_name_version: 1` with their fully resolved name. The marker
 travels in the fixed definition and any pending replacement payload. Creation
@@ -612,6 +622,12 @@ semantic-handler, runtime-component, profile, and record-format identity as
 applicable. Loading rejects internal disagreement before replay begins.
 
 ## Replay contract
+
+New records pin `ninjutsu_band_retention_version: 1`. The Ninja joins combat
+as an individual attacker while the current unrelated attack bands retain
+their members. A checkpoint without the marker keeps the recorded Ninjutsu
+behavior and omits the marker on serialization. The manifest and checkpoint
+must agree.
 
 Native records use `command_replay`. Verification loads the exact initial
 checkpoint and pinned semantic identity, then resubmits each accepted command

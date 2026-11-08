@@ -14,7 +14,13 @@ from quorune.work_selection_common import (
     WorkSelectionError,
 )
 from quorune.work_selection_evidence import (
+    ADMISSION_RECOVERY_AFTER,
+    ADMISSION_RECOVERY_BEFORE,
+    ADMISSION_RECOVERY_IDS,
+    admission_recovery_metrics_are_exact,
+    non_harvest_entry_metrics_are_valid,
     non_harvest_metrics_are_conservative,
+    valid_admission_recovery_ids,
     validate_harvest_forecast_correction,
 )
 
@@ -679,8 +685,11 @@ def validated_semantic_transition_declaration(
         "expected_complete_card_gain"
     }
     generated_prediction = fields == common_fields | {"measurement_id"}
+    recovery = fields == common_fields | {
+        "expected_complete_card_gain", ADMISSION_RECOVERY_IDS,
+    }
     if not isinstance(declaration, Mapping) or not (
-        legacy_prediction or generated_prediction
+        legacy_prediction or generated_prediction or recovery
     ):
         raise HarvestOutcomeHistoryError(
             "Changed semantic support requires one transition declaration"
@@ -740,9 +749,11 @@ def validated_semantic_transition_declaration(
         )
     )
     non_harvest = (
-        legacy_prediction
-        and
-        bundle_id is None
+        (
+            legacy_prediction
+            or recovery and valid_admission_recovery_ids(declaration[ADMISSION_RECOVERY_IDS])
+        )
+        and bundle_id is None
         and not candidate_ids
         and not family_ids
         and not capability_ids
@@ -1159,6 +1170,44 @@ def _content_entry(
     return entry
 
 
+def verify_admission_recovery(
+    oracle_ids: list[str],
+    *,
+    base: Mapping[str, Any],
+    head: Mapping[str, Any],
+    metrics: Mapping[str, Any],
+) -> list[str]:
+    """Bind a declared recovery to the full base and head card receipts."""
+    before = base.get("_card_states")
+    after = head.get("_card_states")
+    base_carriers = base.get("_ability_carriers")
+    if (
+        base["card_data_snapshot"] != head["card_data_snapshot"]
+        or base["card_program_schema_version"] != head["card_program_schema_version"]
+        or not isinstance(before, Mapping)
+        or not isinstance(after, Mapping)
+        or before.keys() != after.keys()
+        or len(before) != base["cards_considered"]
+        or len(after) != head["cards_considered"]
+        or not isinstance(base_carriers, Mapping)
+        or base_carriers != head.get("_ability_carriers")
+        or not admission_recovery_metrics_are_exact(metrics, oracle_ids)
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Admission recovery requires one pinned roster and unchanged ability and failure counts"
+        )
+    changed = {oracle_id for oracle_id in before if before[oracle_id] != after[oracle_id]}
+    if changed != set(oracle_ids) or any(
+        before[oracle_id] != ADMISSION_RECOVERY_BEFORE
+        or after[oracle_id] != ADMISSION_RECOVERY_AFTER
+        for oracle_id in changed
+    ):
+        raise HarvestOutcomeHistoryError(
+            "Admission recovery must match exactly the declared existing exact programs"
+        )
+    return list(oracle_ids)
+
+
 def _non_harvest_content_entry(
     declaration: Mapping[str, Any],
     *,
@@ -1175,7 +1224,12 @@ def _non_harvest_content_entry(
             "Non-harvest semantic transition identity is inconsistent"
         )
     metrics = _transition_metrics(base, head)
-    if not non_harvest_metrics_are_conservative(metrics):
+    recovery = {}
+    if ADMISSION_RECOVERY_IDS in declaration:
+        recovery[ADMISSION_RECOVERY_IDS] = verify_admission_recovery(
+            declaration[ADMISSION_RECOVERY_IDS], base=base, head=head, metrics=metrics,
+        )
+    elif not non_harvest_metrics_are_conservative(metrics):
         raise HarvestOutcomeHistoryError(
             "A non-harvest transition cannot increase card support or failures"
         )
@@ -1192,6 +1246,7 @@ def _non_harvest_content_entry(
         "receipt_identity_kind": "semantic_content",
         "base_receipt": _content_public_receipt(base),
         "head_receipt": _content_public_receipt(head),
+        **recovery,
         **metrics,
     }
     entry["entry_fingerprint"] = _hash(entry)
@@ -1230,7 +1285,7 @@ def _validate_non_harvest_content_entry(entry: Any) -> dict[str, Any]:
         or head.get("content_fingerprint")
         != _receipt_content_fingerprint(head)
         or base.get("content_fingerprint") == head.get("content_fingerprint")
-        or not non_harvest_metrics_are_conservative(candidate)
+        or not non_harvest_entry_metrics_are_valid(candidate)
     ):
         raise HarvestOutcomeHistoryError(
             "Content-bound non-harvest transition is malformed"
@@ -1410,6 +1465,8 @@ def validate_semantic_transition_source_identity(
                     "Recorded non-harvest rationale is immutable; retain it "
                     "or declare a new compiler transition"
                 )
+            if recorded.get(ADMISSION_RECOVERY_IDS) != validated.get(ADMISSION_RECOVERY_IDS):
+                raise HarvestOutcomeHistoryError("Recorded admission recovery scope is immutable")
             return
     latest = _latest_semantic_receipt(entries, non_harvest, repository=repository)
     if latest["compiler_version"] != validated["compiler_version"]:
@@ -1436,6 +1493,8 @@ def _pending_non_harvest_declaration(value: Any) -> dict[str, Any] | None:
         "expected_complete_card_gain",
         "non_harvest_reason",
     }
+    if ADMISSION_RECOVERY_IDS in value:
+        fields.add(ADMISSION_RECOVERY_IDS)
     try:
         return validated_semantic_transition_declaration(
             {field: value.get(field) for field in fields}
@@ -2023,6 +2082,8 @@ def build_harvest_outcome_history(
                 == non_harvest_transitions[-1]["transition_id"]
                 and validated_declaration["compiler_version"]
                 == non_harvest_transitions[-1]["compiler_version"]
+                and validated_declaration.get(ADMISSION_RECOVERY_IDS)
+                == non_harvest_transitions[-1].get(ADMISSION_RECOVERY_IDS)
             )
             if (
                 matching_content_entry

@@ -545,11 +545,22 @@ class IndependentDualSourceEventRuntimeTests(unittest.TestCase):
         resumed=self.replay(session,load=True);resumed=self.finish_combat(resumed);engine=resumed.engine
         for seat in 'ABCD':self.assertEqual(before[seat]+int(seat in 'AB'),len(engine.state.players[seat].zones['hand']))
         private_draws=[event for event in engine.state.events if event.code=='card.draw.private']
+        decision_principals = set(resumed.pending_principals())
         for event in private_draws:
-            owner=event.actor
-            for seat in set('ABCD')-{owner}:
-                packet=json.dumps(resumed.packet('pilot:'+seat,full=True))
-                for ref in event.details['objects']:self.assertNotIn(ref,packet)
+            for seat in 'ABCD':
+                if seat == event.actor:
+                    continue
+                principal = 'pilot:' + seat
+                packet = resumed.packet(principal, full=True)
+                if principal in decision_principals:
+                    decision = dict(packet['decision'])
+                    self.assertIsInstance(decision.pop('cap'), str)
+                    packet = {**packet, 'decision': decision}
+                else:
+                    self.assertIsNone(packet['decision'])
+                packet_text = json.dumps(packet)
+                for ref in event.details['objects']:
+                    self.assertNotIn(ref, packet_text)
         self.replay(resumed)
 
     def test_created_dual_source_trigger_survives_real_ability_removal_response_and_replays(self):

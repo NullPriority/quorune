@@ -400,15 +400,86 @@ class ExactDeckTriggerFamilyTests(unittest.TestCase):
             )
             self.assertTrue(result.ok, result.summary)
 
-        tokens = {
-            card.printed_name
+        tokens = [
+            card
             for card in engine.state.cards.values()
             if card.controller == "B"
             and card.zone == "battlefield"
             and card.is_token
-        }
-        # The reviewed landfall program stores literal names in its choice branches.
-        self.assertTrue({"Food", "Treasure"}.issubset(tokens))
+        ]
+        self.assertEqual({"Food Token", "Treasure Token"}, {card.printed_name for card in tokens})
+        for token in tokens:
+            self.assertEqual(token.printed_name, engine.display_name(token.object_id))
+            self.assertEqual(token.printed_name, engine._copyable_characteristics(token)["name"])
+
+    def test_provisioner_native_choice_retains_current_and_pinned_names(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from common import ROOT
+        from quorune import CommanderSession
+        from quorune.record import authoritative_state_hash, checkpoint_envelope, replay_record
+        from quorune.semantics import SemanticRegistry
+        from quorune.turn_step_owner import TURN_STEPS
+
+        historical = SemanticRegistry(include_builtin_packs=False,
+            pack_paths=[ROOT / "quorune/semantic_packs/v080-exact-triggers.json"])
+        for legacy, choice in ((False, "food"), (True, "treasure")):
+            with self.subTest(legacy=legacy), TemporaryDirectory() as directory:
+                session = self.make_session(1114011 + legacy)
+                engine = session.engine
+                source = self.card(engine, "B", "Tireless Provisioner")
+                land = self.card(engine, "B", "Island")
+                key = f"{source.oracle_id}:trigger:landfall"
+                if legacy:
+                    engine.semantics.put(historical.get(key))
+                expected_version = 1 if legacy else 2
+                self.assertEqual(expected_version, engine.semantics.get(key).version)
+                engine.move_card(source.object_id, "battlefield", controller="B", log=False)
+                engine.move_card(land.object_id, "hand", log=False)
+                engine.state.active_player = engine.state.last_normal_turn_player = "B"
+                engine.state.phase, engine.state.step = "precombat_main", "main"
+                engine.state.phase_index = TURN_STEPS.index(("precombat_main", "main"))
+                engine.state.priority_passes = []
+                engine._grant_priority("B")
+                engine.pump()
+                session.initial_checkpoint = checkpoint_envelope(session.state)
+                session.commands.clear()
+                session.decisions.clear()
+
+                land_action = f"play-land:{land.ref}"
+                offered = session.packet("pilot:B", full=True)["decision"]["ctx"]["legal"]["actions"]
+                self.assertIn(land_action, {row["id"] for row in offered})
+                result = session.act("pilot:B", {"action_id": land_action})
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual(key, session.state.stack[-1].semantic_key)
+                for _ in range(len(engine.seats)):
+                    result = session.act(session.pending_principals()[0], {"action_id": "pass"})
+                    self.assertTrue(result.ok, result.summary)
+                self.assertEqual("semantic.choice", session.state.pending_decision.kind)
+                self.assertFalse(any(card.is_token for card in session.state.cards.values()))
+                self.assertEqual({"food", "treasure"}, {row["id"] for row in
+                    session.packet("pilot:B", full=True)["decision"]["ctx"]["options"]})
+
+                path = Path(directory) / "provisioner-choice"
+                session.save(path)
+                resumed = CommanderSession.load(self.db, path)
+                self.assertEqual(expected_version, resumed.engine.semantics.get(key).version)
+                command = {"action_id": "choose", "choice": choice}
+                before = authoritative_state_hash(resumed.state)
+                self.assertFalse(resumed.act("pilot:A", command).ok)
+                self.assertEqual(before, authoritative_state_hash(resumed.state))
+                result = resumed.act("pilot:B", command)
+                self.assertTrue(result.ok, result.summary)
+                token, = [card for card in resumed.state.cards.values() if card.is_token and card.zone == "battlefield"]
+                expected_name = choice.title() if legacy else f"{choice.title()} Token"
+                self.assertEqual(expected_name, token.printed_name)
+                self.assertEqual(expected_name, resumed.engine.display_name(token.object_id))
+                self.assertEqual(expected_name, resumed.engine._copyable_characteristics(token)["name"])
+                resumed.save(path)
+                replay = replay_record(path, self.db, verify=True)
+                self.assertTrue(replay["ok"], replay)
+                self.assertEqual(authoritative_state_hash(resumed.state), replay["final_state_hash"])
 
     def test_bloodghast_landfall_return_block_restriction_and_conditional_haste(
         self,
