@@ -8314,30 +8314,14 @@
       ]
     },
     "semantic_transition_declaration": {
-      "transition_id": "oracle-ir-v800-consolidated-runtime-defect-repair",
-      "compiler_version": "oracle-ir-v803",
+      "transition_id": "oracle-ir-v841-consolidated-rules-defects",
+      "compiler_version": "oracle-ir-v841",
       "bundle_id": null,
       "candidate_ids": [],
       "family_ids": [],
       "capability_ids": [],
       "expected_complete_card_gain": null,
-      "admission_recovery_oracle_ids": [
-        "0390a3dc-386c-402f-a89c-b94867bfb0a2",
-        "278db664-4235-40f0-a926-3074a0e038c1",
-        "38132f50-9e2d-433b-9f2f-9bd0a7925b68",
-        "3a7b1d1c-1724-4208-943b-650a5d773653",
-        "6b315dc3-c330-4b30-b6ad-4da12ccf6ca3",
-        "84d67d87-2696-4c2f-9f10-29d5832bfbb6",
-        "ad181ee7-756f-4002-9009-023ea6172991",
-        "c3b395b3-fea0-41d9-a3f2-6c90f89d8bdb",
-        "c428cbe2-17fd-4bd2-9810-de2561519f14",
-        "c45090bd-a589-45a0-8388-025b8e0b3487",
-        "cbac75c6-6006-4025-b893-8828965b5f97",
-        "da052082-b440-4abb-9c69-05d4d13e5fd2",
-        "dc763f20-73e7-4db7-9e98-6f419b8fba84",
-        "f3b4097f-b84f-4645-81f1-018366e40eeb"
-      ],
-      "non_harvest_reason": "Repair reproduced strict-admission dependencies for existing Enlist, public-set and amount contracts. Preserve printed mana legality, reviewed token names, and unrelated combat bands with pinned replay evidence."
+      "non_harvest_reason": "Repair reproduced damage history, reflexive and counter event admission, modal transform, unlocked Room characteristics, and printed snow casting defects while preserving historical replay."
     },
     "forecast_corrections": [
       {
