@@ -320,11 +320,11 @@ class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
         drawn = self.top_cards(session)
         for source in (king, mastermind, brainstorm):
             self.assert_closed(session, source)
-        self.prepare(session, mana={"C": 1, "W": 1, "U": 2})
+        self.prepare(session, mana={"C": 5, "W": 2, "U": 3})
         self.checkpoint(session)
         offer = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
                      if row["id"] == f"cast:{king.ref}")
-        cast = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "reserve": {"U": 1}})
+        cast = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto", "reserve": {"C": 4, "W": 1, "U": 2}})
         self.assertTrue(cast.ok, cast.summary)
         self.assertIsNone(self.resolve(session))
         self.assertEqual("battlefield", session.state.cards[king.object_id].zone)
@@ -339,4 +339,17 @@ class TopOrderNativeTests(fixtures.TopOrderFixture,unittest.TestCase):
         self.assertEqual(0, self.trigger_count(session, mastermind))
         self.settle(session)
         self.assertEqual(4, session.state.players["A"].stats["cards_drawn_by_turn"][turn])
+        current = session.state.cards[king.object_id]
+        identity = current.logical_object_id
+        actions = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+        offer = next(action for action in actions
+                     if action["id"].startswith(f"activate:{king.ref}:") and "Transform" in action["label"])
+        activated = session.act("pilot:A", {"action_id": offer["id"], "pay": "auto"})
+        self.assertTrue(activated.ok, activated.summary)
+        self.assertFalse(any(session.state.players["A"].mana_pool.values()))
+        self.assertIsNone(self.resolve(session))
+        current = session.state.cards[king.object_id]
+        self.assertEqual("Black Panther, Hope Enduring", current.active_face)
+        self.assertEqual(identity, current.logical_object_id)
+        self.assertEqual(1, current.transform_count)
         self.replay(session, load=True)
