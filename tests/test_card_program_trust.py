@@ -379,6 +379,7 @@ class CardProgramTrustTests(unittest.TestCase):
                 "casting.payment.delve",
                 "casting.payment.improvise",
                 "combat.block.self-counter-prohibition",
+                "combat.defender_permission.current_attachment",
                 "combat.defender_permission.current_numeric",
                 "continuous.fixed_query_ability_grant",
                 "continuous.fixed_query_characteristic_grant",

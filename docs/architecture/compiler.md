@@ -2077,16 +2077,14 @@ chosen-color links and independently unsupported siblings remain residual.
 
 `compiler/defender_permission_templates.py` separately compiles the closed
 permission to attack as though a creature did not have Defender. It preserves
-Defender and grants one typed layer-6 fact to the current self, attachment or
-public-query recipient. Closed public-state conditions use the existing
-snapshot owner through a strict permission-only schema. Shared attacker
-legality disregards only Defender; tapped state, summoning sickness and other
-attack restrictions still apply. Fixed temporary self, target and public-query
-forms lock current logical incarnations through the ordinary end-of-turn
-continuous-effect journal, optionally sharing one timestamp with fixed stats
-or supported keywords. Later entrants and new incarnations receive no earlier
-temporary permission. Linked riders, defending-player history, and
-combat-damage assignment rules remain separate unsupported families.
+Defender while the shared attacker query checks tapped state, summoning
+sickness and other attack restrictions. Legacy temporary instruction schema
+three retains its locked layer-six permission. Current group permissions use
+the end-of-turn declaration journal and evaluate current public membership,
+including later entrants and control changes. Fixed characteristics in the
+same instruction retain their resolution-time recipients. A source-bound
+compound permission uses the same journal with its exact source incarnation.
+Linked riders and defending-player history retain separate ownership.
 
 Self permissions conditioned on current power or toughness use a separate
 `combat.attack.permission` event and a closed declaration component. They read
@@ -2094,7 +2092,10 @@ complete current characteristics when declaring attackers, including a
 qualifying creature controlled by the source's current controller. The generic
 layer-six numeric feedback guard remains in place. An ambiguous conditional
 pronoun, unrepresented condition, or missing capability keeps the ability
-residual; this numeric owner does not admit counter or attachment conditions.
+residual. A separate attachment component evaluates the source's current
+enchanted or equipped state or its reciprocal Equipment relation to the
+declaring creature. Both components read the current source ability at
+declaration.
 
 `compiler/as_unblocked_templates.py` owns the separate printed instruction
 to assign combat damage as though a creature were not blocked. Intrinsic,

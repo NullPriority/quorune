@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-"""Full-current numeric Defender exceptions, evaluated only at declaration."""
+"""Full-current Defender exceptions, evaluated only at declaration."""
 
 from dataclasses import dataclass
 
 from ..continuous_conditions import FixedPublicStateConditionKind, FixedPublicStateConditionSpec
 from ..defender_permission import (
     DEFENDER_DECLARATION_CAPABILITY, DEFENDER_DECLARATION_EVENT, DEFENDER_DECLARATION_HANDLER,
+    DEFENDER_ATTACHMENT_CAPABILITIES, DEFENDER_ATTACHMENT_HANDLER, DefenderAttachmentScope,
 )
 from .component_registry import exact_fields
 from .context import SemanticNodeError
@@ -49,6 +50,32 @@ class DefenderDeclarationPermissionHandler:
             return DefenderDeclarationRule(FixedPublicStateConditionSpec.from_dict(descriptor['source_condition']))
         except (TypeError, ValueError) as exc:
             raise SemanticNodeError(str(exc)) from exc
+
+    def lower(self, descriptor, context):
+        del context
+        return (self.validate(descriptor),)
+
+
+@dataclass(frozen=True, slots=True)
+class DefenderAttachmentPermissionHandler:
+    handler_id: str = DEFENDER_ATTACHMENT_HANDLER
+    schema_version: int = 1
+    family: str = 'combat.defender_permission.current_attachment'
+    event: str = DEFENDER_DECLARATION_EVENT
+    rule_references: tuple[str, ...] = ('301.5', '609.4', '702.3b', '508.1c', '611.3a')
+    capability_dependencies: tuple[str, ...] = DEFENDER_ATTACHMENT_CAPABILITIES
+
+    def validate(self, descriptor):
+        exact_fields(descriptor, {'handler_id', 'schema_version', 'event', 'permission', 'scope'},
+                     field='attachment-dependent Defender permission')
+        if (descriptor['handler_id'] != self.handler_id or descriptor['event'] != self.event
+                or type(descriptor['schema_version']) is not int or descriptor['schema_version'] != 1
+                or descriptor['permission'] != 'ignore_defender'):
+            raise SemanticNodeError('Attachment-dependent Defender permission header is invalid')
+        try:
+            return DefenderAttachmentScope(descriptor['scope'])
+        except (TypeError, ValueError) as exc:
+            raise SemanticNodeError('Unsupported Defender attachment scope') from exc
 
     def lower(self, descriptor, context):
         del context

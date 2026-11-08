@@ -291,6 +291,11 @@ def _value_runtime_requirements(program):
         required.update(fixed_resolution_characteristics_runtime_dependencies(program))
     except (ValueError, TypeError) as exc:
         blockers.add(f"runtime_resolution_characteristics:invalid:{exc}")
+    from ..rules.defender_permission_effect import resolved_defender_permission_runtime_dependencies
+    try:
+        required.update(resolved_defender_permission_runtime_dependencies(program))
+    except (ValueError, TypeError) as exc:
+        blockers.add(f"runtime_defender_permission:invalid:{exc}")
     try:
         required.update(cast_x_runtime_dependencies(values))
     except (ValueError, TypeError) as exc:

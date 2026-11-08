@@ -3,6 +3,7 @@ from __future__ import annotations
 """Dispatch versioned temporary characteristics to their coherent owners."""
 
 from ..resolution_characteristic_model import FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS
+from ..defender_permission import DEFENDER_RULE_VERSION
 
 
 def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
@@ -28,7 +29,7 @@ def apply_versioned_characteristic_effect(host,effect,*,actor,reason):
     if version==4:
         from ..rules.as_unblocked_effect import apply_temporary_as_unblocked
         return True,apply_temporary_as_unblocked(host,effect,actor=actor,reason=reason)
-    if version==3:
+    if version in (3, DEFENDER_RULE_VERSION):
         from ..rules.defender_permission_effect import apply_temporary_defender_permission
         return True,apply_temporary_defender_permission(host,effect,actor=actor,reason=reason)
     if type(version) is int and version in FIXED_CHARACTERISTIC_INSTRUCTION_VERSIONS:

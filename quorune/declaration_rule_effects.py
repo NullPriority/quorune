@@ -14,6 +14,7 @@ from .continuous_effect_model import (
     validate_turn_expiry,
 )
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
+from .defender_permission import DefenderAttackPermission
 from .replacement.immutable import immutable_fingerprint
 from .object_predicate import ObjectQuerySpec
 from .as_unblocked_rule import AS_UNBLOCKED_RULE_KIND,AsUnblockedAssignmentRule
@@ -64,7 +65,7 @@ class ResolutionDeclarationRuleEffect:
     effect_id: str
     source_id: str
     timestamp: int
-    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate
+    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate | DefenderAttackPermission
     locked_objects: tuple[ContinuousObjectIdentity, ...]
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
@@ -87,17 +88,18 @@ class ResolutionDeclarationRuleEffect:
                 "Declaration-rule effect timestamps must be nonnegative integers"
             )
         requirement = isinstance(self.restriction, DeclarationRequirementTemplate)
+        defender_permission = isinstance(self.restriction, DefenderAttackPermission)
         if requirement and (
             self.restriction.schema_version != 1
             or self.restriction.kind != 'all_able_blockers'
             or self.live_query is not None
         ):
             raise ContinuousEffectError('Resolved requirements need one locked all-able-blocker subject')
-        if not requirement and not isinstance(self.restriction, DeclarationRestrictionTemplate):
+        if not (requirement or defender_permission or isinstance(self.restriction, DeclarationRestrictionTemplate)):
             raise ContinuousEffectError(
-                "Declaration-rule effects require a typed restriction or requirement"
+                "Declaration-rule effects require a typed restriction, requirement or permission"
             )
-        if not requirement and (
+        if not requirement and not defender_permission and (
             self.restriction.mode != "prohibit"
             or self.restriction.scope not in {"self", "source_option"}
         ):
@@ -124,6 +126,8 @@ class ResolutionDeclarationRuleEffect:
             raise ContinuousEffectError("Detain requires a locked next-turn attack and block prohibition")
         if requirement and self.expires_on_next_turn_of is not None:
             raise ContinuousEffectError("Resolved declaration requirements expire at end of turn")
+        if defender_permission and duration is not ContinuousEffectDuration.UNTIL_END_OF_TURN:
+            raise ContinuousEffectError("Resolved Defender permissions expire at end of turn")
         object.__setattr__(self, "duration", duration)
         try:
             locked = tuple(sorted(tuple(self.locked_objects)))
@@ -145,6 +149,8 @@ class ResolutionDeclarationRuleEffect:
         object.__setattr__(self, "locked_objects", locked)
         if requirement and len(locked) != 1:
             raise ContinuousEffectError('Resolved requirements lock exactly one battlefield incarnation')
+        if defender_permission and self.live_query is None and len(locked) != 1:
+            raise ContinuousEffectError("A locked Defender permission requires one battlefield incarnation")
         if self.live_query is not None and (
             locked or not declaration_group_query_is_closed(self.live_query, resolved=True)
         ):
@@ -161,12 +167,16 @@ class ResolutionDeclarationRuleEffect:
                 identity.to_dict() for identity in self.locked_objects
             ],
         }
-        if isinstance(self.restriction, DeclarationRequirementTemplate):
+        if isinstance(self.restriction, DefenderAttackPermission):
+            value.update(schema_version=5, permission=self.restriction.to_dict())
+            if self.live_query is not None:
+                value["live_query"] = self.live_query.to_dict()
+        elif isinstance(self.restriction, DeclarationRequirementTemplate):
             value.update(schema_version=3, requirement=self.restriction.to_dict())
         else:
             value['restriction'] = self.restriction.to_dict()
-        if self.live_query is not None:
-            value.update(schema_version=2, live_query=self.live_query.to_dict())
+            if self.live_query is not None:
+                value.update(schema_version=2, live_query=self.live_query.to_dict())
         if self.expires_on_next_turn_of is not None:
             value["expires_on_next_turn_of"] = self.expires_on_next_turn_of
         if self.forbid_activations:
@@ -194,7 +204,9 @@ class ResolutionDeclarationRuleEffect:
         live = fields == expected | {"schema_version", "live_query"}
         requirement = fields == (expected - {'restriction'}) | {'schema_version', 'requirement'}
         detain = fields == expected | {"schema_version", "forbid_activations"}
-        if fields != expected and not live and not requirement and not detain:
+        permission_fields = (expected - {"restriction"}) | {"schema_version", "permission"}
+        permission = fields in (permission_fields, permission_fields | {"live_query"})
+        if fields != expected and not (live or requirement or detain or permission):
             raise ContinuousEffectError(
                 "Declaration-rule effect fields are missing or unknown"
             )
@@ -209,7 +221,10 @@ class ResolutionDeclarationRuleEffect:
         if detain and (type(value['schema_version']) is not int or value['schema_version'] != 4
                        or value['forbid_activations'] is not True):
             raise ContinuousEffectError('Detain declaration-rule schema version and scope are malformed')
-        payload = value['requirement'] if requirement else value['restriction']
+        if permission and (type(value["schema_version"]) is not int or value["schema_version"] != 5
+                           or ("live_query" in value and not isinstance(value["live_query"], Mapping))):
+            raise ContinuousEffectError("Resolved Defender permission schema version or query is malformed")
+        payload = value["permission"] if permission else value["requirement"] if requirement else value["restriction"]
         if not isinstance(payload, Mapping) or not isinstance(
             value["locked_objects"], list
         ):
@@ -217,17 +232,22 @@ class ResolutionDeclarationRuleEffect:
                 "Declaration-rule restriction and locked objects are malformed"
             )
         try:
+            rule_type = (
+                DefenderAttackPermission if permission
+                else DeclarationRequirementTemplate if requirement
+                else DeclarationRestrictionTemplate
+            )
             return cls(
                 effect_id=value["effect_id"],
                 source_id=value["source_id"],
                 timestamp=value["timestamp"],
-                restriction=(DeclarationRequirementTemplate if requirement else DeclarationRestrictionTemplate).from_dict(payload),
+                restriction=rule_type.from_dict(payload),
                 duration=ContinuousEffectDuration(value["duration"]),
                 locked_objects=tuple(
                     ContinuousObjectIdentity.from_dict(identity)
                     for identity in value["locked_objects"]
                 ),
-                live_query=ObjectQuerySpec.from_dict(value["live_query"]) if live else None,
+                live_query=ObjectQuerySpec.from_dict(value["live_query"]) if "live_query" in fields else None,
                 expires_on_next_turn_of=turn_expiry,
                 forbid_activations=detain,
             )

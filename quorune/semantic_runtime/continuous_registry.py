@@ -15,7 +15,7 @@ def default_continuous_effect_component_registry(
     from .conditional_flash import ConditionalFlashKeywordHandler
     from .negative_keyword_grants import DisjointNegativeKeywordGrantHandler
     from .enchanted_player_characteristics import EnchantedPlayerCharacteristicsHandler
-    from .defender_declarations import DefenderDeclarationPermissionHandler
+    from .defender_declarations import DefenderAttachmentPermissionHandler, DefenderDeclarationPermissionHandler
     from .conditional_color_grants import ConditionalColorGrantHandler
     from .keyword_prohibitions import OpponentKeywordProhibitionHandler
     from .basic_type_addition import ScopedBasicTypeAdditionHandler
@@ -73,6 +73,7 @@ def default_continuous_effect_component_registry(
                 handler_id='continuous.anthem.source-counter-total-query.v4', schema_version=4,
                 capability_dependencies=('continuous.power_toughness.fixed_anthem', COUNTER_TOTAL_CAPABILITY)),
             ConditionalDefenderPermissionHandler(),
+            DefenderAttachmentPermissionHandler(),
             DefenderDeclarationPermissionHandler(),
             ConditionalAsUnblockedAssignmentHandler(),
             ConditionalBlockCapacityHandler(),

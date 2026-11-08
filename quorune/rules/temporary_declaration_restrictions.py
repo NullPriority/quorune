@@ -166,7 +166,9 @@ def current_declaration_restrictions(
 
     result: list[CurrentDeclarationRestriction] = []
     live_rules = any(
-        isinstance(effect, ResolutionDeclarationRuleEffect) and effect.live_query is not None
+        isinstance(effect, ResolutionDeclarationRuleEffect)
+        and isinstance(effect.restriction, DeclarationRestrictionTemplate)
+        and effect.live_query is not None
         for effect in host.state.continuous_effects or ()
     )
     for source in sorted(
@@ -204,7 +206,7 @@ def current_declaration_restrictions(
             key=lambda effect: (effect.timestamp, effect.effect_id),
         )
         for index, effect in enumerate(resolved):
-            if isinstance(effect.restriction, DeclarationRequirementTemplate):
+            if not isinstance(effect.restriction, DeclarationRestrictionTemplate):
                 continue
             result.append(
                 CurrentDeclarationRestriction(

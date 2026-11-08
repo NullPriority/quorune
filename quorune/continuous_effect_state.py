@@ -23,6 +23,7 @@ from .temporary_cast_rule_model import ResolvedCastRestriction
 from .source_block_pair_model import ResolvedSourceBlockPair
 from .library_search_model import ResolvedLibrarySearchProhibition
 from .declaration_fragments import DeclarationRequirementTemplate, DeclarationRestrictionTemplate
+from .defender_permission import DefenderAttackPermission
 from .object_predicate import ObjectQuerySpec
 from .next_turn_effect import NEXT_TURN_EFFECT_FIELD
 from .object_query import ObjectQueryResult, object_matches_query, object_query_result
@@ -526,7 +527,7 @@ def create_resolution_declaration_rule_effect(
     *,
     source: ResolutionEffectSource,
     targets: Sequence[Any],
-    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate,
+    restriction: DeclarationRestrictionTemplate | DeclarationRequirementTemplate | DefenderAttackPermission,
     duration: ContinuousEffectDuration = (
         ContinuousEffectDuration.UNTIL_END_OF_TURN
     ),

@@ -934,6 +934,12 @@ The decoder accepts the legacy shape and the exact version-two shape, rejecting
 unknown fields, malformed queries, or mixed live and locked recipients. Both
 shapes expire through the same continuous-effect cleanup owner.
 
+A resolved Defender permission uses declaration-rule schema five and a
+typed `permission` field. It carries either one locked battlefield
+incarnation or a live public creature query with an empty locked list.
+Its duration expires at end of turn. Older rule schemas and temporary
+Defender instruction schema three retain their replay encodings.
+
 A resolved all-able-blocker requirement uses the additive exact
 `schema_version: 3` shape. Its `requirement` field replaces `restriction` and
 contains the historical self-scoped typed requirement payload. It locks exactly
