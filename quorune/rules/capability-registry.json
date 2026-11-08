@@ -6369,6 +6369,96 @@
     {
       "applicability": {
         "exclusions": [
+          "targeted preparation",
+          "explicit unprepare instructions",
+          "unsupported inset or source sibling abilities"
+        ],
+        "inputs": [
+          "complete source-pinned ability",
+          "original source incarnation",
+          "current copiable inset characteristics"
+        ],
+        "outputs": [
+          "one prepared designation",
+          "one linked inset exile copy under current control"
+        ],
+        "summary": "A closed source result prepares the original surviving permanent with its current copiable inset spell and shared linked casting authority."
+      },
+      "blockers": [],
+      "dependencies": [
+        "card.preparation.fixed_entry_spell"
+      ],
+      "dependency_fail_closed_rationale": "The normalized source result derives its dependency from the instruction even inside a payment. Withdrawing it or losing complete-card admission rejects binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "card.preparation.source_result",
+      "implementation_components": [
+        "quorune.compiler.preparation_nodes.preparation_effect_template",
+        "quorune.preparation.preparation_runtime_dependencies",
+        "quorune.semantic_runtime.preparation.PrepareSourceHandler",
+        "quorune.preparation.compiled_prepare_spell",
+        "quorune.preparation.resolve_prepare_source"
+      ],
+      "implementation_mutation_rationale": "Suppressing the typed source result makes the actual attack witness fail to produce its linked inset.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
+        "test_actual_aviator_trigger_ignores_the_returned_incarnation",
+        "test_actual_leech_prepares_once_per_turn_then_casts_its_inset",
+        "test_actual_ideation_payment_keeps_one_prepared_copy"
+      ],
+      "multiplayer_tests": [
+        "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
+        "test_actual_leech_prepares_once_per_turn_then_casts_its_inset",
+        "test_actual_ideation_payment_keeps_one_prepared_copy"
+      ],
+      "negative_tests": [
+        "test_source_preparation_pins_the_result_and_rejects_other_referents",
+        "test_source_preparation_withdrawal_rejects_a_complete_program",
+        "test_actual_aviator_trigger_ignores_the_returned_incarnation"
+      ],
+      "official_rules": [
+        "113.7a",
+        "400.7",
+        "601.2i",
+        "722.2b",
+        "722.3a",
+        "722.3c",
+        "704.5e"
+      ],
+      "positive_tests": [
+        "test_source_preparation_pins_the_result_and_rejects_other_referents",
+        "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
+        "test_actual_leech_prepares_once_per_turn_then_casts_its_inset"
+      ],
+      "privacy_tests": [
+        "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
+        "test_actual_ideation_payment_keeps_one_prepared_copy"
+      ],
+      "replay_tests": [
+        "test_actual_aviator_token_attack_prepares_its_inset_and_casts",
+        "test_actual_aviator_trigger_ignores_the_returned_incarnation",
+        "test_actual_leech_prepares_once_per_turn_then_casts_its_inset",
+        "test_actual_ideation_payment_keeps_one_prepared_copy"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "cards in another player's graveyard",
           "graveyard-to-battlefield reanimation",
           "top- or bottom-of-library destinations",
@@ -46575,7 +46665,6 @@
     },
     {
       "applicability": {
-        "summary": "A fixed minimum spell mana value on an owned library-top permission determines the payable announced X range using the selected spell cost.",
         "exclusions": [
           "target-dependent X thresholds and unrepresented mana or alternative costs"
         ],
@@ -46588,7 +46677,8 @@
           "minimum X on the existing cast choice",
           "atomic rejection of insufficient X",
           "ordinary paid spell with its announced X"
-        ]
+        ],
+        "summary": "A fixed minimum spell mana value on an owned library-top permission determines the payable announced X range using the selected spell cost."
       },
       "blockers": [],
       "dependencies": [
@@ -46647,7 +46737,6 @@
     },
     {
       "applicability": {
-        "summary": "Qualified current library-top actions use live attachment, distinct creature power, individual opposing land count, or source chosen-type facts.",
         "exclusions": [
           "temporary grants, opponent libraries, and unsupported qualifiers",
           "missing live attachment or chosen-type identity"
@@ -46660,7 +46749,8 @@
         "outputs": [
           "qualified ordinary cast or land-play permission",
           "unchanged independent controller-only look"
-        ]
+        ],
+        "summary": "Qualified current library-top actions use live attachment, distinct creature power, individual opposing land count, or source chosen-type facts."
       },
       "blockers": [],
       "dependencies": [

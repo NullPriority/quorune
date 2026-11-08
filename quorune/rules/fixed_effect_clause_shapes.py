@@ -106,6 +106,7 @@ from .monarch_capability_shapes import fixed_monarch_node_capabilities
 from .ring_capability_shapes import ring_temptation_node_capabilities
 from .event_player_choice_shapes import event_player_sacrifice_node_capabilities
 from .transform_capability_shapes import source_transform_node_capabilities
+from ..preparation_model import preparation_result_node_capabilities
 from .library_selection_capability_shapes import fixed_library_selection_node_capabilities
 from .hand_inspection_capability_shapes import fixed_hand_inspection_node_capabilities
 from .reanimation_capability_shapes import fixed_target_reanimation_node_capabilities
@@ -136,6 +137,7 @@ FIXED_EFFECT_CLAUSE_SEQUENCE_CAPABILITY = (
 )
 
 _COMPONENT_RESOLVERS = (
+    preparation_result_node_capabilities,
     graveyard_return_choice_node_capabilities,
     fixed_land_untap_choice_capabilities,
     fixed_library_order_capabilities,

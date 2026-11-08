@@ -9,6 +9,7 @@ from quorune.oracle_ir import compile_oracle_card
 from quorune.rules.capabilities import load_default_capability_registry
 from quorune.carddb import CardRecord
 import test_fixed_reveal_additional_costs as reveal
+from inherited_composition_fixture import InheritedNativeFixture
 
 
 def preparation_record(text='This creature enters prepared.'):
@@ -68,6 +69,28 @@ class PreparationModelCompilerTests(unittest.TestCase):
                 semantic_registry=SemanticRegistry(),capability_registry=self.registry,capability_profile='commander_review')
             self.assertFalse(bind_card_program_runtime(program,capability_registry=self.registry,profile='commander_review')['strict_capability_ready'])
 
+    def test_source_preparation_pins_the_result_and_rejects_other_referents(self):
+        from quorune.preparation_model import PREPARATION_RESULT_CAPABILITY, preparation_result_spell
+
+        printed = "Whenever this creature attacks, it becomes prepared."
+        card = preparation_record(printed)
+        ir = compile_oracle_card(card, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual(printed, card.faces[0]["oracle_text"][node.span.start:node.span.end])
+        self.assertIn(PREPARATION_RESULT_CAPABILITY, node.capability_dependencies)
+        spell = preparation_result_spell(node.effects[0])
+        self.assertEqual((card.oracle_id, "Generic Preparation Spell"), (spell.oracle_id, spell.face_id))
+        for text in (
+            "Whenever this creature attacks, target creature becomes prepared.",
+            "Whenever you cast a creature spell, it becomes prepared.",
+            "Whenever this creature attacks, it becomes prepared twice.",
+        ):
+            rejected = compile_oracle_card(preparation_record(text), capability_registry=self.registry)
+            self.assertNotEqual("exact", rejected.status)
+        without_inset = replace(card, layout="normal", faces=())
+        self.assertNotEqual("exact", compile_oracle_card(without_inset, capability_registry=self.registry).status)
+
     def test_physical_prepare_front_face_preserves_case_insensitive_selection(self):
         from types import SimpleNamespace
         from quorune.preparation import preparation_cast_face
@@ -86,6 +109,13 @@ class PreparationRuntimeTests(unittest.TestCase):
     resolve=reveal.FixedRevealCostRuntimeTests.resolve
     replay=reveal.FixedRevealCostRuntimeTests.replay
     reject=reveal.FixedRevealCostRuntimeTests.reject
+    attack = InheritedNativeFixture.attack
+    cast_for = InheritedNativeFixture.cast_for
+    priority = InheritedNativeFixture.priority
+    until = InheritedNativeFixture.until
+    resolve_top = InheritedNativeFixture.resolve_top
+    assert_closed = InheritedNativeFixture.assert_closed
+    trigger_count = InheritedNativeFixture.trigger_count
 
     @classmethod
     def setUpClass(cls):
@@ -105,6 +135,9 @@ class PreparationRuntimeTests(unittest.TestCase):
         result=session.act('pilot:A',{'action_id':'cast:'+source.ref,'pay':'auto'});self.assertTrue(result.ok,result.summary)
         self.assertIsNone(self.resolve(session));self.assertEqual('battlefield',session.state.cards[source.object_id].zone)
         return session.state.cards[source.object_id]
+
+    def action(self, session, seat, card):
+        return reveal.FixedRevealCostRuntimeTests.offered(self, session, card, actor=seat)
 
     def prepare_copy(self,session,source):
         self.assertIn(PREPARED_FIELD,session.state.cards[source.object_id].annotations)
@@ -433,3 +466,158 @@ class PreparationRuntimeTests(unittest.TestCase):
         options=build_cast_cost_options(session.engine,'A',copy,program,hint=True,force_without_mana_cost=True)
         self.assertEqual(1,len(options));self.assertFalse(sum(options[0].to_dict()['requirements'].values()))
         self.assertIn(PREPARED_FIELD,session.state.cards[source.object_id].annotations);self.assertEqual('exile',session.state.cards[copy.object_id].zone)
+
+
+    def test_source_preparation_withdrawal_rejects_a_complete_program(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+        from quorune.preparation import preparation_result_spells
+        from quorune.preparation_model import PREPARATION_RESULT_CAPABILITY
+
+        session = self.session(722_310_001)
+        source = self.add(session.engine, "Emeritus of Ideation")
+        self.assert_closed(session, source)
+        program, = (
+            candidate for candidate in session.engine.semantics.programs_for_oracle(source.oracle_id)
+            if preparation_result_spells(candidate.effects)
+        )
+        def bind(value):
+            return bind_semantic_program_runtime(value, capability_registry=self.registry, profile="commander_review")
+        self.assertTrue(bind(program)["strict"])
+        dependencies = tuple(dep for dep in program.capability_dependencies if dep != PREPARATION_RESULT_CAPABILITY)
+        withdrawn = replace(program, capability_dependencies=dependencies, capability_closure=self.registry.closure(
+            dependencies, profile="commander_review").to_dict())
+        result = bind(withdrawn)
+        self.assertFalse(result["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{PREPARATION_RESULT_CAPABILITY}", result["blockers"])
+        incomplete = {key: value for key, value in program.provenance.items() if key != "card_program_admission"}
+        self.assertFalse(bind(replace(program, provenance=incomplete))["strict"])
+
+    def test_actual_aviator_token_attack_prepares_its_inset_and_casts(self):
+        session = self.session(722_310_002)
+        original = self.add(session.engine, "Encouraging Aviator")
+        recipe = self.add(session.engine, "Croaking Counterpart", zone="hand")
+        self.add(session.engine, "Fervor")
+        self.add(session.engine, "Island")
+        private = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand", ref="prepare-hidden-hand")
+        for card in (original, recipe):
+            self.assert_closed(session, card)
+        self.fund(session, {"U": 1, "G": 1, "C": 1})
+        self.cast_for(session, "A", recipe, (original.ref,))
+        self.assertIsNone(self.resolve(session))
+        frog, = [card for card in session.state.cards.values() if card.is_token and card.zone == "battlefield"]
+        frog_data = session.engine._effective_card_data(frog)
+        self.assertEqual(["G"], frog_data["colors"])
+        self.assertIn("Frog", frog_data["type_line"])
+        self.assertNotIn(PREPARED_FIELD, frog.annotations)
+        self.attack(session, [(frog, "B")])
+        self.assertEqual(1, self.trigger_count(session, frog))
+        self.assertIsNone(self.resolve(session))
+        copy = self.prepare_copy(session, frog)
+        self.assertNotIn(PREPARED_FIELD, session.state.cards[original.object_id].annotations)
+        values = session.engine._effective_card_data(copy)
+        self.assertEqual(("Jump", "Instant", ["U"]), (values["name"], values["type_line"], values["colors"]))
+        self.assertIsNone(values["power"])
+        self.assertIsNone(values["toughness"])
+        session = self.replay(session, load=True)
+        self.priority(session, "A")
+        offer = self.action(session, "A", copy)
+        self.reject(session, "B", action_id=offer["id"], targets=[frog.ref], pay="auto")
+        self.cast_for(session, "A", copy, (frog.ref,))
+        self.assertIsNone(self.resolve(session))
+        self.assertNotIn(PREPARED_FIELD, session.state.cards[frog.object_id].annotations)
+        self.assertIn("flying", session.engine._combat_keywords(session.state.cards[frog.object_id]))
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        self.replay(session)
+
+    def test_actual_aviator_trigger_ignores_the_returned_incarnation(self):
+        session = self.session(722_310_003)
+        source = self.add(session.engine, "Encouraging Aviator")
+        source.acquired_control_turn_count = -1
+        blink = self.add(session.engine, "Cloudshift", zone="hand")
+        self.add(session.engine, "Generic Bound Plains", ref="prepare-blink-plains")
+        self.assert_closed(session, source)
+        self.assert_closed(session, blink)
+        self.fund(session, {})
+        self.attack(session, [(source, "B")])
+        self.assertEqual(1, self.trigger_count(session, source))
+        old_identity = source.logical_object_id
+        self.cast_for(session, "A", blink, (source.ref,))
+        self.resolve_top(session)
+        self.assertEqual(1, self.trigger_count(session, source))
+        current = session.state.cards[source.object_id]
+        self.assertEqual("battlefield", current.zone)
+        self.assertNotEqual(old_identity, current.logical_object_id)
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+        self.assertFalse(any(PREPARE_COPY_FIELD in card.annotations for card in session.state.cards.values()))
+        self.replay(session)
+
+    def test_actual_leech_prepares_once_per_turn_then_casts_its_inset(self):
+        session = self.session(722_310_004)
+        source = self.add(session.engine, "Leech Collector")
+        gains = [self.add(session.engine, "Chaplain's Blessing", zone="hand", ref=f"prepare-gain-{i}") for i in range(2)]
+        self.assert_closed(session, source)
+        self.fund(session, {"W": 2, "B": 1})
+        self.cast_for(session, "A", gains[0])
+        self.assertIsNone(self.resolve(session))
+        copy = self.prepare_copy(session, source)
+        self.assertEqual("Bloodletting", session.engine.display_name(copy.object_id))
+        before = {seat: session.state.players[seat].life for seat in "BCD"}
+        self.cast_for(session, "A", copy)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual({seat: life - 2 for seat, life in before.items()},
+                         {seat: session.state.players[seat].life for seat in "BCD"})
+        self.cast_for(session, "A", gains[1])
+        self.assertIsNone(self.resolve(session))
+        self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+        self.replay(session, load=True)
+
+    def test_actual_ideation_payment_keeps_one_prepared_copy(self):
+        for prepared in (False, True):
+            with self.subTest(prepared=prepared):
+                session = self.session(722_310_005 + prepared)
+                cards = [self.add(session.engine, "Generic Bound Body", zone="graveyard", ref=f"prepare-exile-{i}")
+                         for i in range(8)]
+                foreign = self.add(session.engine, "Generic Bound Body", seat="B", zone="graveyard", ref="prepare-foreign-grave")
+                private = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand", ref="prepare-payment-private")
+                self.add(session.engine, "Fervor")
+                self.add(session.engine, "Island")
+                source = self.cast_prepared_creature(session, "Emeritus of Ideation", mana={"U": 3, "C": 3})
+                self.assert_closed(session, source)
+                old = self.prepare_copy(session, source)
+                if not prepared:
+                    self.cast_for(session, "A", old, ("A",))
+                    self.assertIsNone(self.resolve(session))
+                    self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+                self.attack(session, [(source, "B")])
+                pending = self.resolve(session)
+                self.assertEqual("semantic.choice", pending.kind)
+                self.assertEqual(("pilot:A",), tuple(session.pending_principals()))
+                action = session.packet("pilot:A", full=True)["decision"]["ctx"]["legal_actions"][0]
+                self.assertNotIn(foreign.ref, action["choice_schema"]["legal_refs"])
+                refs = [card.ref for card in cards]
+                self.reject(session, "B", action_id="choose", cards=refs)
+                self.reject(session, action_id="choose", cards=refs[:-1])
+                session = self.replay(session, load=True)
+                accepted = session.act("pilot:A", {"action_id": "choose", "cards": refs})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertIsNone(self.resolve(session))
+                self.assertTrue(all(session.state.cards[card.object_id].zone == "exile" for card in cards))
+                self.assertEqual("graveyard", session.state.cards[foreign.object_id].zone)
+                new = self.prepare_copy(session, source)
+                self.assertEqual(prepared, old.object_id == new.object_id)
+                self.assertEqual("Ancestral Recall", session.engine.display_name(new.object_id))
+                self.assertEqual([new.object_id], [card.object_id for card in session.state.cards.values()
+                                 if card.zone == "exile" and PREPARE_COPY_FIELD in card.annotations])
+                for seat in "ABC":
+                    self.assertNotIn(private.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+                self.replay(session)
+
+    def test_source_preparation_mutant_omits_the_native_result(self):
+        from unittest.mock import patch
+
+        with patch("quorune.preparation.resolve_prepare_source", return_value=False):
+            with self.assertRaises(AssertionError):
+                self.test_actual_aviator_token_attack_prepares_its_inset_and_casts()

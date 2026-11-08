@@ -22,6 +22,7 @@ from ..temporary_cast_rule_model import TemporaryCastRestrictionIntent
 from ..turn_skip_model import ScheduleTurnSkipIntent
 from .earthbend_intents import EarthbendIntent, FinishEarthbendIntent, ReturnEarthbentObjectsIntent
 from ..suspect_model import SuspectIntent
+from ..preparation_model import PrepareSourceIntent
 from ..combat_removal import CombatRemovalIntent, execute_combat_removal, unavailable_optional_combat_removal
 from ..rules.temporary_cast_restrictions import apply_temporary_cast_restriction
 from ..library_search_model import ProhibitLibrarySearchIntent
@@ -398,6 +399,7 @@ PermanentObjectIntent = (
     PairSoulbondIntent | GainControlIntent | GainControlSetIntent | CreateRegenerationShieldIntent
     | ChampionExileIntent | ReturnLinkedAbilityExileIntent
     | EncodeCipherIntent
+    | PrepareSourceIntent
     | DestroyPermanentIntent
     | DestroyPermanentSetIntent
     | DestroyPermanentTargetsIntent
@@ -412,6 +414,7 @@ PERMANENT_OBJECT_INTENT_TYPES = (
     SelectMutateMergeIntent,
     ResumeCompositionOrderIntent,
     EncodeCipherIntent,
+    PrepareSourceIntent,
     *CHAMPION_INTENT_TYPES,
     PairSoulbondIntent,
     GainControlIntent, GainControlSetIntent,
@@ -432,6 +435,10 @@ def _execute_permanent_object_intent(
     sink: SemanticIntentSink,
     intent: PermanentObjectIntent,
 ) -> tuple[str, object]:
+    if isinstance(intent, PrepareSourceIntent):
+        from ..preparation import resolve_prepare_source
+
+        return "preparation", resolve_prepare_source(sink, intent)
     if isinstance(intent, CombatRemovalIntent):
         return intent.object_ref, execute_combat_removal(sink, intent)
     if isinstance(intent,SelectMutateMergeIntent):

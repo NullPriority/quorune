@@ -334,12 +334,17 @@ def _terminal_spell_move_requirements(program, required, blockers):
 
 
 def program_dynamic_runtime_requirements(program):
+    from ..preparation import preparation_runtime_dependencies
     from ..rules.fuse_shapes import fuse_runtime_requirements
     try:
         fused=fuse_runtime_requirements(program)
         if fused is not None and 'fused_spell_resolution' in program.coverage:return fused
     except (TypeError,ValueError) as exc:return {'casting.method.fuse'},{f'runtime_fuse:invalid:{exc}'}
     required,blockers=_event_query_runtime_requirements(program)
+    try:
+        required.update(preparation_runtime_dependencies(program))
+    except (TypeError, ValueError) as exc:
+        blockers.add(f"runtime_source_preparation:invalid:{exc}")
     required.update(_intrinsic_spell_face_dependencies(program.coverage))
     value_requirements, value_blockers = _value_runtime_requirements(program)
     required.update(value_requirements)

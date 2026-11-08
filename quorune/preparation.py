@@ -4,14 +4,41 @@ from __future__ import annotations
 
 from dataclasses import replace
 from .preparation_model import (PrepareSpellSpec,PreparedDesignation,PREPARED_FIELD,PREPARE_SPELL_FIELD,
-    PREPARE_COPY_FIELD,PREPARATION_HANDLER)
+    PREPARE_COPY_FIELD, PREPARATION_HANDLER, PREPARATION_RESULT_CAPABILITY, PREPARATION_RESULT_OPERATION,
+    preparation_result_spell)
 from .errors import GameRuleError
+
+
+def preparation_result_spells(values):
+    from .rules.effect_shape_walkers import nested_effects
+
+    return tuple(
+        preparation_result_spell(effect)
+        for effect in nested_effects(values)
+        if effect["op"] == PREPARATION_RESULT_OPERATION
+    )
+
+
+def preparation_runtime_dependencies(program):
+    from .card_programs.admission import program_has_declared_complete_source_admission
+
+    spells = preparation_result_spells((program.effects, program.target_schema))
+    if not spells:
+        return ()
+    if (program.active_zone != "battlefield"
+            or not program.ability_id.startswith(("trigger:", "ability:"))
+            or any(spell.oracle_id != program.oracle_id for spell in spells)
+            or not program_has_declared_complete_source_admission(program)):
+        raise ValueError("Source preparation requires a complete matching battlefield program")
+    return (PREPARATION_RESULT_CAPABILITY,)
 
 
 def compiled_prepare_spell(host,card,*,record=None):
     """Read copiable alternatives independently from current ability presence."""
     from .entry_copy import copiable_oracle_id
-    from .card_programs.admission import program_has_complete_card_program_admission
+    from .card_programs.admission import (
+        program_has_complete_card_program_admission, program_has_declared_complete_source_admission,
+    )
     from .semantic_runtime.preparation import PreparationEntryHandler
     values=card.annotations.get('copy_overrides',{})
     if card.face_down or values.get('is_prepare_spell') is True:return None
@@ -24,7 +51,19 @@ def compiled_prepare_spell(host,card,*,record=None):
         if not host.semantic_program_is_current_trusted(program) or not program_has_complete_card_program_admission(program):continue
         for value in program.handlers:
             if value.get('handler_id')==PREPARATION_HANDLER:specs.append(handler.validate(value))
-    return specs[0] if len(specs)==1 else None
+    if specs:
+        return specs[0] if len(specs) == 1 else None
+
+    alternatives = {
+        spell
+        for program in host.semantics.programs_for_oracle(copiable_oracle_id(card), active_zone="battlefield")
+        if PREPARATION_RESULT_CAPABILITY in program.capability_dependencies
+        and program_has_declared_complete_source_admission(program)
+        and host.semantic_program_is_current_trusted(program)
+        for spell in preparation_result_spells((program.effects, program.target_schema))
+        if spell.oracle_id == record.oracle_id
+    }
+    return next(iter(alternatives)) if len(alternatives) == 1 else None
 
 
 def prepared_designation(card):
@@ -61,6 +100,15 @@ def become_prepared(host,source,*,spell=None):
     designation=PreparedDesignation(source.object_id,source.ref,source.logical_object_id,specification)
     _create_prepare_spell_copy(host,source,designation)
     return True
+
+
+def resolve_prepare_source(host, intent):
+    """Prepare the surviving original incarnation using its current copiable spell."""
+    source = host.state.cards.get(intent.object_id)
+    if (source is None or source.zone != "battlefield" or source.phased_out
+            or source.logical_object_id != intent.logical_object_id):
+        return False
+    return become_prepared(host, source)
 
 
 def prepare_copy_link(host,copy):

@@ -426,7 +426,11 @@ def _node_group_provenance(
     from ..rules.fuse_model import FUSE_HANDLER
     fuse_source = next((h['fuse'] for f in ir.faces for n in f.nodes for h in n.handlers if h.get('handler_id')==FUSE_HANDLER),None)
     text_variant_requires_complete_source = fuse_source is not None or any(OVERLOAD_BOUNDARY in node.runtime_coverage or CLEAVE_BOUNDARY in node.runtime_coverage for node in nodes)
-    requires_complete_card_program = face_up_requires_complete_source or text_variant_requires_complete_source or copy_requires_complete_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
+    from ..preparation_model import PREPARATION_RESULT_MECHANIC
+    preparation_requires_complete_source = any(PREPARATION_RESULT_MECHANIC in node.mechanics for node in nodes)
+    requires_declared_source = (face_up_requires_complete_source or copy_requires_complete_source
+                                or text_variant_requires_complete_source or preparation_requires_complete_source)
+    requires_complete_card_program = requires_declared_source or any(PERMANENT_ADDITIONAL_COST_COVERAGE in node.runtime_coverage for node in nodes) or any(
         descriptor_requires_complete_card_program(handler)
         for node in nodes
         for handler in node.handlers
@@ -434,7 +438,7 @@ def _node_group_provenance(
     return {
         "source_oracle_hash": ir.oracle_hash,
         **({'fuse_source': fuse_source} if fuse_source is not None else {}),
-        **({'requires_complete_card_program': True} if face_up_requires_complete_source or copy_requires_complete_source or text_variant_requires_complete_source else {}),
+        **({'requires_complete_card_program': True} if requires_declared_source else {}),
         "source_rulings_hash": rulings_hash,
         "authored_by": authored_by,
         "review_status": (

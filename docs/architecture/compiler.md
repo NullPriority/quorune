@@ -326,8 +326,10 @@ remain residuals. This production does not lower granted spell-tax abilities.
 
 `compiler/preparation_nodes.py` binds an enters-prepared clause on the normal
 face of a preparation card to closed inset instant or sorcery characteristics.
-The handler requires complete-card admission, including the inset result.
-Current static-ability presence controls the entry replacement; alternative
+The entry replacement and source-only preparation results require complete-card
+admission, including the inset result. The source result reuses typed trigger
+conditions and payment wrappers where their complete effects are supported.
+Current ability presence controls replacement and trigger discovery. Alternative
 characteristics remain copiable independently of later ability removal.
 An inset copy has only its inset characteristics and does not acquire another
 prepare spell. Individual preparation names remain selectable by the existing

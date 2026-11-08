@@ -1841,10 +1841,11 @@ the validated keyword metadata, declared-attack journal and once-per-turn owner.
 
 Preparation cards have normal permanent characteristics and separate copiable
 prepare-spell characteristics. The physical card casts only with its normal
-characteristics. A compiled enters-prepared replacement gives the entering
-permanent a noncopiable prepared designation and creates one linked noncard
-copy of its inset spell in exile. The existing copy owner allocates that object;
-the state-based owner retains it only while its original permanent incarnation
+characteristics. An enters-prepared replacement or a resolving source-only
+result gives the permanent a noncopiable prepared designation and creates one
+linked noncard copy of its inset spell in exile. The source result checks the
+original battlefield incarnation and its current copiable spell. The copy owner
+allocates the object and the state-based owner retains it while that incarnation
 remains present and prepared. Departure or unpreparing ends that exception.
 
 Only the prepared permanent's current controller can cast the exile copy, using
@@ -1852,9 +1853,9 @@ ordinary timing, targets and payment. An offer or a failed payment preserves
 the designation. The accepted cast unprepares the source after the spell enters
 the stack; countering it does not restore preparation. Losing abilities or
 becoming a different copy after preparation leaves the existing link intact.
-A newly copied creature receives the alternative characteristics, but receives
-prepared status only through its own entry replacement. Token copy exceptions
-to its color or base statistics do not alter the inset spell's values.
+A copy receives the alternative characteristics. Its own entry replacement
+or a later instruction can give it prepared status. Token copy exceptions to
+its color or base statistics leave the inset spell's values intact.
 
 Phase boundaries preserve the designation, end the old exile copy, and create
 a new copy on phasing in. This lifecycle does not admit general phasing actions,

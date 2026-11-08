@@ -51,6 +51,7 @@ from .attachment_action_capability_shapes import (
 from .counter_capability_shapes import fixed_counter_placement_group_node_capabilities
 from .creature_power_damage_capability_shapes import fixed_creature_power_damage_covered_mechanics, fixed_creature_power_damage_node_capabilities
 from .prepared_creature_power_damage_shapes import PREPARED_POWER_DAMAGE_CAPABILITY, PREPARED_POWER_DAMAGE_MECHANIC
+from ..preparation_model import PREPARATION_RESULT_CAPABILITY, PREPARATION_RESULT_MECHANIC
 from .delayed_draw_capability_shapes import fixed_next_turn_draw_node_capabilities
 from .crew_capability_shapes import ordinary_crew_node_capabilities, ordinary_saddle_node_capabilities
 from .station_capability_shapes import ordinary_station_node_capabilities
@@ -1346,14 +1347,13 @@ def _shape_gated_covered_mechanics(supplied: set[str]) -> set[str]:
         'target.set.one_per_player':'fixed-per-player-target-set',
         FACE_UP_EFFECT_CAPABILITY: FACE_UP_EFFECT_MECHANIC,
         PREPARED_POWER_DAMAGE_CAPABILITY: PREPARED_POWER_DAMAGE_MECHANIC,
+        PREPARATION_RESULT_CAPABILITY: PREPARATION_RESULT_MECHANIC,
         'library.order.fixed_controller':'fixed-controller-top-order',
         'permanent.untap.fixed_land_choice':'fixed-untargeted-land-untap',
         'library.shuffle.fixed_controller':'fixed-controller-shuffle',
         'trigger.state.fixed_public_condition':'fixed-public-state-trigger',
         FIXED_OPTIONAL_EFFECT_CAPABILITY: FIXED_OPTIONAL_EFFECT_MECHANIC,
-        FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY: (
-            FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC
-        ),
+        FIXED_OPTIONAL_MANA_PAYMENT_CAPABILITY: FIXED_OPTIONAL_MANA_PAYMENT_MECHANIC,
         "trigger.source.fixed_maintenance": "fixed-source-maintenance",
         "trigger.entry.fixed_kicked_result": "fixed-kicked-entry-trigger",
         'trigger.event.normalized_target_announcement': 'trigger-event-normalized-target-announcement',

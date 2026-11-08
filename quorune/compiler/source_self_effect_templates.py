@@ -209,6 +209,8 @@ def _source_self_optional_result(text, *, card_name, event_phrase, compile_effec
 
 def normalized_source_result_body(body: str) -> str | None:
     """Bind only a complete source-led result, never new-object anaphora."""
+    if re.fullmatch(r"It becomes prepared\.?", body, re.I):
+        return "This creature becomes prepared."
     if re.fullmatch(r"Switch its power and toughness until end of turn\.?", body, re.I):
         return "Switch this creature's power and toughness until end of turn."
     if re.search(r'\b(?:target|create|choose|another|that)\b',body,re.I):return None

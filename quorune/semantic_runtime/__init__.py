@@ -71,6 +71,7 @@ from .combat_entry_activations import (
     EncoreTokensEffectHandler,
 )
 from .self_zone_move import SELF_ZONE_MOVE_EFFECT_HANDLERS
+from .preparation import PrepareSourceHandler
 from .cast_permissions import (
     CastPermissionRegistry,
     default_cast_permission_registry,
@@ -441,6 +442,7 @@ def default_semantic_handler_registry() -> SemanticHandlerRegistry:
             *UNEARTH_EFFECT_HANDLERS,
             *NINJUTSU_EFFECT_HANDLERS,
             *SELF_ZONE_MOVE_EFFECT_HANDLERS,
+            PrepareSourceHandler(),
             *DOMAIN_EFFECT_HANDLERS,
         )
     )

@@ -7,6 +7,10 @@ from dataclasses import dataclass
 
 PREPARATION_CAPABILITY='card.preparation.fixed_entry_spell'
 PREPARATION_HANDLER='replacement.zone.prepared-entry.v1'
+PREPARATION_RESULT_OPERATION = "prepare_source"
+PREPARATION_RESULT_MECHANIC = "fixed-source-preparation"
+PREPARATION_RESULT_CAPABILITY = "card.preparation.source_result"
+PREPARATION_RESULT_RULES = ("400.7", "722.2b", "722.3a", "722.3c")
 PREPARE_SPELL_FIELD='_prepare_spell'
 PREPARED_FIELD='prepared_designation'
 PREPARE_COPY_FIELD='prepared_spell_copy'
@@ -38,6 +42,34 @@ class PrepareSpellSpec:
                 or type(value['schema_version']) is not int or value['schema_version']!=1 or not isinstance(value['colors'],(list,tuple))):
             raise ValueError('Prepare spell alternative characteristic fields are closed')
         return cls(value['oracle_id'],value['face_id'],value['mana_cost'],value['mana_value'],value['type_line'],tuple(value['colors']))
+
+
+def preparation_result_spell(effect):
+    """Decode the sealed alternative characteristics on a source-only result."""
+    if (set(effect) != {"op", "schema_version", "spell"}
+            or effect["op"] != PREPARATION_RESULT_OPERATION
+            or type(effect["schema_version"]) is not int
+            or effect["schema_version"] != 1):
+        raise ValueError("Source preparation requires a closed version-one result")
+    return PrepareSpellSpec.from_dict(effect["spell"])
+
+
+def preparation_result_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if (target_schema is not None or len(effects) != 1
+            or PREPARATION_RESULT_MECHANIC not in mechanic_ids
+            or effects[0].get("op") != PREPARATION_RESULT_OPERATION):
+        return ()
+    try:
+        preparation_result_spell(effects[0])
+    except (TypeError, ValueError):
+        return ()
+    return (PREPARATION_RESULT_CAPABILITY,)
+
+
+@dataclass(frozen=True, slots=True)
+class PrepareSourceIntent:
+    object_id: str | None
+    logical_object_id: str | None
 
 
 @dataclass(frozen=True,slots=True)

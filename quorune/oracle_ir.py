@@ -177,7 +177,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v827"
+ORACLE_COMPILER_VERSION = "oracle-ir-v828"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -454,17 +454,28 @@ def _contextual_effect_templates(
     source_is_permanent: bool | None,
     source_card_types: Sequence[str],
     source_attachment_relation: AttachmentReferenceKind | None,
+    *,
+    record: CardRecord | None = None,
+    face_name: str | None = None,
 ) -> tuple[Any, Any]:
+    from .compiler.preparation_nodes import preparation_effect_template, preparation_spell
+
     context = {
         "source_is_permanent": source_is_permanent,
         "source_card_types": source_card_types,
         "source_attachment_relation": source_attachment_relation,
     }
-    contextual_effect = partial(_reviewed_effect_template, **context)
+    fixed = _effect_template
+    reviewed = _reviewed_effect_template
+    if record is not None and (inset := preparation_spell(record, face_name)) is not None:
+        fixed = partial(preparation_effect_template, spell=inset, compile_effect=_effect_template)
+        atomic = partial(preparation_effect_template, spell=inset, compile_effect=_reviewed_atomic_effect_template)
+        reviewed = partial(reviewed_contextual_effect_template, compile_atomic=atomic, compile_fixed=fixed)
+    contextual_effect = partial(reviewed, **context)
     contextual_trigger_effect = partial(
         reviewed_fixed_optional_mana_payment_trigger_template,
         compile_trigger_effect=contextual_effect,
-        compile_effect=partial(_effect_template, **context),
+        compile_effect=partial(fixed, **context),
     )
     return contextual_effect, contextual_trigger_effect
 
@@ -1172,7 +1183,7 @@ def _compile_face(
     (card_types, permanent, spell, support_source_is_permanent,
      source_attachment_relation) = _face_type_context(type_line)
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
-        support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
+        support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation, record=record, face_name=face_name)
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
     from .compiler import station_context_nodes as station_context_owner
     material_rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, material_rows)

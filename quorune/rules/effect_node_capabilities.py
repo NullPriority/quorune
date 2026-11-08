@@ -3,6 +3,8 @@ from __future__ import annotations
 """Canonical dispatch to independently owned typed effect capability shapes."""
 
 from typing import Any,Mapping,Sequence
+from ..attachment_references import AttachmentReferenceError, attachment_information_capabilities
+from ..preparation_model import preparation_result_node_capabilities
 from ..emblem_program_model import compiled_emblem_node_capabilities
 from .untargeted_untap_shapes import fixed_land_untap_choice_capabilities
 from .library_order_shapes import fixed_library_order_capabilities
@@ -97,7 +99,6 @@ def effect_node_capabilities(
     from .occurrence_object_results import occurrence_object_node_capabilities,block_counterpart_zone_capabilities
     from .attack_event_results import attack_event_characteristic_capabilities
     from .prevention_component_shapes import fixed_prevention_component_capabilities
-    from ..attachment_references import AttachmentReferenceError,attachment_information_capabilities
     try:
         dependencies: set[str] = set(attachment_information_capabilities(effects))
     except AttachmentReferenceError:
@@ -180,6 +181,7 @@ def effect_node_capabilities(
         ring_temptation_node_capabilities,
         champion_node_capabilities,
         source_transform_node_capabilities,
+        preparation_result_node_capabilities,
         class_level_node_capabilities,
         fixed_library_search_node_capabilities,
         fixed_type_to_hand_search_node_capabilities, partner_with_search_node_capabilities,
