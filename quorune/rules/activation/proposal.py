@@ -477,12 +477,17 @@ def _activation_choice_schema(
 ) -> dict[str, Any] | None:
     from ..selected_counter_costs import selected_counter_cost_choice_schema
     counter_choice = selected_counter_cost_choice_schema(ability, hint)
-    if counter_choice is not None:
-        return counter_choice
     from .source_counter_choices import source_counter_cost_choice_schema
-    source_counters = source_counter_cost_choice_schema(source, ability)
-    if source_counters is not None:
-        return source_counters
+    cost_choice = counter_choice if counter_choice is not None else source_counter_cost_choice_schema(source, ability)
+    if ability.mana_ability:
+        from ...triggered_mana import triggered_mana_offer_schema
+        from ...triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+
+        triggered_choice = triggered_mana_offer_schema(host, seat, source, ability)
+        if triggered_choice is not None:
+            return {**(cost_choice or {}), TRIGGERED_MANA_OPTION_FIELD: triggered_choice}
+    if cost_choice is not None:
+        return cost_choice
     if ability.mana_ability:
         from ...public_quantity_mana_runtime import public_quantity_mana_choice_schema
         quantity_choice = public_quantity_mana_choice_schema(host, seat, source, ability)

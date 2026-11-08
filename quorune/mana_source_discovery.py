@@ -147,7 +147,7 @@ def available_mana_sources(
                         object_id,
                         card.ref,
                         host.display_name(object_id),
-                        modes_with_triggered_mana(host, seat, card, compiled_modes, providers),
+                        compiled_modes,
                         snow="snow" in supertypes,
                     )
                 )
@@ -172,16 +172,19 @@ def available_mana_sources(
                     object_id,
                     card.ref,
                     host.display_name(object_id),
-                    modes_with_triggered_mana(host, seat, card, modes, providers),
+                    modes,
                     snow="snow" in supertypes,
                 )
             )
     intermediate = frozenset(mode.price.spend_context for source in sources for mode in source.modes if mode.price)
+    departures = frozenset(source.object_id for source in sources if any(mode.sacrifices_source for mode in source.modes))
     result = []
     for source in sources:
-        legacy_recordless = source.object_id in recordless_sources and not any(mode.triggered_mana for mode in source.modes)
-        modes = (source.modes if legacy_recordless else _unrestricted_when_payable(
-            host, source.modes, spend_context=spend_context, intermediate_contexts=intermediate,
+        with_triggers = modes_with_triggered_mana(host, seat, host.state.cards[source.object_id], source.modes,
+                                                providers, departures=departures)
+        legacy_recordless = source.object_id in recordless_sources and not any(mode.triggered_mana for mode in with_triggers)
+        modes = (with_triggers if legacy_recordless else _unrestricted_when_payable(
+            host, with_triggers, spend_context=spend_context, intermediate_contexts=intermediate,
         ))
         if modes:
             result.append(replace(source, modes=modes))

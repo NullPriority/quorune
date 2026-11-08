@@ -270,7 +270,9 @@
         "tests/fixtures/fixed-triggered-mana-cards.json"
       ],
       "test_modules": [
+        "test_assist_payment",
         "test_card_program_trust",
+        "test_choice_forms",
         "test_color_set_mana_abilities",
         "test_fixed_activated_zone_change_costs",
         "test_fixed_activation_tap_costs",

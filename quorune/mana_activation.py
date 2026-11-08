@@ -20,7 +20,8 @@ from .mana_mode_effects import apply_mana_mode_effects
 from .util import normalize_mana_bundle, pay_mana_from_pool
 from .tap_state import set_permanent_tapped
 from .mana_source_discovery import mana_plan_abilities
-from .triggered_mana import TapManaSource, commit_triggered_mana, tap_mana_source
+from .triggered_mana import TapManaSource, commit_triggered_mana, tap_mana_source, triggered_mana_base_response
+from .triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
 
 
 class ManaActivationHost(Protocol):
@@ -98,7 +99,7 @@ def complete_mana_activation(
 ) -> None:
     """Commit one activated mana ability and its reversible UI boundary."""
 
-    bundle = mana_output_for_ability(host, seat, source, ability, response,
+    bundle = mana_output_for_ability(host, seat, source, ability, triggered_mana_base_response(response),
         source_information=source_information)
     restriction = ability.mana_spend_restriction
     host._add_mana_to_pool(
@@ -158,7 +159,9 @@ def complete_mana_activation(
         changed_objects=[source.object_id, *paid_objects],
         changed_players=[seat],
     )
-    triggered = commit_triggered_mana(host, seat, trigger_source, bundle)
+    selection = response.get(TRIGGERED_MANA_OPTION_FIELD)
+    triggered = commit_triggered_mana(host, seat, trigger_source, bundle,
+        **({"selection": selection} if selection is not None else {}))
     reversible = bool(
         not host.state.pending_trigger_batches
         and not triggered
@@ -322,6 +325,7 @@ def _commit_plan_mode(
     *,
     payment_id: str | None,
     replacement_selections_by_event: Mapping[str, Any] | None,
+    triggered_mana_option: str | None = None,
 ) -> None:
     trigger_source = tap_mana_source(host, card, tap_source=mode.tap_source)
     cost_effects = tuple(
@@ -366,7 +370,8 @@ def _commit_plan_mode(
         changed_objects=[card.object_id],
         changed_players=[seat],
     )
-    commit_triggered_mana(host, seat, trigger_source, bundle)
+    commit_triggered_mana(host, seat, trigger_source, bundle,
+        **({"selection": triggered_mana_option} if triggered_mana_option is not None else {}))
 
 
 def complete_mana_plan_activations(
@@ -440,6 +445,7 @@ def complete_mana_plan_activations(
             "snow" in supertypes,
             payment_id=payment_id,
             replacement_selections_by_event=replacement_selections_by_event,
+            triggered_mana_option=activation.get(TRIGGERED_MANA_OPTION_FIELD),
         )
 
 

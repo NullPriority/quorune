@@ -1006,6 +1006,248 @@ class FixedTriggeredManaRuntimeTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 self.test_original_wild_growth_and_overgrowth_add_for_the_land_controller_immediately()
 
+    @staticmethod
+    def bonus_option(base, *choices):
+        from quorune.triggered_mana_model import TriggeredManaOption
+
+        return TriggeredManaOption(FixedManaMode.from_bundle(base),
+            tuple(FixedManaMode.from_bundle(choice) for choice in choices)).encode()
+
+    def test_chosen_triggered_mana_direct_choice_uses_only_base_types_and_is_actor_scoped(self):
+        from quorune.choice_forms import build_action_form
+        from quorune.triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+
+        session = self.session(6054201)
+        land = self.add(session.engine, 'Boros Garrison')
+        colorless = self.add(session.engine, 'Crystal Vein')
+        aura = self.add(session.engine, 'Fertile Ground', seat='C')
+        flare = self.add(session.engine, 'Mana Flare', seat='B')
+        private = self.add(session.engine, 'Generic Bound Body', seat='D', zone='hand')
+        self.attach(session, aura, land)
+        for card in (aura, flare, land):
+            self.assert_closed(session, card)
+        offer, = self.ready(session, land)
+        self.checkpoint(session)
+        field = next(field for field in build_action_form(offer, decision_kind='priority', context={})['fields']
+                     if field['name'] == TRIGGERED_MANA_OPTION_FIELD)
+        valid = self.bonus_option({'R': 1, 'W': 1}, {'G': 1}, {'W': 1})
+        self.assertIn(valid, {row['value'] for row in field['options']})
+        self.assertTrue(any(aura.ref in row['label'] and flare.ref in row['label'] for row in field['options']))
+        before = authoritative_state_hash(session.state)
+        invalid = self.bonus_option({'R': 1, 'W': 1}, {'G': 1}, {'G': 1})
+        bad_base = self.bonus_option({'U': 1}, {'G': 1})
+        for seat, response in (
+            ('B', {TRIGGERED_MANA_OPTION_FIELD: valid}),
+            ('C', {TRIGGERED_MANA_OPTION_FIELD: valid}),
+            ('A', {}),
+            ('A', {TRIGGERED_MANA_OPTION_FIELD: invalid}),
+            ('A', {TRIGGERED_MANA_OPTION_FIELD: bad_base}),
+            ('A', {TRIGGERED_MANA_OPTION_FIELD: valid, 'mana_output': {'U': 1}}),
+        ):
+            with self.subTest(seat=seat, response=response):
+                self.assertFalse(session.act(f'pilot:{seat}', {'action_id': offer['id'], **response}).ok)
+                self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', {'action_id': offer['id'], 'choices': {TRIGGERED_MANA_OPTION_FIELD: valid}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual((1, 2, 1), tuple(session.state.players['A'].mana_pool[color] for color in 'RWG'))
+        self.assertEqual([0, 0, 0], [sum(session.state.players[seat].mana_pool.values()) for seat in 'BCD'])
+        self.assertEqual([(aura.ref, {'G': 1}), (flare.ref, {'W': 1})], [
+            (e.details['source'], e.details['bundle']) for e in session.state.events if e.code == 'mana.triggered'
+        ])
+        self.assertFalse(session.state.stack)
+        self.assertFalse(session.state.pending_trigger_batches)
+        colorless_offer = next(action for action in self.actions(session)
+                               if action.get('source') == colorless.ref and action['ability'] == 'ab1')
+        self.assertNotIn(TRIGGERED_MANA_OPTION_FIELD, colorless_offer.get('choice_schema') or {})
+        result = session.act('pilot:A', {'action_id': colorless_offer['id']})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, session.state.players['A'].mana_pool['C'])
+        for seat in 'ABC':
+            self.assertNotIn(private.ref, json.dumps(session.packet(f'pilot:{seat}', full=True)))
+        self.replay(session, load=True)
+
+    def test_chosen_triggered_mana_auto_payment_selects_one_produced_type(self):
+        session = self.session(6054202)
+        land = self.add(session.engine, 'Boros Garrison')
+        flare = self.add(session.engine, 'Mana Flare', seat='B')
+        spell = self.add(session.engine, "Krenko's Enforcer", zone='hand')
+        self.assert_closed(session, flare)
+        self.ready(session, land)
+        self.checkpoint(session)
+        offer = next(action for action in self.actions(session) if action.get('card') == spell.ref)
+        result = session.act('pilot:A', {'action_id': offer['id'], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[land.object_id].tapped)
+        self.assertEqual(0, sum(session.state.players['A'].mana_pool.values()))
+        self.assertEqual([{'R': 1}], [e.details['bundle'] for e in session.state.events if e.code == 'mana.triggered'])
+        self.assertEqual(['spell'], [item.kind for item in session.state.stack])
+        self.replay(session, load=True)
+
+    def test_chosen_triggered_mana_auto_payment_can_choose_a_color_absent_from_base(self):
+        session = self.session(6054210)
+        land = self.add(session.engine, 'Island')
+        aura = self.add(session.engine, 'Fertile Ground', seat='B')
+        spell = self.add(session.engine, 'Giant Growth', zone='hand')
+        target = self.add(session.engine, 'Generic Bound Body')
+        self.attach(session, aura, land)
+        self.ready(session, land)
+        self.checkpoint(session)
+        offer = next(action for action in self.actions(session) if action.get('card') == spell.ref)
+        result = session.act('pilot:A', {'action_id': offer['id'], 'targets': [target.ref], 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual((1, 0), tuple(session.state.players['A'].mana_pool[color] for color in 'UG'))
+        self.assertEqual([{'G': 1}], [e.details['bundle'] for e in session.state.events if e.code == 'mana.triggered'])
+        self.replay(session, load=True)
+
+    def test_chosen_triggered_mana_two_colors_can_repeat_and_keep_source_provenance(self):
+        from quorune.mana_provenance import mana_provenance_lots
+        from quorune.triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+
+        session = self.session(6054203)
+        land = self.add(session.engine, 'Snow-Covered Island')
+        aura = self.add(session.engine, 'Market Festival', seat='B')
+        self.attach(session, aura, land)
+        self.assert_closed(session, aura)
+        offer, = self.ready(session, land)
+        self.checkpoint(session)
+        selected = self.bonus_option({'U': 1}, {'R': 2})
+        self.assertIn(selected, offer['choice_schema'][TRIGGERED_MANA_OPTION_FIELD]['legal_values'])
+        before = authoritative_state_hash(session.state)
+        invalid = self.bonus_option({'U': 1}, {'C': 2})
+        self.assertFalse(session.act('pilot:A', {'action_id': offer['id'], TRIGGERED_MANA_OPTION_FIELD: invalid}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:A', {'action_id': offer['id'], TRIGGERED_MANA_OPTION_FIELD: selected})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual((1, 2), tuple(session.state.players['A'].mana_pool[color] for color in 'UR'))
+        self.assertEqual([({'U': 1}, True)], [(dict(lot.bundle), lot.snow)
+            for lot in mana_provenance_lots(session.state.players['A'])])
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+    def test_chosen_triggered_mana_uses_basic_status_and_matches_subtype_union_once(self):
+        session = self.session(6054204)
+        dual = self.add(session.engine, 'Taiga')
+        basic = self.add(session.engine, 'Mountain')
+        keeper = self.add(session.engine, 'Keeper of Progenitus', seat='C')
+        leaper = self.add(session.engine, 'Lavaleaper', seat='B')
+        for card in (keeper, leaper):
+            self.assert_closed(session, card)
+        self.ready(session, dual)
+        self.checkpoint(session)
+        red = next(action for action in self.actions(session) if action.get('source') == dual.ref and '{R}' in action['label'])
+        result = session.act('pilot:A', {'action_id': red['id'], 'mana_output': {'R': 1}})
+        self.assertTrue(result.ok, result.summary)
+        self.assertEqual(2, session.state.players['A'].mana_pool['R'])
+        self.activate(session, basic)
+        self.assertEqual(5, session.state.players['A'].mana_pool['R'])
+        self.assertCountEqual([keeper.ref, keeper.ref, leaper.ref],
+                              [e.details['source'] for e in session.state.events if e.code == 'mana.triggered'])
+        self.replay(session, load=True)
+
+    def test_chosen_triggered_mana_monarch_condition_controls_offer_and_output(self):
+        from quorune.triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+
+        for monarch in ('A', 'B'):
+            with self.subTest(monarch=monarch):
+                session = self.session(6054205 + ord(monarch))
+                land = self.add(session.engine, 'Island')
+                behemoth = self.add(session.engine, 'Regal Behemoth')
+                session.state.monarch = monarch
+                self.assert_closed(session, behemoth)
+                offer, = self.ready(session, land)
+                self.checkpoint(session)
+                command = {'action_id': offer['id']}
+                schema = offer.get('choice_schema') or {}
+                if monarch == 'A':
+                    selected = self.bonus_option({'U': 1}, {'G': 1})
+                    self.assertIn(selected, schema[TRIGGERED_MANA_OPTION_FIELD]['legal_values'])
+                    command[TRIGGERED_MANA_OPTION_FIELD] = selected
+                else:
+                    self.assertNotIn(TRIGGERED_MANA_OPTION_FIELD, schema)
+                result = session.act('pilot:A', command)
+                self.assertTrue(result.ok, result.summary)
+                self.assertEqual((1, int(monarch == 'A')), tuple(session.state.players['A'].mana_pool[color] for color in 'UG'))
+                self.replay(session, load=True)
+
+    def test_chosen_triggered_mana_descriptor_and_assist_step_are_closed(self):
+        from quorune.card_programs.binding import bind_semantic_program_runtime
+        from quorune.rules.casting.assist_frame import AssistManaStep
+        from quorune.rules.casting.assist_payment import _available_steps
+        from quorune.triggered_mana_model import CHOSEN_TRIGGERED_MANA_CAPABILITY, FIXED_TRIGGERED_MANA_EVENT
+
+        session = self.session(6054208)
+        land = self.add(session.engine, 'Boros Garrison')
+        flare = self.add(session.engine, 'Mana Flare', seat='B')
+        self.ready(session, land)
+        steps = [step for step, _ in _available_steps(session.engine, 'A', None, set()) if step.source == land.ref]
+        self.assertEqual({self.bonus_option({'R': 1, 'W': 1}, {color: 1}) for color in 'RW'},
+                         {step.triggered_mana_option for step in steps})
+        self.assertTrue(all(AssistManaStep.from_dict(step.to_dict()) == step for step in steps))
+        program, = (program for program in session.engine.semantics.programs_for_oracle(flare.oracle_id)
+                    if program.event == FIXED_TRIGGERED_MANA_EVENT)
+        omitted = replace(program, capability_dependencies=(), capability_closure=None)
+        binding = bind_semantic_program_runtime(omitted, capability_registry=self.registry, profile='commander_review')
+        self.assertFalse(binding['strict'])
+        self.assertIn('capability:undeclared_runtime_dependency:' + CHOSEN_TRIGGERED_MANA_CAPABILITY, binding['blockers'])
+
+    def test_chosen_triggered_mana_assist_helper_locks_the_selected_bonus(self):
+        from test_bound_effect_programs import BoundEffectProgramRuntimeTests
+
+        session = self.session(6054209)
+        spell = self.add(session.engine, 'Bring Down', zone='hand')
+        land = self.add(session.engine, 'Boros Garrison', seat='B')
+        flare = self.add(session.engine, 'Mana Flare', seat='D')
+        target = self.add(session.engine, 'Ancient Brontodon', seat='C')
+        for card in (spell, land, flare, target):
+            self.assert_closed(session, card)
+        session.state.players['A'].mana_pool['W'] = 1
+        self.ready(session, spell)
+        self.checkpoint(session)
+        offer = next(action for action in self.actions(session) if action.get('card') == spell.ref)
+        result = session.act('pilot:A', {'action_id': offer['id'], 'targets': [target.ref], 'pay': 'auto', 'assist_helper': 'B'})
+        self.assertTrue(result.ok, result.summary)
+        decision = session.packet('pilot:B', full=True)['decision']
+        selected = self.bonus_option({'R': 1, 'W': 1}, {'R': 1})
+        mana = next(action for action in decision['legal_actions']
+            if action.get('assist_step', {}).get('triggered_mana_option') == selected)
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:D', {'action_id': mana['id']}).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:B', {'action_id': mana['id']})
+        self.assertTrue(result.ok, result.summary)
+        session = self.replay(session, load=True)
+        for seat, action in (('B', 'assist:finish-mana'), ('A', 'assist:finish-mana'),
+                             ('B', 'assist:contribute'), ('A', 'assist:pay')):
+            command = {'action_id': action}
+            if action == 'assist:contribute':
+                command['assist_amount'] = 3
+            result = session.act(f'pilot:{seat}', command)
+            self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[land.object_id].tapped)
+        self.assertEqual([0, 0], [sum(session.state.players[seat].mana_pool.values()) for seat in 'AB'])
+        self.assertEqual([{'R': 1}], [e.details['bundle'] for e in session.state.events if e.code == 'mana.triggered'])
+        self.assertIsNone(BoundEffectProgramRuntimeTests.resolve(self, session))
+        self.assertEqual('graveyard', session.state.cards[target.object_id].zone)
+        self.replay(session, load=True)
+
+    def test_chosen_triggered_mana_planner_keeps_snow_and_departure_dependencies_distinct(self):
+        from quorune.triggered_mana import TriggeredManaOutput, _output_variants
+
+        options = tuple(FixedManaMode.from_bundle({color: 1}) for color in 'RW')
+        left = tuple(TriggeredManaOutput('left', 'left', option, False, needs_choice=True) for option in options)
+        right = tuple(TriggeredManaOutput('right', 'right', option, False, needs_choice=True) for option in options)
+        snowy = tuple(replace(output, snow=True) for output in right)
+        self.assertEqual(3, len(_output_variants((left, right), frozenset())))
+        self.assertEqual(4, len(_output_variants((left, right), frozenset({'left'}))))
+        self.assertEqual(4, len(_output_variants((left, snowy), frozenset())))
+
+    def test_chosen_triggered_mana_option_omission_is_caught_by_automatic_cast(self):
+        from quorune.triggered_mana import _selected_outputs
+
+        with mock.patch('quorune.triggered_mana._selected_outputs', side_effect=lambda rows, base, _: _selected_outputs(rows, base, None)):
+            with self.assertRaises(AssertionError):
+                self.test_chosen_triggered_mana_auto_payment_selects_one_produced_type()
+
 
 class FixedManaRuntimeTests(unittest.TestCase):
     @classmethod

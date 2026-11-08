@@ -13,6 +13,7 @@ from ...mana_mode_effects import mana_damage_event_belongs_to_payment, mana_sacr
 from ...replacement.immutable import FrozenMap, thaw_value
 from ...replacement.ordering import ReplacementChoiceRequired, replacement_choice_payload
 from ...semantic_runtime.mana_spending import current_mana_spending_policy
+from ...triggered_mana import triggered_mana_mode_label, triggered_mana_selection
 from ...util import pay_mana_from_pool
 from ..action_proposals import thaw_json
 from .assist_costs import ASSIST_HELPER_FIELD
@@ -93,10 +94,13 @@ def _available_steps(host, seat, spend_context, excluded):
                 continue
             for payment in available_mode_payments(mode, host.state.players[seat], host._mana_restriction_allows):
                 step_input = ManaStepInput(*mode.price.key, payment) if mode.price else None
-                step = AssistManaStep(seat, source.ref, mode.bundle, mode.tap_source, input=step_input)
+                selection = triggered_mana_selection(mode.bundle, mode.triggered_mana)
+                step = AssistManaStep(seat, source.ref, mode.bundle, mode.tap_source, input=step_input,
+                                      triggered_mana_option=selection)
                 input_key = (*step_input.key, tuple(sorted(step_input.payment.items()))) if step_input else None
-                identity = (step.source, tuple(sorted(step.bundle.items())), step.tap_source, input_key)
-                modes.setdefault(identity, (step, source.name))
+                identity = (step.source, tuple(sorted(step.bundle.items())), step.tap_source, input_key, selection)
+                label = f"{source.name} ({triggered_mana_mode_label(mode)})" if selection is not None else source.name
+                modes.setdefault(identity, (step, label))
     return tuple(modes.values())
 
 

@@ -51189,6 +51189,98 @@
     {
       "applicability": {
         "exclusions": [
+          "linked or variable outputs",
+          "mana plus an independent result rider",
+          "temporary providers",
+          "ordinary tap effects"
+        ],
+        "inputs": [
+          "current trusted typed land-mana trigger",
+          "actual positive base production",
+          "acting player selection and public land qualifications"
+        ],
+        "outputs": [
+          "immediate independently sourced bonus mana",
+          "authoritative direct and payment-time output choices"
+        ],
+        "summary": "The land user chooses one actually produced type or one or two colors when a closed triggered mana ability adds mana for that player. The producer and independent bonuses retain separate provenance. A canonical option seals the base and choices across direct activations, automatic payment and Assist."
+      },
+      "blockers": [],
+      "dependencies": [
+        "mana.triggered.fixed_output"
+      ],
+      "dependency_fail_closed_rationale": "The descriptor independently requires the choice capability, with a canonical option validated against the actual tapped land output.",
+      "dependency_fail_closed_status": "passed",
+      "id": "mana.triggered.chosen_output",
+      "implementation_components": [
+        "quorune.compiler.triggered_mana_nodes.fixed_triggered_mana_node",
+        "quorune.triggered_mana_model.TriggeredManaChoice",
+        "quorune.triggered_mana_model.TriggeredManaOption",
+        "quorune.triggered_mana.fixed_mana_providers",
+        "quorune.triggered_mana.triggered_mana_offer_schema",
+        "quorune.triggered_mana.commit_triggered_mana",
+        "quorune.mana._mana_plan_steps",
+        "quorune.rules.casting.assist_frame.AssistManaStep"
+      ],
+      "implementation_mutation_rationale": "Dropping the selected bonus at commit rejects the previously payable native cast.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_chosen_triggered_mana_auto_payment_selects_one_produced_type",
+        "test_chosen_triggered_mana_assist_helper_locks_the_selected_bonus",
+        "test_chosen_triggered_mana_planner_keeps_snow_and_departure_dependencies_distinct",
+        "test_chosen_triggered_mana_auto_payment_can_choose_a_color_absent_from_base"
+      ],
+      "multiplayer_tests": [
+        "test_chosen_triggered_mana_direct_choice_uses_only_base_types_and_is_actor_scoped",
+        "test_chosen_triggered_mana_assist_helper_locks_the_selected_bonus"
+      ],
+      "negative_tests": [
+        "test_chosen_triggered_mana_descriptor_and_assist_step_are_closed",
+        "test_chosen_triggered_mana_monarch_condition_controls_offer_and_output"
+      ],
+      "official_rules": [
+        "106.1a",
+        "106.1b",
+        "106.3",
+        "106.12",
+        "106.12a",
+        "605.3a",
+        "605.4a",
+        "608.2d"
+      ],
+      "positive_tests": [
+        "test_chosen_triggered_mana_direct_choice_uses_only_base_types_and_is_actor_scoped",
+        "test_chosen_triggered_mana_two_colors_can_repeat_and_keep_source_provenance",
+        "test_chosen_triggered_mana_uses_basic_status_and_matches_subtype_union_once"
+      ],
+      "privacy_tests": [
+        "test_chosen_triggered_mana_direct_choice_uses_only_base_types_and_is_actor_scoped"
+      ],
+      "replay_tests": [
+        "test_chosen_triggered_mana_direct_choice_uses_only_base_types_and_is_actor_scoped",
+        "test_chosen_triggered_mana_auto_payment_selects_one_produced_type",
+        "test_chosen_triggered_mana_two_colors_can_repeat_and_keep_source_provenance",
+        "test_chosen_triggered_mana_assist_helper_locks_the_selected_bonus"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "variable or chosen output",
           "temporary trigger grants",
           "ordinary tap events and other-permanent tap costs",

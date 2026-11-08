@@ -127,11 +127,17 @@ class ManaMode:
         if self.price is not None:
             payload["price"] = {"ability_id": self.price.ability_id, **self.price.option.compact()}
         if self.triggered_mana:
+            from .triggered_mana import triggered_mana_selection
+            from .triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+
             payload["triggered_mana"] = [
                 {"source": output.provider_ref, "m": {k: v for k, v in output.bundle.bundle.items() if v},
                  "snow": output.snow}
                 for output in self.triggered_mana
             ]
+            selection = triggered_mana_selection(self.bundle, self.triggered_mana)
+            if selection is not None:
+                payload[TRIGGERED_MANA_OPTION_FIELD] = selection
         return payload
 
 
@@ -683,7 +689,7 @@ def auto_plan_payment(
     else:
         pool, snow_pool = _planned_output_pools(best, starting_pool, starting_snow_pool)
         steps = [(source, mode, {}) for source, mode in best]
-    activations = [_mana_plan_step(source, mode, payment) for source, mode, payment in steps]
+    activations = _mana_plan_steps(steps)
 
     snow_payment = _snow_payment_option(
         pool,
@@ -728,7 +734,17 @@ def auto_plan_payment(
     )
 
 
-def _mana_plan_step(source, mode, payment):
+def _mana_plan_steps(steps):
+    activations = []
+    departed: frozenset[str] = frozenset()
+    for source, mode, payment in steps:
+        activations.append(_mana_plan_step(source, mode, payment, departed))
+        if mode.sacrifices_source:
+            departed |= {source.object_id}
+    return activations
+
+
+def _mana_plan_step(source, mode, payment, departed):
     activation = {
         "source": source.object_id,
         "source_ref": source.ref,
@@ -741,4 +757,12 @@ def _mana_plan_step(source, mode, payment):
         activation["tap_source"] = False
     if mode.price is not None:
         activation["input"] = ManaStepInput(*mode.price.key, payment).to_dict()
+    if mode.triggered_mana:
+        from .triggered_mana import triggered_mana_selection
+        from .triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD
+
+        surviving = tuple(output for output in mode.triggered_mana if output.survives(departed))
+        selection = triggered_mana_selection(mode.bundle, surviving)
+        if selection is not None:
+            activation[TRIGGERED_MANA_OPTION_FIELD] = selection
     return activation

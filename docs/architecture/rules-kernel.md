@@ -655,6 +655,12 @@ restriction and snow provenance. Both paths account for providers removed by
 mana costs. The production owner recognizes one tap occurrence from the base
 activation, then records its separate bonus outputs.
 
+Triggered mana choices bind the land's base output and each bonus together.
+Copied types come from the base production. Color choices support one mana or
+two in any combination. Direct activation, automatic funding, and Assist carry
+the same typed option through commitment. Funding groups equivalent outcomes by
+mana provenance and by the providers that can leave during payment.
+
 Enlist adds an optional tap cost to an accepted attack declaration. Each
 instance may tap one distinct eligible controlled nonattacking creature that
 has haste or has been controlled since the turn began. All choices validate

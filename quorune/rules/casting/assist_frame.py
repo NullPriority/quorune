@@ -9,6 +9,8 @@ import re
 from ...errors import GameRuleError
 from ...mana import ManaStepInput
 from ...replacement.immutable import FrozenMap, thaw_value
+from ...triggered_mana_model import TRIGGERED_MANA_OPTION_FIELD, TriggeredManaOption
+from ...util import normalize_mana_bundle
 from .assist_costs import ASSIST_HELPER_FIELD
 
 
@@ -53,6 +55,7 @@ class AssistManaStep:
     tap_source: bool
     replacements: FrozenMap = FrozenMap({})
     input: ManaStepInput | None = None
+    triggered_mana_option: str | None = None
 
     def __post_init__(self):
         if (type(self.seat) is not str or not self.seat or type(self.source) is not str or not self.source
@@ -67,11 +70,22 @@ class AssistManaStep:
                 raise GameRuleError("Assist mana replacement journal is malformed")
         object.__setattr__(self, "bundle", assist_mana_bundle(self.bundle, allow_zero=False))
         object.__setattr__(self, "replacements", FrozenMap(self.replacements))
+        if self.triggered_mana_option is not None:
+            try:
+                option = TriggeredManaOption.decode(self.triggered_mana_option)
+            except ValueError as exc:
+                raise GameRuleError(str(exc)) from exc
+            if not self.tap_source or option.base.bundle != normalize_mana_bundle(self.bundle):
+                raise GameRuleError("Assist triggered mana requires the same base tap output")
 
     @classmethod
     def from_dict(cls, value):
         has_input = isinstance(value, Mapping) and "input" in value
         fields = _STEP_FIELDS | {"input"} if has_input else _STEP_FIELDS
+        if isinstance(value, Mapping) and TRIGGERED_MANA_OPTION_FIELD in value:
+            if value[TRIGGERED_MANA_OPTION_FIELD] is None:
+                raise GameRuleError("Assist triggered mana option is missing")
+            fields |= {TRIGGERED_MANA_OPTION_FIELD}
         data = dict(_closed_mapping(value, fields, "Assist mana activation fields changed"))
         if has_input:
             try:
@@ -84,6 +98,8 @@ class AssistManaStep:
         result = {"source": self.source, "bundle": thaw_value(self.bundle), "tap_source": self.tap_source}
         if self.input is not None:
             result["input"] = self.input.to_dict()
+        if self.triggered_mana_option is not None:
+            result[TRIGGERED_MANA_OPTION_FIELD] = self.triggered_mana_option
         return result
 
     def to_dict(self):
