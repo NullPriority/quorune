@@ -64,6 +64,7 @@ def _layer(relative: str, protected_rules_modules: set[str]) -> str:
     if relative=='quorune/battle_cry_resolution.py':return 'rules'
     if relative=='quorune/entry_x_amount_model.py':return 'domain'
     if relative=='quorune/ravenous_model.py':return 'domain'
+    if relative=='quorune/fixed_top_exile.py':return 'rules'
     if relative=='quorune/variable_resolution_mana_model.py':return 'rules'
     if relative=='quorune/permanent_event_state_model.py':return 'domain'
     if relative=='quorune/alternative_discard_model.py':return 'domain'

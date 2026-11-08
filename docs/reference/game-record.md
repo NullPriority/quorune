@@ -1120,6 +1120,11 @@ The instant-or-sorcery scan uses version-three progress to retain its supplying
 library owner independently from the casting controller. Cleanup retains the
 same public exile identities and returns unused cards to that supplier.
 
+Version-four fixed-top progress binds the chosen exile incarnation, its
+supplying player and its free or paid casting mode. The enclosing choice
+retains the unconsumed public results and the current option fingerprint.
+Unused cards remain exiled when the resolving instruction ends.
+
 Regeneration shields use the same additive compatibility rule. A positive
 `CardInstance.regeneration_shields` value is authoritative public
 logical-object state; zero is omitted so historical Game Record v3 card payloads

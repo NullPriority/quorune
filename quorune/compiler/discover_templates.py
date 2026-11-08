@@ -7,6 +7,7 @@ import re
 from ..discover_model import (DISCOVER_OPERATION, NONLAND_SCAN_MECHANIC, NONLAND_SCAN_OPERATION,
     QUALIFIED_SCAN_MECHANIC, QUALIFIED_SCAN_OPERATION, QUALIFIED_SCAN_TARGET)
 from ..replacement.immutable import thaw_value
+from ..fixed_top_exile import FIXED_TOP_EXILE_MECHANIC, FIXED_TOP_EXILE_OPERATION
 from .declared_effect_amounts import declared_effect_amount_template
 from .scalar_effect_amounts import scalar_effect_amount_template
 
@@ -27,6 +28,43 @@ _DAMAGE_QUALIFIED_SCAN = re.compile(
     r'That player ' + _QUALIFIED_SCAN +
     r'Then that player puts the exiled cards that weren[’\']t cast this way on the bottom of their library in a random order\.?', re.I,
 )
+_EACH_TOP_CAST = re.compile(
+    r"Exile the top card of each player's library,? then you may cast any number of spells "
+    r"from among those cards without paying their mana costs\.?", re.I,
+)
+_EVENT_TOP_CAST = re.compile(
+    r"That player exiles the top card of their library\. If it['’]s a nonland card, "
+    r"you may cast it without paying its mana cost\.?", re.I,
+)
+_PAID_TOP_CAST = re.compile(
+    r"Exile the top card of your library\. You may cast that card\. If you don['’]t, (?P<damage>.+)", re.I,
+)
+
+
+def _fixed_top_exile_template(text, *, source_name, event):
+    body = text.strip()
+    supplier = decline = None
+    if _EACH_TOP_CAST.fullmatch(body):
+        scope = "each_library"
+    elif event == "spell.cast" and _EVENT_TOP_CAST.fullmatch(body):
+        scope = "cast_event_library"
+        supplier = "$context.player"
+    else:
+        match = _PAID_TOP_CAST.fullmatch(body)
+        if match is None or not source_name:
+            return None
+        from .damage_templates import fixed_damage_effect_template
+        damage = fixed_damage_effect_template(match["damage"], card_name=source_name)
+        if damage is None:
+            return None
+        _, effects, schema, _ = damage.compiled()
+        if schema is not None or len(effects) != 1 or effects[0].get("op") != "damage_each_opponent":
+            return None
+        decline = effects[0]
+        scope = "controller_library"
+    return ("fixed-top-exile-resolving-cast-v1", ({"op": FIXED_TOP_EXILE_OPERATION, "schema_version": 1,
+            "player": "$controller", "scope": scope, "supplier": supplier, "decline": decline},),
+            None, (FIXED_TOP_EXILE_MECHANIC,))
 
 
 def _qualified_exile_cast(supplier, target_schema):
@@ -46,7 +84,16 @@ def damage_player_qualified_exile_cast(binding, body):
     return None
 
 
+def cast_event_fixed_top_exile(binding, body):
+    if binding.event.value == "spell.cast" and _EVENT_TOP_CAST.fullmatch(body.strip()):
+        return _fixed_top_exile_template(body, source_name="", event="spell.cast")
+    return None
+
+
 def discover_effect_template(text,*,source_name='',cast_x_available=False,forbid_public_x=False,**context):
+    fixed_top = _fixed_top_exile_template(text, source_name=source_name, event=context.get("event"))
+    if fixed_top is not None:
+        return fixed_top
     if _TARGETED_QUALIFIED_SCAN.fullmatch(text.strip()):
         return _qualified_exile_cast('$target.0', thaw_value(QUALIFIED_SCAN_TARGET))
     if _FIRST_NONLAND_CAST.fullmatch(text.strip()):

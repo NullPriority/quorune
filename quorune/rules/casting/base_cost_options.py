@@ -54,6 +54,7 @@ def _zone_cast_base_options(
     force_without_mana_cost: bool,
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
+    resolving_exile_authority: bool = False,
 ) -> list[dict[str, Any]]:
     base = _flashback_base_options(
         host,
@@ -73,6 +74,7 @@ def _zone_cast_base_options(
         and not adventure_cast_permission(host,seat,card)
         and not force_without_mana_cost
         and alternative_base is None
+        and not resolving_exile_authority
     ):
         base.clear()
     common = {

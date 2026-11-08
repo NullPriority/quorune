@@ -11,7 +11,7 @@ from .disturb_costs import cast_view_zone_permission,disturb_back_cast_permissio
 from ..prototype import compiled_prototype_spec
 from .characteristic_methods import characteristic_cast_view,characteristic_program_key,characteristic_offer_fields
 from ..fuse import fuse_source_cast_is_complete
-from typing import Any, Protocol
+from typing import Any, Literal, Protocol
 
 from ...aura import EnchantSpec, enchant_spec_to_dict, is_aura_type_line
 from ...cast_lifecycles import (
@@ -115,6 +115,7 @@ class CastProposalHost(CastCostHost, Protocol):
         alternative_base: Mapping[str, Any] | None = None,
         cast_type_line: str | None = None,
         suppress_source_costs: bool = False,
+        resolving_exile_authority: bool = False,
     ) -> list[dict[str, Any]]: ...
 
 
@@ -565,20 +566,16 @@ def _cast_program_and_cost(
         request,
         method_spec,
     )
+    cost_query = dict(response=response, force_without_mana_cost=request.force_without_mana_cost,
+        alternative_base=alternative_base, cast_type_line=type_line if method_spec is not None else None,
+        suppress_source_costs=suppress_source_costs)
+    if (request.during_resolution and request.authorized_from_zone == "exile"
+            and request.authorized_cost_option is None and not request.force_without_mana_cost):
+        cost_query["resolving_exile_authority"] = True
     if request.cost_option_id is None:
         advertised = tuple(
             CastCostOption.from_dict(value)
-            for value in host._cast_cost_options(
-                request.actor,
-                card,
-                program,
-                response=response,
-                hint=True,
-                force_without_mana_cost=request.force_without_mana_cost,
-                alternative_base=alternative_base,
-                cast_type_line=type_line if method_spec is not None else None,
-                suppress_source_costs=suppress_source_costs,
-            )
+            for value in host._cast_cost_options(request.actor, card, program, hint=True, **cost_query)
         )
         if sum(
             option.kind == "additional_alternative"
@@ -590,17 +587,7 @@ def _cast_program_and_cost(
             )
     options = tuple(
         CastCostOption.from_dict(value)
-        for value in host._cast_cost_options(
-            request.actor,
-            card,
-            program,
-            response=response,
-            hint=False,
-            force_without_mana_cost=request.force_without_mana_cost,
-            alternative_base=alternative_base,
-            cast_type_line=type_line if method_spec is not None else None,
-            suppress_source_costs=suppress_source_costs,
-        )
+        for value in host._cast_cost_options(request.actor, card, program, hint=False, **cost_query)
     )
     selected = _selected_cost_option(
         request,
@@ -924,7 +911,8 @@ def _cast_offer_payload(
     return payload, tuple(legal_options)
 
 
-def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type_line, declaration):
+def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type_line, declaration,
+                      resolving_exile_payment):
     alternative = None
     if face_down:
         alternative = {
@@ -933,11 +921,13 @@ def _cast_offer_costs(host, seat, card, program, *, cast_method, face_down, type
             "label": f"Cast face down using {str(cast_method).title()}",
             "requirements": {"GENERIC": 3, **{color: 0 for color in "WUBRGC"}},
         }
+    authority = {"force_without_mana_cost": True} if resolving_exile_payment == "free" else (
+        {"resolving_exile_authority": True} if resolving_exile_payment == "paid" else {})
     return tuple(
         CastCostOption.from_dict(value)
         for value in host._cast_cost_options(
             seat, card, program, response=declaration, hint=True, alternative_base=alternative,
-            cast_type_line=type_line if face_down else None, suppress_source_costs=face_down,
+            cast_type_line=type_line if face_down else None, suppress_source_costs=face_down, **authority,
         )
     )
 
@@ -950,9 +940,12 @@ def build_cast_offer(
     cast_method: str | None = None,
     face_name: str | None = None,
     splice_declaration: Mapping[str, Any] | None = None,
+    resolving_exile_payment: Literal["free", "paid"] | None = None,
 ) -> CastProposalResult:
     """Use the casting proposal queries to advertise one executable action."""
 
+    if resolving_exile_payment is not None and card.zone != "exile":
+        return CastProposalResult("unavailable", "zone_permission")
     record = host.card_record(card)
     if not record:
         return CastProposalResult("unavailable", "custom_token")
@@ -971,7 +964,7 @@ def build_cast_offer(
     if cast_method=='fuse' and face_name is not None:return CastProposalResult('unavailable','fuse_single_face')
     front = host._select_cast_face(record,face_name) if record.faces and cast_method!='fuse' else None
     card=prospective_cast_card(host,card,face_name)
-    if card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):
+    if resolving_exile_payment is None and card.zone not in {'hand','command'} and not cast_view_zone_permission(host,seat,card):
         return CastProposalResult('unavailable','zone_permission')
     type_line = (
         "Creature"
@@ -980,7 +973,7 @@ def build_cast_offer(
     )
     if type_line_has_card_type(type_line, "land"):
         return CastProposalResult("unavailable", "land_not_spell")
-    if not _zone_lifecycle_cast_timing_is_legal(host, seat, card):
+    if resolving_exile_payment is None and not _zone_lifecycle_cast_timing_is_legal(host, seat, card):
         return CastProposalResult("unavailable", "zone_lifecycle_timing")
     face_name = str(front.get("name") or "") if front else None
     static_prohibition, timing_permissions = _static_cast_rule_state(
@@ -993,7 +986,7 @@ def build_cast_offer(
     )
     if static_prohibition is not None:
         return CastProposalResult("unavailable", static_prohibition)
-    if not cast_timing_is_legal(
+    if resolving_exile_payment is None and not cast_timing_is_legal(
         host.state,
         seat,
         type_line,
@@ -1028,8 +1021,8 @@ def build_cast_offer(
         return CastProposalResult(exc.status, exc.reason)
     if method_spec is None and host.state.config.semantic_policy == "trusted_only" and not cast_resolution_is_trusted(host,record,front,program):
         return CastProposalResult("unresolved", "semantic_policy_requires_trusted")
-    options = _cast_offer_costs(host, seat, card, program, cast_method=cast_method,
-        face_down=method_spec is not None, type_line=type_line, declaration=splice_declaration)
+    options = _cast_offer_costs(host, seat, card, program, cast_method=cast_method, face_down=method_spec is not None,
+        type_line=type_line, declaration=splice_declaration, resolving_exile_payment=resolving_exile_payment)
     if not options:
         return CastProposalResult("unpayable", "mandatory_cost_unpayable")
     payload, legal = _cast_offer_payload(

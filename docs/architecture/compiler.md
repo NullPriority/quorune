@@ -3959,6 +3959,12 @@ and payment owners. Cleanup randomizes unused cards onto the supplying
 library's bottom. Ownership, cast control, and the supplier remain separate
 through the continuation.
 
+Fixed top exile captures one card per supplying library and moves the set
+together. The cast choice keeps only the captured exile incarnations and
+recomputes costs and targets after each accepted cast. The same owner handles
+a normalized caster's top card, a controller's paid cast with a fixed damage
+fallback, and optional free casts in any order from the multiplayer set.
+
 Fixed life loss unless each affected player discards or sacrifices one object
 shares the APNAP choice owner. Players choose in turn order. Earlier payment
 decisions are visible, and selected hand identities stay private until the

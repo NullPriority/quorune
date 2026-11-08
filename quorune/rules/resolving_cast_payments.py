@@ -8,7 +8,8 @@ from ..replacement_effects import ReplacementChoiceRequired
 from .random_discard_additional_cost import freeze_random_spell_cost_response
 
 
-def commit_resolving_free_exile_cast(host,*,actor,response,payment_id,replacement_selections=()):
+def commit_resolving_exile_cast(host, *, actor, response, payment_id, replacement_selections=(),
+                               force_without_mana_cost=True):
     if type(payment_id) is not str or not payment_id:
         raise GameRuleError('A resolving cast payment requires its server identity')
     if any(type(key) is not str or key.startswith('_') for key in response):
@@ -20,7 +21,7 @@ def commit_resolving_free_exile_cast(host,*,actor,response,payment_id,replacemen
         try:
             with host.transaction():
                 host._cast(actor,{**payload,'_mana_replacement_selections':journal},
-                    authorized_from_zone='exile',force_without_mana_cost=True,
+                    authorized_from_zone='exile',force_without_mana_cost=force_without_mana_cost,
                     ignore_priority=True,ignore_timing=True,during_resolution=True)
                 if index!=len(selections):
                     raise GameRuleError('The resolving cast contains unused cost replacement choices')

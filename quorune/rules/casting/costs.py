@@ -374,6 +374,27 @@ def _additional_x_with_free_mana(host, seat, card, program, *, suppress_source_c
     return not printed_x
 
 
+def _printed_or_fixed_cast_base(host, seat, card, program, *, x_value, hint, cast_without_mana,
+                                alternative_base, suppress_source_costs, resolving_exile_authority):
+    if alternative_base is None and not cast_without_mana:
+        if resolving_exile_authority:
+            from .face_queries import current_printed_cast_mana_cost
+            record = host.card_record(card)
+            if record is None or not current_printed_cast_mana_cost(host, card, record).strip():
+                return [], False
+        return host._compiled_printed_cost_options(seat, card, x_value=int(x_value) if x_value is not None else None,
+                                                   hint=hint)
+    if alternative_base is not None and cast_without_mana:
+        return None
+    if x_value is not None and int(x_value) != 0 and not _additional_x_with_free_mana(
+            host, seat, card, program, suppress_source_costs=suppress_source_costs):
+        return None
+    if alternative_base is not None:
+        return [copy.deepcopy(dict(alternative_base))], False
+    return [{"id": "without_mana_cost", "kind": "alternate", "label": "Cast without paying its mana cost",
+             "requirements": host._mana_vector({})}], False
+
+
 def _initial_options(
     host: CastCostHost,
     seat: str,
@@ -386,6 +407,7 @@ def _initial_options(
     alternative_base: Mapping[str, Any] | None,
     suppress_source_costs: bool,
     cast_type_line: str | None = None,
+    resolving_exile_authority: bool = False,
 ) -> tuple[
     list[dict[str, Any]],
     list[dict[str, Any]],
@@ -397,34 +419,15 @@ def _initial_options(
     intrinsic_disturb = (disturb_back_cast_permission(host,seat,card)
         and not (force_without_mana_cost or suppress_source_costs or alternative_base is not None))
     cast_without_mana = force_without_mana_cost or bool(
-        temporary_permission and temporary_permission.get("without_mana_cost") and not intrinsic_disturb
+        temporary_permission and temporary_permission.get("without_mana_cost")
+        and not intrinsic_disturb and not resolving_exile_authority
     )
-    if alternative_base is not None:
-        if cast_without_mana or (x_value is not None and int(x_value) != 0
-                and not _additional_x_with_free_mana(host, seat, card, program, suppress_source_costs=suppress_source_costs)):
-            return None
-        printed = [copy.deepcopy(dict(alternative_base))]
-        has_x = False
-    elif cast_without_mana:
-        if x_value is not None and int(x_value) != 0 and not _additional_x_with_free_mana(
-                host, seat, card, program, suppress_source_costs=suppress_source_costs):
-            return None
-        printed = [
-            {
-                "id": "without_mana_cost",
-                "kind": "alternate",
-                "label": "Cast without paying its mana cost",
-                "requirements": host._mana_vector({}),
-            }
-        ]
-        has_x = False
-    else:
-        printed, has_x = host._compiled_printed_cost_options(
-            seat,
-            card,
-            x_value=int(x_value) if x_value is not None else None,
-            hint=hint,
-        )
+    printed_base = _printed_or_fixed_cast_base(host, seat, card, program, x_value=x_value, hint=hint,
+        cast_without_mana=cast_without_mana, alternative_base=alternative_base,
+        suppress_source_costs=suppress_source_costs, resolving_exile_authority=resolving_exile_authority)
+    if printed_base is None:
+        return None
+    printed, has_x = printed_base
     resolved = _cast_schema_and_mechanics(
         host,
         seat,
@@ -458,6 +461,7 @@ def _initial_options(
         force_without_mana_cost=force_without_mana_cost,
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs or alternative_base is not None,
+        resolving_exile_authority=resolving_exile_authority,
     )
     base.extend(emerge_base_options(host, seat, card, commander_tax=commander_tax,
         enabled=not (cast_without_mana or suppress_source_costs or alternative_base is not None)))
@@ -1476,6 +1480,7 @@ def build_cast_cost_options(
     alternative_base: Mapping[str, Any] | None = None,
     cast_type_line: str | None = None,
     suppress_source_costs: bool = False,
+    resolving_exile_authority: bool = False,
 ) -> tuple[CastCostOption, ...]:
     """Return immutable, currently payable server-authoritative cost choices."""
 
@@ -1493,6 +1498,7 @@ def build_cast_cost_options(
         alternative_base=alternative_base,
         suppress_source_costs=suppress_source_costs,
         cast_type_line=cast_type_line,
+        resolving_exile_authority=resolving_exile_authority,
     )
     if initial is None:
         return ()

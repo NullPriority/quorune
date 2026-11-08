@@ -23,6 +23,7 @@ from ..fixed_mana_abilities import (
     fixed_mana_handler_descriptor,
 )
 from ..effect_contracts import REANIMATE_OPERATION
+from ..fixed_top_exile import FIXED_TOP_EXILE_OPERATION
 from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
@@ -314,6 +315,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     COMBAT_REMOVAL_OPERATION,
     "life_loss_then_gain_actual",
     'discover',
+    FIXED_TOP_EXILE_OPERATION,
     'exile_until_nonland_then_cast',
     'exile_until_instant_or_sorcery',
     'reveal_until_library_selection',

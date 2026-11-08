@@ -63,8 +63,8 @@ class SemanticChoiceCoordinationMixin:
             "battlefield", "graveyard", "exile", "command", "stack"
         }
         choice_effect = effect or {}
-        from ..discover_casting import qualified_scan_library_refs
-        scan_refs = {ref for refs in qualified_scan_library_refs(self, actor=actor, effect=choice_effect).values()
+        from ..discover_casting import resolving_exile_library_refs
+        scan_refs = {ref for refs in resolving_exile_library_refs(self, actor=actor, effect=choice_effect).values()
                      for ref in refs}
         inspected_hand_owner = (
             str(choice_effect.get("target") or "")
@@ -468,7 +468,11 @@ class SemanticChoiceCoordinationMixin:
         stack_item: StackItem | None = None,
     ) -> tuple[Mapping[str, Any], ...]:
         from ..discover_model import EXILE_CAST_CHOICE_OPERATIONS
+        from ..fixed_top_exile import FIXED_TOP_EXILE_OFFER_OPERATION
 
+        if effect.get("op") == FIXED_TOP_EXILE_OFFER_OPERATION:
+            from ..discover_casting import fixed_top_exile_cast_options
+            return fixed_top_exile_cast_options(self, item=stack_item, actor=actor, effect=effect)
         if effect.get('op') in EXILE_CAST_CHOICE_OPERATIONS:
             from ..discover_casting import discover_cast_options
             return discover_cast_options(self,item=stack_item,actor=actor,effect=effect)
@@ -514,7 +518,7 @@ class SemanticChoiceCoordinationMixin:
     ) -> SnapshotSemanticChoiceQuery:
         """Materialize immutable facts under the instruction's visibility scope."""
 
-        from ..discover_casting import qualified_scan_library_refs
+        from ..discover_casting import resolving_exile_library_refs
         choice_effect = effect or {}
         object_rows = self._semantic_choice_object_rows(actor, choice_effect)
         target_schemas, validated_targets = (
@@ -566,7 +570,7 @@ class SemanticChoiceCoordinationMixin:
                     self.state.cards[object_id].ref
                     for object_id in self.state.players[actor].zones["library"]
                 ],
-                **qualified_scan_library_refs(self, actor=actor, effect=choice_effect),
+                **resolving_exile_library_refs(self, actor=actor, effect=choice_effect),
             },
             mana_by_seat={
                 actor: dict(self.state.players[actor].mana_pool)

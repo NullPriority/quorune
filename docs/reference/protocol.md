@@ -81,6 +81,11 @@ its canonical hash, current revision, visible definitions/events, and current
 decision. A delta names the exact base hash, resulting view hash, patch, event
 tail, and current decision.
 
+A resolving cast choice over several exiled cards includes a public `card`
+reference in each `cast_options` entry. The submitted `cost_option` selects the
+card, face, casting method and price together. Later choices reflect the spells already cast
+while the enclosing instruction is still resolving.
+
 A spell or permanent with an active fixed color setting carries a public
 `colors` array. An empty array represents colorless. The color field uses the
 current layer result and is visible on a face-down object under its existing

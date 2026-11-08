@@ -270,6 +270,10 @@ def _value_runtime_requirements(program):
         amounts = typed_result_amount_runtime_dependencies(values, mechanics=tuple(program.coverage))
         from ..fractional_quantity_model import HALF_MILL_CAPABILITY
         from ..target_cardinality import SELECTED_PLAYER_RESULT_CAPABILITY
+        from ..fixed_top_exile import FIXED_TOP_EXILE_CAPABILITY
+        if FIXED_TOP_EXILE_CAPABILITY in amounts:
+            from ..rules.discover_capability_shapes import validate_fixed_top_exile_program_scope
+            validate_fixed_top_exile_program_scope(program)
         if SELECTED_PLAYER_RESULT_CAPABILITY in amounts:
             from ..rules.any_number_target_shapes import selected_player_result_node_capabilities
             if not selected_player_result_node_capabilities(

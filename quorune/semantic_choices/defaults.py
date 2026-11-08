@@ -14,6 +14,7 @@ from .endure import SourceEndureChoiceHandler
 from .blight import FixedBlightChoiceHandler
 from .discover import DiscoverScanHandler, QUALIFIED_SCAN_HANDLERS
 from .discover_cast import DiscoverCastChoiceHandler
+from .fixed_top_exile import FIXED_TOP_EXILE_HANDLERS
 from .variable_library_selection import VariableLibrarySelectionHandler
 from .reveal_until_library_selection import RevealUntilLibrarySelectionHandler
 from .extort import ExtortChoiceHandler
@@ -109,6 +110,7 @@ def default_semantic_choice_registry() -> SemanticChoiceRegistry:
                 replay_fixture='first-nonland-exile-and-optional-cast',
             ),
             *QUALIFIED_SCAN_HANDLERS,
+            *FIXED_TOP_EXILE_HANDLERS,
             VariableLibrarySelectionHandler(),
             RevealUntilLibrarySelectionHandler(),
             *ARTIFACT_EXCHANGE_CHOICE_HANDLERS,

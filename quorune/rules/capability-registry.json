@@ -80900,6 +80900,93 @@
     {
       "applicability": {
         "exclusions": [
+          "uncaptured exile objects",
+          "later permission windows",
+          "land plays and variable library suppliers"
+        ],
+        "inputs": [
+          "fixed library-top instruction",
+          "resolving stack and controller",
+          "captured exile incarnations"
+        ],
+        "outputs": [
+          "simultaneous fixed-top exile",
+          "native payable cast choices",
+          "bounded continuation across casts"
+        ],
+        "summary": "Cast a captured library-top exile result while its instruction resolves. Support ordered choices from the multiplayer set, the triggering caster's eligible top, and a paid own-top cast with fixed decline damage."
+      },
+      "blockers": [],
+      "dependencies": [
+        "casting.permission.one_shot_exile_without_mana",
+        "zone.change.destination_replacement"
+      ],
+      "dependency_fail_closed_rationale": "Removing the compiled fixed-top declaration is rejected by independent runtime binding.",
+      "dependency_fail_closed_status": "passed",
+      "id": "zone.exile.fixed_top_resolving_cast",
+      "implementation_components": [
+        "quorune.fixed_top_exile.validate_fixed_top_exile",
+        "quorune.discover_casting.fixed_top_exile_cast_options",
+        "quorune.semantic_choices.fixed_top_exile.FixedTopExileHandler",
+        "quorune.rules.resolving_cast_payments.commit_resolving_exile_cast"
+      ],
+      "implementation_mutation_rationale": "Omitting the bound event producer leaves the supplying-caster instruction unresolved.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_etali_casts_any_order_with_fresh_targets_and_leaves_unused_cards_exiled",
+        "test_minds_dilation_uses_each_opponents_first_cast_and_only_their_top",
+        "test_chandra_pays_printed_cast_cost_and_damage_runs_only_on_decline"
+      ],
+      "multiplayer_tests": [
+        "test_etali_casts_any_order_with_fresh_targets_and_leaves_unused_cards_exiled",
+        "test_minds_dilation_uses_each_opponents_first_cast_and_only_their_top"
+      ],
+      "negative_tests": [
+        "test_fixed_top_exile_requires_its_scope_and_runtime_capability",
+        "test_etali_casts_any_order_with_fresh_targets_and_leaves_unused_cards_exiled",
+        "test_minds_dilation_uses_each_opponents_first_cast_and_only_their_top"
+      ],
+      "official_rules": [
+        "400.7j",
+        "601.2",
+        "608.2c",
+        "608.2d",
+        "608.2g",
+        "712.8a",
+        "712.11"
+      ],
+      "positive_tests": [
+        "test_etali_casts_any_order_with_fresh_targets_and_leaves_unused_cards_exiled",
+        "test_minds_dilation_uses_each_opponents_first_cast_and_only_their_top",
+        "test_chandra_pays_printed_cast_cost_and_damage_runs_only_on_decline"
+      ],
+      "privacy_tests": [
+        "test_etali_casts_any_order_with_fresh_targets_and_leaves_unused_cards_exiled"
+      ],
+      "replay_tests": [
+        "test_etali_casts_any_order_with_fresh_targets_and_leaves_unused_cards_exiled",
+        "test_minds_dilation_uses_each_opponents_first_cast_and_only_their_top",
+        "test_chandra_pays_printed_cast_cost_and_damage_runs_only_on_decline"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "modified Champion subject grammar",
           "unrepresented source-specific championed-result bodies"
         ],

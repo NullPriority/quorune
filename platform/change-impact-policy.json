@@ -11185,6 +11185,8 @@
         "quorune/card_programs/descriptor_requirements.py",
         "quorune/semantic_choices/discover.py",
         "quorune/semantic_choices/discover_cast.py",
+        "quorune/fixed_top_exile.py",
+        "quorune/semantic_choices/fixed_top_exile.py",
         "quorune/semantic_choices/defaults.py",
         "quorune/semantic_choices/engine_coordination.py",
         "quorune/semantic_choices/intent_replacement.py",

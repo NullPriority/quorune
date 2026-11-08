@@ -65,6 +65,7 @@ from .public_zone_move_capability_shapes import (
 from .reanimation_capability_shapes import fixed_target_reanimation_covered_mechanics, fixed_target_reanimation_node_capabilities
 from .reanimation_followup import REANIMATION_FOLLOWUP_CAPABILITY, REANIMATION_FOLLOWUP_MECHANIC
 from ..resolution_characteristic_model import FIXED_TARGET_COLOR_CAPABILITY, FIXED_TARGET_COLOR_MECHANIC
+from ..fixed_top_exile import FIXED_TOP_EXILE_CAPABILITY, FIXED_TOP_EXILE_MECHANIC
 from .counter_removal_capabilities import (
     all_counter_removal_node_capabilities,
     fixed_counter_removal_node_capabilities,
@@ -392,6 +393,7 @@ MECHANIC_CAPABILITY_DEPENDENCIES: dict[str, tuple[str, ...]] = {
     'discover':('library.discover.controller',),
     'exile-until-nonland-cast': ('library.exile_until_nonland.cast_without_mana',),
     'exile-until-instant-or-sorcery-cast': ('library.exile_until_instant_or_sorcery.cast_and_return',),
+    FIXED_TOP_EXILE_MECHANIC: (FIXED_TOP_EXILE_CAPABILITY,),
     'source-entry-cast-condition':('trigger.condition.source_entry_cast',),
     'source-entry-cast-hand-condition':('trigger.condition.source_entry_cast_hand',),
     'fixed-target-reanimation-set':('zone.reanimate.fixed_target_set',),
@@ -562,6 +564,7 @@ _SHAPE_GATED_MECHANICS = frozenset(
         'shared-target-set-result-sequence',
         'fixed-target-entry-counter-reanimation',
         REANIMATION_FOLLOWUP_MECHANIC,
+        FIXED_TOP_EXILE_MECHANIC,
         FIXED_TARGET_COLOR_MECHANIC,
         'fixed-per-player-target-set',
         'fixed-controller-top-order',
