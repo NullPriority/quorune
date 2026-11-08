@@ -3,6 +3,7 @@ from __future__ import annotations
 """Shared Assist affordability against one locked casting price."""
 
 from ...cost_payments import cost_is_affordable
+from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from .source_placement import cast_payment_read_host
 
 
@@ -33,12 +34,16 @@ def select_assist_cost(
     requirements = option["requirements"]
     payer = response.get(ASSIST_HELPER_FIELD)
     read_host = cast_payment_read_host(host, seat)
+    snow = cast_snow_payment_kwargs(option)
 
     def caster_affordable(price):
         return cost_is_affordable(
             read_host, seat, price, exclude_sources=exclude_sources, spend_context=spend_context,
+            **snow,
         )
 
+    if snow:
+        return payer is None and caster_affordable(requirements)
     minimum = _minimum_generic_help(requirements, caster_affordable)
     if minimum is None:
         return False

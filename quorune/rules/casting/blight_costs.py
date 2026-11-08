@@ -65,7 +65,7 @@ def blight_cast_payment_from_response(response):
     return payment
 
 
-def payable_blight_cast_candidates(host, seat, cost, requirements, *, spend_context, exclude_sources):
+def payable_blight_cast_candidates(host, seat, cost, requirements, *, spend_context, exclude_sources, snow_required=0):
     refs = fixed_counter_cost_candidates(host, actor=seat, cost=cost)
     if not refs:
         return ()
@@ -75,6 +75,7 @@ def payable_blight_cast_candidates(host, seat, cost, requirements, *, spend_cont
     return tuple(ref for ref in refs if ref not in sacrificing or host._cost_is_affordable(
         seat, requirements, spend_context=spend_context, exclude_sources=exclude_sources,
         preserve_source_id=sacrificing[ref],
+        **({"snow_required": snow_required} if snow_required else {}),
     ))
 
 

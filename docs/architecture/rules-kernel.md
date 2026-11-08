@@ -355,6 +355,12 @@ the existing typed spending-purpose context. Sources are rechecked after mana
 activations before the final spend; ordinary later sacrifice prices do not
 retroactively invalidate an already paid mana cost.
 
+Printed mana cost authority version two carries each printed snow symbol as a
+separate obligation on the chosen cast option. The offer and committed payment
+use the same snow provenance query. Generic adjustments affect the ordinary
+mana vector, while the snow obligation consumes an eligible source unit.
+Historical version-one records keep their original printed-cost behavior.
+
 `rules/casting/spell_mana_payments.py` reads actual committed spell payments
 into the bounded turn-history owner and captures Expend occurrences before
 later casting costs remove their sources. The cast coordinator retains those

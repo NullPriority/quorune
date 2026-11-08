@@ -18,13 +18,15 @@ def waterbend_candidates(host,seat,*,excluded=()):
     return tuple(host.state.cards[row.object_id] for row in sorted(query_objects(rows,query),key=lambda row:row.ref))
 
 
-def select_waterbend_payment(host,seat,cost,requirements,response,*,hint,spend_context,excluded=()):
+def select_waterbend_payment(host,seat,cost,requirements,response,*,hint,spend_context,excluded=(),snow_required=0):
     candidates=waterbend_candidates(host,seat,excluded=excluded)
     maximum=min(cost.generic,int(requirements['GENERIC']))
     if hint:
         from .casting.costs import _find_improvise_plan
         reserved=tuple(host.state.cards[oid] for oid in excluded)
-        found=_find_improvise_plan(host,seat,requirements,candidates,spend_context=spend_context,reserved_cards=reserved,maximum_taps=maximum)
+        found=_find_improvise_plan(host,seat,requirements,candidates,spend_context=spend_context,
+            reserved_cards=reserved,maximum_taps=maximum,
+            **({'snow_required':snow_required} if snow_required else {}))
         if found is None:return None
         remaining,selected=found
     else:

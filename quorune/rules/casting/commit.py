@@ -35,6 +35,7 @@ from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...compiled_flashback import compiled_fixed_mana_flashback_spec
 from ...compiled_madness import current_fixed_cast_lifecycle_spec
 from ...compiled_cast_lifecycles import compiled_fixed_cast_lifecycle_spec, compiled_mayhem_permission
+from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from .face_queries import prospective_cast_card
 from ...cast_lifecycles import (
     FixedCastLifecycleError,
@@ -116,6 +117,7 @@ class CastCommitHost(Protocol):
         *,
         exclude_sources: set[str] | None = None,
         spend_context: Any = None,
+        snow_required: int = 0,
     ) -> tuple[dict[str, int], list[dict[str, Any]]]: ...
 
     def _spell_mana_spend_context(self, type_line: str) -> Any: ...
@@ -1493,7 +1495,7 @@ def _commit_cast_costs_and_stack(
         with blight_cast_replacement_scope(blight_payment):
             spent, activations = host._pay_for_cost(
                 proposal.seat, requirements, mana_response, exclude_sources=excluded,
-                spend_context=spend_context, **payer_protection,
+                spend_context=spend_context, **payer_protection, **cast_snow_payment_kwargs(selected_option),
             )
         if mana_replay is not None:
             mana_replay.validate()

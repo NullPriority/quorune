@@ -45,6 +45,7 @@ from ...convoke import (
 )
 from ...evoke import EVOKE_PAYMENT_FIELD, validate_evoke_payment_marker
 from ...object_query import object_matches_query, object_query_result
+from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from ..action_proposals import CastCostOption
 from ..casting_additional_costs import (
     AdditionalCostError,
@@ -120,6 +121,7 @@ class CastCostHost(Protocol):
         *,
         exclude_sources: set[str] | None = None,
         spend_context: Any = None,
+        snow_required: int = 0,
         preserve_source_id: str | None = None,
     ) -> bool: ...
 
@@ -621,12 +623,14 @@ def _convoke_plan_is_affordable(
     *,
     spend_context: Any,
     reserved_cards: Sequence[Any] = (),
+    snow_required: int = 0,
 ) -> bool:
     return host._cost_is_affordable(
         seat,
         plan.remaining_dict,
         exclude_sources=set(plan.selected_object_ids)|{c.object_id for c in reserved_cards},
         spend_context=spend_context,
+        **({"snow_required": snow_required} if snow_required else {}),
     )
 
 
@@ -697,6 +701,7 @@ def _apply_convoke(
         plan,
         spend_context=spend_context,
         reserved_cards=selected_cards,
+        **cast_snow_payment_kwargs(option),
     )
     if hint:
         plan = find_convoke_plan(requirements, candidates, affordable=affordable)
@@ -771,6 +776,7 @@ def _apply_improvise(
             candidates,
             spend_context=spend_context,
             reserved_cards=selected_cards,
+            **cast_snow_payment_kwargs(option),
         )
         if plan is None:
             return False
@@ -823,6 +829,7 @@ def _find_improvise_plan(
     spend_context: Any,
     reserved_cards: Sequence[Any] = (),
     maximum_taps: int | None = None,
+    snow_required: int = 0,
 ) -> tuple[dict[str, int], list[Any]] | None:
     """Find a deterministic minimum-card Improvise payment."""
 
@@ -843,6 +850,7 @@ def _find_improvise_plan(
             reduced,
             exclude_sources={card.object_id for card in (*reserved_cards,*selected)},
             spend_context=spend_context,
+            **({"snow_required": snow_required} if snow_required else {}),
         ):
             best = (reduced, list(selected))
             return
@@ -972,6 +980,7 @@ def _apply_delve(
                     seat,
                     remaining,
                     spend_context=spend_context,
+                    **cast_snow_payment_kwargs(option),
                 ):
                     count = candidate_count
                     break
@@ -1142,6 +1151,7 @@ def _maximum_affordable_x_with_mechanics(
                 option["requirements"],
                 exclude_sources={source.object_id for source in selected},
                 spend_context=spend_context,
+                **cast_snow_payment_kwargs(option),
             ):
                 value_payable = True
                 break
@@ -1191,6 +1201,7 @@ def _apply_additional_costs(
                 candidates = list(payable_blight_cast_candidates(
                     host, seat, counter_cost, option["requirements"],
                     spend_context=spend_context, exclude_sources=exclude_sources,
+                    **cast_snow_payment_kwargs(option),
                 ))
             else:
                 candidates = list(fixed_counter_cost_candidates(host, actor=seat, cost=counter_cost))
@@ -1381,6 +1392,7 @@ def _finalize_option_payment(host,seat,card,option,program,mandatory_costs,mecha
             return None
     elif not host._cost_is_affordable(
         seat, option["requirements"], exclude_sources=excluded, spend_context=spend_context,
+        **cast_snow_payment_kwargs(option),
     ):
         return None
     if selected_cards:

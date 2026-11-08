@@ -7,6 +7,8 @@ import json
 import math
 from typing import Any, Literal, TypeAlias
 
+from ..printed_mana_cost_model import cast_snow_mana_required
+
 
 class ActionProposalError(ValueError):
     """An action proposal or offer is malformed or noncanonical."""
@@ -230,6 +232,10 @@ class CastCostOption:
             object.__setattr__(self, "payload", freeze_json(self.payload))
         if not isinstance(self.payload, FrozenObject):
             raise ActionProposalError("Cast-cost payload must be an object")
+        try:
+            cast_snow_mana_required(thaw_json(self.payload))
+        except ValueError as exc:
+            raise ActionProposalError(str(exc)) from exc
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "CastCostOption":

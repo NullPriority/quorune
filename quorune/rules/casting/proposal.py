@@ -24,6 +24,7 @@ from ...compiled_cast_lifecycles import compiled_sneak_timing_permissions
 from ...compiled_morph import compiled_fixed_mana_face_down_method_spec
 from ...convoke import ConvokeError
 from ...morph import FACE_DOWN_CAST_METHODS, MORPH_CAST_METHOD
+from ...printed_mana_cost_model import cast_snow_mana_required
 from ...semantic_runtime.static_cast_rules import (
     static_cast_prohibition_reason,
     static_cast_timing_permissions,
@@ -212,27 +213,32 @@ def _validate_declared_cost(
     request: CastProposalRequest,
     card: Any,
     commander_tax: int,
+    *,
+    selected: Mapping[str, Any] | None = None,
 ) -> None:
     response = request.response()
     declared = response.get("declared_cost")
     if not declared or not host.state.config.strict_mana:
         return
-    printed, _ = host._compiled_printed_cost_options(
-        request.actor,
-        card,
-        x_value=request.x_value,
-        hint=False,
-    )
+    if selected is None:
+        options, _ = host._compiled_printed_cost_options(
+            request.actor, card, x_value=request.x_value, hint=False,
+        )
+    else:
+        if cast_snow_mana_required(selected):
+            raise CastProposalError("Snow costs require a server-offered cost option.", reason="declared_cost_mismatch")
+        options = [selected]
     supplied = {
         "GENERIC": int(declared.get("GENERIC", 0)) + commander_tax,
         **{color: int(declared.get(color, 0)) for color in "WUBRGC"},
     }
     authoritative = [
-        host._mana_vector(option["requirements"]) for option in printed
+        host._mana_vector(option["requirements"]) for option in options
     ]
     if supplied not in authoritative:
+        expected = authoritative if selected is None else authoritative[0]
         raise CastProposalError(
-            f"Pilot-declared casting cost {supplied} does not match authoritative cost {authoritative}.",
+            f"Pilot-declared casting cost {supplied} does not match authoritative cost {expected}.",
             reason="declared_cost_mismatch",
         )
 
@@ -600,20 +606,10 @@ def _cast_program_and_cost(
         mana_cost=mana_cost,
         strict_mana=host.state.config.strict_mana,
     )
-    requirements = host._mana_vector(selected.to_dict()["requirements"])
-    declared = response.get("declared_cost")
-    if declared and host.state.config.strict_mana:
-        supplied = {
-            "GENERIC": int(declared.get("GENERIC", 0)) + commander_tax,
-            **{color: int(declared.get(color, 0)) for color in "WUBRGC"},
-        }
-        if supplied != requirements:
-            raise CastProposalError(
-                f"Pilot-declared casting cost {supplied} does not match authoritative cost {requirements}.",
-                reason="declared_cost_mismatch",
-            )
+    selected_cost = selected.to_dict()
+    _validate_declared_cost(host, request, card, commander_tax, selected=selected_cost)
     from .fixed_text_variant_costs import select_text_variant_proposal_program
-    program = select_text_variant_proposal_program(host, card, program, selected.to_dict())
+    program = select_text_variant_proposal_program(host, card, program, selected_cost)
     semantic_key = program.key if program is not None else semantic_key
     return type_line, mana_cost, commander_tax, semantic_key, program, selected
 
@@ -878,7 +874,7 @@ def _cast_offer_payload(
         projected = {
             key: copy.deepcopy(value)
             for key, value in raw.items()
-            if key in {"id", "kind", "requirements", "choice_schema", "label", "permission_source"}
+            if key in {"id", "kind", "requirements", "snow", "choice_schema", "label", "permission_source"}
         }
         from ..optional_life_cost_model import optional_life_cost_amount
         life_payment=optional_life_cost_amount(raw)

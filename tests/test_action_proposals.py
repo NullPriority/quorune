@@ -187,6 +187,16 @@ class ActionProposalModelTests(unittest.TestCase):
                 }
             )
 
+    def test_cast_cost_option_keeps_snow_outside_the_mana_vector(self) -> None:
+        base = {"id": "normal", "kind": "mana", "requirements": {"GENERIC": 1}}
+        snow = {**base, "snow": 1}
+        option = CastCostOption.from_dict(snow)
+        self.assertEqual(snow, option.to_dict())
+        self.assertNotEqual(CastCostOption.from_dict(base).fingerprint, option.fingerprint)
+        for amount in (None, True, 0, -1, 1.0, "1"):
+            with self.subTest(amount=amount), self.assertRaisesRegex(ActionProposalError, "snow mana"):
+                CastCostOption.from_dict({**base, "snow": amount})
+
     def test_activation_proposal_fingerprint_covers_payability_facts(self) -> None:
         base = dict(
             seat="A",

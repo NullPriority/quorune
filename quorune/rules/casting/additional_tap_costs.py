@@ -58,12 +58,14 @@ def validate_fixed_tap_payment(host,seat,source,option):
 
 
 def _partial_payment_possible(host,seat,option,mechanics,response,*,spend_context,selected):
+    from ...printed_mana_cost_model import cast_snow_payment_kwargs
     from .costs import _apply_payment_mechanics
     candidate=deepcopy(option)
     payment=_apply_payment_mechanics(host,seat,candidate,mechanics,response,hint=True,spend_context=spend_context,reserved_cards=selected)
     if payment is None:return False
     # The ordinary owners jointly account for Convoke, Improvise, Delve and mana.
-    return host._cost_is_affordable(seat,candidate['requirements'],exclude_sources={c.object_id for c in payment[1]},spend_context=spend_context)
+    return host._cost_is_affordable(seat,candidate['requirements'],exclude_sources={c.object_id for c in payment[1]},
+        spend_context=spend_context,**cast_snow_payment_kwargs(candidate))
 
 
 def _payable_selections(host,seat,option,cost,candidates,mechanics,response,spend_context):

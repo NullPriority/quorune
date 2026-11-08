@@ -3,6 +3,7 @@ from __future__ import annotations
 """One mandatory Waterbend price around the existing casting payment stages."""
 
 from copy import deepcopy
+from ...printed_mana_cost_model import cast_snow_payment_kwargs
 from ...waterbend import fixed_waterbend_cost
 from ..waterbend_payments import select_waterbend_payment,validate_waterbend_payment
 
@@ -25,7 +26,8 @@ def finalize_waterbend_cast_option(host,seat,card,option,program,costs,mechanics
     args=dict(hint=hint,spend_context=spend_context,has_x=has_x,cast_type_line=cast_type_line)
     if cost is None:return finalize_fixed_tap_option(host,seat,card,option,program,costs,mechanics,response,**args)
     if has_x or mechanics:return None
-    payment=select_waterbend_payment(host,seat,cost,option['requirements'],response,hint=hint,spend_context=spend_context)
+    payment=select_waterbend_payment(host,seat,cost,option['requirements'],response,hint=hint,
+        spend_context=spend_context,**cast_snow_payment_kwargs(option))
     if payment is None:return None
     remaining,cards,plan,schema=payment;candidate=deepcopy(option)
     if not hint and response.get('_waterbend_payment') not in (None,plan.to_dict()):return None

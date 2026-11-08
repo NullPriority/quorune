@@ -190,7 +190,6 @@ from .mana import (
     ManaPlanError,
     ManaSource,
     auto_plan_payment,
-    parsed_cost,
 )
 from .maximum_hand_size import effective_maximum_hand_size
 from .mana_restrictions import (
@@ -380,7 +379,6 @@ from .relative_power_target import (
 )
 from .token_creation import TokenCreationError, create_tokens
 from .util import (
-    mana_cost_to_vector,
     normalize_mana_bundle,
     parse_mana_symbols,
     pay_mana_from_pool,
@@ -2987,18 +2985,20 @@ class CommanderEngine(
         x_value: int | None,
         hint: bool,
     ) -> tuple[list[dict[str, Any]], bool]:
-        """Expand an ordinary or hybrid printed cost into exact alternatives."""
+        """Expand an ordinary printed cost into exact alternatives."""
 
         record = self.card_record(card)
         if record is None:
             return [], False
         from .rules.casting.face_queries import current_printed_cast_mana_cost
-        from .printed_mana_cost_model import CURRENT_PRINTED_MANA_COST_VERSION, PRINTED_MANA_COST_VERSION_FIELD
+        from .printed_mana_cost_model import PRINTED_MANA_COST_VERSION_FIELD, SNOW_MANA_COST_VERSION
         mana_cost = current_printed_cast_mana_cost(self,card,record)
-        if getattr(self.state, PRINTED_MANA_COST_VERSION_FIELD, None) == CURRENT_PRINTED_MANA_COST_VERSION and not mana_cost.strip():
+        cost_version = getattr(self.state, PRINTED_MANA_COST_VERSION_FIELD, None)
+        if cost_version is not None and not mana_cost.strip():
             return [], False
         variants = [self._mana_vector(None)]
         has_x = False
+        snow = 0
         for symbol in parse_mana_symbols(mana_cost):
             if symbol.isdigit():
                 for variant in variants:
@@ -3007,6 +3007,9 @@ class CommanderEngine(
             if symbol in "WUBRGC" and len(symbol) == 1:
                 for variant in variants:
                     variant[symbol] += 1
+                continue
+            if symbol == "S" and cost_version == SNOW_MANA_COST_VERSION:
+                snow += 1
                 continue
             if symbol == "X":
                 has_x = True
@@ -3076,32 +3079,10 @@ class CommanderEngine(
                 "id": "normal" if len(unique) == 1 else f"hybrid-{index}",
                 "kind": "mana" if len(unique) == 1 else "hybrid",
                 "requirements": variant,
+                **({"snow": snow} if snow else {}),
             }
             for index, variant in enumerate(unique, start=1)
         ], has_x
-        commander_tax = (
-            2
-            * self.state.players[seat].commander_casts.get(card.oracle_id, 0)
-            if card.zone == "command" and card.is_commander
-            else 0
-        )
-        try:
-            return parsed_cost(record.mana_cost, commander_tax), False
-        except ManaPlanError:
-            fixed, complex_symbols = mana_cost_to_vector(record.mana_cost)
-            if complex_symbols and set(complex_symbols) == {"X"}:
-                if x_value is None and not hint:
-                    raise GameRuleError(
-                        f"Casting {record.name} requires an explicit X value"
-                    )
-                selected_x = 0 if x_value is None else int(x_value)
-                if selected_x < 0:
-                    raise GameRuleError("X cannot be negative")
-                fixed["GENERIC"] += (
-                    selected_x * complex_symbols.count("X") + commander_tax
-                )
-                return self._mana_vector(fixed), True
-            return None, False
 
     def _maximum_affordable_x(
         self,
