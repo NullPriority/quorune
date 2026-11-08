@@ -842,6 +842,8 @@ including gains offset by simultaneous life loss. Turn rollover clears the
 facts and retains the mode. The manifest binds the mode to the initial
 checkpoint, and historical absence preserves the earlier event history.
 
+The first-gain and damage-life modes are independently pinned.
+
 Public-condition schema eight stores one closed `history_query` and a
 nonnegative count or amount threshold. Its version-one query identifies the
 typed event, principal relation, card-type filters and reduction. It reads the

@@ -10,6 +10,7 @@ from quorune.rules.capabilities import load_default_capability_registry
 from quorune.carddb import CardRecord
 import test_fixed_reveal_additional_costs as reveal
 from inherited_composition_fixture import InheritedNativeFixture
+from quorune.attachments import attach_objects
 
 
 def preparation_record(text='This creature enters prepared.'):
@@ -123,7 +124,8 @@ class PreparationRuntimeTests(unittest.TestCase):
         from quorune.deck import DeckDefinition,DeckEntry
         from scripts.build_test_database import build_fixture_database
         cls.temp=tempfile.TemporaryDirectory();path=Path(cls.temp.name)/'preparation.sqlite3'
-        build_fixture_database([ROOT/'tests/fixtures/bound-effect-program-cards.json',ROOT/'tests/fixtures/preparation-cards.json'],path)
+        fixtures = ("bound-effect-program-cards", "preparation-cards", "recorded-history-condition-cards")
+        build_fixture_database([ROOT / "tests/fixtures" / f"{name}.json" for name in fixtures], path)
         cls.db=CardDatabase(path);cls.registry=load_default_capability_registry()
         cls.deck=DeckDefinition('Preparation witness',[DeckEntry('Generic Bound Commander',1,'commander'),DeckEntry('Generic Bound Plains',30)],['Generic Bound Commander'])
 
@@ -573,6 +575,65 @@ class PreparationRuntimeTests(unittest.TestCase):
         self.assertIsNone(self.resolve(session))
         self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
         self.replay(session, load=True)
+
+    def test_actual_silvertongue_counts_two_gains_at_net_zero_and_keeps_one_first_gain(self):
+        for count in (1, 2):
+            with self.subTest(committed_gains=count):
+                session = self.session(722_329_020 + count)
+                engine = session.engine
+                source = self.add(engine, "Scheming Silvertongue")
+                leech = self.add(engine, "Leech Collector")
+                pingers = []
+                for index in range(count):
+                    pinger = self.add(engine, "Prodigal Sorcerer", ref=f"silvertongue-pinger-{index}")
+                    pinger.acquired_control_turn_count = -1
+                    collar = self.add(engine, "Basilisk Collar", ref=f"silvertongue-collar-{index}")
+                    attach_objects(session.state.cards, collar, pinger,
+                                   source_timestamp=collar.zone_timestamp, players=session.state.players)
+                    self.add(engine, "Swamp", ref=f"silvertongue-swamp-{index}")
+                    pingers.append(pinger)
+                for card in (source, leech, pingers[0], collar):
+                    self.assert_closed(session, card)
+                session.state.players["A"].life = 1
+                self.fund(session, {})
+                for pinger in pingers:
+                    self.priority(session, "A")
+                    offer = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                                 if row["id"].startswith(f"activate:{pinger.ref}:"))
+                    command = {"action_id": offer["id"], "targets": ["A"], "pay": "auto"}
+                    self.reject(session, "C", **command)
+                    accepted = session.act("pilot:A", command)
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertIn("A", session.engine.active_seats)
+                    self.assertEqual(1, session.state.players["A"].life)
+                history = [(event.kind, event.amount) for event in session.state.turn_history.events
+                           if event.target == "A"]
+                self.assertEqual(count, history.count(("player_gained_life", 1)))
+                self.assertEqual(count, history.count(("player_lost_life", 1)))
+                self.assertEqual(1, history.count(("first_life_gain", 0)))
+                self.assertEqual("Bloodletting", engine.display_name(self.prepare_copy(session, leech).object_id))
+                self.until(session, lambda game: game.state.phase == "postcombat_main" and game.state.step == "main")
+                self.assertEqual(int(count == 2), self.trigger_count(session, source))
+                self.assertIsNone(self.resolve(session))
+                if count == 1:
+                    self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+                else:
+                    copy = self.prepare_copy(session, source)
+                    self.assertEqual("Sign in Blood", engine.display_name(copy.object_id))
+                    target = session.state.players["B"]
+                    before_life = target.life
+                    before_hand = set(target.zones["hand"])
+                    self.cast_for(session, "A", copy, ("B",))
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual(before_life - 2, session.state.players["B"].life)
+                    drawn = set(session.state.players["B"].zones["hand"]) - before_hand
+                    self.assertEqual(2, len(drawn))
+                    packet = json.dumps(session.packet("pilot:A", full=True))
+                    for object_id in drawn:
+                        self.assertNotIn(json.dumps(session.state.cards[object_id].ref), packet)
+                    self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+                self.replay(session, load=True)
 
     def test_actual_ideation_payment_keeps_one_prepared_copy(self):
         for prepared in (False, True):
