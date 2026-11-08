@@ -135,6 +135,13 @@
           ],
           "type": "integer"
         },
+        "damage_life_history_version": {
+          "enum": [
+            0,
+            1
+          ],
+          "type": "integer"
+        },
         "departed_turn_boundary_version": {
           "const": 1,
           "type": "integer"

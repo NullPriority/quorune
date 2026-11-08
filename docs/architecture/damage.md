@@ -202,6 +202,11 @@ parallel generic counter-state commit. Every owner validates before the first
 write, so a malformed event or stale logical incarnation leaves the complete
 life, placement, removal, and permanent-result batch unchanged.
 
+Damage results preserve each committed life gain and loss as a distinct turn
+history fact, including simultaneous changes that cancel in the final total.
+The life state owner validates the entire plan and writes each player's final
+total once. The history facts also inform the inherent speed trigger.
+
 The life and damage planners share an immutable gain-permission snapshot.
 Current trusted battlefield abilities supply global or opponent prohibitions,
 including their current controller and layer-6 applicability. Prohibited gains

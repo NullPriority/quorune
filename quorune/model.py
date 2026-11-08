@@ -187,6 +187,7 @@ class TurnHistory:
     spell_mana_history_version: int | None = None
     crime_history_version: int | None = None
     committed_occurrence_history_version: int | None = None
+    damage_life_history_version: int | None = None
 
     def __post_init__(self) -> None:
         if self.schema_version != 1 or type(self.schema_version) is not int:
@@ -205,6 +206,9 @@ class TurnHistory:
         occurrence_version = self.committed_occurrence_history_version
         if occurrence_version is not None and (type(occurrence_version) is not int or occurrence_version != 1):
             raise ValueError("Unsupported committed occurrence history version")
+        damage_life_version = self.damage_life_history_version
+        if damage_life_version is not None and (type(damage_life_version) is not int or damage_life_version != 1):
+            raise ValueError("Unsupported damage life history version")
         if self.graveyard_type_history_version is not None and self.arrival_history_version!=1:raise ValueError('Graveyard type history requires complete arrival history')
         if not isinstance(self.events, list) or any(
             not isinstance(event, TurnHistoryEvent) for event in self.events
@@ -257,6 +261,8 @@ class TurnHistory:
             **({"crime_history_version":1} if self.crime_history_version is not None else {}),
             **({"committed_occurrence_history_version": 1}
                if self.committed_occurrence_history_version is not None else {}),
+            **({"damage_life_history_version": 1}
+               if self.damage_life_history_version is not None else {}),
             **({"departure_history_version": self.departure_history_version}
                if self.departure_history_version is not None else {}),
             **(
@@ -295,6 +301,7 @@ class TurnHistory:
             spell_mana_history_version=data.get("spell_mana_history_version"),
             crime_history_version=data.get("crime_history_version"),
             committed_occurrence_history_version=data.get("committed_occurrence_history_version"),
+            damage_life_history_version=data.get("damage_life_history_version"),
             turn_sequence=int(data.get("turn_sequence", 0)),
             events=[
                 TurnHistoryEvent.from_dict(event)

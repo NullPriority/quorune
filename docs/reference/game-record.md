@@ -104,6 +104,12 @@ incarnation without storing its hidden destination. Rollover clears
 the facts and retains the mode. Older records omit the field and retain
 their previous event hashes.
 
+The optional `turn_history.damage_life_history_version` is `1` when damage
+results record each committed life gain and loss separately. The manifest
+pins the mode from the initial checkpoint. Records that omit it retain the
+historical net life transitions from damage. The mode persists when the
+turn history resets.
+
 The optional `turn_history.crime_history_version` is `1` for complete initial
 action crime recording. Historical absence stays absent and does not add facts
 during replay. The mode survives journal reset and turn rollover. A
