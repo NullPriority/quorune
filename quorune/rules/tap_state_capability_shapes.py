@@ -9,6 +9,8 @@ from ..attachment_references import (
     AttachmentReferenceSpec,
 )
 from ..compiler.fixed_source_effect_sequences import SOURCE_ZONE_OBJECT
+from ..damage_recipient_model import DAMAGE_PERMANENT_CAPABILITY, DAMAGE_PERMANENT_OBJECT
+from ..event_counter_reference import BLOCK_COUNTERPART_OBJECT
 from ..source_tap_effect import SOURCE_TAP_UNTAP_CAPABILITY, split_source_tap_untap_restraint
 from ..tap_state import TAP_TARGET_SET_UNTAP_FIELD
 from .permanent_predicate_capability_shapes import (
@@ -37,6 +39,22 @@ def target_set_next_untap_dependencies(values: object) -> tuple[str, ...]:
     return ()
 
 
+def event_next_untap_node_capabilities(*, effects, target_schema, mechanic_ids):
+    if (target_schema is not None or len(effects) != 2 or not isinstance(effects[0], Mapping)
+            or 'tap-and-untap' not in mechanic_ids):
+        return ()
+    reference = effects[0].get('card')
+    if reference == DAMAGE_PERMANENT_OBJECT:
+        binding = DAMAGE_PERMANENT_CAPABILITY
+    elif reference == BLOCK_COUNTERPART_OBJECT:
+        binding = 'trigger.event.block_pair_counterpart'
+    else:
+        return ()
+    if tuple(effects) != ({'op': 'tap', 'card': reference}, {'op': 'prohibit_next_untap', 'card': reference}):
+        return ()
+    return ('permanent.tap.effect', 'untap.step.prohibit_next_controller', binding)
+
+
 def targeted_tap_state_node_capabilities(
     *,
     effects: Sequence[Mapping[str, object]],
@@ -46,6 +64,8 @@ def targeted_tap_state_node_capabilities(
     """Return ownership only for closed single-object tap-state shapes."""
 
     mechanics = {str(value).casefold() for value in mechanic_ids}
+    if target_schema is None and len(effects) == 2:
+        return event_next_untap_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanics)
     if 'tap-and-untap' in mechanics and len(effects) == 2 and target_schema is not None:
         if (list(effects) != [{'op': 'tap', 'card': '$target.0'}, {'op': 'prohibit_next_untap', 'card': '$target.0'}]
                 or 'cr-115-targets' not in mechanics or not direct_permanent_target_schema_is_closed(target_schema)):
@@ -144,4 +164,4 @@ def targeted_tap_state_node_capabilities(
     )
 
 
-__all__ = ["targeted_tap_state_node_capabilities", "target_set_next_untap_dependencies"]
+__all__ = ["event_next_untap_node_capabilities", "targeted_tap_state_node_capabilities", "target_set_next_untap_dependencies"]

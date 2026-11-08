@@ -7,6 +7,7 @@ from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.tap_state import NEXT_UNTAP_PROHIBITION_ANNOTATION
 from scripts.build_test_database import build_fixture_database
 
 
@@ -62,3 +63,89 @@ class DealtDamageRecipientNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertFalse(any(trigger.active for trigger in s.state.delayed_triggers))
         for seat in 'ABC':self.assertNotIn('dealt-recipient-private-hand',json.dumps(s.packet('pilot:'+seat,full=True)))
         self.replay(s,load=True)
+
+    def test_combat_next_untap_uses_the_original_damaged_creature_after_responses(self):
+        session = self.session(120603702)
+        warrior = self.add(session.engine, 'Kashi-Tribe Warriors', ref='untap-damage-warrior')
+        wall = self.add(session.engine, 'Wall of Mist', seat='B', ref='untap-damage-wall')
+        noncombat = self.add(session.engine, 'Fall of the Hammer', zone='hand', ref='untap-damage-noncombat')
+        source_blink = self.add(session.engine, 'Cloudshift', zone='hand', ref='untap-damage-source-blink')
+        recipient_blink = self.add(session.engine, 'Cloudshift', seat='B', zone='hand', ref='untap-damage-recipient-blink')
+        self.add(session.engine, 'Plains', ref='untap-damage-source-mana')
+        self.add(session.engine, 'Plains', seat='B', ref='untap-damage-recipient-mana')
+        warrior.acquired_control_turn_count = -1
+        self.assert_closed(session, warrior)
+        self.prepare(session, mana={'C': 1, 'R': 1})
+        self.checkpoint(session)
+
+        self.cast(session, 'A', noncombat, [warrior.ref, wall.ref])
+        self.resolve_top(session)
+        self.assertGreater(session.state.cards[wall.object_id].marked_damage, 0)
+        self.assertFalse(session.state.stack)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[wall.object_id].annotations)
+
+        self.attack(session, [(warrior, 'B')])
+        self.until(session, lambda game: game.state.pending_decision.kind == 'combat.blockers')
+        result = session.act('pilot:B', {'action_id': 'block', 'blocks': {wall.ref: warrior.ref}})
+        self.assertTrue(result.ok, result.summary)
+        self.until(session, lambda game: bool(game.state.stack) and game.state.pending_decision.kind == 'priority')
+        item, = session.state.stack
+        original_wall = session.state.cards[wall.object_id].logical_object_id
+        original_warrior = session.state.cards[warrior.object_id].logical_object_id
+        self.assertFalse(item.targets)
+        self.assertEqual({'reference': wall.ref, 'logical_object_id': original_wall},
+                         item.context['damage_permanent_recipient'])
+
+        returned = self.replay(session, load=True)
+        self.cast(session, 'A', source_blink, [warrior.ref])
+        self.resolve_top(session)
+        self.resolve_top(session)
+        self.assertNotEqual(original_warrior, session.state.cards[warrior.object_id].logical_object_id)
+        self.assertTrue(session.state.cards[wall.object_id].tapped)
+        self.assertIs(session.state.cards[wall.object_id].annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION], True)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[warrior.object_id].annotations)
+        self.until(session, lambda game: game.state.active_player == 'B' and game.state.step == 'upkeep')
+        self.assertTrue(session.state.cards[wall.object_id].tapped)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[wall.object_id].annotations)
+        self.replay(session, load=True)
+
+        self.cast(returned, 'B', recipient_blink, [wall.ref])
+        self.resolve_top(returned)
+        self.resolve_top(returned)
+        new_wall = returned.state.cards[wall.object_id]
+        self.assertNotEqual(original_wall, new_wall.logical_object_id)
+        self.assertFalse(new_wall.tapped)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, new_wall.annotations)
+        self.replay(returned, load=True)
+
+    def test_noncombat_next_untap_marks_an_already_tapped_survivor_and_skips_lethal_damage(self):
+        for index, (name, survives) in enumerate((('Wind Drake', True), ('Suntail Hawk', False))):
+            with self.subTest(recipient=name):
+                session = self.session(120603703 + index)
+                sniper = self.add(session.engine, 'Matsu-Tribe Sniper', ref='untap-damage-sniper')
+                flyer = self.add(session.engine, name, seat='B', ref='untap-damage-flyer')
+                sniper.acquired_control_turn_count = -1
+                flyer.tapped = True
+                original_flyer = flyer.logical_object_id
+                self.assert_closed(session, sniper)
+                self.prepare(session)
+                self.checkpoint(session)
+                offered = next(row for row in session.packet('pilot:A', full=True)['decision']['ctx']['legal']['actions']
+                               if row['id'].startswith('activate:' + sniper.ref + ':'))
+                result = session.act('pilot:A', {'action_id': offered['id'], 'targets': [flyer.ref], 'pay': 'auto'})
+                self.assertTrue(result.ok, result.summary)
+                self.resolve_top(session)
+                item, = session.state.stack
+                self.assertFalse(item.targets)
+                self.assertEqual({'reference': flyer.ref, 'logical_object_id': original_flyer},
+                                 item.context['damage_permanent_recipient'])
+                session = self.replay(session, load=True)
+                self.resolve_top(session)
+                recipient = session.state.cards[flyer.object_id]
+                self.assertEqual('battlefield' if survives else 'graveyard', recipient.zone)
+                if survives:
+                    self.assertTrue(recipient.tapped)
+                    self.assertIs(recipient.annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION], True)
+                else:
+                    self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, recipient.annotations)
+                self.replay(session, load=True)

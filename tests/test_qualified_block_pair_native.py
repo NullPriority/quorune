@@ -7,6 +7,7 @@ from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition,DeckEntry
 from quorune.record import authoritative_state_hash
 from quorune.rules.capabilities import load_default_capability_registry
+from quorune.tap_state import NEXT_UNTAP_PROHIBITION_ANNOTATION
 from scripts.build_test_database import build_fixture_database
 
 
@@ -43,6 +44,42 @@ class QualifiedBlockPairNativeTests(InheritedNativeFixture,unittest.TestCase):
         self.assertFalse(s.state.delayed_triggers)
         for seat in 'ABC':self.assertNotIn('single-pair-private-hand',json.dumps(s.packet('pilot:'+seat,full=True)))
         self.replay(s,load=True)
+
+    def test_vertigo_spawn_taps_only_the_blocked_attacker_and_keeps_it_in_combat(self):
+        session = self.session(509603703)
+        first = self.add(session.engine, 'Generic Bound Body', ref='untap-block-first')
+        second = self.add(session.engine, 'Generic Bound Body', ref='untap-block-second')
+        spawn = [self.add(session.engine, 'Vertigo Spawn', seat='B', ref=f'untap-block-spawn-{i}') for i in range(2)]
+        for attacker in (first, second):
+            attacker.acquired_control_turn_count = -1
+        self.assert_closed(session, spawn[0])
+        self.prepare(session)
+        self.checkpoint(session)
+        self.attack(session, [(first, 'B'), (second, 'B')])
+        self.until(session, lambda game: game.state.pending_decision.kind == 'combat.blockers')
+        command = {'action_id': 'block', 'blocks': {blocker.ref: first.ref for blocker in spawn}}
+        before = authoritative_state_hash(session.state)
+        self.assertFalse(session.act('pilot:C', command).ok)
+        self.assertEqual(before, authoritative_state_hash(session.state))
+        result = session.act('pilot:B', command)
+        self.assertTrue(result.ok, result.summary)
+        self.until(session, lambda game: len(game.state.stack) == 2 and not game.state.pending_trigger_batches)
+        self.assertFalse(session.state.cards[first.object_id].tapped)
+        for item in session.state.stack:
+            self.assertFalse(item.targets)
+            self.assertEqual({'reference': first.ref, 'logical_object_id': first.logical_object_id},
+                             item.context['block_counterpart_recipient'])
+
+        session = self.replay(session, load=True)
+        self.resolve_top(session)
+        self.assertTrue(session.state.cards[first.object_id].tapped)
+        self.resolve_top(session)
+        attacker = session.state.cards[first.object_id]
+        self.assertIn(attacker.object_id, session.state.combat.attackers)
+        self.assertIs(attacker.annotations[NEXT_UNTAP_PROHIBITION_ANNOTATION], True)
+        self.assertFalse(session.state.cards[second.object_id].tapped)
+        self.assertNotIn(NEXT_UNTAP_PROHIBITION_ANNOTATION, session.state.cards[second.object_id].annotations)
+        self.replay(session, load=True)
 
     def test_actual_deathgazer_uses_block_time_color_and_old_recipient_after_pending_load(self):
         s=self.session(509603701)

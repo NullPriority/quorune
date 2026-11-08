@@ -3,7 +3,9 @@ from __future__ import annotations
 """Runtime minimum and event compatibility for sealed occurrence results."""
 
 from collections.abc import Mapping
+from ..block_characteristic_model import BLOCK_CHARACTERISTIC_CONDITION
 from .event_subscriptions import FixedEventSubscriptionSet
+from .tap_state_capability_shapes import event_next_untap_node_capabilities
 
 
 def _permanent_receiving_condition(value):
@@ -65,6 +67,13 @@ def occurrence_object_runtime_dependencies(program):
             or delayed_object_node_capabilities(effects=program.effects, target_schema=None, mechanic_ids=program.coverage))
         if not required:
             required=block_counterpart_zone_capabilities(effects=program.effects,target_schema=program.target_schema,mechanic_ids=program.coverage)
+        if not required:
+            required = event_next_untap_node_capabilities(effects=program.effects, target_schema=None, mechanic_ids=program.coverage)
+            if required:
+                from .block_characteristics import qualified_block_runtime_dependencies
+                if any(not guarantees(condition, BLOCK_CHARACTERISTIC_CONDITION, 'eq', True) for _event, condition in pairs):
+                    raise ValueError('Next-untap block counterparts require sealed counterpart characteristics')
+                required = (*required, *qualified_block_runtime_dependencies(program))
         if not required:
             raise ValueError('Block counterpart requires one independently closed untargeted result')
         return tuple(sorted(set(required) | {'trigger.event.block_pair_counterpart','trigger.event.normalized_public_action'}

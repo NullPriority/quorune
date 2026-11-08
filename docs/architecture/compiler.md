@@ -727,6 +727,11 @@ its source, including source departure information, and omits a returned
 recipient incarnation. Aggregate blocked wording, attached observers, variable
 amounts, controller-damage siblings and delayed results retain their independent
 admission boundaries.
+The immediate tap and next-untap pair also accepts a sealed block counterpart
+or committed creature damage recipient. It applies both instructions to the
+same creature incarnation without announcing a target. The next-untap
+restriction applies even if the creature is already tapped, and a creature
+that leaves and returns receives neither instruction.
 When that bound result begins with a source pronoun, a possessive scalar such
 as “its power” retains that same source even if the damage instruction also
 has a target. An explicit target-led result keeps its target characteristic.

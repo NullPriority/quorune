@@ -46,6 +46,39 @@ class DealtDamageRecipientTests(unittest.TestCase):
                     self.assertIn({'field':'source','op':'eq','value':'$source.ref'},source_terms)
                     self.assertIn({'field':'source_logical_object_id','op':'eq','value':'$source.logical_object_id'},source_terms)
 
+    def test_damage_next_untap_pair_requires_the_same_sealed_recipient_and_event(self):
+        from quorune.rules.damage_permanent_recipients import damage_permanent_runtime_dependencies
+
+        registry = load_default_capability_registry()
+        reference = '$event.damaged_permanent'
+        effects = ({'op': 'tap', 'card': reference}, {'op': 'prohibit_next_untap', 'card': reference})
+        for head, body in (
+            ('deals combat damage', "tap that creature and it doesn't untap during its controller's next untap step."),
+            ('deals damage', "tap that creature. That creature doesn't untap during its controller's next untap step."),
+        ):
+            with self.subTest(head=head):
+                oracle = f'Whenever this creature {head} to a creature, {body}'
+                ir = compile_oracle_card(record(oracle, 'Creature — Snake'), capability_registry=registry)
+                self.assertEqual('exact', ir.status, ir.material_residuals)
+                node, = ir.faces[0].nodes
+                self.assertEqual('damage.dealt', node.event)
+                self.assertIsNone(node.target_schema)
+                self.assertEqual(effects, node.effects)
+                program = dict(event=node.event, active_zone='battlefield', target_schema=node.target_schema,
+                               effects=node.effects, coverage=('tap-and-untap',), event_condition=node.event_condition)
+                dependencies = damage_permanent_runtime_dependencies(SimpleNamespace(**program))
+                self.assertIn('untap.step.prohibit_next_controller', dependencies)
+                self.assertIn('trigger.event.damage_permanent_recipient', dependencies)
+                for change in (
+                    {'event': 'damage.received'},
+                    {'effects': tuple(reversed(effects))},
+                    {'effects': (effects[0], {**effects[1], 'card': '$event.block_counterpart'})},
+                    {'event_condition': {'all': [term for term in node.event_condition['all']
+                                                 if term.get('field') != 'target_types']}},
+                ):
+                    with self.subTest(change=change), self.assertRaises(ValueError):
+                        damage_permanent_runtime_dependencies(SimpleNamespace(**{**program, **change}))
+
     def test_unrepresented_damage_source_groups_and_linked_recipient_bodies_stay_residual(self):
         registry=load_default_capability_registry()
         for text in ('Whenever one or more creatures you control deal damage to one or more creatures, destroy those creatures at end of combat.',

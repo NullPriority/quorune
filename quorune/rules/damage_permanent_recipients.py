@@ -3,6 +3,7 @@ from collections.abc import Mapping
 from ..damage_recipient_model import DAMAGE_PERMANENT_CAPABILITY,DAMAGE_PERMANENT_OBJECT,uses_damaged_permanent
 from ..delayed_object_model import delayed_object_node_capabilities
 from ..creature_subtypes import canonical_creature_subtype
+from .tap_state_capability_shapes import event_next_untap_node_capabilities
 
 
 def _guarantees(condition,expected):
@@ -35,7 +36,9 @@ def damage_permanent_runtime_dependencies(program):
             or not _guarantees(condition,{'field':'target_kind','op':'eq','value':'permanent'})
             or not _guarantees(condition,{'field':'target_types','op':'contains_any','value':['creature']})):
         raise ValueError('Damaged-creature result requires its closed source and permanent-recipient event predicates')
-    required=delayed_object_node_capabilities(effects=program.effects,target_schema=None,mechanic_ids=program.coverage)
-    if not required or program.effects[0].get('object')!=DAMAGE_PERMANENT_OBJECT:
-        raise ValueError('Damaged-creature result requires one independently closed delayed action')
+    required = event_next_untap_node_capabilities(effects=program.effects,target_schema=None,mechanic_ids=program.coverage)
+    if not required:
+        required=delayed_object_node_capabilities(effects=program.effects,target_schema=None,mechanic_ids=program.coverage)
+        if not required or program.effects[0].get('object')!=DAMAGE_PERMANENT_OBJECT:
+            raise ValueError('Damaged-creature result requires a closed delayed or next-untap action')
     return tuple(sorted({DAMAGE_PERMANENT_CAPABILITY,'trigger.event.normalized_damage',*required}))
