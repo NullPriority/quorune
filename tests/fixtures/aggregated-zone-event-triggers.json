@@ -501,7 +501,7 @@
     {
       "oracle_id": "fixture:aggregate-small-sweeper",
       "name": "Generic Aggregate Small Sweeper",
-      "mana_cost": "",
+      "mana_cost": "{G}",
       "cmc": 1,
       "type_line": "Sorcery",
       "oracle_text": "Generic Aggregate Small Sweeper deals 2 damage to each creature.",
