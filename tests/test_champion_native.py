@@ -202,7 +202,7 @@ class ChampionNativeTests(unittest.TestCase):
 
     def test_exile_link_omission_mutant_is_killed(self):
         self.test_native_entry_exiles_borrowed_creature_and_return_uses_its_owner()
-        with patch('quorune.champion_state.record_linked_ability_exile',return_value=()),self.assertRaises(AssertionError):
+        with patch('quorune.linked_ability_exile_state.record_linked_ability_exile',return_value=()),self.assertRaises(AssertionError):
             self.test_native_entry_exiles_borrowed_creature_and_return_uses_its_owner()
 
     def test_owner_entry_replacement_choice_resumes_only_the_linked_return(self):

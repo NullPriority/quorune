@@ -1,5 +1,6 @@
 from __future__ import annotations
 from .compiler.entry_x_results import entry_x_trigger_node_compiler
+from .compiler.linked_exile_return_templates import linked_ability_trigger_compiler
 from .source_entry_cast_information import source_entry_cast_runtime_coverage
 
 import hashlib
@@ -176,7 +177,7 @@ from .util import stable_json
 
 
 ORACLE_IR_SCHEMA_VERSION = 1
-ORACLE_COMPILER_VERSION = "oracle-ir-v817"
+ORACLE_COMPILER_VERSION = "oracle-ir-v818"
 ORACLE_OPERATIONS = {"parse", "explain", "residuals", "coverage"}
 _TRIGGER_PREFIX = re.compile(
     r"^(when|whenever|at the beginning of)\b",
@@ -1146,6 +1147,14 @@ def _typed_whole_spell_face(
         trigger_node=_trigger_node, grant_effect_templates=_contextual_effect_templates)
 
 
+def _face_trigger_compiler(record, material_rows, effect_template, face_name, permanent):
+    fallback = entry_x_trigger_node_compiler(
+        record, trigger_node=_trigger_node, ordinary_effect=effect_template, match_source=_source_self_zone_trigger_match,
+    )
+    return linked_ability_trigger_compiler(fallback, trigger_node=_trigger_node, material_rows=material_rows,
+        card_name=face_name or record.name, match_source=_source_self_zone_trigger_match, permanent=permanent)
+
+
 def _compile_face(
     record: CardRecord,
     *,
@@ -1164,7 +1173,6 @@ def _compile_face(
      source_attachment_relation) = _face_type_context(type_line)
     contextual_effect_template, contextual_trigger_effect_template = _contextual_effect_templates(
         support_source_is_permanent, tuple(sorted(card_types)), source_attachment_relation)
-    contextual_trigger_node = entry_x_trigger_node_compiler(record,trigger_node=_trigger_node,ordinary_effect=contextual_trigger_effect_template,match_source=_source_self_zone_trigger_match)
     material_rows, leveler_context = _leveler_source_context(record.layout, type_line, oracle_text, ordinary_saga="saga" in type_parts(type_line)[1])
     from .compiler import station_context_nodes as station_context_owner
     material_rows, station_context, cipher_context = cipher_context_owner.contextual_source_rows(record, material_rows)
@@ -1190,6 +1198,7 @@ def _compile_face(
         card_name=face_name or record.name,type_line=type_line,keywords=keywords,trusted_mechanics=trusted_mechanics,
         capability_registry=capability_registry,capability_profile=capability_profile,effect_template=contextual_effect_template,
         activated_or_event_node=_activated_or_fixed_event_trigger_node,trigger_node=_trigger_node)
+    contextual_trigger_node = _face_trigger_compiler(record, material_rows, contextual_trigger_effect_template, face_name, permanent)
     for index, row in (_class_context.class_compilation_rows(class_context, material_rows) if class_context is not None else _leveler_compilation_rows(leveler_context, material_rows)):
         if modal_blocks.append_to(index - 1, nodes=nodes, residuals=residuals):
             continue

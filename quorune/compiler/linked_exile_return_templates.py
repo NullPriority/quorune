@@ -6,9 +6,13 @@ import hashlib
 import re
 from typing import Any, Mapping
 
-from ..linked_exile_return_model import LinkedExileReturnSpec, LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION
+from ..linked_exile_return_model import (
+    LinkedExileReturnSpec, LINKED_ABILITY_BINDING_PREFIX, LINKED_ABILITY_TIMING,
+    LINKED_EXILE_RETURN_MECHANIC, LINKED_EXILE_RETURN_OPERATION,
+)
 from ..rules.source_references import SourceReferenceSpec, source_self_permanent_type
 from .direct_target import direct_permanent_target_spec
+from .exile_templates import targeted_exile_effect_template
 from .fixed_homogeneous_target_sets import _singularize_subject
 from .fixed_target_effect_sequences import _keyword_list
 
@@ -23,6 +27,54 @@ _INSTRUCTION = re.compile(
     re.IGNORECASE,
 )
 _COUNTS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6}
+_LINKED_LEAVE_BODY = re.compile(r"return the exiled card to the battlefield under its owner['’]s control\.", re.I)
+
+
+def linked_ability_trigger_compiler(fallback, *, trigger_node, material_rows, card_name, match_source, permanent):
+    """Bind one unambiguous printed exile and separate return to two source spans."""
+    if not permanent:
+        return fallback
+    leaving = [(text, span) for _, text, span in material_rows if "return the exiled card" in text.casefold()]
+    if len(leaving) != 1:
+        return fallback
+    leave_text, leave_span = leaving[0]
+    departure = match_source(leave_text, card_name=card_name)
+    if (departure is None or departure["event"].casefold() != "leaves the battlefield"
+            or _LINKED_LEAVE_BODY.fullmatch(departure["body"]) is None):
+        return fallback
+    exiling = [(text, span) for _, text, span in material_rows if re.search(r"\bexile\b", text, re.I)]
+    if len(exiling) != 1:
+        return fallback
+    entry_text, entry_span = exiling[0]
+    entry = match_source(entry_text, card_name=card_name)
+    if entry is None or entry["event"].casefold() != "enters":
+        return fallback
+    body = entry["body"]
+    optional = body.casefold().startswith("you may ")
+    exile = targeted_exile_effect_template(body[8:] if optional else body)
+    if exile is None:
+        return fallback
+    seed = f"{card_name}:{entry_span.line}:{leave_span.line}"
+    pair = LINKED_ABILITY_BINDING_PREFIX + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:24]
+    spec = LinkedExileReturnSpec(timing=LINKED_ABILITY_TIMING, schema_version=3).to_dict()
+    common = {"op": LINKED_EXILE_RETURN_OPERATION, "binding_id": pair, "spec": spec}
+    effect = {**common, "phase": "exile", "cards": "$targets"}
+    effects = ({"op": "offer_optional_effect", "player": "$controller", "effects": [effect]},) if optional else (effect,)
+    mechanics = (LINKED_EXILE_RETURN_MECHANIC, *exile.mechanics)
+    if optional:
+        mechanics = (*mechanics, "fixed-optional-effect-choice")
+    templates = {
+        entry_span.line: ("linked-ability-target-exile-v1", effects, exile.target_schema, mechanics),
+        leave_span.line: ("linked-ability-owner-return-v1", ({**common, "phase": "return"},), None, (LINKED_EXILE_RETURN_MECHANIC,)),
+    }
+
+    def compile_trigger(**values):
+        compiled = templates.get(values["span"].line)
+        if compiled is None:
+            return fallback(**values)
+        return trigger_node(**values, effect_template=lambda _body, **_source: compiled)
+
+    return compile_trigger
 
 
 def scope_linked_return_bindings(value: Any, scope: str) -> Any:

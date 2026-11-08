@@ -1224,6 +1224,13 @@ and advertised subject incarnations. Earlier choices stay with that stack
 item until every copied Aura has a legal assignment. The token owner commits
 the batch together and then publishes entry occurrences.
 
+An explicit linked-exile return records each earlier Aura attachment selection
+in its resolving instruction until the simultaneous return commits. Later
+owners choose in APNAP order. Their `aura.entry` packet includes earlier
+selections as public Aura and attachment references in `chosen_attachments`.
+The suspended instruction stays bound to the original trigger and the current
+Aura's exile incarnation.
+
 Version-three fixed-color or fixed-card-type Protection fragments add a required
 `exempt_aura_incarnation` for one granting Aura. CardProgram attached definitions
 carry the closed source marker; live evaluation binds the current source

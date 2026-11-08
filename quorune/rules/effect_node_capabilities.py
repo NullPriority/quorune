@@ -77,6 +77,7 @@ from .fixed_controller_effect_shapes import fixed_counter_controller_effect_sequ
 from .fixed_effect_clause_shapes import fixed_effect_clause_sequence_node_capabilities, fixed_optional_mana_payment_node_capabilities, fixed_optional_effect_node_capabilities
 from .fixed_homogeneous_target_set_capability_shapes import fixed_homogeneous_target_set_node_capabilities, announced_target_set_node_capabilities
 from .closed_effect_program_shapes import closed_effect_program_node_capabilities
+from .linked_exile_return_shapes import linked_ability_exile_node_capabilities
 
 
 def effect_node_capabilities(
@@ -189,6 +190,7 @@ def effect_node_capabilities(
         fixed_effect_clause_sequence_node_capabilities,
         fixed_optional_mana_payment_node_capabilities,
         fixed_optional_effect_node_capabilities,
+        linked_ability_exile_node_capabilities,
         closed_effect_program_node_capabilities,
         fixed_scry_node_capabilities,
         fixed_surveil_node_capabilities,

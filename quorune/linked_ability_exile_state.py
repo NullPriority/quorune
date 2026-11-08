@@ -8,6 +8,7 @@ from .linked_ability_exile_model import (
 )
 from .linked_exile_return_model import ExiledObjectIdentity, LinkedExileReturnSpec
 from .linked_exile_return import return_linked_exiled_objects
+from .zone_transitions import ZoneTransitionOwner
 
 
 def _stored_links(card):
@@ -23,11 +24,15 @@ def _stored_links(card):
     return links
 
 
-def record_linked_ability_exile(host, *, source, ability_pair, objects):
-    """Record only actual exile incarnations after canonical movement commits."""
+def _require_linked_pair(source, ability_pair):
     if (not isinstance(source, ContinuousObjectIdentity) or type(ability_pair) is not str
             or not ability_pair.strip() or ability_pair != ability_pair.strip()):
         raise GameRuleError('Exile links require an exact original source and ability pair')
+
+
+def record_linked_ability_exile(host, *, source, ability_pair, objects):
+    """Record only actual exile incarnations after canonical movement commits."""
+    _require_linked_pair(source, ability_pair)
     pending = []
     for identity in tuple(objects):
         if not isinstance(identity, ExiledObjectIdentity):
@@ -61,12 +66,54 @@ def current_linked_ability_exile(host, *, source, ability_pair):
     return linked_exile_objects(links, source=source, ability_pair=ability_pair, current_exiled=current)
 
 
-def return_linked_ability_exile(host, *, source, ability_pair, actor, reason, replacement_selections=()):
+def exile_for_linked_ability(host, *, card, source, ability_pair, reason, replacement_selections=()):
+    """Commit one admitted subject and retain only its actual exile incarnation."""
+    _require_linked_pair(source, ability_pair)
+    moved = ZoneTransitionOwner(host).move_cards_simultaneously(
+        ((card.object_id, "exile"),), reason=reason, replacement_selections=replacement_selections,
+    )
+    actual = tuple(ExiledObjectIdentity(value.object_id, value.ref, value.logical_object_id)
+                   for value in moved if value.zone == "exile" and not value.is_token and not value.is_spell_copy)
+    record_linked_ability_exile(host, source=source, ability_pair=ability_pair, objects=actual)
+    return tuple(value.ref for value in moved)
+
+
+def return_linked_ability_exile(host, *, source, ability_pair, actor, reason,
+                               replacement_selections=(), aura_target_refs=None, owner_order=()):
     """Resolve a linked return only when its actual returning ability resolves."""
     objects = current_linked_ability_exile(host, source=source, ability_pair=ability_pair)
+    if owner_order:
+        ranks = {seat: index for index, seat in enumerate(owner_order)}
+        objects = tuple(sorted(objects, key=lambda value: ranks.get(host.state.cards[value.object_id].owner, len(ranks))))
     return return_linked_exiled_objects(host, {
         'op': 'return_linked_exiled_objects',
         'objects': [value.to_dict() for value in objects],
         'spec': LinkedExileReturnSpec().to_dict(),
         **({'_replacement_selections': replacement_selections} if replacement_selections else {}),
+        **({'_aura_target_refs': aura_target_refs} if aura_target_refs else {}),
     }, actor=actor, operation='return_linked_exiled_objects', reason=reason)
+
+
+def resolve_linked_ability_instruction(host, item, effect, *, actor, reason):
+    if item.kind != "triggered_ability" or item.controller != actor:
+        raise GameRuleError("A linked ability instruction requires its resolving trigger")
+    try:
+        source = ContinuousObjectIdentity(item.source_object_id, item.context.get("source_logical_object_id"))
+    except ValueError as exc:
+        raise GameRuleError("A linked ability instruction lost its original source") from exc
+    pair = effect["binding_id"]
+    selections = tuple(effect.get("_replacement_selections", ()))
+    if effect["phase"] == "return":
+        return return_linked_ability_exile(host, source=source, ability_pair=pair, actor=actor, reason=reason,
+            replacement_selections=selections, aura_target_refs=effect.get("_aura_target_refs"), owner_order=host.apnap_order())
+    refs = effect["cards"]
+    refs = (refs,) if isinstance(refs, str) else refs
+    if not refs:
+        return []
+    if len(refs) != 1 or type(refs[0]) is not str or not refs[0]:
+        raise GameRuleError("A linked exile requires its one legal target")
+    card = host._resolve_object(actor, refs[0], zones={"battlefield"})
+    if card.phased_out:
+        raise GameRuleError("A linked exile target is phased out")
+    return list(exile_for_linked_ability(host, card=card, source=source, ability_pair=pair, reason=reason,
+                                         replacement_selections=selections))

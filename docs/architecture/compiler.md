@@ -971,6 +971,18 @@ optional immediate fixed keyword grant. Exiled tokens cannot return. Conditional
 outcomes, transformed or face-down returns, source-departure banishment,
 attachment restoration, and unsupported riders remain residual.
 
+`compiler/linked_exile_return_templates.py` also binds one printed source
+entry exile and a separate leaves-the-battlefield return. Entry preserves its
+direct target predicate and any optional choice. Each successful exile records
+the exile incarnation under the original source and printed ability pair.
+Only the return trigger uses that pair to return its still-linked cards under
+their owners' control. A return that resolves before entry exile finds an empty
+link. An Aura that can return uses an untargeted attachment choice by its owner.
+Owners choose in APNAP order with the earlier public selections visible, and
+the eligible objects return simultaneously after all choices are made.
+This pair has independent triggers and a separate lifetime from the
+source-departure duration described below.
+
 `compiler/champion_nodes.py` lowers a complete Champion keyword line into two
 triggered nodes with distinct generated ability identities and one source-line
 ability-pair binding through the existing multiple-node keyword dispatcher.

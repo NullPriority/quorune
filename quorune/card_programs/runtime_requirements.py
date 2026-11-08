@@ -38,6 +38,7 @@ from ..qualified_hexproof import qualified_hexproof_runtime_dependencies
 from ..protection_attachment_exceptions import attached_protection_runtime_dependencies
 from ..query_effect_amount_model import cast_x_runtime_dependencies
 from ..rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
+from ..rules.linked_exile_return_shapes import linked_ability_exile_runtime_dependencies
 from ..rules.resolution_characteristic_shapes import fixed_target_color_runtime_dependencies
 from ..rules.closed_effect_program_shapes import closed_effect_program_runtime_dependencies
 from ..rules.spell_self_exile import spell_self_exile_runtime_dependencies, spell_self_shuffle_runtime_dependencies
@@ -298,6 +299,10 @@ def _value_runtime_requirements(program):
         required.update(fixed_resolution_characteristics_runtime_dependencies(program))
     except (ValueError, TypeError) as exc:
         blockers.add(f"runtime_resolution_characteristics:invalid:{exc}")
+    try:
+        required.update(linked_ability_exile_runtime_dependencies(program))
+    except (ValueError, TypeError) as exc:
+        blockers.add(f"runtime_linked_ability_exile:invalid:{exc}")
     try:
         required.update(fixed_target_color_runtime_dependencies(program))
     except (ValueError, TypeError) as exc:

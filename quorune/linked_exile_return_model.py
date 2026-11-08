@@ -13,6 +13,8 @@ LINKED_EXILE_RETURN_MECHANIC = "linked-exile-return"
 LINKED_EXILE_RETURN_OPERATION = "linked_exile_return"
 LINKED_RETURN_OPERATION = "return_linked_exiled_objects"
 CONDITIONAL_EXILE_CAPABILITY = 'zone.exile_until_source_departure.fixed'
+LINKED_ABILITY_TIMING = "linked_ability"
+LINKED_ABILITY_BINDING_PREFIX = "ability-exile:"
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,11 +54,17 @@ def validate_linked_instruction(effect: Mapping[str, Any]) -> None:
     allowed = {"op", "phase", "binding_id", "spec", "_replacement_selections"}
     if phase == "exile":
         allowed.add("cards")
+    spec = LinkedExileReturnSpec.from_dict(effect.get("spec"))
+    linked_ability = spec.timing == LINKED_ABILITY_TIMING
+    if linked_ability and phase == "return":
+        allowed.add("_aura_target_refs")
     if effect.get("op") != LINKED_EXILE_RETURN_OPERATION or phase not in {"exile", "return"} or set(effect) - allowed or not {"op", "phase", "binding_id", "spec"}.issubset(effect):
         raise ValueError("Linked exile/return instruction has a closed schema")
-    if type(effect["binding_id"]) is not str or not effect["binding_id"].startswith("blink:"):
+    prefix = LINKED_ABILITY_BINDING_PREFIX if linked_ability else "blink:"
+    binding = effect["binding_id"]
+    if type(binding) is not str or not binding.startswith(prefix) or (linked_ability and
+            (len(binding) != len(prefix) + 24 or any(c not in "0123456789abcdef" for c in binding[len(prefix):]))):
         raise ValueError("Linked exile/return binding identity is malformed")
-    LinkedExileReturnSpec.from_dict(effect["spec"])
     if phase == "exile":
         if "cards" not in effect:
             raise ValueError("Linked exile requires a selected object set")
@@ -65,6 +73,10 @@ def validate_linked_instruction(effect: Mapping[str, Any]) -> None:
             raise ValueError("Linked exile object set is malformed")
     if not isinstance(effect.get("_replacement_selections", ()), (list, tuple)):
         raise ValueError("Linked exile/return replacement selections are malformed")
+    aura_targets = effect.get("_aura_target_refs", {})
+    if not isinstance(aura_targets, Mapping) or any(type(key) is not str or not key or type(ref) is not str or not ref
+                                                    for key, ref in aura_targets.items()):
+        raise ValueError("Linked return Aura selections are malformed")
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,14 +89,15 @@ class LinkedExileReturnSpec:
     schema_version: int = 1
 
     def __post_init__(self) -> None:
-        if type(self.schema_version) is not int or self.schema_version not in {1,2}:
+        if type(self.schema_version) is not int or self.schema_version not in {1, 2, 3}:
             raise ValueError("Unsupported linked exile/return schema")
-        if self.timing not in {"immediate", "next_end_step", "controller_next_end_step", 'source_departure'}:
+        if self.timing not in {"immediate", "next_end_step", "controller_next_end_step", "source_departure", LINKED_ABILITY_TIMING}:
             raise ValueError("Unsupported linked return timing")
-        if (self.schema_version == 2) != (self.timing == 'source_departure'):
-            raise ValueError('Conditional source departure requires its explicit linked spec version')
-        if self.timing == 'source_departure' and (self.controller != 'owner' or self.tapped or self.entry_counters or self.keywords):
-            raise ValueError('Conditional departure returns have a fixed prior-zone owner policy')
+        version = {"source_departure": 2, LINKED_ABILITY_TIMING: 3}.get(self.timing, 1)
+        if self.schema_version != version:
+            raise ValueError("Linked return timing requires its exact spec version")
+        if version != 1 and (self.controller != "owner" or self.tapped or self.entry_counters or self.keywords):
+            raise ValueError("Departure and ability-pair returns have a fixed owner policy")
         if self.controller not in {"owner", "actor"} or type(self.tapped) is not bool:
             raise ValueError("Linked return controller or tapped state is malformed")
         if len(set(name for name, _ in self.entry_counters)) != len(self.entry_counters):

@@ -4,10 +4,8 @@ from __future__ import annotations
 from .champion_model import champion_candidates
 from .continuous_effect_model import Layer
 from .errors import GameRuleError
-from .linked_ability_exile_state import record_linked_ability_exile
-from .linked_exile_return_model import ExiledObjectIdentity
+from .linked_ability_exile_state import exile_for_linked_ability
 from .object_query import object_query_result
-from .zone_transitions import ZoneTransitionOwner
 
 
 def sacrifice_champion_source_if_controlled(host, *, source, actor, reason, replacement_selections=()):
@@ -32,9 +30,5 @@ def exile_champion_permanent(host, *, source, ability_pair, actor, subject, subj
                               known_to_actor=True, attached_to_ref=None)
     if not champion_candidates((row,), spec=spec, actor=actor, source=source):
         raise GameRuleError('The chosen Champion object is no longer eligible')
-    moved = ZoneTransitionOwner(host).move_cards_simultaneously(((card.object_id, 'exile'),), reason=reason,
-        replacement_selections=replacement_selections)
-    actual = tuple(ExiledObjectIdentity(value.object_id, value.ref, value.logical_object_id)
-                   for value in moved if value.zone == 'exile' and not value.is_token and not value.is_spell_copy)
-    record_linked_ability_exile(host, source=source, ability_pair=ability_pair, objects=actual)
-    return tuple(value.ref for value in moved)
+    return exile_for_linked_ability(host, card=card, source=source, ability_pair=ability_pair, reason=reason,
+                                    replacement_selections=replacement_selections)

@@ -25,6 +25,7 @@ from quorune.session import CommanderSession
 from quorune.record import checkpoint_envelope, authoritative_state_hash, replay_record
 from quorune.oracle_ir import register_generated_programs
 from common import ROOT, keep_all
+from inherited_composition_fixture import InheritedNativeFixture
 from scripts.build_test_database import build_fixture_database
 
 
@@ -41,6 +42,46 @@ def record(text: str, *, type_line: str = "Instant") -> CardRecord:
 
 
 class LinkedExileReturnCompilerTests(unittest.TestCase):
+    def test_printed_linked_abilities_share_one_pair_and_preserve_trigger_and_target_scope(self):
+        from quorune.rules.linked_exile_return_shapes import linked_ability_exile_runtime_dependencies
+
+        text = ("When this creature enters, you may exile another target creature.\n"
+                "When this creature leaves the battlefield, return the exiled card to the battlefield under its owner's control.")
+        options = dict(capability_registry=load_default_capability_registry(), capability_profile="commander_review")
+        card = record(text, type_line="Creature — Cleric")
+        ir = compile_oracle_card(card, **options)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        entry, departure = ir.faces[0].nodes
+        self.assertEqual(("permanent.enter.self", "permanent.leave.self"), (entry.event, departure.event))
+        self.assertEqual((1, 2), (entry.span.line, departure.span.line))
+        self.assertIs(entry.target_schema["source_exclusion"], True)
+        self.assertIsNone(departure.target_schema)
+        self.assertEqual("offer_optional_effect", entry.effects[0]["op"])
+        exiling, = entry.effects[0]["effects"]
+        returning, = departure.effects
+        self.assertEqual(exiling["binding_id"], returning["binding_id"])
+        self.assertEqual(("exile", "return"), (exiling["phase"], returning["phase"]))
+        self.assertEqual("linked_ability", exiling["spec"]["timing"])
+        self.assertEqual(3, returning["spec"]["schema_version"])
+        for node in (entry, departure):
+            program = dict(effects=node.effects, target_schema=node.target_schema, active_zone=node.active_zone,
+                           event=node.event, event_condition=None)
+            required = linked_ability_exile_runtime_dependencies(SimpleNamespace(**program))
+            self.assertIn("zone.exile.linked_ability_pair", required)
+            self.assertIn("zone.linked_exile_return.fixed", required)
+            for change in ({"event": "resolve"}, {"active_zone": "graveyard"}, {"event_condition": {"field": "card"}}):
+                with self.subTest(change=change), self.assertRaises(ValueError):
+                    linked_ability_exile_runtime_dependencies(SimpleNamespace(**{**program, **change}))
+        for unsupported in (
+            text + "\nWhen this creature enters, exile target land.",
+            text.replace("When this creature leaves", "When another creature leaves"),
+            text.replace("to the battlefield under its owner's control", "to its owner's hand"),
+        ):
+            with self.subTest(unsupported=unsupported):
+                candidate = compile_oracle_card(record(unsupported, type_line="Creature — Cleric"), **options)
+                self.assertFalse(any("zone.exile.linked_ability_pair" in node.capability_dependencies
+                                     for node in candidate.faces[0].nodes))
+
     def test_optional_cardinality_and_source_exclusion_are_independent(self):
         registry = load_default_capability_registry()
         for subject, maximum, optional, excluded in (
@@ -257,6 +298,163 @@ class LinkedExileReturnIntegratedCompilerTests(unittest.TestCase):
         ):
             with self.subTest(text=text):
                 self.assertNotEqual("exact", compile_oracle_card(record(text), capability_registry=registry, capability_profile="commander_review").status)
+
+
+class LinkedAbilityExileNativeTests(InheritedNativeFixture, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        path = Path(cls.temporary.name) / "linked-ability-exile.sqlite3"
+        build_fixture_database([ROOT / "tests/fixtures/bound-effect-program-cards.json",
+                                ROOT / "tests/fixtures/linked-exile-return-cards.json"], path)
+        cls.db = CardDatabase(path)
+        cls.registry = load_default_capability_registry()
+        cls.deck = DeckDefinition("Linked ability exile", [
+            DeckEntry("Generic Bound Commander", 1, "commander"), DeckEntry("Generic Bound Plains", 24),
+        ], ["Generic Bound Commander"])
+
+    def test_journey_early_departure_returns_nothing_and_entry_still_checks_the_old_target(self):
+        session = self.session(607020101)
+        journey = self.add(session.engine, "Journey to Nowhere", zone="hand", ref="linked-journey")
+        body = self.add(session.engine, "Generic Bound Body", seat="B", ref="linked-journey-body")
+        removal = self.add(session.engine, "Disenchant", zone="hand", ref="linked-journey-removal")
+        blink = self.add(session.engine, "Cloudshift", seat="B", zone="hand", ref="linked-journey-target-blink")
+        self.add(session.engine, "Generic Bound Plains", seat="B", ref="linked-journey-response-mana")
+        self.assert_closed(session, journey)
+        self.prepare(session, mana={"C": 2, "W": 2})
+        self.checkpoint(session)
+        self.cast(session, "A", journey)
+        self.target(session, "A", [body.ref])
+        blinked = self.replay(session, load=True)
+
+        self.cast(session, "A", removal, [journey.ref])
+        self.resolve_top(session)
+        self.assertEqual("graveyard", session.state.cards[journey.object_id].zone)
+        self.assertEqual(2, len(session.state.stack))
+        self.assertFalse(session.state.stack[-1].targets)
+        self.resolve_top(session)
+        self.assertEqual("battlefield", session.state.cards[body.object_id].zone)
+        self.resolve_top(session)
+        self.assertEqual("exile", session.state.cards[body.object_id].zone)
+        self.assertFalse(session.state.stack)
+        self.replay(session, load=True)
+
+        previous = blinked.state.cards[body.object_id].logical_object_id
+        self.cast(blinked, "B", blink, [body.ref])
+        self.assertIsNone(self.resolve(blinked))
+        recipient = blinked.state.cards[body.object_id]
+        self.assertNotEqual(previous, recipient.logical_object_id)
+        self.assertEqual("battlefield", recipient.zone)
+        self.replay(blinked, load=True)
+
+    def test_fiend_hunter_optional_exile_and_blinked_source_keep_separate_links(self):
+        session = self.session(607020102)
+        hunter = self.add(session.engine, "Fiend Hunter", zone="hand", ref="linked-fiend")
+        first = self.add(session.engine, "Generic Bound Body", seat="B", ref="linked-fiend-first")
+        second = self.add(session.engine, "Generic Bound Body", seat="C", ref="linked-fiend-second")
+        blink = self.add(session.engine, "Cloudshift", zone="hand", ref="linked-fiend-source-blink")
+        bounce = self.add(session.engine, "Unsummon", zone="hand", ref="linked-fiend-source-bounce")
+        self.assert_closed(session, hunter)
+        self.add(session.engine, "Generic Bound Plains", ref="linked-fiend-blink-mana")
+        self.prepare(session, mana={"C": 4, "W": 5, "U": 3})
+        self.checkpoint(session)
+        self.cast(session, "A", hunter)
+        self.target(session, "A", [first.ref])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        declined = self.replay(session, load=True)
+        result = declined.act("pilot:A", {"action_id": "choose", "choice": "decline"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(declined))
+        self.assertEqual("battlefield", declined.state.cards[first.object_id].zone)
+        self.replay(declined, load=True)
+
+        result = session.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual("exile", session.state.cards[first.object_id].zone)
+        original = session.state.cards[hunter.object_id].logical_object_id
+        self.cast(session, "A", blink, [hunter.ref])
+        self.target(session, "A", [second.ref])
+        self.assertEqual("semantic.choice", self.resolve(session).kind)
+        result = session.act("pilot:A", {"action_id": "choose", "choice": "apply"})
+        self.assertTrue(result.ok, result.summary)
+        self.assertIsNone(self.resolve(session))
+        self.assertNotEqual(original, session.state.cards[hunter.object_id].logical_object_id)
+        self.assertEqual(("battlefield", "B"), (session.state.cards[first.object_id].zone,
+                                              session.state.cards[first.object_id].controller))
+        self.assertEqual("exile", session.state.cards[second.object_id].zone)
+
+        self.cast(session, "A", bounce, [hunter.ref])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.resolve(session))
+        self.assertEqual(("battlefield", "C"), (session.state.cards[second.object_id].zone,
+                                              session.state.cards[second.object_id].controller))
+        self.replay(session, load=True)
+
+    def test_ring_returns_both_linked_auras_only_after_their_owners_choose(self):
+        from quorune.attachments import attach_objects
+
+        session = self.session(607020103)
+        ring = self.add(session.engine, "Oblivion Ring", zone="hand", ref="linked-ring")
+        doubler = self.add(session.engine, "Yarok, the Desecrated", ref="linked-entry-doubler")
+        pacifism = self.add(session.engine, "Pacifism", seat="B", ref="linked-aura-z-b")
+        robe = self.add(session.engine, "Robe of Mirrors", seat="C", ref="linked-aura-a-c")
+        first = self.add(session.engine, "Generic Bound Body", seat="B", ref="linked-aura-target-b")
+        second = self.add(session.engine, "Generic Bound Body", seat="C", ref="linked-aura-target-c")
+        removal = self.add(session.engine, "Disenchant", zone="hand", ref="linked-ring-removal")
+        wipe = self.add(session.engine, "Wrath of God", zone="hand", ref="linked-aura-no-attachment")
+        private = self.add(session.engine, "Generic Bound Growth", seat="D", zone="hand", ref="linked-private-hand")
+        for aura, target in ((pacifism, first), (robe, second)):
+            attach_objects(session.state.cards, aura, target, source_timestamp=aura.zone_timestamp,
+                           players=session.state.players)
+        for card in (ring, doubler, pacifism, robe, wipe):
+            self.assert_closed(session, card)
+        self.prepare(session, mana={"C": 5, "W": 4})
+        self.checkpoint(session)
+        self.cast(session, "A", ring)
+        self.target(session, "A", [pacifism.ref])
+        self.target(session, "A", [robe.ref])
+        self.assertIsNone(self.resolve(session))
+        exiled = {aura.object_id: session.state.cards[aura.object_id].logical_object_id for aura in (pacifism, robe)}
+        self.assertTrue(all(session.state.cards[key].zone == "exile" for key in exiled))
+        no_subject = self.replay(session, load=True)
+
+        self.cast(session, "A", removal, [ring.ref])
+        self.assertEqual("aura.entry", self.resolve(session).kind)
+        chosen = {}
+        for expected_actor in ("B", "C"):
+            self.assertTrue(all(session.state.cards[key].zone == "exile" for key in exiled))
+            actor, = session.state.pending_decision.actors
+            self.assertEqual(expected_actor, actor)
+            packet = session.packet("pilot:" + actor, full=True)["decision"]
+            if actor == "C":
+                self.assertEqual([{"aura": pacifism.ref, "aura_target": first.ref}],
+                                 packet["ctx"]["chosen_attachments"])
+            target = first if actor == "B" else second
+            command = {"action_id": "choose", "aura_target": target.ref}
+            before = authoritative_state_hash(session.state)
+            self.assertFalse(session.act("pilot:A", command).ok)
+            self.assertEqual(before, authoritative_state_hash(session.state))
+            session = self.replay(session, load=True)
+            result = session.act("pilot:" + actor, command)
+            self.assertTrue(result.ok, result.summary)
+            chosen[actor] = target.object_id
+        self.assertIsNone(self.resolve(session))
+        for aura in (pacifism, robe):
+            returned = session.state.cards[aura.object_id]
+            self.assertEqual(("battlefield", aura.owner, chosen[aura.owner]),
+                             (returned.zone, returned.controller, returned.attached_to))
+            self.assertNotEqual(exiled[aura.object_id], returned.logical_object_id)
+        for seat in "ABC":
+            self.assertNotIn(private.ref, json.dumps(session.packet("pilot:" + seat, full=True)))
+        self.replay(session, load=True)
+
+        self.cast(no_subject, "A", wipe)
+        self.assertIsNone(self.resolve(no_subject))
+        self.cast(no_subject, "A", removal, [ring.ref])
+        self.assertIsNone(self.resolve(no_subject))
+        self.assertTrue(all(no_subject.state.cards[key].zone == "exile" for key in exiled))
+        self.replay(no_subject, load=True)
 
 
 class LinkedExileReturnActionTests(unittest.TestCase):
