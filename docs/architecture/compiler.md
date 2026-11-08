@@ -1107,6 +1107,12 @@ resolution validates the same physical and logical battlefield incarnation
 before counter replacement and again when a suspended continuation resumes.
 This production contains no card names or mechanic-specific runtime behavior.
 
+Fixed signed power and toughness changes to the enchanted creature use the
+Aura's own activation cost and announce no target. The result uses the Aura's
+attachment at resolution or its last attachment when the Aura leaves.
+The existing layer 7c effect stays with that permanent incarnation through
+cleanup, including when it temporarily stops being a creature.
+
 `compiler/fixed_controller_effect_sequences.py` owns one closed two-instruction
 controller grammar across spell, triggered, and activated contexts. It requires
 exactly one positive fixed ordinary draw plus one represented fixed controller

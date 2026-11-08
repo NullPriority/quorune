@@ -985,7 +985,11 @@ def fixed_source_characteristics_node_capabilities(
     target_schema: Mapping[str, Any] | None,
     mechanic_ids: Iterable[str],
 ) -> tuple[str, ...]:
-    """Return ownership for one closed source characteristic effect."""
+    """Return ownership for one closed source-bound characteristic effect."""
+
+    if len(effects) == 1 and effects[0].get("op") == "modify_stats_until_end_of_turn":
+        from .fixed_resolution_characteristic_shapes import fixed_attached_stat_node_capabilities
+        return fixed_attached_stat_node_capabilities(effects=effects, target_schema=target_schema, mechanic_ids=mechanic_ids)
 
     if any(effect.get('card') == '$event.block_counterpart' for effect in effects):
         from ..compiler.fixed_target_effect_sequences import FixedSourceCharacteristicsTemplate

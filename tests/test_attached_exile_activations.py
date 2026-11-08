@@ -9,6 +9,7 @@ from unittest.mock import patch
 from types import SimpleNamespace
 
 from common import ROOT
+from inherited_composition_fixture import InheritedNativeFixture
 from quorune.carddb import CardDatabase
 from quorune.deck import DeckDefinition, DeckEntry
 from quorune.attachment_references import AttachmentReferenceKind as K, AttachmentReferenceSpec
@@ -22,6 +23,51 @@ import test_life_gain_prohibitions as native
 
 
 class AttachedExileActivationCompilerTests(unittest.TestCase):
+    def test_fixed_attached_stats_require_the_closed_result_and_versioned_reference(self):
+        from quorune.compiler.fixed_resolution_characteristics import fixed_attached_stat_effect_template
+        from quorune.rules.fixed_resolution_characteristic_shapes import fixed_resolution_characteristics_runtime_dependencies
+        from quorune.rules.node_capability_shapes import fixed_source_characteristics_node_capabilities
+
+        text = 'Enchanted creature gets +2/-2 until end of turn.'
+        compiled = fixed_attached_stat_effect_template(text, source_attachment_relation=K.ENCHANTED)
+        self.assertIsNotNone(compiled)
+        _, effects, target_schema, mechanics = compiled
+        self.assertIsNone(target_schema)
+        effect, = effects
+        reference = AttachmentReferenceSpec(K.ENCHANTED, 'permanent', schema_version=2).to_dict()
+        self.assertEqual({'op': 'modify_stats_until_end_of_turn', 'card': reference, 'power': 2, 'toughness': -2}, effect)
+        required = {'continuous.resolution.fixed_characteristics_until_end_of_turn',
+                    'object.reference.source_attachment_information'}
+        self.assertEqual(required, set(fixed_source_characteristics_node_capabilities(
+            effects=effects, target_schema=None, mechanic_ids=mechanics)))
+        self.assertEqual(required, set(fixed_resolution_characteristics_runtime_dependencies(
+            SimpleNamespace(effects=effects, target_schema=None, coverage=()))))
+        for bad in (
+            {**effect, 'card': {**reference, 'schema_version': 1}},
+            {**effect, 'card': {**reference, 'required_card_type': 'creature'}},
+            {**effect, 'card': {**reference, 'relation': K.EQUIPPED.value}},
+            {**effect, 'power': True},
+            {**effect, 'power': 0, 'toughness': 0},
+        ):
+            with self.subTest(bad=bad):
+                self.assertEqual((), fixed_source_characteristics_node_capabilities(
+                    effects=(bad,), target_schema=None, mechanic_ids=mechanics))
+                with self.assertRaises(ValueError):
+                    fixed_resolution_characteristics_runtime_dependencies(
+                        SimpleNamespace(effects=(bad,), target_schema=None, coverage=()))
+        with self.assertRaises(ValueError):
+            fixed_resolution_characteristics_runtime_dependencies(
+                SimpleNamespace(effects=effects, target_schema={'count': 1}, coverage=()))
+        for relation in (None, K.EQUIPPED):
+            self.assertIsNone(fixed_attached_stat_effect_template(text, source_attachment_relation=relation))
+        for unsupported in (
+            'Enchanted creature gets +0/+0 until end of turn.',
+            'Enchanted creature gets +X/+0 until end of turn.',
+            'Enchanted creature gets +1/+0 until your next turn.',
+            'Enchanted creature gets +1/+0 until end of turn if it blocked.',
+        ):
+            self.assertIsNone(fixed_attached_stat_effect_template(unsupported, source_attachment_relation=K.ENCHANTED))
+
     def test_attached_exile_requires_the_source_relation_and_versioned_information(self):
         template = attached_exile_effect_template('Exile enchanted creature.',source_attachment_relation=K.ENCHANTED)
         self.assertIsNotNone(template)
@@ -119,6 +165,8 @@ class AttachedExileActivationRuntimeTests(unittest.TestCase):
     activate = native.LifeGainProhibitionRuntimeTests.activate
     resume = native.LifeGainProhibitionRuntimeTests.resume
     settle = native.LifeGainProhibitionRuntimeTests.settle
+    resolve_top = InheritedNativeFixture.resolve_top
+    until = InheritedNativeFixture.until
 
     @classmethod
     def setUpClass(cls):
@@ -153,6 +201,129 @@ class AttachedExileActivationRuntimeTests(unittest.TestCase):
         self.cast(s,aura,[recipient.ref],payment=payment)
         self.assertIsNone(self.settle(s))
         self.assertEqual(recipient.object_id,s.state.cards[aura.object_id].attached_to)
+
+    def stats(self, session, card):
+        return tuple(session.engine._numeric_stat(card.object_id, stat) for stat in ('power', 'toughness'))
+
+    def test_ghitu_stats_follow_current_or_last_attachment_without_following_a_blinked_creature(self):
+        from quorune.attachments import attach_objects
+        from quorune.attachment_references import ATTACHMENT_INFORMATION_VERSION
+
+        session = self.session(113700170)
+        aura = self.add(session.engine, 'Ghitu Firebreathing', zone='hand', ref='stats-ghitu-aura')
+        first = self.add(session.engine, 'Generic Bound Body', seat='B', ref='stats-original-creature')
+        second = self.add(session.engine, 'Generic Bound Body', ref='stats-new-creature')
+        blink = self.add(session.engine, 'Cloudshift', zone='hand', ref='stats-blink')
+        private = self.add(session.engine, 'Generic Bound Growth', seat='C', zone='hand', ref='stats-private-hand')
+        self.assertTrue(self.binding(session, aura)['strict_capability_ready'])
+        self.prepare(session, mana={'C': 1, 'R': 3, 'W': 1})
+        self.checkpoint(session)
+        self.cast(session, aura, [first.ref], payment={'C': 1, 'R': 1})
+        self.assertIsNone(self.settle(session))
+        self.assertEqual(first.object_id, session.state.cards[aura.object_id].attached_to)
+
+        command = self.activation_command(session, aura)
+        self.reject(session, command, seat='B')
+        result = session.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        item, = session.state.stack
+        self.assertFalse(item.targets)
+        self.assertEqual(1, item.context[ATTACHMENT_INFORMATION_VERSION])
+        self.assertEqual(first.ref, item.context['source_attachment_snapshot']['attached_object']['reference'])
+        session = self.replay(session, load=True)
+
+        # Reattachment is a prepared owner interaction. The paid actions and both
+        # resolutions are ordinary player commands recorded from their checkpoints.
+        provider = session.state.cards[aura.object_id]
+        attach_objects(session.state.cards, provider, session.state.cards[second.object_id],
+                       source_timestamp=provider.zone_timestamp, players=session.state.players)
+        self.checkpoint(session)
+        departed = self.replay(session, load=True)
+        self.assertIsNone(self.settle(session))
+        self.assertEqual((2, 6), self.stats(session, first))
+        self.assertEqual((3, 6), self.stats(session, second))
+        self.private_replay(session, private)
+        provider = session.state.cards[aura.object_id]
+        attach_objects(session.state.cards, provider, session.state.cards[first.object_id],
+                       source_timestamp=provider.zone_timestamp, players=session.state.players)
+        self.assertEqual((2, 6), self.stats(session, first))
+        self.assertEqual((3, 6), self.stats(session, second))
+
+        self.priority(departed, 'A')
+        bounce = next(row['id'] for row in self.actions(departed)
+                      if row['id'].startswith('activate:' + aura.ref + ':') and row['id'] != command['action_id'])
+        result = departed.act('pilot:A', {'action_id': bounce, 'pay': 'auto'})
+        self.assertTrue(result.ok, result.summary)
+        self.resolve_top(departed)
+        self.assertEqual('hand', departed.state.cards[aura.object_id].zone)
+        item, = departed.state.stack
+        self.assertEqual(second.ref, item.context['source_attachment_snapshot']['attached_object']['reference'])
+
+        returned = self.replay(departed, load=True)
+        self.assertIsNone(self.settle(departed))
+        self.assertEqual((2, 6), self.stats(departed, first))
+        self.assertEqual((3, 6), self.stats(departed, second))
+        self.private_replay(departed, private)
+
+        original = returned.state.cards[second.object_id].logical_object_id
+        self.cast(returned, blink, [second.ref], payment={'W': 1})
+        self.assertIsNone(self.settle(returned))
+        self.assertNotEqual(original, returned.state.cards[second.object_id].logical_object_id)
+        self.assertEqual((2, 6), self.stats(returned, first))
+        self.assertEqual((2, 6), self.stats(returned, second))
+        self.private_replay(returned, private)
+
+    def test_briar_shield_creates_the_modifier_even_if_the_original_recipient_stops_being_a_creature(self):
+        session = self.session(113700171)
+        aura = self.add(session.engine, 'Briar Shield', zone='hand', ref='stats-sacrificed-aura')
+        body = self.add(session.engine, 'Generic Bound Body', seat='B', ref='stats-type-changing-recipient')
+        song = self.add(session.engine, 'Song of the Dryads', zone='hand', ref='stats-temporary-type-loss')
+        disenchant = self.add(session.engine, 'Disenchant', zone='hand', ref='stats-type-restoration')
+        self.add(session.engine, 'Vedalken Orrery')
+        self.assertTrue(self.binding(session, aura)['strict_capability_ready'])
+        self.prepare(session, mana={'C': 3, 'G': 2, 'W': 1})
+        self.checkpoint(session)
+        self.cast(session, aura, [body.ref], payment={'G': 1})
+        self.assertIsNone(self.settle(session))
+        self.assertEqual((3, 7), self.stats(session, body))
+        self.activate(session, aura)
+        self.assertEqual('graveyard', session.state.cards[aura.object_id].zone)
+        self.assertFalse(session.state.stack[-1].targets)
+        self.assertEqual((2, 6), self.stats(session, body))
+        original = session.state.cards[body.object_id].logical_object_id
+
+        self.cast(session, song, [body.ref], payment={'C': 2, 'G': 1})
+        self.resolve_top(session)
+        self.assertNotIn('creature', session.engine._type_parts(session.engine._effective_card_data(
+            session.state.cards[body.object_id])['type_line'])[0])
+        session = self.replay(session, load=True)
+        self.assertIsNone(self.settle(session))
+        self.cast(session, disenchant, [song.ref], payment={'C': 1, 'W': 1})
+        self.assertIsNone(self.settle(session))
+        self.assertEqual(original, session.state.cards[body.object_id].logical_object_id)
+        self.assertEqual((5, 9), self.stats(session, body))
+        self.replay(session, load=True)
+
+    def test_flowstone_embrace_taps_its_own_source_and_expires_its_signed_result_at_cleanup(self):
+        session = self.session(113700172)
+        aura = self.add(session.engine, 'Flowstone Embrace', zone='hand', ref='stats-tap-aura')
+        body = self.add(session.engine, 'Generic Bound Body', seat='B', ref='stats-tap-aura-recipient')
+        self.assertTrue(self.binding(session, aura)['strict_capability_ready'])
+        self.prepare(session, mana={'C': 1, 'R': 1})
+        self.checkpoint(session)
+        self.cast(session, aura, [body.ref], payment={'C': 1, 'R': 1})
+        self.assertIsNone(self.settle(session))
+        command = self.activation_command(session, aura)
+        result = session.act('pilot:A', command)
+        self.assertTrue(result.ok, result.summary)
+        self.assertTrue(session.state.cards[aura.object_id].tapped)
+        self.assertFalse(session.state.cards[body.object_id].tapped)
+        self.reject(session, command)
+        self.assertIsNone(self.settle(session))
+        self.assertEqual((4, 4), self.stats(session, body))
+        self.until(session, lambda game: game.state.active_player == 'B' and game.state.step == 'upkeep')
+        self.assertEqual((2, 6), self.stats(session, body))
+        self.replay(session, load=True)
 
     def test_paid_original_aura_exile_preserves_static_bodies_and_untargeted_shroud_behavior(self):
         for i,name in enumerate(NAMES):

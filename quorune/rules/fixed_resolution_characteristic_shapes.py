@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
 
+from ..attachment_references import (
+    ATTACHMENT_INFORMATION_CAPABILITY, AttachmentReferenceError, AttachmentReferenceKind, AttachmentReferenceSpec,
+)
 from ..compiler.fixed_resolution_characteristic_queries import (
     fixed_resolution_characteristic_query_is_closed,
 )
@@ -18,6 +21,24 @@ from ..next_turn_effect import NEXT_TURN_EFFECT_CAPABILITY, split_next_turn_effe
 FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY = (
     "continuous.resolution.fixed_characteristics_until_end_of_turn"
 )
+
+
+def fixed_attached_stat_node_capabilities(*, effects, target_schema, mechanic_ids) -> tuple[str, ...]:
+    if target_schema is not None or len(effects) != 1 or "cr-611-continuous-effects" not in mechanic_ids:
+        return ()
+    effect = effects[0]
+    if (not isinstance(effect, Mapping) or set(effect) != {"op", "card", "power", "toughness"}
+            or effect.get("op") != "modify_stats_until_end_of_turn"
+            or type(effect.get("power")) is not int or type(effect.get("toughness")) is not int
+            or not (effect["power"] or effect["toughness"])):
+        return ()
+    try:
+        reference = AttachmentReferenceSpec.from_dict(effect["card"])
+    except AttachmentReferenceError:
+        return ()
+    if reference != AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2):
+        return ()
+    return (FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY, ATTACHMENT_INFORMATION_CAPABILITY)
 
 
 def fixed_resolution_characteristic_set_node_capabilities(
@@ -134,9 +155,19 @@ def _runtime_stat_amount(value):
 
 
 def fixed_resolution_characteristics_runtime_dependencies(program):
-    """Bind canonical public-set descriptors independently of declared owners."""
+    """Bind canonical public-set and attachment descriptors independently of declared owners."""
     required = set()
     for effect in program.effects:
+        reference = effect.get("card")
+        if (effect.get("op") == "modify_stats_until_end_of_turn"
+                and isinstance(reference, Mapping) and reference.get("kind") == "source_attachment"):
+            owners = fixed_attached_stat_node_capabilities(
+                effects=(effect,), target_schema=program.target_schema, mechanic_ids=("cr-611-continuous-effects",),
+            )
+            if not owners:
+                raise ValueError("Attached stat modifier requires a closed untargeted attachment reference")
+            required.update(owners)
+            continue
         if effect.get('op') != 'modify_all_matching_permanents_until_end_of_turn' or 'predicate' not in effect:
             continue
         projected = dict(effect)
@@ -158,6 +189,7 @@ def fixed_resolution_characteristics_runtime_dependencies(program):
 
 __all__ = [
     "FIXED_RESOLUTION_CHARACTERISTICS_CAPABILITY",
+    "fixed_attached_stat_node_capabilities",
     "fixed_resolution_characteristic_set_node_capabilities",
     "fixed_resolution_characteristics_runtime_dependencies",
 ]

@@ -6,6 +6,7 @@ from dataclasses import replace
 import re
 from typing import Any, Mapping
 
+from ..attachment_references import AttachmentReferenceKind, AttachmentReferenceSpec
 from ..object_predicate import ObjectQuerySpec
 from ..resolution_characteristic_model import (
     CHARACTERISTIC_OPERATION, PERMANENT_CHARACTERISTIC_MECHANIC,
@@ -21,6 +22,23 @@ from .public_state_queries import fixed_characteristic_battlefield_query_subject
 _BASE = re.compile(r"(?P<subject>.+?) (?:has|have) base power and toughness (?P<p>\d+)/(?P<t>\d+)(?P<tail>.*)",re.I)
 _ANIMATE = re.compile(r"(?P<subject>.+?) becomes? (?:an? )?(?:(?P<p>\d+)/(?P<t>\d+) (?P<description>.+)|(?P<base_description>.+?) with base power and toughness (?P<bp>\d+)/(?P<bt>\d+))(?P<tail>.*)",re.I)
 _PLAYER_SET_SCHEMA = {"zones":["player"],"categories":["player"],"player_relation":"any","count":1}
+
+
+def fixed_attached_stat_effect_template(text: str, *, source_attachment_relation: AttachmentReferenceKind | None):
+    if source_attachment_relation is not AttachmentReferenceKind.ENCHANTED:
+        return None
+    match = re.fullmatch(
+        r"Enchanted creature gets ([+-]\d+)/([+-]\d+) until end of turn\.", text.strip(), re.I,
+    )
+    if match is None:
+        return None
+    power, toughness = map(int, match.groups())
+    if not (power or toughness):
+        return None
+    # The last enchanted object can remain on the battlefield as a noncreature.
+    reference = AttachmentReferenceSpec(AttachmentReferenceKind.ENCHANTED, "permanent", schema_version=2)
+    effect = {"op": "modify_stats_until_end_of_turn", "card": reference.to_dict(), "power": power, "toughness": toughness}
+    return "fixed-attached-stats-until-end-of-turn-v1", (effect,), None, ("cr-611-continuous-effects",)
 
 
 def _subject(text: str, *, source_name: str, source_is_permanent: bool | None,

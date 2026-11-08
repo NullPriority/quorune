@@ -104,7 +104,7 @@ CompiledEffectTemplate = tuple[
 ]
 
 
-def _attachment_or_owner_zone_move(
+def _attachment_or_zone_result(
     text: str,
     card_name: str,
     source_is_permanent: bool | None,
@@ -112,6 +112,10 @@ def _attachment_or_owner_zone_move(
 ) -> CompiledEffectTemplate | None:
     from .attached_destruction import attached_destruction_template
     from .exile_templates import attached_exile_effect_template
+    from .fixed_resolution_characteristics import fixed_attached_stat_effect_template
+    attached_stats = fixed_attached_stat_effect_template(text, source_attachment_relation=source_attachment_relation)
+    if attached_stats is not None:
+        return attached_stats
     created_attachment = created_token_attachment_effect_template(
         text, source_attachment_relation=source_attachment_relation,
     )
@@ -285,7 +289,7 @@ def typed_resolution_effect_template(
     )
     if fixed_counter_controller_sequence is not None:
         return fixed_counter_controller_sequence.compiled()
-    attachment = _attachment_or_owner_zone_move(
+    attachment = _attachment_or_zone_result(
         text, card_name, source_is_permanent, source_attachment_relation
     )
     if attachment is not None:
