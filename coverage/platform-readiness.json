@@ -36,7 +36,7 @@
     "ordinary printed Exhaust now uses one typed per-ability, per-object once-only activation owner shared by advertised actions and accepted commands; control changes and phasing preserve the consumed use, while a zone change creates a new object and resets it. One closed source-threaded fixed counter-then-until-end-of-turn characteristic sequence is shared by activated and triggered contexts, preserves printed order, suspends for replacement choices, revalidates source identity, and commits atomically. Effects that grant another Exhaust use, copied, granted, removed, or face-down Exhaust abilities, reverse-order or broader source sequences, usage-limited mana auto-payment, and independently unsupported costs or results remain explicit blockers, so aggregate Exhaust is not trusted"
   ],
   "generated": {
-    "evaluated_input_fingerprint": "d65aca27afc5a117b3191be0ab190c5b9017d7489ac947db19e609d913fef338",
+    "evaluated_input_fingerprint": "dd5cbfc15759b6fe10817abefd3c63c5b2547b3ec9af832f3dd8d604696f925b",
     "generator": "scripts/update_platform_status.py",
     "input_fingerprint_algorithm": "platform-readiness-derived-inputs-sha256-v1",
     "source": "platform/readiness-source.json",
@@ -763,14 +763,14 @@
         "material_residuals": 19062,
         "status_counts": {
           "residual": 14113,
-          "trusted": 17486,
-          "untrusted": 24
+          "trusted": 17500,
+          "untrusted": 10
         },
         "trust_basis_counts": {
-          "capability_closed": 17447,
+          "capability_closed": 17461,
           "legacy_reviewed": 13,
           "mixed": 26,
-          "unresolved": 14137
+          "unresolved": 14123
         }
       },
       "full": {
@@ -779,14 +779,14 @@
         "status_counts": {
           "failed": 2248,
           "residual": 17680,
-          "trusted": 18671,
-          "untrusted": 24
+          "trusted": 18685,
+          "untrusted": 10
         },
         "trust_basis_counts": {
-          "capability_closed": 18632,
+          "capability_closed": 18646,
           "legacy_reviewed": 13,
           "mixed": 26,
-          "unresolved": 17704
+          "unresolved": 17690
         }
       }
     },
