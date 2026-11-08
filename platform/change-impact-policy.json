@@ -9115,6 +9115,27 @@
       ]
     },
     {
+      "id": "committed-first-life-gain-contract",
+      "patterns": [
+        "quorune/life_change.py",
+        "quorune/player_result_events.py",
+        "quorune/turn_history.py",
+        "quorune/record_state_provenance.py",
+        "quorune/compiler/fixed_public_event_trigger_bindings.py",
+        "quorune/compiler/graveyard_self_return.py",
+        "quorune/rules/graveyard_self_return.py",
+        "schemas/game-record-v3-manifest.schema.json",
+        "tests/test_life_gain_prohibitions.py"
+      ],
+      "test_modules": [
+        "test_card_program_trust",
+        "test_damage_result_events",
+        "test_game_record_v3",
+        "test_life_gain_prohibitions",
+        "test_surveil_rules"
+      ]
+    },
+    {
       "id": "static-life-gain-prohibitions",
       "patterns": [
         "quorune/life_gain_permission.py",

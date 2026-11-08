@@ -3551,6 +3551,14 @@ capability closure. Counter-producing bodies retain their counter-specific
 capability and optional-choice wrapper rather than entering a second trigger
 path.
 
+First-life-gain triggers use the gaining seat's first committed positive life
+occurrence in the current turn. The own-turn form also matches the current
+turn anchor. The normal life-gain stream retains its per-source occurrences.
+Graveyard self-returns observe the source zone before the subsequent
+state-based actions. A gain offset by simultaneous damage still supplies the
+first occurrence, and a source that arrives later reads the next turn's first
+gain.
+
 The public zone-change grammar lowers only closed controller, opponent,
 source-exclusion, token, and single-subtype predicates. It consumes the
 normalized owner's current entry facts or predeparture last-known facts and

@@ -69851,6 +69851,87 @@
     {
       "applicability": {
         "exclusions": [
+          "later life-gain ordinals, occurrence amounts or source-linked results",
+          "unrepresented source zones and legacy checkpoints without the mode"
+        ],
+        "inputs": [
+          "committed positive gain and gaining seat",
+          "current turn and first-occurrence history",
+          "current source ability and typed result"
+        ],
+        "outputs": [
+          "one first-life-gain occurrence per player and turn",
+          "ordinary gain stream retains each source occurrence"
+        ],
+        "summary": "One committed first positive life gain per gaining seat and turn, including an own-turn qualifier or a closed graveyard return."
+      },
+      "blockers": [],
+      "dependencies": [
+        "trigger.event.normalized_life_gain"
+      ],
+      "dependency_fail_closed_rationale": "The normalized first-gain event requires its capability and current battlefield or graveyard source independently of compiler annotations.",
+      "dependency_fail_closed_status": "passed",
+      "id": "trigger.event.first_life_gain",
+      "implementation_components": [
+        "quorune.player_result_events.dispatch_life_gain_event",
+        "quorune.turn_history.record_first_life_gain",
+        "quorune.life_change.first_life_gain_runtime_dependencies",
+        "quorune.compiler.fixed_public_event_trigger_bindings.fixed_public_event_binding_spec"
+      ],
+      "implementation_mutation_rationale": "Omitting the committed occurrence suppresses the native first-gain Cat token.",
+      "implementation_mutation_status": "killed",
+      "interaction_tests": [
+        "test_vanguard_seraph_observes_net_zero_lifelink_and_keeps_surveil_private",
+        "test_healer_and_cleric_share_first_gain_after_prohibition_and_replacement",
+        "test_deathless_knight_uses_the_graveyard_before_state_actions_and_the_next_turn",
+        "test_simultaneous_lifelink_keeps_regular_source_events_and_one_first_gain"
+      ],
+      "multiplayer_tests": [
+        "test_cat_collector_uses_the_gaining_player_and_current_turn"
+      ],
+      "negative_tests": [
+        "test_first_life_gain_has_closed_timing_and_runtime_authority",
+        "test_healer_and_cleric_share_first_gain_after_prohibition_and_replacement",
+        "test_first_life_gain_history_and_manifest_keep_legacy_absence"
+      ],
+      "official_rules": [
+        "109.5",
+        "119.9",
+        "120.3f",
+        "603.2",
+        "603.2g",
+        "704.3"
+      ],
+      "positive_tests": [
+        "test_first_life_gain_has_closed_timing_and_runtime_authority",
+        "test_cat_collector_uses_the_gaining_player_and_current_turn"
+      ],
+      "privacy_tests": [
+        "test_vanguard_seraph_observes_net_zero_lifelink_and_keeps_surveil_private"
+      ],
+      "replay_tests": [
+        "test_vanguard_seraph_observes_net_zero_lifelink_and_keeps_surveil_private",
+        "test_deathless_knight_uses_the_graveyard_before_state_actions_and_the_next_turn"
+      ],
+      "required_evidence": [
+        "positive",
+        "negative",
+        "interaction",
+        "multiplayer",
+        "privacy",
+        "replay"
+      ],
+      "status": "trusted",
+      "supported_profiles": [
+        "traditional",
+        "commander_duel",
+        "commander_review"
+      ],
+      "version": 1
+    },
+    {
+      "applicability": {
+        "exclusions": [
           "tokens and noncard objects",
           "replacement destinations outside graveyard",
           "hidden pre-transition facts",

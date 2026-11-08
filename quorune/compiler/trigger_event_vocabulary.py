@@ -2,6 +2,7 @@
 from enum import Enum
 
 from ..rules.event_subscriptions import LAND_PLAY_EVENT
+from ..life_change import FIRST_LIFE_GAIN_EVENT
 
 
 from ..transform_timestamp_model import TRANSFORM_EVENT
@@ -23,6 +24,7 @@ class FixedCounterTriggerEvent(str, Enum):
     SOURCE_ATTACKS = "creature.attacks"
     ATTACKER_UNBLOCKED = 'creature.unblocked'
     CONTROLLER_LIFE_GAIN = "life.gained"
+    CONTROLLER_FIRST_LIFE_GAIN = FIRST_LIFE_GAIN_EVENT
     CONTROLLER_CARD_DRAW = "card.drawn"
     CONTROLLER_SECOND_DRAW = "card.second_draw"
     PERMANENT_ENTER = "permanent.enter"

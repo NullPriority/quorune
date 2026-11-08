@@ -163,10 +163,12 @@ def _event_query_runtime_requirements(program):
     required.update(crime_fact_dependencies((program.handlers,program.event_condition,program.effects,program.cost_schema)))
     from ..continuous_conditions import FIXED_PUBLIC_STATE_INTERVENING_COVERAGE
     from ..counter_placement_event_model import counter_placement_event_dependencies
+    from ..life_change import first_life_gain_runtime_dependencies
     from ..rules.event_subscriptions import FixedEventSubscriptionSet, LAND_PLAY_EVENT, upkeep_hand_runtime_dependencies
     try:
         subscriptions=FixedEventSubscriptionSet.from_condition(program.event_condition)
         required.update(counter_placement_event_dependencies(program, subscriptions))
+        required.update(first_life_gain_runtime_dependencies(program, subscriptions))
         if program.event == TRANSFORM_EVENT or (
             subscriptions is not None and subscriptions.subscription_for(TRANSFORM_EVENT) is not None
         ):

@@ -158,6 +158,10 @@
           "const": 1,
           "type": "integer"
         },
+        "first_life_gain_history_version": {
+          "const": 1,
+          "type": "integer"
+        },
         "first_player_draws": {
           "type": "boolean"
         },

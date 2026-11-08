@@ -7,6 +7,7 @@ import re
 from typing import Any, Callable, Mapping
 
 from ..creature_subtypes import canonical_creature_subtype
+from ..life_change import FIRST_LIFE_GAIN_CAPABILITY, FIRST_LIFE_GAIN_EVENT
 from ..class_levels import CLASS_MECHANIC_ID
 from ..rules.source_references import SourceReferenceSpec
 from .fixed_entry_return_requirements import (
@@ -1204,6 +1205,23 @@ def _transform_into_spec(material_line, *, card_name):
     )
 
 
+_FIRST_LIFE_GAIN = re.compile(
+    r'(?:When|Whenever) you gain life for the first time (each turn|during each of your turns), (?P<body>.+)', re.I,
+)
+
+
+def _first_life_gain_spec(material_line):
+    match = _FIRST_LIFE_GAIN.fullmatch(material_line)
+    if match is None:
+        return None
+    condition = {'field': 'player', 'op': 'eq', 'value': '$source.controller'}
+    if match[1].casefold() != 'each turn':
+        condition = {'all': [condition, {'field': 'active_player', 'op': 'eq', 'value': '$source.controller'}]}
+    return _spec(FIRST_LIFE_GAIN_EVENT, 'controller_first_life_gain', match['body'],
+        'fixed-counter-controller-first-life-gain-trigger-v1', 'trigger-event-normalized-life-gain',
+        condition=condition, capabilities=(FIRST_LIFE_GAIN_CAPABILITY,))
+
+
 def fixed_public_event_binding_spec(
     material_line: str,
     *,
@@ -1223,7 +1241,8 @@ def fixed_public_event_binding_spec(
             'fixed-source-exploit-result-v1','fixed-exploit-result',capabilities=('trigger.keyword.exploit.creature_sacrifice',))
 
     return (
-        _anywhere_graveyard_spec(material_line)
+        _first_life_gain_spec(material_line)
+        or _anywhere_graveyard_spec(material_line)
         or _source_any_damage_spec(material_line,card_name=card_name)
         or _transform_into_spec(material_line, card_name=card_name)
         or _class_level_spec(material_line)

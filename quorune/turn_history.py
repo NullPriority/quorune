@@ -24,6 +24,7 @@ def reset_turn_history(history: TurnHistory, turn_sequence: int) -> TurnHistory:
         committed_occurrence_history_version=history.committed_occurrence_history_version,
         damage_life_history_version=history.damage_life_history_version,
         permanent_death_history_version=history.permanent_death_history_version,
+        first_life_gain_history_version=history.first_life_gain_history_version,
     )
 
 
@@ -144,6 +145,19 @@ def current_turn_history_events(
     ):
         return ()
     return tuple(event for event in history.events if event.kind == kind)
+
+
+def record_first_life_gain(host, player: str) -> bool:
+    """Claim one first occurrence after the canonical gain has committed."""
+    state = getattr(host, 'state', None)
+    history = getattr(state, 'turn_history', None)
+    if getattr(history, 'first_life_gain_history_version', None) != 1:
+        return False
+    prior = current_turn_history_events(history, turn_sequence=state.turn_sequence, kind='first_life_gain')
+    if any(event.target == player for event in prior):
+        return False
+    host._record_turn_history('first_life_gain', target=player, target_kind='player')
+    return True
 
 
 def record_milled_graveyard_arrivals(host, player, results) -> None:

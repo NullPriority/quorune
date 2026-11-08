@@ -1,4 +1,7 @@
 """Closed triggered source-return instruction authority and validation."""
+from ..life_change import FIRST_LIFE_GAIN_EVENT
+
+
 GRAVEYARD_SELF_RETURN_CAPABILITY='zone.return.triggered_self_graveyard_hand'
 GRAVEYARD_SELF_RETURN_VERSION='triggered_graveyard_hand_version'
 
@@ -34,6 +37,6 @@ def graveyard_self_return_runtime_dependencies(program):
     visit(program.effects)
     if found and (program.active_zone!='graveyard' or program.event not in {
             'step.begin','spell.cast','land.enter','permanent.enter','creature.enter','artifact.enter','enchantment.enter',
-            'permanent.sacrificed'}):
+            'permanent.sacrificed',FIRST_LIFE_GAIN_EVENT}):
         raise ValueError('Triggered source return requires its represented graveyard event envelope')
     return (GRAVEYARD_SELF_RETURN_CAPABILITY,) if found else ()

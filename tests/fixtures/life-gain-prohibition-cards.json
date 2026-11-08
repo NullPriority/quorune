@@ -1466,6 +1466,440 @@
         "tlr": "legal",
         "vintage": "legal"
       }
+    },
+    {
+      "oracle_id": "3250466f-82a4-45e1-9722-ff247ddf8c15",
+      "name": "Vanguard Seraph",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Angel Warrior",
+      "oracle_text": "Flying\nWhenever you gain life for the first time each turn, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "power": "3",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Flying",
+        "Surveil"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "52f1b5a4-62ff-44de-80da-503d4e52d312",
+      "name": "Cat Collector",
+      "mana_cost": "{2}{W}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Citizen",
+      "oracle_text": "When this creature enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nWhenever you gain life for the first time during each of your turns, create a 1/1 white Cat creature token.",
+      "power": "3",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [
+        "Food"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "9442a18b-9093-4a10-ab61-6962f5af3bb6",
+      "name": "Attended Healer",
+      "mana_cost": "{3}{W}",
+      "cmc": 4.0,
+      "type_line": "Creature — Kor Cleric",
+      "oracle_text": "Whenever you gain life for the first time each turn, create a 1/1 white Cat creature token.\n{2}{W}: Another target Cleric gains lifelink until end of turn.",
+      "power": "2",
+      "toughness": "3",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "d7721c5e-b3c5-45c8-b757-935603dfe44b",
+      "name": "Cleric of Life's Bond",
+      "mana_cost": "{W}{B}",
+      "cmc": 2.0,
+      "type_line": "Creature — Vampire Cleric",
+      "oracle_text": "Whenever another Cleric you control enters, you gain 1 life.\nWhenever you gain life for the first time each turn, put a +1/+1 counter on this creature.",
+      "power": "2",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "W"
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2020-09-25",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f96f1a94-6226-4e1f-a7fb-a43a276b3c3a",
+      "name": "Deathless Knight",
+      "mana_cost": "{B/G}{B/G}{B/G}{B/G}",
+      "cmc": 4.0,
+      "type_line": "Creature — Skeleton Knight",
+      "oracle_text": "Haste\nWhen you gain life for the first time each turn, return this card from your graveyard to your hand.",
+      "power": "4",
+      "toughness": "2",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "keywords": [
+        "Haste"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2019-10-04",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "legal",
+        "tlr": "not_legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "beab66e0-2b6c-478f-ba42-8c0c216a527e",
+      "name": "Heroes' Reunion",
+      "mana_cost": "{G}{W}",
+      "cmc": 2.0,
+      "type_line": "Instant",
+      "oracle_text": "Target player gains 7 life.",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "G",
+        "W"
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2012-10-05",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "f5f4dd28-f4ae-4d39-b9b8-6ebfd63c93fe",
+      "name": "Basilisk Collar",
+      "mana_cost": "{1}",
+      "cmc": 1.0,
+      "type_line": "Artifact — Equipment",
+      "oracle_text": "Equipped creature has deathtouch and lifelink. (Any amount of damage it deals to a creature is enough to destroy it. Damage dealt by this creature also causes you to gain that much life.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+      "power": null,
+      "toughness": null,
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "Equip"
+      ],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2024-11-15",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "oracle_id": "5e961d15-5972-4e4b-9385-1cd7cd7c6bbe",
+      "name": "Prodigal Sorcerer",
+      "mana_cost": "{2}{U}",
+      "cmc": 3.0,
+      "type_line": "Creature — Human Wizard Sorcerer",
+      "oracle_text": "{T}: This creature deals 1 damage to any target.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2016-06-10",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      }
+    },
+    {
+      "cmc": 0.0,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "defense": null,
+      "keywords": [],
+      "layout": "normal",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "legal",
+        "paupercommander": "legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "legal",
+        "premodern": "legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "loyalty": null,
+      "mana_cost": "",
+      "name": "Forest",
+      "oracle_id": "b34bb2dc-c1af-4d77-b0b3-a0fb342a5fc6",
+      "oracle_text": "({T}: Add {G}.)",
+      "power": null,
+      "produced_mana": [
+        "G"
+      ],
+      "released_at": "2026-06-26",
+      "toughness": null,
+      "type_line": "Basic Land — Forest"
     }
   ],
   "rulings": [
@@ -2038,6 +2472,108 @@
       "published_at": "2010-06-15",
       "source": "wotc",
       "comment": "This applies only to casting spells. It does not, for example, change when you may activate abilities that can only be activated \"any time you could cast a sorcery\"."
+    },
+    {
+      "oracle_id": "3250466f-82a4-45e1-9722-ff247ddf8c15",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you gain life during a turn before Vanguard Seraph is on the battlefield, its last ability won't trigger that turn even if you gain life again later in the turn."
+    },
+    {
+      "oracle_id": "3250466f-82a4-45e1-9722-ff247ddf8c15",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Vanguard Seraph's last ability triggers just once for your first life-gaining event on each turn, no matter how much life you gain."
+    },
+    {
+      "oracle_id": "52f1b5a4-62ff-44de-80da-503d4e52d312",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "If you gain life during your turn before Cat Collector is on the battlefield, its last ability won't trigger that turn even if you gain life again later in the turn."
+    },
+    {
+      "oracle_id": "52f1b5a4-62ff-44de-80da-503d4e52d312",
+      "published_at": "2024-11-08",
+      "source": "wotc",
+      "comment": "Cat Collector's last ability triggers just once and creates just one Cat token for the first life-gaining event on each of your turns, no matter how much life you gain."
+    },
+    {
+      "oracle_id": "9442a18b-9093-4a10-ab61-6962f5af3bb6",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "An ability that triggers “whenever you gain life” triggers just once for each life-gaining event, no matter how much life you gain."
+    },
+    {
+      "oracle_id": "9442a18b-9093-4a10-ab61-6962f5af3bb6",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "An ability that triggers whenever you gain life “for the first time each turn” won’t trigger if you gain life during a turn before the permanent with that ability is on the battlefield, even if you gain life again later in the turn."
+    },
+    {
+      "oracle_id": "9442a18b-9093-4a10-ab61-6962f5af3bb6",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won’t cause the ability to trigger, even though it caused your team’s life total to increase."
+    },
+    {
+      "oracle_id": "9442a18b-9093-4a10-ab61-6962f5af3bb6",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If you gain an amount of life “for each” of something, that life is gained as one event and the ability will trigger only once."
+    },
+    {
+      "oracle_id": "9442a18b-9093-4a10-ab61-6962f5af3bb6",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, a “whenever you gain life” ability will trigger twice. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, and/or planeswalkers at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will trigger only once."
+    },
+    {
+      "oracle_id": "9442a18b-9093-4a10-ab61-6962f5af3bb6",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Multiple instances of lifelink on the same creature are redundant."
+    },
+    {
+      "oracle_id": "d7721c5e-b3c5-45c8-b757-935603dfe44b",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "If you gain an amount of life “for each” of something, that life is gained as one event and the ability will trigger only once."
+    },
+    {
+      "oracle_id": "d7721c5e-b3c5-45c8-b757-935603dfe44b",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "An ability that triggers “whenever you gain life” triggers just once for each life-gaining event, no matter how much life you gain."
+    },
+    {
+      "oracle_id": "d7721c5e-b3c5-45c8-b757-935603dfe44b",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "An ability that triggers whenever you gain life “for the first time each turn” won’t trigger if you gain life during a turn before the permanent with that ability is on the battlefield, even if you gain life again later in the turn."
+    },
+    {
+      "oracle_id": "d7721c5e-b3c5-45c8-b757-935603dfe44b",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "Each creature with lifelink dealing combat damage causes a separate life-gaining event. For example, if two creatures you control with lifelink deal combat damage at the same time, a “whenever you gain life” ability will trigger twice. However, if a single creature you control with lifelink deals combat damage to multiple creatures, players, and/or planeswalkers at the same time (perhaps because it has trample or was blocked by more than one creature), the ability will trigger only once."
+    },
+    {
+      "oracle_id": "d7721c5e-b3c5-45c8-b757-935603dfe44b",
+      "published_at": "2020-09-25",
+      "source": "wotc",
+      "comment": "In a Two-Headed Giant game, life gained by your teammate won’t cause the ability to trigger, even though it caused your team’s life total to increase."
+    },
+    {
+      "oracle_id": "f96f1a94-6226-4e1f-a7fb-a43a276b3c3a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "If Deathless Knight enters your graveyard after you've gained life in a turn, its last ability can't trigger during that turn."
+    },
+    {
+      "oracle_id": "f96f1a94-6226-4e1f-a7fb-a43a276b3c3a",
+      "published_at": "2019-10-04",
+      "source": "wotc",
+      "comment": "Deathless Knight must be in your graveyard immediately after you gain life for its last ability to trigger. If you gain life due to damage from a source with lifelink, and that damage is dealt at the same time that lethal damage is dealt to Deathless Knight, it won't be in your graveyard until state-based actions are performed a moment later, and so the ability can't trigger."
     }
   ]
 }

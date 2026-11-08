@@ -836,6 +836,12 @@ compilation; replay uses the pinned predicate rather than reparsing Oracle.
 Legacy activation condition fields and fixed-mana payloads keep their original
 forms. The new discriminator adds no game-state or event-history fields.
 
+`turn_history.first_life_gain_history_version` enables one first-positive-gain
+fact per gaining seat and turn. The journal records committed occurrences,
+including gains offset by simultaneous life loss. Turn rollover clears the
+facts and retains the mode. The manifest binds the mode to the initial
+checkpoint, and historical absence preserves the earlier event history.
+
 Public-condition schema eight stores one closed `history_query` and a
 nonnegative count or amount threshold. Its version-one query identifies the
 typed event, principal relation, card-type filters and reduction. It reads the
