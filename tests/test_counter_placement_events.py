@@ -338,5 +338,23 @@ class CounterPlacementEventRuntimeTests(unittest.TestCase):
         with patch.object(owner,'dispatch_prepared_counter_events',return_value=None):
             with self.assertRaises(AssertionError):self.test_actual_fathom_and_herd_distinguish_replaced_quantity_from_one_occurrence()
 
+    def test_existing_singular_subscription_derives_placement_runtime_authority(self):
+        from quorune.card_programs import bind_semantic_program_runtime
+
+        session = self.session(122824003)
+        source = self.add(session.engine, "Fathom Mage")
+        witness, = (entry for entry in session.engine.semantics.programs_for_oracle(source.oracle_id)
+                    if entry.event == "counter.single_put")
+        self.assertTrue(bind_semantic_program_runtime(
+            witness, capability_registry=self.registry, profile="commander_review",
+        )["strict"])
+        capability = "trigger.event.normalized_counter_placement"
+        dependencies = tuple(value for value in witness.capability_dependencies if value != capability)
+        withdrawn = replace(witness, capability_dependencies=dependencies,
+                            capability_closure=self.registry.closure(dependencies, profile="commander_review").to_dict())
+        bound = bind_semantic_program_runtime(withdrawn, capability_registry=self.registry, profile="commander_review")
+        self.assertFalse(bound["strict"])
+        self.assertIn(f"capability:undeclared_runtime_dependency:{capability}", bound["blockers"])
+
 
 if __name__=='__main__':unittest.main()

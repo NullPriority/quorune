@@ -90,6 +90,8 @@ Typed event-subscription sets require the multi-event capability at runtime,
 including their represented spell-cast and entry producer requirements.
 The binder derives these minima from the descriptor even when a coverage
 marker or declared dependency was removed.
+Counter placement events also require the normalized placement capability,
+including singular placement and placement in a typed subscription set.
 Current modal tap/block and spell-cast descriptors also retain their primitive
 event requirements independently from coverage. Their mode schemas continue to
 bind every child owner; removing an event label cannot hide a missing producer.

@@ -11,6 +11,13 @@ COUNTER_EVENT_CAPABILITY='trigger.event.normalized_counter_placement'
 COUNTER_EVENT_MECHANIC='trigger-event-normalized-counter-placement'
 
 
+def counter_placement_event_dependencies(program, subscriptions):
+    events = (program.event, *(child.event for child in subscriptions.subscriptions)) if subscriptions else (program.event,)
+    if any(event.removesuffix(".self") in {COUNTER_PLACEMENT_EVENT, SINGLE_COUNTER_EVENT} for event in events):
+        return (COUNTER_EVENT_CAPABILITY,)
+    return ()
+
+
 def counter_quantity_provenance_version(value: int | None) -> int | None:
     if value is not None and (type(value) is not int or value != 1):
         raise ValueError("Unsupported counter quantity provenance version")
