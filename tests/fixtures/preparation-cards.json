@@ -1962,6 +1962,122 @@
       "released_at": "2026-06-26",
       "toughness": null,
       "type_line": "Basic Land — Swamp"
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "name": "Harmonized Trio // Brainstorm",
+      "mana_cost": "{U} // {U}",
+      "cmc": 1.0,
+      "type_line": "Creature — Merfolk Bard Wizard // Instant",
+      "oracle_text": "Harmonized Trio: {T}, Tap two untapped creatures you control: This creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)\n//\nBrainstorm: Draw three cards, then put two cards from your hand on top of your library in any order.",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "keywords": [
+        "Prepared"
+      ],
+      "produced_mana": [],
+      "layout": "prepare",
+      "released_at": "2026-04-24",
+      "legalities": {
+        "alchemy": "legal",
+        "brawl": "legal",
+        "commander": "legal",
+        "competitivebrawl": "legal",
+        "duel": "legal",
+        "future": "legal",
+        "gladiator": "legal",
+        "historic": "legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "legal",
+        "pioneer": "legal",
+        "predh": "not_legal",
+        "premodern": "not_legal",
+        "standard": "legal",
+        "standardbrawl": "legal",
+        "timeless": "legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "card_faces": [
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{U}",
+          "name": "Harmonized Trio",
+          "oracle_text": "{T}, Tap two untapped creatures you control: This creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+          "power": "1",
+          "toughness": "1",
+          "type_line": "Creature — Merfolk Bard Wizard"
+        },
+        {
+          "colors": [],
+          "defense": null,
+          "loyalty": null,
+          "mana_cost": "{U}",
+          "name": "Brainstorm",
+          "oracle_text": "Draw three cards, then put two cards from your hand on top of your library in any order.",
+          "power": null,
+          "toughness": null,
+          "type_line": "Instant"
+        }
+      ]
+    },
+    {
+      "oracle_id": "7663ac7c-1de3-4250-b96a-fae9dbd66a27",
+      "name": "Memnite",
+      "mana_cost": "{0}",
+      "type_line": "Artifact Creature — Construct",
+      "oracle_text": "",
+      "power": "1",
+      "toughness": "1",
+      "loyalty": null,
+      "defense": null,
+      "colors": [],
+      "color_identity": [],
+      "keywords": [],
+      "produced_mana": [],
+      "layout": "normal",
+      "released_at": "2011-05-14",
+      "legalities": {
+        "alchemy": "not_legal",
+        "brawl": "not_legal",
+        "commander": "legal",
+        "competitivebrawl": "not_legal",
+        "duel": "legal",
+        "future": "not_legal",
+        "gladiator": "not_legal",
+        "historic": "not_legal",
+        "legacy": "legal",
+        "modern": "legal",
+        "oathbreaker": "legal",
+        "oldschool": "not_legal",
+        "pauper": "not_legal",
+        "paupercommander": "not_legal",
+        "penny": "not_legal",
+        "pioneer": "not_legal",
+        "predh": "legal",
+        "premodern": "not_legal",
+        "standard": "not_legal",
+        "standardbrawl": "not_legal",
+        "timeless": "not_legal",
+        "tlr": "legal",
+        "vintage": "legal"
+      },
+      "cmc": 0.0
     }
   ],
   "rulings": [
@@ -3896,6 +4012,102 @@
       "published_at": "2026-03-20",
       "source": "wotc",
       "comment": "If a prepare spell with one or more targets has no legal targets when it tries to resolve, it won't resolve and none of its effects will happen. Since the spell was cast, the associated permanent will still not be prepared."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "As an effect causes a creature with a prepare spell to become prepared (including effects that state that a creature \"enters prepared\"), that creature's controller creates a copy of that creature's prepare spell in exile. That copy remains in exile for as long as that permanent is on the battlefield and is prepared. That creature's controller may cast that copy as long as it remains in exile. As they cast it, that creature stops being prepared."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If an effect instructs you to choose a card name, you may choose the alternative prepare spell's name. Consider only the alternative characteristics to determine whether that is an appropriate name to choose."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If an effect causes a creature to become unprepared, a prepared creature stops being prepared and the associated copy of its prepare spell in exile ceases to exist. If it wasn't prepared at that time, nothing happens."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "A creature with a prepare spell can't become prepared more than once at the same time. For example, Emeritus of Ideation is on the battlefield and is prepared. When it attacks, its last ability triggers. When that ability resolves, its controller may still exile eight cards from their graveyard, but doing so won't cause Emeritus of Ideation to become prepared a second time or create a second copy of Ancestral Recall in exile."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If a prepare spell with one or more targets has no legal targets when it tries to resolve, it won't resolve and none of its effects will happen. Since the spell was cast, the associated permanent will still not be prepared."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "A creature without a prepare spell can't become prepared."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If a prepared creature stops being a creature, it will still be prepared, and the copy of its prepare spell will remain in exile. That permanent's controller will still be able to cast it. The same is true if a prepared creature becomes a copy of something else, even if it's then a permanent without a prepare spell."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Being prepared isn't a copiable value. If a permanent becomes a copy of a prepared creature, it won't be prepared. That permanent will have the alternative characteristics, though, and some other effect could cause it to become prepared later."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Creating a copy of a creature's prepare spell in exile ignores copy exceptions applied to that creature that would affect the copiable values of that spell. For example, say a player casts Croaking Counterpart (a sorcery that says \"Create a token that's a copy of target non-Frog creature, except it's a 1/1 green Frog.\") targeting Goblin Glasswright. The token copy of Goblin Glasswright will enter prepared as a 1/1 green Frog creature, but the copy of Craft with Pride in exile will still be a red sorcery. The copy of Craft with Pride won't be green, a creature, or a Frog, and it won't have power or toughness."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Preparation cards can only be cast with their base characteristics."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Casting a copy of a prepare spell from exile isn't casting it for an alternative cost. Effects that allow you to cast a spell for an alternative cost or without paying its mana cost may allow you to apply those to a copy of a prepare spell cast from exile."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "You can tap any untapped creatures you control to pay the cost of Harmonized Trio's activated ability, even ones you haven't controlled continuously since the beginning of your most recent turn."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "If a prepared creature loses all abilities, it won't stop being prepared, and nothing will happen to its alternative characteristics or to the copy of its prepare spell in exile."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "Only the current controller of a prepared creature can cast the copy of its prepare spell in exile. It doesn't matter who owns that creature or who controlled it when it became prepared."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "While copies of spells in zones other than the stack cease to exist when state-based actions are checked, this does not apply to copies of prepare spells in exile that were created as a creature became prepared."
+    },
+    {
+      "oracle_id": "f6036065-7196-44d4-8a27-2199f0e1a03c",
+      "published_at": "2026-03-20",
+      "source": "wotc",
+      "comment": "A preparation card is a creature card in every zone. For example, while it's in your graveyard, Emeritus of Ideation is a blue creature whose mana value is 5. It can't be the target of Zealous Lorecaster's triggered ability (\"When this creature enters, return target instant or sorcery card from your graveyard to your hand.\")."
     }
   ]
 }

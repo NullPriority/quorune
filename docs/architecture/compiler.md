@@ -329,6 +329,9 @@ face of a preparation card to closed inset instant or sorcery characteristics.
 The entry replacement and source-only preparation results require complete-card
 admission, including the inset result. The source result reuses typed trigger
 conditions and payment wrappers where their complete effects are supported.
+A paid source preparation activation uses the ordinary cost owners. Promotion
+checks the closed result and its complete matching battlefield program,
+including the inset spell.
 Current ability presence controls replacement and trigger discovery. Alternative
 characteristics remain copiable independently of later ability removal.
 An inset copy has only its inset characteristics and does not acquire another

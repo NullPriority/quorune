@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import replace
 from .preparation_model import (PrepareSpellSpec,PreparedDesignation,PREPARED_FIELD,PREPARE_SPELL_FIELD,
     PREPARE_COPY_FIELD, PREPARATION_HANDLER, PREPARATION_RESULT_CAPABILITY, PREPARATION_RESULT_OPERATION,
-    preparation_result_spell)
+    preparation_result_node_capabilities, preparation_result_spell)
 from .errors import GameRuleError
 
 
@@ -31,6 +31,21 @@ def preparation_runtime_dependencies(program):
             or not program_has_declared_complete_source_admission(program)):
         raise ValueError("Source preparation requires a complete matching battlefield program")
     return (PREPARATION_RESULT_CAPABILITY,)
+
+
+def is_closed_activated_preparation_program(program):
+    """Promote only an independently closed source preparation activation."""
+    if getattr(program, "event", None) != "activate" or not getattr(program, "ability_id", "").startswith("ability:"):
+        return False
+    required = preparation_result_node_capabilities(
+        effects=program.effects, target_schema=program.target_schema, mechanic_ids=program.coverage,
+    )
+    if not required or not set(required) <= set(program.capability_dependencies):
+        return False
+    try:
+        return preparation_runtime_dependencies(program) == required
+    except (TypeError, ValueError):
+        return False
 
 
 def compiled_prepare_spell(host,card,*,record=None):

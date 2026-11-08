@@ -92,6 +92,47 @@ class PreparationModelCompilerTests(unittest.TestCase):
         without_inset = replace(card, layout="normal", faces=())
         self.assertNotEqual("exact", compile_oracle_card(without_inset, capability_registry=self.registry).status)
 
+    def test_paid_source_preparation_promotes_only_its_complete_battlefield_program(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from quorune.card_programs import bind_card_program_runtime
+        from quorune.card_programs.adapters import compile_best_available_card_program
+        from quorune.compiler.program_generation import register_generated_programs
+        from quorune.preparation import is_closed_activated_preparation_program
+        from quorune.preparation_model import PREPARATION_RESULT_CAPABILITY
+        from quorune.semantics import SemanticRegistry
+
+        text = "{T}, Tap two untapped creatures you control: This creature becomes prepared."
+        record = preparation_record(text)
+        ir = compile_oracle_card(record, capability_registry=self.registry)
+        self.assertEqual("exact", ir.status, ir.material_residuals)
+        node, = ir.faces[0].nodes
+        self.assertEqual((0, len(text)), (node.span.start, node.span.end))
+        self.assertTrue(node.cost["tap_source"])
+        self.assertEqual("$source", node.cost["choices"][0]["q"]["exclude_ref"])
+        self.assertIn(PREPARATION_RESULT_CAPABILITY, node.capability_dependencies)
+
+        database = SimpleNamespace(rulings=lambda _record: ())
+        options = dict(capability_registry=self.registry, capability_profile="commander_review")
+        semantics = SemanticRegistry()
+        register_generated_programs(database, semantics, [record], **options, promote_exact_effect_programs=True)
+        program, = (entry for entry in semantics.programs_for_oracle(record.oracle_id)
+                    if entry.event == "activate" and entry.effects)
+        self.assertEqual("trusted", program.trust_level)
+        self.assertTrue(is_closed_activated_preparation_program(program))
+        incomplete = {key: value for key, value in program.provenance.items() if key != "card_program_admission"}
+        self.assertFalse(is_closed_activated_preparation_program(replace(program, provenance=incomplete)))
+        self.assertFalse(is_closed_activated_preparation_program(replace(program, active_zone="graveyard")))
+        bound = compile_best_available_card_program(database, record, semantic_registry=semantics, **options)
+        self.assertTrue(bind_card_program_runtime(bound, capability_registry=self.registry,
+                                                 profile="commander_review")["strict_capability_ready"])
+        without_promotion = SemanticRegistry()
+        with patch("quorune.preparation.is_closed_activated_preparation_program", return_value=False):
+            register_generated_programs(database, without_promotion, [record], **options,
+                                        promote_exact_effect_programs=True)
+        self.assertFalse(any(entry.event == "activate" and entry.effects and entry.trust_level == "trusted"
+                             for entry in without_promotion.programs_for_oracle(record.oracle_id)))
+
     def test_physical_prepare_front_face_preserves_case_insensitive_selection(self):
         from types import SimpleNamespace
         from quorune.preparation import preparation_cast_face
@@ -682,3 +723,70 @@ class PreparationRuntimeTests(unittest.TestCase):
         with patch("quorune.preparation.resolve_prepare_source", return_value=False):
             with self.assertRaises(AssertionError):
                 self.test_actual_aviator_token_attack_prepares_its_inset_and_casts()
+
+
+    def test_actual_harmonized_trio_pays_distinct_taps_and_resolves_its_inset(self):
+        for blink in (False, True):
+            with self.subTest(source_blinks=blink):
+                session = self.session(722_831_020 + blink)
+                engine = session.engine
+                source = self.add(engine, "Harmonized Trio")
+                source.acquired_control_turn_count = -1
+                helper = self.add(engine, "Generic Bound Body", ref="trio-new-helper")
+                helper.acquired_control_turn_count = session.state.players["A"].turns_begun
+                next_helper = self.add(engine, "Memnite", zone="hand", ref="trio-memnite")
+                enemy = self.add(engine, "Generic Bound Body", seat="B", ref="trio-foreign-helper")
+                self.add(engine, "Island", ref="trio-inset-mana")
+                response = self.add(engine, "Cloudshift", zone="hand") if blink else None
+                self.assert_closed(session, source)
+                self.fund(session, {"W": 1} if blink else {})
+
+                prefix = f"activate:{source.ref}:"
+                packet = session.packet("pilot:A", full=True)
+                self.assertFalse(any(row["id"].startswith(prefix) for row in packet["decision"]["ctx"]["legal"]["actions"]))
+                self.cast_for(session, "A", next_helper)
+                self.assertIsNone(self.resolve(session))
+                self.priority(session, "A")
+                self.assertEqual("battlefield", session.state.cards[next_helper.object_id].zone)
+                offer = next(row for row in session.packet("pilot:A", full=True)["decision"]["ctx"]["legal"]["actions"]
+                             if row["id"].startswith(prefix))
+                cost = offer["cost_summary"]["choose_cost"][0]
+                self.assertEqual({helper.ref, next_helper.ref}, set(cost["legal_refs"]))
+                for refs in ([source.ref, helper.ref], [helper.ref, helper.ref], [helper.ref, enemy.ref], [helper.ref]):
+                    self.reject(session, "A", action_id=offer["id"], cost_cards=refs, pay="auto")
+                refs = [helper.ref, next_helper.ref]
+                self.reject(session, "B", action_id=offer["id"], cost_cards=refs, pay="auto")
+                accepted = session.act("pilot:A", {"action_id": offer["id"], "cost_cards": refs, "pay": "auto"})
+                self.assertTrue(accepted.ok, accepted.summary)
+                self.assertTrue(all(session.state.cards[card.object_id].tapped for card in (source, helper, next_helper)))
+                self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+
+                if response is not None:
+                    incarnation = session.state.cards[source.object_id].logical_object_id
+                    self.cast_for(session, "A", response, (source.ref,))
+                    self.resolve_top(session)
+                    self.assertNotEqual(incarnation, session.state.cards[source.object_id].logical_object_id)
+                session = self.replay(session, load=True)
+                self.assertIsNone(self.resolve(session))
+                self.assertTrue(all(session.state.cards[card.object_id].tapped for card in (helper, next_helper)))
+                if blink:
+                    self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+                    self.assertFalse(any(PREPARE_COPY_FIELD in card.annotations for card in session.state.cards.values()))
+                else:
+                    copy = self.prepare_copy(session, source)
+                    self.assertEqual("Brainstorm", session.engine.display_name(copy.object_id))
+                    player = session.state.players["A"]
+                    before = set(player.zones["hand"])
+                    self.cast_for(session, "A", copy)
+                    pending = self.resolve(session)
+                    self.assertEqual("semantic.choice", pending.kind)
+                    drawn = [session.state.cards[object_id].ref for object_id in player.zones["hand"] if object_id not in before]
+                    self.assertEqual(3, len(drawn))
+                    selected = [drawn[-1], drawn[0]]
+                    self.reject(session, "B", action_id="choose", cards=selected)
+                    accepted = session.act("pilot:A", {"action_id": "choose", "cards": selected})
+                    self.assertTrue(accepted.ok, accepted.summary)
+                    self.assertIsNone(self.resolve(session))
+                    self.assertEqual(selected, [session.state.cards[oid].ref for oid in reversed(player.zones["library"][-2:])])
+                    self.assertNotIn(PREPARED_FIELD, session.state.cards[source.object_id].annotations)
+                self.replay(session)

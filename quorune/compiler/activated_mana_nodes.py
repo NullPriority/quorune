@@ -24,6 +24,7 @@ from ..fixed_mana_abilities import (
 )
 from ..effect_contracts import REANIMATE_OPERATION
 from ..fixed_top_exile import FIXED_TOP_EXILE_OPERATION
+from ..preparation_model import PREPARATION_RESULT_OPERATION
 from ..creature_power_damage_model import (
     CREATURE_POWER_DAMAGE_MECHANIC,
     CREATURE_POWER_DAMAGE_OPERATION,
@@ -375,6 +376,7 @@ _CAPABILITY_SHAPED_EFFECT_OPERATIONS = frozenset({
     "populate",
     "regenerate",
     REANIMATE_OPERATION,
+    PREPARATION_RESULT_OPERATION,
     "place_counters",
     "place_counter_batch",
     "place_counters_on_set",
